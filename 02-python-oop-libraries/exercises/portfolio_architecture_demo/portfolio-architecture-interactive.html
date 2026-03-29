@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Portfolio Architecture Demo - OOP para clase en vivo</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23060a10'/%3E%3Ccircle cx='21' cy='21' r='8' fill='%232dd4f0'/%3E%3Cpath d='M18 44h28' stroke='%238da2ff' stroke-width='6' stroke-linecap='round'/%3E%3Cpath d='M31 18l12 12-12 12' fill='none' stroke='%23f4f8ff' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>
+/* CSS_BASE */
+:root {
+  --bg: #06090e;
+  --bg-2: #0a111b;
+  --panel: rgba(11, 16, 25, 0.94);
+  --panel-2: rgba(14, 21, 32, 0.98);
+  --line: rgba(122, 144, 174, 0.16);
+  --text: #f5f8fe;
+  --muted: #aab9cc;
+  --muted-2: #7c8ca1;
+  --cyan: #2dd4f0;
+  --blue: #8da2ff;
+  --green: #57e389;
+  --amber: #f7b955;
+  --red: #ff7b8c;
+  --shadow: 0 26px 72px rgba(0, 0, 0, 0.34);
+  --wrap: min(1200px, calc(100vw - 32px));
+  --nav-h: 90px;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 12% 10%, rgba(45, 212, 240, 0.09), transparent 20%),
+    radial-gradient(circle at 82% 16%, rgba(141, 162, 255, 0.09), transparent 20%),
+    linear-gradient(180deg, #06090e 0%, #08101a 44%, #06090e 100%);
+  line-height: 1.6;
+  font-size: 17px;
+  overflow-x: hidden;
+}
+
+body.is-fullscreen {
+  scroll-snap-type: y proximity;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+  background-size: 74px 74px;
+  mask-image: radial-gradient(circle at center, black 38%, transparent 84%);
+  pointer-events: none;
+  opacity: 0.22;
+}
+
+nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 40;
+  background: rgba(6, 9, 14, 0.84);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--line);
+}
+
+.nav-shell {
+  width: var(--wrap);
+  margin: 0 auto;
+  padding: 12px 0 10px;
+}
+
+.nav-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.brand-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--cyan);
+  box-shadow: 0 0 18px rgba(45, 212, 240, 0.85);
+}
+
+.nav-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pill, .nav-links a, .full-btn, .chip-btn, .switch-btn, .tab-btn, .toggle-btn, .jump-btn {
+  border: 1px solid var(--line);
+  background: rgba(14, 21, 31, 0.9);
+  color: var(--muted);
+  border-radius: 999px;
+  text-decoration: none;
+  padding: 9px 13px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.full-btn, .chip-btn, .switch-btn, .tab-btn, .toggle-btn, .jump-btn { cursor: pointer; }
+
+.full-btn:hover,
+.chip-btn:hover,
+.switch-btn:hover,
+.tab-btn:hover,
+.toggle-btn:hover,
+.jump-btn:hover,
+.nav-links a:hover {
+  color: var(--text);
+  border-color: rgba(45, 212, 240, 0.28);
+}
+
+.nav-scroll {
+  margin-top: 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.nav-scroll::-webkit-scrollbar { display: none; }
+
+.nav-links {
+  display: inline-flex;
+  gap: 8px;
+  min-width: max-content;
+}
+
+.nav-links a.active,
+.chip-btn.active,
+.switch-btn.active,
+.tab-btn.active {
+  color: var(--text);
+  border-color: rgba(45, 212, 240, 0.3);
+  background: rgba(22, 34, 48, 0.96);
+}
+
+.progress {
+  position: fixed;
+  top: var(--nav-h);
+  left: 0;
+  z-index: 45;
+  width: 0%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--cyan), var(--blue), #8cf5cf);
+}
+
+main {
+  width: var(--wrap);
+  margin: 0 auto;
+  padding: calc(var(--nav-h) + 26px) 0 90px;
+}
+
+section {
+  margin-bottom: 56px;
+  scroll-margin-top: calc(var(--nav-h) + 18px);
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.42s ease, transform 0.42s ease;
+}
+
+body.is-fullscreen section {
+  scroll-snap-align: start;
+}
+
+section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.shell {
+  position: relative;
+  overflow: hidden;
+  padding: 26px;
+  border-radius: 30px;
+  background: linear-gradient(180deg, rgba(10, 15, 24, 0.92), rgba(8, 12, 19, 0.88));
+  border: 1px solid rgba(122, 144, 174, 0.13);
+  box-shadow: var(--shadow);
+}
+
+.shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(45, 212, 240, 0.05), transparent 26%);
+  pointer-events: none;
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(45, 212, 240, 0.18);
+  background: rgba(45, 212, 240, 0.08);
+  color: var(--cyan);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Space Grotesk', sans-serif;
+  letter-spacing: -0.05em;
+  line-height: 0.98;
+}
+
+h1 { font-size: clamp(42px, 6vw, 82px); max-width: 620px; }
+h2 { font-size: clamp(30px, 4vw, 54px); max-width: 760px; }
+h3 { font-size: 24px; }
+h4 { font-size: 16px; }
+
+p, li { color: var(--muted); }
+
+.lead {
+  max-width: 720px;
+  margin-top: 14px;
+  font-size: clamp(18px, 2vw, 23px);
+  color: #c6d5e7;
+}
+
+.muted-line {
+  color: var(--muted-2);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.accent-cyan { color: var(--cyan); }
+.accent-blue { color: var(--blue); }
+
+pre, code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  line-height: 1.7;
+  color: #d9e5f4;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+/* CSS_LAYOUT */
+.hero-grid,
+.roles-grid,
+.flow-grid,
+.repo-grid,
+.why-grid,
+.close-grid {
+  display: grid;
+  gap: 18px;
+  align-items: start;
+}
+
+.hero-grid { grid-template-columns: minmax(0, 1fr) minmax(360px, 0.95fr); }
+.roles-grid { grid-template-columns: 290px minmax(0, 1fr); }
+.flow-grid { grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr); }
+.repo-grid { grid-template-columns: 260px minmax(0, 1fr); }
+.why-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.close-grid { grid-template-columns: minmax(0, 1fr) 340px; }
+
+.stack,
+.hero-steps,
+.artifact-stack,
+.module-list,
+.switch-row,
+.chip-row,
+.tab-row,
+.takeaway-row,
+.pill-row,
+.badge-row {
+  display: grid;
+  gap: 14px;
+}
+
+.hero-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.takeaway-row { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.switch-row, .chip-row, .tab-row, .pill-row, .badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.card,
+.panel,
+.code-panel,
+.compact-card,
+.teacher-card,
+.artifact,
+.module-detail,
+.compare-card,
+.repo-detail,
+.command-card {
+  background: linear-gradient(180deg, var(--panel), var(--panel-2));
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+}
+
+.panel,
+.artifact,
+.module-detail,
+.compare-card,
+.repo-detail,
+.teacher-card,
+.command-card,
+.code-panel,
+.compact-card {
+  padding: 18px;
+}
+
+.hero-step {
+  min-height: 132px;
+  padding: 16px;
+}
+
+.hero-step h4,
+.takeaway strong {
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+.micro-label {
+  color: var(--cyan);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+}
+
+.artifact-head {
+  display: grid;
+  gap: 12px;
+}
+
+.artifact-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.pipeline {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.pipeline .chip-btn {
+  min-height: 62px;
+  border-radius: 18px;
+  padding: 12px 10px;
+  text-align: left;
+  overflow: hidden;
+}
+
+.pipeline .chip-btn strong {
+  display: block;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.chip-sub {
+  display: block;
+  margin-top: 5px;
+  color: var(--muted-2);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.artifact-focus {
+  padding: 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(45, 212, 240, 0.14);
+  background: rgba(9, 16, 24, 0.92);
+}
+
+.artifact-focus h3,
+.module-detail h3,
+.repo-detail h3,
+.compare-card h3,
+.teacher-card h3,
+.command-card h3 {
+  margin-bottom: 10px;
+}
+
+.teacher-quote {
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(45, 212, 240, 0.08);
+  border: 1px solid rgba(45, 212, 240, 0.14);
+  color: #d7edf6;
+}
+
+.module-item {
+  width: 100%;
+  text-align: left;
+  padding: 16px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: rgba(11, 17, 25, 0.92);
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.module-item.active {
+  color: var(--text);
+  border-color: rgba(45, 212, 240, 0.28);
+  background: rgba(15, 24, 35, 0.96);
+}
+
+.module-item strong {
+  display: block;
+  margin: 4px 0 6px;
+  font-size: 16px;
+}
+
+.module-item small,
+.repo-file small {
+  display: block;
+  color: var(--muted-2);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.kicker {
+  color: var(--muted-2);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.summary-line {
+  color: #d7e3f2;
+  font-size: 15px;
+}
+
+.tab-body {
+  margin-top: 14px;
+}
+
+.bullet-list {
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.bullet-list li {
+  position: relative;
+  padding-left: 18px;
+}
+
+.bullet-list li::before {
+  content: ">";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--cyan);
+  font-weight: 900;
+}
+
+.snippet {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(8, 14, 21, 0.92);
+  border: 1px solid rgba(122, 144, 174, 0.12);
+}
+
+.snippet pre {
+  max-height: 112px;
+  overflow: hidden;
+}
+
+.snippet.expanded pre {
+  max-height: none;
+}
+
+.stage-strip {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.stage {
+  padding: 14px 12px;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: rgba(11, 17, 25, 0.92);
+}
+
+.stage strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.stage span {
+  display: block;
+  color: var(--muted-2);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.stage.done {
+  border-color: rgba(87, 227, 137, 0.24);
+  background: rgba(87, 227, 137, 0.1);
+}
+
+.stage.fail {
+  border-color: rgba(255, 123, 140, 0.24);
+  background: rgba(255, 123, 140, 0.11);
+}
+
+.stage.pending { opacity: 0.72; }
+
+.focus-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.focus-box {
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(9, 15, 23, 0.92);
+  border: 1px solid rgba(122, 144, 174, 0.12);
+}
+
+.focus-box h4 { margin-bottom: 8px; }
+
+.repo-file {
+  width: 100%;
+  text-align: left;
+  padding: 14px 14px;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: rgba(11, 17, 25, 0.86);
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.repo-file.active {
+  color: var(--text);
+  border-color: rgba(45, 212, 240, 0.28);
+  background: rgba(15, 24, 35, 0.96);
+}
+
+.compare-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.compare-card ul {
+  margin-top: 12px;
+}
+
+.badge {
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(122, 144, 174, 0.13);
+  background: rgba(10, 16, 24, 0.9);
+  color: #d8e5f5;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.takeaway {
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(122, 144, 174, 0.13);
+  background: rgba(10, 16, 24, 0.92);
+}
+
+.cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.jump-btn {
+  color: #061017;
+  border: 0;
+  background: linear-gradient(90deg, var(--cyan), #93ddff);
+}
+/* CSS_COMPONENTS */
+.mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.teacher-card,
+.command-card {
+  min-height: 100%;
+}
+
+.toggle-btn {
+  margin-top: 10px;
+  padding: 8px 11px;
+  font-size: 12px;
+}
+
+.code-panel {
+  padding: 16px;
+  background: rgba(8, 14, 21, 0.92);
+}
+
+.code-panel pre {
+  max-height: 210px;
+  overflow: auto;
+}
+
+.soft-line {
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(90deg, rgba(45, 212, 240, 0.2), transparent);
+}
+
+/* CSS_MEDIA */
+@media (max-width: 1120px) {
+  :root { --wrap: min(1080px, calc(100vw - 28px)); }
+  .hero-grid,
+  .roles-grid,
+  .flow-grid,
+  .repo-grid,
+  .why-grid,
+  .close-grid,
+  .compare-grid {
+    grid-template-columns: 1fr;
+  }
+  .hero-steps,
+  .takeaway-row,
+  .pipeline,
+  .stage-strip,
+  .focus-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  :root { --nav-h: 92px; --wrap: min(100vw - 20px, 1000px); }
+  body { font-size: 16px; }
+  .nav-shell { padding: 8px 0 6px; }
+  .brand { font-size: 13px; }
+  .pill, .nav-links a, .full-btn, .chip-btn, .switch-btn, .tab-btn, .toggle-btn, .jump-btn {
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+  main { padding-top: calc(var(--nav-h) + 18px); }
+  .shell { padding: 18px; border-radius: 24px; }
+  h1 { font-size: clamp(36px, 13vw, 56px); }
+  h2 { font-size: clamp(28px, 10vw, 42px); }
+  .hero-steps,
+  .takeaway-row,
+  .pipeline,
+  .stage-strip,
+  .focus-grid {
+    grid-template-columns: 1fr;
+  }
+  .pipeline .chip-btn {
+    min-height: auto;
+  }
+}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-shell">
+    <div class="nav-top">
+      <div class="brand">
+        <span class="brand-dot"></span>
+        <span>Portfolio OOP Demo</span>
+      </div>
+      <div class="nav-meta">
+        <span class="pill">Lesson 2</span>
+        <button class="full-btn" id="fullscreen-btn" type="button">Pantalla</button>
+      </div>
+    </div>
+    <div class="nav-scroll">
+      <div class="nav-links">
+        <a href="#hero">Mapa</a>
+        <a href="#roles">Roles</a>
+        <a href="#flow">Fallo</a>
+        <a href="#repo">Repo</a>
+        <a href="#why">Ganancias</a>
+        <a href="#close">Cierre</a>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="progress" id="progress"></div>
+
+<main>
+  <section id="hero">
+    <div class="shell">
+      <div class="hero-grid">
+        <div class="stack">
+          <div class="label">Mapa rapido</div>
+          <h1>Cinco clases. <span class="accent-cyan">Una app.</span> Un sistema mas claro.</h1>
+          <p class="lead">
+            OOP aqui no va de teoria. Va de repartir el trabajo para saber quien hace que y donde depurar cuando algo falla.
+          </p>
+
+          <div class="hero-steps">
+            <div class="compact-card hero-step">
+              <div class="kicker">Paso 1</div>
+              <h4>Roles</h4>
+              <p>Primero fijamos ownership.</p>
+            </div>
+            <div class="compact-card hero-step">
+              <div class="kicker">Paso 2</div>
+              <h4>Flujo</h4>
+              <p>Luego seguimos el dato por el sistema.</p>
+            </div>
+            <div class="compact-card hero-step">
+              <div class="kicker">Paso 3</div>
+              <h4>Debugging</h4>
+              <p>Al final localizamos el modulo correcto.</p>
+            </div>
+          </div>
+
+          <div class="cta-row">
+            <a class="jump-btn" href="#roles">Ver roles</a>
+            <a class="pill" href="#flow">Ir a fallos</a>
+          </div>
+        </div>
+
+        <div class="artifact-stack">
+          <div class="artifact">
+            <div class="micro-label">Pipeline del sistema</div>
+            <div class="pipeline" id="hero-pipeline"></div>
+          </div>
+
+          <div class="artifact-focus">
+            <div class="micro-label">Que mirar ahora</div>
+            <h3 id="hero-full-name"></h3>
+            <p class="summary-line" id="hero-summary"></p>
+            <div class="teacher-quote" id="hero-teacher-line"></div>
+          </div>
+
+          <div class="compact-card">
+            <div class="micro-label">Frase de clase</div>
+            <p class="summary-line" id="hero-bridge-line"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="roles">
+    <div class="shell">
+      <div class="label">Roles</div>
+      <h2>Quien hace que</h2>
+      <p class="lead">Cada modulo deberia responder a una sola pregunta del sistema.</p>
+
+      <div class="roles-grid" style="margin-top: 18px;">
+        <div class="module-list" id="module-list"></div>
+
+        <div class="module-detail">
+          <div class="micro-label">Modulo activo</div>
+          <h3 id="module-full-name"></h3>
+          <p class="summary-line" id="module-summary"></p>
+          <div class="teacher-quote" id="module-teacher-line"></div>
+
+          <div class="tab-row" style="margin-top: 16px;" id="role-tabs">
+            <button class="tab-btn active" type="button" data-role-tab="does">Hace</button>
+            <button class="tab-btn" type="button" data-role-tab="avoids">No hace</button>
+            <button class="tab-btn" type="button" data-role-tab="debug">Donde depuro</button>
+          </div>
+
+          <div class="tab-body">
+            <ul class="bullet-list" id="role-list"></ul>
+          </div>
+
+          <div class="snippet" id="module-snippet">
+            <div class="micro-label mono" id="module-file-path"></div>
+            <pre id="module-snippet-code"></pre>
+            <button class="toggle-btn" id="module-snippet-toggle" type="button">Ver snippet</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="flow">
+    <div class="shell">
+      <div class="label">Fallo</div>
+      <h2>Donde se rompe el flujo</h2>
+      <p class="lead">Cambia el escenario. La pagina debe dejar claro en que capa tiene sentido mirar primero.</p>
+
+      <div class="switch-row" style="margin-top: 18px;" id="scenario-switches"></div>
+
+      <div class="flow-grid" style="margin-top: 18px;">
+        <div class="panel">
+          <div class="micro-label">Estado del sistema</div>
+          <div class="stage-strip" id="flow-stages"></div>
+
+          <div class="code-panel" style="margin-top: 16px;">
+            <div class="micro-label">Salida del escenario</div>
+            <pre id="scenario-console"></pre>
+          </div>
+        </div>
+
+        <div class="teacher-card">
+          <div class="micro-label">Lectura docente</div>
+          <div class="focus-grid">
+            <div class="focus-box">
+              <h4>Que mirar</h4>
+              <p id="scenario-look"></p>
+            </div>
+            <div class="focus-box">
+              <h4>Idea clave</h4>
+              <p id="scenario-idea"></p>
+            </div>
+            <div class="focus-box">
+              <h4>Pregunta</h4>
+              <p id="scenario-question"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="repo">
+    <div class="shell">
+      <div class="label">Repo</div>
+      <h2>Como se ve en archivos</h2>
+      <p class="lead">Aqui el alumno conecta la idea abstracta con una carpeta y con un archivo concreto.</p>
+
+      <div class="repo-grid" style="margin-top: 18px;">
+        <div class="module-list" id="repo-file-list"></div>
+
+        <div class="repo-detail">
+          <div class="micro-label">Archivo activo</div>
+          <h3 id="repo-title"></h3>
+          <p class="summary-line" id="repo-purpose"></p>
+          <div class="soft-line" style="margin: 14px 0;"></div>
+          <p class="summary-line"><strong>Ownership:</strong> <span id="repo-owner"></span></p>
+          <p class="summary-line" style="margin-top: 10px;"><strong>Pregunta:</strong> <span id="repo-question"></span></p>
+
+          <div class="snippet" id="repo-snippet">
+            <div class="micro-label mono" id="repo-path"></div>
+            <pre id="repo-code"></pre>
+            <button class="toggle-btn" id="repo-snippet-toggle" type="button">Ver snippet</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="why">
+    <div class="shell">
+      <div class="label">Ganancias</div>
+      <h2>Por que modularizar</h2>
+      <p class="lead">La modularidad buena reduce el espacio mental y el numero de archivos que tienes que tocar.</p>
+
+      <div class="switch-row" style="margin-top: 18px;" id="change-switches"></div>
+
+      <div class="compare-grid" style="margin-top: 18px;">
+        <div class="compare-card">
+          <div class="micro-label">Monolito</div>
+          <h3 id="monolith-title"></h3>
+          <p id="monolith-copy"></p>
+          <ul class="bullet-list" id="monolith-list"></ul>
+        </div>
+
+        <div class="compare-card">
+          <div class="micro-label">Modular</div>
+          <h3 id="modular-title"></h3>
+          <p id="modular-copy"></p>
+          <div class="pill-row" id="modular-files" style="margin-top: 12px;"></div>
+          <div class="teacher-quote" style="margin-top: 14px;" id="modular-principle"></div>
+        </div>
+      </div>
+
+      <div class="badge-row" style="margin-top: 16px;">
+        <div class="badge">Encapsulacion: la regla vive donde corresponde.</div>
+        <div class="badge">Modularidad: lees una pieza sin cargar todo el sistema.</div>
+        <div class="badge">DRY: una validacion, una formula, un ownership.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="close">
+    <div class="shell">
+      <div class="label">Cierre</div>
+      <h2>La idea que debe quedarse</h2>
+      <p class="lead">No todo error vive en <code>main</code>. La pregunta correcta es quien era responsable de esto.</p>
+
+      <div class="close-grid" style="margin-top: 18px;">
+        <div class="stack">
+          <div class="takeaway-row">
+            <div class="takeaway"><strong>Universe</strong><p>Define que existe.</p></div>
+            <div class="takeaway"><strong>Selector</strong><p>Protege la entrada.</p></div>
+            <div class="takeaway"><strong>Data</strong><p>Entrega snapshot.</p></div>
+            <div class="takeaway"><strong>Model</strong><p>Convierte datos en pesos.</p></div>
+          </div>
+
+          <div class="teacher-card">
+            <div class="micro-label">Frase de profesor</div>
+            <h3>Si falla algo, no abras todo.</h3>
+            <p class="summary-line">Empieza por la pieza que era duenna de ese comportamiento.</p>
+          </div>
+        </div>
+
+        <div class="stack">
+          <div class="command-card">
+            <div class="micro-label">Comandos</div>
+            <pre>python run_demo.py --scenario happy
+python run_demo.py --scenario data_fail
+python run_demo.py --scenario bad_selection
+python run_demo.py --scenario model_fail</pre>
+          </div>
+
+          <div class="command-card">
+            <div class="micro-label">Como contarlo</div>
+            <ul class="bullet-list">
+              <li>Mapa de roles.</li>
+              <li>Escenario que falla.</li>
+              <li>Archivo responsable.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+/* DATA_MODULES */
+const modules = [
+  {
+    id: "universe",
+    shortName: "Universe",
+    fullName: "AssetUniverse",
+    chipLabel: "catalogo",
+    summary: "Define que activos existen y como se agrupan.",
+    teacherLine: "Sin catalogo no puedes validar nada.",
+    bridgeLine: "Primero dices que existe. Luego dejas que el sistema opere sobre eso.",
+    does: [
+      "Guarda el universo fijo de tech, financials, alts y ETFs.",
+      "Expone tickers por categoria.",
+      "Permite validar contra una lista comun."
+    ],
+    avoids: [
+      "No pregunta al usuario.",
+      "No descarga datos.",
+      "No calcula pesos."
+    ],
+    debug: [
+      "Si el menu esta mal, empieza aqui.",
+      "Si falta un ticker esperado, revisa este modulo."
+    ],
+    file: "portfolio_app/universe.py",
+    snippetPreview: `class AssetUniverse:\n    def __init__(self):\n        self._assets_by_category = {\n            "tech": ["AAPL", "MSFT", "NVDA", "AMZN", "GOOGL"],\n            "financials": ["JPM", "GS", "BAC", "MS", "BLK"],\n        }`
+  },
+  {
+    id: "selector",
+    shortName: "Selector",
+    fullName: "UnderlyingSelector",
+    chipLabel: "entrada",
+    summary: "Recoge o simula la seleccion y protege la entrada.",
+    teacherLine: "El input malo debe morir pronto, no contaminar el resto.",
+    bridgeLine: "Si la entrada es mala, no tiene sentido pedir datos ni abrir el modelo.",
+    does: [
+      "Muestra el universo disponible.",
+      "Valida rango, duplicados y tickers desconocidos.",
+      "Devuelve una lista limpia de tickers."
+    ],
+    avoids: [
+      "No decide pesos.",
+      "No conoce la logica cuantitativa.",
+      "No trae mercado."
+    ],
+    debug: [
+      "Si el usuario mete FAKE, revisa selector.",
+      "Si el sistema sigue con entrada mala, revisa selector."
+    ],
+    file: "portfolio_app/selector.py",
+    snippetPreview: `def _parse_selection(self, raw_selection):\n    tickers = [piece.strip().upper() for piece in raw_selection.split(",") if piece.strip()]\n    if len(tickers) < self.min_choices or len(tickers) > self.max_choices:\n        raise SelectionError(...)\n    if invalid:\n        raise SelectionError(...)`
+  },
+  {
+    id: "provider",
+    shortName: "Data",
+    fullName: "YahooFinanceDataProvider",
+    chipLabel: "snapshot",
+    summary: "Entrega datos de mercado o falla con claridad.",
+    teacherLine: "Si el dato no llega, no empieces por la formula.",
+    bridgeLine: "La capa de datos es intercambiable solo si mantiene ownership claro.",
+    does: [
+      "Devuelve last_price, expected_return y volatility.",
+      "Simula una API de mercado sin red.",
+      "Puede disparar fallos controlados."
+    ],
+    avoids: [
+      "No valida lo que el usuario escribio.",
+      "No decide la cartera final.",
+      "No corrige el modelo."
+    ],
+    debug: [
+      "Si falla NVDA en data_fail, revisa provider.",
+      "Si falta un ticker en la base mock, revisa provider."
+    ],
+    file: "portfolio_app/data_provider.py",
+    snippetPreview: `def get_market_snapshot(self, tickers, scenario="happy"):\n    for ticker in tickers:\n        if scenario == "data_fail" and ticker == "NVDA":\n            raise DataRetrievalError(...)\n        snapshot[ticker] = dict(self._market_data[ticker])\n    return snapshot`
+  },
+  {
+    id: "model",
+    shortName: "Model",
+    fullName: "PortfolioOptimizerModel",
+    chipLabel: "pesos",
+    summary: "Transforma snapshot en pesos con una regla simple.",
+    teacherLine: "Aqui ya no validas input: conviertes datos en una decision.",
+    bridgeLine: "El modelo deberia poder leerse solo, sin ruido de UI o de entrada.",
+    does: [
+      "Calcula score = expected_return / volatility.",
+      "Descarta scores no positivos.",
+      "Normaliza para que los pesos sumen 1."
+    ],
+    avoids: [
+      "No pregunta nada al usuario.",
+      "No sabe de que API vienen los datos.",
+      "No imprime menus."
+    ],
+    debug: [
+      "Si los pesos no suman 1, mira model.",
+      "Si no hay scores validos, el fallo es del modelo."
+    ],
+    file: "portfolio_app/model.py",
+    snippetPreview: `def compute_weights(self, snapshot):\n    scores = {}\n    for ticker, metrics in snapshot.items():\n        score = metrics["expected_return"] / metrics["volatility"]\n        if score > 0:\n            scores[ticker] = score\n    return {ticker: score / total_score for ticker, score in scores.items()}`
+  },
+  {
+    id: "app",
+    shortName: "App",
+    fullName: "PortfolioOptimizerApp",
+    chipLabel: "orquesta",
+    summary: "Conecta selector, provider y model en orden.",
+    teacherLine: "La app coordina. No deberia tragarse toda la logica.",
+    bridgeLine: "Main arranca. App orquesta. Los modulos hacen el trabajo real.",
+    does: [
+      "Escoge escenario.",
+      "Llama a cada capa en orden.",
+      "Explica donde buscar cuando algo falla."
+    ],
+    avoids: [
+      "No guarda el catalogo.",
+      "No reimplementa la formula.",
+      "No duplica validaciones."
+    ],
+    debug: [
+      "Si el flujo entre capas esta roto, revisa app.",
+      "Si el mensaje apunta al lugar incorrecto, revisa app."
+    ],
+    file: "portfolio_app/app.py",
+    snippetPreview: `def run(self, scenario="happy"):\n    selected_tickers = self.selector.prompt_selection()\n    snapshot = self.data_provider.get_market_snapshot(selected_tickers, scenario)\n    weights = self.model.compute_weights(snapshot)\n    self._print_result_table(snapshot, weights)`
+  }
+];
+
+/* DATA_SCENARIOS */
+const scenarios = {
+  happy: {
+    label: "Flujo completo",
+    stageStatus: {
+      universe: ["done", "catalogo listo"],
+      selector: ["done", "entrada valida"],
+      provider: ["done", "snapshot listo"],
+      model: ["done", "pesos listos"],
+      app: ["done", "salida final"]
+    },
+    console: `Seleccion simulada: AAPL, MSFT, BTC, SPY\nSeleccion validada: AAPL, MSFT, BTC, SPY\n\nResultado de cartera\nAAPL  0.261\nMSFT  0.290\nBTC   0.171\nSPY   0.279\n\nSuma de pesos: 1.0000`,
+    look: "Mira que ninguna clase invade a la otra.",
+    idea: "Colaboracion limpia: cada capa hace solo su parte.",
+    question: "Si anades un ETF nuevo, tiene sentido abrir model.py?"
+  },
+  bad_selection: {
+    label: "Fallo en selector",
+    stageStatus: {
+      universe: ["done", "catalogo visible"],
+      selector: ["fail", "entrada invalida"],
+      provider: ["pending", "no corre"],
+      model: ["pending", "no corre"],
+      app: ["pending", "muestra error"]
+    },
+    console: `Seleccion simulada: AAPL, FAKE, MSFT\nSelectionError: Unknown tickers: FAKE.\nBusca primero en: portfolio_app/selector.py`,
+    look: "La frontera correcta es la entrada del usuario.",
+    idea: "Validar pronto evita ruido en provider y model.",
+    question: "Si el ticker no existe, por que abrir model.py seria mala idea?"
+  },
+  data_fail: {
+    label: "Fallo en data",
+    stageStatus: {
+      universe: ["done", "catalogo visible"],
+      selector: ["done", "entrada valida"],
+      provider: ["fail", "snapshot falla"],
+      model: ["pending", "no corre"],
+      app: ["pending", "muestra error"]
+    },
+    console: `Seleccion simulada: AAPL, NVDA, SPY\nSeleccion validada: AAPL, NVDA, SPY\n\nDataRetrievalError: Simulated Yahoo Finance timeout while retrieving NVDA.\nBusca primero en: portfolio_app/data_provider.py`,
+    look: "El dato no ha llegado. El modelo no es el primer sospechoso.",
+    idea: "Ownership de datos: fallar bien tambien es responsabilidad.",
+    question: "Si el snapshot falla, donde buscarias primero y por que?"
+  },
+  model_fail: {
+    label: "Fallo en model",
+    stageStatus: {
+      universe: ["done", "catalogo visible"],
+      selector: ["done", "entrada valida"],
+      provider: ["done", "snapshot listo"],
+      model: ["fail", "no hay pesos"],
+      app: ["pending", "muestra error"]
+    },
+    console: `Seleccion simulada: XLF, BAC, SILVER\nSeleccion validada: XLF, BAC, SILVER\n\nModelComputationError: No positive scores available.\nBusca primero en: portfolio_app/model.py`,
+    look: "Aqui ya si tiene sentido abrir el modelo.",
+    idea: "Los datos existen. El fallo nace al transformarlos.",
+    question: "Si los pesos no suman 1, en que modulo empezarias?"
+  }
+};
+
+/* DATA_REPO */
+const repoFiles = [
+  {
+    id: "run-demo",
+    label: "run_demo.py",
+    kicker: "entrypoint",
+    title: "run_demo.py",
+    purpose: "Arranca la app y fija el escenario de trabajo.",
+    owner: "Lanzar el flujo y delegar.",
+    question: "Si anades un escenario nuevo, este es un buen primer sitio.",
+    path: "run_demo.py",
+    snippetPreview: `def main():\n    parser = build_parser()\n    args = parser.parse_args()\n    app = PortfolioOptimizerApp()\n    app.run(scenario=args.scenario)`
+  },
+  {
+    id: "selector-file",
+    label: "selector.py",
+    kicker: "input",
+    title: "selector.py",
+    purpose: "Convierte texto en una lista valida de tickers.",
+    owner: "Proteger la entrada del usuario.",
+    question: "Si el sistema no detecta un ticker invalido, mira aqui.",
+    path: "portfolio_app/selector.py",
+    snippetPreview: `duplicates = sorted({ticker for ticker in tickers if tickers.count(ticker) > 1})\nif duplicates:\n    raise SelectionError(...)\nif invalid:\n    raise SelectionError(...)`
+  },
+  {
+    id: "provider-file",
+    label: "data_provider.py",
+    kicker: "market data",
+    title: "data_provider.py",
+    purpose: "Entrega un snapshot mock con metrica por ticker.",
+    owner: "Dar datos consistentes o fallar con claridad.",
+    question: "Si el escenario data_fail rompe NVDA, el ownership esta aqui.",
+    path: "portfolio_app/data_provider.py",
+    snippetPreview: `if scenario == "data_fail" and ticker == "NVDA":\n    raise DataRetrievalError(...)\nsnapshot[ticker] = dict(self._market_data[ticker])`
+  },
+  {
+    id: "model-file",
+    label: "model.py",
+    kicker: "logic",
+    title: "model.py",
+    purpose: "Transforma el snapshot en pesos.",
+    owner: "Aplicar la regla y normalizar.",
+    question: "Si la suma de pesos no es 1, empieza aqui.",
+    path: "portfolio_app/model.py",
+    snippetPreview: `score = metrics["expected_return"] / metrics["volatility"]\nif score > 0:\n    scores[ticker] = score\nreturn {ticker: score / total_score for ticker, score in scores.items()}`
+  },
+  {
+    id: "app-file",
+    label: "app.py",
+    kicker: "orchestration",
+    title: "app.py",
+    purpose: "Conecta capas y traduce errores en mensajes legibles.",
+    owner: "Orquestar sin duplicar logica.",
+    question: "Si el flujo entre capas se rompe, revisa este archivo.",
+    path: "portfolio_app/app.py",
+    snippetPreview: `try:\n    selected_tickers = self.selector.prompt_selection()\n    snapshot = self.data_provider.get_market_snapshot(selected_tickers, scenario)\n    weights = self.model.compute_weights(snapshot)\nexcept SelectionError:\n    self._print_failure(...)`
+  }
+];
+
+/* DATA_CHANGES */
+const changes = {
+  add_asset: {
+    label: "Anadir ticker",
+    monolithTitle: "Cambias mas de la cuenta",
+    monolithCopy: "Catalogo, menu y validacion tienden a mezclarse.",
+    monolithList: [
+      "Buscas demasiado codigo.",
+      "Aumenta el riesgo de tocar lo que no cambia."
+    ],
+    modularTitle: "Tocas el lugar correcto",
+    modularCopy: "Si cambia el universo, el primer archivo natural es universe.py.",
+    files: ["portfolio_app/universe.py"],
+    principle: "Single responsibility: cambia el catalogo sin tocar el modelo."
+  },
+  swap_provider: {
+    label: "Cambiar proveedor",
+    monolithTitle: "Datos mezclados con todo",
+    monolithCopy: "Cambiar la fuente puede romper flujo y salida a la vez.",
+    monolithList: [
+      "Acopla modelo y mercado.",
+      "Dificulta simular fallos."
+    ],
+    modularTitle: "Cambias una capa",
+    modularCopy: "Mantienes la interfaz y sustituyes solo data_provider.py.",
+    files: ["portfolio_app/data_provider.py"],
+    principle: "Encapsulacion: el resto del sistema no necesita saber como llegan los datos."
+  },
+  fix_weights: {
+    label: "Arreglar pesos",
+    monolithTitle: "La formula queda escondida",
+    monolithCopy: "Coste alto para aislar el calculo real.",
+    monolithList: [
+      "La logica se difumina.",
+      "Se vuelve facil duplicar reglas."
+    ],
+    modularTitle: "La formula vive en un sitio",
+    modularCopy: "Abres model.py y sigues toda la regla sin ruido.",
+    files: ["portfolio_app/model.py"],
+    principle: "DRY: una formula, un lugar, un ownership."
+  }
+};
+
+/* SCRIPT_LOGIC */
+const stageOrder = [
+  ["universe", "Universe"],
+  ["selector", "Selector"],
+  ["provider", "Data"],
+  ["model", "Model"],
+  ["app", "App"]
+];
+
+let activeModuleId = "universe";
+let activeRoleTab = "does";
+
+const heroPipeline = document.getElementById("hero-pipeline");
+const heroFullName = document.getElementById("hero-full-name");
+const heroSummary = document.getElementById("hero-summary");
+const heroTeacherLine = document.getElementById("hero-teacher-line");
+const heroBridgeLine = document.getElementById("hero-bridge-line");
+
+const moduleList = document.getElementById("module-list");
+const moduleFullName = document.getElementById("module-full-name");
+const moduleSummary = document.getElementById("module-summary");
+const moduleTeacherLine = document.getElementById("module-teacher-line");
+const roleList = document.getElementById("role-list");
+const moduleFilePath = document.getElementById("module-file-path");
+const moduleSnippetCode = document.getElementById("module-snippet-code");
+const moduleSnippet = document.getElementById("module-snippet");
+const moduleSnippetToggle = document.getElementById("module-snippet-toggle");
+
+const scenarioSwitches = document.getElementById("scenario-switches");
+const flowStages = document.getElementById("flow-stages");
+const scenarioConsole = document.getElementById("scenario-console");
+const scenarioLook = document.getElementById("scenario-look");
+const scenarioIdea = document.getElementById("scenario-idea");
+const scenarioQuestion = document.getElementById("scenario-question");
+
+const repoFileList = document.getElementById("repo-file-list");
+const repoTitle = document.getElementById("repo-title");
+const repoPurpose = document.getElementById("repo-purpose");
+const repoOwner = document.getElementById("repo-owner");
+const repoQuestion = document.getElementById("repo-question");
+const repoPath = document.getElementById("repo-path");
+const repoCode = document.getElementById("repo-code");
+const repoSnippet = document.getElementById("repo-snippet");
+const repoSnippetToggle = document.getElementById("repo-snippet-toggle");
+
+const changeSwitches = document.getElementById("change-switches");
+const monolithTitle = document.getElementById("monolith-title");
+const monolithCopy = document.getElementById("monolith-copy");
+const monolithList = document.getElementById("monolith-list");
+const modularTitle = document.getElementById("modular-title");
+const modularCopy = document.getElementById("modular-copy");
+const modularFiles = document.getElementById("modular-files");
+const modularPrinciple = document.getElementById("modular-principle");
+
+function fillList(target, items) {
+  target.innerHTML = "";
+  items.forEach((item) => {
+    const li = document.createElement("li");
+    li.textContent = item;
+    target.appendChild(li);
+  });
+}
+
+function renderHeroPipeline() {
+  modules.forEach((item) => {
+    const button = document.createElement("button");
+    button.className = "chip-btn";
+    button.type = "button";
+    button.dataset.module = item.id;
+    button.innerHTML = `<strong>${item.shortName}</strong><span class="chip-sub">${item.chipLabel}</span>`;
+    button.addEventListener("click", () => setActiveModule(item.id));
+    heroPipeline.appendChild(button);
+  });
+}
+
+function renderModuleList() {
+  modules.forEach((item) => {
+    const button = document.createElement("button");
+    button.className = "module-item";
+    button.type = "button";
+    button.dataset.module = item.id;
+    button.innerHTML = `<small>${item.chipLabel}</small><strong>${item.fullName}</strong><p>${item.summary}</p>`;
+    button.addEventListener("click", () => setActiveModule(item.id));
+    moduleList.appendChild(button);
+  });
+}
+
+function setActiveModule(moduleId) {
+  activeModuleId = moduleId;
+  const item = modules.find((entry) => entry.id === moduleId) || modules[0];
+
+  document.querySelectorAll("[data-module]").forEach((node) => {
+    node.classList.toggle("active", node.dataset.module === moduleId);
+  });
+
+  heroFullName.textContent = item.fullName;
+  heroSummary.textContent = item.summary;
+  heroTeacherLine.textContent = item.teacherLine;
+  heroBridgeLine.textContent = item.bridgeLine;
+
+  moduleFullName.textContent = item.fullName;
+  moduleSummary.textContent = item.summary;
+  moduleTeacherLine.textContent = item.teacherLine;
+  moduleFilePath.textContent = item.file;
+  moduleSnippetCode.textContent = item.snippetPreview;
+  moduleSnippet.classList.remove("expanded");
+  moduleSnippetToggle.textContent = "Ver snippet";
+
+  renderRoleTab(item);
+}
+
+function renderRoleTab(item) {
+  const contentMap = {
+    does: item.does,
+    avoids: item.avoids,
+    debug: item.debug
+  };
+  fillList(roleList, contentMap[activeRoleTab]);
+}
+
+document.querySelectorAll("[data-role-tab]").forEach((button) => {
+  button.addEventListener("click", () => {
+    activeRoleTab = button.dataset.roleTab;
+    document.querySelectorAll("[data-role-tab]").forEach((node) => {
+      node.classList.toggle("active", node.dataset.roleTab === activeRoleTab);
+    });
+    const item = modules.find((entry) => entry.id === activeModuleId) || modules[0];
+    renderRoleTab(item);
+  });
+});
+
+moduleSnippetToggle.addEventListener("click", () => {
+  moduleSnippet.classList.toggle("expanded");
+  moduleSnippetToggle.textContent = moduleSnippet.classList.contains("expanded") ? "Ocultar snippet" : "Ver snippet";
+});
+
+function renderScenarios() {
+  Object.entries(scenarios).forEach(([key, value]) => {
+    const button = document.createElement("button");
+    button.className = "switch-btn";
+    button.type = "button";
+    button.dataset.scenario = key;
+    button.textContent = value.label;
+    button.addEventListener("click", () => setScenario(key));
+    scenarioSwitches.appendChild(button);
+  });
+}
+
+function setScenario(scenarioId) {
+  const scenario = scenarios[scenarioId];
+  document.querySelectorAll("[data-scenario]").forEach((node) => {
+    node.classList.toggle("active", node.dataset.scenario === scenarioId);
+  });
+
+  flowStages.innerHTML = "";
+  stageOrder.forEach(([key, label]) => {
+    const [state, copy] = scenario.stageStatus[key];
+    const stage = document.createElement("div");
+    stage.className = `stage ${state}`;
+    stage.innerHTML = `<strong>${label}</strong><span>${copy}</span>`;
+    flowStages.appendChild(stage);
+  });
+
+  scenarioConsole.textContent = scenario.console;
+  scenarioLook.textContent = scenario.look;
+  scenarioIdea.textContent = scenario.idea;
+  scenarioQuestion.textContent = scenario.question;
+}
+
+function renderRepoFiles() {
+  repoFiles.forEach((item) => {
+    const button = document.createElement("button");
+    button.className = "repo-file";
+    button.type = "button";
+    button.dataset.repoFile = item.id;
+    button.innerHTML = `<small>${item.kicker}</small><strong>${item.label}</strong>`;
+    button.addEventListener("click", () => setRepoFile(item.id));
+    repoFileList.appendChild(button);
+  });
+}
+
+function setRepoFile(fileId) {
+  const item = repoFiles.find((entry) => entry.id === fileId) || repoFiles[0];
+  document.querySelectorAll("[data-repo-file]").forEach((node) => {
+    node.classList.toggle("active", node.dataset.repoFile === fileId);
+  });
+  repoTitle.textContent = item.title;
+  repoPurpose.textContent = item.purpose;
+  repoOwner.textContent = item.owner;
+  repoQuestion.textContent = item.question;
+  repoPath.textContent = item.path;
+  repoCode.textContent = item.snippetPreview;
+  repoSnippet.classList.remove("expanded");
+  repoSnippetToggle.textContent = "Ver snippet";
+}
+
+repoSnippetToggle.addEventListener("click", () => {
+  repoSnippet.classList.toggle("expanded");
+  repoSnippetToggle.textContent = repoSnippet.classList.contains("expanded") ? "Ocultar snippet" : "Ver snippet";
+});
+
+function renderChanges() {
+  Object.entries(changes).forEach(([key, value]) => {
+    const button = document.createElement("button");
+    button.className = "switch-btn";
+    button.type = "button";
+    button.dataset.change = key;
+    button.textContent = value.label;
+    button.addEventListener("click", () => setChange(key));
+    changeSwitches.appendChild(button);
+  });
+}
+
+function setChange(changeId) {
+  const item = changes[changeId];
+  document.querySelectorAll("[data-change]").forEach((node) => {
+    node.classList.toggle("active", node.dataset.change === changeId);
+  });
+  monolithTitle.textContent = item.monolithTitle;
+  monolithCopy.textContent = item.monolithCopy;
+  fillList(monolithList, item.monolithList);
+  modularTitle.textContent = item.modularTitle;
+  modularCopy.textContent = item.modularCopy;
+  modularPrinciple.textContent = item.principle;
+  modularFiles.innerHTML = "";
+  item.files.forEach((file) => {
+    const pill = document.createElement("div");
+    pill.className = "pill mono";
+    pill.textContent = file;
+    modularFiles.appendChild(pill);
+  });
+}
+
+function setupScrollState() {
+  const sections = [...document.querySelectorAll("section")];
+  const links = [...document.querySelectorAll(".nav-links a")];
+  const progress = document.getElementById("progress");
+
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("visible");
+      }
+    });
+  }, { threshold: 0.12 });
+
+  sections.forEach((section) => revealObserver.observe(section));
+
+  const activeObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      const id = entry.target.id;
+      links.forEach((link) => {
+        link.classList.toggle("active", link.getAttribute("href") === `#${id}`);
+      });
+    });
+  }, { threshold: 0.45 });
+
+  sections.forEach((section) => activeObserver.observe(section));
+
+  document.addEventListener("scroll", () => {
+    const top = window.scrollY;
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const ratio = max > 0 ? (top / max) * 100 : 0;
+    progress.style.width = `${ratio}%`;
+  }, { passive: true });
+}
+
+function setupFullscreen() {
+  const fullBtn = document.getElementById("fullscreen-btn");
+  const syncFullscreenUi = () => {
+    document.body.classList.toggle("is-fullscreen", Boolean(document.fullscreenElement));
+    fullBtn.textContent = document.fullscreenElement ? "Salir" : "Pantalla";
+  };
+
+  fullBtn.addEventListener("click", async () => {
+    if (!document.fullscreenElement) {
+      await document.documentElement.requestFullscreen();
+    } else {
+      await document.exitFullscreen();
+    }
+    syncFullscreenUi();
+  });
+
+  document.addEventListener("fullscreenchange", () => {
+    syncFullscreenUi();
+  });
+
+  syncFullscreenUi();
+}
+
+function setupKeyboard() {
+  const ids = ["hero", "roles", "flow", "repo", "why", "close"];
+  document.addEventListener("keydown", (event) => {
+    if (!["ArrowRight", "ArrowLeft"].includes(event.key)) return;
+    const current = ids.find((id) => {
+      const rect = document.getElementById(id).getBoundingClientRect();
+      return rect.top <= 140 && rect.bottom >= 140;
+    }) || "hero";
+    const index = ids.indexOf(current);
+    const next = event.key === "ArrowRight"
+      ? Math.min(ids.length - 1, index + 1)
+      : Math.max(0, index - 1);
+    document.getElementById(ids[next]).scrollIntoView({ behavior: "smooth" });
+  });
+}
+
+renderHeroPipeline();
+renderModuleList();
+renderScenarios();
+renderRepoFiles();
+renderChanges();
+setActiveModule("universe");
+setScenario("happy");
+setRepoFile("run-demo");
+setChange("add_asset");
+setupScrollState();
+setupFullscreen();
+setupKeyboard();
+</script>
+</body>
+</html>

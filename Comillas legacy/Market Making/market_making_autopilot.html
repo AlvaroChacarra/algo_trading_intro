@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Making Auto-Pilot</title>
+
+    <!-- DEPENDENCIAS OBLIGATORIAS (vía CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- KaTeX para Fórmulas Matemáticas -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" xintegrity="sha384-n8MVd4RsNIU0KOVEMeaYGqrkPcDtMERNFYViLaUjDWzHRod5ADMo2pcRmwfrHHaK" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" xintegrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctApi0givMi" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" xintegrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+
+    <style>
+        /* --- Estilos Base y Tema Oscuro --- */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0F172A, #1E293B);
+            color: #E2E8F0;
+            overflow: hidden; /* Evita el scroll de la página */
+        }
+
+        #presentation-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 3rem 4rem;
+            box-sizing: border-box;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+        }
+        
+        /* Ajuste para slides con mucho contenido vertical */
+        .slide.compact-v-padding {
+            padding-top: 2.5rem;
+            padding-bottom: 2.5rem;
+        }
+
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* --- Estilos de Texto --- */
+        .slide-title {
+            font-weight: 900; /* font-black */
+            color: #ffffff;
+            text-transform: uppercase;
+        }
+
+        .highlight {
+            color: #38BDF8; /* Cian brillante */
+        }
+        
+        h1, h2, h3 {
+            color: #ffffff;
+        }
+
+        /* --- Componentes Visuales --- */
+        .diagram-box {
+            background-color: rgba(30, 41, 59, 0.7); /* Azul oscuro semitransparente */
+            border: 1px solid #334155; /* Borde sutil */
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+        }
+
+        .warning-box {
+             background-color: rgba(239, 68, 68, 0.1);
+             border-left: 4px solid #F87171;
+             color: #FEE2E2;
+             padding: 1.5rem;
+             border-radius: 0.5rem;
+        }
+        
+        .critical-box {
+            background-color: rgba(251, 191, 36, 0.1);
+            border-left: 8px solid #FBBF24;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        .info-box {
+            background-color: rgba(59, 130, 246, 0.1);
+            border-top: 4px solid #60A5FA;
+            border-bottom: 4px solid #60A5FA;
+        }
+
+        /* --- Footer Fijo --- */
+        .slide-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 2rem;
+            background-color: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(5px);
+            border-top: 1px solid #334155;
+            font-size: 0.9rem;
+            z-index: 10;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="presentation-container">
+
+        <!-- DIAPOSITIVA 1: PORTADA -->
+        <section class="slide active">
+            <div class="w-full max-w-5xl text-center">
+                <h1 class="text-5xl md:text-6xl slide-title tracking-wider mb-6"><strong class="highlight">Market Making Auto-Pilot</strong> Introducción</h1>
+                <h2 class="text-2xl md:text-3xl font-light text-slate-400 mb-4">Paper: <em>High Frequency Trading in a limit order book</em></h2>
+                <p class="text-xl text-slate-300 mb-12">Marco Avellaneda & Sasha Stoikov (2008)</p>
+                <div class="w-48 h-1 bg-cyan-400 mx-auto mb-12"></div>
+                <div class="diagram-box max-w-3xl mx-auto">
+                    <p class="text-xl md:text-2xl text-slate-200"><strong class="highlight font-bold">Objetivo:</strong> Calcular el spread óptimo en base al riesgo de inventario, volatilidad y transaccionalidad.</p>
+                </div>
+                <div class="mt-16 text-right w-full"><p class="text-lg text-slate-400">Presentado por:</p><p class="text-xl font-bold highlight">Álvaro López-Chacarra, Desk Quant BBVA</p></div>
+            </div>
+        </section>
+
+        <!-- DIAPOSITIVA 2: AGENDA -->
+        <section class="slide">
+            <div class="w-full max-w-5xl text-center">
+                <h1 class="text-3xl md:text-4xl slide-title mb-10">Mapa de Ruta</h1>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
+                    <div class="diagram-box !p-6 flex items-center"><i class="fas fa-question-circle text-5xl text-red-400 mr-6"></i><div><h2 class="text-2xl font-black"><span class="text-gray-500">PARTE I</span><br>El Problema</h2><p class="text-lg text-slate-300">Definiremos el rol del market maker y los riesgos a los que se enfrenta.</p></div></div>
+                    <div class="diagram-box !p-6 flex items-center"><i class="fas fa-puzzle-piece text-5xl text-blue-400 mr-6"></i><div><h2 class="text-2xl font-black"><span class="text-gray-500">PARTE II</span><br>Las Piezas del Modelo</h2><p class="text-lg text-slate-300">Analizaremos los 3 ingredientes clave: precio, aversión al riesgo y liquidez.</p></div></div>
+                    <div class="diagram-box !p-6 flex items-center"><i class="fas fa-calculator text-5xl text-slate-400 mr-6"></i><div><h2 class="text-2xl font-black"><span class="text-gray-500">PARTE III</span><br>La Derivación (HJB)</h2><p class="text-lg text-slate-300">Nos sumergiremos en el corazón matemático para entender de dónde viene la solución.</p></div></div>
+                    <div class="diagram-box !p-6 flex items-center"><i class="fas fa-lightbulb text-5xl text-green-400 mr-6"></i><div><h2 class="text-2xl font-black"><span class="text-gray-500">PARTE IV</span><br>Solución y Resultados</h2><p class="text-lg text-slate-300">Presentaremos la estrategia final y veremos cómo funciona en la práctica.</p></div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DIAPOSITIVA 3: ANATOMÍA DE UNA COTIZACIÓN -->
+        <section class="slide">
+            <div class="w-full max-w-7xl text-center">
+                <h1 class="text-3xl md:text-4xl slide-title mb-4">La Anatomía de una Cotización</h1>
+                <p class="text-lg text-slate-300 mb-10 max-w-3xl mx-auto">El market maker opera en torno a un <strong class="highlight">"precio justo"</strong> teórico (Mid-Price), ofreciendo comprar un poco por debajo y vender un poco por encima.</p>
+                <div class="grid grid-cols-5 gap-4 items-stretch mb-10">
+                    <div class="diagram-box !text-center flex flex-col justify-center"><i class="fas fa-shopping-cart text-3xl text-green-400 mb-3"></i><h2 class="text-xl font-bold">BID</h2><p class="text-slate-400 text-sm">Compramos a</p><p class="text-3xl font-bold text-green-400">99.95€</p></div>
+                    <div class="flex flex-col justify-center text-center"><i class="fas fa-arrows-alt-h text-2xl text-slate-500"></i><p class="text-lg font-bold highlight mt-2">0.05€</p></div>
+                    <div class="diagram-box !text-center flex flex-col justify-center bg-cyan-900/50 border-2 border-cyan-400"><i class="fas fa-balance-scale text-3xl text-slate-300 mb-3"></i><h2 class="text-xl font-bold highlight">MID-PRICE</h2><p class="text-slate-400 text-sm">"Precio Justo"</p><p class="text-3xl font-bold text-slate-100">100.00€</p></div>
+                    <div class="flex flex-col justify-center text-center"><i class="fas fa-arrows-alt-h text-2xl text-slate-500"></i><p class="text-lg font-bold highlight mt-2">0.05€</p></div>
+                    <div class="diagram-box !text-center flex flex-col justify-center"><i class="fas fa-tag text-3xl text-red-400 mb-3"></i><h2 class="text-xl font-bold">ASK</h2><p class="text-slate-400 text-sm">Vendemos a</p><p class="text-3xl font-bold text-red-400">100.05€</p></div>
+                </div>
+                <div class="warning-box max-w-4xl mx-auto"><h3 class="text-xl font-bold text-red-300 mb-2"><i class="fas fa-exclamation-triangle mr-2"></i>El Gran Dilema del Market Maker</h3><p class="text-base text-red-200 text-left"><strong class="font-bold">1. Riesgo de Inventario:</strong> Si compramos y el precio baja, o vendemos y sube, perdemos dinero.<br><strong class="font-bold">2. Riesgo de Ejecución:</strong> Si nuestro spread es muy grande, nadie nos operará y no ganaremos nada.</p></div>
+            </div>
+        </section>
+
+        <!-- DIAPOSITIVA 4: LOS DOS GRANDES RIESGOS -->
+        <section class="slide">
+            <div class="w-full max-w-6xl text-center">
+                <h1 class="text-3xl md:text-4xl slide-title mb-12">El Campo de Batalla del Market Maker</h1>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mb-12">
+                    <div class="diagram-box flex flex-col"><div class="text-center"><i class="fas fa-chart-line text-5xl text-red-400 mb-4"></i><h2 class="text-2xl font-bold mb-3">1. Riesgo de Inventario</h2></div><p class="text-lg text-slate-300 mb-6">Es el riesgo de que el <strong class="font-semibold text-white">precio se mueva en tu contra</strong>. Si tienes inventario positivo y el precio cae, sufres una pérdida.</p><div class="bg-red-900/50 p-4 rounded-lg mt-auto"><p class="text-lg italic text-red-200"><strong>Pregunta Clave:</strong> ¿Cómo nos <strong class="font-semibold">protegemos</strong> de los movimientos del precio?</p></div></div>
+                    <div class="diagram-box flex flex-col"><div class="text-center"><i class="fas fa-exchange-alt text-5xl text-green-400 mb-4"></i><h2 class="text-2xl font-bold mb-3">2. Riesgo de Ejecución</h2></div><p class="text-lg text-slate-300 mb-6">Riesgo asociado a la <strong class="font-semibold text-white">frecuencia de operaciones</strong>. Un spread muy amplio te protege, pero no operas. Uno muy estrecho es peligroso.</p><div class="bg-green-900/50 p-4 rounded-lg mt-auto"><p class="text-lg italic text-green-200"><strong>Pregunta Clave:</strong> ¿Cuál es el spread óptimo para <strong class="font-semibold">atraer negocio</strong> sin asumir demasiado riesgo?</p></div></div>
+                </div>
+                <div class="info-box p-5 rounded-lg max-w-4xl mx-auto backdrop-blur-sm"><p class="text-xl font-semibold text-slate-100">El modelo nos da una <strong class="highlight">estrategia matemática</strong> para responder a estas dos preguntas.</p></div>
+            </div>
+        </section>
+
+        <!-- DIAPOSITIVA 5: MOVIMIENTO DEL PRECIO -->
+        <section class="slide compact-v-padding">
+             <div class="w-full max-w-7xl flex flex-col h-full">
+                <div class="text-center shrink-0"><h1 class="text-3xl md:text-4xl slide-title mb-2">Pieza 1: El Movimiento del Precio</h1><p class="text-lg text-slate-300 mb-2">El modelo asume que el precio sigue un <strong class="highlight">camino aleatorio</strong> (Movimiento Browniano).</p></div>
+                <div class="w-full h-[55%] bg-slate-100 p-4 rounded-lg border border-slate-700 mb-2"><canvas id="brownianChart"></canvas></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 shrink-0">
+                    <div class="diagram-box h-full flex flex-col justify-center"><div class="text-center mb-2"><span class="text-3xl text-slate-100">\( S_t = s + \sigma W_t \)</span></div><div class="text-sm space-y-1"><p><strong class="font-semibold highlight">\( S_t \):</strong> Precio del activo.</p><p><strong class="font-semibold highlight">\( \sigma \):</strong> Volatilidad.</p><p><strong class="font-semibold highlight">\( W_t \):</strong> "Motor" aleatorio.</p></div></div>
+                    <div class="warning-box p-4 rounded-r-lg flex items-center h-full"><div><h3 class="text-lg font-bold text-red-300 mb-1"><i class="fas fa-lightbulb mr-2"></i>La Clave</h3><p class="text-md text-red-200">No intentamos <strong class="font-semibold">predecir</strong>. El objetivo es <strong class="font-semibold">gestionar el riesgo</strong> de su naturaleza impredecible.</p></div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DIAPOSITIVA 6: FUNCIÓN DE UTILIDAD -->
+        <section class="slide compact-v-padding">
+            <div class="w-full max-w-7xl flex flex-col h-full">
+                <div class="text-center shrink-0"><h1 class="text-3xl md:text-4xl slide-title mb-2">Pieza 2: La "Personalidad" del Market Maker</h1></div>
+                <div class="w-full h-[55%] bg-slate-100 p-4 rounded-lg border border-slate-700 mb-2"><canvas id="utilityChart"></canvas></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 shrink-0">
+                    <div class="diagram-box h-full flex flex-col justify-center"><h2 class="text-xl font-bold mb-2">La Función de Utilidad Exponencial</h2><p class="text-slate-300">Se usa la función <strong class="highlight">\( U(x) = -e^{-\gamma x} \)</strong> para medir la "satisfacción" ante una ganancia/pérdida \(x\).</p></div>
+                    <div class="warning-box p-4 rounded-r-lg flex items-center h-full"><div><h3 class="text-lg font-bold text-red-300 mb-1"><i class="fas fa-lightbulb mr-2"></i>La Intuición</h3><p class="text-md text-red-200">Cuanto más <strong class="font-semibold">alto es \( \gamma \)</strong>, más se penalizan las pérdidas, reflejando un comportamiento más conservador.</p></div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DIAPOSITIVA 7: INTERPRETANDO LA UTILIDAD -->
+        <section class="slide">
+            <div class="w-full max-w-6xl">
+                <h1 class="text-3xl md:text-4xl slide-title mb-8 text-center">Pieza 2.1: ¿Qué nos dice la Función de Utilidad?</h1>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="diagram-box space-y-4"><div class="text-center"><i class="fas fa-balance-scale-right text-5xl text-blue-400 mb-3"></i><h2 class="text-2xl font-bold">Lo importante son las <span class="highlight">Diferencias</span></h2></div><p class="text-lg text-slate-300">Los valores absolutos de la utilidad no importan. Es una <strong class="font-semibold text-white">herramienta para comparar</strong> decisiones y ver si la <strong class="font-semibold">variación</strong> esperada es positiva.</p></div>
+                    <div class="diagram-box space-y-4"><div class="text-center"><i class="fas fa-brain text-5xl text-red-400 mb-3"></i><h2 class="text-2xl font-bold">La Psicología de un <span class="text-red-400">Gamma Alto</span></h2></div><div><h3 class="text-xl font-semibold"><i class="fas fa-arrow-down text-red-400 mr-2"></i>Pérdidas dolorosas</h3><p class="text-lg">Una pequeña pérdida provoca una <strong class="font-semibold">caída inmensa en la utilidad</strong>.</p></div><div><h3 class="text-xl font-semibold"><i class="fas fa-grip-lines text-green-400 mr-2"></i>Ganancias que se aplanan</h3><p class="text-lg">La satisfacción adicional por ganar más es mínima. El agente prefiere <strong class="font-semibold">no arriesgar más</strong>.</p></div></div>
+                </div>
+                <div class="info-box p-6 rounded-lg max-w-5xl mx-auto mt-10 text-center shadow-lg"><p class="text-xl font-semibold text-slate-100"><i class="fas fa-check-circle text-blue-400 mr-2"></i><strong class="highlight">Conclusión:</strong> Un gamma alto define a un agente que, por encima de todo, quiere <strong class="font-semibold">evitar pérdidas</strong>.</p></div>
+            </div>
+        </section>
+
+        <!-- DIAPOSITIVA 8: COMPARATIVA DE PERFILES -->
+        <section class="slide">
+             <div class="w-full max-w-7xl">
+                <h1 class="text-3xl md:text-4xl slide-title mb-8 text-center">Comparativa: Neutral vs. Averso al Riesgo</h1>
+                <div class="overflow-x-auto diagram-box shadow-xl border-slate-700">
+                    <table class="w-full text-lg text-left">
+                        <thead class="border-b-2 border-slate-600"><tr><th class="p-4 w-1/4">Característica</th><th class="p-4 w-2/5 text-center"><i class="fas fa-robot mr-2 text-slate-400"></i>Agente Neutral (\(\gamma \rightarrow 0\))</th><th class="p-4 w-2/5 text-center"><i class="fas fa-user-shield mr-2 text-red-400"></i>Agente Averso (\(\gamma = 1\))</th></tr></thead>
+                        <tbody>
+                            <tr class="border-b border-slate-700"><td class="p-4 font-bold">Utilidad</td><td class="p-4 text-center text-2xl font-mono highlight">\( U(x) = x \)</td><td class="p-4 text-center text-2xl font-mono text-red-400">\( U(x) = -e^{-x} \)</td></tr>
+                            <tr class="border-b border-slate-700"><td class="p-4 font-bold">Valoración</td><td>Cada euro tiene <strong class="font-semibold">el mismo valor</strong>.</td><td>Las pérdidas <strong class="font-semibold">"duelen" mucho más</strong> que las ganancias.</td></tr>
+                            <tr class="border-b border-slate-700"><td class="p-4 font-bold">Criterio</td><td>Maximizar <strong class="font-semibold highlight">Valor Esperado</strong>.</td><td>Maximizar <strong class="font-semibold text-red-400">Utilidad Esperada</strong>.</td></tr>
+                            <tr class="border-b border-slate-700"><td class="p-4 font-bold">Inventario</td><td>No le importa acumularlo.</td><td><strong class="font-semibold">Lo detesta</strong> porque expone al riesgo.</td></tr>
+                            <tr><td class="p-4 font-bold">Analogía</td><td class="p-4 text-center"><strong class="font-semibold">Un robot.</strong></td><td class="p-4 text-center"><strong class="font-semibold">Un pensionista.</strong></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        
+        <!-- DIAPOSITIVA 9: PRECIO DE RESERVA (CONCEPTUAL) -->
+        <section class="slide">
+            <div class="w-full max-w-6xl text-center">
+                <h1 class="text-3xl md:text-4xl slide-title mb-6">El Concepto Clave: El Precio de Reserva (\(r\))</h1>
+                <p class="text-xl text-slate-300 mb-8 max-w-4xl mx-auto">Es la <strong class="highlight">"brújula interna"</strong> del market maker, su valoración personal del activo.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="diagram-box"><h2 class="text-2xl font-bold mb-4 text-center">¿Qué es? El Precio de Indiferencia</h2><p class="text-lg text-slate-200">Es el precio al que nos da <strong class="font-semibold">exactamente igual</strong> comprar una acción o no hacer nada.</p><div class="text-center mt-4 bg-slate-900 p-3 rounded-lg"><p class="text-lg font-mono text-blue-300">\( \text{Utilidad}(\text{no operar}) = \text{Utilidad}(\text{comprar a } r) \)</p></div></div>
+                    <div class="diagram-box"><h2 class="text-2xl font-bold mb-4 text-center">¿De qué depende?</h2><p class="text-lg text-slate-200"><i class="fas fa-layer-group text-red-400 mr-2"></i><strong class="font-semibold">Del Inventario (\(q\)):</strong> Cuantas más tienes, menos valoras la siguiente.</p><p class="text-lg text-slate-200 mt-4"><i class="fas fa-chart-line text-blue-400 mr-2"></i><strong class="font-semibold">De la Volatilidad (\(\sigma\)):</strong> A más volatilidad, más arriesgado es tu inventario.</p></div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- DIAPOSITIVA 10: DERIVACIÓN P. RESERVA: SUPOSICIÓN -->
+        <section class="slide">
+            <div class="w-full max-w-5xl text-center">
+                <h1 class="text-3xl md:text-4xl slide-title mb-6">Derivación del Precio de Reserva</h1>
+                <p class="text-xl text-slate-300 mb-8 max-w-4xl mx-auto">Ahora demostramos de dónde sale la fórmula, bajo una <strong class="highlight">suposición temporal clave</strong>.</p>
+                <div class="critical-box shadow-lg"><h2 class="text-2xl font-bold text-yellow-300 mb-4"><i class="fas fa-exclamation-triangle mr-3"></i>Suposición Crítica: Un Mundo sin Trading Futuro</h2><div class="text-lg text-slate-200 text-left space-y-3"><p><i class="fas fa-times-circle text-red-400 mr-3"></i> Para aislar el <strong class="font-semibold">Riesgo de Inventario</strong>, imaginamos que el market maker <strong class="font-semibold">NO PUEDE VOLVER A OPERAR</strong>.</p><p><i class="fas fa-times-circle text-red-400 mr-3"></i> Su única opción es <strong class="font-semibold">mantener su inventario (\(q\))</strong> hasta el final (\(T\)).</p></div></div>
+            </div>
+        </section>
+        
+        <!-- DIAPOSITIVA 11: DERIVACIÓN P. RESERVA: PASO 1 -->
+        <section class="slide">
+            <div class="w-full max-w-6xl">
+                <h1 class="text-3xl md:text-4xl slide-title mb-6 text-center">Paso 1: El Principio de Indiferencia</h1>
+                <p class="text-xl text-slate-300 mb-8 text-center">El precio de reserva es el que hace que al market maker le dé <strong class="highlight">exactamente igual</strong> operar que no.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="diagram-box"><h2 class="text-2xl font-bold mb-4 text-center">La "Función de Valor" \(v\)</h2><p class="text-lg">Es la <strong class="font-semibold">utilidad esperada</strong> si mantenemos la posición hasta el final.</p><div class="text-center mt-4 bg-slate-900 p-3 rounded-lg"><p class="text-lg font-mono">\( v = E_t[-e^{-\gamma(X_T + q_T S_T)}] \)</p></div></div>
+                    <div class="diagram-box"><h2 class="text-2xl font-bold mb-4 text-center">La Ecuación de Indiferencia</h2><p class="text-lg">Igualamos el valor de "no hacer nada" con el de "comprar una acción a precio \(r^b\)".</p><div class="text-center mt-4 bg-slate-900 p-3 rounded-lg"><p class="text-lg font-mono text-blue-300">\( v(x, s, q, t) = v(x-r^b, s, q+1, t) \)</p></div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DIAPOSITIVA 12: DERIVACIÓN P. RESERVA: PASO 2 -->
+        <section class="slide">
+            <div class="w-full max-w-5xl">
+                <h1 class="text-3xl md:text-4xl slide-title mb-6 text-center">Paso 2: Calcular la Función de Valor</h1>
+                <p class="text-xl text-slate-300 mb-8 text-center">Recordando nuestra suposición, la única incertidumbre es el precio final \(S_T\).</p>
+                <div class="diagram-box"><p class="text-lg mb-4">La utilidad esperada de la riqueza final tiene una solución cerrada:</p><div class="text-center bg-slate-900 p-3 rounded-lg mb-4"><p class="text-lg font-mono">\( v(x, s, q, t) = -e^{-\gamma x} E_t[e^{-\gamma q S_T}] \)</p></div><div class="text-center bg-green-900/50 p-4 rounded-lg shadow"><h3 class="text-xl font-bold text-green-300 mb-2">Fórmula Explícita para \(v\)</h3><p class="text-2xl font-mono">\( v(x,s,q,t) = -e^{-\gamma x} e^{-\gamma qs} e^{\frac{1}{2}\gamma^{2}q^{2}\sigma^{2}(T-t)} \)</p></div></div>
+            </div>
+        </section>
+
+        <!-- DIAPOSITIVA 13: DERIVACIÓN P. RESERVA: PASO 3 -->
+        <section class="slide">
+            <div class="w-full max-w-7xl">
+                <h1 class="text-3xl md:text-4xl slide-title mb-6 text-center">Paso 3: Despejando el Precio</h1>
+                <p class="text-xl text-slate-300 mb-6 text-center">Sustituimos la fórmula de \(v\) en la ecuación de indiferencia y simplificamos.</p>
+                <div class="diagram-box !p-6">
+                    <p class="text-lg mb-2"><strong class="font-semibold">1. Planteamos la igualdad:</strong> \( v(x, s, q, t) = v(x-r^b, s, q+1, t) \)</p>
+                    <div class="bg-slate-900 p-3 rounded-lg overflow-x-auto text-sm md:text-base"><p class="font-mono">\(-e^{-\gamma x} e^{-\gamma qs} e^{\frac{1}{2}\gamma^{2}q^{2}\sigma^{2}\tau} = -e^{-\gamma (x-r^b)} e^{-\gamma (q+1)s} e^{\frac{1}{2}\gamma^{2}(q+1)^{2}\sigma^{2}\tau} \)</p></div>
+                    <p class="text-lg mt-3 mb-2"><strong class="font-semibold">2. Aplicamos logaritmos</strong>, simplificamos y despejamos \(r^b\).</p>
+                     <div class="text-center info-box !border-none bg-blue-900/50 p-4 rounded-lg shadow mt-4"><h3 class="text-xl font-bold text-blue-300 mb-2">Resultado Final (Caso sin Trading)</h3><p class="text-3xl font-mono">\( r(s, q, t) = s - q \gamma \sigma^2 (T-t) \)</p></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DIAPOSITIVA 14: ANATOMÍA PRECIO RESERVA -->
+        <section class="slide">
+            <div class="w-full max-w-7xl">
+                <h1 class="text-3xl md:text-4xl slide-title mb-6 text-center">La Anatomía del Precio de Reserva (\(r\))</h1>
+                <div class="diagram-box bg-slate-900/50 p-6 mb-8 text-center shadow-lg"><span class="text-3xl md:text-4xl font-mono">\( r(s, q, t) = s - q \gamma \sigma^2 (T-t) \)</span></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="diagram-box !text-center"><i class="fas fa-cogs text-5xl text-blue-400 mb-4"></i><h2 class="text-2xl font-bold mb-4">El Desglose de la Fórmula</h2><p class="text-lg"><strong class="highlight">\(r = s\)</strong> - Parte del <strong class="font-semibold">Mid-Price</strong>...<br><strong class="highlight">\(... - q \gamma \sigma^2 \tau\)</strong> ...y se le aplica un <strong class="font-semibold text-red-400">ajuste por riesgo</strong>.</p></div>
+                    <div class="space-y-6">
+                        <div class="diagram-box"><h3 class="text-xl font-bold text-red-400 mb-2"><i class="fas fa-layer-group mr-2"></i>Si tengo inventario (\(q > 0\))</h3><p class="text-2xl font-mono bg-red-900/50 text-red-300 p-2 rounded text-center mb-2">\(r < s\)</p><p class="text-lg">Mi precio personal es <strong class="font-semibold">inferior</strong> al del mercado. Estoy motivado para vender.</p></div>
+                        <div class="diagram-box"><h3 class="text-xl font-bold text-green-400 mb-2"><i class="fas fa-hand-holding-usd mr-2"></i>Si estoy "corto" (\(q < 0\))</h3><p class="text-2xl font-mono bg-green-900/50 text-green-300 p-2 rounded text-center mb-2">\(r > s\)</p><p class="text-lg">Mi precio personal es <strong class="font-semibold">superior</strong> al del mercado. Estoy dispuesto a comprar más caro.</p></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- DIAPOSITIVA 15: TRANSICIÓN A MUNDO DINÁMICO -->
+        <section class="slide">
+            <div class="w-full max-w-6xl text-center">
+                <h1 class="text-3xl md:text-4xl slide-title mb-6">Abriendo la Puerta al Trading</h1>
+                <p class="text-xl text-slate-300 mb-8 max-w-4xl mx-auto">Ya tenemos nuestra "brújula interna" (\(r\)). Ahora, <strong class="highlight">volvemos a la realidad</strong> donde sí podemos operar.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="diagram-box !p-8"><h2 class="text-2xl font-bold mb-4">El Nuevo Desafío: El Riesgo de Ejecución</h2><p class="text-lg text-slate-200">Al poner órdenes, nos enfrentamos a una nueva incertidumbre: <strong class="font-semibold">¿nos ejecutarán la orden?</strong></p><p class="text-lg text-slate-200 mt-4">Necesitamos un modelo que nos diga la <strong class="font-semibold text-blue-400">probabilidad de que una orden sea "golpeada"</strong>.</p></div>
+                    <div class="text-center"><i class="fas fa-door-closed text-8xl text-red-400 mb-4"></i><p class="text-xl font-bold">Mundo Estático</p><i class="fas fa-long-arrow-alt-down text-4xl text-slate-500 my-4"></i><i class="fas fa-door-open text-8xl text-green-400 mb-4"></i><p class="text-xl font-bold">Mundo Dinámico</p></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DIAPOSITIVA 16: PIEZA 3: EL DILEMA DEL SPREAD -->
+        <section class="slide compact-v-padding">
+             <div class="w-full max-w-7xl h-full flex flex-col">
+                <h1 class="text-3xl md:text-4xl slide-title mb-2 text-center shrink-0">Pieza 3: El Dilema del Spread</h1>
+                <div class="w-full h-[55%] bg-slate-100 p-4 rounded-lg border border-slate-700"><canvas id="intensityChart"></canvas></div>
+                <div class="shrink-0 my-2 diagram-box border-t-4 border-b-4 border-blue-500 p-3 text-center shadow-md"><p class="text-lg text-slate-200">La probabilidad de que nos ejecuten (\(\lambda\)) <strong class="highlight">depende de su distancia \(\delta\)</strong> al mid-price:</p><span class="text-2xl font-mono highlight">\( \lambda(\delta) = A e^{-k\delta} \)</span></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 shrink-0">
+                    <div class="diagram-box bg-green-900/50 border-green-700"><h3 class="text-xl font-bold text-green-300 text-center mb-2">Spread Estrecho (\(\delta\) pequeño)</h3><ul class="text-lg text-slate-300 space-y-1 list-disc list-inside"><li><strong class="font-semibold">Probabilidad de Cierre:</strong> ALTA (\(\lambda\) elevada).</li><li><strong class="font-semibold">Margen por Operación:</strong> BAJO.</li></ul></div>
+                     <div class="diagram-box bg-red-900/50 border-red-700"><h3 class="text-xl font-bold text-red-300 text-center mb-2">Spread Amplio (\(\delta\) grande)</h3><ul class="text-lg text-slate-300 space-y-1 list-disc list-inside"><li><strong class="font-semibold">Probabilidad de Cierre:</strong> BAJA (\(\lambda\) pequeña).</li><li><strong class="font-semibold">Margen por Operación:</strong> ALTO.</li></ul></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DIAPOSITIVA 17: TRANSICIÓN A HJB -->
+        <section class="slide">
+            <div class="w-full max-w-7xl text-center">
+                <h1 class="text-3xl md:text-4xl slide-title mb-6">Juntando Todas las Fuentes de Azar</h1>
+                <p class="text-xl text-slate-300 mb-8 max-w-4xl mx-auto">Ahora tenemos dos procesos aleatorios que evolucionan a la vez:</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="diagram-box text-center"><i class="fas fa-wave-square text-5xl text-blue-400 mb-4"></i><h2 class="text-2xl font-bold mb-3">1. El Precio (\(S_t\))</h2><p class="text-lg">Cambia de forma <strong class="font-semibold">continua y suave</strong> (Movimiento Browniano).</p></div>
+                    <div class="diagram-box text-center"><i class="fas fa-shoe-prints text-5xl text-green-400 mb-4"></i><h2 class="text-2xl font-bold mb-3">2. El Inventario (\(q_t\))</h2><p class="text-lg">Cambia a <strong class="font-semibold">saltos discretos</strong> (+1 o -1) (Proceso de Poisson).</p></div>
+                </div>
+                <div class="mt-10 warning-box max-w-4xl mx-auto !border-l-4 !border-yellow-400 !bg-yellow-400/10"><h3 class="text-xl font-bold text-yellow-300 mb-2"><i class="fas fa-exclamation-triangle mr-2"></i>El Problema de Optimización Dinámica</h3><p class="text-lg text-yellow-200">¿Cómo encontramos la <strong class="font-semibold">mejor estrategia (\(\delta^a, \delta^b\))</strong>, considerando ambos riesgos? Necesitamos una herramienta más potente.</p></div>
+            </div>
+        </section>
+        
+        <!-- DIAPOSITIVAS 18-37: DERIVACIÓN HJB DETALLADA -->
+        <section class="slide"><div class="w-full max-w-6xl text-center"><h1 class="text-3xl slide-title mb-6">Parte III - HJB: El Problema Completo</h1><p class="text-xl text-slate-300 mb-8">Volvemos al mundo real donde <strong class="highlight">sí podemos operar</strong>. El objetivo es encontrar la estrategia (\(\delta_t^a, \delta_t^b\)) que maximiza la utilidad esperada.</p><div class="diagram-box"><h2 class="text-2xl font-bold mb-4 text-center">La Función de Valor Dinámica (\(u\))</h2><p class="text-lg text-center">\(u(s, x, q, t)\) es la máxima utilidad esperada, optimizando las decisiones.</p><div class="text-center mt-4 bg-slate-900 p-3 rounded-lg"><p class="text-lg font-mono">\( u(s,x,q,t) = \max_{\delta^a_t, \delta^b_t} E_t[-e^{-\gamma(X_T + q_T S_T)}] \)</p></div></div></div></section>
+        <section class="slide"><div class="w-full max-w-5xl text-center"><h1 class="text-3xl slide-title mb-6">Parte III - HJB: Principio de Optimalidad</h1><p class="text-xl text-slate-300 mb-8">Usamos la idea de <strong class="highlight">Programación Dinámica</strong> de Bellman.</p><div class="diagram-box !text-center"><i class="fas fa-route text-6xl text-blue-400 mb-4"></i><p class="text-2xl italic text-slate-100">"Una estrategia es óptima si, partiendo de cualquier punto, las decisiones restantes también son óptimas."</p></div><p class="text-xl mt-8 text-slate-100"><strong class="font-semibold">Cada decisión, en cada instante, debe ser la mejor posible.</strong></p></div></section>
+        <section class="slide"><div class="w-full max-w-6xl text-center"><h1 class="text-3xl slide-title mb-6">Parte III - HJB: La Ecuación Maestra</h1><p class="text-xl text-slate-300 mb-8">La Ecuación de Hamilton-Jacobi-Bellman (HJB) es la versión en tiempo continuo del principio de Bellman. Describe el <strong class="highlight">equilibrio perfecto</strong> de una estrategia óptima.</p><div class="diagram-box !text-center"><h2 class="text-2xl font-bold mb-4">La Lógica de la HJB</h2><p class="text-xl text-slate-100">\( \text{Cambio en valor (tiempo y azar)} + \text{Cambio en valor (trading)} = 0 \)</p></div></div></section>
+        <section class="slide"><div class="w-full max-w-6xl text-center"><h1 class="text-3xl slide-title mb-6">Parte III - HJB: Una Ecuación Especial</h1><p class="text-xl text-slate-300 mb-8">Nuestro problema es un <strong class="highlight">proceso de difusión con saltos</strong>, por lo que necesitamos una HJB que contemple ambos fenómenos.</p><div class="grid grid-cols-2 gap-8"><div class="diagram-box"><h3 class="font-bold text-center mb-2 text-2xl">Proceso de Difusión</h3><i class="fas fa-wave-square text-5xl text-blue-400 text-center w-full my-4"></i><p class="text-lg">Captura los <strong class="font-semibold">cambios continuos</strong> del precio (\(S_t\)).</p></div><div class="diagram-box"><h3 class="font-bold text-center mb-2 text-2xl">Proceso de Salto</h3><i class="fas fa-shoe-prints text-5xl text-green-400 text-center w-full my-4"></i><p class="text-lg">Captura los <strong class="font-semibold">cambios discretos</strong> en el inventario (\(q\)).</p></div></div></div></section>
+        <section class="slide"><div class="w-full max-w-7xl text-center"><h1 class="text-3xl slide-title mb-6">Parte III - HJB: La Foto Completa</h1><p class="text-xl text-slate-300 mb-8">Esta es la "ecuación maestra" que debemos resolver. La analizaremos término a término.</p><div class="diagram-box !p-4 !text-center text-xl font-mono overflow-x-auto">\( 0 = \frac{\partial u}{\partial t} + \frac{1}{2}\sigma^2 \frac{\partial^2 u}{\partial s^2} + \max_{\delta^b} \lambda^b(\delta^b) [u(q+1) - u(q)] + \max_{\delta^a} \lambda^a(\delta^a) [u(q-1) - u(q)] \)</div></div></section>
+        <section class="slide"><div class="w-full max-w-5xl text-center"><h1 class="text-3xl slide-title mb-6">HJB: Término 1 - Paso del Tiempo</h1><div class="diagram-box !p-6 !text-center !text-3xl font-mono">\( \underbrace{\frac{\partial u}{\partial t}}_{\text{Decaimiento Temporal}} \)</div><p class="text-xl text-slate-300 mt-8">Representa el cambio en el valor \(u\) debido al <strong class="highlight">paso del tiempo</strong>. Al acercarnos a \(T\), el riesgo disminuye y el valor cambia.</p></div></section>
+        <section class="slide"><div class="w-full max-w-5xl text-center"><h1 class="text-3xl slide-title mb-6">HJB: Término 2 - Azar del Precio</h1><div class="diagram-box !p-6 !text-center !text-3xl font-mono">\( \underbrace{\frac{1}{2}\sigma^2 \frac{\partial^2 u}{\partial s^2}}_{\text{Efecto de la Difusión}} \)</div><p class="text-xl text-slate-300 mt-8">Proviene del <strong class="highlight">Lema de Itô</strong> y captura el efecto del <strong class="font-semibold">movimiento aleatorio</strong> del precio. Mide cómo la convexidad de \(u\) reacciona a la volatilidad \(\sigma\).</p></div></section>
+        <section class="slide"><div class="w-full max-w-5xl text-center"><h1 class="text-3xl slide-title mb-6">HJB: Término 3 - Saltos del Trading</h1><div class="diagram-box !p-6 !text-center !text-xl font-mono">\( \dots + \max_{\delta^b} \lambda^b(\delta^b) [u(q+1) - u(q)] + \dots \)</div><p class="text-xl text-slate-300 mt-8">Es el <strong class="highlight">componente de salto</strong>. Es el producto de dos cosas:</p><div class="grid grid-cols-2 gap-8 mt-8"><div class="diagram-box text-center"><h3 class="font-bold text-lg">Frecuencia del Salto</h3><p>\(\lambda^b(\delta^b)\)</p></div><div class="diagram-box text-center"><h3 class="font-bold text-lg">Magnitud del Salto</h3><p>\(u(q+1) - u(q)\)</p></div></div></div></section>
+        <section class="slide"><div class="w-full max-w-5xl text-center"><h1 class="text-3xl slide-title mb-6">HJB: La Decisión Óptima</h1><div class="diagram-box !p-6 !text-center !text-xl font-mono">\( \max_{\delta} \lambda(\delta) \Delta u \)</div><p class="text-xl text-slate-300 mt-8">La HJB nos obliga a elegir la distancia \(\delta\) que <strong class="highlight">maximiza el beneficio esperado de operar</strong>.</p></div></section>
+        <section class="slide"><div class="w-full max-w-5xl"><h1 class="text-3xl slide-title mb-6 text-center">HJB: El "Ansatz"</h1><p class="text-xl text-slate-300 mb-8 text-center">Hacemos una <strong class="highlight">conjetura inteligente ("ansatz")</strong> sobre la forma de la solución para simplificar.</p><div class="diagram-box"><h2 class="text-2xl font-bold mb-4 text-center">La Conjetura de Separación</h2><p class="text-lg text-center">Suponemos que \(u\) se puede separar en una parte de riqueza (\(x\)) y otra de todo lo demás (\(\theta\)).</p><div class="text-center mt-4 bg-slate-900 p-3 rounded-lg"><p class="text-2xl font-mono">\( u(s,x,q,t) = -e^{-\gamma x} \cdot \theta(s,q,t) \)</p></div></div></div></section>
+        <section class="slide"><div class="w-full max-w-6xl text-center"><h1 class="text-3xl slide-title mb-6">HJB: Aplicando el Ansatz (Parte I)</h1><p class="text-xl text-slate-300 mb-8">Sustituimos el ansatz en los <strong class="highlight">términos de difusión</strong>. El término de riqueza \(x\) se cancelará.</p><p class="text-3xl font-mono mt-4">\( \frac{\partial u}{\partial t} \rightarrow -e^{-\gamma x} \frac{\partial \theta}{\partial t} \)</p><p class="text-3xl font-mono mt-6">\( \frac{\partial^2 u}{\partial s^2} \rightarrow -e^{-\gamma x} \frac{\partial^2 \theta}{\partial s^2} \)</p></div></section>
+        <section class="slide"><div class="w-full max-w-6xl text-center"><h1 class="text-3xl slide-title mb-6">HJB: Aplicando el Ansatz (Parte II)</h1><p class="text-xl text-slate-300 mb-8">Lo aplicamos a los <strong class="highlight">términos de salto</strong>. Para una compra, pagamos \(p^b=s-\delta^b\).</p><div class="diagram-box mt-4 !text-center"><p class="font-mono text-2xl">\( u(x-(s-\delta^b), q+1) = -e^{-\gamma (x-s+\delta^b)} \theta(q+1) \)</p></div></div></section>
+        <section class="slide"><div class="w-full max-w-6xl"><h1 class="text-3xl slide-title mb-6 text-center">HJB: La Ecuación para \(\theta\)</h1><p class="text-xl text-slate-300 mb-8">Tras sustituir y cancelar \(-e^{-\gamma x}\), la HJB se convierte en una nueva ecuación para \(\theta\).</p><div class="diagram-box !p-4 !text-center text-lg font-mono overflow-x-auto">\( 0 = \frac{\partial \theta}{\partial t} + \dots - \frac{1}{2}\gamma\sigma^2 (\frac{\partial \theta}{\partial s})^2 + \max_{\delta^b} \lambda^b(\delta^b) [e^{\gamma(s-\delta^b)}\theta(q+1) - \theta(q)] + \dots \)</div></div></section>
+        <section class="slide"><div class="w-full max-w-5xl"><h1 class="text-3xl slide-title mb-6 text-center">HJB: Condición de Primer Orden (CPO)</h1><p class="text-xl text-slate-300 mb-8 text-center">Para encontrar \(\delta^a\) óptimo, <strong class="highlight">derivamos el término de beneficio respecto a \(\delta^a\) y lo igualamos a cero</strong>.</p><div class="diagram-box"><h2 class="text-2xl font-bold mb-4 text-center">El Corazón de la Optimización</h2><div class="text-center mt-2 bg-slate-900 p-3 rounded-lg"><p class="text-lg font-mono">\( \frac{\partial}{\partial \delta^a} \left( \lambda^a(\delta^a) [e^{-\gamma(s+\delta^a)}\theta(q-1) - \theta(q)] \right) = 0 \)</p></div></div></div></section>
+        <section class="slide"><div class="w-full max-w-6xl text-center"><h1 class="text-3xl slide-title mb-6">HJB: Resolviendo la CPO</h1><p class="text-xl text-slate-300 mb-8">Usamos \(\lambda(\delta) = Ae^{-k\delta}\) y resolvemos la derivada. Tras álgebra, llegamos a una expresión de esta forma:</p><div class="diagram-box"><div class="text-center mt-4 bg-blue-900/50 p-3 rounded-lg"><p class="text-2xl font-mono text-blue-300">\( \text{Algo con } r^a - s = \delta^a - \frac{1}{\gamma}\ln(1+\frac{\gamma}{k}) \)</p></div></div></div></section>
+        <section class="slide"><div class="w-full max-w-6xl"><h1 class="text-3xl slide-title mb-6 text-center">HJB: Conexión con P. Reserva</h1><p class="text-xl text-slate-300 mb-8 text-center">El término de la izquierda es el <strong class="highlight">spread de indiferencia</strong>. Usamos la aproximación de que es igual al del caso sin trading.</p><div class="diagram-box text-center !p-6"><p class="text-2xl">\( \underbrace{r(s,q,t) - s}_{\text{Ajuste por inventario}} \approx \underbrace{\delta - \frac{1}{\gamma}\ln(1+\frac{\gamma}{k})}_{\text{Ajuste por ejecución}} \)</p></div></div></section>
+        <section class="slide"><div class="w-full max-w-5xl text-center"><h1 class="text-3xl slide-title mb-6">HJB: Solución para el Spread Óptimo</h1><p class="text-xl text-slate-300 mb-8">Reordenando la ecuación anterior, llegamos a la solución para la distancia óptima \(\delta^*\).</p><div class="diagram-box !p-6 !text-center"><h2 class="text-2xl font-bold mb-4">La Mitad del Spread Óptimo</h2><p class="text-3xl font-mono highlight mt-2">\( \delta^* \approx \frac{1}{\gamma}\ln(1 + \frac{\gamma}{k}) \)</p></div></div></section>
+        <section class="slide"><div class="w-full max-w-6xl text-center"><h1 class="text-3xl slide-title mb-6">HJB: La Aproximación Clave</h1><p class="text-xl text-slate-300 mb-8">La solución se basa en que el <strong class="highlight">Precio de Reserva dinámico</strong> (HJB) es similar al <strong class="highlight">Precio de Reserva estático</strong> (sin trading).</p><div class="diagram-box !text-center"><div class="text-2xl font-mono text-blue-300">\( r_{\text{dinámico}}(s,q,t) \approx r_{\text{estático}}(s,q,t) = s - q\gamma\sigma^2(T-t) \)</div><p class="text-xl mt-4">Esta aproximación nos permite usar la fórmula simple como centro de la estrategia.</p></div></div></section>
+        <section class="slide"><div class="w-full max-w-7xl"><h1 class="text-3xl slide-title mb-6 text-center">HJB: La Receta Final</h1><p class="text-xl text-slate-300 mb-8 text-center">Juntando todo, obtenemos la estrategia de dos pasos de Avellaneda-Stoikov.</p><div class="grid grid-cols-2 gap-8"><div class="diagram-box text-center"><h2 class="text-2xl font-bold mb-4">Paso 1: Calcular el Centro</h2><p class="text-lg">Calcula tu precio de reserva personal.</p><p class="text-2xl font-mono mt-4">\( r = s - q\gamma\sigma^2\tau \)</p></div><div class="diagram-box text-center"><h2 class="text-2xl font-bold mb-4">Paso 2: Calcular el Spread</h2><p class="text-lg">Calcula el spread óptimo.</p><p class="text-2xl font-mono mt-4">\( \delta^* = \frac{1}{\gamma}\ln(1+\frac{\gamma}{k}) \)</p></div></div></div></section>
+        <section class="slide"><div class="w-full max-w-7xl h-full flex flex-col"><h1 class="text-3xl slide-title mb-6 text-center shrink-0">HJB: La Solución en Acción</h1><div class="text-center diagram-box p-4 mb-6 shadow-lg shrink-0"><p class="text-lg">Las órdenes se colocan simétricamente alrededor del <strong class="highlight">Precio de Reserva (\(r\))</strong> con un ancho \(\delta^*\).</p><div class="flex justify-center items-center space-x-8 mt-2"><span class="text-2xl font-mono">\( \text{Bid}_{\text{opt}} = r - \delta^* \)</span><span class="text-2xl font-mono">\( \text{Ask}_{\text{opt}} = r + \delta^* \)</span></div></div><div class="diagram-box flex-grow w-full"><h2 class="text-2xl font-bold text-center mb-4">Uniendo los Dos Mundos</h2><div class="grid grid-cols-2 gap-6 text-lg"><div class="border-r pr-6 border-slate-600"><p><i class="fas fa-key text-blue-400 mr-2"></i>El <strong class="highlight">Precio de Reserva (\(r\))</strong> gestiona el <strong class="font-semibold text-red-400">Riesgo de Inventario</strong>.</p></div><div><p><i class="fas fa-key text-blue-400 mr-2"></i>El <strong class="highlight">Spread Óptimo (\(2\delta^*\))</strong> gestiona el <strong class="font-semibold text-green-400">Riesgo de Ejecución</strong>.</p></div></div><div class="mt-6 info-box p-4 rounded-b-lg text-center"><p class="text-xl font-semibold">Esta estrategia de dos pasos es la gran aportación del modelo.</p></div></div></div></section>
+        
+        <!-- DIAPOSITIVA 38: EL RESULTADO FINAL -->
+        <section class="slide">
+            <div class="w-full max-w-7xl">
+                <h1 class="text-3xl md:text-4xl slide-title mb-8 text-center">El Resultado: La Estrategia Óptima</h1>
+                <p class="text-xl text-slate-300 mb-8 text-center max-w-5xl mx-auto">La solución se reduce a una <strong class="highlight">receta elegante y práctica</strong> de dos pasos para colocar nuestras órdenes.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="diagram-box text-center"><div class="bg-blue-600 text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4"><span class="text-3xl font-black">1</span></div><h2 class="text-2xl font-bold mb-3">Calcular el Centro: Precio de Reserva</h2><p class="text-lg text-slate-300 mb-4">Ajusta el precio para compensar el <strong class="font-semibold text-red-400">riesgo de inventario</strong>.</p><div class="bg-slate-900 p-4 rounded-lg"><p class="text-3xl font-mono">\( r = s - q\gamma\sigma^2\tau \)</p></div></div>
+                    <div class="diagram-box text-center"><div class="bg-blue-600 text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4"><span class="text-3xl font-black">2</span></div><h2 class="text-2xl font-bold mb-3">Calcular el Ancho: Spread Óptimo</h2><p class="text-lg text-slate-300 mb-4">Equilibra tu <strong class="font-semibold">aversión al riesgo</strong> con la <strong class="font-semibold text-green-400">liquidez</strong>.</p><div class="bg-slate-900 p-4 rounded-lg"><p class="text-3xl font-mono">\( \delta^* = \frac{1}{\gamma}\ln(1+\frac{\gamma}{k}) \)</p></div></div>
+                </div>
+                <div class="mt-10 info-box p-6 rounded-lg text-center shadow-lg"><p class="text-2xl font-semibold text-slate-100">Las órdenes óptimas de Bid y Ask son:</p><div class="grid grid-cols-1 gap-4 mt-3 overflow-x-auto"><div class="bg-red-900/50 text-red-200 p-3 rounded-lg"><p class="text-xl md:text-2xl font-mono">\( \text{Ask}^* = r + \delta^* \)</p></div><div class="bg-green-900/50 text-green-200 p-3 rounded-lg"><p class="text-xl md:text-2xl font-mono">\( \text{Bid}^* = r - \delta^* \)</p></div></div></div>
+            </div>
+        </section>
+
+        <!-- DIAPOSITIVA 39: EL MODELO EN ACCIÓN -->
+        <section class="slide compact-v-padding">
+            <div class="w-full max-w-7xl h-full flex flex-col">
+                <h1 class="text-3xl md:text-4xl slide-title mb-2 text-center shrink-0">El Modelo en Acción: Análisis Visual</h1>
+                <div class="w-full h-[55%] bg-slate-100 p-4 rounded-lg border border-slate-700 mb-2"><canvas id="strategyChart"></canvas></div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 shrink-0">
+                    <div class="diagram-box bg-red-900/50 p-4 rounded-lg"><h3 class="text-lg font-bold text-red-300"><i class="fas fa-layer-group mr-2"></i>Inventario Positivo (\(q > 0\))</h3><p class="text-md">El precio de reserva (amarillo) <strong class="font-semibold">cae por debajo</strong> del mid-price (verde) para incentivar ventas.</p></div>
+                    <div class="diagram-box bg-green-900/50 p-4 rounded-lg"><h3 class="text-lg font-bold text-green-300"><i class="fas fa-hand-holding-usd mr-2"></i>Inventario Negativo (\(q < 0\))</h3><p class="text-md">El precio de reserva (amarillo) <strong class="font-semibold">sube por encima</strong> del mid-price (verde) para incentivar compras.</p></div>
+                    <div class="diagram-box bg-blue-900/50 p-4 rounded-lg"><h3 class="text-lg font-bold text-blue-300"><i class="fas fa-hourglass-end mr-2"></i>Convergencia a \(T\)</h3><p class="text-md">Cerca del final, el precio de reserva (amarillo) <strong class="font-semibold">converge</strong> con el mid-price (verde).</p></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DIAPOSITIVA 40: RESULTADOS DE LA SIMULACIÓN -->
+        <section class="slide">
+            <div class="w-full max-w-7xl h-full flex flex-col">
+                <h1 class="text-3xl md:text-4xl slide-title mb-4 text-center shrink-0">Resultados de la Simulación</h1>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-grow">
+                    <div class="flex flex-col"><h2 class="text-2xl font-bold text-center mb-2">Evolución del PnL</h2><div class="bg-slate-100 p-4 rounded-lg border border-slate-700 flex-grow"><canvas id="pnlChart"></canvas></div></div>
+                    <div class="flex flex-col"><h2 class="text-2xl font-bold text-center mb-2">Evolución del Inventario</h2><div class="bg-slate-100 p-4 rounded-lg border border-slate-700 flex-grow"><canvas id="inventoryChart"></canvas></div></div>
+                </div>
+                <div class="shrink-0 mt-4 info-box p-4 rounded-lg text-center shadow-lg"><p class="text-xl font-semibold text-slate-100"><i class="fas fa-check-circle text-blue-400 mr-2"></i><strong class="highlight">Conclusión:</strong> La estrategia genera un PnL con deriva positiva mientras el inventario <strong class="font-semibold">oscila en torno a cero</strong>.</p></div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- --- Footer y Contador --- -->
+    <div class="slide-footer">
+        <p><strong>Market Making</strong>: Avellaneda & Stoikov (2008)</p>
+        <p id="slide-counter">1 / N</p>
+    </div>
+
+    <script>
+        // --- MOTOR DE NAVEGACIÓN Y LÓGICA DE LA PRESENTACIÓN ---
+        
+        const slides = document.querySelectorAll('.slide');
+        const slideCounter = document.getElementById('slide-counter');
+        let currentSlide = 0;
+        const totalSlides = slides.length;
+        const slideInitialized = new Array(totalSlides).fill(false);
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => slide.classList.toggle('active', i === index));
+            currentSlide = index;
+            slideCounter.textContent = `${index + 1} / ${totalSlides}`;
+            if (!slideInitialized[index] && typeof slideInitializers[index] === 'function') {
+                slideInitializers[index]();
+                slideInitialized[index] = true;
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); showSlide((currentSlide + 1) % totalSlides); } 
+            else if (e.key === 'ArrowLeft') { e.preventDefault(); showSlide((currentSlide - 1 + totalSlides) % totalSlides); }
+        });
+
+        // --- LÓGICA DE CONTENIDO DINÁMICO ---
+
+        const renderMath = () => {
+            if (window.renderMathInElement) {
+                renderMathInElement(document.body, { delimiters: [ {left: '$$', right: '$$', display: true}, {left: '\\[', right: '\\]', display: true}, {left: '\\(', right: '\\)', display: false} ] });
+            }
+        };
+        
+        let simData = null;
+        function runFullSimulation() {
+            if (simData) return simData; 
+            const s0 = 100, sigma = 2, T = 1, gamma = 0.1, k = 1.5, dt = 0.005, n_steps = T / dt;
+            const A = 137.45; let q = 0, s = s0, cash = 0;
+            const data = { labels: [], midPrice: [], reservationPrice: [], askPrice: [], bidPrice: [], pnl: [], inventory: [] };
+            for (let i = 0; i < n_steps; i++) {
+                const t = i * dt; data.labels.push(t.toFixed(2));
+                const z = Math.sqrt(-2.0 * Math.log(Math.random())) * Math.cos(2.0 * Math.PI * Math.random());
+                s += sigma * Math.sqrt(dt) * z;
+                const reservationPrice = s - q * gamma * Math.pow(sigma, 2) * (T - t);
+                const halfSpread = (1 / gamma) * Math.log(1 + gamma / k);
+                const askPrice = reservationPrice + halfSpread, bidPrice = reservationPrice - halfSpread;
+                data.midPrice.push(s); data.reservationPrice.push(reservationPrice); data.askPrice.push(askPrice); data.bidPrice.push(bidPrice);
+                if (Math.random() < A * Math.exp(-k * (askPrice - s)) * dt) { q -= 1; cash += askPrice; }
+                if (Math.random() < A * Math.exp(-k * (s - bidPrice)) * dt) { q += 1; cash -= bidPrice; }
+                data.pnl.push(cash + q * s); data.inventory.push(q);
+            }
+            simData = data; return data;
+        }
+        
+        const initBrownianChart = () => {
+             function simulateBrownianMotion(s0, sigma, T, numSimulations) {
+                const paths = [], labels = Array.from({ length: T + 1 }, (_, i) => `Día ${i}`);
+                for (let i = 0; i < numSimulations; i++) {
+                    const path = [s0];
+                    for (let t = 1; t <= T; t++) { path.push(path[t - 1] + sigma * Math.sqrt(1) * (Math.sqrt(-2.0 * Math.log(Math.random())) * Math.cos(2.0 * Math.PI * Math.random()))); }
+                    paths.push(path);
+                }
+                return { paths, labels };
+            }
+            const { paths, labels } = simulateBrownianMotion(100, 2, 10, 10);
+            new Chart(document.getElementById('brownianChart').getContext('2d'), { type: 'line', data: { labels: labels, datasets: paths.map((p, i) => ({ data: p, borderColor: `hsla(${i*36}, 90%, 60%, 0.7)`, borderWidth: 2, pointRadius: 0, tension: 0.1 })) }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, title: { display: true, text: '10 Simulaciones de Movimiento Browniano', font: { size: 16, weight: 'bold' }, color: '#111827' } }, scales: { x: { title: { display: true, text: 'Tiempo', color: '#111827' }, ticks: { color: '#111827' } }, y: { title: { display: true, text: 'Precio', color: '#111827' }, ticks: { color: '#111827' } } } } });
+        };
+        
+        const initUtilityChart = () => {
+             const gammas = [ { value: 0, label: 'γ = 0 (Neutral)', color: '#9CA3AF', dashed: true }, { value: 0.5, label: 'γ = 0.5', color: '#60A5FA', dashed: false }, { value: 1, label: 'γ = 1', color: '#34D399', dashed: false }, { value: 2, label: 'γ = 2 (Averso)', color: '#F87171', dashed: false } ];
+             const xValues = Array.from({ length: 41 }, (_, i) => (i - 20) * 0.2);
+             const datasets = gammas.map(g => ({ label: g.label, data: (g.value === 0) ? xValues.map(x => x) : xValues.map(x => -Math.exp(-g.value * x)), borderColor: g.color, borderWidth: 3, borderDash: g.dashed ? [10, 5] : [], fill: false, pointRadius: 0, tension: 0.1 }));
+             new Chart(document.getElementById('utilityChart').getContext('2d'), { type: 'line', data: { labels: xValues.map(x => x.toFixed(1)), datasets: datasets }, options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Función de Utilidad para Perfiles de Riesgo (γ)', font: { size: 16, weight: 'bold' }, color: '#111827' }, legend: { position: 'bottom', labels: { color: '#111827'} } }, scales: { x: { title: { display: true, text: 'Ganancia / Pérdida (€)', color: '#111827' }, ticks: {color: '#111827'} }, y: { title: { display: true, text: 'Nivel de "Utilidad"', color: '#111827' }, min: -8, max: 4, ticks: {color: '#111827'} } } } });
+        };
+        
+        const initIntensityChart = () => {
+            const A = 10, k = 1.5, deltaValues = Array.from({ length: 21 }, (_, i) => i * 0.2);
+            new Chart(document.getElementById('intensityChart').getContext('2d'), { type: 'line', data: { labels: deltaValues.map(d => d.toFixed(1)), datasets: [{ label: 'Intensidad λ(δ)', data: deltaValues.map(d => A * Math.exp(-k * d)), borderColor: '#38BDF8', backgroundColor: 'rgba(56, 189, 248, 0.2)', borderWidth: 3, fill: true, tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Probabilidad de Ejecución vs. Distancia (δ)', font: { size: 16, weight: 'bold' }, color: '#111827' }, legend: { display: false } }, scales: { x: { title: { display: true, text: 'Distancia al Mid-Price (δ en €)', color: '#111827' }, ticks: {color: '#111827'} }, y: { title: { display: true, text: 'Frecuencia de Operaciones (λ)', color: '#111827' }, ticks: {color: '#111827'} } } } });
+        };
+
+        const initStrategyChart = () => {
+            const data = runFullSimulation();
+            new Chart(document.getElementById('strategyChart').getContext('2d'), { type: 'line', data: { labels: data.labels, datasets: [ 
+                { label: 'Mid-Price (s)', data: data.midPrice, borderColor: '#34D399', borderWidth: 2, pointRadius: 0 }, // Verde
+                { label: 'P. Reserva (r)', data: data.reservationPrice, borderColor: '#FBBF24', borderWidth: 3, pointRadius: 0, borderDash: [5, 5] }, // Amarillo
+                { label: 'Ask (p^a)', data: data.askPrice, borderColor: '#F87171', borderWidth: 1.5, pointRadius: 0 }, 
+                { label: 'Bid (p^b)', data: data.bidPrice, borderColor: '#60A5FA', borderWidth: 1.5, pointRadius: 0 } 
+            ] }, options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Simulación de la Estrategia', font: { size: 16, weight: 'bold' }, color: '#111827' }, legend: { position: 'top', labels: {color: '#111827'} } }, scales: { x: { ticks:{color: '#111827'}, grid: { color: 'rgba(0,0,0,0.1)'} }, y: { ticks:{color: '#111827'}, grid: { color: 'rgba(0,0,0,0.1)'} } } } });
+        };
+
+        const initPnlInventoryCharts = () => {
+            const data = runFullSimulation();
+            new Chart(document.getElementById('pnlChart').getContext('2d'), { type: 'line', data: { labels: data.labels, datasets: [{ label: 'PnL Acumulado', data: data.pnl, borderColor: '#38BDF8', backgroundColor: 'rgba(56, 189, 248, 0.2)', borderWidth: 2, fill: true, pointRadius: 0 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks:{color: '#111827'}, grid: { color: 'rgba(0,0,0,0.1)'} }, y: { title: { display: true, text: 'PnL (€)', color: '#111827' }, ticks:{color: '#111827'}, grid: { color: 'rgba(0,0,0,0.1)'} } } } });
+            new Chart(document.getElementById('inventoryChart').getContext('2d'), { type: 'line', data: { labels: data.labels, datasets: [{ label: 'Inventario (q)', data: data.inventory, borderColor: '#34D399', borderWidth: 2, fill: false, pointRadius: 0, stepped: true }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks:{color: '#111827'}, grid: { color: 'rgba(0,0,0,0.1)'} }, y: { title: { display: true, text: 'Nº de Acciones', color: '#111827' }, ticks:{color: '#111827'}, grid: { color: 'rgba(0,0,0,0.1)'} } } } });
+        };
+
+        const slideInitializers = new Array(totalSlides).fill(null);
+        slideInitializers[4] = initBrownianChart;
+        slideInitializers[5] = initUtilityChart;
+        slideInitializers[15] = initIntensityChart;
+        slideInitializers[38] = initStrategyChart;
+        slideInitializers[39] = initPnlInventoryCharts;
+        
+        document.addEventListener("DOMContentLoaded", function() {
+            setTimeout(renderMath, 100);
+            showSlide(0);
+        });
+
+    </script>
+</body>
+</html>
+

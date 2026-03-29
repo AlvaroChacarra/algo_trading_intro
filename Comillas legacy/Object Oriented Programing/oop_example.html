@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejemplo: Sistema de Trading LOB Avanzado</title>
+    <!-- Incluimos Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
+    <!-- Usaremos la fuente 'Inter' y 'Montserrat' --><link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+    <!-- CSS para el resaltado de sintaxis --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-light.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background: linear-gradient(135deg, #3a506b 0%, #1c2541 100%); /* Gradiente "Quant" */
+        }
+        h1, h2, h3 {
+            font-family: 'Montserrat', sans-serif;
+        }
+        .slide { display: none; }
+        .active-slide { display: block; }
+        pre { white-space: pre-wrap; word-wrap: break-word; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <!-- Slide 1: Título del Ejercicio Práctico --><main id="slide-1" class="slide active-slide bg-white rounded-3xl shadow-2xl p-8 md:p-16 w-full max-w-5xl text-center relative overflow-hidden">
+        <div class="relative z-10">
+            <p class="text-base md:text-lg text-gray-600 font-semibold mb-6 tracking-wide">
+                Presentado por <strong class="text-gray-900">Álvaro López-Chacarra</strong>, <em>Desk Quant BBVA</em>
+            </p>
+            <h1 class="text-5xl md:text-6xl font-extrabold text-gray-900 leading-tight tracking-tighter">
+                <strong>Ejemplo Práctico:</strong><br/>Sistema de Trading con LOB
+            </h1>
+            <p class="mt-6 text-xl md:text-2xl text-gray-700 max-w-4xl mx-auto font-medium">
+                Una demostración de Programación Orientada a Objetos para un sistema de Market Making.
+            </p>
+            <div class="my-10">
+                 <svg class="mx-auto h-28 w-28 text-blue-800" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"/>
+                    <path d="M11 6h2v8h-2V6z"/>
+                    <path d="M11 15h2v2h-2v-2z"/>
+                    <circle cx="12" cy="12" r="8"/>
+                    <path d="M12 4a8 8 0 00-8 8H2c0-5.523 4.477-10 10-10V4z"/>
+                    <path d="M22 12h-2a8 8 0 00-8-8v2c4.411 0 8 3.589 8 8z"/>
+                    <path d="M12 20a8 8 0 008-8h2c0 5.523-4.477 10-10 10v-2z"/>
+                    <path d="M2 12h2a8 8 0 008 8v2c-5.523 0-10-4.477-10-10z"/>
+                    <path d="M11 7h2v5h-2zM11 13h2v2h-2zM11 16h2v1h-2zM11 18h2v1h-2zM11 5h2v1h-2zM11 2h2v1h-2zM11 21h2v1h-2zM11 23h2v1h-2zM1 11h1v2H1zM3 11h1v2H3zM5 11h1v2H5zM18 11h1v2h-1zM20 11h1v2h-1zM22 11h1v2h-1z"/>
+                    <path d="M12.5 7C12.224 7 12 7.224 12 7.5S12.224 8 12.5 8 13 7.776 13 7.5 12.776 7 12.5 7z"/>
+                    <path d="M12.5 10C12.224 10 12 10.224 12 10.5S12.224 11 12.5 11 13 10.776 13 10.5 12.776 10 12.5 10z"/>
+                    <path d="M12.5 13C12.224 13 12 13.224 12 13.5S12.224 14 12.5 14 13 13.776 13 13.5 12.776 13 12.5 13z"/>
+                    <path d="M12.5 16C12.224 16 12 16.224 12 16.5S12.224 17 12.5 17 13 16.776 13 16.5 12.776 16 12.5 16z"/>
+                    <path d="M12 4C8.686 4 6 6.686 6 10h-2c0-4.411 3.589-8 8-8v2z"/>
+                    <path d="M22 12c0-3.314-2.686-6-6-6v-2c4.411 0 8 3.589 8 8h-2z"/>
+                    <path d="M12 20c3.314 0 6-2.686 6-6h2c0 4.411-3.589 8-8 8v-2z"/>
+                    <path d="M4 12c0 3.314 2.686 6 6 6v2c-4.411 0-8-3.589-8-8h2z"/>
+                    <path d="M10 11a1 1 0 100-2 1 1 0 000 2zM14 11a1 1 0 100-2 1 1 0 000 2zM12 15a1 1 0 100-2 1 1 0 000 2z"/>
+                    <path d="M13.293 10.293L12 11.586l-1.293-1.293-1.414 1.414L12 14.414l2.707-2.707z"/>
+                </svg>
+            </div>
+        </div>
+        <div class="absolute bottom-6 right-8 text-lg font-bold text-gray-400">1 / 7</div>
+    </main>
+
+    <!-- Slide 2: Pricing Calculator --><main id="slide-2" class="slide bg-white rounded-3xl shadow-2xl p-8 md:p-12 w-full max-w-6xl relative">
+        <div class="text-center mb-8">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900">Paso 1: El Calculador de Pricing</h2>
+            <p class="mt-4 text-xl text-gray-600">Todo sistema necesita un "precio justo". Lo modelamos con un objeto que encapsula esta lógica.</p>
+        </div>
+        <div class="grid md:grid-cols-2 gap-8 items-start">
+            <div>
+                <h3 class="text-2xl font-bold text-blue-800 mb-4">La Clase `CalculadorPricing`:</h3>
+                <pre class="rounded-xl shadow-lg overflow-hidden"><code class="language-python">class CalculadorPricing:
+    """
+    Un objeto simple cuya única responsabilidad es
+    calcular el precio medio de un activo.
+    """
+    def calcular_mid_price(self, best_bid, best_ask):
+        """Calcula el punto medio entre la mejor compra y venta."""
+        if best_bid is None or best_ask is None:
+            return None # No podemos calcular sin datos
+        
+        mid_price = (best_bid + best_ask) / 2
+        return mid_price
+
+# --- Uso del objeto ---
+# 1. Obtenemos datos del mercado (simulados)
+lob_best_bid = 99.98
+lob_best_ask = 100.02
+
+# 2. Creamos una instancia de nuestro calculador
+pricing_calculator = CalculadorPricing()
+
+# 3. Le pedimos que haga su trabajo
+precio_justo = pricing_calculator.calcular_mid_price(
+    lob_best_bid, 
+    lob_best_ask
+)
+
+print(f"El precio justo (mid-price) es: {precio_justo}")
+# SALIDA: El precio justo (mid-price) es: 100.0
+</code></pre>
+            </div>
+            <div class="space-y-6">
+                <h3 class="text-2xl font-bold text-blue-800 mb-4">Diagrama de Flujo</h3>
+                <div class="bg-gray-50 p-6 rounded-2xl border-2 border-gray-200 shadow-lg text-center">
+                    <p class="font-semibold text-gray-700">Datos del LOB</p>
+                    <div class="flex justify-around items-center my-4">
+                        <div class="bg-green-100 text-green-800 p-3 rounded-lg"><strong>Best Bid:</strong> 99.98</div>
+                        <div class="bg-red-100 text-red-800 p-3 rounded-lg"><strong>Best Ask:</strong> 100.02</div>
+                    </div>
+                    <svg class="w-8 h-8 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
+                    <div class="bg-blue-100 p-4 rounded-lg my-4">
+                        <p class="font-bold text-blue-800">Objeto: `CalculadorPricing`</p>
+                        <p class="font-mono text-blue-700">.calcular_mid_price()</p>
+                    </div>
+                    <svg class="w-8 h-8 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
+                    <div class="bg-indigo-100 text-indigo-800 p-3 rounded-lg mt-4">
+                        <strong>Resultado (Mid-Price):</strong> 100.0
+                    </div>
+                </div>
+                <div class="mt-6 bg-yellow-50 p-4 rounded-lg">
+                    <p class="text-yellow-900"><strong>Encapsulación:</strong> La lógica para calcular el precio está contenida en su propia clase. Si el modelo de pricing cambia (ej. a un VWAP), solo modificamos esta clase, ¡y el resto del sistema no se entera!</p>
+                </div>
+            </div>
+        </div>
+        <div class="absolute bottom-6 right-8 text-lg font-bold text-gray-400">2 / 7</div>
+    </main>
+
+    <!-- Slide 3: Spread Calculator --><main id="slide-3" class="slide bg-white rounded-3xl shadow-2xl p-8 md:p-12 w-full max-w-6xl relative">
+        <div class="text-center mb-8">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900">Paso 2: El Modelo de Quotes y Spread</h2>
+            <p class="mt-4 text-xl text-gray-600">Con el precio justo, ahora decidimos a qué precios queremos comprar (bid) y vender (ask).</p>
+        </div>
+        <div class="grid md:grid-cols-2 gap-8 items-start">
+            <div>
+                <h3 class="text-2xl font-bold text-blue-800 mb-4">La Clase `ModeloDeQuotes`:</h3>
+                <pre class="rounded-xl shadow-lg overflow-hidden"><code class="language-python">class ModeloDeQuotes:
+    """
+    Calcula los precios de compra y venta aplicando
+    un spread alrededor del precio medio.
+    """
+    def calcular_quotes(self, mid_price, spread_bps):
+        """Calcula bid y ask a partir del mid-price."""
+        if mid_price is None:
+            return None, None
+            
+        spread = mid_price * (spread_bps / 10000) / 2
+        
+        # Nuestros precios para operar
+        bid_quote = mid_price - spread
+        ask_quote = mid_price + spread
+        
+        # Redondeamos a 2 decimales para que sean precios válidos
+        return round(bid_quote, 2), round(ask_quote, 2)
+
+# --- Uso del objeto ---
+# 1. Usamos el mid-price del paso anterior
+precio_justo = 100.0
+
+# 2. Definimos nuestro spread (ej. 4 basis points)
+spread_deseado_bps = 4
+
+# 3. Creamos una instancia de nuestro modelo
+quoting_model = ModeloDeQuotes()
+
+# 4. Le pedimos que calcule nuestros precios
+mi_bid, mi_ask = quoting_model.calcular_quotes(
+    precio_justo, 
+    spread_deseado_bps
+)
+
+print(f"Mi quote es: Bid={mi_bid} | Ask={mi_ask}")
+# SALIDA: Mi quote es: Bid=99.98 | Ask=100.02
+</code></pre>
+            </div>
+            <div class="space-y-6">
+                <h3 class="text-2xl font-bold text-blue-800 mb-4">Diagrama de Flujo</h3>
+                <div class="bg-gray-50 p-6 rounded-2xl border-2 border-gray-200 shadow-lg text-center">
+                    <p class="font-semibold text-gray-700">Input</p>
+                    <div class="bg-indigo-100 text-indigo-800 p-3 rounded-lg my-4">
+                        <strong>Mid-Price:</strong> 100.0
+                    </div>
+                    <svg class="w-8 h-8 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                    <div class="bg-yellow-100 text-yellow-800 p-3 rounded-lg my-4">
+                        <strong>Spread:</strong> 4 bps
+                    </div>
+                    <svg class="w-8 h-8 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
+                    <div class="bg-blue-100 p-4 rounded-lg my-4">
+                        <p class="font-bold text-blue-800">Objeto: `ModeloDeQuotes`</p>
+                        <p class="font-mono text-blue-700">.calcular_quotes()</p>
+                    </div>
+                    <svg class="w-8 h-8 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
+                     <div class="flex justify-around items-center mt-4">
+                        <div class="bg-green-100 text-green-800 p-3 rounded-lg"><strong>New Bid:</strong> 99.98</div>
+                        <div class="bg-red-100 text-red-800 p-3 rounded-lg"><strong>New Ask:</strong> 100.02</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="absolute bottom-6 right-8 text-lg font-bold text-gray-400">3 / 7</div>
+    </main>
+
+    <!-- Slide 4: Order Manager --><main id="slide-4" class="slide bg-white rounded-3xl shadow-2xl p-8 md:p-12 w-full max-w-6xl relative">
+        <div class="text-center mb-8">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900">Paso 3: El Gestor de Órdenes y el LOB</h2>
+            <p class="mt-4 text-xl text-gray-600">Con nuestros precios, creamos órdenes y las enviamos al mercado (nuestro LOB simulado).</p>
+        </div>
+        <div class="grid md:grid-cols-2 gap-8 items-start">
+            <div>
+                <h3 class="text-2xl font-bold text-blue-800 mb-4">Poniéndolo todo junto:</h3>
+                <pre class="rounded-xl shadow-lg overflow-hidden"><code class="language-python"># Clase para representar una orden
+class Orden:
+    def __init__(self, side, price, qty):
+        self.side = side # "buy" o "sell"
+        self.price = price
+        self.qty = qty
+    def __repr__(self): # Para que se imprima de forma legible
+        return f"Orden({self.side}, P={self.price}, Q={self.qty})"
+
+# Simulación de nuestro libro de órdenes
+class LimitOrderBook:
+    def __init__(self):
+        self.ordenes = []
+    def add_order(self, orden):
+        print(f"📬 Enviando orden al LOB: {orden}")
+        self.ordenes.append(orden)
+
+# --- Flujo completo ---
+# 1. Usamos los precios del paso anterior
+mi_bid, mi_ask = 99.98, 100.02
+cantidad = 10
+
+# 2. Creamos los objetos Orden
+orden_de_compra = Orden("buy", mi_bid, cantidad)
+orden_de_venta = Orden("sell", mi_ask, cantidad)
+
+# 3. Creamos una instancia de nuestro LOB
+lob = LimitOrderBook()
+
+# 4. Enviamos las órdenes
+lob.add_order(orden_de_compra)
+lob.add_order(orden_de_venta)
+
+print("\nÓrdenes en el libro:", lob.ordenes)
+# SALIDA: 📬 Enviando orden al LOB: Orden(buy, P=99.98, Q=10)
+# SALIDA: 📬 Enviando orden al LOB: Orden(sell, P=100.02, Q=10)
+# SALIDA: Órdenes en el libro: [Orden(buy, ...), Orden(sell, ...)]
+</code></pre>
+            </div>
+            <div class="space-y-6">
+                <h3 class="text-2xl font-bold text-blue-800 mb-4">La Orquesta de Objetos</h3>
+                 <p class="text-lg text-gray-700">El `GestorDeOrdenes` (nuestro script principal) actúa como el director de orquesta, coordinando los diferentes objetos, cada uno con su responsabilidad única:</p>
+                
+                <div class="bg-gray-50 p-4 rounded-lg border-l-4 border-gray-400">
+                    <p><strong>`CalculadorPricing`</strong>: Sabe de precios.</p>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg border-l-4 border-gray-400">
+                    <p><strong>`ModeloDeQuotes`</strong>: Sabe de spreads y quotes.</p>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg border-l-4 border-gray-400">
+                    <p><strong>`Orden`</strong>: Sabe representar una orden.</p>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg border-l-4 border-gray-400">
+                    <p><strong>`LimitOrderBook`</strong>: Sabe cómo gestionar un libro de órdenes.</p>
+                </div>
+
+                <div class="mt-6 bg-green-50 p-6 rounded-2xl border-2 border-green-200">
+                    <h4 class="font-bold text-lg text-green-900">¿Por Qué Es Mejor Así?</h4>
+                    <p class="text-gray-700">Separar las responsabilidades hace que el sistema sea:</p>
+                    <ul class="list-disc list-inside mt-2">
+                        <li><strong>Fácil de testear:</strong> Podemos probar el `CalculadorPricing` de forma aislada.</li>
+                        <li><strong>Fácil de modificar:</strong> Si queremos un spread dinámico, solo cambiamos `ModeloDeQuotes`.</li>
+                        <li><strong>Fácil de entender:</strong> Cada clase tiene un propósito claro y definido.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="absolute bottom-6 right-8 text-lg font-bold text-gray-400">4 / 7</div>
+    </main>
+
+    <!-- Slide 5: The Strategy Orchestrator --><main id="slide-5" class="slide bg-white rounded-3xl shadow-2xl p-8 md:p-12 w-full max-w-6xl relative">
+        <div class="text-center mb-8">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900">Paso 4: La Estrategia (El Orquestador)</h2>
+            <p class="mt-4 text-xl text-gray-600">Creamos un objeto "jefe" que contiene a nuestros calculadores. A esto se le llama <strong>Composición</strong>.</p>
+        </div>
+        <div class="grid md:grid-cols-2 gap-8 items-start">
+            <div>
+                <h3 class="text-2xl font-bold text-blue-800 mb-4">La Clase `TradingStrategy`:</h3>
+                <pre class="rounded-xl shadow-lg overflow-hidden"><code class="language-python">class TradingStrategy:
+    """
+    Este objeto contiene otros objetos y orquesta el flujo.
+    Un objeto "TIENE UN" CalculadorPricing.
+    Un objeto "TIENE UN" ModeloDeQuotes.
+    """
+    def __init__(self, spread_bps):
+        # La estrategia CREA y GUARDA sus herramientas
+        self.pricing_model = CalculadorPricing()
+        self.quoting_model = ModeloDeQuotes()
+        self.spread_bps = spread_bps
+
+    def generar_quotes(self, best_bid, best_ask):
+        """
+        Orquesta el flujo:
+        1. Calcula el mid-price usando su herramienta.
+        2. Calcula los quotes usando su otra herramienta.
+        """
+        mid_price = self.pricing_model.calcular_mid_price(
+            best_bid, best_ask
+        )
+        
+        bid, ask = self.quoting_model.calcular_quotes(
+            mid_price, self.spread_bps
+        )
+        
+        return bid, ask
+
+# --- Uso ---
+# Creamos una instancia de la estrategia completa
+mi_estrategia = TradingStrategy(spread_bps=4)
+
+# Le damos los datos del mercado y nos devuelve los quotes
+mi_bid, mi_ask = mi_estrategia.generar_quotes(99.98, 100.02)
+
+print(f"La estrategia ha generado: Bid={mi_bid} | Ask={mi_ask}")
+# SALIDA: La estrategia ha generado: Bid=99.98 | Ask=100.02
+</code></pre>
+            </div>
+            <div class="space-y-6">
+                <h3 class="text-2xl font-bold text-blue-800 mb-4">Composición vs. Herencia</h3>
+                 <div class="bg-blue-50 p-6 rounded-2xl border-2 border-blue-200">
+                    <h4 class="font-bold text-lg text-blue-900">Herencia (ES UN)</h4>
+                    <p class="text-gray-700">Un `Coche` <strong>ES UN</strong> `Vehiculo`. Es una relación de tipo.</p>
+                </div>
+                 <div class="bg-green-50 p-6 rounded-2xl border-2 border-green-200">
+                    <h4 class="font-bold text-lg text-green-900">Composición (TIENE UN)</h4>
+                    <p class="text-gray-700">Una `TradingStrategy` <strong>TIENE UN</strong> `CalculadorPricing`. No es un tipo de calculador, sino que lo usa como herramienta.</p>
+                </div>
+                <div class="mt-6 bg-yellow-50 p-4 rounded-lg">
+                    <p class="text-yellow-900"><strong>Abstracción en acción:</strong> Desde fuera, solo necesitamos llamar a `mi_estrategia.generar_quotes()`. No nos importa cómo calcula el mid-price o el spread, toda esa complejidad está oculta (abstraída) dentro del objeto.</p>
+                </div>
+            </div>
+        </div>
+        <div class="absolute bottom-6 right-8 text-lg font-bold text-gray-400">5 / 7</div>
+    </main>
+
+    <!-- Slide 6: Data as an Object --><main id="slide-6" class="slide bg-white rounded-3xl shadow-2xl p-8 md:p-12 w-full max-w-6xl relative">
+        <div class="text-center mb-8">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900">Paso 5: Los Datos Como Objetos</h2>
+            <p class="mt-4 text-xl text-gray-600">En lugar de pasar muchos argumentos, pasamos un solo objeto que contiene toda la información.</p>
+        </div>
+        <div class="grid md:grid-cols-2 gap-8 items-start">
+            <div>
+                <h3 class="text-2xl font-bold text-blue-800 mb-4">La Clase `DatosMercado`:</h3>
+                <pre class="rounded-xl shadow-lg overflow-hidden"><code class="language-python">from dataclasses import dataclass
+
+@dataclass
+class DatosMercado:
+    """Un objeto simple para agrupar datos de entrada."""
+    best_bid: float
+    best_ask: float
+    timestamp: int
+
+# --- Refactorizamos la estrategia para aceptar este objeto ---
+class TradingStrategy:
+    def __init__(self, spread_bps):
+        self.pricing_model = CalculadorPricing()
+        self.quoting_model = ModeloDeQuotes()
+        self.spread_bps = spread_bps
+
+    def generar_quotes(self, datos: DatosMercado):
+        # Ahora el método es más limpio, solo recibe un objeto
+        mid_price = self.pricing_model.calcular_mid_price(
+            datos.best_bid, datos.best_ask
+        )
+        bid, ask = self.quoting_model.calcular_quotes(
+            mid_price, self.spread_bps
+        )
+        return bid, ask
+
+# --- Uso ---
+# 1. Creamos un objeto con los datos del mercado
+datos_actuales = DatosMercado(
+    best_bid=99.98,
+    best_ask=100.02,
+    timestamp=1678886400
+)
+
+# 2. La llamada al método es mucho más limpia
+mi_estrategia = TradingStrategy(spread_bps=4)
+mi_bid, mi_ask = mi_estrategia.generar_quotes(datos_actuales)
+
+print(f"Quote generado a partir de objeto de datos: Bid={mi_bid}")
+# SALIDA: Quote generado a partir de objeto de datos: Bid=99.98
+</code></pre>
+            </div>
+            <div class="space-y-6">
+                <h3 class="text-2xl font-bold text-blue-800 mb-4">¿Por Qué Hacer Esto?</h3>
+                <div class="bg-red-50 p-4 rounded-lg border-l-4 border-red-400">
+                    <h4 class="font-bold text-lg text-red-900">Antes (Frágil)</h4>
+                    <p class="font-mono text-gray-700">def generar_quotes(self, bid, ask, vol, timestamp, ...):</p>
+                    <p class="mt-2 text-gray-700">Si queremos añadir un nuevo dato (ej. `last_trade_price`), ¡tenemos que cambiar la definición del método en todos sitios!</p>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-400">
+                    <h4 class="font-bold text-lg text-green-900">Ahora (Robusto y Escalable)</h4>
+                    <p class="font-mono text-gray-700">def generar_quotes(self, datos: DatosMercado):</p>
+                    <p class="mt-2 text-gray-700">Si queremos añadir `last_trade_price`, solo lo añadimos a la clase `DatosMercado`. ¡El método `generar_quotes` no necesita cambiar!</p>
+                </div>
+            </div>
+        </div>
+        <div class="absolute bottom-6 right-8 text-lg font-bold text-gray-400">6 / 7</div>
+    </main>
+
+    <!-- Slide 7: The Complete Flow --><main id="slide-7" class="slide active-slide bg-white rounded-3xl shadow-2xl p-8 md:p-12 w-full max-w-6xl relative">
+        <div class="text-center mb-8">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900">Paso 6: El Flujo Avanzado y Completo</h2>
+            <p class="mt-4 text-xl text-gray-600">Así se ve la "orquesta" de objetos trabajando en armonía.</p>
+        </div>
+        <div class="flex flex-col xl:flex-row gap-6">
+            <div class="w-full xl:w-1/2">
+                <h3 class="text-2xl font-bold text-blue-800 mb-4">El Script Principal:</h3>
+                <pre class="rounded-xl shadow-lg overflow-hidden h-full"><code class="language-python"># ... (Definiciones de todas las clases anteriores)
+# CalculadorPricing, ModeloDeQuotes, Orden, LimitOrderBook
+# DatosMercado, TradingStrategy
+
+# --- Punto de Entrada Principal (main) ---
+
+# 1. Creamos nuestras herramientas y el mercado
+mi_estrategia = TradingStrategy(spread_bps=4)
+lob = LimitOrderBook()
+cantidad_orden = 10
+
+# 2. Llega un nuevo "tick" de datos del mercado
+datos_tick_1 = DatosMercado(99.98, 100.02, 1)
+
+# 3. La estrategia procesa los datos y genera quotes
+bid, ask = mi_estrategia.generar_quotes(datos_tick_1)
+
+# 4. Creamos objetos Orden con esos quotes
+orden_compra = Orden("buy", bid, cantidad_orden)
+orden_venta = Orden("sell", ask, cantidad_orden)
+
+# 5. Enviamos las órdenes al LOB
+lob.add_order(orden_compra)
+lob.add_order(orden_venta)
+
+# --- Llega otro tick ---
+datos_tick_2 = DatosMercado(100.01, 100.05, 2)
+bid, ask = mi_estrategia.generar_quotes(datos_tick_2)
+# ... y el ciclo se repite ...
+</code></pre>
+            </div>
+            <div class="w-full xl:w-1/2 space-y-4">
+                <h3 class="text-2xl font-bold text-blue-800 mb-4">El Poder de la Abstracción</h3>
+                <p class="text-lg text-gray-700">Observa lo limpio y legible que es el script principal. Es como leer un resumen de alto nivel de lo que hace el sistema, porque cada objeto esconde su propia complejidad.</p>
+                <div class="bg-indigo-50 p-6 rounded-2xl border-2 border-indigo-200">
+                    <ul class="space-y-4">
+                        <li class="flex items-center"><span class="text-indigo-500 mr-3"><strong>1.</strong></span> <span>Crea los actores: `Estrategia`, `Mercado`.</span></li>
+                        <li class="flex items-center"><span class="text-indigo-500 mr-3"><strong>2.</strong></span> <span>Recibe `Datos`.</span></li>
+                        <li class="flex items-center"><span class="text-indigo-500 mr-3"><strong>3.</strong></span> <span>La `Estrategia` genera `Quotes`.</span></li>
+                        <li class="flex items-center"><span class="text-indigo-500 mr-3"><strong>4.</strong></span> <span>Crea `Órdenes`.</span></li>
+                        <li class="flex items-center"><span class="text-indigo-500 mr-3"><strong>5.</strong></span> <span>Envía al `Mercado`.</span></li>
+                    </ul>
+                </div>
+                <div class="mt-6 bg-green-50 p-6 rounded-2xl border-2 border-green-200">
+                    <h4 class="font-bold text-lg text-green-900">Un Sistema Preparado para Crecer</h4>
+                    <p class="text-gray-700">Este diseño nos permite:</p>
+                    <ul class="list-disc list-inside mt-2">
+                        <li><strong>Añadir Estrategias:</strong> Crear una `TrendingStrategy(TradingStrategy)` que herede y cambie el cálculo del spread.</li>
+                        <li><strong>Cambiar el Mercado:</strong> Reemplazar `LimitOrderBook` por una conexión a un exchange real (`BinanceGateway`) sin cambiar la estrategia.</li>
+                        <li><strong>Trabajar en Equipo:</strong> Un desarrollador puede mejorar `CalculadorPricing` mientras otro trabaja en el `LimitOrderBook`, ¡sin pisarse!</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="absolute bottom-6 right-8 text-lg font-bold text-gray-400">7 / 7</div>
+    </main>
+
+    <!-- Controles de Navegación --><div class="fixed bottom-8 right-8 z-50 flex space-x-4">
+        <button onclick="changeSlide(-1)" class="bg-white rounded-full p-4 shadow-lg hover:bg-gray-200 transition-colors">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+        </button>
+        <button onclick="changeSlide(1)" class="bg-white rounded-full p-4 shadow-lg hover:bg-gray-200 transition-colors">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </button>
+    </div>
+
+    <!-- Librería JS para el resaltado de sintaxis --><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active-slide', i === index);
+                slide.classList.toggle('hidden', i !== index);
+            });
+        }
+        
+        function changeSlide(direction) {
+            if(slides[currentSlideIndex]) {
+                slides[currentSlideIndex].classList.remove('active-slide');
+                slides[currentSlideIndex].classList.add('hidden');
+            }
+            currentSlideIndex = (currentSlideIndex + direction + slides.length) % slides.length;
+            if(slides[currentSlideIndex]) {
+                slides[currentSlideIndex].classList.add('active-slide');
+                slides[currentSlideIndex].classList.remove('hidden');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            hljs.highlightAll();
+            let foundActive = false;
+            slides.forEach((slide, index) => {
+                if (slide.classList.contains('active-slide')) {
+                    currentSlideIndex = index;
+                    foundActive = true;
+                }
+            });
+            if (!foundActive && slides.length > 0) {
+                currentSlideIndex = 0;
+                slides[0].classList.add('active-slide');
+            }
+            showSlide(currentSlideIndex);
+        });
+    </script>
+</body>
+</html>
+

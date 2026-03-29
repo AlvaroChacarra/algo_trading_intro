@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentación Filtro de Kalman</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Librerías para LaTeX y Gráficos -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" xintegrity="sha384-n8MVd4RsNIU0KOVEMeaYGqrkPcDtMERNFYViLaUjDWzHRod5ADMo2pcRmwfrHHaK" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" xintegrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctApi0givMi" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" xintegrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '\\[', right: '\\]', display: true},
+                    {left: '\\(', right: '\\)', display: false} // Cambiado de $ a \( \)
+                ]
+            });
+
+            // --- GRÁFICO SEÑAL VS RUIDO ---
+            if (document.getElementById('signalNoiseChart')) {
+                const labels = Array.from({ length: 50 }, (_, i) => i);
+                const signal = labels.map(x => 100 + 5 * Math.sin(x / 5));
+                const noise = signal.map(y => y + (Math.random() - 0.5) * 8);
+
+                const ctx = document.getElementById('signalNoiseChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Precio Justo (La Señal Oculta)',
+                                data: signal,
+                                borderColor: '#004481',
+                                borderWidth: 4,
+                                pointRadius: 0,
+                                tension: 0.4
+                            },
+                            {
+                                label: 'Operaciones (Observaciones Ruidosas)',
+                                data: noise,
+                                type: 'scatter',
+                                backgroundColor: 'rgba(239, 68, 68, 0.7)',
+                                pointRadius: 5,
+                                pointHoverRadius: 8
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    font: { size: 14 }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                display: false
+                            },
+                            y: {
+                                ticks: {
+                                    callback: function(value) {
+                                        return value.toFixed(0) + '€';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // --- GRÁFICO RANDOM WALK ---
+            if (document.getElementById('randomWalkChart')) {
+                const labels = Array.from({ length: 100 }, (_, i) => i);
+                let lastVal = 100;
+                const randomWalkData = [lastVal];
+                for (let i = 1; i < labels.length; i++) {
+                    lastVal += (Math.random() - 0.5) * 2;
+                    randomWalkData.push(lastVal);
+                }
+
+                const ctx = document.getElementById('randomWalkChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Camino Aleatorio (Random Walk)',
+                            data: randomWalkData,
+                            borderColor: '#004481',
+                            borderWidth: 3,
+                            pointRadius: 0,
+                            tension: 0.1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'Ejemplo de un Camino Aleatorio',
+                                font: { size: 16 }
+                            }
+                        },
+                        scales: {
+                             x: { display: false },
+                             y: {
+                                ticks: {
+                                    callback: function(value) { return value.toFixed(0) + '€'; }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // --- GRÁFICO KALMAN FILTER EN ACCIÓN (VERSIÓN PEDAGÓGICA) ---
+            if (document.getElementById('kalmanFilterChart')) {
+                // 1. Simulación de datos
+                const n_points = 100;
+                const labels = Array.from({ length: n_points }, (_, i) => `t=${i}`);
+                
+                // El "precio justo" real (la verdad oculta), con una ligera deriva
+                const true_signal = labels.map((_, i) => 100 + i * 0.05);
+
+                // Una ÚNICA observación fiable en el instante t=60
+                const observation_time = 60;
+                const observation_noise_std = 0.1; // Muy poco ruido
+                const observations = labels.map((_, i) => {
+                    if (i === observation_time) {
+                        return true_signal[i] + (Math.random() - 0.5) * 2 * observation_noise_std;
+                    }
+                    return null; // No hay observaciones en el resto de instantes
+                });
+
+                // 2. Implementación del Filtro de Kalman
+                let x_hat = 98; // Empezamos con una estimación inicial incorrecta
+                let P = 1.0;  // Incertidumbre inicial pequeña
+                const Q = 0.05**2; // Varianza del ruido del proceso (cómo de rápido crece la incertidumbre)
+                const R = observation_noise_std**2; // Varianza del ruido de la medida (fiabilidad del trade)
+
+                const kalman_estimate = [];
+                const uncertainty_upper = [];
+                const uncertainty_lower = [];
+
+                for (let i = 0; i < n_points; i++) {
+                    // --- Paso de Predicción (siempre ocurre) ---
+                    let x_hat_predict = x_hat; // La mejor predicción es el estado anterior
+                    let P_predict = P + Q;     // La incertidumbre siempre crece
+
+                    // --- Paso de Actualización (SOLO si hay un trade) ---
+                    if (observations[i] !== null) {
+                        const K = P_predict / (P_predict + R); // Kalman Gain
+                        x_hat = x_hat_predict + K * (observations[i] - x_hat_predict); // Corrección
+                        P = (1 - K) * P_predict; // La incertidumbre colapsa
+                    } else {
+                        // Si no hay trade, la nueva estimación es la predicción
+                        x_hat = x_hat_predict;
+                        P = P_predict;
+                    }
+
+                    kalman_estimate.push(x_hat);
+                    uncertainty_upper.push(x_hat + 2 * Math.sqrt(P));
+                    uncertainty_lower.push(x_hat - 2 * Math.sqrt(P));
+                }
+
+                // 3. Creación del Gráfico
+                const ctx = document.getElementById('kalmanFilterChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Incertidumbre (±2σ)',
+                                data: uncertainty_upper,
+                                borderColor: 'rgba(0, 68, 129, 0.2)',
+                                backgroundColor: 'rgba(0, 68, 129, 0.1)',
+                                fill: '+1',
+                                pointRadius: 0,
+                                borderWidth: 1,
+                            },
+                            {
+                                label: 'Lower Bound',
+                                data: uncertainty_lower,
+                                borderColor: 'rgba(0, 68, 129, 0.2)',
+                                backgroundColor: 'rgba(0, 68, 129, 0.1)',
+                                fill: false,
+                                pointRadius: 0,
+                                borderWidth: 1,
+                            },
+                            {
+                                label: 'Estimación de Kalman',
+                                data: kalman_estimate,
+                                borderColor: '#004481',
+                                borderWidth: 3,
+                                pointRadius: 0,
+                                tension: 0.1,
+                                borderDash: [5, 5]
+                            },
+                             {
+                                label: 'Precio Justo Real (Oculto)',
+                                data: true_signal,
+                                borderColor: 'rgba(0, 0, 0, 0.3)',
+                                borderWidth: 2,
+                                pointRadius: 0,
+                                tension: 0.1
+                            },
+                            {
+                                label: 'Trade Observado',
+                                data: observations,
+                                type: 'scatter',
+                                backgroundColor: 'rgba(239, 68, 68, 1)',
+                                pointRadius: 6,
+                                pointHoverRadius: 8,
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'El Filtro de Kalman en Acción',
+                                font: { size: 16 }
+                            },
+                            legend: { 
+                                position: 'bottom',
+                                labels: {
+                                    filter: item => item.text !== 'Lower Bound'
+                                }
+                             }
+                        },
+                        scales: {
+                            x: { 
+                                ticks: {
+                                    callback: function(val, index) {
+                                        return index % 10 === 0 ? this.getLabelForValue(val) : '';
+                                    }
+                                }
+                             },
+                            y: { 
+                                ticks: {
+                                    callback: function(value) { return value.toFixed(0) + '€'; }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+             // --- GRÁFICO MULTI-ASSET DATA ---
+            if (document.getElementById('multiAssetDataChart')) {
+                const n = 100;
+                const rho = 0.98;
+                let sA = 100, sB = 102;
+                const seriesA = [sA];
+                const seriesB = [sB];
+
+                for (let i = 1; i < n; i++) {
+                    const z1 = (Math.random() - 0.5) * 2;
+                    const z2 = (Math.random() - 0.5) * 2;
+                    sA += 0.2 * z1;
+                    sB += 0.2 * (rho * z1 + Math.sqrt(1 - rho**2) * z2) + 0.02; // B has a slight drift
+                    seriesA.push(sA);
+                    seriesB.push(sB);
+                }
+
+                const tradesA = [{x: 60, y: seriesA[60] + 0.1}];
+                const tradesB = [{x: 20, y: seriesB[20]-0.1}, {x: 40, y: seriesB[40]+0.1}, {x: 70, y: seriesB[70]-0.1}, {x: 90, y: seriesB[90]+0.2}];
+
+                const ctx = document.getElementById('multiAssetDataChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: Array.from({length: n}, (_, i) => i),
+                        datasets: [
+                            { label: 'Activo A (Ilíquido)', data: seriesA, borderColor: '#004481', borderWidth: 3, pointRadius: 0 },
+                            { label: 'Activo B (Líquido)', data: seriesB, borderColor: '#22c55e', borderWidth: 3, pointRadius: 0 },
+                            { label: 'Trade Activo A', data: tradesA, type: 'scatter', backgroundColor: 'red', pointRadius: 6 },
+                            { label: 'Trades Activo B', data: tradesB, type: 'scatter', backgroundColor: 'green', pointRadius: 6 }
+                        ]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' }}}
+                });
+            }
+
+            // --- GRÁFICO MULTI-ASSET FILTER ---
+            if (document.getElementById('multiAssetFilterChart')) {
+                const n = 100;
+                const rho = 0.98;
+                const varA = 0.2**2;
+                const varB = 0.2**2;
+                const cov = rho * Math.sqrt(varA * varB);
+                
+                let sA = 100, sB = 102;
+                const trueA = [sA];
+                const trueB = [sB];
+                for (let i = 1; i < n; i++) {
+                    const z1 = (Math.random() - 0.5) * 2;
+                    const z2 = (Math.random() - 0.5) * 2;
+                    sA += Math.sqrt(varA) * z1;
+                    sB += Math.sqrt(varB) * (rho * z1 + Math.sqrt(1 - rho**2) * z2) + 0.02;
+                    trueA.push(sA);
+                    trueB.push(sB);
+                }
+
+                const obs = Array(n).fill(null);
+                const obs_type = Array(n).fill(null);
+                obs[20] = trueB[20] - 0.1; obs_type[20] = 'B';
+                obs[40] = trueB[40] + 0.1; obs_type[40] = 'B';
+                obs[60] = trueA[60] + 0.1; obs_type[60] = 'A';
+                obs[70] = trueB[70] - 0.1; obs_type[70] = 'B';
+                obs[90] = trueB[90] + 0.2; obs_type[90] = 'B';
+
+                let x_hat = [99, 101]; // [mA, mB]
+                let P = [[1, 0.9], [0.9, 1]];
+                const Q = [[varA, cov], [cov, varB]];
+                const R = 0.1**2;
+
+                const estA = [];
+                const pA_upper = [];
+                const pA_lower = [];
+
+                for (let i = 0; i < n; i++) {
+                    // Predict
+                    let x_hat_pred = x_hat;
+                    let P_pred = [[P[0][0] + Q[0][0], P[0][1] + Q[0][1]], [P[1][0] + Q[1][0], P[1][1] + Q[1][1]]];
+
+                    // Update
+                    if (obs[i]) {
+                        const H = (obs_type[i] === 'A') ? [1, 0] : [0, 1];
+                        const y = obs[i];
+                        const y_pred = H[0]*x_hat_pred[0] + H[1]*x_hat_pred[1];
+                        const S = (H[0]*(P_pred[0][0]*H[0] + P_pred[0][1]*H[1]) + H[1]*(P_pred[1][0]*H[0] + P_pred[1][1]*H[1])) + R;
+                        const K = [(P_pred[0][0]*H[0] + P_pred[0][1]*H[1])/S, (P_pred[1][0]*H[0] + P_pred[1][1]*H[1])/S];
+
+                        x_hat = [x_hat_pred[0] + K[0]*(y - y_pred), x_hat_pred[1] + K[1]*(y - y_pred)];
+                        
+                        const I_KH = [[1 - K[0]*H[0], -K[0]*H[1]], [-K[1]*H[0], 1 - K[1]*H[1]]];
+                        P = [[ I_KH[0][0]*P_pred[0][0] + I_KH[0][1]*P_pred[1][0], I_KH[0][0]*P_pred[0][1] + I_KH[0][1]*P_pred[1][1] ],
+                             [ I_KH[1][0]*P_pred[0][0] + I_KH[1][1]*P_pred[1][0], I_KH[1][0]*P_pred[0][1] + I_KH[1][1]*P_pred[1][1] ]];
+                    } else {
+                        x_hat = x_hat_pred;
+                        P = P_pred;
+                    }
+                    estA.push(x_hat[0]);
+                    pA_upper.push(x_hat[0] + 1.96 * Math.sqrt(P[0][0]));
+                    pA_lower.push(x_hat[0] - 1.96 * Math.sqrt(P[0][0]));
+                }
+                
+                const tradesA_pts = obs.map((v, i) => obs_type[i] === 'A' ? {x: i, y: v} : null).filter(v => v);
+                const tradesB_pts = obs.map((v, i) => obs_type[i] === 'B' ? {x: i, y: v} : null).filter(v => v);
+
+                const ctx = document.getElementById('multiAssetFilterChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: Array.from({length: n}, (_, i) => i),
+                        datasets: [
+                             { label: 'Incertidumbre Activo A', data: pA_upper, fill: '+1', backgroundColor: 'rgba(0, 68, 129, 0.1)', borderColor: 'transparent', pointRadius: 0},
+                             { label: 'Lower Bound', data: pA_lower, fill: false, borderColor: 'transparent', pointRadius: 0},
+                             { label: 'Estimación Activo A', data: estA, borderColor: '#004481', borderWidth: 3, pointRadius: 0, borderDash: [5, 5]},
+                             { label: 'Trade Activo A', data: tradesA_pts, type: 'scatter', backgroundColor: 'red', pointRadius: 6 },
+                             { label: 'Trades Activo B (Info Externa)', data: tradesB_pts, type: 'scatter', backgroundColor: 'green', pointRadius: 6, pointStyle: 'triangle' },
+                        ]
+                    },
+                     options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels:{ filter: item => item.text !== 'Lower Bound' } }}}
+                });
+            }
+        });
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap');
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: #e5e7eb; /* A light grey background for the page */
+        }
+        .slide {
+            width: 90vw; /* Use 90% of the viewport width */
+            max-width: 1280px; /* Set a max width */
+            margin: 5vh auto; /* Center with vertical margin */
+            aspect-ratio: 16 / 9; /* Enforce 16:9 aspect ratio */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #FFFFFF;
+            color: #111827;
+            padding: 2rem 3rem;
+            box-sizing: border-box;
+            position: relative;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            overflow: hidden; /* Prevent content from spilling out */
+        }
+        .slide.no-header {
+            padding-top: 2rem;
+        }
+        .section-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 0.5rem 2rem;
+            text-align: right;
+            font-weight: 700;
+            font-size: 0.9rem;
+            background-color: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+            color: #6b7280;
+            text-transform: uppercase;
+        }
+        .highlight { color: #004481; }
+        .card { background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1.5rem; text-align: left; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
+        th, td { padding: 1rem; text-align: left; vertical-align: top; border-bottom: 1px solid #e5e7eb; }
+        th { font-weight: 900; }
+        @media print {
+            body, html { height: auto; background-color: #FFFFFF !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .slide {
+                width: 100%;
+                height: 100vh;
+                page-break-after: always;
+                box-shadow: none;
+                border: none;
+                margin: 0;
+                aspect-ratio: auto; /* Revert aspect ratio for printing */
+            }
+            .slide:last-child { page-break-after: avoid; }
+            .section-header { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- === DIAPOSITIVA 1: PORTADA === -->
+    <section class="slide no-header">
+        <div class="w-full max-w-5xl text-center">
+            <h1 class="text-5xl md:text-6xl font-black uppercase tracking-wider mb-6">
+                Estimando el <strong class="highlight">Precio Justo</strong><br>con el Filtro de Kalman
+            </h1>
+            <h2 class="text-2xl md:text-3xl font-light text-gray-500 mb-12">
+                Una guía intuitiva para separar la señal del ruido en los mercados financieros.
+            </h2>
+            <div class="w-48 h-1 bg-blue-800 mx-auto mb-12"></div>
+            <div class="bg-gray-100 p-6 rounded-lg border border-gray-300 max-w-3xl mx-auto">
+                <p class="text-xl md:text-2xl text-gray-800">
+                    <strong class="highlight">Objetivo:</strong> Aprender a construir una estimación robusta del <em>fair price</em> en tiempo real, incluso con información imperfecta y "ruidosa".
+                </p>
+            </div>
+            <div class="mt-16 text-right w-full">
+                <p class="text-lg text-gray-500">Presentado por:</p>
+                <p class="text-xl font-bold highlight">Álvaro López-Chacarra, Desk Quant BBVA</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- === DIAPOSITIVA 2: SEÑAL VS RUIDO === -->
+    <section class="slide">
+        <div class="section-header">Parte I: La Intuición</div>
+        <div class="w-full max-w-6xl h-full flex flex-col">
+            <div class="text-center shrink-0">
+                <h1 class="text-3xl md:text-4xl font-black uppercase mb-2">El Problema Fundamental</h1>
+                <p class="text-lg text-gray-600 mb-6 max-w-4xl mx-auto">El <strong class="highlight">"precio justo"</strong> de un activo es una señal invisible que evoluciona suavemente. Lo que vemos en el mercado son <strong class="text-red-600">operaciones</strong>, observaciones ruidosas afectadas por mil factores.</p>
+            </div>
+            <div class="flex-grow w-full bg-gray-50 p-4 rounded-lg border border-gray-200 shadow-inner">
+                <canvas id="signalNoiseChart"></canvas>
+            </div>
+            <div class="shrink-0 mt-8 bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded-r-lg max-w-3xl mx-auto">
+                <h3 class="text-xl font-bold text-yellow-800 mb-2"><i class="fas fa-question-circle mr-2"></i>La Gran Pregunta</h3>
+                <p class="text-lg text-yellow-700">¿Cómo podemos estimar la <strong class="font-semibold">línea azul</strong> (la verdad oculta) si solo podemos ver los <strong class="font-semibold">puntos rojos</strong> (la evidencia ruidosa)?</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- === DIAPOSITIVA 3: LA ANALOGÍA DEL CHARCUTERO === -->
+    <section class="slide">
+        <div class="section-header">Parte I: La Intuición</div>
+        <div class="w-full max-w-7xl text-center">
+            <h1 class="text-3xl md:text-4xl font-black uppercase mb-6">La Solución Intuitiva: El Charcutero Experto</h1>
+            <p class="text-lg text-gray-600 mb-8 max-w-4xl mx-auto">Imagina que pides 500g de jamón, pero la báscula del charcutero no es fiable: a veces marca de más, a veces de menos. ¿Cómo consigue el peso correcto?</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+                <!-- Paso 1: Predicción -->
+                <div class="card text-center h-full">
+                    <i class="fas fa-brain text-5xl text-blue-600 mb-4"></i>
+                    <h2 class="text-2xl font-bold mb-3">1. La Predicción<br><span class="text-lg font-normal text-gray-500">(Su Experiencia)</span></h2>
+                    <p class="text-lg text-gray-700">Por pura experiencia, coge un fajo de lonchas que <strong class="highlight">él cree que pesa 500g</strong>. Esta es su mejor conjetura inicial, su "predicción".</p>
+                </div>
+                <!-- Paso 2: Observación -->
+                <div class="card text-center h-full">
+                    <i class="fas fa-balance-scale-right text-5xl text-red-600 mb-4"></i>
+                    <h2 class="text-2xl font-bold mb-3">2. La Observación<br><span class="text-lg font-normal text-gray-500">(La Báscula Rota)</span></h2>
+                    <p class="text-lg text-gray-700">Pone el jamón en la báscula y esta marca <strong class="text-red-600">520g</strong>. Esta es una "observación ruidosa". Es información útil, pero no es la verdad absoluta.</p>
+                </div>
+                <!-- Paso 3: Corrección -->
+                <div class="card text-center h-full">
+                    <i class="fas fa-sync-alt text-5xl text-green-600 mb-4"></i>
+                    <h2 class="text-2xl font-bold mb-3">3. La Corrección<br><span class="text-lg font-normal text-gray-500">(Fusión Inteligente)</span></h2>
+                    <p class="text-lg text-gray-700">No quita 20g. <strong class="text-green-600">Combina su predicción con la medida</strong>, fiándose un poco más de su instinto. Quita una loncha (10g) y vuelve a empezar el ciclo.</p>
+                </div>
+            </div>
+            <div class="mt-10 bg-blue-50 border-t-4 border-blue-600 p-6 rounded-b-lg max-w-5xl mx-auto shadow-lg">
+            <p class="text-xl font-semibold text-gray-800"><i class="fas fa-check-circle text-blue-700 mr-2"></i><strong class="highlight">El Filtro de Kalman es este charcutero:</strong> fusiona su predicción interna con las observaciones ruidosas del mercado para encontrar la estimación más probable.</p>
+        </div>
+    </section>
+
+    <!-- === DIAPOSITIVA 4: EL CICLO VIRTUOSO (REESTRUCTURADA) === -->
+    <section class="slide">
+        <div class="section-header">Parte I: La Intuición</div>
+        <div class="w-full max-w-6xl text-center">
+            <h1 class="text-2xl md:text-3xl font-black uppercase mb-4">El Ciclo Virtuoso: Predecir y Corregir</h1>
+            <p class="text-base text-gray-600 mb-8 max-w-4xl mx-auto">El filtro no es una fórmula estática, es un <strong class="highlight">proceso dinámico</strong> que se repite sin fin para refinar la estimación con cada nueva operación.</p>
+            
+            <div class="flex items-center justify-center space-x-4 md:space-x-8">
+                <!-- Predicción -->
+                <div class="card !p-4 text-center bg-blue-50 border-blue-200 shadow-xl w-1/3">
+                    <div class="bg-blue-600 text-white rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-2"><span class="text-xl font-bold">1</span></div>
+                    <h2 class="text-xl font-bold">PREDECIR</h2>
+                    <p class="text-sm mt-1">Avanzamos nuestra última estimación. <br><strong class="text-gray-500 font-normal">(La incertidumbre aumenta)</strong></p>
+                </div>
+
+                <!-- Flechas -->
+                <div class="flex flex-col items-center w-1/3">
+                     <i class="fas fa-long-arrow-alt-right text-4xl text-gray-400"></i>
+                     <div class="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg my-1">
+                        <i class="fas fa-bolt mr-1"></i> LLEGA UN TRADE
+                     </div>
+                     <i class="fas fa-long-arrow-alt-left text-4xl text-gray-400"></i>
+                </div>
+
+                <!-- Corrección -->
+                 <div class="card !p-4 text-center bg-green-50 border-green-200 shadow-xl w-1/3">
+                    <div class="bg-green-600 text-white rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-2"><span class="text-xl font-bold">2</span></div>
+                    <h2 class="text-xl font-bold">CORREGIR</h2>
+                    <p class="text-sm mt-1">Ajustamos la predicción con el nuevo dato.<br><strong class="text-gray-500 font-normal">(La incertidumbre disminuye)</strong></p>
+                </div>
+            </div>
+            
+            <div class="mt-8 bg-blue-50 border-t-4 border-blue-600 p-4 rounded-b-lg max-w-5xl mx-auto shadow-lg">
+                <p class="text-lg font-semibold text-gray-800"><strong class="highlight">Resultado:</strong> Una estimación del precio justo que se adapta y aprende en tiempo real, volviéndose más precisa con cada operación que observa.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- === DIAPOSITIVA 5: NUESTRO OBJETIVO (REESTRUCTURADA) === -->
+    <section class="slide">
+        <div class="section-header">Parte I: La Intuición</div>
+        <div class="w-full max-w-7xl text-center h-full flex flex-col justify-center">
+            <h1 class="text-2xl md:text-3xl font-black uppercase mb-2">Nuestro Objetivo: Un "Mid-Price" Inteligente</h1>
+            <p class="text-base text-gray-600 mb-4 max-w-4xl mx-auto">Usaremos el ciclo de <strong class="highlight">Predecir y Corregir</strong> para alimentar nuestra estrategia con una estimación del precio justo que se adapta en tiempo real.</p>
+            
+            <div class="flex justify-center">
+                <div class="card !p-2 !text-center bg-gray-100 w-auto">
+                    <i class="fas fa-filter text-2xl text-blue-600 mb-1"></i>
+                    <h2 class="text-base font-bold">Filtro de Kalman</h2>
+                    <p class="text-xs text-gray-600">Procesa los trades</p>
+                </div>
+            </div>
+            
+            <div class="my-2"><i class="fas fa-long-arrow-alt-down text-4xl text-gray-400"></i></div>
+
+            <div class="grid grid-cols-5 gap-2 items-stretch max-w-4xl mx-auto">
+                <div class="card !text-center flex flex-col justify-center !p-2"><i class="fas fa-shopping-cart text-2xl text-green-600 mb-1"></i><h2 class="text-base font-bold">BID</h2><p class="text-gray-500 text-xs">Nuestra oferta</p></div>
+                <div class="flex flex-col justify-center text-center"><i class="fas fa-arrows-alt-h text-xl text-gray-400"></i></div>
+                <div class="card !text-center flex flex-col justify-center bg-blue-50 border-2 border-blue-700 shadow-xl !p-2"><i class="fas fa-brain text-2xl text-blue-700 mb-1"></i><h2 class="text-base font-bold highlight">MID FILTRADO</h2><p class="text-gray-500 text-xs">"Precio Justo"</p></div>
+                <div class="flex flex-col justify-center text-center"><i class="fas fa-arrows-alt-h text-xl text-gray-400"></i></div>
+                <div class="card !text-center flex flex-col justify-center !p-2"><i class="fas fa-tag text-2xl text-red-600 mb-1"></i><h2 class="text-base font-bold">ASK</h2><p class="text-gray-500 text-xs">Nuestra oferta</p></div>
+            </div>
+
+            <div class="mt-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg max-w-3xl mx-auto">
+                <h3 class="text-lg font-bold text-yellow-800 mb-1"><i class="fas fa-lightbulb mr-2"></i>Siguiente Paso</h3>
+                <p class="text-base text-yellow-700">Ahora, nos sumergiremos en el "cómo": las <strong class="font-semibold">piezas matemáticas</strong> que hacen funcionar este motor.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- === DIAPOSITIVA 6: EL ESTADO OCULTO (REESTRUCTURADA) === -->
+    <section class="slide">
+        <div class="section-header">Parte II: Las Piezas del Modelo</div>
+        <div class="w-full max-w-4xl text-center">
+            <h1 class="text-2xl md:text-3xl font-black uppercase mb-4">Pieza 1: El Estado Oculto (\(x_t\))</h1>
+            <p class="text-lg text-gray-600 mb-6 max-w-3xl mx-auto">Es la variable que queremos conocer, pero que es <strong class="highlight">invisible</strong> a nuestros ojos.</p>
+
+            <div class="card !p-6 bg-gray-50 border-2 border-gray-200 shadow-xl">
+                <div class="flex items-center justify-center">
+                    <div class="text-center"><i class="fas fa-eye-slash text-6xl text-gray-400"></i></div>
+                    <div class="ml-6 text-left">
+                        <h2 class="text-xl font-bold mb-2">El Verdadero Mid-Price (\(m_t\))</h2>
+                        <p class="text-base text-gray-700">En nuestro modelo, el "estado" es el <strong class="highlight">precio justo teórico</strong> en un instante \(t\).</p>
+                        <div class="mt-2 bg-white p-2 rounded-lg border"><span class="text-2xl font-mono text-blue-800">\( x_t = m_t \)</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 bg-blue-50 border-t-4 border-blue-600 p-4 rounded-b-lg max-w-4xl mx-auto shadow-lg">
+                <p class="text-lg font-semibold text-gray-800"><i class="fas fa-key text-blue-700 mr-2"></i>Este es el <strong class="highlight">"santo grial"</strong> que intentamos estimar.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- === DIAPOSITIVA 7: LA ECUACIÓN DE TRANSICIÓN (REESTRUCTURADA) === -->
+    <section class="slide">
+        <div class="section-header">Parte II: Las Piezas del Modelo</div>
+        <div class="w-full h-full flex flex-col justify-center">
+            <div class="text-center shrink-0">
+                <h1 class="text-2xl md:text-3xl font-black uppercase mb-2">Pieza 2: La Ecuación de Transición</h1>
+                <p class="text-base text-gray-600 mb-4">Define nuestra hipótesis sobre <strong class="highlight">cómo se mueve el precio por sí solo</strong>.</p>
+            </div>
+            <div class="flex-grow w-full grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                <div class="card !p-6 h-full flex flex-col justify-center">
+                    <h2 class="text-xl font-bold mb-2">La Hipótesis del Camino Aleatorio</h2>
+                    <p class="text-base text-gray-700 mb-2">Asumimos que el precio de mañana es el de hoy más un <strong class="highlight">paso aleatorio</strong> (\(\epsilon_t\)).</p>
+                    <div class="bg-white p-3 rounded-lg border text-center my-2 shadow-inner">
+                        <span class="text-2xl font-mono text-blue-800">\( m_{t+\Delta t} = m_t + \epsilon_t \)</span>
+                    </div>
+                    <ul class="text-base space-y-1 mt-2">
+                        <li>\(\boldsymbol{m_t}\): Precio justo en \(t\).</li>
+                        <li>\(\boldsymbol{\epsilon_t}\): "Ruido del proceso" (shock aleatorio).</li>
+                    </ul>
+                </div>
+                <div class="h-full bg-gray-50 p-2 rounded-lg border shadow-inner">
+                    <canvas id="randomWalkChart"></canvas>
+                </div>
+            </div>
+             <div class="shrink-0 mt-4 bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded-r-lg max-w-3xl mx-auto">
+                <h3 class="text-lg font-bold text-yellow-800 mb-1"><i class="fas fa-lightbulb mr-2"></i>La Clave de la Predicción</h3>
+                <p class="text-sm text-yellow-700">Esta ecuación es el motor del paso de <strong class="font-semibold">PREDICCIÓN</strong>.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- === DIAPOSITIVA 8: LA OBSERVACIÓN (REESTRUCTURADA) === -->
+    <section class="slide">
+        <div class="section-header">Parte II: Las Piezas del Modelo</div>
+        <div class="w-full max-w-4xl text-center">
+            <h1 class="text-2xl md:text-3xl font-black uppercase mb-4">Pieza 3: La Observación (\(y_t\))</h1>
+            <p class="text-lg text-gray-600 mb-6 max-w-3xl mx-auto">Es la <strong class="highlight">información tangible que recibimos del mercado</strong>.</p>
+
+            <div class="card !p-6 bg-gray-50 border-2 border-gray-200 shadow-xl">
+                <div class="flex items-center justify-center">
+                    <div class="text-center"><i class="fas fa-binoculars text-6xl text-gray-400"></i></div>
+                    <div class="ml-6 text-left">
+                        <h2 class="text-xl font-bold mb-2">El Precio de una Operación (\(p_t\))</h2>
+                        <p class="text-base text-gray-700">La observación es el <strong class="highlight">precio de un trade</strong> en el instante \(t\).</p>
+                        <div class="mt-2 bg-white p-2 rounded-lg border"><span class="text-2xl font-mono text-blue-800">\( y_t = p_t \)</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 bg-blue-50 border-t-4 border-blue-600 p-4 rounded-b-lg max-w-4xl mx-auto shadow-lg">
+                <p class="text-lg font-semibold text-gray-800"><i class="fas fa-satellite-dish text-blue-700 mr-2"></i>Esta es la <strong class="highlight">"señal"</strong> que nuestro filtro recibe para encontrar el estado oculto.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- === DIAPOSITIVA 9: LA ECUACIÓN DE OBSERVACIÓN (REESTRUCTURADA) === -->
+    <section class="slide">
+        <div class="section-header">Parte II: Las Piezas del Modelo</div>
+        <div class="w-full max-w-7xl h-full flex flex-col justify-center">
+            <div class="text-center shrink-0">
+                <h1 class="text-2xl md:text-3xl font-black uppercase mb-1">Pieza 4: La Ecuación de Observación</h1>
+                <p class="text-base text-gray-600 mb-4">La <strong class="highlight">fórmula que conecta</strong> lo que vemos (trade) con lo que queremos saber (precio justo).</p>
+            </div>
+
+            <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+                <div class="card !p-6 h-full flex flex-col justify-center text-center">
+                    <h2 class="text-xl font-bold mb-2">Vínculo entre Realidad y Teoría</h2>
+                    <p class="text-base text-gray-700 mb-4">El precio de un trade (\(p_t\)) es el precio justo (\(m_t\)) más un <strong class="text-red-600">error aleatorio</strong> (\(\nu_t\)).</p>
+                    <div class="bg-white p-3 rounded-lg border text-center my-2 shadow-inner"><span class="text-2xl font-mono text-blue-800">\( p_t = m_t + \nu_t \)</span></div>
+                    <div class="flex items-center justify-around text-center mt-2 text-sm"><div class="w-1/3"><i class="fas fa-binoculars text-2xl text-gray-500 mb-1"></i><p>\(p_t\)<br>Lo Vemos</p></div><div class="w-auto"><i class="fas fa-equals text-2xl text-gray-400"></i></div><div class="w-1/3"><i class="fas fa-eye-slash text-2xl text-gray-500 mb-1"></i><p>\(m_t\)<br>Lo Buscamos</p></div><div class="w-auto"><i class="fas fa-plus text-2xl text-gray-400"></i></div><div class="w-1/3"><i class="fas fa-random text-2xl text-red-500 mb-1"></i><p>\(\nu_t\)<br>El Ruido</p></div></div>
+                </div>
+
+                <div class="card !p-6 h-full flex flex-col justify-center bg-gray-50">
+                    <h2 class="text-xl font-bold mb-2">¿De dónde viene el ruido \(\nu_t\)?</h2>
+                    <p class="text-sm text-gray-700 mb-2">De las <strong class="highlight">fricciones del mercado</strong>:</p>
+                    <ul class="text-sm space-y-1 list-disc list-inside mb-2"><li>Bid-ask spread, inventario, liquidez...</li></ul>
+                    <div class="bg-white p-2 rounded-lg border text-center shadow-inner"><p class="text-sm">Asumimos que el ruido es Normal:</p><span class="text-xl font-mono text-red-600 mt-1 block">\( \nu_t \sim N(0, \sigma_\nu^2) \)</span></div>
+                </div>
+            </div>
+
+            <div class="shrink-0 mt-4 bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded-r-lg max-w-3xl mx-auto">
+                <h3 class="text-lg font-bold text-yellow-800 mb-1"><i class="fas fa-lightbulb mr-2"></i>Clave de la Corrección</h3>
+                <p class="text-sm text-yellow-700">Esta ecuación nos permite cuantificar la "sorpresa" para ajustar la estimación.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- === DIAPOSITIVA 10: RESUMEN DEL MODELO (REESTRUCTURADA) === -->
+    <section class="slide">
+        <div class="section-header">Parte II: Las Piezas del Modelo</div>
+        <div class="w-full max-w-7xl text-center">
+            <h1 class="text-2xl md:text-3xl font-black uppercase mb-1">La Fotografía Completa: Nuestro Modelo</h1>
+            <p class="text-base text-gray-600 mb-4 max-w-4xl mx-auto">Hemos ensamblado un <strong class="highlight">Modelo de Espacio de Estados Lineal y Gaussiano</strong> (LG-SSM).</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+                <div class="card border-t-4 border-blue-600 h-full !p-4">
+                    <div class="text-center mb-2"><i class="fas fa-cogs text-4xl text-blue-700"></i><h2 class="text-xl font-bold mt-2">1. El Mundo Oculto</h2><p class="text-sm text-gray-500">Cómo evoluciona el precio justo.</p></div>
+                    <div class="bg-white p-2 rounded-lg border text-center my-2 shadow-inner"><p class="text-sm font-semibold">Ecuación de Transición:</p><span class="text-xl font-mono text-blue-800">\( m_{t+\Delta t} = m_t + \epsilon_t \)</span></div>
+                    <div class="mt-auto text-center"><span class="bg-blue-600 text-white font-bold py-1 px-3 rounded-full shadow-lg text-sm">FASE DE PREDICCIÓN</span></div>
+                </div>
+
+                <div class="card border-t-4 border-green-600 h-full !p-4">
+                     <div class="text-center mb-2"><i class="fas fa-satellite-dish text-4xl text-green-700"></i><h2 class="text-xl font-bold mt-2">2. El Mundo Observable</h2><p class="text-sm text-gray-500">Cómo se relaciona con lo que vemos.</p></div>
+                     <div class="bg-white p-2 rounded-lg border text-center my-2 shadow-inner"><p class="text-sm font-semibold">Ecuación de Observación:</p><span class="text-xl font-mono text-green-800">\( p_t = m_t + \nu_t \)</span></div>
+                     <div class="mt-auto text-center"><span class="bg-green-600 text-white font-bold py-1 px-3 rounded-full shadow-lg text-sm">FASE DE CORRECCIÓN</span></div>
+                </div>
+            </div>
+
+            <div class="mt-4 bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded-r-lg max-w-4xl mx-auto">
+                <h3 class="text-lg font-bold text-yellow-800 mb-1"><i class="fas fa-drafting-compass mr-2"></i>El Plano del Filtro</h3>
+                <p class="text-sm text-yellow-700">Este sistema de dos ecuaciones es todo lo que el filtro necesita para encontrar el estado oculto \(m_t\).</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- === DIAPOSITIVA 11: PREDICCIÓN Y ACTUALIZACIÓN (REESTRUCTURADA) === -->
+    <section class="slide">
+        <div class="section-header">Parte III: Aplicación (Un Activo)</div>
+        <div class="w-full max-w-7xl text-center">
+            <h1 class="text-2xl md:text-3xl font-black uppercase mb-1">El Dúo Dinámico: Predicción y Actualización</h1>
+            <p class="text-sm text-gray-600 mb-4 max-w-4xl mx-auto">El filtro opera en un ciclo de dos pasos que se repite con cada nueva operación.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+                <div class="card border-t-4 border-blue-600 h-full flex flex-col !p-4">
+                    <div class="text-center mb-2"><i class="fas fa-crystal-ball text-4xl text-blue-700"></i><h2 class="text-xl font-bold mt-2">Paso 1: Predicción</h2></div>
+                    <div class="bg-white p-2 rounded-lg border my-2 shadow-inner text-left text-sm space-y-1 flex-grow">
+                        <p><strong class="highlight">Idea:</strong> "Si no llegara más información, ¿dónde espero que esté el precio?"</p>
+                        <p><strong>1. Mejor Estimación (\(\hat{m}_{t|t-1}\)):</strong> Es simplemente la estimación anterior.</p>
+                        <p><strong>2. Incertidumbre (\(P_{t|t-1}\)):</strong> El tiempo ha pasado, la confianza <strong class="text-red-600">disminuye</strong>.</p>
+                    </div>
+                    <div class="mt-auto pt-2 text-center"><div class="bg-gray-100 p-2 rounded-lg"><p class="text-sm font-semibold">Resultado: <span class="text-red-600 font-bold">Más Incertidumbre</span></p></div></div>
+                </div>
+
+                <div class="card border-t-4 border-green-600 h-full flex flex-col !p-4">
+                     <div class="text-center mb-2"><i class="fas fa-check-circle text-4xl text-green-700"></i><h2 class="text-xl font-bold mt-2">Paso 2: Actualización</h2></div>
+                    <div class="bg-white p-2 rounded-lg border my-2 shadow-inner text-left text-sm space-y-1 flex-grow">
+                        <p><strong class="highlight">Idea:</strong> "La realidad discrepa de mi predicción. ¿Cuánto debo corregir?"</p>
+                        <p><strong>1. Error:</strong> Calculamos la "sorpresa": \( (p_t - \hat{m}_{t|t-1}) \).</p>
+                        <p><strong>2. Fusión:</strong> Actualizamos la estimación moviéndola una <strong class="font-semibold">fracción del error</strong>. La confianza <strong class="text-green-600">aumenta</strong>.</p>
+                    </div>
+                    <div class="mt-auto pt-2 text-center"><div class="bg-gray-100 p-2 rounded-lg"><p class="text-sm font-semibold">Resultado: <span class="text-green-600 font-bold">Menos Incertidumbre</span></p></div></div>
+                </div>
+            </div>
+
+            <div class="mt-4 bg-blue-50 border-t-4 border-blue-600 p-3 rounded-b-lg max-w-5xl mx-auto shadow-lg">
+                <p class="text-base font-semibold text-gray-800"><i class="fas fa-sync-alt text-blue-700 mr-2"></i>Este ciclo refina nuestra creencia sobre el precio justo con cada nueva pieza de evidencia.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- === DIAPOSITIVA 12: EL KALMAN GAIN (REESTRUCTURADA) === -->
+    <section class="slide">
+        <div class="section-header">Parte III: Aplicación (Un Activo)</div>
+        <div class="w-full max-w-7xl text-center flex flex-col justify-center h-full p-2">
+            <div>
+                <h1 class="text-2xl font-black uppercase mb-1">El "Kalman Gain" (\(K_t\)): Factor de Confianza</h1>
+                <p class="text-sm text-gray-600 mb-2 max-w-4xl mx-auto">Un número entre 0 y 1 que actúa como un <strong class="highlight">regulador inteligente de confianza</strong>.</p>
+            </div>
+    
+            <div class="card !p-2 bg-gray-50 max-w-2xl mx-auto my-1">
+                 <h2 class="text-lg font-bold text-center">La Fórmula de la Sabiduría</h2>
+                 <div class="bg-white p-1 rounded-lg border text-center shadow-inner">
+                    <span class="text-xl font-mono text-blue-800">\( K_t = \frac{\text{Incertidumbre Pred.}}{\text{Incertidumbre Pred.} + \text{Incertidumbre Medida}} \)</span>
+                 </div>
+            </div>
+    
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch mt-2">
+                <div class="card border-t-4 border-green-600 h-full flex flex-col !p-3">
+                    <div class="text-center"><i class="fas fa-balance-scale-right text-3xl text-green-700"></i><h2 class="text-base font-bold">Caso 1: K Alto (\(K_t \to 1\))</h2></div>
+                    <div class="bg-white p-2 rounded-lg border my-1 shadow-inner text-left text-xs space-y-1 flex-grow">
+                        <p><strong class="highlight">Condiciones:</strong> Predicción <strong class="text-red-600">incierta</strong>, trade <strong class="text-green-600">fiable</strong>.</p>
+                        <p><strong class="highlight">Decisión:</strong> "Confío mucho en el nuevo dato."</p>
+                    </div>
+                    <div class="mt-auto pt-1 text-center"><div class="bg-green-50 text-green-800 p-1 rounded-lg"><p class="text-sm font-semibold">Corregimos <strong class="font-bold">fuertemente</strong> hacia el trade.</p></div></div>
+                </div>
+    
+                <div class="card border-t-4 border-red-600 h-full flex flex-col !p-3">
+                     <div class="text-center"><i class="fas fa-balance-scale-left text-3xl text-red-700"></i><h2 class="text-base font-bold">Caso 2: K Bajo (\(K_t \to 0\))</h2></div>
+                    <div class="bg-white p-2 rounded-lg border my-1 shadow-inner text-left text-xs space-y-1 flex-grow">
+                        <p><strong class="highlight">Condiciones:</strong> Predicción <strong class="text-green-600">segura</strong>, trade <strong class="text-red-600">ruidoso</strong>.</p>
+                        <p><strong class="highlight">Decisión:</strong> "El nuevo dato no es fiable."</p>
+                    </div>
+                    <div class="mt-auto pt-1 text-center"><div class="bg-red-50 text-red-800 p-1 rounded-lg"><p class="text-sm font-semibold"><strong class="font-bold">Apenas cambiamos</strong> la estimación.</p></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- === DIAPOSITIVA 13: EL MODELO EN ACCIÓN (VISUAL) - ACTUALIZADA === -->
+    <section class="slide">
+        <div class="section-header">Parte III: Aplicación (Un Activo)</div>
+        <div class="w-full max-w-7xl h-full flex flex-col">
+            <div class="text-center shrink-0">
+                <h1 class="text-3xl md:text-4xl font-black uppercase mb-2">El Filtro en Acción</h1>
+                <p class="text-lg text-gray-600 mb-4 max-w-4xl mx-auto">Así es como el filtro <strong class="highlight">aprende y se adapta</strong> en tiempo real con cada operación.</p>
+            </div>
+            <div class="flex-grow w-full bg-gray-50 p-4 rounded-lg border border-gray-200 shadow-inner">
+                <canvas id="kalmanFilterChart"></canvas>
+            </div>
+            <div class="shrink-0 mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-3 rounded-r-lg">
+                    <h3 class="font-bold text-blue-800">La Estimación (Azul discontinua)</h3>
+                    <p>Se mantiene en su predicción hasta que llega el trade. Entonces, <strong class="font-semibold">salta bruscamente</strong> para ajustarse a la nueva realidad.</p>
+                </div>
+                <div class="bg-gray-200 border-l-4 border-gray-500 p-3 rounded-r-lg">
+                    <h3 class="font-bold text-gray-800">La Incertidumbre (Sombra azul)</h3>
+                    <p><strong class="font-semibold">Crece sin parar</strong> mientras no hay datos (fase de predicción). Al llegar el trade, <strong class="font-semibold">colapsa</strong>, y luego vuelve a crecer.</p>
+                </div>
+                 <div class="bg-red-50 border-l-4 border-red-400 p-3 rounded-r-lg">
+                    <h3 class="font-bold text-red-800">El Trade (Punto Rojo)</h3>
+                    <p>El único dato nuevo. Como es muy fiable, el filtro le da <strong class="font-semibold">mucha importancia</strong> y se ajusta casi por completo a su valor.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- === DIAPOSITIVA 14: CALIBRANDO EL FILTRO (MATEMÁTICAS) - AJUSTADA FINAL 3 === -->
+    <section class="slide">
+        <div class="section-header">Parte III: Aplicación (Un Activo)</div>
+        <div class="w-full h-full flex flex-col justify-center text-center px-4">
+            <h1 class="text-xl md:text-2xl font-black uppercase mb-2">El Baile de la Incertidumbre (La Varianza \(P_t\))</h1>
+            <p class="text-base text-gray-600 mb-4 max-w-4xl mx-auto">El comportamiento visual del filtro se rige por estas dos ecuaciones clave.</p>
+    
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch flex-grow">
+                <!-- PREDICCIÓN -->
+                <div class="card border-t-4 border-blue-600 h-full flex flex-col !p-3">
+                    <div class="text-center mb-2"><i class="fas fa-arrow-up text-3xl text-red-500"></i><h2 class="text-xl font-bold">1. La Incertidumbre Crece</h2></div>
+                    <p class="text-sm text-gray-700 mb-2">Sin datos, la incertidumbre <strong class="text-red-600">aumenta</strong>.</p>
+                    <div class="bg-white p-2 rounded-lg border text-center my-2 shadow-inner">
+                        <p class="text-sm font-semibold">Varianza Predicha:</p>
+                        <span class="text-xl font-mono text-blue-800">\( P_{t|t-1} = P_{t-1|t-1} + Q \)</span>
+                    </div>
+                    <div class="mt-auto pt-2 bg-red-50 text-red-800 p-2 rounded-lg text-sm font-semibold">
+                        <i class="fas fa-lightbulb mr-1"></i>Sumar \(Q\) causa el <strong class="font-bold">crecimiento</strong> de la incertidumbre.
+                    </div>
+                </div>
+    
+                <!-- ACTUALIZACIÓN -->
+                <div class="card border-t-4 border-green-600 h-full flex flex-col !p-3">
+                    <div class="text-center mb-2"><i class="fas fa-arrow-down text-3xl text-green-500"></i><h2 class="text-xl font-bold">2. La Incertidumbre Colapsa</h2></div>
+                    <p class="text-sm text-gray-700 mb-2">Con un trade, la incertidumbre <strong class="text-green-600">disminuye</strong>.</p>
+                    <div class="bg-white p-2 rounded-lg border text-center my-2 shadow-inner">
+                        <p class="text-sm font-semibold">Varianza Actualizada:</p>
+                        <span class="text-xl font-mono text-green-800">\( P_{t|t} = (1 - K_t) P_{t|t-1} \)</span>
+                    </div>
+                    <div class="bg-gray-100 p-1 rounded-lg border text-center text-xs my-2">
+                        <strong>Recordatorio:</strong> \( K_t = \frac{P_{t|t-1}}{P_{t|t-1} + R} \)
+                    </div>
+                    <div class="mt-auto pt-2 bg-green-50 text-green-800 p-2 rounded-lg text-sm font-semibold">
+                        <i class="fas fa-lightbulb mr-1"></i>Multiplicar por \((1-K_t)\) <strong class="font-bold">siempre reduce</strong> la varianza.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- === DIAPOSITIVA 15: UN FILTRO MÁS INTELIGENTE: RUIDO Y VOLUMEN === -->
+    <section class="slide">
+        <div class="section-header">Parte III: Aplicación (Un Activo)</div>
+        <div class="w-full h-full flex flex-col justify-center text-center px-4">
+            <h1 class="text-2xl font-black uppercase mb-2">Un Filtro Más Inteligente: Ruido y Volumen</h1>
+            <p class="text-base text-gray-600 mb-4 max-w-4xl mx-auto">No todos los trades son iguales. Un filtro avanzado ajusta su confianza basándose en el <strong class="highlight">volumen de la operación</strong>.</p>
+    
+            <div class="card !p-3 bg-gray-50 max-w-3xl mx-auto my-2">
+                 <h2 class="text-xl font-bold mb-1 text-center">La Idea Clave: El Ruido es Dinámico</h2>
+                 <p class="text-sm text-gray-700 text-center mb-2">Hacemos que la incertidumbre de la medida (\(R\)) dependa del volumen (\(v\)).</p>
+                 <div class="bg-white p-2 rounded-lg border text-center shadow-inner">
+                    <span class="text-2xl font-mono text-blue-800">\( R_t = R(v_t) \)</span>
+                 </div>
+            </div>
+    
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch mt-4 flex-grow">
+                <!-- BAJO VOLUMEN -->
+                <div class="card border-t-4 border-red-500 h-full flex flex-col !p-3">
+                    <div class="text-center mb-2"><i class="fas fa-feather-alt text-4xl text-red-500"></i><h2 class="text-xl font-bold">Trade de Bajo Volumen</h2></div>
+                    <p class="text-sm text-center text-gray-700 mb-2">Poca convicción, potencialmente "ruidoso".</p>
+                    <div class="bg-white p-3 rounded-lg border shadow-inner flex-grow text-base space-y-2">
+                        <p><i class="fas fa-arrow-right text-red-500 mr-2"></i>\(v_t\) es bajo \(\implies\) <strong class="font-mono text-red-500">\(R(v_t)\) es ALTO</strong></p>
+                        <p><i class="fas fa-arrow-right text-gray-500 mr-2"></i>\(K_t = \frac{P}{P+R}\) \(\implies\) <strong class="font-mono">\(K_t\) es BAJO</strong></p>
+                    </div>
+                    <div class="mt-auto pt-2 bg-red-50 text-red-800 p-2 rounded-lg text-sm font-semibold text-center">
+                        <i class="fas fa-lightbulb mr-1"></i><strong>Resultado:</strong> El filtro es escéptico y se mueve muy poco.
+                    </div>
+                </div>
+    
+                <!-- ALTO VOLUMEN -->
+                <div class="card border-t-4 border-green-500 h-full flex flex-col !p-3">
+                     <div class="text-center mb-2"><i class="fas fa-weight-hanging text-4xl text-green-500"></i><h2 class="text-xl font-bold">Trade de Alto Volumen</h2></div>
+                     <p class="text-sm text-center text-gray-700 mb-2">Mucha convicción, señal más fiable.</p>
+                     <div class="bg-white p-3 rounded-lg border shadow-inner flex-grow text-base space-y-2">
+                        <p><i class="fas fa-arrow-right text-green-500 mr-2"></i>\(v_t\) es alto \(\implies\) <strong class="font-mono text-green-500">\(R(v_t)\) es BAJO</strong></p>
+                        <p><i class="fas fa-arrow-right text-gray-500 mr-2"></i>\(K_t = \frac{P}{P+R}\) \(\implies\) <strong class="font-mono">\(K_t\) es ALTO</strong></p>
+                    </div>
+                    <div class="mt-auto pt-2 bg-green-50 text-green-800 p-2 rounded-lg text-sm font-semibold text-center">
+                        <i class="fas fa-lightbulb mr-1"></i><strong>Resultado:</strong> El filtro confía en el dato y se ajusta significativamente.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- === DIAPOSITIVA 16: ESTRATEGIA FINAL (UN ACTIVO) === -->
+    <section class="slide">
+        <div class="section-header">Parte III: Aplicación (Un Activo)</div>
+        <div class="w-full h-full flex flex-col justify-center text-center px-4">
+            <h1 class="text-2xl font-black uppercase mb-2">Estrategia Final: Del Filtro al Mercado</h1>
+            <p class="text-base text-gray-600 mb-4 max-w-4xl mx-auto">Conectamos la salida del filtro a nuestra lógica de market making para generar cotizaciones dinámicas.</p>
+    
+            <div class="grid grid-cols-3 gap-4 items-center flex-grow">
+                <!-- ENTRADA -->
+                <div class="card h-full flex flex-col justify-center items-center !p-4">
+                    <i class="fas fa-exchange-alt text-4xl text-gray-500 mb-3"></i>
+                    <h2 class="text-xl font-bold">ENTRADA</h2>
+                    <p class="text-sm">Trades del mercado</p>
+                    <div class="bg-white p-2 rounded-lg border mt-2 text-sm">
+                        <p>\(p_t, v_t\)</p>
+                    </div>
+                </div>
+
+                <!-- FLECHA Y FILTRO -->
+                <div class="flex flex-col items-center justify-center h-full">
+                    <i class="fas fa-long-arrow-alt-right text-5xl text-gray-400 mb-3"></i>
+                    <div class="card !p-4 bg-blue-50 border-blue-200">
+                        <h2 class="text-xl font-bold highlight text-center">Filtro de Kalman</h2>
+                        <ul class="text-sm list-disc list-inside mt-2">
+                            <li>Predice y corrige</li>
+                            <li>Estima \( \hat{m}_t \) (mid-price)</li>
+                            <li>Calcula \( P_t \) (incertidumbre)</li>
+                        </ul>
+                    </div>
+                    <i class="fas fa-long-arrow-alt-right text-5xl text-gray-400 mt-3"></i>
+                </div>
+
+                <!-- SALIDA -->
+                <div class="card h-full flex flex-col justify-center items-center !p-4">
+                     <i class="fas fa-bullseye text-4xl text-green-500 mb-3"></i>
+                    <h2 class="text-xl font-bold">SALIDA</h2>
+                    <p class="text-sm">Nuestras cotizaciones</p>
+                     <div class="bg-green-50 p-2 rounded-lg border mt-2 text-sm text-left font-mono">
+                        <p>Ask = \( \hat{m}_t + \text{spread}(P_t) \)</p>
+                        <p>Bid = \( \hat{m}_t - \text{spread}(P_t) \)</p>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="mt-4 bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded-r-lg max-w-4xl mx-auto">
+                <h3 class="text-lg font-bold text-yellow-800 mb-1"><i class="fas fa-lightbulb mr-2"></i>La Clave: El Spread Adaptativo</h3>
+                <p class="text-sm text-yellow-700">El <strong class="font-semibold">spread</strong> ya no es fijo. Se convierte en una función de nuestra incertidumbre (\(P_t\)). Si estamos inseguros ( \(P_t\) alto), abrimos el spread para protegernos. Si estamos seguros ( \(P_t\) bajo), lo cerramos para ser más competitivos.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- === DIAPOSITIVA 17: DE LA INCERTIDUMBRE AL SPREAD (CORREGIDA) === -->
+    <section class="slide">
+        <div class="section-header">Parte III: Aplicación (Un Activo)</div>
+        <div class="w-full h-full flex flex-col justify-center text-center px-4">
+            <h1 class="text-2xl font-black uppercase mb-2">De la Incertidumbre al Spread</h1>
+            <p class="text-base text-gray-600 mb-4 max-w-4xl mx-auto">El filtro no da solo un precio, sino una <strong class="highlight">distribución de probabilidad</strong> del precio justo.</p>
+    
+            <div class="flex flex-col items-center justify-center flex-grow w-full max-w-3xl mx-auto">
+                <div class="card !p-3 w-full">
+                    <h2 class="text-xl font-bold text-center">Intervalo de Confianza del 95%</h2>
+                    <p class="text-center text-sm mb-2">Tenemos un 95% de confianza en que el precio justo real está en este rango:</p>
+                     <div class="bg-white p-2 rounded-lg border text-center shadow-inner font-mono text-xl">
+                        <span class="text-blue-800">\(\hat{m}_t\)</span> ± <span class="text-red-600">\(1.96 \times \sqrt{P_t}\)</span>
+                    </div>
+                </div>
+    
+                <div class="w-full my-3"><i class="fas fa-arrow-down text-3xl text-gray-400"></i></div>
+    
+                <div class="card !p-3 w-full bg-blue-50 border-blue-200">
+                    <h2 class="text-xl font-bold text-center">Una Estrategia de Spread Directa</h2>
+                    <p class="text-center text-sm mb-2">Usamos los límites del intervalo como nuestras cotizaciones.</p>
+                    <div class="bg-white p-2 rounded-lg border shadow-inner text-left font-mono text-base space-y-1">
+                        <p><strong class="text-red-600">Ask</strong> = \(\hat{m}_t + 1.96 \times \sqrt{P_t}\)</p>
+                        <p><strong class="text-green-600">Bid</strong> = \(\hat{m}_t - 1.96 \times \sqrt{P_t}\)</p>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="mt-4 bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded-r-lg max-w-4xl mx-auto">
+                <h3 class="text-lg font-bold text-yellow-800 mb-1"><i class="fas fa-ruler-combined mr-2"></i>El Spread es una medida del riesgo</h3>
+                <p class="text-sm text-yellow-700">Nuestro spread total, \(2 \times 1.96 \times \sqrt{P_t}\), es una <strong class="font-semibold">función directa de nuestra incertidumbre</strong>.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- === DIAPOSITIVA 18: EL SPREAD ADAPTATIVO EN ACCIÓN === -->
+    <section class="slide">
+        <div class="section-header">Parte III: Aplicación (Un Activo)</div>
+        <div class="w-full h-full flex flex-col justify-center text-center px-4">
+            <h1 class="text-2xl font-black uppercase mb-4">El Spread Adaptativo en Acción</h1>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch flex-grow">
+                <!-- ALTA INCERTIDUMBRE -->
+                <div class="card border-t-4 border-red-500 h-full flex flex-col !p-4">
+                    <div class="text-center mb-2">
+                        <i class="fas fa-magnifying-glass-chart text-4xl text-red-500"></i>
+                        <h2 class="text-xl font-bold mt-2">Escenario 1: Alta Incertidumbre</h2>
+                    </div>
+                    <p class="text-sm text-center text-gray-700 mb-2">Mucho tiempo sin trades, mercado volátil.</p>
+                    <div class="bg-white p-3 rounded-lg border shadow-inner flex-grow text-base space-y-2">
+                        <p><i class="fas fa-arrow-right text-red-500 mr-2"></i>\(P_t\) es ALTO \(\implies\) \(\sqrt{P_t}\) es GRANDE</p>
+                    </div>
+                    <div class="mt-auto pt-2 bg-red-50 text-red-800 p-2 rounded-lg text-lg font-semibold text-center">
+                        <i class="fas fa-arrows-alt-h mr-2"></i>SPREAD AMPLIO
+                    </div>
+                     <p class="text-center text-sm mt-2">Nos protegemos con cotizaciones más anchas.</p>
+                </div>
+    
+                <!-- BAJA INCERTIDUMBRE -->
+                <div class="card border-t-4 border-green-500 h-full flex flex-col !p-4">
+                     <div class="text-center mb-2">
+                        <i class="fas fa-crosshairs text-4xl text-green-500"></i>
+                        <h2 class="text-xl font-bold mt-2">Escenario 2: Baja Incertidumbre</h2>
+                    </div>
+                    <p class="text-sm text-center text-gray-700 mb-2">Acaba de llegar un trade de alto volumen.</p>
+                     <div class="bg-white p-3 rounded-lg border shadow-inner flex-grow text-base space-y-2">
+                        <p><i class="fas fa-arrow-right text-green-500 mr-2"></i>\(P_t\) es bajo \(\implies\) \(\sqrt{P_t}\) es PEQUEÑO</p>
+                    </div>
+                    <div class="mt-auto pt-2 bg-green-50 text-green-800 p-2 rounded-lg text-lg font-semibold text-center">
+                        <i class="fas fa-compress-arrows-alt mr-2"></i>SPREAD ESTRECHO
+                    </div>
+                     <p class="text-center text-sm mt-2">Somos competitivos con cotizaciones más ajustadas.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- === DIAPOSITIVA 19: RESUMEN MATEMÁTICO GENERAL === -->
+    <section class="slide">
+        <div class="section-header">Parte III: Aplicación (Un Activo)</div>
+        <div class="w-full h-full flex flex-col justify-center text-center px-4">
+            <h1 class="text-2xl font-black uppercase mb-2">Resumen Matemático: El Algoritmo de Kalman</h1>
+            <p class="text-base text-gray-600 mb-4 max-w-4xl mx-auto">Estas son las ecuaciones generales. Para nuestro modelo simple, \(A\), \(H\), e \(I\) son simplemente el número 1.</p>
+    
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch flex-grow">
+                <!-- PREDICCIÓN -->
+                <div class="card border-t-4 border-blue-600 h-full flex flex-col !p-3">
+                    <div class="text-center mb-2"><i class="fas fa-crystal-ball text-3xl text-blue-500"></i><h2 class="text-xl font-bold">Paso 1: Predicción</h2></div>
+                    <div class="bg-white p-2 rounded-lg border text-left my-2 shadow-inner text-sm space-y-3">
+                        <p><strong class="underline">Estado Predicho:</strong><br><span class="font-mono text-lg"> \(\hat{x}_{t|t-1} = A \hat{x}_{t-1|t-1}\)</span></p>
+                        <p><strong class="underline">Varianza Predicha:</strong><br><span class="font-mono text-lg">\(P_{t|t-1} = A P_{t-1|t-1} A^T + Q\)</span></p>
+                    </div>
+                </div>
+    
+                <!-- ACTUALIZACIÓN -->
+                <div class="card border-t-4 border-green-600 h-full flex flex-col !p-3">
+                    <div class="text-center mb-2"><i class="fas fa-check-circle text-3xl text-green-500"></i><h2 class="text-xl font-bold">Paso 2: Actualización</h2></div>
+                    <div class="bg-white p-2 rounded-lg border text-left my-2 shadow-inner text-sm space-y-3">
+                         <p><strong class="underline">Innovación Residual:</strong><br><span class="font-mono text-lg">\(S_t = H P_{t|t-1} H^T + R\)</span></p>
+                        <p><strong class="underline">Ganancia de Kalman:</strong><br><span class="font-mono text-lg">\(K_t = P_{t|t-1} H^T S_t^{-1}\)</span></p>
+                        <p><strong class="underline">Estado Actualizado:</strong><br><span class="font-mono text-lg">\(\hat{x}_{t|t} = \hat{x}_{t|t-1} + K_t (y_t - H \hat{x}_{t|t-1})\)</span></p>
+                        <p><strong class="underline">Varianza Actualizada:</strong><br><span class="font-mono text-lg">\(P_{t|t} = (I - K_t H) P_{t|t-1}\)</span></p>
+                    </div>
+                </div>
+            </div>
+             <div class="mt-4 bg-gray-100 p-2 rounded-lg max-w-4xl mx-auto">
+                <p class="text-xs text-gray-600"><strong>Nota:</strong> En nuestro caso, \(x_t\) es el precio \(m_t\). \(y_t\) es el trade \(p_t\). Las matrices \(A\) y \(H\) son escalares con valor 1, y \(Q\) y \(R\) son las varianzas \(\sigma_\epsilon^2\) y \(\sigma_\nu^2\).</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- === DIAPOSITIVA 20: EJEMPLO NUMÉRICO - ESTADO INICIAL === -->
+    <section class="slide">
+        <div class="section-header">Parte III: Aplicación (Un Activo)</div>
+        <div class="w-full h-full flex flex-col justify-center text-center px-4">
+            <h1 class="text-2xl font-black uppercase mb-2">Ejemplo Numérico (1/3): El Punto de Partida</h1>
+            <p class="text-base text-gray-600 mb-4 max-w-4xl mx-auto">Vamos a ponerle números a nuestro gráfico. Partimos de nuestra última estimación, justo antes de empezar la fase de predicción larga.</p>
+    
+            <div class="card !p-6 bg-gray-50 max-w-2xl mx-auto my-4">
+                <h2 class="text-xl font-bold text-center mb-4">Estado en \(t=58\)</h2>
+                <div class="grid grid-cols-2 gap-4 text-left">
+                    <div>
+                        <p class="font-semibold underline">Estimación del Precio:</p>
+                        <p class="font-mono text-2xl text-blue-800">\(\hat{m}_{58|58} = 102.90\)</p>
+                    </div>
+                    <div>
+                        <p class="font-semibold underline">Varianza del Error:</p>
+                        <p class="font-mono text-2xl text-red-600">\(P_{58|58} = 0.0500\)</p>
+                    </div>
+                </div>
+                 <div class="mt-4 text-center text-sm text-gray-600">
+                    <p>(Estos valores provienen de la ejecución del filtro hasta ese instante)</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- === DIAPOSITIVA 21: EJEMPLO NUMÉRICO - PREDICCIÓN === -->
+    <section class="slide">
+        <div class="section-header">Parte III: Aplicación (Un Activo)</div>
+        <div class="w-full h-full flex flex-col justify-center text-center px-4">
+            <h1 class="text-2xl font-black uppercase mb-2">Ejemplo Numérico (2/3): Predicción en \(t=59\)</h1>
+            <p class="text-base text-gray-600 mb-4 max-w-4xl mx-auto">No llegan observaciones. Avanzamos el filtro un paso en el tiempo.</p>
+            
+            <div class="card !p-4">
+                <div class="grid grid-cols-2 gap-6">
+                    <!-- Parámetros -->
+                    <div>
+                        <h3 class="text-lg font-bold mb-2">Parámetros del Modelo</h3>
+                        <div class="bg-white p-2 rounded text-left text-sm space-y-1">
+                            <p>\(A=1\), \(H=1\)</p>
+                            <p>\(Q = 0.0025\) (Incertidumbre que se añade en cada paso)</p>
+                            <p>\(R = 0.0100\) (Fiabilidad del futuro trade)</p>
+                        </div>
+                    </div>
+                    <!-- Cálculos -->
+                    <div class="space-y-4">
+                         <div>
+                            <p class="font-semibold underline">Estado Predicho:</p>
+                            <p class="font-mono text-lg"> \(\hat{m}_{59|58} = 1 \times 102.90 = 102.90\)</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold underline">Varianza Predicha:</p>
+                            <p class="font-mono text-lg">\(P_{59|58} = 1 \times 0.0500 \times 1 + 0.0025 = 0.0525\)</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 text-center bg-red-50 text-red-700 p-2 rounded-lg">
+                    <p class="font-semibold"><i class="fas fa-arrow-up mr-2"></i>¡La varianza ha aumentado, tal como esperábamos!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- === DIAPOSITIVA 22: EJEMPLO NUMÉRICO - ACTUALIZACIÓN === -->
+    <section class="slide">
+        <div class="section-header">Parte III: Aplicación (Un Activo)</div>
+        <div class="w-full h-full flex flex-col justify-center text-center px-4">
+            <h1 class="text-2xl font-black uppercase mb-2">Ejemplo Numérico (3/3): Actualización en \(t=60\)</h1>
+            <p class="text-base text-gray-600 mb-2">¡Llega un trade! \(y_{60} = 103.05\). Usamos las fórmulas de actualización.</p>
+            
+            <div class="card !p-3 flex-grow w-full">
+                <div class="grid grid-cols-2 h-full gap-4">
+                    <!-- Columna 1: Kalman Gain -->
+                    <div class="flex flex-col space-y-2">
+                        <h3 class="font-bold text-center underline">Cálculo de \(K_{60}\)</h3>
+                        <div class="bg-white p-1 rounded text-sm">\(S_{60} = 1 \times 0.0525 \times 1 + 0.01 = 0.0625\)</div>
+                        <div class="bg-white p-1 rounded text-sm">\(K_{60} = 0.0525 \times 1 \times (0.0625)^{-1} = 0.84\)</div>
+                        <div class="bg-yellow-50 text-yellow-800 p-2 rounded-lg text-sm font-semibold text-center mt-auto">
+                            <i class="fas fa-lightbulb mr-1"></i>Un \(K\) alto significa que confiamos mucho en el trade.
+                        </div>
+                    </div>
+                    <!-- Columna 2: Actualización de Estado y Varianza -->
+                     <div class="flex flex-col space-y-2">
+                        <h3 class="font-bold text-center underline">Actualización Final</h3>
+                        <div class="bg-white p-1 rounded text-sm">\( \hat{m}_{60|60} = 102.90 + 0.84 \times (103.05 - 102.90) = 103.026 \)</div>
+                        <div class="bg-white p-1 rounded text-sm">\( P_{60|60} = (1 - 0.84 \times 1) \times 0.0525 = 0.0084 \)</div>
+                        <div class="mt-auto grid grid-cols-2 gap-2 text-center">
+                            <div class="bg-green-50 text-green-700 p-2 rounded-lg"><i class="fas fa-arrow-down mr-2"></i><p class="font-bold">El precio se acerca al trade.</p></div>
+                            <div class="bg-green-50 text-green-700 p-2 rounded-lg"><i class="fas fa-arrow-down mr-2"></i><p class="font-bold">La varianza colapsa.</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- === DIAPOSITIVA 23: INTRODUCCIÓN A MULTI-ASSET (REESTRUCTURADA) === -->
+    <section class="slide">
+        <div class="section-header">Parte IV: Aplicación Multi-Activo</div>
+        <div class="w-full h-full flex flex-col justify-center text-center px-4">
+            <h1 class="text-2xl font-black uppercase mb-2">Ampliando Horizontes: El Filtro Multi-Activo</h1>
+            <p class="text-base text-gray-600 mb-4 max-w-4xl mx-auto">¿Qué pasa si un activo no cotiza pero otro muy correlacionado sí? El filtro puede usar esa información.</p>
+            
+            <div class="card !p-3 flex-grow w-full">
+                <h3 class="text-lg font-bold text-center mb-1">Escenario: Dos Activos Correlacionados (\(\rho=0.98\))</h3>
+                <div class="flex-grow w-full bg-gray-50 p-1 rounded-lg border shadow-inner">
+                    <canvas id="multiAssetDataChart"></canvas>
+                </div>
+                <div class="grid grid-cols-2 gap-4 mt-2 text-xs">
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-2 rounded-r-lg">
+                        <h3 class="font-bold text-blue-800">Activo A (Ilíquido)</h3>
+                        <p>Solo recibe <strong class="font-semibold">un trade</strong> (punto rojo).</p>
+                    </div>
+                    <div class="bg-green-50 border-l-4 border-green-400 p-2 rounded-r-lg">
+                        <h3 class="font-bold text-green-800">Activo B (Líquido)</h3>
+                        <p>Recibe <strong class="font-semibold">múltiples trades</strong> (puntos verdes).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- === DIAPOSITIVA 24: VISUALIZACIÓN DEL FILTRO MULTI-ASSET (REESTRUCTURADA) === -->
+    <section class="slide">
+        <div class="section-header">Parte IV: Aplicación Multi-Activo</div>
+        <div class="w-full h-full flex flex-col justify-center text-center px-4">
+            <h1 class="text-2xl font-black uppercase mb-2">La Magia de la Correlación en Acción</h1>
+            <p class="text-base text-gray-600 mb-4 max-w-4xl mx-auto">La estimación del <strong class="highlight">Activo A (ilíquido)</strong> se actualiza gracias a los trades del <strong class="text-green-600">Activo B</strong>.</p>
+
+            <div class="card !p-3 flex-grow w-full">
+                 <div class="flex-grow w-full bg-gray-50 p-1 rounded-lg border shadow-inner">
+                    <canvas id="multiAssetFilterChart"></canvas>
+                </div>
+                <div class="mt-2 bg-yellow-50 border-l-4 border-yellow-400 p-2 rounded-r-lg">
+                    <h3 class="text-base font-bold text-yellow-800 mb-1"><i class="fas fa-lightbulb mr-2"></i>Observación Clave</h3>
+                    <p class="text-sm text-yellow-700">Cada trade en B (triángulos verdes) <strong class="font-semibold">corrige</strong> la estimación de A y <strong class="font-semibold">reduce</strong> su incertidumbre.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- === DIAPOSITIVA 25: EXPLICACIÓN MATEMÁTICA MULTI-ASSET === -->
+    <section class="slide">
+        <div class="section-header">Parte IV: Aplicación Multi-Activo</div>
+        <div class="w-full h-full flex flex-col justify-center text-center px-4">
+            <h1 class="text-2xl font-black uppercase mb-2">La Mecánica de la Actualización Indirecta</h1>
+            <p class="text-base text-gray-600 mb-4 max-w-4xl mx-auto">Cuando llega un trade del <strong class="text-green-600">Activo B</strong>, ¿cómo se actualiza el <strong class="highlight">Activo A</strong>?</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch flex-grow">
+                <div class="card border-t-4 border-gray-400 h-full flex flex-col !p-3">
+                    <div class="text-center mb-2"><i class="fas fa-sitemap text-3xl text-gray-500"></i><h2 class="text-xl font-bold">1. El Estado ahora es un Vector</h2></div>
+                    <p class="text-sm text-center">El filtro sigue los dos precios a la vez.</p>
+                    <div class="bg-white p-2 rounded-lg border text-center my-2 shadow-inner font-mono text-lg">
+                       \( x_t = \begin{bmatrix} m_A \\ m_B \end{bmatrix} \)
+                    </div>
+                     <p class="text-sm text-center mt-2">La matriz de covarianza \(P_t\) ahora es 2x2 y contiene la correlación.</p>
+                </div>
+                
+                <div class="card border-t-4 border-green-500 h-full flex flex-col !p-3">
+                    <div class="text-center mb-2"><i class="fas fa-filter text-3xl text-green-500"></i><h2 class="text-xl font-bold">2. La Observación es Selectiva</h2></div>
+                    <p class="text-sm text-center">La matriz \(H\) le dice al filtro que el trade es solo del Activo B.</p>
+                     <div class="bg-white p-2 rounded-lg border text-center my-2 shadow-inner font-mono text-lg">
+                       \( H = \begin{bmatrix} 0 & 1 \end{bmatrix} \)
+                    </div>
+                     <p class="text-sm text-center mt-2">\(y_t - H \hat{x}_{t|t-1}\) compara el trade solo con la predicción del Activo B.</p>
+                </div>
+            </div>
+            <div class="card mt-4 !p-3 bg-yellow-50 border-l-4 border-yellow-400">
+                <h3 class="text-lg font-bold text-yellow-800 mb-1 text-center"><i class="fas fa-magic-wand-sparkles mr-2"></i>El Truco: La Ganancia de Kalman \(K_t\)</h3>
+                <p class="text-sm text-yellow-700">Aunque H es selectiva, la covarianza en \(P_{t|t-1}\) hace que la Ganancia de Kalman \(K_t\) sea un <strong class="font-semibold">vector de 2x1</strong>. Esto significa que la "sorpresa" del Activo B se distribuye a <strong class="font-semibold">ambos activos</strong>, actualizando también al Activo A en proporción a su correlación.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- === DIAPOSITIVA 26: EJEMPLO NUMÉRICO MULTI-ASSET (1/3) === -->
+    <section class="slide">
+        <div class="section-header">Parte IV: Aplicación Multi-Activo</div>
+        <div class="w-full h-full flex flex-col justify-center text-center px-4">
+            <h1 class="text-2xl font-black uppercase mb-2">Ejemplo Multi-Activo (1/3): Parámetros Iniciales</h1>
+            <p class="text-base text-gray-600 mb-4">Analicemos el instante \(t=19\), justo antes del primer trade del Activo B.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+                <!-- Estado y Parámetros -->
+                <div class="card !p-3 space-y-2">
+                    <h3 class="text-lg font-bold text-center">Estado y Creencia en \(t=19\)</h3>
+                    <p class="text-sm"><strong>Vector de Estados \(\hat{x}_{19|19}\):</strong> \( \begin{bmatrix} 100.0 \\ 102.0 \end{bmatrix} \)</p>
+                    <p class="text-sm"><strong>Matriz de Covarianza \(P_{19|19}\):</strong> \( \begin{bmatrix} 1.00 & 0.98 \\ 0.98 & 1.00 \end{bmatrix} \)</p>
+                </div>
+                <div class="card !p-3 space-y-2">
+                    <h3 class="text-lg font-bold text-center">Parámetros del Modelo</h3>
+                    <p class="text-sm"><strong>Transición \(A\):</strong> \( \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} \)</p>
+                    <p class="text-sm"><strong>Ruido del Proceso \(Q\):</strong> \( \begin{bmatrix} 0.0400 & 0.0392 \\ 0.0392 & 0.0400 \end{bmatrix} \)</p>
+                    <p class="text-sm"><strong>Ruido de Medida \(R\):</strong> \(0.01\)</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- === DIAPOSITIVA 27: EJEMPLO NUMÉRICO MULTI-ASSET (2/3) === -->
+    <section class="slide">
+        <div class="section-header">Parte IV: Aplicación Multi-Activo</div>
+        <div class="w-full h-full flex flex-col justify-center text-center px-4">
+            <h1 class="text-2xl font-black uppercase mb-2">Ejemplo Multi-Activo (2/3): Predicción a \(t=20\)</h1>
+            <p class="text-base text-gray-600 mb-4">Avanzamos un paso. No hay trades, por lo que solo aplicamos la dinámica interna.</p>
+
+            <div class="space-y-4">
+                <div class="card !p-3">
+                    <h3 class="text-lg font-bold">Estado Predicho \(\hat{x}_{20|19}\)</h3>
+                    <p class="text-lg font-mono">\( \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} \begin{bmatrix} 100.0 \\ 102.0 \end{bmatrix} = \begin{bmatrix} 100.0 \\ 102.0 \end{bmatrix} \) (No cambia)</p>
+                </div>
+                <div class="card !p-3">
+                    <h3 class="text-lg font-bold">Varianza Predicha \(P_{20|19}\)</h3>
+                    <p class="text-lg font-mono">\( \begin{bmatrix} 1.00 & 0.98 \\ 0.98 & 1.00 \end{bmatrix} + \begin{bmatrix} 0.0400 & 0.0392 \\ 0.0392 & 0.0400 \end{bmatrix} = \begin{bmatrix} 1.0400 & 1.0192 \\ 1.0192 & 1.0400 \end{bmatrix} \)</p>
+                    <div class="mt-2 text-center bg-red-50 text-red-700 p-2 rounded-lg text-sm"><p>Las varianzas (diagonal) y la covarianza han aumentado.</p></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- === DIAPOSITIVA 28: EJEMPLO NUMÉRICO MULTI-ASSET (3/3) === -->
+    <section class="slide">
+        <div class="section-header">Parte IV: Aplicación Multi-Activo</div>
+        <div class="w-full h-full flex flex-col justify-center text-center px-4">
+            <h1 class="text-2xl font-black uppercase mb-1">Ejemplo Multi-Activo (3/3): Update con Trade en B</h1>
+            <p class="text-base text-gray-600 mb-2">Llega un trade en el Activo B: \(y_{20} = 102.3\). Observación \(H = \begin{bmatrix} 0 & 1 \end{bmatrix}\).</p>
+
+            <div class="grid grid-cols-2 gap-4 flex-grow">
+                <div class="card !p-2 space-y-1">
+                    <h3 class="font-bold">1. Ganancia de Kalman \(K_{20}\)</h3>
+                    <p class="text-sm">\(S_{20} = \begin{bmatrix} 0 & 1 \end{bmatrix} P_{20|19} \begin{bmatrix} 0 \\ 1 \end{bmatrix} + R = 1.0400 + 0.01 = 1.0500\)</p>
+                    <p class="text-sm">\(K_{20} = P_{20|19} \begin{bmatrix} 0 \\ 1 \end{bmatrix} (1.0500)^{-1} = \begin{bmatrix} 1.0192 \\ 1.0400 \end{bmatrix} \times 0.952 = \begin{bmatrix} 0.970 \\ 0.990 \end{bmatrix}\)</p>
+                </div>
+                 <div class="card !p-2 space-y-1">
+                    <h3 class="font-bold">2. Estado Actualizado \(\hat{x}_{20|20}\)</h3>
+                     <p class="text-sm">Error: \(102.3 - (\begin{bmatrix} 0 & 1 \end{bmatrix} \begin{bmatrix} 100.0 \\ 102.0 \end{bmatrix}) = 0.3\)</p>
+                     <p class="text-sm">\(\hat{x}_{20|20} = \begin{bmatrix} 100.0 \\ 102.0 \end{bmatrix} + \begin{bmatrix} 0.970 \\ 0.990 \end{bmatrix} \times 0.3 = \begin{bmatrix} 100.291 \\ 102.297 \end{bmatrix}\)</p>
+                </div>
+                 <div class="card !p-2 space-y-1">
+                    <h3 class="font-bold">3. Varianza Actualizada \(P_{20|20}\)</h3>
+                    <p class="text-sm">\((I - K_{20}H)P_{20|19} = \begin{bmatrix} 0.069 & 0.040 \\ 0.040 & 0.010 \end{bmatrix}\)</p>
+                </div>
+                <div class="card !p-2 bg-yellow-50 border-yellow-300">
+                    <h3 class="font-bold text-yellow-800">Conclusión</h3>
+                    <p class="text-sm">El estado del <strong class="highlight">Activo A</strong> se ha movido a 100.291, <strong class="highlight">sin recibir un trade directo</strong>, solo por su correlación con el Activo B. Las incertidumbres de ambos (diagonal de \(P\)) <strong class="text-green-600">han disminuido drásticamente</strong>.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- === DIAPOSITIVA 29: APLICACIÓN A POLYMARKET (REVISADA) === -->
+    <section class="slide">
+        <div class="section-header">Parte V: Conclusiones</div>
+        <div class="w-full h-full flex flex-col justify-center text-center px-4">
+            <h1 class="text-2xl font-black uppercase mb-2">Aplicación Final: El Reto de Polymarket</h1>
+            <p class="text-base text-gray-600 mb-4 max-w-4xl mx-auto">Aquí es donde la teoría se encuentra con la realidad: mercados de predicción en la blockchain.</p>
+    
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch flex-grow">
+                <div class="card !p-4">
+                    <h2 class="text-xl font-bold text-center mb-2"><i class="fas fa-satellite-dish mr-2"></i>Las Señales</h2>
+                     <div class="bg-blue-50 border-l-4 border-blue-400 p-3 rounded-r-lg mb-3">
+                        <h3 class="font-bold text-blue-800">1. Datos del Order Book</h3>
+                        <p class="text-sm">El <strong class="font-semibold">Mid-Price</strong> y el <strong class="font-semibold">Spread</strong> ofrecen una visión continua del consenso.</p>
+                    </div>
+                    <div class="bg-green-50 border-l-4 border-green-400 p-3 rounded-r-lg">
+                        <h3 class="font-bold text-green-800">2. Datos de Trades</h3>
+                        <p class="text-sm">Operaciones reales que confirman un precio, con una <strong class="font-semibold">informatividad que depende del volumen</strong>.</p>
+                    </div>
+                </div>
+                <div class="card !p-4">
+                    <h2 class="text-xl font-bold text-center mb-2"><i class="fas fa-puzzle-piece mr-2"></i>Los Desafíos</h2>
+                    <div class="bg-gray-100 p-3 rounded-lg mb-3">
+                        <h3 class="font-bold">Calibración del Modelo</h3>
+                        <p class="text-sm">Encontrar los valores correctos para \(Q\) (ruido del tiempo) y las funciones para \(R\) (ruido de las observaciones) es clave.</p>
+                    </div>
+                     <div class="bg-gray-100 p-3 rounded-lg">
+                        <h3 class="font-bold">Ingeniería de Datos</h3>
+                        <p class="text-sm">Recoger y procesar datos históricos de trades y order books. Al ser una blockchain, estos datos son <strong class="font-semibold">públicos y gratuitos</strong>, ¡una gran ventaja!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- === DIAPOSITIVA 30: MODELANDO LAS SEÑALES DE POLYMARKET (REVISADA) === -->
+    <section class="slide">
+        <div class="section-header">Parte V: Conclusiones</div>
+        <div class="w-full h-full flex flex-col justify-center text-center px-4">
+            <h1 class="text-2xl font-black uppercase mb-2">Un Modelo de Partida para Polymarket</h1>
+            <p class="text-base text-gray-600 mb-4 max-w-4xl mx-auto">Así traducimos las señales del mercado en parámetros para el filtro.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch flex-grow">
+                <div class="card border-t-4 border-blue-500 h-full flex flex-col !p-4">
+                    <div class="text-center mb-2"><i class="fas fa-book-open text-4xl text-blue-500"></i><h2 class="text-xl font-bold mt-2">Observación de Mid-Price</h2></div>
+                    <div class="bg-white p-3 rounded-lg border text-left my-2 shadow-inner text-base space-y-2 flex-grow">
+                        <p><strong>\(y_t\):</strong> <span class="font-mono">\( \frac{Ask + Bid}{2} \)</span></p>
+                        <p><strong>\(R_t\):</strong> <span class="font-mono">\( f(Ask - Bid) \)</span></p>
+                    </div>
+                    <div class="bg-blue-50 text-blue-800 p-2 rounded-lg text-sm"><i class="fas fa-info-circle mr-1"></i>A mayor spread, mayor \(R\), y menos confianza.</div>
+                </div>
+                
+                <div class="card border-t-4 border-green-500 h-full flex flex-col !p-4">
+                    <div class="text-center mb-2"><i class="fas fa-chart-line text-4xl text-green-500"></i><h2 class="text-xl font-bold mt-2">Observación de Trade</h2></div>
+                     <div class="bg-white p-3 rounded-lg border text-left my-2 shadow-inner text-base space-y-2 flex-grow">
+                        <p><strong>\(y_t\):</strong> <span class="font-mono">\( \text{Precio Trade} \)</span></p>
+                        <p><strong>\(R_t\):</strong> <span class="font-mono">\( f(\frac{V_{\text{avg}}}{V_t}) \)</span></p>
+                    </div>
+                    <div class="bg-green-50 text-green-800 p-2 rounded-lg text-sm"><i class="fas fa-info-circle mr-1"></i>A mayor volumen (\(V_t\)), menor \(R\), y mayor confianza.</div>
+                </div>
+            </div>
+             <div class="card mt-4 !p-3">
+                <p class="text-base text-center">Entre observaciones (cada ~1s), la incertidumbre crece por el <strong class="font-semibold">ruido del proceso \(Q\)</strong>, que debemos calibrar.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- === DIAPOSITIVA 31: EL DESAFÍO FINAL Y CIERRE (REVISADA) === -->
+    <section class="slide">
+        <div class="section-header">Parte V: Conclusiones</div>
+        <div class="w-full h-full flex flex-col justify-center text-center px-4">
+            <i class="fas fa-compass text-6xl text-blue-600 mb-4"></i>
+            <h1 class="text-4xl font-black uppercase mb-3">El Futuro es Vuestro Lienzo</h1>
+            <p class="text-xl text-gray-700 mb-6 max-w-4xl mx-auto">Estáis ante el inicio de lo que podría ser un mercado gigantesco en 5 años. No hay peor arrepentimiento que el de no haberlo intentado, especialmente cuando se es joven.</p>
+            
+            <div class="card !p-4 bg-gray-50 max-w-3xl mx-auto w-full">
+                <h2 class="text-xl font-bold text-center mb-3">Vuestra Misión</h2>
+                <p class="text-lg">Tomad estas ideas, este lienzo en blanco, y colaborad con herramientas como <strong class="highlight">Gemini</strong> para construir un filtro que os dé una ventaja única. La experimentación es vuestra mayor aliada.</p>
+            </div>
+
+            <div class="mt-8 border-t-4 border-gray-800 pt-6 max-w-5xl mx-auto">
+                 <p class="text-2xl italic text-gray-800">"If you don't design your own life plan, chances are you will fall into someone else's plans. And guess what they have planned for you? Not much."</p>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>
+

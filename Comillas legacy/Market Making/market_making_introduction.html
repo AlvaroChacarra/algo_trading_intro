@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentación: Introducción al Market Making</title>
+    
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+    <!-- KaTeX for LaTeX Math Rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" xintegrity="sha384-n8MVd4RsNIU0KOVEMeaYGqrkPcDtMERNFYViLaUjDWzHRod5ADMo2pcRmwfrHHaK" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" xintegrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctApi0givMi" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" xintegrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+    
+    <!-- Chart.js for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* Estilos base y de la presentación */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0F172A;
+            background-image: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+            color: #E2E8F0;
+            overflow: hidden; /* Evita el scroll de la página */
+        }
+
+        #presentation-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+            transform: scale(0.95);
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+        
+        /* Estilos de texto */
+        .slide-title {
+            font-size: 3rem;
+            font-weight: 900;
+            line-height: 1.2;
+            text-align: center;
+            color: #ffffff;
+        }
+        
+        .slide-subtitle {
+            font-size: 1.25rem;
+            margin-top: 1rem;
+            color: #94A3B8;
+            text-align: center;
+        }
+        
+        .highlight {
+            color: #38BDF8; /* Tono de azul más brillante */
+        }
+        
+        .text-strong {
+             color: #ffffff;
+             font-weight: 700;
+        }
+
+        /* Estructura y footer */
+        .slide-content {
+            flex-grow: 1;
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .slide-footer {
+            position: absolute;
+            bottom: 2rem;
+            left: 0;
+            width: 100%;
+            padding: 0 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.875rem;
+            color: #64748B;
+        }
+        
+        /* Diagramas y elementos visuales */
+        .diagram-box {
+            background-color: rgba(30, 41, 59, 0.7);
+            border: 1px solid #334155;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="presentation-container">
+        
+        <!-- === DIAPOSITIVA 1: PORTADA === -->
+        <section class="slide active">
+            <div class="w-full max-w-5xl text-center">
+                <h1 class="text-5xl md:text-6xl font-black uppercase tracking-wider mb-6 text-white">
+                    Introducción al <strong class="highlight">Market Making</strong>
+                </h1>
+                <h2 class="text-2xl md:text-3xl font-light text-gray-400 mb-12">
+                    El Arte de Proveer Liquidez: Ganar en la Diferencia y Gestionar el Riesgo.
+                </h2>
+                <div class="w-48 h-1 bg-sky-500 mx-auto mb-12"></div>
+                <div class="diagram-box max-w-3xl mx-auto">
+                    <p class="text-xl md:text-2xl text-gray-200">
+                        <strong class="highlight">Objetivo:</strong> Entender el rol, el negocio y los desafíos fundamentales de un <em>creador de mercado</em> en los mercados financieros modernos.
+                    </p>
+                </div>
+                <div class="mt-16 text-right w-full">
+                    <p class="text-lg text-gray-500">Presentado por:</p>
+                    <p class="text-xl font-bold highlight">Álvaro López-Chacarra, Desk Quant BBVA</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- === DIAPOSITIVA 2: ¿QUÉ ES UN MARKET MAKER? === -->
+        <section class="slide">
+            <div class="w-full h-full flex flex-col justify-center text-center">
+                <h1 class="text-3xl md:text-4xl font-black uppercase mb-4 text-white">¿Qué es un Market Maker?</h1>
+                <p class="text-lg text-gray-400 mb-6 max-w-4xl mx-auto">Es un participante del mercado que actúa como una "tienda" para un activo financiero. Su trabajo es estar <strong class="highlight">siempre dispuesto a comprar y a vender</strong>, asegurando que siempre haya una contrapartida disponible.</p>
+                <div class="flex items-center justify-around w-full flex-grow">
+                    <div class="text-center">
+                        <i class="fas fa-user-tie text-5xl text-green-400 mb-4"></i>
+                        <p class="text-xl font-bold text-white">Vendedor Impaciente</p>
+                    </div>
+                    <div class="flex flex-col items-center mx-4">
+                        <i class="fas fa-arrow-right text-3xl text-gray-500 mb-2"></i>
+                         <div class="diagram-box border-sky-400 flex flex-col items-center justify-center">
+                             <i class="fas fa-store text-5xl text-sky-400"></i>
+                             <p class="text-xl font-bold mt-2 highlight">Market Maker</p>
+                             <p class="text-base text-gray-400">Proveedor de Liquidez</p>
+                         </div>
+                        <i class="fas fa-arrow-left text-3xl text-gray-500 mt-2"></i>
+                    </div>
+                    <div class="text-center">
+                        <i class="fas fa-user-tie text-5xl text-red-400 mb-4"></i>
+                        <p class="text-xl font-bold text-white">Comprador Impaciente</p>
+                    </div>
+                </div>
+                 <div class="mt-6 diagram-box border-t-4 border-sky-500 max-w-5xl mx-auto">
+                     <p class="text-lg font-semibold text-gray-200"><i class="fas fa-check-circle text-sky-400 mr-2"></i>Su función es <strong class="highlight">proporcionar liquidez</strong>, permitiendo que otros compren o vendan sin tener que esperar.</p>
+                 </div>
+            </div>
+        </section>
+
+        <!-- === DIAPOSITIVA 3: EL BID-ASK SPREAD === -->
+        <section class="slide">
+            <div class="w-full h-full flex flex-col justify-center text-center">
+                <h1 class="text-3xl md:text-4xl font-black uppercase mb-4 text-white">El Modelo de Negocio: Ganar con el <em>Spread</em></h1>
+                <p class="text-lg text-gray-400 mb-6">El market maker ajusta su spread en función de la volatilidad del activo y el riesgo percibido.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-grow w-full">
+                    <div class="diagram-box h-full flex flex-col">
+                        <h2 class="text-xl font-bold mb-2 text-center text-white">Activo de Poca Varianza <i class="fas fa-chart-line text-green-500"></i></h2>
+                        <p class="text-base text-gray-400 mb-2 text-center">Mercado estable, bajo riesgo. <strong class="highlight">Spread Estrecho</strong>.</p>
+                        <div class="flex-grow bg-slate-800 p-2 rounded-lg border border-slate-700 shadow-inner min-h-0">
+                            <canvas id="lowVarianceChart" class="w-full h-full"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="diagram-box h-full flex flex-col">
+                        <h2 class="text-xl font-bold mb-2 text-center text-white">Activo de Mucha Varianza <i class="fas fa-chart-line text-red-500"></i></h2>
+                        <p class="text-base text-gray-400 mb-2 text-center">Mercado volátil, alto riesgo. <strong class="highlight">Spread Ancho</strong>.</p>
+                        <div class="flex-grow bg-slate-800 p-2 rounded-lg border border-slate-700 shadow-inner min-h-0">
+                            <canvas id="highVarianceChart" class="w-full h-full"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 diagram-box border-t-4 border-sky-500 max-w-5xl mx-auto">
+                    <p class="text-lg font-semibold text-gray-200"><i class="fas fa-info-circle text-sky-400 mr-2"></i>El <strong class="highlight">spread es la compensación</strong> que exige el market maker por asumir el riesgo de operar.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- === DIAPOSITIVA 4: MARGEN VS VOLUMEN (REDESIGNED) === -->
+        <section class="slide">
+            <div class="w-full h-full flex flex-col justify-center">
+                <div class="text-center shrink-0">
+                    <h1 class="text-2xl md:text-3xl font-black uppercase mb-2 text-white">El Dilema Estático: Margen vs. Volumen</h1>
+                    <p class="text-base text-gray-400 mb-6 max-w-4xl mx-auto">Un market maker debe decidir constantemente el ancho de su spread. Es un equilibrio delicado.</p>
+                </div>
+                <div class="flex-grow w-full flex gap-8 items-center">
+                    <div class="w-1/3 flex flex-col gap-6">
+                        <div class="diagram-box h-full flex flex-col justify-center text-center">
+                            <i class="fas fa-arrows-alt-h text-4xl text-red-400 mb-3"></i>
+                            <h2 class="text-xl font-bold mb-2 text-white">Spread Ancho</h2>
+                            <ul class="text-sm text-left list-disc list-inside space-y-1 text-gray-300">
+                                <li><strong class="text-green-400">PRO:</strong> Alto margen por operación.</li>
+                                <li><strong class="text-red-400">CONTRA:</strong> Baja probabilidad de operar.</li>
+                            </ul>
+                        </div>
+                        <div class="diagram-box h-full flex flex-col justify-center text-center">
+                            <i class="fas fa-compress-arrows-alt text-4xl text-green-400 mb-3"></i>
+                            <h2 class="text-xl font-bold mb-2 text-white">Spread Estrecho</h2>
+                             <ul class="text-sm text-left list-disc list-inside space-y-1 text-gray-300">
+                                 <li><strong class="text-green-400">PRO:</strong> Alta probabilidad de operar.</li>
+                                 <li><strong class="text-red-400">CONTRA:</strong> Bajo margen por operación.</li>
+                             </ul>
+                        </div>
+                    </div>
+                    <div class="w-2/3 h-full bg-slate-800 p-4 rounded-lg border border-slate-700 shadow-inner">
+                        <canvas id="spreadVolumeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === DIAPOSITIVA 5: EL PROBLEMA DEL INVENTARIO === -->
+        <section class="slide">
+            <div class="w-full h-full flex flex-col justify-center text-center">
+                <div class="shrink-0">
+                    <h1 class="text-2xl md:text-3xl font-black uppercase mb-1 text-white">El Problema Real: ¡Las Órdenes no Llegan a la Vez!</h1>
+                    <p class="text-base text-gray-400 mb-2 max-w-4xl mx-auto">En la realidad, las órdenes se acumulan y crean un inventario.</p>
+                </div>
+                
+                <div class="diagram-box w-full flex-1 flex flex-col min-h-0 my-2">
+                    <div class="h-full w-full relative">
+                        <canvas id="inventoryPnlCanvas" class="w-full h-full"></canvas>
+                    </div>
+                </div>
+                <div class="shrink-0 w-full grid grid-cols-2 gap-4 mt-2">
+                     <div class="diagram-box border-l-4 border-sky-500 p-2">
+                         <h3 class="font-bold text-sky-400 text-sm">Inventario Acumulado</h3>
+                         <p class="text-xl font-mono text-white" id="kpi-inventory">0</p>
+                     </div>
+                     <div class="diagram-box border-l-4 border-green-500 p-2">
+                         <h3 class="font-bold text-green-400 text-sm">Spread Cobrado</h3>
+                         <p class="text-xl font-mono text-white" id="kpi-spread">0.00€</p>
+                     </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- === DIAPOSITIVA 6: EL RIESGO DE INVENTARIO (EXPANDED) === -->
+        <section class="slide">
+            <div class="w-full h-full flex flex-col justify-center">
+                <h1 class="text-3xl md:text-4xl font-black uppercase mb-4 text-center text-white">El Gran Dolor de Cabeza: El Riesgo de Precio</h1>
+                <p class="text-lg text-gray-400 mb-6 text-center">Tener inventario significa estar expuesto al mercado. El coste de mantenerlo no es solo la posible pérdida si el precio se mueve en contra:</p>
+                <div class="grid grid-cols-3 gap-4 mb-6 text-center">
+                    <div class="diagram-box"><strong class="text-yellow-400">Coste de Financiación</strong><p class="text-sm text-gray-400">El coste de "pedir prestado" el activo o el dinero para mantener la posición.</p></div>
+                    <div class="diagram-box"><strong class="text-red-400">Volatilidad del Precio</strong><p class="text-sm text-gray-400">El riesgo principal: que el valor de tu inventario caiga (si es largo) o suba (si es corto).</p></div>
+                    <div class="diagram-box"><strong class="text-purple-400">Incertidumbre Temporal</strong><p class="text-sm text-gray-400">No sabes cuándo llegará la orden contraria para cerrar tu posición.</p></div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch flex-grow">
+                    <div class="diagram-box border-t-4 border-red-500 h-full flex flex-col">
+                        <div class="text-center mb-2"><i class="fas fa-arrow-trend-down text-4xl text-red-500"></i><h2 class="text-2xl font-bold mt-2 text-white">Inventario Largo (Long)</h2></div>
+                        <p class="text-center text-lg text-gray-300">Has comprado más de lo que has vendido. Tienes <strong>+10 acciones</strong>.</p>
+                        <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 shadow-inner flex-grow flex items-center justify-center my-2">
+                            <p class="text-xl font-semibold text-gray-200">Si el precio del mercado <strong class="text-red-400">BAJA</strong>... <strong class="text-red-400 text-2xl">¡PIERDES DINERO!</strong></p>
+                        </div>
+                    </div>
+        
+                    <div class="diagram-box border-t-4 border-red-500 h-full flex flex-col">
+                        <div class="text-center mb-2"><i class="fas fa-arrow-trend-up text-4xl text-red-500"></i><h2 class="text-2xl font-bold mt-2 text-white">Inventario Corto (Short)</h2></div>
+                        <p class="text-center text-lg text-gray-300">Has vendido más de lo que has comprado. Debes <strong>-10 acciones</strong>.</p>
+                         <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 shadow-inner flex-grow flex items-center justify-center my-2">
+                             <p class="text-xl font-semibold text-gray-200">Si el precio del mercado <strong class="text-red-400">SUBE</strong>... <strong class="text-red-400 text-2xl">¡PIERDES DINERO!</strong></p>
+                         </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === DIAPOSITIVA 7: LA SOLUCIÓN DINÁMICA (REDESIGNED SKEW) === -->
+        <section class="slide">
+            <div class="w-full h-full flex flex-col justify-center">
+                <h1 class="text-3xl md:text-4xl font-black uppercase mb-4 text-center text-white">La Solución Dinámica: Asimetría o <em>"Skewing"</em></h1>
+                <p class="text-lg text-gray-400 mb-6 text-center">Para controlar el inventario, el market maker <strong class="highlight">desplaza sus precios</strong> para incentivar las operaciones que necesita.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch flex-grow w-full">
+                    <div class="diagram-box border-t-4 border-sky-500 h-full flex flex-col">
+                        <div class="text-center mb-2">
+                            <div class="text-xl font-bold text-white">Situación: Inventario <strong class="text-green-400">LARGO</strong></div>
+                            <p class="text-base text-gray-400"><strong>Objetivo:</strong> Vender para reducir inventario.</p>
+                        </div>
+                        <div class="bg-slate-800 flex-grow rounded border border-slate-700 shadow-inner p-4">
+                            <canvas id="longSkewCanvas" class="w-full h-full"></canvas>
+                        </div>
+                        <p class="text-center mt-2 text-sm text-gray-500">Se bajan ambos precios para atraer compradores y disuadir vendedores.</p>
+                    </div>
+        
+                    <div class="diagram-box border-t-4 border-sky-500 h-full flex flex-col">
+                        <div class="text-center mb-2">
+                            <div class="text-xl font-bold text-white">Situación: Inventario <strong class="text-red-400">CORTO</strong></div>
+                            <p class="text-base text-gray-400"><strong>Objetivo:</strong> Comprar para cubrir la posición.</p>
+                        </div>
+                         <div class="bg-slate-800 flex-grow rounded border border-slate-700 shadow-inner p-4">
+                             <canvas id="shortSkewCanvas" class="w-full h-full"></canvas>
+                         </div>
+                        <p class="text-center mt-2 text-sm text-gray-500">Se suben ambos precios para atraer vendedores y disuadir compradores.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === DIAPOSITIVA 8: NEW - MODELING INTRODUCTION === -->
+        <section class="slide">
+            <div class="w-full max-w-4xl text-center">
+                <h1 class="text-4xl font-black uppercase mb-6 text-white">Modelando la Realidad</h1>
+                <p class="text-xl text-gray-400 mb-10">Para tomar decisiones óptimas de forma automática, necesitamos un modelo matemático que capture la incertidumbre del mercado. Esto se reduce a modelar dos piezas clave:</p>
+                <div class="flex justify-around items-center">
+                    <div class="diagram-box text-center w-5/12">
+                        <i class="fas fa-wave-square text-5xl text-sky-400 mb-4"></i>
+                        <h2 class="text-2xl font-bold text-white">1. El Precio del Activo</h2>
+                        <p class="text-gray-300 mt-2">¿Cómo se moverá el "precio justo" en el futuro?</p>
+                        <p class="font-mono text-2xl mt-4 text-sky-300">\(S_t\)</p>
+                    </div>
+                    <div class="text-5xl font-thin text-gray-500">+</div>
+                    <div class="diagram-box text-center w-5/12">
+                        <i class="fas fa-bolt text-5xl text-amber-400 mb-4"></i>
+                        <h2 class="text-2xl font-bold text-white">2. La Llegada de Órdenes</h2>
+                        <p class="text-gray-300 mt-2">¿Con qué probabilidad alguien operará a los precios que ofrecemos?</p>
+                        <p class="font-mono text-2xl mt-4 text-amber-300">\(\lambda(\delta)\)</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === DIAPOSITIVA 9: EL PRECIO DE REFERENCIA (EXPANDED) === -->
+        <section class="slide">
+            <div class="w-full h-full flex flex-col justify-center">
+                <h1 class="text-3xl md:text-4xl font-black uppercase mb-4 text-center text-white">Pieza 1: El Precio de Referencia (\(S_t\))</h1>
+                <p class="text-lg text-gray-400 mb-6 text-center max-w-4xl mx-auto">Se asume que el precio justo sigue un "camino aleatorio" impredecible. El futuro es incierto; existen infinitas trayectorias posibles y nuestro modelo debe ser robusto ante todas ellas.</p>
+                
+                <div class="flex-grow w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="diagram-box h-full flex flex-col justify-center">
+                        <h2 class="text-2xl font-bold mb-4 text-white">La Hipótesis: Movimiento Browniano</h2>
+                        <p class="text-lg text-gray-300 mb-4">Cada una de las trayectorias de la derecha es una posible realización de la misma ecuación diferencial estocástica. Nuestra estrategia debe funcionar para cualquiera de ellas.</p>
+                        <div class="bg-slate-800 p-4 rounded-lg border border-slate-700 text-center shadow-inner">
+                            <span class="text-3xl font-mono highlight">\( dS_t = \sigma dW_t \)</span>
+                        </div>
+                    </div>
+                    <div class="h-full bg-slate-800 p-2 rounded-lg border border-slate-700 shadow-inner">
+                        <canvas id="randomWalkCanvas"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === DIAPOSITIVA 10: LA INTENSIDAD DE LAS ÓRDENES (EXPANDED) === -->
+        <section class="slide">
+            <div class="w-full h-full flex flex-col">
+                <div class="text-center shrink-0">
+                    <h1 class="text-2xl md:text-3xl font-black uppercase mb-2 text-white">Pieza 2: La Intensidad de las Órdenes (\(\lambda\))</h1>
+                    <p class="text-base text-gray-400 mb-4 max-w-4xl mx-auto">La llegada de órdenes se modela como un <strong class="highlight">Proceso de Poisson</strong>, donde la tasa de llegada \(\lambda\) (la intensidad) depende de cuán atractivos sean nuestros precios.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-grow items-center">
+                     <div class="diagram-box h-full flex flex-col justify-center">
+                         <h2 class="text-xl font-bold mb-2 text-white">Proceso de Poisson</h2>
+                         <p class="text-base text-gray-300 mb-2">Modela eventos que ocurren de forma independiente a una tasa media constante. La intensidad \(\lambda(\delta)\) es esa tasa, que depende de nuestra distancia al precio justo \(\delta\).</p>
+                          <div class="bg-slate-800 p-2 rounded-lg border border-slate-700 text-center shadow-inner">
+                              <span class="text-2xl font-mono highlight">\( \lambda(\delta) = A e^{-k\delta} \)</span>
+                          </div>
+                          <p class="text-sm mt-2 text-gray-400">Un \(\delta\) pequeño (spread estrecho) implica una \(\lambda\) alta (muchas órdenes), y viceversa.</p>
+                     </div>
+                     <div class="h-full bg-slate-800 p-4 rounded-lg border border-slate-700 shadow-inner">
+                         <canvas id="intensityChart"></canvas>
+                     </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- === DIAPOSITIVA 11: NEW - INTRO TO OPTIMAL CONTROL === -->
+        <section class="slide">
+            <div class="w-full h-full flex flex-col justify-center">
+                <h1 class="text-3xl md:text-4xl font-black uppercase mb-4 text-center text-white">Juntando las Piezas: El Control Óptimo</h1>
+                <p class="text-lg text-gray-400 mb-6 text-center max-w-4xl mx-auto">Con los modelos del mercado definidos, nuestro problema es ahora uno de <strong class="highlight">control óptimo</strong>: tomar la mejor decisión en cada instante.</p>
+                <div class="diagram-box w-full max-w-4xl mx-auto text-center">
+                    <h2 class="text-2xl font-bold text-white mb-4">La Analogía del Scalextric</h2>
+                    <div class="flex items-center gap-8">
+                        <div class="w-1/3 text-6xl">🏎️</div>
+                        <div class="w-2/3 text-left text-lg space-y-3 text-gray-300">
+                           <p><strong class="text-white">OBJETIVO:</strong> Ir lo más rápido posible.</p>
+                           <p><strong class="text-white">CONTROL:</strong> El acelerador.</p>
+                           <p><strong class="text-white">RESTRICCIÓN:</strong> ¡No salirse en la curva!</p>
+                           <p class="text-xl mt-2"><strong class="highlight">DECISIÓN ÓPTIMA:</strong> Aplicar la aceleración justa en cada punto del circuito para maximizar la velocidad sin salirse.</p>
+                        </div>
+                    </div>
+                </div>
+                 <p class="text-xl mt-8 text-center">Para un market maker: el <strong class="text-strong">control</strong> son sus <strong class="text-strong">precios (spread y skew)</strong> y el <strong class="text-strong">objetivo</strong> es maximizar la <strong class="text-strong">utilidad</strong> sin asumir un <strong class="text-strong">riesgo excesivo</strong>.</p>
+            </div>
+        </section>
+        
+        <!-- === DIAPOSITIVA 12: NEW - VALUE FUNCTION === -->
+        <section class="slide">
+             <div class="w-full max-w-4xl text-center">
+                <h1 class="text-4xl font-black uppercase mb-6 text-white">La Búsqueda de la Estrategia Perfecta</h1>
+                <p class="text-xl text-gray-400 mb-10">El objetivo del control óptimo es encontrar dos elementos interconectados:</p>
+                <div class="flex justify-around items-stretch gap-8">
+                    <div class="diagram-box text-center w-1/2 flex flex-col">
+                        <i class="fas fa-trophy text-5xl text-amber-400 mb-4"></i>
+                        <h2 class="text-2xl font-bold text-white">1. La Función Valor (\(v\))</h2>
+                        <p class="text-gray-300 mt-2 flex-grow">Representa el <strong class="text-amber-300">máximo valor futuro esperado</strong> que podemos obtener, dado nuestro estado actual (tiempo, inventario, etc.). Es la respuesta a: "¿cuánto vale mi posición si actúo de forma óptima de aquí en adelante?"</p>
+                    </div>
+                    <div class="diagram-box text-center w-1/2 flex flex-col">
+                         <i class="fas fa-sliders-h text-5xl text-sky-400 mb-4"></i>
+                        <h2 class="text-2xl font-bold text-white">2. Los Controles Óptimos (\(\delta^*\))</h2>
+                        <p class="text-gray-300 mt-2 flex-grow">Son las <strong class="highlight">decisiones que debemos tomar ahora</strong> (qué spread y skew poner) para alcanzar el camino que nos lleva a esa Función Valor. Son las "palancas" que nos mantienen en la trayectoria óptima.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === DIAPOSITIVA 13: EL PROBLEMA DE OPTIMIZACIÓN (VISUAL) === -->
+        <section class="slide">
+            <div class="w-full h-full flex flex-col justify-center text-center">
+                <h1 class="text-3xl md:text-4xl font-black uppercase mb-6 text-white">El Problema de Optimización</h1>
+                <p class="text-xl text-gray-400 mb-8 max-w-4xl mx-auto">Buscamos los controles (\(\delta^b, \delta^a\)) que maximizan la utilidad esperada de nuestra riqueza final, penalizando el riesgo.</p>
+                
+                <div class="diagram-box w-full max-w-4xl mx-auto">
+                    <h2 class="text-2xl font-bold mb-4 text-white">Maximizar: \( \mathbb{E}[U(W_T)] \)</h2>
+                    <div class="bg-slate-800 p-6 rounded-lg border border-slate-700 text-center shadow-inner">
+                        <span class="text-3xl font-mono highlight">\( \max_{\delta^b, \delta^a} \mathbb{E}[-e^{-\gamma(X_T + q_T S_T)}] \)</span>
+                    </div>
+                    <div class="mt-6 grid grid-cols-3 gap-4 text-center">
+                        <div>
+                            <p class="text-lg font-bold text-white">Riqueza Final (\(W_T\))</p>
+                            <p class="text-gray-400">Cash (\(X_T\)) + Valor del Inventario (\(q_T S_T\))</p>
+                        </div>
+                        <div>
+                            <p class="text-lg font-bold text-white">Aversión al Riesgo (\(\gamma\))</p>
+                            <p class="text-gray-400">\(\gamma > 0\). Cuanto mayor es, más odiamos la incertidumbre.</p>
+                        </div>
+                         <div>
+                            <p class="text-lg font-bold text-white">Expectativa (\(\mathbb{E}\))</p>
+                            <p class="text-gray-400">Se promedia sobre todos los posibles caminos futuros del precio.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === DIAPOSITIVA 14: LA SOLUCIÓN TEÓRICA (HJB EXPANDED) === -->
+        <section class="slide">
+            <div class="w-full h-full flex flex-col justify-center">
+                <h1 class="text-3xl md:text-4xl font-black uppercase mb-4 text-center text-white">La Solución Teórica: Ecuaciones HJB</h1>
+                <div class="flex-grow w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="diagram-box h-full flex flex-col justify-center">
+                        <h2 class="text-2xl font-bold mb-4 text-white">¿Qué es una Ecuación HJB?</h2>
+                        <p class="text-lg text-gray-300">Es la "ecuación maestra" del control óptimo. Relaciona el valor de estar en un estado ahora (\(v(t, \dots)\)) con el valor de llegar al siguiente estado infinitesimal (\(v(t+dt, \dots)\)) tras tomar la mejor decisión posible. Es una forma de "viajar atrás en el tiempo": si conocemos la solución al final, HJB nos dice cuál es la solución un instante antes.</p>
+                    </div>
+                    <div class="diagram-box h-full flex flex-col justify-center">
+                        <h2 class="text-xl font-bold mb-2 text-center text-white">Visión Simplificada de la Ecuación</h2>
+                        <div class="bg-slate-800 p-2 rounded-lg border border-slate-700 text-center shadow-inner overflow-x-auto">
+                            <p class="font-mono text-sm text-gray-200">\( \partial_t v + \frac{1}{2}\sigma^2 \partial_{ss}^2 v + \max_{\delta^b, \delta^a} \{ \dots \} = 0 \)</p>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 mt-2 text-xs text-center">
+                            <div class="p-1 bg-blue-900/50 rounded text-blue-300"><strong>Paso del Tiempo</strong></div>
+                            <div class="p-1 bg-red-900/50 rounded text-red-300"><strong>Riesgo de Precio</strong></div>
+                            <div class="p-1 bg-green-900/50 rounded text-green-300"><strong>Decisión Óptima</strong></div>
+                        </div>
+                         <p class="mt-2 text-sm text-yellow-300 text-center"><i class="fas fa-exclamation-circle mr-1"></i>Resolverla es computacionalmente muy costoso.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === DIAPOSITIVA 15: FÓRMULAS DE APROXIMACIÓN (ADJUSTED) === -->
+        <section class="slide">
+            <div class="w-full h-full flex flex-col justify-center text-center">
+                <h1 class="text-3xl md:text-4xl font-black uppercase mb-4 text-white">Soluciones Prácticas: Fórmulas de Aproximación</h1>
+                <p class="text-lg text-gray-400 mb-6">La investigación académica ha desarrollado <strong class="highlight">fórmulas cerradas</strong> que aproximan muy bien la solución óptima.</p>
+                
+                <div class="diagram-box w-full flex-grow flex flex-col justify-center">
+                     <h2 class="text-2xl font-bold mb-2 text-white">Las Fórmulas <em>Guéant-Lehalle-Fernandez-Tapia</em></h2>
+                     <p class="text-base text-gray-400 mb-4">Descomponen las cotizaciones óptimas en dos partes intuitivas:</p>
+                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                           <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 shadow-inner">
+                               <h3 class="text-lg font-bold mb-2 text-white">Distancia de Compra (\(\delta^{b*}\))</h3>
+                               <p class="font-mono text-sm break-words text-gray-300">\( \approx \frac{1}{\gamma}\ln(1+\frac{\gamma}{k}) + \gamma\sigma^2(T-t) \cdot q \)</p>
+                               <p class="text-xs mt-2"><span class="bg-purple-900/50 text-purple-300 px-2 py-1 rounded">Spread Base</span> + <span class="bg-yellow-900/50 text-yellow-300 px-2 py-1 rounded">Ajuste por Inventario</span></p>
+                           </div>
+                           <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 shadow-inner">
+                               <h3 class="text-lg font-bold mb-2 text-white">Distancia de Venta (\(\delta^{a*}\))</h3>
+                               <p class="font-mono text-sm break-words text-gray-300">\( \approx \frac{1}{\gamma}\ln(1+\frac{\gamma}{k}) - \gamma\sigma^2(T-t) \cdot q \)</p>
+                               <p class="text-xs mt-2"><span class="bg-purple-900/50 text-purple-300 px-2 py-1 rounded">Spread Base</span> - <span class="bg-yellow-900/50 text-yellow-300 px-2 py-1 rounded">Ajuste por Inventario</span></p>
+                           </div>
+                     </div>
+                </div>
+                
+                <div class="mt-4 diagram-box border-l-4 border-green-500 p-4 text-left bg-green-900/20">
+                    <p class="text-lg font-semibold text-green-300"><i class="fas fa-check-circle mr-2"></i><strong class="font-semibold">Intuición:</strong> Partimos de un spread simétrico y lo "desplazamos" (skew) en función de nuestro inventario \(q\), la aversión al riesgo \(\gamma\) y la volatilidad \(\sigma\).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- === DIAPOSITIVA 16: EL RETO MULTI-ACTIVO (ADJUSTED) === -->
+        <section class="slide">
+            <div class="w-full h-full flex flex-col justify-center text-center">
+                <h1 class="text-3xl md:text-4xl font-black uppercase mb-4 text-white">El Reto Multi-Activo</h1>
+                <p class="text-lg text-gray-400 mb-6 max-w-4xl mx-auto">Un market maker real gestiona carteras de <strong class="highlight">cientos de activos correlacionados</strong>. El riesgo de un activo individual no es lo relevante; lo es el riesgo de la cartera total.</p>
+                
+                <div class="diagram-box w-full max-w-4xl mx-auto flex-grow flex flex-col justify-center">
+                    <h2 class="text-xl font-bold mb-2 text-white">El Poder de la Correlación: Cobertura Natural</h2>
+                    <div class="grid grid-cols-2 gap-4 mt-2 text-center">
+                        <div class="bg-slate-800 p-2 rounded-lg border border-slate-700">
+                            <p class="text-base font-bold text-white">Activo A (Bono a 10 años)</p>
+                            <p class="text-lg font-mono text-green-400">+100M</p>
+                        </div>
+                         <div class="bg-slate-800 p-2 rounded-lg border border-slate-700">
+                             <p class="text-base font-bold text-white">Activo B (Futuro sobre bono)</p>
+                             <p class="text-lg font-mono text-red-400">-95M</p>
+                         </div>
+                    </div>
+                     <div class="my-2 text-center"><i class="fas fa-plus text-2xl text-gray-500"></i></div>
+                    <div class="bg-sky-900/50 p-2 rounded-lg border-2 border-sky-500">
+                        <p class="text-lg font-bold highlight">Riesgo Neto de la Cartera <i class="fas fa-arrow-down"></i></p>
+                        <p class="text-sm text-gray-300">El riesgo neto es mucho menor que la suma de los riesgos individuales.</p>
+                    </div>
+                </div>
+                
+                <div class="mt-4 diagram-box border-l-4 border-yellow-400 p-3 text-left bg-yellow-900/20">
+                    <p class="text-base font-semibold text-yellow-300"><i class="fas fa-lightbulb mr-2"></i>La cotización óptima para el bono a 10 años debe depender no solo de su propio inventario, sino también del de su futuro y del resto de la cartera.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- === DIAPOSITIVA 17: RIESGOS ADICIONALES (REDESIGNED) === -->
+        <section class="slide">
+            <div class="w-full h-full flex flex-col justify-center text-center">
+                <h1 class="text-3xl md:text-4xl font-black uppercase mb-6 text-white">Más Allá del Inventario: Un Ecosistema de Riesgos</h1>
+                <div class="grid grid-cols-3 grid-rows-2 gap-4 items-stretch flex-grow w-full">
+                    <div class="diagram-box text-center flex flex-col p-3"><i class="fas fa-user-secret text-3xl text-red-500 mb-2"></i><h2 class="text-lg font-bold mb-1 text-white">Selección Adversa</h2><p class="text-xs text-gray-300 flex-grow">Operar contra alguien que tiene <strong class="text-red-400">información privilegiada</strong> sobre el precio futuro.</p></div>
+                    <div class="diagram-box text-center flex flex-col p-3"><i class="fas fa-hourglass-half text-3xl text-yellow-500 mb-2"></i><h2 class="text-lg font-bold mb-1 text-white">Riesgo de Ejecución</h2><p class="text-xs text-gray-300 flex-grow"><strong class="text-yellow-400">No poder deshacerte</strong> de tu inventario cuando lo necesitas, extendiendo tu exposición al mercado.</p></div>
+                    <div class="diagram-box text-center flex flex-col p-3"><i class="fas fa-tachometer-alt text-3xl text-sky-500 mb-2"></i><h2 class="text-lg font-bold mb-1 text-white">Competencia HFT</h2><p class="text-xs text-gray-300 flex-grow">El riesgo de ser <strong class="highlight">más lento o menos sofisticado</strong> que otros algoritmos en el mercado.</p></div>
+                    <div class="diagram-box text-center flex flex-col p-3"><i class="fas fa-brain text-3xl text-purple-500 mb-2"></i><h2 class="text-lg font-bold mb-1 text-white">Riesgo de Modelo</h2><p class="text-xs text-gray-300 flex-grow">El riesgo de que tus <strong class="text-purple-400">modelos matemáticos</strong> sean incorrectos o no capturen bien la realidad del mercado.</p></div>
+                    <div class="diagram-box text-center flex flex-col p-3"><i class="fas fa-server text-3xl text-orange-500 mb-2"></i><h2 class="text-lg font-bold mb-1 text-white">Riesgo Operacional</h2><p class="text-xs text-gray-300 flex-grow">Pérdidas debidas a <strong class="text-orange-400">fallos en sistemas</strong>, procesos internos o errores humanos (bugs, latencia, etc.).</p></div>
+                    <div class="diagram-box text-center flex flex-col p-3"><i class="fas fa-link-slash text-3xl text-teal-500 mb-2"></i><h2 class="text-lg font-bold mb-1 text-white">Riesgo de Correlación</h2><p class="text-xs text-gray-300 flex-grow">Que la relación entre activos <strong class="text-teal-400">cambie bruscamente</strong>, haciendo que tus coberturas dejen de funcionar.</p></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === DIAPOSITIVA 18: CONCLUSIÓN (VISUAL) === -->
+        <section class="slide">
+            <div class="w-full h-full flex flex-col justify-center text-center">
+                <h1 class="text-4xl font-black uppercase tracking-wider mb-10 text-white">Conclusiones: El Equilibrio del Market Maker</h1>
+                
+                <div class="w-full max-w-5xl grid grid-cols-2 grid-rows-2 gap-8 text-left text-lg flex-grow">
+                    <div class="diagram-box flex items-center p-6 border-l-4 border-sky-400"><i class="fas fa-balance-scale-right text-4xl text-sky-400 mr-6"></i><p class="text-gray-200">Es un <strong class="highlight">juego de equilibrios</strong>: capturar el spread mientras se gestiona activamente el riesgo de inventario.</p></div>
+                    <div class="diagram-box flex items-center p-6 border-l-4 border-sky-400"><i class="fas fa-cogs text-4xl text-sky-400 mr-6"></i><p class="text-gray-200">La estrategia clave es el <strong class="highlight"><em>skewing</em> dinámico</strong> para controlar el inventario de forma proactiva.</p></div>
+                    <div class="diagram-box flex items-center p-6 border-l-4 border-sky-400"><i class="fas fa-calculator text-4xl text-sky-400 mr-6"></i><p class="text-gray-200">Se formaliza como un <strong class="highlight">control óptimo</strong>, pero se implementa con <strong class="highlight">fórmulas de aproximación</strong> eficientes.</p></div>
+                    <div class="diagram-box flex items-center p-6 border-l-4 border-sky-400"><i class="fas fa-project-diagram text-4xl text-sky-400 mr-6"></i><p class="text-gray-200">La verdadera complejidad reside en el <strong class="highlight">entorno multi-activo</strong>, donde el riesgo de cartera es el rey.</p></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === DIAPOSITIVA 19: FRASE FINAL === -->
+        <section class="slide">
+            <div class="text-center w-full max-w-5xl">
+                <h1 class="text-3xl font-extrabold text-white leading-relaxed">"Los especuladores apuestan. Los inversores eligen un número y esperan.<br>Los market makers venden las fichas, gestionan la mesa y se quedan con una parte de cada bote.<br><span class="highlight mt-4 block">Nosotros estamos en el negocio de la infraestructura del juego.</span>"</h1>
+                <div class="mt-20 border-t border-slate-700 w-1/3 mx-auto pt-8">
+                     <h2 class="text-3xl font-bold text-sky-400">¿Preguntas?</h2>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Footer que se actualiza dinámicamente -->
+    <div class="slide-footer">
+        <p>Introducción al Market Making</p>
+        <p id="slide-counter">1 / 19</p>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+                delimiters: [ {left: '$$', right: '$$', display: true}, {left: '\\[', right: '\\]', display: true}, {left: '\\(', right: '\\)', display: false} ]
+            });
+
+            const activeSlideLogic = new Map();
+
+            const initSlide3 = () => { /* ... (Logic remains the same) ... */ };
+            activeSlideLogic.set(2, () => {
+                // Contenido de initSlide3 aquí
+                const generatePriceData = (variance, length = 50, initial = 100) => { const labels = Array.from({ length }, (_, i) => i); let lastVal = initial; const midPriceData = [lastVal]; for (let i = 1; i < labels.length; i++) { lastVal += (Math.random() - 0.5) * variance; midPriceData.push(lastVal); } return { labels, midPriceData }; };
+                const createVarianceChart = (canvasId, data, spread, colors, scale) => { const canvas = document.getElementById(canvasId); if (!canvas || canvas.chart) return; const ctx = canvas.getContext('2d'); const bidData = data.midPriceData.map(p => p - spread / 2); const askData = data.midPriceData.map(p => p + spread / 2); canvas.chart = new Chart(ctx, { type: 'line', data: { labels: data.labels, datasets: [{ label: 'Precio Bid', data: bidData, borderColor: colors.bid, backgroundColor: `${colors.bid}33`, borderWidth: 2, tension: 0.3, fill: '+1' }, { label: 'Precio Ask', data: askData, borderColor: colors.ask, backgroundColor: `${colors.ask}33`, borderWidth: 2, tension: 0.3, fill: false }, { label: 'Precio Justo', data: data.midPriceData, borderColor: colors.mid, borderWidth: 2, borderDash: [5, 5], tension: 0.3, fill: false }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: true, min: scale.min, max: scale.max, ticks: { font: { size: 10 }, color: '#94A3B8', maxTicksLimit: 6 }, grid: { color: '#334155' } } }, elements: { point: { radius: 0 } }, animation: { duration: 800 } } }); };
+                const lowVarianceData = generatePriceData(0.5); const highVarianceData = generatePriceData(2.0); const allValues = [...lowVarianceData.midPriceData.map(p => p - 0.4 / 2), ...lowVarianceData.midPriceData.map(p => p + 0.4 / 2), ...highVarianceData.midPriceData.map(p => p - 1.5 / 2), ...highVarianceData.midPriceData.map(p => p + 1.5 / 2)]; const unifiedScale = { min: Math.min(...allValues) - 0.5, max: Math.max(...allValues) + 0.5 }; const chartColors = { mid: '#6b7280', bid: '#16a34a', ask: '#dc2626' };
+                createVarianceChart('lowVarianceChart', lowVarianceData, 0.4, chartColors, unifiedScale); createVarianceChart('highVarianceChart', highVarianceData, 1.5, chartColors, unifiedScale);
+            });
+
+            activeSlideLogic.set(3, () => {
+                // Contenido de initSlide4 aquí
+                const canvas = document.getElementById('spreadVolumeChart'); if (!canvas || canvas.chart) return; const ctx = canvas.getContext('2d'); canvas.chart = new Chart(ctx, { type: 'bar', data: { labels: ['Spread Ancho', 'Spread Estrecho'], datasets: [ { label: 'Margen por Operación', data: [10, 2], backgroundColor: '#38BDF8', yAxisID: 'y' }, { label: 'Volumen de Operaciones', data: [20, 100], backgroundColor: '#16A34A', yAxisID: 'y1' } ] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#94A3B8' } } }, scales: { x: { ticks: { color: '#94A3B8' }, grid: { color: '#334155' } }, y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Margen (€)', color: '#94A3B8' }, ticks: { color: '#94A3B8' }, grid: { color: '#334155' } }, y1: { type: 'linear', display: true, position: 'right', grid: { drawOnChartArea: false }, title: { display: true, text: 'Nº Operaciones', color: '#94A3B8' }, ticks: { color: '#94A3B8' } } } } });
+            });
+
+            activeSlideLogic.set(4, () => {
+                // Contenido de initSlide5 aquí
+                const canvas = document.getElementById('inventoryPnlCanvas'); if (!canvas || canvas.animationFrameId) return; const ctx = canvas.getContext('2d'); const trades = [{ type: 'BUY', time: 0.1, size: 1 }, { type: 'BUY', time: 0.25, size: 1 }, { type: 'SELL', time: 0.5, size: 1 }, { type: 'BUY', time: 0.7, size: 1 }, { type: 'SELL', time: 0.9, size: 1 }];
+                function resizeCanvas() { if (canvas.animationFrameId) cancelAnimationFrame(canvas.animationFrameId); const canvasWidth = canvas.clientWidth; const canvasHeight = canvas.clientHeight; canvas.width = canvasWidth; canvas.height = canvasHeight; const padding = 30; const tradesHeight = canvasHeight * 0.35; const inventoryAreaTop = tradesHeight; const x = (t) => padding + (canvasWidth - 2 * padding) * t; let animationProgress = 0;
+                function animate() { animationProgress += 0.005; if (animationProgress > 1.2) animationProgress = 0; ctx.clearRect(0, 0, canvasWidth, canvasHeight); ctx.strokeStyle = '#d1d5db'; ctx.beginPath(); ctx.moveTo(padding, tradesHeight / 2); ctx.lineTo(canvasWidth - padding, tradesHeight / 2); ctx.stroke(); let inventory = 0; let tradeCount = 0;
+                trades.forEach(trade => { if (animationProgress >= trade.time) { tradeCount++; const tradeX = x(trade.time); const tradeY = tradesHeight / 2; ctx.beginPath(); const radius = Math.min(15, canvasWidth / 50); ctx.arc(tradeX, tradeY, radius, 0, 2 * Math.PI); ctx.fillStyle = trade.type === 'BUY' ? '#16a34a' : '#dc2626'; ctx.fill(); ctx.fillStyle = 'white'; ctx.font = `bold ${Math.max(10, radius * 0.9)}px 'Inter'`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(trade.type === 'BUY' ? 'B' : 'S', tradeX, tradeY); inventory += (trade.type === 'BUY' ? trade.size : -trade.size); } }); let spreadCollected = tradeCount * 0.05;
+                const invGraphTopMargin = 20; const invGraphBottomMargin = 10; const invGraphTop = inventoryAreaTop + invGraphTopMargin; const invGraphBottom = canvasHeight - invGraphBottomMargin; const invGraphHeight = invGraphBottom - invGraphTop; const maxInvDisplay = 2.5; const invY = (q) => (invGraphTop + invGraphHeight / 2) - (q / maxInvDisplay) * (invGraphHeight / 2); ctx.strokeStyle = '#d1d5db'; ctx.beginPath(); ctx.moveTo(padding, invY(0)); ctx.lineTo(canvasWidth - padding, invY(0)); ctx.stroke(); ctx.fillStyle = '#94A3B8'; ctx.font = `${Math.min(14, canvasWidth / 60)}px 'Inter'`; ctx.textAlign = 'right'; ctx.textBaseline = 'middle'; ctx.fillText('0', padding - 8, invY(0)); ctx.fillText('+2', padding - 8, invY(2)); ctx.fillText('-1', padding - 8, invY(-1));
+                ctx.beginPath(); ctx.moveTo(x(0), invY(0)); ctx.strokeStyle = '#38BDF8'; ctx.lineWidth = 3; let currentInv = 0;
+                trades.forEach(trade => { if (animationProgress >= trade.time) { ctx.lineTo(x(trade.time), invY(currentInv)); currentInv += (trade.type === 'BUY' ? 1 : -1); ctx.lineTo(x(trade.time), invY(currentInv)); } }); if (animationProgress > (trades.length > 0 ? trades[trades.length - 1].time : 0)) { if (animationProgress < 1.0) ctx.lineTo(x(animationProgress), invY(currentInv)); else ctx.lineTo(x(1.0), invY(currentInv)); } ctx.stroke();
+                document.getElementById('kpi-inventory').textContent = `${inventory > 0 ? '+' : ''}${inventory}`; document.getElementById('kpi-spread').textContent = `${spreadCollected.toFixed(2)}€`; canvas.animationFrameId = requestAnimationFrame(animate); }
+                animate(); }
+                new ResizeObserver(resizeCanvas).observe(canvas.parentElement); resizeCanvas();
+            });
+            
+            activeSlideLogic.set(6, () => {
+                // Contenido de initSlide7 aquí - SKEW REDESIGNED
+                 const longSkewCanvas = document.getElementById('longSkewCanvas'); const shortSkewCanvas = document.getElementById('shortSkewCanvas');
+                 function drawSkew(ctx, inventory) {
+                     const canvasWidth = ctx.canvas.clientWidth; const canvasHeight = ctx.canvas.clientHeight; ctx.canvas.width = canvasWidth; ctx.canvas.height = canvasHeight;
+                     const padding = { top: 20, bottom: 40, left: 20, right: 20 };
+                     const chartWidth = canvasWidth - padding.left - padding.right;
+                     const priceToX = (price) => padding.left + chartWidth * price;
+
+                     const fairPrice = 0.5; const spread = 0.2; const skew = -inventory * 0.15;
+                     const midPrice = fairPrice + skew;
+                     const bidPrice = midPrice - spread / 2;
+                     const askPrice = midPrice + spread / 2;
+
+                     // Eje de precios
+                     ctx.strokeStyle = '#64748B'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(padding.left, canvasHeight - padding.bottom); ctx.lineTo(canvasWidth - padding.right, canvasHeight - padding.bottom); ctx.stroke();
+                     
+                     // Línea de Precio Justo
+                     const fairPriceX = priceToX(fairPrice);
+                     ctx.strokeStyle = '#9ca3af'; ctx.lineWidth = 2; ctx.setLineDash([5, 5]); ctx.beginPath(); ctx.moveTo(fairPriceX, padding.top); ctx.lineTo(fairPriceX, canvasHeight - padding.bottom); ctx.stroke(); ctx.setLineDash([]);
+                     ctx.fillStyle = '#9ca3af'; ctx.font = "14px 'Inter'"; ctx.textAlign = 'center'; ctx.fillText('Precio Justo', fairPriceX, padding.top - 5);
+
+                     // Barras de Bid y Ask
+                     const barHeight = canvasHeight - padding.top - padding.bottom - 20;
+                     const bidX = priceToX(bidPrice);
+                     ctx.fillStyle = 'rgba(22, 163, 74, 0.8)'; ctx.fillRect(bidX - 5, padding.top + 10, 10, barHeight);
+                     ctx.fillStyle = '#16a34a'; ctx.textAlign = 'center'; ctx.fillText('BID', bidX, canvasHeight - padding.bottom + 15);
+
+                     const askX = priceToX(askPrice);
+                     ctx.fillStyle = 'rgba(220, 38, 38, 0.8)'; ctx.fillRect(askX - 5, padding.top + 10, 10, barHeight);
+                     ctx.fillStyle = '#dc2626'; ctx.textAlign = 'center'; ctx.fillText('ASK', askX, canvasHeight - padding.bottom + 15);
+                 }
+                 if (longSkewCanvas) { const longCtx = longSkewCanvas.getContext('2d'); new ResizeObserver(() => drawSkew(longCtx, 1)).observe(longSkewCanvas.parentElement); drawSkew(longCtx, 1); }
+                 if (shortSkewCanvas) { const shortCtx = shortSkewCanvas.getContext('2d'); new ResizeObserver(() => drawSkew(shortCtx, -1)).observe(shortSkewCanvas.parentElement); drawSkew(shortCtx, -1); }
+            });
+
+            activeSlideLogic.set(8, () => {
+                // Contenido de initSlide8 aquí - MULTIPLE RANDOM WALKS
+                 const canvas = document.getElementById('randomWalkCanvas'); if (!canvas || canvas.chart) return;
+                 const generateWalk = () => { const data = [100]; for (let i = 1; i < 100; i++) { data.push(data[i-1] + (Math.random() - 0.5) * 2); } return data; };
+                 const datasets = [
+                     { label: 'Trayectoria 1', data: generateWalk(), borderColor: '#38BDF8', borderWidth: 3 },
+                     { label: 'Trayectoria 2', data: generateWalk(), borderColor: 'rgba(100, 116, 139, 0.5)', borderWidth: 1.5 },
+                     { label: 'Trayectoria 3', data: generateWalk(), borderColor: 'rgba(100, 116, 139, 0.5)', borderWidth: 1.5 },
+                 ];
+                 const ctx = canvas.getContext('2d'); canvas.chart = new Chart(ctx, { type: 'line', data: { labels: Array.from({length: 100}, (_,i)=>i), datasets: datasets.map(d => ({...d, pointRadius: 0, tension: 0.1})) }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { title: { display: true, text: 'Precio Justo (St)', color: '#94A3B8' }, ticks: { color: '#94A3B8' }, grid: { color: '#334155' } } } } });
+            });
+
+            activeSlideLogic.set(9, () => {
+                // Contenido de initSlide9 aquí
+                 const canvas = document.getElementById('intensityChart'); if (!canvas || canvas.chart) return; const labels = Array.from({ length: 21 }, (_, i) => (i * 0.1).toFixed(1)); const data = labels.map(x => 100 * Math.exp(-3 * x)); const ctx = canvas.getContext('2d'); canvas.chart = new Chart(ctx, { type: 'line', data: { labels: labels, datasets: [{ label: 'Probabilidad de Ejecución', data: data, borderColor: '#38BDF8', backgroundColor: 'rgba(56, 189, 248, 0.2)', fill: true, borderWidth: 3, pointRadius: 0, tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { title: { display: true, text: 'Distancia al Precio Justo (δ)', color: '#94A3B8' }, ticks: { color: '#94A3B8' }, grid: { color: '#334155' } }, y: { title: { display: true, text: 'Intensidad de llegada de órdenes', color: '#94A3B8' }, ticks: { color: '#94A3B8' }, grid: { color: '#334155' } } } } });
+            });
+            
+            window.activeSlideLogic = activeSlideLogic;
+
+            // --- SCRIPT DE NAVEGACIÓN (de la plantilla) ---
+            const slides = document.querySelectorAll('.slide');
+            const slideCounter = document.getElementById('slide-counter');
+            let currentSlide = 0;
+            const totalSlides = slides.length;
+
+            function showSlide(index) {
+                if (currentSlide !== undefined && slides[currentSlide]) {
+                    slides[currentSlide].classList.remove('active');
+                    const oldCanvas = slides[currentSlide].querySelector('canvas');
+                    if (oldCanvas && oldCanvas.animationFrameId) {
+                        cancelAnimationFrame(oldCanvas.animationFrameId);
+                        oldCanvas.animationFrameId = null;
+                    }
+                }
+
+                currentSlide = index;
+                slides[currentSlide].classList.add('active');
+                slideCounter.textContent = `${currentSlide + 1} / ${totalSlides}`;
+                
+                if (window.activeSlideLogic && window.activeSlideLogic.has(currentSlide)) {
+                    window.activeSlideLogic.get(currentSlide)();
+                }
+            }
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight' || e.key === ' ') {
+                    if (currentSlide < totalSlides - 1) {
+                        showSlide(currentSlide + 1);
+                    }
+                } else if (e.key === 'ArrowLeft') {
+                    if (currentSlide > 0) {
+                        showSlide(currentSlide - 1);
+                    }
+                }
+            });
+            
+            showSlide(0);
+        });
+    </script>
+</body>
+</html>
+
+

@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentación OOP (21/21): Completa</title>
+    <!-- Incluimos Tailwind CSS para un diseño moderno y rápido --><script src="https://cdn.tailwindcss.com"></script>
+    <!-- Usaremos la fuente 'Inter' y 'Montserrat' de Google Fonts para un mejor impacto --><link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+    <!-- CSS para el resaltado de sintaxis (tema claro) --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-light.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background: linear-gradient(135deg, #93c5fd 0%, #3b82f6 100%); /* Fondo degradado azul */
+        }
+        h1, h2, h3 {
+            font-family: 'Montserrat', sans-serif; /* Fuente más impactante para títulos */
+        }
+        /* Ocultamos las diapositivas por defecto */
+        .slide {
+            display: none;
+        }
+        /* Mostramos la diapositiva activa */
+        .active-slide {
+            display: block;
+        }
+        /* La librería de resaltado se encarga del estilo del código */
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <!-- Diapositiva 1: Portada Visual y Dinámica --><main id="slide-1" class="slide bg-white rounded-3xl shadow-2xl p-8 md:p-16 w-full max-w-5xl text-center relative overflow-hidden transform transition-all duration-500 ease-in-out">
+        
+        <!-- Elemento visual de fondo simulando orden y estructura --><div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none z-0">
+            <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
+                <defs>
+                    <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                        <path d="M 10 0 L 0 0 L 0 10" fill="none" stroke="#e5e7eb" stroke-width="0.5"/>
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#grid)" />
+                <circle cx="20" cy="20" r="15" fill="#e0e7ff" opacity="0.6"/>
+                <circle cx="80" cy="80" r="15" fill="#f0e7ff" opacity="0.6"/>
+                <rect x="50" y="10" width="30" height="30" fill="#dbeafe" opacity="0.6" transform="rotate(15 65 25)"/>
+            </svg>
+        </div>
+
+        <div class="relative z-10"> <!-- Contenido principal sobre el fondo visual --><!-- Información del presentador --><p class="text-base md:text-lg text-blue-700 font-semibold mb-6 tracking-wide">
+                Presentado por <strong class="text-blue-900">Álvaro López-Chacarra</strong>, <em>Desk Quant</em>
+            </p>
+
+            <!-- Título principal con más impacto --><h1 class="text-5xl md:text-6xl font-extrabold text-gray-900 leading-tight tracking-tighter">
+                <strong>Programación Orientada a Objetos en Python</strong>
+            </h1>
+
+            <!-- Subtítulo que explica el propósito, con un toque más motivador --><p class="mt-6 text-xl md:text-2xl text-gray-700 max-w-4xl mx-auto font-medium">
+                Cómo programar de forma escalable.
+            </p>
+            
+            <!-- Icono visual que representa la organización / bloques --><div class="my-10">
+                <svg class="mx-auto h-24 w-24 text-blue-500 animate-pulse-slow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2v10zm10-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2a2 2 0 012-2zm0-10h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V7a2 2 0 012-2z" />
+                </svg>
+            </div>
+
+            <!-- Agenda de la sesión, ahora más integrada visualmente --><div class="bg-blue-50 p-6 rounded-xl border border-blue-100 shadow-inner mt-8 max-w-2xl mx-auto">
+                <h2 class="text-2xl font-bold text-blue-800 mb-4">Agenda de la Sesión</h2>
+                <ul class="text-left space-y-3 text-gray-700 md:text-lg">
+                    <li class="flex items-center">
+                        <span class="mr-3 text-blue-600 font-extrabold text-xl">1.</span> <span class="font-semibold">¿Por Qué OOP?</span>&nbsp;La Gran Idea
+                    </li>
+                    <li class="flex items-center">
+                        <span class="mr-3 text-blue-600 font-extrabold text-xl">2.</span> <span class="font-semibold">Los Ladrillos</span>&nbsp;de Construcción
+                    </li>
+                    <li class="flex items-center">
+                        <span class="mr-3 text-blue-600 font-extrabold text-xl">3.</span> <span class="font-semibold">Los 4 Pilares</span>&nbsp;y el Principio DRY
+                    </li>
+                    <li class="flex items-center">
+                        <span class="mr-3 text-blue-600 font-extrabold text-xl">4.</span> <span class="font-semibold">Aplicación Práctica</span>&nbsp;y Cierre
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="absolute bottom-6 right-8 text-lg font-bold text-gray-400">1 / 21</div>
+    </main>
+
+    <!-- Diapositiva 2: El Problema del Código Espagueti --><main id="slide-2" class="slide bg-white rounded-3xl shadow-2xl p-8 md:p-12 w-full max-w-6xl relative transform transition-all duration-500 ease-in-out">
+        <div class="text-center mb-8">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900">El Problema: El Caos del Código "Espagueti"</h2>
+            <p class="mt-4 text-xl text-gray-600">Cuando empezamos, es normal escribir código así. Funciona, ¿pero a qué coste?</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8 items-center">
+            <!-- Columna izquierda: El código problemático --><div>
+                <h3 class="text-2xl font-bold text-blue-800 mb-4">Un ejemplo de nuestro mini-juego:</h3>
+                <!-- MODIFICADO: Añadida clase para el resaltado y estilo del contenedor --><pre class="rounded-xl shadow-lg overflow-hidden"><code class="language-python"># --- Héroe ---
+heroe_nombre = "Aragorn"
+heroe_vida = 100
+heroe_ataque = 15
+
+# --- Enemigo ---
+orco_nombre = "Uglúk"
+orco_vida = 80
+orco_ataque = 10
+
+# --- Lógica de combate ---
+def atacar_al_orco(vida_orco, ataque_heroe):
+    vida_orco -= ataque_heroe
+    print(f"{heroe_nombre} ataca a {orco_nombre}!")
+    print(f"{orco_nombre} ahora tiene {vida_orco} de vida.")
+    return vida_orco
+
+def atacar_al_heroe(vida_heroe, ataque_orco):
+    # ... código similar ...
+    pass
+
+# Simulación
+orco_vida = atacar_al_orco(orco_vida, heroe_ataque)
+# ... y así sucesivamente ...</code></pre>
+            </div>
+            <!-- Columna derecha: Las preguntas y el problema --><div class="bg-blue-50 p-6 rounded-2xl border-2 border-dashed border-blue-200">
+                <h3 class="text-2xl font-bold text-red-600 mb-4">⚠️ ¡Esto se complica rápido!</h3>
+                <ul class="space-y-4 text-lg text-gray-800">
+                    <li class="flex items-start">
+                        <span class="text-red-500 mr-3 font-bold text-2xl">?</span>
+                        <div>
+                            <strong class="text-gray-900">¿Y si queremos añadir otro orco?</strong><br>
+                            Tendríamos que crear `orco2_nombre`, `orco2_vida`... ¡Un lío!
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-red-500 mr-3 font-bold text-2xl">?</span>
+                        <div>
+                            <strong class="text-gray-900">¿Y un mago con maná?</strong><br>
+                            Más variables sueltas (`heroe_mana`, `orco_resistencia_magica`...).
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-red-500 mr-3 font-bold text-2xl">?</span>
+                        <div>
+                            <strong class="text-gray-900">¿Cómo sabemos qué datos pertenecen a quién?</strong><br>
+                            Los datos (`vida`) y las acciones (`atacar`) están separados. Es fácil cometer errores.
+                        </div>
+                    </li>
+                </ul>
+                <p class="mt-6 text-center text-blue-800 font-semibold text-xl bg-blue-100 p-4 rounded-lg">
+                    Necesitamos una forma de agrupar datos y comportamientos en "cajas" lógicas.
+                </p>
+            </div>
+        </div>
+        <div class="absolute bottom-6 right-8 text-lg font-bold text-gray-400">2 / 21</div>
+    </main>
+
+    <!-- Diapositiva 3: La Solución - Pensar como en el Mundo Real --><main id="slide-3" class="slide bg-white rounded-3xl shadow-2xl p-8 md:p-12 w-full max-w-6xl relative transform transition-all duration-500 ease-in-out">
+        <div class="text-center mb-8">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900">La Solución: Pensar Como en el Mundo Real</h2>
+            <p class="mt-4 text-xl text-gray-600">La OOP nos propone organizar el código de la misma forma en que organizamos nuestro pensamiento.</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8 items-center mt-10">
+            <!-- Columna izquierda: La explicación conceptual --><div class="space-y-6">
+                <p class="text-lg text-gray-700">En el mundo real, un objeto como un <strong>coche</strong> no es solo una colección de datos sueltos. Es una entidad única que agrupa sus propias características y sus propios comportamientos.</p>
+                
+                <div>
+                    <h3 class="text-2xl font-bold text-blue-800 mb-2">Características (Datos)</h3>
+                    <ul class="list-disc list-inside text-lg text-gray-800 space-y-1">
+                        <li>Color</li>
+                        <li>Marca</li>
+                        <li>Velocidad actual</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-2xl font-bold text-blue-800 mb-2">Comportamientos (Acciones)</h3>
+                    <ul class="list-disc list-inside text-lg text-gray-800 space-y-1">
+                        <li>Acelerar</li>
+                        <li>Frenar</li>
+                        <li>Tocar la bocina</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Columna derecha: La representación visual --><div class="bg-blue-50 p-6 rounded-2xl border-2 border-blue-200 shadow-lg">
+                <div class="text-center">
+                    <h3 class="text-3xl font-bold text-gray-900">Objeto: `Coche`</h3>
+                    <!-- ÍCONO DE COCHE ACTUALIZADO Y SIMPLIFICADO --><svg class="w-24 h-24 text-blue-500 mx-auto my-4" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11C5.84 5 5.28 5.42 5.08 6.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>
+                    </svg>
+                </div>
+                
+                <div class="bg-white p-4 rounded-lg mt-4">
+                    <h4 class="font-bold text-blue-700 text-xl mb-2">Atributos (Datos)</h4>
+                    <p class="font-mono text-gray-700">color = "Rojo"<br>marca = "Toyota"<br>velocidad = 0</p>
+                </div>
+                
+                <div class="bg-white p-4 rounded-lg mt-4">
+                    <h4 class="font-bold text-blue-700 text-xl mb-2">Métodos (Acciones)</h4>
+                    <p class="font-mono text-gray-700">acelerar()<br>frenar()<br>tocar_bocina()</p>
+                </div>
+                
+                <p class="mt-6 text-center text-green-800 font-semibold text-xl bg-green-100 p-4 rounded-lg">
+                    ¡Todo organizado en una sola "caja" lógica!
+                </p>
+            </div>
+        </div>
+        <div class="absolute bottom-6 right-8 text-lg font-bold text-gray-400">3 / 21</div>
+    </main>
+    
+    <!-- Diapositiva 4: La Analogía Clave - El Plano y la Casa --><main id="slide-4" class="slide bg-white rounded-3xl shadow-2xl p-8 md:p-12 w-full max-w-6xl relative transform transition-all duration-500 ease-in-out">
+        <div class="text-center mb-10">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900">La Analogía Clave: El Plano y la Casa</h2>
+            <p class="mt-4 text-xl text-gray-600">Esta es la diferencia fundamental entre una <strong>Clase</strong> y un <strong>Objeto</strong>.</p>
+        </div>
+
+        <div class="flex flex-col md:flex-row items-center justify-center gap-8">
+            <!-- Columna Izquierda: La Clase (El Plano) --><div class="bg-blue-50 p-6 rounded-2xl border-2 border-blue-200 w-full md:w-1/2 text-center">
+                <h3 class="text-3xl font-bold text-gray-800">La Clase: El Plano</h3>
+                <svg class="w-24 h-24 text-blue-500 mx-auto my-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                </svg>
+                <p class="text-lg text-gray-700">Es la <strong>plantilla</strong> o la <strong>receta</strong>. No es algo real, sino el conjunto de instrucciones que define cómo será algo.</p>
+                <ul class="mt-4 text-left list-disc list-inside text-gray-800">
+                    <li>Define las características (atributos).</li>
+                    <li>Define los comportamientos (métodos).</li>
+                    <li><strong>No se puede "usar" directamente</strong>, solo sirve para construir.</li>
+                </ul>
+            </div>
+
+            <!-- Flecha de conexión --><div class="hidden md:block text-blue-400">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-16 h-16 animate-pulse">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
+                </svg>
+            </div>
+
+            <!-- Columna Derecha: El Objeto (La Casa) --><div class="bg-green-50 p-6 rounded-2xl border-2 border-green-200 w-full md:w-1/2 text-center">
+                 <h3 class="text-3xl font-bold text-gray-800">El Objeto: La Casa</h3>
+                <svg class="w-24 h-24 text-green-500 mx-auto my-4" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                     <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/>
+                </svg>
+                <p class="text-lg text-gray-700">Es la <strong>instancia real</strong> creada a partir de la clase. Es el resultado tangible de seguir las instrucciones del plano.</p>
+                <ul class="mt-4 text-left list-disc list-inside text-gray-800">
+                    <li>Tiene sus propios valores para los atributos.</li>
+                    <li>Puede ejecutar los comportamientos definidos.</li>
+                    <li><strong>Con este sí interactuamos</strong> en nuestro programa.</li>
+                </ul>
+            </div>
+        </div>
+        <p class="mt-10 text-center text-xl font-semibold text-gray-800 bg-gray-100 p-4 rounded-lg">
+            Podemos construir <strong>muchos objetos (casas)</strong> a partir de <strong>una sola clase (plano)</strong>.
+        </p>
+        <div class="absolute bottom-6 right-8 text-lg font-bold text-gray-400">4 / 21</div>
+    </main>
+
+    <!-- Diapositiva 5: Anatomía de una Clase - El Constructor __init__ --><main id="slide-5" class="slide bg-white rounded-3xl shadow-2xl p-8 md:p-12 w-full max-w-6xl relative transform transition-all duration-500 ease-in-out">
+        <div class="text-center mb-8">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900">Anatomía de una Clase: El Constructor `__init__`</h2>
+            <p class="mt-4 text-xl text-gray-600">Este es el "ritual de construcción" que se ejecuta al crear un nuevo objeto.</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8 items-start">
+            <!-- Columna izquierda: El código --><div>
+                <h3 class="text-2xl font-bold text-blue-800 mb-4">Nuestro primer "plano" en Python:</h3>
+                <pre class="rounded-xl shadow-lg overflow-hidden"><code class="language-python"># 1. Definimos el plano con la palabra clave "class"
+class Coche:
+    # 2. El método constructor, se llama automáticamente
+    #    al crear un objeto. ¡Es un método "mágico"!
+    def __init__(self, color_inicial, marca_inicial):
+        
+        # 3. Creamos los "atributos" o características
+        #    y les asignamos los valores iniciales.
+        print("¡Construyendo un coche nuevo!")
+        self.color = color_inicial
+        self.marca = marca_inicial
+        self.velocidad = 0 # Todos los coches empiezan parados</code></pre>
+            </div>
+            
+            <!-- Columna derecha: La explicación --><div class="space-y-4">
+                 <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-400">
+                    <h4 class="font-bold text-lg text-blue-900">1. `class Coche:`</h4>
+                    <p class="text-gray-700">Es la declaración. Le decimos a Python: "voy a crear una nueva plantilla llamada <strong>Coche</strong>". Por convención, los nombres de las clases empiezan con mayúscula.</p>
+                </div>
+                 <div class="bg-yellow-50 p-4 rounded-lg border-l-4 border-yellow-400">
+                    <h4 class="font-bold text-lg text-yellow-900">2. `def __init__(...)`</h4>
+                    <p class="text-gray-700">Este es el <strong>constructor</strong>. Su misión es inicializar el objeto. Recibe los "ingredientes" necesarios para construirlo (`color_inicial`, `marca_inicial`).</p>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-400">
+                    <h4 class="font-bold text-lg text-green-900">3. `self.color = ...`</h4>
+                    <p class="text-gray-700">Aquí creamos una variable <strong>dentro</strong> del objeto, llamada `color`, y le guardamos el valor que nos pasaron. A estas variables internas las llamamos <strong>atributos</strong>. Hacemos lo mismo para `marca` y `velocidad`.</p>
+                </div>
+                <div class="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-400">
+                    <h4 class="font-bold text-lg text-purple-900">El misterioso `self`...</h4>
+                    <p class="text-gray-700">Es la forma que tiene el objeto de referirse a sí mismo. Piensa que es como decir "mi color" o "mi marca". Lo veremos en detalle en la siguiente diapositiva.</p>
+                </div>
+            </div>
+        </div>
+        <div class="absolute bottom-6 right-8 text-lg font-bold text-gray-400">5 / 21</div>
+    </main>
+    
+    <!-- Diapositiva 6: Desmitificando "self" --><main id="slide-6" class="slide bg-white rounded-3xl shadow-2xl p-8 md:p-12 w-full max-w-6xl relative transform transition-all duration-500 ease-in-out">
+        <div class="text-center mb-8">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900">El Misterioso `self`: La Clave de Todo</h2>
+            <p class="mt-4 text-xl text-gray-600">¿Por qué todos los métodos empiezan con `self`? Vamos a desvelar el secreto.</p>
+        </div>
+    
+        <div class="grid md:grid-cols-2 gap-8 items-start">
+            <!-- Columna izquierda: El código --><div>
+                <h3 class="text-2xl font-bold text-blue-800 mb-4">Veamos el código en acción:</h3>
+                <pre class="rounded-xl shadow-lg overflow-hidden"><code class="language-python">class Coche:
+    def __init__(self, color, marca):
+        # 'self' aquí se refiere al objeto
+        # que se está creando en este momento.
+        self.color = color
+        self.marca = marca
+
+    def mostrar_info(self):
+        # 'self' aquí se refiere al objeto
+        # específico que llamó al método.
+        print(f"Soy un coche de marca {self.marca} y color {self.color}.")
+
+# Creamos dos objetos (casas) diferentes
+coche_de_ana = Coche("Rojo", "Toyota")
+coche_de_juan = Coche("Azul", "Ford")
+
+# Cada objeto usa 'self' para acceder a su PROPIA información
+coche_de_ana.mostrar_info()
+# SALIDA: Soy un coche de marca Toyota y color Rojo.
+
+coche_de_juan.mostrar_info()
+# SALIDA: Soy un coche de marca Ford y color Azul.
+</code></pre>
+            </div>
+            
+            <!-- Columna derecha: La explicación visual --><div class="space-y-6">
+                <h3 class="text-2xl font-bold text-blue-800 mb-4">¿Qué hace Python "por debajo"?</h3>
+                
+                <div class="bg-gray-50 p-4 rounded-lg border">
+                    <p class="font-mono text-gray-800 text-lg">Cuando ejecutas: <br><code class="text-red-600 font-bold">coche_de_ana.mostrar_info()</code></p>
+                    
+                    <div class="my-4 text-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                        </svg>
+                    </div>
+    
+                    <p class="text-gray-700 text-lg">Python lo traduce automáticamente a:</p>
+                    <p class="font-mono text-gray-800 text-lg mt-2 bg-gray-200 p-2 rounded"><code class="text-blue-600 font-bold">Coche.mostrar_info(coche_de_ana)</code></p>
+                    <p class="mt-4 text-gray-700">¡Python pasa el propio objeto (`coche_de_ana`) como el primer argumento! A ese primer argumento, por convención, lo llamamos <strong>`self`</strong>.</p>
+                </div>
+    
+                <div class="bg-green-50 p-6 rounded-2xl border-2 border-green-200 shadow-lg text-center">
+                     <h4 class="text-3xl font-bold text-green-800">`self` es el "pronombre YO" del objeto.</h4>
+                     <p class="mt-4 text-lg text-gray-800">Permite que cada objeto trabaje con sus propios datos sin confundirse con los de otros objetos del mismo tipo.</p>
+                </div>
+            </div>
+        </div>
+        <div class="absolute bottom-6 right-8 text-lg font-bold text-gray-400">6 / 21</div>
+    </main>
+
+    <!-- Diapositiva 7: Atributos - Las Características --><main id="slide-7" class="slide bg-white rounded-3xl shadow-2xl p-8 md:p-12 w-full max-w-6xl relative transform transition-all duration-500 ease-in-out">
+        <div class="text-center mb-8">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900">Atributos: Las Características del Objeto</h2>
+            <p class="mt-4 text-xl text-gray-600">Son las variables que viven dentro de un objeto y guardan su estado individual.</p>
+        </div>
+    
+        <div class="grid md:grid-cols-2 gap-8 items-start">
+            <!-- Columna izquierda: El código --><div>
+                <h3 class="text-2xl font-bold text-blue-800 mb-4">Accediendo a los datos:</h3>
+                <pre class="rounded-xl shadow-lg overflow-hidden"><code class="language-python">class Coche:
+    def __init__(self, color, marca):
+        self.color = color
+        self.marca = marca
+        self.velocidad = 0
+
+# Creamos dos objetos
+coche_de_ana = Coche("Rojo", "Toyota")
+coche_de_juan = Coche("Azul", "Ford")
+
+# Usamos la "sintaxis del punto" para LEER un atributo
+print(f"El coche de Ana es de color {coche_de_ana.color}")
+# SALIDA: El coche de Ana es de color Rojo
+
+print(f"La marca del coche de Juan es {coche_de_juan.marca}")
+# SALIDA: La marca del coche de Juan es Ford
+
+# También podemos MODIFICAR un atributo
+coche_de_ana.velocidad = 50
+print(f"Velocidad del coche de Ana: {coche_de_ana.velocidad} km/h")
+# SALIDA: Velocidad del coche de Ana: 50 km/h
+</code></pre>
+            </div>
+            
+            <!-- Columna derecha: La explicación visual --><div class="space-y-6">
+                <h3 class="text-2xl font-bold text-blue-800 mb-4">Cada Objeto, Sus Propios Datos</h3>
+                <p class="text-lg text-gray-700">Imagina que cada objeto es una "caja" con sus propias etiquetas. Al crear `coche_de_ana` y `coche_de_juan`, esto es lo que ocurre en la memoria:</p>
+                
+                <!-- Visualización para coche_de_ana --><div class="bg-red-50 p-4 rounded-lg border-2 border-red-200">
+                    <h4 class="font-bold text-lg text-red-800">Objeto: `coche_de_ana`</h4>
+                    <div class="mt-2 font-mono text-gray-700 bg-white p-3 rounded">
+                        <p>color: "Rojo"</p>
+                        <p>marca: "Toyota"</p>
+                        <p>velocidad: 0</p>
+                    </div>
+                </div>
+
+                <!-- Visualización para coche_de_juan --><div class="bg-blue-50 p-4 rounded-lg border-2 border-blue-200">
+                    <h4 class="font-bold text-lg text-blue-800">Objeto: `coche_de_juan`</h4>
+                     <div class="mt-2 font-mono text-gray-700 bg-white p-3 rounded">
+                        <p>color: "Azul"</p>
+                        <p>marca: "Ford"</p>
+                        <p>velocidad: 0</p>
+                    </div>
+                </div>
+
+                <div class="bg-yellow-50 p-4 rounded-lg text-center shadow">
+                    <p class="text-yellow-900 font-semibold text-lg">Modificar `coche_de_ana.velocidad` <strong>NO</strong> afecta a `coche_de_juan.velocidad`.</p>
+                </div>
+            </div>
+        </div>
+        <div class="absolute bottom-6 right-8 text-lg font-bold text-gray-400">7 / 21</div>
+    </main>
+
+    <!-- Diapositiva 8: Métodos - Los Comportamientos --><main id="slide-8" class="slide bg-white rounded-3xl shadow-2xl p-8 md:p-12 w-full max-w-6xl relative transform transition-all duration-500 ease-in-out">
+        <div class="text-center mb-8">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900">Métodos: Los Comportamientos del Objeto</h2>
+            <p class="mt-4 text-xl text-gray-600">Son las funciones que definen lo que un objeto puede <strong>hacer</strong>, normalmente modificando sus propios atributos.</p>
+        </div>
+    
+        <div class="grid md:grid-cols-2 gap-8 items-start">
+            <!-- Columna izquierda: El código --><div>
+                <h3 class="text-2xl font-bold text-blue-800 mb-4">Añadiendo acciones a nuestro `Coche`:</h3>
+                <pre class="rounded-xl shadow-lg overflow-hidden"><code class="language-python">class Coche:
+    def __init__(self, color, marca):
+        self.color = color
+        self.marca = marca
+        self.velocidad = 0 # Atributo de estado
+
+    # Un método para cambiar el estado (velocidad)
+    def acelerar(self, cantidad):
+        self.velocidad += cantidad
+        print(f"¡Brum, brum! Velocidad actual: {self.velocidad} km/h")
+
+    # Otro método que usa los atributos
+    def tocar_bocina(self):
+        print(f"¡El {self.marca} {self.color} hace Beep, beep!")
+
+# Creamos un coche
+mi_ferrari = Coche("Rojo", "Ferrari")
+
+# Llamamos a sus métodos usando la sintaxis del punto
+mi_ferrari.tocar_bocina()
+# SALIDA: ¡El Ferrari Rojo hace Beep, beep!
+
+mi_ferrari.acelerar(50)
+# SALIDA: ¡Brum, brum! Velocidad actual: 50 km/h
+
+mi_ferrari.acelerar(30)
+# SALIDA: ¡Brum, brum! Velocidad actual: 80 km/h
+</code></pre>
+            </div>
+            
+            <!-- Columna derecha: La explicación visual --><div class="space-y-6">
+                <h3 class="text-2xl font-bold text-blue-800 mb-4">¿Cómo Funcionan?</h3>
+                
+                <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-400">
+                    <h4 class="font-bold text-lg text-blue-900">Son Funciones "Especiales"</h4>
+                    <p class="text-gray-700">Un método es simplemente una función que "vive" dentro de una clase. La única diferencia es que siempre reciben `self` como primer parámetro.</p>
+                </div>
+
+                <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-400">
+                    <h4 class="font-bold text-lg text-green-900">Modifican el Estado Interno</h4>
+                    <p class="text-gray-700">La principal utilidad de un método es leer o cambiar los valores de los atributos del propio objeto. El método `acelerar` usa `self.velocidad` para saber la velocidad actual y poder aumentarla.</p>
+                </div>
+
+                <div class="bg-purple-50 p-6 rounded-2xl border-2 border-purple-200 shadow-lg text-center">
+                     <h4 class="text-2xl font-bold text-purple-800">Atributos (Datos) + Métodos (Acciones) = Objeto Completo</h4>
+                     <p class="mt-4 text-lg text-gray-800">¡Ahora nuestro objeto no solo tiene datos, sino que también puede realizar acciones con ellos! Está completo.</p>
+                </div>
+            </div>
+        </div>
+        <div class="absolute bottom-6 right-8 text-lg font-bold text-gray-400">8 / 21</div>
+    </main>
+
+    <!-- Diapositiva 9: Creación y Uso - ¡Dando Vida al Objeto! --><main id="slide-9" class="slide bg-white rounded-3xl shadow-2xl p-8 md:p-12 w-full max-w-6xl relative transform transition-all duration-500 ease-in-out">
+        <div class="text-center mb-8">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900">¡Dando Vida al Objeto! El Ciclo Completo</h2>
+            <p class="mt-4 text-xl text-gray-600">Este es el flujo de trabajo fundamental en OOP: <strong>Definir, Crear e Interactuar</strong>.</p>
+        </div>
+    
+        <div class="flex flex-col space-y-6">
+            <!-- Paso 1: Definir la Clase --><div class="bg-blue-50 p-6 rounded-2xl border-2 border-blue-200">
+                <h3 class="text-2xl font-bold text-blue-800 mb-2">
+                    <span class="bg-blue-600 text-white rounded-full w-8 h-8 inline-flex items-center justify-center mr-3">1</span>
+                    Definir el Plano (la Clase)
+                </h3>
+                <p class="text-lg text-gray-700 ml-11 mb-4">Escribimos el código que sirve como plantilla para todos nuestros futuros objetos `Coche`.</p>
+                <pre class="rounded-xl shadow-md overflow-hidden"><code class="language-python">class Coche:
+    def __init__(self, color, marca):
+        self.color = color
+        self.marca = marca
+        self.velocidad = 0
+
+    def acelerar(self, cantidad):
+        self.velocidad += cantidad
+
+    def mostrar_info(self):
+        return f"Coche {self.marca} de color {self.color} (Vel: {self.velocidad} km/h)"</code></pre>
+            </div>
+            
+            <div class="text-center text-blue-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mx-auto" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+            </div>
+    
+            <!-- Paso 2: Crear el Objeto --><div class="bg-green-50 p-6 rounded-2xl border-2 border-green-200">
+                <h3 class="text-2xl font-bold text-green-800 mb-2">
+                    <span class="bg-green-600 text-white rounded-full w-8 h-8 inline-flex items-center justify-center mr-3">2</span>
+                    Construir el Coche (el Objeto)
+                </h3>
+                <p class="text-lg text-gray-700 ml-11 mb-4">Usamos la clase como si fuera una función para crear una instancia real y tangible.</p>
+                <pre class="rounded-xl shadow-md overflow-hidden"><code class="language-python"># Creamos una instancia de la clase Coche
+mi_coche = Coche("Plata", "Honda")</code></pre>
+            </div>
+    
+            <div class="text-center text-green-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mx-auto" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+            </div>
+    
+            <!-- Paso 3: Interactuar con el Objeto --><div class="bg-purple-50 p-6 rounded-2xl border-2 border-purple-200">
+                <h3 class="text-2xl font-bold text-purple-800 mb-2">
+                    <span class="bg-purple-600 text-white rounded-full w-8 h-8 inline-flex items-center justify-center mr-3">3</span>
+                    Usar el Coche (Interactuar)
+                </h3>
+                <p class="text-lg text-gray-700 ml-11 mb-4">Una vez creado, podemos llamar a sus métodos y leer/modificar sus atributos.</p>
+                <pre class="rounded-xl shadow-md overflow-hidden"><code class="language-python"># Leemos un atributo
+print(mi_coche.color)
+# SALIDA: Plata
+
+# Llamamos a un método para cambiar su estado
+mi_coche.acelerar(100)
+
+# Llamamos a otro método para ver la información actualizada
+print(mi_coche.mostrar_info())
+# SALIDA: Coche Honda de color Plata (Vel: 100 km/h)</code></pre>
+            </div>
+        </div>
+        <div class="absolute bottom-6 right-8 text-lg font-bold text-gray-400">9 / 21</div>
+    </main>
+    
+    <!-- Diapositiva 10: Pilar 1 - Encapsulación (Introducción) --><main id="slide-10" class="slide bg-white rounded-3xl shadow-2xl p-8 md:p-12 w-full max-w-6xl relative transform transition-all duration-500 ease-in-out">
+        <div class="text-center mb-10">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900">Pilar 1: Encapsulación (El Coche es Tuyo)</h2>
+            <p class="mt-4 text-xl text-gray-600">La idea es que un objeto debe controlar su propio estado. ¡Nadie más debería "meter mano" donde no le llaman!</p>
+        </div>
+    
+        <div class="grid md:grid-cols-2 gap-8 items-center">
+            <!-- Columna Izquierda: La Explicación --><div class="space-y-6">
+                <h3 class="text-2xl font-bold text-blue-800">La Analogía del Conductor</h3>
+                <p class="text-lg text-gray-700">Imagina que tu objeto `Coche` es tu coche real. Tú, como conductor, eres el único que debe tener control total sobre sus funciones internas a través de una <strong>interfaz clara</strong> (el salpicadero).</p>
+                
+                <p class="text-lg text-gray-700">Un pasajero (otro trozo de código) no debería poder bajar el aire acondicionado directamente. Debería <strong>pedírtelo a ti</strong>, y tú (el objeto) decides si hacerlo o no a través de tus controles.</p>
+
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <h4 class="font-bold text-lg text-gray-800">Interfaz Pública (El Salpicadero)</h4>
+                    <p class="text-gray-700">Son los métodos que ofreces al mundo exterior para interactuar contigo: `acelerar()`, `frenar()`, `subir_volumen_radio()`.</p>
+                </div>
+                 <div class="bg-gray-100 p-4 rounded-lg">
+                    <h4 class="font-bold text-lg text-gray-800">Estado Interno (La Mecánica)</h4>
+                    <p class="text-gray-700">Son los atributos que gestionas internamente: `velocidad`, `temperatura_ac`, `volumen_radio`.</p>
+                </div>
+            </div>
+    
+            <!-- Columna Derecha: La Visualización --><div class="bg-blue-50 p-6 rounded-2xl border-2 border-blue-200 text-center shadow-lg">
+                <h3 class="text-3xl font-bold text-gray-800">Objeto `Coche`</h3>
+                <div class="relative inline-block">
+                    <svg class="w-48 h-48 text-blue-500 mx-auto my-4" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11C5.84 5 5.28 5.42 5.08 6.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg>
+                    <div class="absolute inset-0 rounded-full border-4 border-dashed border-blue-400 animate-spin-slow"></div>
+                </div>
+
+                <div class="bg-white p-4 rounded-lg shadow-inner text-left">
+                    <h4 class="font-bold text-gray-700 text-center">-- Interfaz Pública --</h4>
+                    <p class="font-mono text-green-600 text-center">acelerar(), frenar(), ajustar_ac()</p>
+                    <hr class="my-2">
+                    <h4 class="font-bold text-gray-700 text-center">-- Estado Interno Protegido --</h4>
+                    <p class="font-mono text-red-600 text-center">_velocidad, _temperatura, _volumen</p>
+                </div>
+            </div>
+        </div>
+        <div class="absolute bottom-6 right-8 text-lg font-bold text-gray-400">10 / 21</div>
+    </main>
+
+    <!-- Diapositiva 11: Encapsulación en Código (Seguridad) --><main id="slide-11" class="slide bg-white rounded-3xl shadow-2xl p-8 md:p-12 w-full max-w-6xl relative transform transition-all duration-500 ease-in-out">
+        <div class="text-center mb-8">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900">Encapsulación en Código: Seguridad</h2>
+            <p class="mt-4 text-xl text-gray-600">Usamos métodos como "guardianes" para proteger nuestros atributos de valores no deseados.</p>
+        </div>
+    
+        <div class="grid md:grid-cols-2 gap-8 items-start">
+            <!-- Columna izquierda: El código --><div>
+                <h3 class="text-2xl font-bold text-blue-800 mb-4">Protegiendo la velocidad:</h3>
+                <pre class="rounded-xl shadow-lg overflow-hidden"><code class="language-python">class Coche:
+    def __init__(self, color, marca):
+        self.color = color
+        self.marca = marca
+        # Con un "_" indicamos que es un atributo "privado"
+        self._velocidad = 0
+
+    def acelerar(self, cantidad):
+        # Podríamos añadir un límite máximo de velocidad aquí
+        self._velocidad += cantidad
+
+    def frenar(self, cantidad):
+        # El método "guardián" protege el atributo
+        if self._velocidad < cantidad:
+            self._velocidad = 0 # No podemos tener velocidad negativa
+        else:
+            self._velocidad -= cantidad
+
+    def get_velocidad(self):
+        return self._velocidad
+
+mi_coche = Coche("Rojo", "Ferrari")
+
+# 🚫 MAL: Acceso directo y peligroso
+mi_coche._velocidad = -50 # ¡Esto no tiene sentido!
+
+# ✅ BIEN: Usamos el método que contiene la lógica de seguridad
+mi_coche.frenar(100)
+print(f"Velocidad segura: {mi_coche.get_velocidad()}")
+# SALIDA: Velocidad segura: 0
+</code></pre>
+            </div>
+            
+            <!-- Columna derecha: La explicación visual --><div class="space-y-6">
+                <h3 class="text-2xl font-bold text-blue-800 mb-4">El Método Guardián</h3>
+                <p class="text-lg text-gray-700">El método `frenar` no se limita a restar. Primero comprueba si la operación tiene sentido. Actúa como un filtro, un "guardia de seguridad" que protege al atributo `_velocidad`.</p>
+                
+                <div class="bg-red-50 p-4 rounded-lg border-l-4 border-red-400">
+                    <h4 class="font-bold text-lg text-red-900">Acceso Directo = Riesgo</h4>
+                    <p class="text-gray-700">Modificar `_velocidad` directamente nos permite asignarle valores ilógicos, creando bugs (errores) en nuestro programa.</p>
+                </div>
+
+                <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-400">
+                    <h4 class="font-bold text-lg text-green-900">Acceso por Método = Control</h4>
+                    <p class="text-gray-700">Llamar a `frenar()` nos garantiza que el estado del objeto siempre será coherente y válido.</p>
+                </div>
+
+                 <div class="bg-gray-100 p-4 rounded-lg text-center shadow">
+                    <p class="text-gray-800 font-semibold text-lg"><strong>Nota:</strong> En Python, el `_` (guion bajo) es una <strong>convención</strong>. No prohíbe técnicamente el acceso, pero es una señal clara para otros programadores: "¡No toques esto directamente!".</p>
+                </div>
+            </div>
+        </div>
+        <div class="absolute bottom-6 right-8 text-lg font-bold text-gray-400">11 / 21</div>
+    </main>
+
+    <!-- Diapositiva 12: Pilar 2 - Abstracción --><main id="slide-12" class="slide bg-white rounded-3xl shadow-2xl p-8 md:p-12 w-full max-w-6xl relative transform transition-all duration-500 ease-in-out">
+        <div class="text-center mb-8">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900">Pilar 2: Abstracción (Ocultando la Complejidad)</h2>
+            <p class="mt-4 text-xl text-gray-600">No necesitas ser un mecánico para conducir. Solo necesitas conocer el volante y los pedales.</p>
+        </div>
+    
+        <div class="grid md:grid-cols-2 gap-8 items-start">
+            <!-- Columna izquierda: El código --><div>
+                <h3 class="text-2xl font-bold text-blue-800 mb-4">Una interfaz simple para una acción compleja:</h3>
+                <pre class="rounded-xl shadow-lg overflow-hidden"><code class="language-python">class Coche:
+    def __init__(self):
+        # El coche está compuesto de otros objetos complejos
+        self._motor = Motor()
+        self._inyeccion = SistemaInyeccion()
+        self._transmision = Transmision()
+        self._velocidad = 0
+
+    # Este es el único método que el conductor necesita conocer
+    def acelerar(self):
+        print("Pisas el acelerador...")
+        # ¡Mucha complejidad oculta aquí!
+        self._motor.aumentar_rpm()
+        self._inyeccion.inyectar_combustible()
+        self._transmision.cambiar_marcha()
+        self._velocidad += 10
+        print("El coche avanza más rápido.")
+
+# --- Desde fuera, todo es muy simple ---
+
+mi_coche = Coche()
+mi_coche.acelerar() # <-- ¡Solo llamamos a un método!
+</code></pre>
+            </div>
+            
+            <!-- Columna derecha: La explicación visual --><div class="space-y-6">
+                <h3 class="text-2xl font-bold text-blue-800 mb-4">Ocultando la Complejidad</h3>
+                <p class="text-lg text-gray-700">Este es el principio de <strong>Abstracción</strong>. Ofrecemos una interfaz de alto nivel (`acelerar()`) que es muy fácil de usar y que esconde todos los detalles complejos de la implementación.</p>
+                
+                <div class="bg-gray-100 p-6 rounded-2xl border-2 border-gray-200 shadow-lg">
+                    <div class="text-center font-bold text-lg text-gray-800">TÚ SOLO VES ESTO</div>
+                    <div class="bg-green-100 p-3 my-2 rounded-lg text-center font-mono text-green-800">mi_coche.acelerar()</div>
+                    <div class="text-center my-3">
+                        <svg class="w-8 h-8 mx-auto text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" /></svg>
+                    </div>
+                    <div class="text-center font-bold text-lg text-gray-800">PERO POR DENTRO OCURRE ESTO</div>
+                    <div class="bg-blue-50 p-4 mt-2 rounded-lg border border-blue-200 space-y-2">
+                        <p class="font-mono text-blue-800 text-sm">_motor.aumentar_rpm()</p>
+                        <p class="font-mono text-blue-800 text-sm">_inyeccion.inyectar_combustible()</p>
+                        <p class="font-mono text-blue-800 text-sm">_transmision.cambiar_marcha()</p>
+                    </div>
+                </div>
+
+                 <div class="bg-yellow-50 p-4 rounded-lg text-center shadow">
+                    <p class="text-yellow-900 font-semibold text-lg"><strong>Beneficio:</strong> Podemos cambiar todo el motor del coche, y mientras el método `acelerar()` siga funcionando, ¡el código que usa el coche no necesita cambiar en absoluto!</p>
+                </div>
+            </div>
+        </div>
+        <div class="absolute bottom-6 right-8 text-lg font-bold text-gray-400">12 / 21</div>
+    </main>
+
+    <!-- Diapositiva 13: Pilar 3 - Herencia --><main id="slide-13" class="slide bg-white rounded-3xl shadow-2xl p-8 md:p-12 w-full max-w-6xl relative transform transition-all duration-500 ease-in-out">
+        <div class="text-center mb-10">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900">Pilar 3: Herencia (Construir sobre lo ya Hecho)</h2>
+            <p class="mt-4 text-xl text-gray-600">¿Para qué escribir el mismo código dos veces? ¡La herencia nos permite reutilizar y especializar!</p>
+        </div>
+    
+        <div class="flex flex-col items-center justify-center gap-4">
+            <!-- Clase Padre --><div class="bg-gray-100 p-6 rounded-2xl border-2 border-gray-300 w-full max-w-lg text-center shadow">
+                <h3 class="text-3xl font-bold text-gray-800">Clase Padre: `Vehiculo`</h3>
+                <p class="mt-2 text-gray-600">Define las características y comportamientos <strong>comunes</strong> a todos los vehículos.</p>
+                <div class="mt-4 font-mono text-left bg-white p-4 rounded-lg">
+                    <p><strong class="text-blue-600">Atributos:</strong> _velocidad, _marca</p>
+                    <p><strong class="text-green-600">Métodos:</strong> acelerar(), frenar()</p>
+                </div>
+            </div>
+    
+            <!-- Flechas de Herencia --><div class="flex w-full max-w-4xl justify-around my-4">
+                <svg class="w-12 h-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" /></svg>
+                <svg class="w-12 h-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" /></svg>
+            </div>
+    
+            <!-- Clases Hijas --><div class="flex flex-col md:flex-row w-full max-w-4xl gap-8">
+                <div class="bg-blue-50 p-6 rounded-2xl border-2 border-blue-200 w-full text-center">
+                    <h3 class="text-2xl font-bold text-blue-800">Clase Hija: `Coche`</h3>
+                    <p class="mt-2 text-gray-600"><strong>Hereda TODO</strong> de `Vehiculo` y añade sus propias cosas.</p>
+                     <div class="mt-4 font-mono text-left bg-white p-4 rounded-lg">
+                        <p class="text-gray-400">// Heredado de Vehiculo</p>
+                        <p><strong class="text-blue-600">Atributos:</strong> _velocidad, _marca</p>
+                        <p><strong class="text-green-600">Métodos:</strong> acelerar(), frenar()</p>
+                        <hr class="my-2">
+                        <p class="text-blue-800">// Específico de Coche</p>
+                        <p><strong class="text-blue-600">Atributos:</strong> amor_acumulado</p>
+                        <p><strong class="text-green-600">Métodos:</strong> invitar_a_ligue()</p>
+                    </div>
+                </div>
+                <div class="bg-purple-50 p-6 rounded-2xl border-2 border-purple-200 w-full text-center">
+                    <h3 class="text-2xl font-bold text-purple-800">Clase Hija: `Camion`</h3>
+                    <p class="mt-2 text-gray-600"><strong>Hereda TODO</strong> de `Vehiculo` y se especializa.</p>
+                     <div class="mt-4 font-mono text-left bg-white p-4 rounded-lg">
+                        <p class="text-gray-400">// Heredado de Vehiculo</p>
+                        <p><strong class="text-blue-600">Atributos:</strong> _velocidad, _marca</p>
+                        <p><strong class="text-green-600">Métodos:</strong> acelerar(), frenar()</p>
+                        <hr class="my-2">
+                        <p class="text-purple-800">// Específico de Camion</p>
+                        <p><strong class="text-blue-600">Atributos:</strong> karma_negativo</p>
+                        <p><strong class="text-green-600">Métodos:</strong> adelantar_en_autopista()</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+         <div class="absolute bottom-6 right-8 text-lg font-bold text-gray-400">13 / 21</div>
+    </main>
+
+    <!-- Diapositiva 14: Herencia y DRY --><main id="slide-14" class="slide bg-white rounded-3xl shadow-2xl p-8 md:p-12 w-full max-w-6xl relative transform transition-all duration-500 ease-in-out">
+        <div class="text-center mb-8">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900">La Herencia y el Principio DRY</h2>
+            <p class="mt-4 text-xl text-gray-600"><strong>D</strong>on't <strong>R</strong>epeat <strong>Y</strong>ourself (No te repitas) es una regla de oro en programación.</p>
+        </div>
+    
+        <div class="grid md:grid-cols-2 gap-8 items-start">
+            <!-- Columna izquierda: El código "WET" --><div>
+                <h3 class="text-2xl font-bold text-red-600 mb-4">🚫 Código WET (Write Everything Twice)</h3>
+                <p class="text-gray-700 mb-4">Sin herencia, nos vemos obligados a copiar y pegar el código común, lo cual es peligroso y difícil de mantener.</p>
+                <pre class="rounded-xl shadow-lg overflow-hidden"><code class="language-python">class Coche:
+    def __init__(self, marca):
+        self.marca = marca
+        self._velocidad = 0
+
+    # --- CÓDIGO DUPLICADO ---
+    def acelerar(self, cantidad):
+        self._velocidad += cantidad
+    def frenar(self, cantidad):
+        self._velocidad -= cantidad
+    # -----------------------
+
+class Camion:
+    def __init__(self, marca):
+        self.marca = marca
+        self._velocidad = 0
+
+    # --- CÓDIGO DUPLICADO ---
+    def acelerar(self, cantidad):
+        self._velocidad += cantidad
+    def frenar(self, cantidad):
+        self._velocidad -= cantidad
+    # -----------------------
+</code></pre>
+            </div>
+            
+            <!-- Columna derecha: El código "DRY" --><div>
+                <h3 class="text-2xl font-bold text-green-600 mb-4">✅ Código DRY (Don't Repeat Yourself)</h3>
+                <p class="text-gray-700 mb-4">Con herencia, definimos el código común <strong>una sola vez</strong> en la clase padre. ¡Mucho más limpio y seguro!</p>
+                <pre class="rounded-xl shadow-lg overflow-hidden"><code class="language-python"># El código común vive aquí, en un solo lugar
+class Vehiculo:
+    def __init__(self, marca):
+        self.marca = marca
+        self._velocidad = 0
+
+    def acelerar(self, cantidad):
+        self._velocidad += cantidad
+    def frenar(self, cantidad):
+        self._velocidad -= cantidad
+
+# Las clases hijas heredan el código, no lo repiten
+class Coche(Vehiculo):
+    def invitar_a_ligue(self):
+        # ...
+        pass
+
+class Camion(Vehiculo):
+    def adelantar_en_autopista(self):
+        # ...
+        pass
+</code></pre>
+            </div>
+        </div>
+        <div class="mt-8 bg-yellow-50 p-6 rounded-2xl border-2 border-yellow-200 text-center shadow">
+            <p class="text-yellow-900 font-semibold text-xl"><strong>Ventaja Clave:</strong> Si encontramos un error en `acelerar()`, con el método DRY solo tenemos que arreglarlo en <strong>un sitio</strong> (`Vehiculo`), y se arreglará automáticamente en `Coche`, `Camion` y cualquier otro vehículo que creemos.</p>
+        </div>
+        <div class="absolute bottom-6 right-8 text-lg font-bold text-gray-400">14 / 21</div>
+    </main>
+    
+    <!-- Diapositiva 15: Herencia en Código --><main id="slide-15" class="slide bg-white rounded-3xl shadow-2xl p-8 md:p-12 w-full max-w-6xl relative transform transition-all duration-500 ease-in-out">
+        <div class="text-center mb-8">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900">Herencia en Código: La Sintaxis</h2>
+            <p class="mt-4 text-xl text-gray-600">Así le decimos a Python que una clase "es un tipo de" otra.</p>
+        </div>
+    
+        <div class="grid md:grid-cols-2 gap-8 items-start">
+            <!-- Columna izquierda: El código --><div>
+                <pre class="rounded-xl shadow-lg overflow-hidden"><code class="language-python">class Vehiculo:
+    def __init__(self, marca):
+        print(f"Construyendo un Vehiculo de marca {marca}")
+        self.marca = marca
+        self._velocidad = 0
+
+    def acelerar(self, cantidad):
+        self._velocidad += cantidad
+        print(f"El {self.marca} acelera. Velocidad: {self._velocidad} km/h")
+
+# 1. Indicamos la clase padre entre paréntesis
+class Coche(Vehiculo):
+    def __init__(self, marca):
+        print("Construyendo un Coche...")
+        # 2. Llamamos al constructor del padre para que haga su parte
+        super().__init__(marca)
+        # 3. Añadimos los atributos específicos del hijo
+        self.amor_acumulado = 100
+
+    def invitar_a_ligue(self):
+        print(f"El {self.marca} se detiene. '¿Te llevo a casa? 😏'")
+
+# --- ¡A usarlo! ---
+mi_coche = Coche("Ferrari")
+# SALIDA: Construyendo un Coche...
+# SALIDA: Construyendo un Vehiculo de marca Ferrari
+
+# Podemos usar un método HEREDADO de Vehiculo
+mi_coche.acelerar(120)
+# SALIDA: El Ferrari acelera. Velocidad: 120 km/h
+
+# Y podemos usar un método PROPIO de Coche
+mi_coche.invitar_a_ligue()
+# SALIDA: El Ferrari se detiene. '¿Te llevo a casa? 😏'
+</code></pre>
+            </div>
+            
+            <!-- Columna derecha: La explicación --><div class="space-y-6">
+                <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-400">
+                    <h4 class="font-bold text-lg text-blue-900">1. `class Coche(Vehiculo):`</h4>
+                    <p class="text-gray-700">Esta es la sintaxis clave. Al poner `(Vehiculo)` después del nombre, le decimos a Python que `Coche` es una clase hija que hereda de `Vehiculo`.</p>
+                </div>
+
+                <div class="bg-yellow-50 p-4 rounded-lg border-l-4 border-yellow-400">
+                    <h4 class="font-bold text-lg text-yellow-900">2. `super().__init__(marca)`</h4>
+                    <p class="text-gray-700">Esta línea es <strong>CRUCIAL</strong>. `super()` se refiere a la clase padre (`Vehiculo`). Con esta llamada, le estamos diciendo: "Ejecuta el constructor del padre para que inicialice los atributos `marca` y `_velocidad`."</p>
+                </div>
+
+                <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-400">
+                    <h4 class="font-bold text-lg text-green-900">3. `self.amor_acumulado = 100`</h4>
+                    <p class="text-gray-700">Una vez que el padre ha hecho su trabajo, la clase hija puede añadir sus propios atributos, que no existen en el padre.</p>
+                </div>
+
+                <div class="bg-purple-50 p-4 rounded-lg text-center shadow">
+                    <p class="text-purple-900 font-semibold text-lg"><strong>Resultado:</strong> El objeto `mi_coche` tiene acceso a <strong>TODOS</strong> los métodos y atributos, tanto los suyos como los de su padre `Vehiculo`.</p>
+                </div>
+            </div>
+        </div>
+        <div class="absolute bottom-6 right-8 text-lg font-bold text-gray-400">15 / 21</div>
+    </main>
+
+    <!-- Diapositiva 16: Pilar 4 - Polimorfismo --><main id="slide-16" class="slide bg-white rounded-3xl shadow-2xl p-8 md:p-12 w-full max-w-6xl relative transform transition-all duration-500 ease-in-out">
+        <div class="text-center mb-10">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900">Pilar 4: Polimorfismo (Una Acción, Múltiples Formas)</h2>
+            <p class="mt-4 text-xl text-gray-600">La misma orden, diferentes resultados. ¡Aquí es donde la OOP se vuelve realmente flexible y potente!</p>
+        </div>
+    
+        <div class="flex flex-col items-center justify-center gap-4">
+            <!-- Acción Común --><div class="bg-gray-100 p-4 rounded-xl w-full max-w-md text-center shadow">
+                <h3 class="text-2xl font-bold text-gray-800">Orden Genérica:</h3>
+                <p class="font-mono text-xl text-indigo-600">vehiculo.hacer_sonido()</p>
+            </div>
+    
+            <!-- Flechas de Polimorfismo --><div class="flex w-full max-w-5xl justify-around my-4">
+                <!-- Flecha 1 invertida --><svg class="w-12 h-12 text-gray-400 rotate-45" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" /></svg>
+                <!-- Flecha del centro sin cambios --><svg class="w-12 h-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" /></svg>
+                <!-- Flecha 3 invertida --><svg class="w-12 h-12 text-gray-400 -rotate-45" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" /></svg>
+            </div>
+    
+            <!-- Resultados Específicos --><div class="flex flex-col md:flex-row w-full max-w-5xl gap-6">
+                <div class="bg-blue-50 p-6 rounded-2xl border-2 border-blue-200 w-full text-center">
+                    <h3 class="text-2xl font-bold text-blue-800">Objeto `Coche`</h3>
+                    <p class="mt-2 text-3xl">🚗</p>
+                    <div class="mt-2 font-mono text-lg bg-white p-3 rounded-lg text-blue-900">"¡Beep, beep!"</div>
+                </div>
+                <div class="bg-purple-50 p-6 rounded-2xl border-2 border-purple-200 w-full text-center">
+                    <h3 class="text-2xl font-bold text-purple-800">Objeto `Camion`</h3>
+                    <p class="mt-2 text-3xl">🚚</p>
+                    <div class="mt-2 font-mono text-lg bg-white p-3 rounded-lg text-purple-900">"¡MOOOOC, MOOOOC!"</div>
+                </div>
+                <div class="bg-green-50 p-6 rounded-2xl border-2 border-green-200 w-full text-center">
+                    <h3 class="text-2xl font-bold text-green-800">Objeto `Bicicleta`</h3>
+                    <p class="mt-2 text-3xl">🚲</p>
+                    <div class="mt-2 font-mono text-lg bg-white p-3 rounded-lg text-green-900">"¡Ring, ring!"</div>
+                </div>
+            </div>
+
+            <div class="mt-8 bg-yellow-50 p-6 rounded-2xl border-2 border-yellow-200 text-center shadow">
+                <p class="text-yellow-900 font-semibold text-xl"><strong>¿La Magia?</strong> Podemos tener una lista con todos estos objetos y llamar a `vehiculo.hacer_sonido()` en cada uno, sin saber de qué tipo son. Cada uno "sabrá" cómo responder a su manera.</p>
+            </div>
+        </div>
+         <div class="absolute bottom-6 right-8 text-lg font-bold text-gray-400">16 / 21</div>
+    </main>
+
+    <!-- Diapositiva 17: Polimorfismo en Código --><main id="slide-17" class="slide bg-white rounded-3xl shadow-2xl p-8 md:p-12 w-full max-w-6xl relative transform transition-all duration-500 ease-in-out">
+        <div class="text-center mb-8">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900">Polimorfismo en Código</h2>
+            <p class="mt-4 text-xl text-gray-600">Así es como un bucle simple puede controlar una orquesta de objetos diferentes.</p>
+        </div>
+    
+        <div class="grid md:grid-cols-2 gap-8 items-start">
+            <!-- Columna izquierda: El código -->
+            <div>
+                <pre class="rounded-xl shadow-lg overflow-hidden"><code class="language-python">class Vehiculo:
+    def hacer_sonido(self):
+        # Un sonido genérico para cualquier vehículo
+        return "Sonido de vehículo..."
+
+# Cada clase hija SOBREESCRIBE el método del padre
+class Coche(Vehiculo):
+    def hacer_sonido(self):
+        return "¡Beep, beep!"
+
+class Camion(Vehiculo):
+    def hacer_sonido(self):
+        return "¡MOOOOC, MOOOOC!"
+
+class Bicicleta(Vehiculo):
+    def hacer_sonido(self):
+        return "¡Ring, ring!"
+
+# --- La magia del polimorfismo ---
+mi_garage = [ Coche(), Camion(), Bicicleta() ]
+
+# Este bucle no necesita saber qué tipo de vehículo es cada uno
+for vehiculo in mi_garage:
+    # Simplemente confía en que cada objeto tiene un método .hacer_sonido()
+    print(vehiculo.hacer_sonido())
+
+# SALIDA:
+# ¡Beep, beep!
+# ¡MOOOOC, MOOOOC!
+# ¡Ring, ring!
+</code></pre>
+            </div>
+            
+            <!-- Columna derecha: La explicación -->
+            <div class="space-y-6">
+                <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-400">
+                    <h4 class="font-bold text-lg text-blue-900">Sobrescritura de Métodos</h4>
+                    <p class="text-gray-700">Cuando una clase hija define un método con el mismo nombre que su padre, lo "sobrescribe". Esto le permite dar su propia implementación específica, como los diferentes sonidos.</p>
+                </div>
+
+                <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-400">
+                    <h4 class="font-bold text-lg text-green-900">Código Flexible y Limpio</h4>
+                    <p class="text-gray-700">El bucle `for` es increíblemente simple. No necesita `if` para preguntar "si el vehículo es un Coche, haz beep... si es un Camión, haz MOOC...". Esto es polimorfismo en acción.</p>
+                </div>
+
+                <div class="bg-yellow-50 p-6 rounded-2xl border-2 border-yellow-200 text-center shadow">
+                    <p class="text-yellow-900 font-semibold text-xl"><strong>El Gran Beneficio:</strong> Si mañana creamos una nueva clase `Moto(Vehiculo)`, ¡solo tenemos que añadirla a la lista `mi_garage` y el bucle funcionará sin tener que modificarlo en absoluto!</p>
+                </div>
+            </div>
+        </div>
+        <div class="absolute bottom-6 right-8 text-lg font-bold text-gray-400">17 / 21</div>
+    </main>
+
+    <!-- Diapositiva 18: Ejercicio Práctico (Parte 1) --><main id="slide-18" class="slide bg-white rounded-3xl shadow-2xl p-8 md:p-12 w-full max-w-6xl relative transform transition-all duration-500 ease-in-out">
+        <div class="text-center mb-8">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900">Ejercicio Práctico (Parte 1): El Mini-RPG</h2>
+            <p class="mt-4 text-xl text-gray-600">¡Manos a la obra! Vamos a aplicar todo lo aprendido creando la base de un juego de rol.</p>
+        </div>
+    
+        <div class="grid md:grid-cols-2 gap-8 items-start">
+            <!-- Columna izquierda: El código -->
+            <div>
+                 <h3 class="text-2xl font-bold text-blue-800 mb-4">La Clase Base `Personaje`:</h3>
+                <pre class="rounded-xl shadow-lg overflow-hidden"><code class="language-python">class Personaje:
+    def __init__(self, nombre, vida, puntos_ataque):
+        self.nombre = nombre
+        self.vida = vida
+        self.puntos_ataque = puntos_ataque
+        print(f"¡Ha nacido {self.nombre}!")
+
+    def atacar(self, enemigo):
+        print(f"⚔️ ¡{self.nombre} ataca a {enemigo.nombre}!")
+        enemigo.vida -= self.puntos_ataque
+        
+        if enemigo.vida <= 0:
+            print(f"☠️ {enemigo.nombre} ha sido derrotado.")
+        else:
+            print(f"{enemigo.nombre} ahora tiene {enemigo.vida} puntos de vida.")
+
+    def mostrar_estado(self):
+        print(f"❤️ {self.nombre}: {self.vida} HP")
+
+# --- Creando y usando nuestros primeros personajes ---
+heroe = Personaje("Aragorn", 100, 15)
+# SALIDA: ¡Ha nacido Aragorn!
+
+orco = Personaje("Uglúk", 80, 10)
+# SALIDA: ¡Ha nacido Uglúk!
+
+heroe.atacar(orco)
+# SALIDA: ⚔️ ¡Aragorn ataca a Uglúk!
+# SALIDA: Uglúk ahora tiene 70 puntos de vida.
+</code></pre>
+            </div>
+            
+            <!-- Columna derecha: La explicación -->
+            <div class="space-y-6">
+                 <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-400">
+                    <h4 class="font-bold text-lg text-blue-900">Nuestra Plantilla</h4>
+                    <p class="text-gray-700">La clase `Personaje` es nuestro "plano" para cualquier entidad que pueda luchar en nuestro juego. Define los atributos y métodos <strong>comunes</strong> a todos.</p>
+                </div>
+
+                <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-400">
+                    <h4 class="font-bold text-lg text-green-900">El Método `atacar`</h4>
+                    <p class="text-gray-700">Fíjate cómo el método recibe `enemigo` como parámetro. Este `enemigo` es, en sí mismo, ¡otro objeto de tipo `Personaje`! Esto demuestra cómo los objetos pueden interactuar entre sí.</p>
+                </div>
+
+                <div class="bg-yellow-50 p-6 rounded-2xl border-2 border-yellow-200 text-center shadow">
+                    <p class="text-yellow-900 font-semibold text-xl"><strong>Repaso Rápido:</strong> ¿Identificas los conceptos? Tenemos `class`, el constructor `__init__`, los `atributos` (nombre, vida, ataque) y los `métodos` (atacar, mostrar_estado).</p>
+                </div>
+            </div>
+        </div>
+        <div class="absolute bottom-6 right-8 text-lg font-bold text-gray-400">18 / 21</div>
+    </main>
+
+    <!-- Diapositiva 19: Ejercicio Práctico (Parte 2) --><main id="slide-19" class="slide bg-white rounded-3xl shadow-2xl p-8 md:p-12 w-full max-w-6xl relative transform transition-all duration-500 ease-in-out">
+        <div class="text-center mb-8">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900">Ejercicio Práctico (Parte 2): Herencia en el RPG</h2>
+            <p class="mt-4 text-xl text-gray-600">¡Especialicemos a nuestros personajes! Un Guerrero no lucha igual que un Mago.</p>
+        </div>
+    
+        <div class="flex flex-col xl:flex-row gap-6">
+            <!-- Columna 1: Código -->
+            <div class="w-full xl:w-2/3">
+                <pre class="rounded-xl shadow-lg overflow-hidden h-full"><code class="language-python"># Clase Padre (de la diapositiva anterior)
+class Personaje:
+    def __init__(self, nombre, vida, puntos_ataque):
+        self.nombre = nombre; self.vida = vida; self.puntos_ataque = puntos_ataque
+    def atacar(self, enemigo):
+        print(f"⚔️ ¡{self.nombre} ataca a {enemigo.nombre}!")
+        enemigo.vida -= self.puntos_ataque
+    def mostrar_estado(self): print(f"❤️ {self.nombre}: {self.vida} HP")
+
+# --- Clases Hijas ---
+class Guerrero(Personaje):
+    def __init__(self, nombre, vida, puntos_ataque):
+        super().__init__(nombre, vida, puntos_ataque)
+        self.furia = 0
+    
+    # Sobrescribimos el método atacar
+    def atacar(self, enemigo):
+        # El ataque del guerrero es más fuerte
+        daño = self.puntos_ataque + self.furia
+        print(f"🔥 ¡{self.nombre} ataca con furia ({daño} pts)!")
+        enemigo.vida -= daño
+        self.furia += 5 # Acumula furia con cada ataque
+
+class Mago(Personaje):
+    def __init__(self, nombre, vida, puntos_ataque):
+        super().__init__(nombre, vida, puntos_ataque)
+        self.mana = 100
+    
+    # Añadimos un método nuevo
+    def lanzar_hechizo(self, enemigo):
+        if self.mana >= 20:
+            print(f"✨ ¡{self.nombre} lanza una bola de fuego!")
+            enemigo.vida -= 30 # Daño mágico fijo
+            self.mana -= 20
+        else:
+            print("¡No hay suficiente maná!")
+
+# --- Combate ---
+gimli = Guerrero("Gimli", 120, 12)
+gandalf = Mago("Gandalf", 80, 8)
+orco = Personaje("Lurtz", 90, 10)
+
+gimli.atacar(orco)
+gandalf.lanzar_hechizo(orco)
+gimli.atacar(orco) # El segundo ataque es más fuerte
+</code></pre>
+            </div>
+            <!-- Columna 2: Explicaciones -->
+            <div class="w-full xl:w-1/3 space-y-4">
+                <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-400">
+                    <h4 class="font-bold text-lg text-blue-900">Guerrero</h4>
+                    <p class="text-sm text-gray-700">Hereda de `Personaje` pero <strong>sobrescribe</strong> `atacar` para añadir la mecánica de `furia`. Su ataque se vuelve más fuerte cada vez que lo usa.</p>
+                </div>
+                <div class="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-400">
+                    <h4 class="font-bold text-lg text-purple-900">Mago</h4>
+                    <p class="text-sm text-gray-700">También hereda de `Personaje`, pero en lugar de sobrescribir, <strong>añade</strong> un nuevo método, `lanzar_hechizo`, con su propia lógica de `mana`.</p>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-400">
+                    <h4 class="font-bold text-lg text-green-900">Polimorfismo Implícito</h4>
+                    <p class="text-sm text-gray-700">Aunque `gimli` es un `Guerrero`, todavía podemos pasarlo como el `enemigo` al método `atacar` de otro personaje, porque "es un tipo de" `Personaje`.</p>
+                </div>
+                 <div class="bg-yellow-50 p-4 rounded-lg text-center shadow">
+                    <p class="text-yellow-900 font-semibold">¡Hemos combinado <strong>Herencia</strong> y <strong>Polimorfismo</strong> para crear un sistema de combate flexible y fácil de extender!</p>
+                </div>
+            </div>
+        </div>
+        <div class="absolute bottom-6 right-8 text-lg font-bold text-gray-400">19 / 21</div>
+    </main>
+
+    <!-- Diapositiva 20: Ejercicio Práctico (Parte 3) --><main id="slide-20" class="slide bg-white rounded-3xl shadow-2xl p-8 md:p-12 w-full max-w-6xl relative transform transition-all duration-500 ease-in-out">
+        <div class="text-center mb-8">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900">Ejercicio Práctico (Parte 3): Polimorfismo en el RPG</h2>
+            <p class="mt-4 text-xl text-gray-600">¡La culminación! Tratemos a todos los personajes por igual, sin importar su clase.</p>
+        </div>
+    
+        <div class="grid md:grid-cols-2 gap-8 items-start">
+            <!-- Columna izquierda: El código -->
+            <div>
+                <pre class="rounded-xl shadow-lg overflow-hidden"><code class="language-python"># ... (Clases Personaje, Guerrero, Mago de la slide anterior)
+# Añadimos un método "presentarse" a cada clase
+
+class Personaje:
+    # ... (init, atacar, etc.)
+    def presentarse(self):
+        print(f"Soy {self.nombre}, un aventurero.")
+
+class Guerrero(Personaje):
+    # ... (init, atacar con furia, etc.)
+    def presentarse(self):
+        print(f"Soy {self.nombre}, ¡un guerrero con {self.furia} de furia!")
+
+class Mago(Personaje):
+    # ... (init, lanzar_hechizo, etc.)
+    def presentarse(self):
+        print(f"Soy {self.nombre}, un mago con {self.mana} de maná.")
+
+
+# --- La magia del Polimorfismo ---
+grupo = [
+    Guerrero("Gimli", 120, 12),
+    Mago("Gandalf", 80, 8),
+    Personaje("Bilbo", 50, 5) # Un personaje genérico
+]
+
+print("--- Presentación del grupo ---")
+for miembro in grupo:
+    # ¡No necesitamos saber qué tipo de personaje es!
+    # Solo llamamos al método que todos comparten.
+    miembro.presentarse()
+
+# SALIDA:
+# --- Presentación del grupo ---
+# Soy Gimli, ¡un guerrero con 0 de furia!
+# Soy Gandalf, un mago con 100 de maná.
+# Soy Bilbo, un aventurero.
+</code></pre>
+            </div>
+            
+            <!-- Columna derecha: La explicación -->
+            <div class="space-y-6">
+                <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-400">
+                    <h4 class="font-bold text-lg text-blue-900">Método Común, Distinta Implementación</h4>
+                    <p class="text-gray-700">Todas las clases (`Personaje`, `Guerrero`, `Mago`) tienen un método llamado `presentarse`. Cada una lo implementa a su manera para mostrar su estado particular.</p>
+                </div>
+
+                <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-400">
+                    <h4 class="font-bold text-lg text-green-900">Un Bucle para Gobernarlos a Todos</h4>
+                    <p class="text-gray-700">El bucle `for` trata a cada `miembro` de la lista como un `Personaje`. No le importa si en realidad es un `Guerrero` o un `Mago`. Simplemente llama a `miembro.presentarse()` y confía en que el objeto sabrá qué hacer.</p>
+                </div>
+
+                <div class="bg-yellow-50 p-6 rounded-2xl border-2 border-yellow-200 text-center shadow">
+                    <h4 class="font-bold text-lg text-yellow-900">Escalabilidad Futura</h4>
+                    <p class="text-yellow-900 font-semibold">Si mañana creamos la clase `Arquero(Personaje)`, solo tenemos que añadir un arquero a la lista `grupo`, y este código <strong>seguirá funcionando sin cambios</strong>. ¡Ese es el poder de la OOP!</p>
+                </div>
+            </div>
+        </div>
+        <div class="absolute bottom-6 right-8 text-lg font-bold text-gray-400">20 / 21</div>
+    </main>
+    
+    <!-- Diapositiva 21: Conclusión y Próximos Pasos --><main id="slide-21" class="slide active-slide bg-white rounded-3xl shadow-2xl p-8 md:p-12 w-full max-w-6xl relative transform transition-all duration-500 ease-in-out">
+        <div class="text-center mb-8">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900">Conclusión y Próximos Pasos</h2>
+            <p class="mt-4 text-xl text-gray-600">Has pasado de ver el "código espagueti" a entender cómo construir mundos organizados.</p>
+        </div>
+    
+        <div class="grid md:grid-cols-2 gap-10">
+            <!-- Columna izquierda: Resumen -->
+            <div class="space-y-6">
+                <h3 class="text-2xl font-bold text-blue-800 mb-4">Resumen de Superpoderes (Los 4 Pilares)</h3>
+                
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <p><strong>🛡️ Encapsulación:</strong> Protege tus datos con métodos "guardianes".</p>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <p><strong>🕹️ Abstracción:</strong> Ofrece interfaces simples para ocultar la complejidad interna.</p>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <p><strong>🏗️ Herencia:</strong> Reutiliza código para evitar repetirte (DRY).</p>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <p><strong>🎭 Polimorfismo:</strong> Escribe código flexible que funciona con muchos tipos de objetos.</p>
+                </div>
+            </div>
+            
+            <!-- Columna derecha: Siguientes Pasos -->
+            <div class="bg-blue-50 p-6 rounded-2xl border-2 border-blue-200">
+                <h3 class="text-2xl font-bold text-blue-800 mb-4">¿Y ahora qué? ¡A Practicar!</h3>
+                <p class="text-lg text-gray-700 mb-6">La programación es como un deporte. ¡Se mejora entrenando!</p>
+
+                <ul class="space-y-4 text-left">
+                    <li class="flex items-start">
+                        <span class="text-green-500 mr-3 text-2xl">➡️</span>
+                        <div>
+                            <strong class="text-gray-900">Amplía el RPG:</strong> Intenta crear una clase `Arquero(Personaje)`. ¿Qué atributos y métodos tendría?
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-500 mr-3 text-2xl">➡️</span>
+                        <div>
+                            <strong class="text-gray-900">Modela el Mundo Real:</strong> Piensa en un problema simple. ¿Una `Receta` con `Ingredientes`? ¿Un `Libro` con `Paginas`? Intenta modelarlo con clases.
+                        </div>
+                    </li>
+                     <li class="flex items-start">
+                        <span class="text-green-500 mr-3 text-2xl">➡️</span>
+                        <div>
+                            <strong class="text-gray-900">Explora Librerías:</strong> Echa un vistazo al código fuente de librerías como `requests` o `pygame`. Verás que todo son clases y objetos.
+                        </div>
+                    </li>
+                </ul>
+                 <div class="mt-8 bg-yellow-100 border-t-4 border-yellow-400 p-4 rounded-b text-yellow-900">
+                    <p class="font-bold">El mensaje más importante:</p>
+                    <p>La OOP es una forma de <strong>pensar</strong>. Antes de escribir una línea de código, pregúntate: ¿cuáles son los "sustantivos" de mi problema? Esos serán tus objetos.</p>
+                </div>
+            </div>
+        </div>
+        <div class="absolute bottom-6 right-8 text-lg font-bold text-gray-400">21 / 21</div>
+    </main>
+
+    <!-- Controles de Navegación --><div class="fixed bottom-8 right-8 z-50 flex space-x-4">
+        <button onclick="changeSlide(-1)" class="bg-white rounded-full p-4 shadow-lg hover:bg-gray-200 transition-colors">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+        </button>
+        <button onclick="changeSlide(1)" class="bg-white rounded-full p-4 shadow-lg hover:bg-gray-200 transition-colors">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </button>
+    </div>
+
+    <!-- Librería JS para el resaltado de sintaxis --><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+
+        function showSlide(index) {
+            // Ocultamos todas las diapositivas
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active-slide', i === index);
+                slide.classList.toggle('hidden', i !== index); // Usamos hidden para asegurar que no interfieran
+            });
+        }
+        
+        // Función para cambiar de diapositiva
+        function changeSlide(direction) {
+            // Ocultamos la diapositiva actual
+            if(slides[currentSlideIndex]) {
+                slides[currentSlideIndex].classList.remove('active-slide');
+                slides[currentSlideIndex].classList.add('hidden');
+            }
+            
+            // Calculamos el nuevo índice
+            currentSlideIndex = (currentSlideIndex + direction + slides.length) % slides.length;
+            
+            // Mostramos la nueva diapositiva
+            if(slides[currentSlideIndex]) {
+                slides[currentSlideIndex].classList.add('active-slide');
+                slides[currentSlideIndex].classList.remove('hidden');
+            }
+        }
+
+
+        // Inicializamos la presentación
+        document.addEventListener('DOMContentLoaded', () => {
+            // Activamos el resaltado de sintaxis en toda la página
+            hljs.highlightAll();
+
+            // Buscamos la diapositiva activa en el HTML y establecemos el índice
+            let foundActive = false;
+            slides.forEach((slide, index) => {
+                if (slide.classList.contains('active-slide')) {
+                    currentSlideIndex = index;
+                    foundActive = true;
+                }
+            });
+
+            // Si no se encuentra ninguna activa, activamos la primera
+            if (!foundActive && slides.length > 0) {
+                currentSlideIndex = 0;
+                slides[0].classList.add('active-slide');
+            }
+
+            // Aseguramos que solo la activa esté visible
+            showSlide(currentSlideIndex);
+        });
+    </script>
+
+</body>
+</html>
+

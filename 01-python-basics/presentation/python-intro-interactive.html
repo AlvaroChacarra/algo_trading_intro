@@ -1,0 +1,3319 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Qué es Python — Clase 1</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2309090b'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Arial,sans-serif' font-size='28' font-weight='700' fill='%2322d3ee'%3EPy%3C/text%3E%3C/svg%3E">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  :root {
+    --bg: #09090b;
+    --surface: #18181b;
+    --surface-2: #27272a;
+    --border: #3f3f46;
+    --text: #fafafa;
+    --muted: #b8b8c0;
+    --cyan: #22d3ee;
+    --blue: #818cf8;
+    --green: #4ade80;
+    --pink: #f472b6;
+    --yellow: #fbbf24;
+    --orange: #fb923c;
+    --red: #f87171;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-snap-type: y proximity;
+    scrollbar-width: thin;
+    scrollbar-color: var(--surface-2) var(--bg);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    line-height: 1.7;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(9,9,11,0.82);
+    backdrop-filter: blur(16px) saturate(1.4);
+    border-bottom: 1px solid rgba(63,63,70,0.5);
+    padding: 0 40px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-brand {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--cyan);
+    letter-spacing: -0.02em;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 6px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+
+  .nav-links a:hover, .nav-links a.active {
+    color: var(--text);
+    background: var(--surface);
+  }
+
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .fullscreen-btn {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform 0.15s, border-color 0.2s, background 0.2s;
+  }
+
+  .fullscreen-btn:hover {
+    transform: translateY(-1px);
+    border-color: rgba(34,211,238,0.35);
+    background: #1a1a20;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .reading-progress {
+    position: fixed;
+    top: 64px; left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--cyan), var(--blue), var(--pink));
+    z-index: 101;
+    width: 0%;
+    transition: width 0.15s;
+  }
+
+  /* ── LAYOUT ── */
+  main {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 108px 48px 160px;
+  }
+
+  section {
+    width: min(100%, 1280px);
+    margin: 0 auto 128px;
+    padding: 24px 0;
+    min-height: calc(100vh - 104px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    scroll-margin-top: 88px;
+    scroll-snap-align: start;
+  }
+
+  section > p,
+  section > .lead {
+    max-width: 860px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    width: min(100%, 1280px);
+    min-height: calc(100vh - 112px);
+    margin: 0 auto 112px;
+    padding: 44px 0 32px;
+    display: flex;
+    align-items: center;
+    scroll-snap-align: start;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
+    gap: 42px;
+    align-items: center;
+    width: 100%;
+  }
+
+  .hero-copy {
+    max-width: 720px;
+  }
+
+  .hero-side {
+    display: grid;
+    gap: 18px;
+    justify-self: end;
+    width: min(100%, 520px);
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    border-radius: 999px;
+    background: rgba(34,211,238,0.08);
+    border: 1px solid rgba(34,211,238,0.2);
+    color: var(--cyan);
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 28px;
+    letter-spacing: 0.02em;
+  }
+
+  .hero-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 10px var(--cyan);
+    animation: pulse 2s ease infinite;
+  }
+
+  @keyframes pulse {
+    0%,100% { opacity: 1; } 50% { opacity: 0.3; }
+  }
+
+  h1 {
+    font-size: clamp(48px, 6vw, 82px);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 0.98;
+    margin-bottom: 22px;
+  }
+
+  .hero p {
+    font-size: 24px;
+    color: var(--muted);
+    max-width: 720px;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .hero-chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 24px;
+  }
+
+  .hero-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: rgba(24,24,27,0.84);
+    border: 1px solid rgba(255,255,255,0.08);
+    font-size: 13px;
+    color: #d6d6dc;
+    font-weight: 600;
+  }
+
+  .hero-chip strong {
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  .stage-card {
+    background: linear-gradient(180deg, rgba(24,24,27,0.94), rgba(14,14,18,0.96));
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 22px 22px 20px;
+    box-shadow: 0 18px 50px rgba(0,0,0,0.28);
+  }
+
+  .stage-card-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 800;
+    color: var(--cyan);
+    margin-bottom: 12px;
+  }
+
+  .stage-card p:last-child { margin-bottom: 0; }
+
+  .python-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(34,211,238,0.08);
+    border: 1px solid rgba(34,211,238,0.2);
+    color: var(--cyan);
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .python-status.loading {
+    color: var(--yellow);
+    border-color: rgba(251,191,36,0.22);
+    background: rgba(251,191,36,0.08);
+  }
+
+  .python-status.error {
+    color: var(--red);
+    border-color: rgba(248,113,113,0.22);
+    background: rgba(248,113,113,0.08);
+  }
+
+  .market-board {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 16px 0;
+  }
+
+  .market-quote {
+    border-radius: 16px;
+    padding: 16px;
+    background: #111116;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .market-quote-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+
+  .market-quote-value {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  .market-quote.bid .market-quote-value { color: var(--green); }
+  .market-quote.ask .market-quote-value { color: var(--pink); }
+
+  .market-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .metric-pill {
+    border-radius: 14px;
+    padding: 12px;
+    background: #101014;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .metric-pill-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 4px;
+    font-weight: 700;
+  }
+
+  .metric-pill-value {
+    font-size: 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+  }
+
+  .market-code {
+    margin: 0;
+    padding: 16px 18px;
+    border-radius: 16px;
+    background: #0c0c0f;
+    border: 1px solid rgba(255,255,255,0.06);
+    font-size: 13px;
+  }
+
+  .market-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 14px;
+  }
+
+  .market-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(34,211,238,0.2);
+    background: rgba(34,211,238,0.08);
+    color: var(--cyan);
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 13px;
+    transition: transform 0.15s, border-color 0.2s, background 0.2s;
+  }
+
+  .market-btn:hover {
+    transform: translateY(-1px);
+    background: rgba(34,211,238,0.12);
+    border-color: rgba(34,211,238,0.35);
+  }
+
+  .market-explainer {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  /* ── SECTION HEADERS ── */
+  .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--cyan);
+    margin-bottom: 14px;
+  }
+
+  .section-label::before {
+    content: '';
+    width: 20px; height: 2px;
+    background: var(--cyan);
+    border-radius: 2px;
+  }
+
+  h2 {
+    font-size: clamp(40px, 4vw, 58px);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.06;
+    margin-bottom: 20px;
+  }
+
+  h3 {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+
+  p { margin-bottom: 16px; }
+
+  .accent {
+    background: linear-gradient(135deg, var(--cyan), var(--blue), var(--pink));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .lead {
+    font-size: 22px;
+    color: #dededf;
+    line-height: 1.55;
+    margin-bottom: 28px;
+  }
+
+  strong { color: var(--text); font-weight: 600; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 16px;
+    transition: border-color 0.3s;
+  }
+
+  .card:hover { border-color: rgba(255,255,255,0.15); }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .card-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .card-icon svg {
+    width: 36px;
+    height: 36px;
+  }
+
+  .card-icon img {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  .card-icon-lg svg {
+    width: 44px;
+    height: 44px;
+  }
+
+  .card-icon-lg img {
+    width: auto;
+    height: 30px;
+  }
+
+  .card-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+
+  .card-text {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  /* ── CODE ── */
+  .code-block {
+    border-radius: 14px;
+    overflow: hidden;
+    background: #0c0c0f;
+    border: 1px solid var(--border);
+    margin: 24px 0;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+  }
+
+  .code-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: #141418;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .code-dots {
+    display: flex; gap: 6px;
+  }
+
+  .code-dots span {
+    width: 11px; height: 11px;
+    border-radius: 50%;
+  }
+
+  .code-dots span:nth-child(1) { background: #ff5f57; }
+  .code-dots span:nth-child(2) { background: #febc2e; }
+  .code-dots span:nth-child(3) { background: #28c840; }
+
+  .code-filename {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  pre {
+    padding: 20px;
+    font-family: 'JetBrains Mono', 'Consolas', monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #eeeef1;
+    overflow-x: auto;
+  }
+
+  .kw { color: var(--pink); }
+  .fn { color: var(--blue); }
+  .str { color: var(--green); }
+  .num { color: var(--yellow); }
+  .cm { color: #6b6b78; }
+  .op { color: #b8b8c0; }
+  .name { color: var(--cyan); }
+
+  /* ── PIPELINE STEPS ── */
+  .pipeline {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 12px;
+    margin: 28px 0;
+  }
+
+  .pipe-step {
+    display: block;
+    padding: 16px 14px 14px;
+    align-items: start;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    min-width: 0;
+  }
+
+  .pipe-num {
+    width: 36px; height: 36px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    font-size: 14px;
+    background: #101014;
+    border: 1px solid var(--border);
+    position: relative;
+    z-index: 1;
+    margin-bottom: 12px;
+  }
+
+  .pipe-step:nth-child(1) .pipe-num { color: var(--cyan); border-color: rgba(34,211,238,0.3); }
+  .pipe-step:nth-child(2) .pipe-num { color: var(--blue); border-color: rgba(129,140,248,0.3); }
+  .pipe-step:nth-child(3) .pipe-num { color: var(--green); border-color: rgba(74,222,128,0.3); }
+  .pipe-step:nth-child(4) .pipe-num { color: var(--yellow); border-color: rgba(251,191,36,0.3); }
+  .pipe-step:nth-child(5) .pipe-num { color: var(--pink); border-color: rgba(244,114,182,0.3); }
+
+  .pipe-title {
+    font-weight: 700;
+    margin-bottom: 8px;
+    font-size: 14px;
+    line-height: 1.3;
+  }
+
+  .pipe-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+
+  /* ── CALLOUT ── */
+  .callout {
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin: 24px 0;
+    border-left: 3px solid;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .callout-info {
+    background: rgba(34,211,238,0.06);
+    border-color: var(--cyan);
+    color: #dededf;
+  }
+
+  .callout-warn {
+    background: rgba(251,191,36,0.06);
+    border-color: var(--yellow);
+    color: #dededf;
+  }
+
+  .callout-aha {
+    background: rgba(129,140,248,0.06);
+    border-color: var(--blue);
+    color: #dededf;
+  }
+
+  .callout > strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 14px;
+  }
+
+  .callout p strong {
+    display: inline;
+    margin: 0;
+    font-size: inherit;
+  }
+
+  .callout-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 14px;
+  }
+
+  .callout-mini {
+    background: rgba(9,9,11,0.34);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+
+  .callout-mini-title {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text);
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+
+  .callout-mini p:last-child { margin-bottom: 0; }
+
+  /* ── DIAGRAM ── */
+  .flow-diagram {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: max-content;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 32px 0;
+    overflow-x: auto;
+    padding: 0 2px 8px;
+    scrollbar-width: none;
+  }
+
+  .flow-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 12px;
+    text-align: center;
+    min-width: 74px;
+  }
+
+  .flow-box-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .flow-box-value {
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .flow-arrow {
+    font-size: 14px;
+    color: var(--muted);
+    padding: 0 2px;
+    opacity: 0.8;
+  }
+
+  /* ── COMPARISON TABLE ── */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .compare-col {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px;
+  }
+
+  .compare-header {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ── TAG ── */
+  .tag {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .tag-cyan { background: rgba(34,211,238,0.12); color: var(--cyan); }
+  .tag-pink { background: rgba(244,114,182,0.12); color: var(--pink); }
+  .tag-green { background: rgba(74,222,128,0.12); color: var(--green); }
+  .tag-yellow { background: rgba(251,191,36,0.12); color: var(--yellow); }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin: 20px 0 28px;
+  }
+
+  .info-pill {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+  }
+
+  .info-pill-title {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    color: var(--cyan);
+  }
+
+  .info-pill p:last-child { margin-bottom: 0; }
+
+  .pedagogy-strip {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+    margin: 24px 0 30px;
+    padding: 18px 20px;
+    background: linear-gradient(180deg, rgba(24,24,27,0.9), rgba(12,12,16,0.95));
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 18px;
+    box-shadow: 0 18px 50px rgba(0,0,0,0.2);
+  }
+
+  .pedagogy-copy {
+    display: grid;
+    gap: 6px;
+  }
+
+  .pedagogy-kicker {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--cyan);
+    font-weight: 800;
+  }
+
+  .pedagogy-title {
+    font-size: 20px;
+    line-height: 1.2;
+    font-weight: 750;
+    letter-spacing: -0.02em;
+  }
+
+  .pedagogy-text {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .pedagogy-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .pedagogy-card {
+    background: rgba(9,9,11,0.42);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px;
+    padding: 14px 15px;
+    min-height: 100%;
+  }
+
+  .pedagogy-card strong {
+    display: block;
+    font-size: 13px;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+
+  .pedagogy-card span {
+    display: block;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ── DIVIDER ── */
+  hr {
+    border: none;
+    height: 1px;
+    background: var(--border);
+    margin: 60px 0;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 40px 24px 60px;
+    color: var(--muted);
+    font-size: 14px;
+    border-top: 1px solid var(--border);
+    max-width: 820px;
+    margin: 0 auto;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 700px) {
+    .card-grid, .compare { grid-template-columns: 1fr; }
+    .callout-grid, .info-grid, .jupyter-showcase, .pedagogy-grid { grid-template-columns: 1fr; }
+    .pipeline { grid-template-columns: 1fr; }
+    .flow-diagram {
+      justify-content: start;
+      padding-bottom: 10px;
+    }
+    nav { padding: 0 16px; }
+    .nav-links { display: none; }
+    .nav-actions { display: none; }
+    main { padding: 80px 16px 80px; }
+    .jupyter-cell { grid-template-columns: 1fr; }
+    .cell-label { width: 56px; }
+    .hero-grid { grid-template-columns: 1fr; }
+    .hero-side { width: 100%; }
+    .market-metrics, .market-board { grid-template-columns: 1fr; }
+    .pedagogy-strip { grid-template-columns: 1fr; }
+    .presentation-dock { display: none; }
+  }
+
+  /* ── P5 CANVASES ── */
+  #hero-canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    opacity: 0.22;
+  }
+
+  .hero > *:not(#hero-canvas) { position: relative; z-index: 1; }
+
+  #bg-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.72;
+  }
+
+  #bg-canvas canvas, #hero-canvas canvas { display: block; }
+
+  /* ── TOKENIZER ── */
+  .tokenizer-demo { margin: 36px 0 0; }
+
+  .tokenizer-input {
+    width: 100%;
+    background: #0c0c0f;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.3s;
+  }
+
+  .tokenizer-input:focus { border-color: var(--cyan); }
+  .tokenizer-input::placeholder { color: #3f3f46; }
+
+  .token-output {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+    min-height: 44px;
+    padding: 16px;
+    background: var(--surface);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+
+  .token-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    animation: tokenPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    cursor: default;
+  }
+
+  .token-chip:hover { transform: scale(1.08); transition: transform 0.2s; }
+
+  @keyframes tokenPop {
+    0% { opacity: 0; transform: scale(0.5) translateY(10px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .token-keyword  { background: rgba(244,114,182,0.15); color: var(--pink); }
+  .token-builtin  { background: rgba(129,140,248,0.15); color: var(--blue); }
+  .token-string   { background: rgba(74,222,128,0.15); color: var(--green); }
+  .token-number   { background: rgba(251,191,36,0.15); color: var(--yellow); }
+  .token-operator { background: rgba(161,161,170,0.15); color: var(--muted); }
+  .token-name     { background: rgba(34,211,238,0.15); color: var(--cyan); }
+  .token-paren    { background: rgba(251,146,60,0.15); color: var(--orange); }
+
+  .token-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    opacity: 0.6;
+  }
+
+  /* ── BINARY TRANSLATOR ── */
+  .binary-demo { margin: 36px 0 0; }
+
+  .binary-input {
+    width: 100%;
+    background: #0c0c0f;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.3s;
+  }
+
+  .binary-input:focus { border-color: var(--green); }
+  .binary-input::placeholder { color: #3f3f46; }
+
+  .binary-output {
+    margin-top: 16px;
+    padding: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 2;
+    min-height: 60px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .bin-char {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: rgba(74,222,128,0.08);
+    border: 1px solid rgba(74,222,128,0.15);
+    animation: tokenPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    cursor: default;
+    transition: background 0.2s;
+  }
+
+  .bin-char:hover { background: rgba(74,222,128,0.15); }
+
+  .bin-char-letter {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--green);
+  }
+
+  .bin-char-bits {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  .bin-arrow {
+    color: var(--muted);
+    font-size: 14px;
+    opacity: 0.4;
+  }
+
+  /* ── ERROR DETECTIVE ── */
+  .detective-demo { margin: 36px 0 0; }
+
+  .detective-input {
+    width: 100%;
+    background: #0c0c0f;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.3s;
+  }
+
+  .detective-input:focus { border-color: var(--pink); }
+  .detective-input::placeholder { color: #3f3f46; }
+
+  .detective-result {
+    margin-top: 16px;
+    padding: 20px 24px;
+    border-radius: 12px;
+    border-left: 3px solid;
+    font-size: 14px;
+    line-height: 1.7;
+    min-height: 60px;
+    transition: all 0.3s;
+  }
+
+  .detective-ok {
+    background: rgba(74,222,128,0.06);
+    border-color: var(--green);
+  }
+
+  .detective-syntax {
+    background: rgba(244,114,182,0.06);
+    border-color: var(--pink);
+  }
+
+  .detective-runtime {
+    background: rgba(251,191,36,0.06);
+    border-color: var(--yellow);
+  }
+
+  .detective-step {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .detective-examples {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .detective-example-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .detective-example-btn:hover {
+    border-color: var(--pink);
+    color: var(--text);
+  }
+
+  /* ── REPL SIMULATOR ── */
+  .repl-demo { margin: 36px 0 0; }
+
+  .repl-terminal {
+    background: #0c0c0f;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+  }
+
+  .repl-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: #141418;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .repl-body {
+    padding: 16px 20px;
+    max-height: 320px;
+    overflow-y: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .repl-line {
+    margin-bottom: 2px;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+
+  .repl-prompt { color: var(--green); }
+  .repl-input-text { color: var(--text); }
+  .repl-output-text { color: var(--cyan); }
+  .repl-error-text { color: var(--pink); }
+
+  .repl-input-row {
+    display: flex;
+    align-items: center;
+    margin-top: 4px;
+  }
+
+  .repl-input-field {
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--text);
+    flex: 1;
+    caret-color: var(--green);
+  }
+
+  .repl-hint {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 12px;
+    opacity: 0.7;
+  }
+
+  /* ── LIVE EDITOR (demo) ── */
+  .live-editor-demo { margin: 36px 0 0; }
+
+  .live-editor-textarea {
+    width: 100%;
+    background: #0c0c0f;
+    border: none;
+    border-radius: 0 0 12px 12px;
+    padding: 16px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    color: var(--text);
+    outline: none;
+    resize: none;
+    line-height: 1.6;
+    caret-color: var(--cyan);
+  }
+
+  .live-run-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    padding: 10px 28px;
+    background: linear-gradient(135deg, var(--green), #16a34a);
+    border: none;
+    border-radius: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #000;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  .live-run-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(74,222,128,0.3); }
+  .live-run-btn:active { transform: scale(0.97); }
+
+  .live-terminal {
+    margin-top: 14px;
+    background: #0c0c0f;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    animation: tokenPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  .live-terminal pre {
+    padding: 16px 20px;
+    margin: 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--green);
+    white-space: pre-wrap;
+  }
+
+  .live-terminal .live-error { color: var(--pink); }
+
+  /* ── DUAL VIEW (CPU vs Python) ── */
+  .dual-view { margin: 32px 0 0; }
+
+  .dual-view-panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  @media (max-width: 700px) {
+    .dual-view-panels { grid-template-columns: 1fr; }
+  }
+
+  .dual-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    min-height: 208px;
+  }
+
+  .dual-panel-label {
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    margin-bottom: 4px;
+  }
+
+  .dual-panel-subtitle {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    opacity: 0.7;
+  }
+
+  .dual-panel-output {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    align-items: flex-start;
+    align-content: flex-start;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 2;
+    min-height: 110px;
+  }
+
+  .dual-panel-output .bin-char {
+    background: rgba(251,146,60,0.08);
+    border-color: rgba(251,146,60,0.15);
+  }
+
+  .dual-panel-output .bin-char .bin-char-letter { color: var(--orange); }
+
+  .dual-vs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--muted);
+    opacity: 0.4;
+    padding: 8px 0;
+  }
+
+  .jupyter-showcase {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+    gap: 18px;
+    margin: 28px 0 18px;
+    align-items: stretch;
+  }
+
+  .jupyter-notebook {
+    background: linear-gradient(180deg, #111116, #0b0b0e);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 18px 50px rgba(0,0,0,0.28);
+  }
+
+  .jupyter-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px;
+    background: #15151b;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .jupyter-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .jupyter-kernel {
+    font-size: 12px;
+    color: var(--green);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .jupyter-body {
+    padding: 18px;
+    display: grid;
+    gap: 14px;
+  }
+
+  .jupyter-cell {
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    gap: 12px;
+    align-items: start;
+  }
+
+  .cell-label {
+    border: 1px solid rgba(34,211,238,0.16);
+    background: rgba(34,211,238,0.06);
+    border-radius: 10px;
+    padding: 8px 10px;
+    font-size: 12px;
+    color: var(--cyan);
+    font-family: 'JetBrains Mono', monospace;
+    text-align: center;
+    font-weight: 700;
+  }
+
+  .cell-box {
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .cell-box pre {
+    margin: 0;
+    padding: 14px 16px;
+    font-size: 13px;
+  }
+
+  .cell-output {
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 12px 16px;
+    color: var(--green);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    background: rgba(74,222,128,0.04);
+  }
+
+  .jupyter-side {
+    display: grid;
+    gap: 14px;
+  }
+
+  .jupyter-note {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px;
+  }
+
+  .jupyter-note-title {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--yellow);
+    margin-bottom: 10px;
+    font-weight: 800;
+  }
+
+  .jupyter-note p:last-child { margin-bottom: 0; }
+
+  .brand-logo {
+    display: inline-block;
+    width: auto;
+    max-width: 170px;
+    height: 28px;
+    object-fit: contain;
+  }
+
+  .brand-logo.invert {
+    filter: brightness(0) invert(1);
+    opacity: 0.95;
+  }
+
+  .recap-callout {
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+
+  .recap-callout-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: rgba(129,140,248,0.14);
+    color: var(--blue);
+    font-size: 18px;
+  }
+
+  .presentation-dock {
+    position: fixed;
+    right: 28px;
+    bottom: 24px;
+    z-index: 120;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: rgba(9,9,11,0.82);
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(18px);
+    color: var(--muted);
+    font-size: 12px;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.25);
+  }
+
+  .shortcut-key {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 26px;
+    height: 26px;
+    padding: 0 8px;
+    border-radius: 8px;
+    background: #17171d;
+    border: 1px solid rgba(255,255,255,0.08);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+  }
+</style>
+</head>
+<body>
+<div id="bg-canvas"></div>
+
+<!-- Navigation -->
+<nav>
+  <div class="nav-brand">&#x1F40D; Clase 1 &middot; ICAI 2026</div>
+  <ul class="nav-links">
+    <li><a href="#hero-section">Inicio</a></li>
+    <li><a href="#demo">Demo</a></li>
+    <li><a href="#programa">Programa</a></li>
+    <li><a href="#cpython">CPython</a></li>
+    <li><a href="#pipeline">Pipeline</a></li>
+    <li><a href="#jupyter">Jupyter</a></li>
+    <li><a href="#porque">Por qu&eacute;</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button id="fullscreen-btn" class="fullscreen-btn" type="button">Pantalla completa</button>
+  </div>
+</nav>
+<div class="reading-progress" id="progress"></div>
+<div class="presentation-dock">
+  <span class="shortcut-key">&#8592;</span>
+  <span class="shortcut-key">&#8594;</span>
+  <span>mover secciones</span>
+  <span class="shortcut-key">F</span>
+  <span>fullscreen</span>
+</div>
+
+<main>
+
+  <!-- ═══ HERO ═══ -->
+  <div class="hero" id="hero-section">
+    <div id="hero-canvas"></div>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <div class="hero-badge">Clase 1 &middot; Introducci&oacute;n</div>
+        <h1>Python es un programa<br>que <span class="accent">lee texto</span></h1>
+        <p>Antes de escribir c&oacute;digo hay que entender una idea muy concreta: cuando pulsas &laquo;ejecutar&raquo;, no ocurre magia. Un programa lee texto, lo interpreta y produce una acci&oacute;n real.</p>
+        <div class="hero-chip-row">
+          <span class="hero-chip"><strong>Idea central</strong> texto &rarr; estructura &rarr; ejecuci&oacute;n</span>
+          <span class="hero-chip"><strong>Objetivo</strong> perder el miedo a tocar Python</span>
+          <span class="hero-chip"><strong>Puente a trading</strong> snapshot &rarr; spread &rarr; decisi&oacute;n</span>
+        </div>
+      </div>
+
+      <div class="hero-side">
+        <div class="stage-card">
+          <div class="stage-card-label">Tecnolog&iacute;a real</div>
+          <div class="python-status loading" data-python-status>Inicializando Python real en el navegador...</div>
+          <p>El editor en vivo y el mini-REPL de esta presentaci&oacute;n ejecutan <strong>Python real</strong> con Pyodide. Sin instalar nada, sin salir del navegador.</p>
+        </div>
+
+        <div class="stage-card">
+          <div class="stage-card-label">Trading en 20 segundos</div>
+          <p>Lo primero que nos interesa no es &laquo;programar por programar&raquo;, sino automatizar una lectura de mercado.</p>
+          <div class="market-board">
+            <div class="market-quote bid">
+              <div class="market-quote-label">Bid</div>
+              <div class="market-quote-value" id="hero-bid">99950</div>
+            </div>
+            <div class="market-quote ask">
+              <div class="market-quote-label">Ask</div>
+              <div class="market-quote-value" id="hero-ask">100000</div>
+            </div>
+          </div>
+          <div class="market-metrics">
+            <div class="metric-pill">
+              <div class="metric-pill-label">Spread</div>
+              <div class="metric-pill-value" id="hero-spread">50</div>
+            </div>
+            <div class="metric-pill">
+              <div class="metric-pill-label">Mid</div>
+              <div class="metric-pill-value" id="hero-mid">99975</div>
+            </div>
+            <div class="metric-pill">
+              <div class="metric-pill-label">Lectura</div>
+              <div class="metric-pill-value" id="hero-market-state">Normal</div>
+            </div>
+          </div>
+          <pre class="market-code"><span class="name">spread</span> <span class="op">=</span> <span class="name">ask</span> <span class="op">-</span> <span class="name">bid</span>
+<span class="name">mid</span> <span class="op">=</span> (<span class="name">bid</span> <span class="op">+</span> <span class="name">ask</span>) <span class="op">/</span> <span class="num">2</span>
+<span class="kw">if</span> <span class="name">spread</span> <span class="op">&lt;=</span> <span class="num">30</span>: <span class="name">state</span> <span class="op">=</span> <span class="str">"tight"</span></pre>
+          <div class="market-actions">
+            <button id="shuffle-market-btn" class="market-btn" type="button">Cambiar snapshot</button>
+            <div class="market-explainer">Esto es justo el tipo de automatizaci&oacute;n simple que vamos a construir despu&eacute;s en Jupyter.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 1: DEMO EN VIVO ═══ -->
+  <section id="demo">
+    <div class="section-label">El gancho</div>
+    <h2>Tu primer programa en 30 segundos</h2>
+    <p class="lead">Sin instalar nada especial. Solo el Bloc de Notas y la terminal.</p>
+
+    <div class="pedagogy-strip">
+      <div class="pedagogy-copy">
+        <div class="pedagogy-kicker">Quiero que vean esto</div>
+        <div class="pedagogy-title">Programar empieza con texto, no con magia</div>
+        <div class="pedagogy-text">Esta primera escena solo tiene que dejar una intuici&oacute;n muy clara: un <code>.py</code> es texto y Python sabe leerlo.</div>
+      </div>
+      <div class="pedagogy-grid">
+        <div class="pedagogy-card">
+          <strong>1. El fichero es normal</strong>
+          <span>Un <code>.py</code> se puede abrir con cualquier editor. No es un objeto misterioso.</span>
+        </div>
+        <div class="pedagogy-card">
+          <strong>2. Python lo interpreta</strong>
+          <span>Al ejecutar, otro programa lee ese texto y decide qu&eacute; hacer con &eacute;l.</span>
+        </div>
+        <div class="pedagogy-card">
+          <strong>3. El output tiene origen</strong>
+          <span>Lo que aparece en pantalla no sale de la nada: sale de una instrucci&oacute;n concreta.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span class="code-filename">Bloc de Notas</span>
+      </div>
+      <pre><span class="fn">print</span>(<span class="str">"hola, soy un programa"</span>)</pre>
+    </div>
+
+    <p>Guardas el fichero como <strong>hola.py</strong>. Abres la terminal. Ejecutas:</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span class="code-filename">Terminal</span>
+      </div>
+      <pre><span class="op">$</span> python hola.py
+<span class="str">hola, soy un programa</span></pre>
+    </div>
+
+    <div class="callout callout-aha">
+      <strong>&#x1F4A1; &iquest;Qu&eacute; acaba de pasar?</strong>
+      Ese fichero <code>.py</code> es texto plano. &Aacute;brelo con el Bloc de Notas, con Word, con cualquier cosa: ver&aacute;s exactamente lo mismo. No hay nada m&aacute;gico en &eacute;l. Es texto. Y Python lo ha le&iacute;do y ha producido un resultado.
+    </div>
+
+    <div class="live-editor-demo">
+      <div class="section-label" style="margin-top:12px;">Pru&eacute;balo t&uacute;</div>
+      <h3>Editor en vivo</h3>
+      <p>Escribe tu propio <code>print()</code> y pulsa Ejecutar. Esto es exactamente lo que pasa cuando ejecutas un <code>.py</code>:</p>
+      <div class="code-block" style="margin-bottom:0;">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-filename">mi_programa.py</span>
+        </div>
+        <textarea id="live-editor-input" class="live-editor-textarea" rows="2" spellcheck="false">print(&quot;hola, soy un programa&quot;)</textarea>
+      </div>
+      <button id="live-run-btn" class="live-run-btn">&#x25B6; Ejecutar</button>
+      <div class="live-terminal" id="live-terminal" style="display:none;">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span class="code-filename">Terminal</span>
+        </div>
+        <pre id="live-terminal-output"></pre>
+      </div>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- ═══ SECTION 2: QUÉ ES UN PROGRAMA ═══ -->
+  <section id="programa">
+    <div class="section-label">Concepto 1</div>
+    <h2>&iquest;Qu&eacute; es un programa?</h2>
+    <p class="lead">Un programa es una <strong>lista ordenada de instrucciones</strong> que una m&aacute;quina puede ejecutar. Nada m&aacute;s.</p>
+
+    <div class="pedagogy-strip">
+      <div class="pedagogy-copy">
+        <div class="pedagogy-kicker">Si solo se quedan con una idea</div>
+        <div class="pedagogy-title">La CPU no entiende Python. Python le traduce.</div>
+        <div class="pedagogy-text">Aqu&iacute; no buscamos memorizar hardware, sino fijar un mapa: texto legible arriba, se&ntilde;ales el&eacute;ctricas abajo, y un traductor entre ambos.</div>
+      </div>
+      <div class="pedagogy-grid">
+        <div class="pedagogy-card">
+          <strong>CPU</strong>
+          <span>Trabaja con se&ntilde;ales muy primitivas, no con palabras como <code>print</code> o <code>if</code>.</span>
+        </div>
+        <div class="pedagogy-card">
+          <strong>Lenguaje</strong>
+          <span>Es la capa humana: nos permite escribir instrucciones que podamos leer y razonar.</span>
+        </div>
+        <div class="pedagogy-card">
+          <strong>Traductor</strong>
+          <span>CPython convierte ese texto en algo que finalmente termina ejecutando la m&aacute;quina.</span>
+        </div>
+      </div>
+    </div>
+
+    <p>La CPU de tu ordenador &mdash; el chip f&iacute;sico &mdash; no entiende espa&ntilde;ol, ni Python, ni nada legible. Solo entiende <strong>corriente el&eacute;ctrica</strong>: voltaje alto o voltaje bajo. Eso es un 1 o un 0.</p>
+
+    <p>Todo lo que ocurre en un ordenador se reduce a largas cadenas de unos y ceros que representan instrucciones primitivas: &laquo;mueve este dato de aqu&iacute; a all&iacute;&raquo;, &laquo;suma estos dos n&uacute;meros&raquo;, &laquo;escribe en pantalla&raquo;.</p>
+
+    <p>Escribir eso a mano es imposible. Por eso existen los <strong>lenguajes de programaci&oacute;n</strong>: una forma de escribir instrucciones que t&uacute; puedas leer. Pero alguien tiene que hacer la traducci&oacute;n.</p>
+
+    <div class="flow-diagram">
+      <div class="flow-box">
+        <div class="flow-box-label">T&uacute; escribes</div>
+        <div class="flow-box-value" style="color:var(--cyan);">print("hola")</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-box">
+        <div class="flow-box-label">Traductor</div>
+        <div class="flow-box-value" style="color:var(--blue);">Python</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-box">
+        <div class="flow-box-label">CPU ejecuta</div>
+        <div class="flow-box-value" style="color:var(--green);">01101001...</div>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-pill">
+        <div class="info-pill-title">1. Token</div>
+        <p><code>print</code> deja de ser solo texto y pasa a ser una pieza reconocible del lenguaje: un identificador que puede referirse a una built-in.</p>
+      </div>
+      <div class="info-pill">
+        <div class="info-pill-title">2. AST</div>
+        <p>El parser ve <code>print("hola")</code> y construye una estructura del tipo: llamada a funci&oacute;n + argumento string. Eso ya es sintaxis, no caracteres.</p>
+      </div>
+      <div class="info-pill">
+        <div class="info-pill-title">3. CPU</div>
+        <p>Cuando la VM ejecuta ese nodo, termina invocando c&oacute;digo nativo del runtime. Ese binario es el que la CPU entiende y ejecuta de verdad.</p>
+      </div>
+    </div>
+
+    <div class="callout callout-info">
+      <strong>&#x1F4CC; En resumen</strong>
+      Un lenguaje de programaci&oacute;n es una forma de escribir instrucciones legibles para humanos. El &laquo;traductor&raquo; convierte esas instrucciones a algo que la CPU puede ejecutar. Python es uno de esos traductores.
+    </div>
+
+    <div class="binary-demo">
+      <div class="section-label" style="margin-top:12px;">Pru&eacute;balo</div>
+      <h3>&#x1F441; Dos formas de &laquo;leer&raquo; el mismo c&oacute;digo</h3>
+      <p>Escribe c&oacute;digo Python y compara c&oacute;mo lo lee la <strong>CPU</strong> y c&oacute;mo lo lee <strong>Python</strong>:</p>
+      <input type="text" class="binary-input" id="binary-input"
+             placeholder='print("hola")' autocomplete="off" spellcheck="false" maxlength="32" value='print("hola")'>
+    </div>
+
+    <div class="dual-view">
+      <div class="dual-view-panels">
+        <div class="dual-panel">
+          <div class="dual-panel-label" style="color:var(--orange);">&#x1F4A1; La CPU ve: caracteres sueltos</div>
+          <div class="dual-panel-subtitle">Cada letra es un n&uacute;mero binario independiente (ASCII). La <code>p</code>, la <code>r</code>, la <code>i</code>... no significan nada juntas.</div>
+          <div class="dual-panel-output" id="binary-output"></div>
+        </div>
+        <div class="dual-panel">
+          <div class="dual-panel-label" style="color:var(--cyan);">&#x1F40D; Python ve: tokens con significado</div>
+          <div class="dual-panel-subtitle"><code>print</code> no son 5 letras sueltas: el tokenizador lo reconoce como un nombre especial del lenguaje y el parser entiende que aqu&iacute; hay una <em>llamada a funci&oacute;n</em>. <code>"hola"</code> pasa a ser un string.</div>
+          <div class="dual-panel-output" id="dual-token-output"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout callout-aha" style="margin-top:24px;">
+      <strong>&#x1F4A1; &iquest;Ves la diferencia?</strong>
+      La CPU ve una cadena plana de bits agrupados en bytes. Python, en cambio, <strong>agrupa caracteres en piezas con significado</strong>: nombres, operadores, par&eacute;ntesis, strings. Eso es lo que hace el <strong>tokenizador</strong> &mdash; el primer paso del pipeline.
+      <div class="callout-grid">
+        <div class="callout-mini">
+          <div class="callout-mini-title">Qu&eacute; pasa con <code>print</code></div>
+          <p>Primero aparece como texto. Luego CPython lo trocea, el parser detecta que va seguido de par&eacute;ntesis y construye un nodo AST de llamada. En ejecuci&oacute;n, la VM resuelve el nombre <code>print</code> contra la tabla de built-ins.</p>
+        </div>
+        <div class="callout-mini">
+          <div class="callout-mini-title">Qu&eacute; hay detr&aacute;s</div>
+          <p>La funci&oacute;n built-in <code>print</code> vive en el runtime de CPython, escrito sobre todo en C. Ese c&oacute;digo C acaba disparando instrucciones m&aacute;quina y llamadas al sistema para escribir bytes en la terminal.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- ═══ SECTION 3: PYTHON ES UN PROGRAMA ═══ -->
+  <section id="cpython">
+    <div class="section-label">Concepto 2</div>
+    <h2>Python es, &eacute;l mismo, un <span class="accent">programa</span></h2>
+    <p class="lead">Esta es la pieza que hace que todo empiece a encajar.</p>
+
+    <div class="pedagogy-strip">
+      <div class="pedagogy-copy">
+        <div class="pedagogy-kicker">La confusi&oacute;n que quiero evitar</div>
+        <div class="pedagogy-title">Lenguaje y ejecutable no son lo mismo</div>
+        <div class="pedagogy-text">Los alumnos suelen mezclar &laquo;Python el lenguaje&raquo; con &laquo;Python el programa instalado&raquo;. Esta secci&oacute;n separa esas dos cosas.</div>
+      </div>
+      <div class="pedagogy-grid">
+        <div class="pedagogy-card">
+          <strong>Tu <code>.py</code></strong>
+          <span>Es solo una receta escrita. Por s&iacute; mismo no ejecuta nada.</span>
+        </div>
+        <div class="pedagogy-card">
+          <strong>CPython</strong>
+          <span>Es el ejecutable que sabe leer esa receta y coordinar la ejecuci&oacute;n.</span>
+        </div>
+        <div class="pedagogy-card">
+          <strong>Instalar Python</strong>
+          <span>Significa instalar ese int&eacute;rprete, no solo aprender una sintaxis.</span>
+        </div>
+      </div>
+    </div>
+
+    <p>Cuando instalas Python en tu ordenador, lo que instalas no es &laquo;un lenguaje&raquo;. Instalas un <strong>ejecutable</strong>: <code>python.exe</code> en Windows, <code>python3</code> en Mac/Linux. Ese ejecutable ocupa espacio en tu disco, tiene bytes, es un binario. Se llama <strong>CPython</strong> y est&aacute; escrito en el lenguaje C.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>
+        <div class="card-title">Tu fichero</div>
+        <div class="card-text"><code>hola.py</code> &mdash; Texto plano. Cualquiera puede leerlo. No hace nada por s&iacute; solo.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+        <div class="card-title">El int&eacute;rprete</div>
+        <div class="card-text"><code>python.exe</code> &mdash; Un programa que sabe leer tu fichero y decirle a la CPU qu&eacute; hacer.</div>
+      </div>
+    </div>
+
+    <p>Es como un PDF: el fichero <code>.pdf</code> no hace nada solo. Necesitas Adobe Reader (un programa) para abrirlo. Tu <code>.py</code> necesita a <code>python.exe</code>.</p>
+
+    <div class="compare">
+      <div class="compare-col">
+        <div class="compare-header" style="color:var(--pink);">&#x1F4D5; Compilado &mdash; C, Rust</div>
+        <div class="card-text">Traduce <strong>todo</strong> tu c&oacute;digo antes de ejecutar. Genera un binario (.exe). M&aacute;s r&aacute;pido, pero el ciclo de desarrollo es lento.</div>
+        <div style="margin-top:10px;">
+          <span class="tag tag-pink">gcc programa.c -o programa</span>
+        </div>
+      </div>
+      <div class="compare-col">
+        <div class="compare-header" style="color:var(--green);">&#x1F5E3;&#xFE0F; Interpretado &mdash; Python</div>
+        <div class="card-text">Lee y ejecuta <strong>al momento</strong>. Sin paso previo. Si algo falla, te avisa inmediatamente en la l&iacute;nea exacta.</div>
+        <div style="margin-top:10px;">
+          <span class="tag tag-green">python programa.py</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout callout-aha">
+      <strong>&#x1F4A1; Momento AHA</strong>
+      Python (el programa) es un chef. Tu fichero <code>.py</code> es la receta. El chef lee la receta paso a paso y cocina. Sin chef, la receta es solo un papel.
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- ═══ SECTION 4: EL PIPELINE ═══ -->
+  <section id="pipeline">
+    <div class="section-label">Concepto 3</div>
+    <h2>Qu&eacute; hace CPython <span class="accent">por dentro</span></h2>
+    <p class="lead">Cuando ejecutas <code>python hola.py</code>, CPython recorre cinco etapas muy concretas. No son cajas m&aacute;gicas: cada una transforma el programa un poco m&aacute;s.</p>
+
+    <div class="pedagogy-strip">
+      <div class="pedagogy-copy">
+        <div class="pedagogy-kicker">Objetivo docente</div>
+        <div class="pedagogy-title">Usar el pipeline como mapa de depuraci&oacute;n mental</div>
+        <div class="pedagogy-text">No hace falta que memoricen cada caja. S&iacute; quiero que sepan distinguir entre entender estructura, preparar ejecuci&oacute;n y fallar en runtime.</div>
+      </div>
+      <div class="pedagogy-grid">
+        <div class="pedagogy-card">
+          <strong>Pasos 1 y 2</strong>
+          <span>CPython intenta entender la forma del programa. Aqu&iacute; viven los problemas de sintaxis.</span>
+        </div>
+        <div class="pedagogy-card">
+          <strong>Pasos 3 y 4</strong>
+          <span>Prepara y ejecuta. La sintaxis puede estar bien y aun as&iacute; fallar en este punto.</span>
+        </div>
+        <div class="pedagogy-card">
+          <strong>Regla &uacute;til</strong>
+          <span><code>SyntaxError</code> suele significar &laquo;no entiendo la frase&raquo;; <code>NameError</code>, &laquo;la frase se entiende, pero falla al hacerla&raquo;.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pipeline">
+      <div class="pipe-step">
+        <div class="pipe-num">1</div>
+        <div class="pipe-title">Tokenizaci&oacute;n</div>
+        <div class="pipe-desc">Rompe el texto en unidades l&eacute;xicas: nombres, operadores, par&eacute;ntesis, strings. Aqu&iacute; todav&iacute;a no se “entiende” el programa completo.</div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">2</div>
+        <div class="pipe-title">Parsing &rarr; AST</div>
+        <div class="pipe-desc">El parser intenta encajar esos tokens en la gram&aacute;tica de Python. Si no puede construir un &aacute;rbol sint&aacute;ctico v&aacute;lido, lanza <span class="tag tag-pink">SyntaxError</span>.</div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">3</div>
+        <div class="pipe-title">Bytecode</div>
+        <div class="pipe-desc">El AST se compila a bytecode: instrucciones para la VM de Python, no para la CPU. Puede guardarse como <code>.pyc</code> en <code>__pycache__/</code>.</div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">4</div>
+        <div class="pipe-title">Python VM</div>
+        <div class="pipe-desc">La VM vive dentro del proceso <code>python.exe</code> o <code>python3</code>. Ejecuta el bytecode instrucci&oacute;n por instrucci&oacute;n y aqu&iacute; aparecen <span class="tag tag-yellow">NameError</span> o <span class="tag tag-yellow">TypeError</span>.</div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">5</div>
+        <div class="pipe-title">Output</div>
+        <div class="pipe-desc">La ejecuci&oacute;n produce efectos reales: texto en pantalla, ficheros, llamadas a red, c&aacute;lculos, gr&aacute;ficos o lo que tu programa haya pedido.</div>
+      </div>
+    </div>
+
+    <div class="flow-diagram">
+      <div class="flow-box">
+        <div class="flow-box-label">Tu fichero</div>
+        <div class="flow-box-value"><span class="tag tag-cyan">.py</span></div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-box">
+        <div class="flow-box-label">Tokens</div>
+        <div class="flow-box-value" style="font-size:13px;color:var(--muted);">NAME ( STRING )</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-box">
+        <div class="flow-box-label">AST</div>
+        <div class="flow-box-value" style="font-size:16px;">&#x1F333;</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-box">
+        <div class="flow-box-label">Bytecode</div>
+        <div class="flow-box-value"><span class="tag tag-green">.pyc</span></div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-box">
+        <div class="flow-box-label">VM</div>
+        <div class="flow-box-value" style="font-size:15px;">python.exe</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-box">
+        <div class="flow-box-label">Output</div>
+        <div class="flow-box-value" style="color:var(--green);">hola</div>
+      </div>
+    </div>
+
+    <div class="card-grid">
+      <div class="card" style="border-color:rgba(244,114,182,0.25);">
+        <div class="card-title" style="color:var(--pink);">&#x1F6A8; SyntaxError</div>
+        <div class="card-text">Falla en el paso 2. El parser no logra construir el AST porque la secuencia de tokens no respeta la gram&aacute;tica del lenguaje.</div>
+      </div>
+      <div class="card" style="border-color:rgba(251,191,36,0.25);">
+        <div class="card-title" style="color:var(--yellow);">&#x26A0;&#xFE0F; NameError / TypeError</div>
+        <div class="card-text">Falla en el paso 4. La sintaxis era correcta, pero en ejecuci&oacute;n algo no cuadra: falta un nombre, se divide entre cero o mezclas tipos incompatibles.</div>
+      </div>
+    </div>
+
+    <div class="callout callout-warn">
+      <strong>&#x26A0;&#xFE0F; Importante</strong>
+      <p>CPython <strong>no</strong> compila directamente a c&oacute;digo m&aacute;quina nativo para tu CPU. Compila a <strong>bytecode</strong>, que es un lenguaje intermedio para su VM. El <strong>c&oacute;digo binario</strong> es lo que ejecuta la CPU; el <strong>bytecode</strong> lo ejecuta la VM que va dentro de <code>python.exe</code>.</p>
+      <div class="callout-grid">
+        <div class="callout-mini">
+          <div class="callout-mini-title">AST en una frase</div>
+          <p>Es un &aacute;rbol que representa la estructura gramatical del programa. Por ejemplo, “llamada a funci&oacute;n” con nombre <code>print</code> y argumento string <code>"hola"</code>.</p>
+        </div>
+        <div class="callout-mini">
+          <div class="callout-mini-title">Por qu&eacute; detecta sintaxis</div>
+          <p>Porque el parser intenta casar los tokens con las reglas del lenguaje. Si falta un par&eacute;ntesis, una coma o un nombre v&aacute;lido, no puede completar el &aacute;rbol y se detiene.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tokenizer-demo">
+      <div class="section-label" style="margin-top:12px;">Pru&eacute;balo</div>
+      <h3>Mini-tokenizador en vivo</h3>
+      <p>Escribe c&oacute;digo Python y mira c&oacute;mo CPython lo descompone en tokens (paso 1 del pipeline):</p>
+      <input type="text" class="tokenizer-input" id="tokenizer-input"
+             placeholder='for i in range(10): print(i)' autocomplete="off" spellcheck="false">
+      <div class="token-output" id="token-output"></div>
+    </div>
+
+    <div class="detective-demo">
+      <div class="section-label" style="margin-top:24px;">Pru&eacute;balo</div>
+      <h3>Detective de errores</h3>
+      <p>&iquest;En qu&eacute; paso del pipeline falla este c&oacute;digo? Escribe algo (o prueba los ejemplos). Ojo: <code>prnt("hola")</code> <strong>no</strong> es SyntaxError; la gram&aacute;tica es v&aacute;lida, pero el nombre no existe.</p>
+      <input type="text" class="detective-input" id="detective-input"
+             placeholder='print("hola")' autocomplete="off" spellcheck="false">
+      <div class="detective-examples" id="detective-examples">
+        <button class="detective-example-btn" data-code='print("hola")'>print("hola")</button>
+        <button class="detective-example-btn" data-code='print("hola"'>print("hola"</button>
+        <button class="detective-example-btn" data-code='prnt("hola")'>prnt("hola")</button>
+        <button class="detective-example-btn" data-code='1 / 0'>1 / 0</button>
+        <button class="detective-example-btn" data-code='x + 1'>x + 1</button>
+        <button class="detective-example-btn" data-code='"hola" + 3'>"hola" + 3</button>
+        <button class="detective-example-btn" data-code='def class:'>def class:</button>
+      </div>
+      <div class="detective-result detective-ok" id="detective-result"></div>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- ═══ SECTION 5: REPL Y JUPYTER ═══ -->
+  <section id="jupyter">
+    <div class="section-label">Concepto 4</div>
+    <h2>El REPL y <span class="accent">Jupyter</span></h2>
+    <p class="lead">CPython tambi&eacute;n funciona sin fichero. Puede leer una l&iacute;nea, ejecutarla, devolverte el resultado, y esperar la siguiente.</p>
+
+    <div class="pedagogy-strip">
+      <div class="pedagogy-copy">
+        <div class="pedagogy-kicker">Lo importante aqu&iacute;</div>
+        <div class="pedagogy-title">Jupyter no es otra cosa distinta: es el REPL convertido en espacio de trabajo</div>
+        <div class="pedagogy-text">Esta transici&oacute;n es clave para el curso: del terminal pasamos a un entorno donde pensar, probar, explicar y simular en la misma pantalla.</div>
+      </div>
+      <div class="pedagogy-grid">
+        <div class="pedagogy-card">
+          <strong>REPL</strong>
+          <span>Conversaci&oacute;n directa con Python: escribes, ejecuta, responde, espera la siguiente l&iacute;nea.</span>
+        </div>
+        <div class="pedagogy-card">
+          <strong>Notebook</strong>
+          <span>Esa misma conversaci&oacute;n, pero troceada en celdas, con texto y resultados visibles.</span>
+        </div>
+        <div class="pedagogy-card">
+          <strong>Kernel</strong>
+          <span>Es la memoria compartida que mantiene variables, imports y funciones entre celdas.</span>
+        </div>
+      </div>
+    </div>
+
+    <p>Se llama <strong>REPL</strong>: <strong>R</strong>ead &rarr; <strong>E</strong>val &rarr; <strong>P</strong>rint &rarr; <strong>L</strong>oop. Es una conversaci&oacute;n:</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span class="code-filename">python (REPL)</span>
+      </div>
+      <pre><span class="op">&gt;&gt;&gt;</span> <span class="num">2</span> <span class="op">+</span> <span class="num">2</span>
+<span class="str">4</span>
+<span class="op">&gt;&gt;&gt;</span> <span class="name">nombre</span> <span class="op">=</span> <span class="str">"Ana"</span>
+<span class="op">&gt;&gt;&gt;</span> <span class="fn">print</span>(<span class="str">f"Hola </span><span class="name">{nombre}</span><span class="str">"</span>)
+<span class="str">Hola Ana</span>
+<span class="op">&gt;&gt;&gt;</span> <span class="cm"># la variable sigue en memoria</span>
+<span class="op">&gt;&gt;&gt;</span> <span class="fn">len</span>(<span class="name">nombre</span>)
+<span class="str">3</span></pre>
+    </div>
+
+    <div class="repl-demo">
+      <div class="section-label" style="margin-top:12px;">Pru&eacute;balo</div>
+      <h3>Mini-REPL real</h3>
+      <p>Escribe expresiones Python simples y pulsa Enter. Aqu&iacute; el c&oacute;digo se ejecuta de verdad y las variables persisten entre l&iacute;neas:</p>
+      <div class="repl-terminal">
+        <div class="repl-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <span>Python 3.12 &mdash; REPL interactivo</span>
+        </div>
+        <div class="repl-body" id="repl-body">
+          <div class="repl-line"><span class="repl-output-text">Python 3.12.0 &mdash; Inicializando runtime real...</span></div>
+          <div class="repl-input-row">
+            <span class="repl-prompt">&gt;&gt;&gt;&nbsp;</span>
+            <input type="text" class="repl-input-field" id="repl-input" autocomplete="off" spellcheck="false" placeholder='2 + 2'>
+          </div>
+        </div>
+      </div>
+      <p class="repl-hint">Prueba: <code>2 + 2</code> &middot; <code>nombre = "Ana"</code> &middot; <code>nombre * 3</code> &middot; <code>len(nombre)</code> &middot; <code>type(42)</code></p>
+    </div>
+
+    <div class="callout callout-aha">
+      <strong>&#x1F680; Ahora entra Jupyter</strong>
+      <p>El REPL es una conversaci&oacute;n en l&iacute;nea. <strong>Jupyter Notebook</strong> convierte esa misma conversaci&oacute;n en un laboratorio visual: celdas, resultados, gr&aacute;ficos, texto explicativo y estado compartido por un mismo kernel.</p>
+    </div>
+
+    <div class="jupyter-showcase">
+      <div class="jupyter-notebook">
+        <div class="jupyter-topbar">
+          <div class="jupyter-title">lesson.ipynb</div>
+          <div class="jupyter-kernel">Python 3.12 • Kernel activo</div>
+        </div>
+        <div class="jupyter-body">
+          <div class="jupyter-cell">
+            <div class="cell-label">In [1]</div>
+            <div class="cell-box">
+              <pre><span class="name">bid</span> <span class="op">=</span> <span class="num">99950</span>
+<span class="name">ask</span> <span class="op">=</span> <span class="num">100000</span>
+<span class="name">spread</span> <span class="op">=</span> <span class="name">ask</span> <span class="op">-</span> <span class="name">bid</span></pre>
+              <div class="cell-output">Sin output visible, pero las variables ya viven en memoria.</div>
+            </div>
+          </div>
+          <div class="jupyter-cell">
+            <div class="cell-label">In [2]</div>
+            <div class="cell-box">
+              <pre><span class="fn">print</span>(<span class="str">"spread:"</span>, <span class="name">spread</span>)</pre>
+              <div class="cell-output">spread: 50</div>
+            </div>
+          </div>
+          <div class="jupyter-cell">
+            <div class="cell-label">In [3]</div>
+            <div class="cell-box">
+              <pre><span class="kw">if</span> <span class="name">spread</span> <span class="op">&lt;=</span> <span class="num">50</span>:
+    <span class="fn">print</span>(<span class="str">"mercado negociable"</span>)</pre>
+              <div class="cell-output">mercado negociable</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="jupyter-side">
+        <div class="jupyter-note">
+          <div class="jupyter-note-title">Por qu&eacute; importa</div>
+          <p>En un notebook puedes mezclar sem&aacute;ntica, sintaxis, c&oacute;digo ejecutable y resultados sin salir de la misma pantalla. Para una primera clase, eso es oro.</p>
+        </div>
+        <div class="jupyter-note">
+          <div class="jupyter-note-title">Qu&eacute; mantiene el kernel</div>
+          <p>Variables, imports, funciones y estado. Si defines <code>spread</code> en una celda, puedes usarlo en la siguiente. Si reinicias el kernel, desaparece todo.</p>
+        </div>
+        <div class="jupyter-note">
+          <div class="jupyter-note-title">Por qu&eacute; encaja en el curso</div>
+          <p>Es el formato perfecto para pasar de intuici&oacute;n a simulaci&oacute;n: explicas una idea, ejecutas una celda, cambias un par&aacute;metro y ense&ntilde;as el efecto al instante.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></span>
+        <div class="card-title">Ideal para explorar</div>
+        <div class="card-text">Calculas algo, ves el resultado, decides el siguiente paso. Es como hacer qu&iacute;mica en un laboratorio, no en una f&aacute;brica.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"/><line x1="9" y1="21" x2="15" y2="21"/></svg></span>
+        <div class="card-title">Las variables viven</div>
+        <div class="card-text">Lo que defines en la celda 1 existe en la celda 5. No empiezas de cero cada vez. El kernel mantiene el estado.</div>
+      </div>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- ═══ SECTION 6: POR QUÉ PYTHON ═══ -->
+  <section id="porque">
+    <div class="section-label">Contexto</div>
+    <h2>&iquest;Por qu&eacute; Python y no otro?</h2>
+    <p class="lead">Para este curso nos da el mejor equilibrio entre aprender r&aacute;pido, pensar bien y construir cosas reales.</p>
+
+    <div class="pedagogy-strip">
+      <div class="pedagogy-copy">
+        <div class="pedagogy-kicker">Mensaje de fondo</div>
+        <div class="pedagogy-title">Python no es una concesi&oacute;n: es una herramienta seria</div>
+        <div class="pedagogy-text">Quiero que el alumno vea que Python es amable para empezar, pero suficientemente potente para datos, investigaci&oacute;n y sistemas reales.</div>
+      </div>
+      <div class="pedagogy-grid">
+        <div class="pedagogy-card">
+          <strong>Aprender</strong>
+          <span>La sintaxis estorba poco y eso deja espacio mental para entender ideas.</span>
+        </div>
+        <div class="pedagogy-card">
+          <strong>Explorar</strong>
+          <span>Encaja muy bien con notebooks, an&aacute;lisis de datos y experimentaci&oacute;n r&aacute;pida.</span>
+        </div>
+        <div class="pedagogy-card">
+          <strong>Construir</strong>
+          <span>No se queda en clase: sirve para automatizar, analizar y producir software real.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg></span>
+        <div class="card-title">Tipado din&aacute;mico</div>
+        <div class="card-text">No declaras tipos. CPython los infiere. Menos c&oacute;digo, m&aacute;s velocidad para explorar.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></span>
+        <div class="card-title">Ecosistema masivo</div>
+        <div class="card-text">pandas, numpy, matplotlib, scikit-learn, requests, FastAPI... Todo est&aacute; hecho. No reinventas la rueda.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>
+        <div class="card-title">Legible por dise&ntilde;o</div>
+        <div class="card-text">Python obliga a indentar. El c&oacute;digo de otra persona se puede leer. Eso importa mucho.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--pink)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></span>
+        <div class="card-title">Lenguaje pegamento</div>
+        <div class="card-text">Conecta piezas: llama a una API, procesa datos, genera un PDF, env&iacute;a un email. Todo en el mismo script.</div>
+      </div>
+    </div>
+
+    <p style="margin-top:28px; font-size:15px; color:var(--muted);">Estas cuatro empresas escribieron su primera l&iacute;nea de Python siendo startups peque&ntilde;as. Hoy son referencia mundial:</p>
+
+    <div class="card-grid" style="margin-top:12px;">
+      <div class="card" style="border-color:rgba(229,9,20,0.2);">
+        <span class="card-icon card-icon-lg"><img class="brand-logo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Netflix_2015_logo.svg" alt="Netflix logo"></span>
+        <div class="card-text">Su motor de recomendaci&oacute;n, que decide qu&eacute; ves, est&aacute; construido sobre Python y scikit-learn.</div>
+      </div>
+      <div class="card" style="border-color:rgba(129,140,248,0.2);">
+        <span class="card-icon card-icon-lg"><img class="brand-logo invert" src="https://commons.wikimedia.org/wiki/Special:FilePath/SpaceX-Logo.svg" alt="SpaceX logo"></span>
+        <div class="card-text">Python controla la simulaci&oacute;n de trayectorias y la telemetr&iacute;a en tiempo real de sus cohetes.</div>
+      </div>
+      <div class="card" style="border-color:rgba(74,222,128,0.2);">
+        <span class="card-icon card-icon-lg"><img class="brand-logo invert" src="https://commons.wikimedia.org/wiki/Special:FilePath/J_P_Morgan_Chase_Logo_2008_1.svg" alt="JP Morgan logo"></span>
+        <div class="card-text">Su plataforma Athena &mdash; 35 millones de l&iacute;neas de Python &mdash; gestiona billones en activos.</div>
+      </div>
+      <div class="card" style="border-color:rgba(244,114,182,0.2);">
+        <span class="card-icon card-icon-lg"><svg viewBox="0 0 24 24" fill="var(--text)"><path d="M22.282 9.821a5.985 5.985 0 0 0-.516-4.91 6.046 6.046 0 0 0-6.51-2.9A6.065 6.065 0 0 0 4.981 4.18a5.985 5.985 0 0 0-3.998 2.9 6.046 6.046 0 0 0 .743 7.097 5.98 5.98 0 0 0 .51 4.911 6.051 6.051 0 0 0 6.515 2.9A5.985 5.985 0 0 0 13.26 24a6.056 6.056 0 0 0 5.772-4.206 5.99 5.99 0 0 0 3.997-2.9 6.056 6.056 0 0 0-.747-7.073zM13.26 22.43a4.476 4.476 0 0 1-2.876-1.04l.141-.081 4.779-2.758a.795.795 0 0 0 .392-.681v-6.737l2.02 1.168a.071.071 0 0 1 .038.052v5.583a4.504 4.504 0 0 1-4.494 4.494zM3.6 18.304a4.47 4.47 0 0 1-.535-3.014l.142.085 4.783 2.759a.771.771 0 0 0 .78 0l5.843-3.369v2.332a.08.08 0 0 1-.033.062L9.74 19.95a4.5 4.5 0 0 1-6.14-1.646zM2.34 7.896a4.485 4.485 0 0 1 2.366-1.973V11.6a.766.766 0 0 0 .388.676l5.815 3.355-2.02 1.168a.076.076 0 0 1-.071 0l-4.83-2.786A4.504 4.504 0 0 1 2.34 7.872zm16.597 3.855l-5.833-3.387L15.119 7.2a.076.076 0 0 1 .071 0l4.83 2.791a4.494 4.494 0 0 1-.676 8.105v-5.678a.79.79 0 0 0-.407-.667zm2.01-3.023l-.141-.085-4.774-2.782a.776.776 0 0 0-.785 0L9.409 9.23V6.897a.066.066 0 0 1 .028-.061l4.83-2.787a4.5 4.5 0 0 1 6.68 4.66zm-12.64 4.135l-2.02-1.164a.08.08 0 0 1-.038-.057V6.075a4.5 4.5 0 0 1 7.375-3.453l-.142.08L8.704 5.46a.795.795 0 0 0-.393.681zm1.097-2.365l2.602-1.5 2.607 1.5v2.999l-2.597 1.5-2.607-1.5z"/></svg></span>
+        <div class="card-text">ChatGPT, DALL-E, Whisper... Todo su stack de investigaci&oacute;n y producci&oacute;n es Python.</div>
+      </div>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- ═══ CIERRE ═══ -->
+  <section id="cierre">
+    <div class="section-label">Recapitulando</div>
+    <h2>Ya tienes el mapa mental para empezar Python con sentido</h2>
+    <p class="lead">No solo has visto Python funcionar. Ya sabes qu&eacute; hace, qui&eacute;n lo ejecuta y por qu&eacute; Jupyter tiene sentido en el curso.</p>
+
+    <div class="pedagogy-strip">
+      <div class="pedagogy-copy">
+        <div class="pedagogy-kicker">Lo siguiente en clase</div>
+        <div class="pedagogy-title">Entramos al notebook con una misi&oacute;n concreta</div>
+        <div class="pedagogy-text">El final tiene que dejar al alumno con sensaci&oacute;n de continuidad: ahora toca practicar, romper cosas y construir una mini lectura de mercado.</div>
+      </div>
+      <div class="pedagogy-grid">
+        <div class="pedagogy-card">
+          <strong>1. Crear variables</strong>
+          <span>Guardar precios, texto y n&uacute;meros como piezas reutilizables.</span>
+        </div>
+        <div class="pedagogy-card">
+          <strong>2. Calcular un spread</strong>
+          <span>Pasar de dos datos de mercado a una magnitud que ya tiene sentido operativo.</span>
+        </div>
+        <div class="pedagogy-card">
+          <strong>3. Automatizar una regla</strong>
+          <span>Usar una condici&oacute;n sencilla para convertir observaci&oacute;n en decisi&oacute;n.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-diagram" style="margin: 32px 0;">
+      <div class="flow-box">
+        <div class="flow-box-label">Tu c&oacute;digo</div>
+        <div class="flow-box-value" style="color:var(--cyan);">Texto plano</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-box">
+        <div class="flow-box-label">CPython</div>
+        <div class="flow-box-value" style="color:var(--blue);">Tokens &rarr; AST &rarr; Bytecode</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-box">
+        <div class="flow-box-label">Resultado</div>
+        <div class="flow-box-value" style="color:var(--green);">Output real</div>
+      </div>
+    </div>
+
+    <div class="callout callout-aha" style="margin: 32px 0; font-size: 17px; line-height: 1.7; border-color: rgba(34,211,238,0.3);">
+      <div class="recap-callout">
+        <div class="recap-callout-icon">&#x1F3AF;</div>
+        <div>
+          <strong style="font-size:19px; margin-bottom:8px;">Ahora viene lo bueno</strong>
+          <p>Abre el notebook. Escribe tu primera variable. Rompe algo. Arr&eacute;glalo.</p>
+          <p>As&iacute; se aprende a programar: <strong>haciendo</strong>, no leyendo.</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center; margin-top:16px;">
+      <span style="font-size:40px;">&#x1F40D;</span>
+      <p style="color:var(--muted); font-size:14px; margin-top:8px; opacity:0.6;">Nos vemos en Jupyter.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  ICAI 2026 &middot; Clase 1 &middot; Python para Trading Algorítmico
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.29.3/full/pyodide.js"></script>
+<script>
+  // ── Reading progress bar ──
+  const bar = document.getElementById('progress');
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    if (h > 0) bar.style.width = (window.scrollY / h * 100) + '%';
+  });
+
+  // ── Active nav link ──
+  const stageEls = [
+    document.getElementById('hero-section'),
+    ...document.querySelectorAll('section[id]')
+  ];
+  const navLinks = document.querySelectorAll('.nav-links a');
+  const fullscreenBtn = document.getElementById('fullscreen-btn');
+  const navObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(a => a.classList.remove('active'));
+        const link = document.querySelector(`.nav-links a[href="#${e.target.id}"]`);
+        if (link) link.classList.add('active');
+      }
+    });
+  }, { threshold: 0.3 });
+  stageEls.forEach(s => navObs.observe(s));
+
+  function scrollToStage(index) {
+    const clamped = Math.max(0, Math.min(stageEls.length - 1, index));
+    stageEls[clamped].scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function currentStageIndex() {
+    const anchor = window.scrollY + window.innerHeight * 0.28;
+    let best = 0;
+    let bestDist = Infinity;
+    stageEls.forEach((el, idx) => {
+      const top = el.getBoundingClientRect().top + window.scrollY;
+      const dist = Math.abs(top - anchor);
+      if (dist < bestDist) {
+        bestDist = dist;
+        best = idx;
+      }
+    });
+    return best;
+  }
+
+  function editableTarget(target) {
+    return target instanceof HTMLElement && (
+      target.tagName === 'INPUT' ||
+      target.tagName === 'TEXTAREA' ||
+      target.isContentEditable
+    );
+  }
+
+  fullscreenBtn.addEventListener('click', async () => {
+    if (!document.fullscreenElement) {
+      await document.documentElement.requestFullscreen().catch(() => {});
+    } else {
+      await document.exitFullscreen().catch(() => {});
+    }
+  });
+
+  document.addEventListener('keydown', async (e) => {
+    if (editableTarget(e.target)) return;
+
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+      e.preventDefault();
+      scrollToStage(currentStageIndex() + 1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      e.preventDefault();
+      scrollToStage(currentStageIndex() - 1);
+    } else if (e.key.toLowerCase() === 'f') {
+      e.preventDefault();
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        await document.exitFullscreen().catch(() => {});
+      }
+    }
+  });
+
+  // ── Hero trading snapshot ──
+  const heroBid = document.getElementById('hero-bid');
+  const heroAsk = document.getElementById('hero-ask');
+  const heroSpread = document.getElementById('hero-spread');
+  const heroMid = document.getElementById('hero-mid');
+  const heroMarketState = document.getElementById('hero-market-state');
+  const shuffleMarketBtn = document.getElementById('shuffle-market-btn');
+
+  const marketSnapshots = [
+    { bid: 99950, ask: 100000 },
+    { bid: 100010, ask: 100030 },
+    { bid: 99980, ask: 100060 },
+    { bid: 100120, ask: 100130 },
+    { bid: 99890, ask: 99970 }
+  ];
+  let marketIdx = 0;
+
+  function renderMarketSnapshot(snapshot) {
+    const spread = snapshot.ask - snapshot.bid;
+    const mid = (snapshot.ask + snapshot.bid) / 2;
+    let state = 'Normal';
+    if (spread <= 20) state = 'Tight';
+    else if (spread >= 70) state = 'Wide';
+
+    heroBid.textContent = String(snapshot.bid);
+    heroAsk.textContent = String(snapshot.ask);
+    heroSpread.textContent = String(spread);
+    heroMid.textContent = String(mid);
+    heroMarketState.textContent = state;
+  }
+
+  shuffleMarketBtn.addEventListener('click', () => {
+    marketIdx = (marketIdx + 1) % marketSnapshots.length;
+    renderMarketSnapshot(marketSnapshots[marketIdx]);
+  });
+  renderMarketSnapshot(marketSnapshots[marketIdx]);
+
+  // ═══════════════════════════════════════
+  // ── p5.js · HERO — Binary Rain → Code ──
+  // ═══════════════════════════════════════
+  let heroVisible = true;
+  const heroEl = document.getElementById('hero-section');
+  new IntersectionObserver(es => { heroVisible = es[0].isIntersecting; }, { threshold: 0 }).observe(heroEl);
+
+  const heroSketch = (p) => {
+    const streams = [];
+    const keywords = ['print','if','for','def','import','class','while','return','True','len','range','list'];
+    const SZ = 14;
+
+    class Stream {
+      constructor(x) { this.x = x; this.reset(); }
+      reset() {
+        this.y = p.random(-400, -50);
+        this.speed = p.random(1.5, 3.8);
+        this.len = Math.floor(p.random(6, 16));
+        this.chars = [];
+        const useKw = Math.random() > 0.5;
+        if (useKw) {
+          const kw = keywords[Math.floor(Math.random() * keywords.length)];
+          const start = Math.floor(Math.random() * Math.max(1, this.len - kw.length));
+          for (let i = 0; i < this.len; i++) {
+            if (i >= start && i < start + kw.length) {
+              this.chars.push({ c: kw[i - start], k: true });
+            } else {
+              this.chars.push({ c: Math.random() > 0.5 ? '1' : '0', k: false });
+            }
+          }
+        } else {
+          for (let i = 0; i < this.len; i++)
+            this.chars.push({ c: Math.random() > 0.5 ? '1' : '0', k: false });
+        }
+      }
+      update() { this.y += this.speed; if (this.y - this.len * SZ > p.height) this.reset(); }
+      draw() {
+        for (let i = 0; i < this.chars.length; i++) {
+          const cy = this.y - i * SZ;
+          if (cy < -SZ || cy > p.height + SZ) continue;
+          const { c, k } = this.chars[i];
+          const fade = p.map(i, 0, this.len, 1, 0.06);
+          if (i === 0) {
+            p.fill(k ? 34 : 180, k ? 211 : 255, k ? 238 : 200, 255 * fade);
+          } else if (k) {
+            p.fill(34, 211, 238, 190 * fade);
+          } else {
+            p.fill(74, 222, 128, 100 * fade);
+          }
+          p.text(c, this.x, cy);
+        }
+      }
+    }
+
+    p.setup = () => {
+      const box = document.getElementById('hero-canvas');
+      p.createCanvas(box.offsetWidth, box.offsetHeight).parent('hero-canvas');
+      p.textFont('JetBrains Mono, Consolas, monospace');
+      p.textSize(SZ);
+      p.textAlign(p.LEFT, p.TOP);
+      p.frameRate(28);
+      const cols = Math.floor(p.width / (SZ * 1.3));
+      for (let i = 0; i < cols; i++) streams.push(new Stream(i * SZ * 1.3 + p.random(-2, 2)));
+    };
+
+    p.draw = () => {
+      if (!heroVisible) return;
+      p.clear();
+      for (const s of streams) { s.update(); s.draw(); }
+    };
+
+    p.windowResized = () => {
+      const box = document.getElementById('hero-canvas');
+      if (box) p.resizeCanvas(box.offsetWidth, box.offsetHeight);
+    };
+  };
+  new p5(heroSketch);
+
+  // ═════════════════════════════════════════
+  // ── p5.js · BACKGROUND — Floating Nodes ──
+  // ═════════════════════════════════════════
+  const bgSketch = (p) => {
+    const pts = [];
+    const N = 60, LINK = 190;
+
+    p.setup = () => {
+      p.createCanvas(p.windowWidth, p.windowHeight).parent('bg-canvas');
+      for (let i = 0; i < N; i++)
+        pts.push({ x: p.random(p.width), y: p.random(p.height),
+                   vx: p.random(-0.3, 0.3), vy: p.random(-0.3, 0.3),
+                   r: p.random(2.5, 5) });
+      p.frameRate(22);
+    };
+
+    p.draw = () => {
+      p.clear();
+      const drift = (window.scrollY * 0.02) % p.height;
+      for (const pt of pts) {
+        pt.x += pt.vx; pt.y += pt.vy;
+        if (pt.x < 0) pt.x = p.width;  if (pt.x > p.width) pt.x = 0;
+        if (pt.y < 0) pt.y = p.height; if (pt.y > p.height) pt.y = 0;
+        const dy = (pt.y + drift) % p.height;
+        p.noStroke(); p.fill(34, 211, 238, 60);
+        p.circle(pt.x, dy, pt.r);
+      }
+      for (let i = 0; i < pts.length; i++) {
+        const a = pts[i], ay = (a.y + drift) % p.height;
+        for (let j = i + 1; j < pts.length; j++) {
+          const b = pts[j], by = (b.y + drift) % p.height;
+          const d = p.dist(a.x, ay, b.x, by);
+          if (d < LINK) {
+            p.stroke(34, 211, 238, p.map(d, 0, LINK, 40, 0));
+            p.strokeWeight(0.8);
+            p.line(a.x, ay, b.x, by);
+          }
+        }
+      }
+    };
+
+    p.windowResized = () => { p.resizeCanvas(p.windowWidth, p.windowHeight); };
+  };
+  new p5(bgSketch);
+
+  // ═══════════════════════════════════
+  // ── TOKENIZER — DOM interactivo   ──
+  // ═══════════════════════════════════
+  const KW = new Set(['False','None','True','and','as','assert','async','await','break',
+    'class','continue','def','del','elif','else','except','finally','for','from',
+    'global','if','import','in','is','lambda','nonlocal','not','or','pass','raise',
+    'return','try','while','with','yield']);
+  const BI = new Set(['print','len','range','int','str','float','list','dict','set',
+    'tuple','type','input','open','map','filter','zip','enumerate','sorted',
+    'reversed','abs','max','min','sum','round','isinstance','hasattr','getattr']);
+
+  function tokenize(code) {
+    const toks = [];
+    const pats = [
+      { t: 'string',   r: /^(["'])(?:(?!\1).)*\1/ },
+      { t: 'number',   r: /^\d+\.?\d*/ },
+      { t: 'paren',    r: /^[(){}\[\],;.]/ },
+      { t: 'operator', r: /^[+\-*/%=<>!&|^~@:]+/ },
+      { t: 'name',     r: /^[a-zA-Z_]\w*/ },
+      { t: 'space',    r: /^\s+/ }
+    ];
+    let rest = code;
+    while (rest.length) {
+      let hit = false;
+      for (const { t, r } of pats) {
+        const m = rest.match(r);
+        if (m) {
+          if (t !== 'space') {
+            let type = t;
+            if (t === 'name') { if (KW.has(m[0])) type = 'keyword'; else if (BI.has(m[0])) type = 'builtin'; }
+            toks.push({ text: m[0], type });
+          }
+          rest = rest.slice(m[0].length);
+          hit = true; break;
+        }
+      }
+      if (!hit) rest = rest.slice(1);
+    }
+    return toks;
+  }
+
+  const LBL = {keyword:'KW',builtin:'FUNC',string:'STR',number:'NUM',operator:'OP',name:'NAME',paren:'PUNCT'};
+  const tokIn  = document.getElementById('tokenizer-input');
+  const tokOut = document.getElementById('token-output');
+
+  function renderTokens() {
+    tokOut.innerHTML = '';
+    const code = tokIn.value;
+    if (!code.trim()) return;
+    tokenize(code).forEach((tk, i) => {
+      const el = document.createElement('span');
+      el.className = 'token-chip token-' + tk.type;
+      el.textContent = tk.text;
+      const lbl = document.createElement('span');
+      lbl.className = 'token-label';
+      lbl.textContent = LBL[tk.type] || tk.type;
+      el.appendChild(lbl);
+      el.style.animationDelay = (i * 0.04) + 's';
+      tokOut.appendChild(el);
+    });
+  }
+
+  tokIn.addEventListener('input', renderTokens);
+  tokIn.value = 'for i in range(10): print(i)';
+  renderTokens();
+
+  // ═══════════════════════════════════════
+  // ── DUAL VIEW: CPU vs PYTHON          ──
+  // ═══════════════════════════════════════
+  const binIn       = document.getElementById('binary-input');
+  const binOut      = document.getElementById('binary-output');
+  const dualTokOut  = document.getElementById('dual-token-output');
+
+  function renderDualView() {
+    const txt = binIn.value;
+
+    // ── Left panel: binary (CPU view) ──
+    binOut.innerHTML = '';
+    if (txt) {
+      [...txt].forEach((ch, i) => {
+        const code = ch.charCodeAt(0);
+        const bits = code.toString(2).padStart(8, '0');
+        const el = document.createElement('span');
+        el.className = 'bin-char';
+        el.style.animationDelay = (i * 0.04) + 's';
+        el.innerHTML = `<span class="bin-char-letter">${ch === ' ' ? '␣' : ch.replace(/</g,'&lt;')}</span><span class="bin-char-bits">${bits}</span>`;
+        binOut.appendChild(el);
+      });
+    }
+
+    // ── Right panel: tokens (Python view) ──
+    dualTokOut.innerHTML = '';
+    if (txt) {
+      const toks = tokenize(txt);
+      const colors = { keyword:'var(--blue)', builtin:'var(--cyan)', string:'var(--green)',
+                       number:'var(--yellow)', operator:'var(--pink)', name:'var(--text)', paren:'var(--muted)' };
+      toks.forEach((tk, i) => {
+        const el = document.createElement('span');
+        el.className = 'token-chip';
+        el.style.animationDelay = (i * 0.06) + 's';
+        el.style.setProperty('--tc', colors[tk.type] || 'var(--text)');
+        el.innerHTML = `<span class="token-text">${tk.text.replace(/</g,'&lt;')}</span><span class="token-label">${tk.type}</span>`;
+        dualTokOut.appendChild(el);
+      });
+    }
+  }
+
+  binIn.addEventListener('input', renderDualView);
+  renderDualView();
+
+  // ═══════════════════════════════════════
+  // ── LIVE EDITOR (demo section)        ──
+  // ═══════════════════════════════════════
+  const liveInput  = document.getElementById('live-editor-input');
+  const liveBtn    = document.getElementById('live-run-btn');
+  const liveTerm   = document.getElementById('live-terminal');
+  const liveOutput = document.getElementById('live-terminal-output');
+  const runtimeStatusEls = document.querySelectorAll('[data-python-status]');
+
+  let pyodide = null;
+  let pyAnalyzer = null;
+  let replGlobals = null;
+  let detectTimer = null;
+  let analyzeTicket = 0;
+
+  function escapeHtml(text) {
+    return String(text)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  function setPythonStatus(text, tone) {
+    runtimeStatusEls.forEach((el) => {
+      el.textContent = text;
+      el.className = 'python-status';
+      if (tone === 'loading') el.classList.add('loading');
+      if (tone === 'error') el.classList.add('error');
+    });
+  }
+
+  function setRuntimeEnabled(enabled) {
+    liveBtn.disabled = !enabled;
+    const replField = document.getElementById('repl-input');
+    if (replField) {
+      replField.disabled = !enabled;
+      replField.placeholder = enabled ? '2 + 2' : 'Cargando Python real...';
+    }
+  }
+
+  function makePythonGlobals() {
+    const scope = pyodide.globals.get('dict')();
+    scope.set('__name__', '__main__');
+    return scope;
+  }
+
+  function normalizeStreamOutput(chunks) {
+    return chunks.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+  }
+
+  function cleanPythonError(error) {
+    return String(error && error.message ? error.message : error)
+      .replace(/^PythonError:\s*/i, '')
+      .trim();
+  }
+
+  function formatPythonValue(value) {
+    if (value === undefined || value === null) return '';
+    if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+      return String(value);
+    }
+    const rendered = typeof value.toString === 'function' ? value.toString() : String(value);
+    if (value && typeof value.destroy === 'function') value.destroy();
+    return rendered;
+  }
+
+  async function runPythonSnippet(code, globals, filename) {
+    const stdout = [];
+    const stderr = [];
+
+    pyodide.setStdout({ batched: (msg) => stdout.push(msg) });
+    pyodide.setStderr({ batched: (msg) => stderr.push(msg) });
+
+    try {
+      await pyodide.loadPackagesFromImports(code);
+      const result = await pyodide.runPythonAsync(code, { globals, filename });
+      return { stdout, stderr, result };
+    } catch (error) {
+      error.__stdout = stdout;
+      error.__stderr = stderr;
+      throw error;
+    } finally {
+      pyodide.setStdout({ batched: () => {} });
+      pyodide.setStderr({ batched: () => {} });
+    }
+  }
+
+  async function initPythonRuntime() {
+    if (typeof loadPyodide !== 'function') {
+      setPythonStatus('No se ha podido cargar Pyodide.', 'error');
+      return;
+    }
+
+    setRuntimeEnabled(false);
+    setPythonStatus('Inicializando Python real en el navegador...', 'loading');
+
+    try {
+      pyodide = await loadPyodide({
+        indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.29.3/full/'
+      });
+
+      await pyodide.runPythonAsync(`
+import ast
+import contextlib
+import io
+
+def codex_analyze(code):
+    try:
+        ast.parse(code)
+    except SyntaxError as error:
+        detail = error.msg
+        if error.lineno is not None:
+            detail = f"{detail} (linea {error.lineno})"
+        return {"stage": "syntax", "title": "SyntaxError", "detail": detail}
+
+    scope = {}
+    try:
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            exec(code, scope, scope)
+        return {"stage": "ok", "title": "OK", "detail": ""}
+    except Exception as error:
+        return {
+            "stage": "runtime",
+            "title": error.__class__.__name__,
+            "detail": str(error)
+        }
+`);
+
+      pyAnalyzer = pyodide.globals.get('codex_analyze');
+      replGlobals = makePythonGlobals();
+      setRuntimeEnabled(true);
+      setPythonStatus('Python real cargado. Editor y REPL listos.', 'ready');
+      analyzeError();
+    } catch (error) {
+      console.error(error);
+      setPythonStatus('No se ha podido cargar Python real. Revisa la conexion.', 'error');
+    }
+  }
+
+  const pythonReadyPromise = initPythonRuntime();
+
+  function liveParse(code) {
+    const lines = code.split('\n').filter(l => l.trim());
+    const outputs = [];
+    for (const line of lines) {
+      const m = line.match(/^\s*print\s*\((.*)\)\s*$/);
+      if (m) {
+        let arg = m[1].trim();
+        // String literal
+        const strM = arg.match(/^(["'])(.*?)\1$/);
+        if (strM) { outputs.push(strM[2]); continue; }
+        // f-string basic
+        const fM = arg.match(/^f(["'])(.*?)\1$/);
+        if (fM) { outputs.push(fM[2].replace(/\{[^}]*\}/g, '???')); continue; }
+        // Number or expression
+        if (/^[\d+\-*/ .()]+$/.test(arg)) {
+          try { outputs.push(String(Function('"use strict"; return (' + arg + ')')())); continue; } catch(e) {}
+        }
+        // String concatenation / repetition
+        if (/^(["']).*\1\s*[+*]/.test(arg) || /[+*]\s*(["'])/.test(arg)) {
+          outputs.push(arg + '  (expresión)');
+          continue;
+        }
+        outputs.push(arg);
+      } else if (line.trim()) {
+        outputs.push('❗ Solo print() está soportado en este mini-editor');
+      }
+    }
+    return outputs;
+  }
+
+  liveBtn.addEventListener('click', () => {
+    const code = liveInput.value;
+    const results = liveParse(code);
+    if (results.length === 0) {
+      liveOutput.innerHTML = '<span class="live-error">❗ Escribe al menos un print("...") para ver el resultado</span>';
+    } else {
+      liveOutput.textContent = results.join('\n');
+    }
+    liveTerm.style.display = 'block';
+    liveTerm.style.animation = 'none';
+    liveTerm.offsetHeight; // reflow
+    liveTerm.style.animation = 'tokenPop 0.3s cubic-bezier(0.34,1.56,0.64,1) both';
+  });
+
+  // ═══════════════════════════════════════
+  // ── ERROR DETECTIVE                   ──
+  // ═══════════════════════════════════════
+  const detIn  = document.getElementById('detective-input');
+  const detOut = document.getElementById('detective-result');
+  const detBtns= document.querySelectorAll('.detective-example-btn');
+
+  const SYNTAX_ERRORS = [
+    { test: s => { const o = (s.match(/\(/g)||[]).length; const c = (s.match(/\)/g)||[]).length; return o !== c; },
+      msg: 'Par\u00e9ntesis sin cerrar (o de m\u00e1s).' },
+    { test: s => { const d = (s.match(/"/g)||[]).length; const q = (s.match(/'/g)||[]).length; return d % 2 !== 0 || q % 2 !== 0; },
+      msg: 'Comillas sin cerrar.' },
+    { test: s => /\bdef\s+(if|for|while|class|return|import|from|and|or|not|in|is|True|False|None|with|as|try|except|finally|raise|del|elif|else|break|continue|pass|yield|assert|global|nonlocal|lambda|async|await)\b/.test(s),
+      msg: 'Nombre de funci\u00f3n inv\u00e1lido: es una palabra reservada.' },
+    { test: s => /\bclass\s*:/.test(s) || /\bdef\s*:/.test(s),
+      msg: 'Falta el nombre despu\u00e9s de def/class.' },
+    { test: s => /===/.test(s),
+      msg: '=== no existe en Python. Usa ==' },
+    { test: s => /[=!<>]=.*=(?!=)/.test(s) && !/[=!<>]==/.test(s),
+      msg: 'Operador inv\u00e1lido.' },
+  ];
+
+  const RUNTIME_ERRORS = [
+    { test: s => /\/\s*0/.test(s),
+      msg: 'ZeroDivisionError', detail: 'Divisi\u00f3n entre cero. Matem\u00e1ticamente imposible.' },
+    { test: s => {
+        const stripped = s.replace(/(["'])(?:(?!\1).)*\1/g, '');
+        const names = stripped.match(/\b[a-zA-Z_]\w*\b/g) || [];
+        const assigned = stripped.match(/\b([a-zA-Z_]\w*)\s*=/g);
+        const assSet = new Set((assigned || []).map(a => a.replace(/\s*=$/,'')));
+        const builtins = new Set([...KW, ...BI, 'True','False','None']);
+        return names.some(n => !builtins.has(n) && !assSet.has(n));
+      },
+      msg: 'NameError', detail: 'Variable no definida. Se usa un nombre que no existe en memoria.' },
+    { test: s => /(["'])[^"']*\1\s*[+]\s*\d|\d\s*[+]\s*(["'])/.test(s) || /(["'])[^"']*\1\s*[-]|[-]\s*(["'])/.test(s),
+      msg: 'TypeError', detail: 'No se puede operar entre texto y n\u00famero directamente.' },
+  ];
+
+  function analyzeError() {
+    const code = detIn.value.trim();
+    if (!code) { detOut.innerHTML = ''; detOut.className = 'detective-result detective-ok'; return; }
+
+    for (const err of SYNTAX_ERRORS) {
+      if (err.test(code)) {
+        detOut.className = 'detective-result detective-syntax';
+        detOut.innerHTML = `<span class="detective-step" style="background:rgba(244,114,182,0.15);color:var(--pink);">\u274C Paso 2 &mdash; Parsing</span><br><strong style="color:var(--pink);">SyntaxError</strong><br>${err.msg}<br><span style="color:var(--muted);font-size:13px;">CPython no puede construir el \u00e1rbol (AST). La gram\u00e1tica es inv\u00e1lida.</span>`;
+        return;
+      }
+    }
+
+    for (const err of RUNTIME_ERRORS) {
+      if (err.test(code)) {
+        detOut.className = 'detective-result detective-runtime';
+        detOut.innerHTML = `<span class="detective-step" style="background:rgba(251,191,36,0.15);color:var(--yellow);">\u26A0\uFE0F Paso 4 &mdash; VM</span><br><strong style="color:var(--yellow);">${err.msg}</strong><br>${err.detail}<br><span style="color:var(--muted);font-size:13px;">La gram\u00e1tica era correcta, pero al ejecutar en la VM falla.</span>`;
+        return;
+      }
+    }
+
+    detOut.className = 'detective-result detective-ok';
+    detOut.innerHTML = `<span class="detective-step" style="background:rgba(74,222,128,0.15);color:var(--green);">\u2705 Pasa los 5 pasos</span><br><span style="color:var(--muted);font-size:13px;">No se detectan errores de sintaxis ni de ejecuci\u00f3n aparente.</span>`;
+  }
+
+  detIn.addEventListener('input', analyzeError);
+  detBtns.forEach(btn => btn.addEventListener('click', () => {
+    detIn.value = btn.dataset.code;
+    analyzeError();
+  }));
+  detIn.value = 'print("hola")';
+  analyzeError();
+
+  // ═══════════════════════════════════════
+  // ── REPL SIMULATOR                    ──
+  // ═══════════════════════════════════════
+  const replBody  = document.getElementById('repl-body');
+  const replInput = document.getElementById('repl-input');
+  const replVars  = {};
+  const replHistory = [];
+  let replHistIdx = -1;
+
+  function safeEval(expr) {
+    expr = expr.trim();
+    if (!expr) return null;
+
+    // Assignment: name = value
+    const assign = expr.match(/^([a-zA-Z_]\w*)\s*=\s*(.+)$/);
+    if (assign) {
+      const val = safeEval(assign[2]);
+      if (val !== null && val !== undefined) { replVars[assign[1]] = val; return null; }
+      if (typeof val === 'number' && isNaN(val)) throw 'No se pudo evaluar el valor';
+      replVars[assign[1]] = val;
+      return null;
+    }
+
+    // Built-in functions
+    const fnCall = expr.match(/^(len|type|int|str|float|abs|round|max|min|print|bool|chr|ord)\((.*)\)$/);
+    if (fnCall) {
+      const fn = fnCall[1], argStr = fnCall[2].trim();
+      const arg = argStr ? safeEval(argStr) : undefined;
+      switch(fn) {
+        case 'len': return typeof arg === 'string' ? arg.length : Array.isArray(arg) ? arg.length : (() => { throw 'TypeError: object has no len()'; })();
+        case 'type': return `<class '${typeof arg === 'number' ? (Number.isInteger(arg) ? 'int' : 'float') : typeof arg === 'string' ? 'str' : typeof arg === 'boolean' ? 'bool' : Array.isArray(arg) ? 'list' : typeof arg}'>`;
+        case 'int': return typeof arg === 'string' ? (parseInt(arg) || (() => { throw `ValueError: invalid literal for int(): '${arg}'`; })()) : Math.floor(Number(arg));
+        case 'str': return String(arg);
+        case 'float': return parseFloat(arg);
+        case 'abs': return Math.abs(arg);
+        case 'round': return Math.round(arg);
+        case 'max': { const parts = argStr.split(',').map(s => safeEval(s.trim())); return Math.max(...parts); }
+        case 'min': { const parts = argStr.split(',').map(s => safeEval(s.trim())); return Math.min(...parts); }
+        case 'bool': return Boolean(arg);
+        case 'chr': return String.fromCharCode(arg);
+        case 'ord': return typeof arg === 'string' ? arg.charCodeAt(0) : (() => { throw 'TypeError'; })();
+        case 'print': { addReplOutput(arg === undefined ? '' : String(arg)); return null; }
+      }
+    }
+
+    // f-string basic: f"...{var}..."
+    const fstr = expr.match(/^f["'](.*)["']$/);
+    if (fstr) {
+      return fstr[1].replace(/\{([^}]+)\}/g, (_, v) => {
+        return v.trim() in replVars ? replVars[v.trim()] : (() => { throw `NameError: name '${v.trim()}' is not defined`; })();
+      });
+    }
+
+    // String literal
+    const strLit = expr.match(/^(["'])(.*?)\1$/);
+    if (strLit) return strLit[2];
+
+    // Number
+    if (/^-?\d+\.?\d*$/.test(expr)) return parseFloat(expr);
+
+    // Boolean / None
+    if (expr === 'True') return true;
+    if (expr === 'False') return false;
+    if (expr === 'None') return null;
+
+    // List literal basic: [1, 2, 3]
+    if (expr.startsWith('[') && expr.endsWith(']')) {
+      const inner = expr.slice(1, -1).trim();
+      if (!inner) return [];
+      return inner.split(',').map(s => safeEval(s.trim()));
+    }
+
+    // Variable lookup
+    if (/^[a-zA-Z_]\w*$/.test(expr)) {
+      if (expr in replVars) return replVars[expr];
+      throw `NameError: name '${expr}' is not defined`;
+    }
+
+    // String repetition: "x" * n  or  name * n
+    const strMul = expr.match(/^(.+?)\s*\*\s*(\d+)$/) || expr.match(/^(\d+)\s*\*\s*(.+)$/);
+    if (strMul) {
+      const a = safeEval(strMul[1]), b = safeEval(strMul[2]);
+      if (typeof a === 'string' && typeof b === 'number') return a.repeat(b);
+      if (typeof b === 'string' && typeof a === 'number') return b.repeat(a);
+      if (typeof a === 'number' && typeof b === 'number') return a * b;
+    }
+
+    // Arithmetic: +, -, *, /, //, %, **
+    const ops = [
+      { r: /^(.+?)\s*\+\s*(.+)$/, f: (a,b) => typeof a === 'string' && typeof b === 'string' ? a + b : a + b },
+      { r: /^(.+?)\s*-\s*(.+)$/, f: (a,b) => a - b },
+      { r: /^(.+?)\s*\/\/\s*(.+)$/, f: (a,b) => Math.floor(a / b) },
+      { r: /^(.+?)\s*\/\s*(.+)$/, f: (a,b) => { if (b === 0) throw 'ZeroDivisionError: division by zero'; return a / b; } },
+      { r: /^(.+?)\s*\*\*\s*(.+)$/, f: (a,b) => Math.pow(a,b) },
+      { r: /^(.+?)\s*%\s*(.+)$/, f: (a,b) => a % b },
+      { r: /^(.+?)\s*\*\s*(.+)$/, f: (a,b) => typeof a === 'string' ? a.repeat(b) : typeof b === 'string' ? b.repeat(a) : a * b },
+      { r: /^(.+?)\s*==\s*(.+)$/, f: (a,b) => a === b },
+      { r: /^(.+?)\s*!=\s*(.+)$/, f: (a,b) => a !== b },
+      { r: /^(.+?)\s*>=\s*(.+)$/, f: (a,b) => a >= b },
+      { r: /^(.+?)\s*<=\s*(.+)$/, f: (a,b) => a <= b },
+      { r: /^(.+?)\s*>\s*(.+)$/, f: (a,b) => a > b },
+      { r: /^(.+?)\s*<\s*(.+)$/, f: (a,b) => a < b },
+    ];
+    for (const { r, f } of ops) {
+      const m = expr.match(r);
+      if (m) {
+        try { return f(safeEval(m[1]), safeEval(m[2])); } catch(e) { throw e; }
+      }
+    }
+
+    throw `SyntaxError: expresi\u00f3n no soportada en este mini-REPL`;
+  }
+
+  function formatVal(v) {
+    if (v === null || v === undefined) return '';
+    if (typeof v === 'string') return `'${v}'`;
+    if (typeof v === 'boolean') return v ? 'True' : 'False';
+    if (Array.isArray(v)) return `[${v.map(formatVal).join(', ')}]`;
+    return String(v);
+  }
+
+  function addReplOutput(text, isError) {
+    const div = document.createElement('div');
+    div.className = 'repl-line';
+    div.innerHTML = `<span class="${isError ? 'repl-error-text' : 'repl-output-text'}">${text.replace(/</g,'&lt;')}</span>`;
+    const inputRow = replBody.querySelector('.repl-input-row');
+    replBody.insertBefore(div, inputRow);
+  }
+
+  function replExec(code) {
+    // Show the input line
+    const inputLine = document.createElement('div');
+    inputLine.className = 'repl-line';
+    inputLine.innerHTML = `<span class="repl-prompt">&gt;&gt;&gt;&nbsp;</span><span class="repl-input-text">${code.replace(/</g,'&lt;')}</span>`;
+    const inputRow = replBody.querySelector('.repl-input-row');
+    replBody.insertBefore(inputLine, inputRow);
+
+    try {
+      const result = safeEval(code);
+      if (result !== null && result !== undefined) addReplOutput(formatVal(result));
+    } catch(e) {
+      addReplOutput(String(e), true);
+    }
+
+    replBody.scrollTop = replBody.scrollHeight;
+  }
+
+  replInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const code = replInput.value.trim();
+      if (!code) return;
+      replHistory.push(code);
+      replHistIdx = replHistory.length;
+      replExec(code);
+      replInput.value = '';
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (replHistIdx > 0) { replHistIdx--; replInput.value = replHistory[replHistIdx]; }
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (replHistIdx < replHistory.length - 1) { replHistIdx++; replInput.value = replHistory[replHistIdx]; }
+      else { replHistIdx = replHistory.length; replInput.value = ''; }
+    }
+  });
+
+  // ── Click on dual-view input to also update binary translator ──
+  // (they share the same input element)
+  (() => {
+    const liveButtonEl = (() => {
+      const clone = liveBtn.cloneNode(true);
+      liveBtn.replaceWith(clone);
+      return clone;
+    })();
+    const detectiveInputEl = (() => {
+      const original = document.getElementById('detective-input');
+      const clone = original.cloneNode(true);
+      original.replaceWith(clone);
+      return clone;
+    })();
+    const detectiveButtons = Array.from(document.querySelectorAll('.detective-example-btn')).map((button) => {
+      const clone = button.cloneNode(true);
+      button.replaceWith(clone);
+      return clone;
+    });
+    const replInputEl = (() => {
+      const original = document.getElementById('repl-input');
+      const clone = original.cloneNode(true);
+      original.replaceWith(clone);
+      return clone;
+    })();
+
+    const liveTermEl = document.getElementById('live-terminal');
+    const liveOutputEl = document.getElementById('live-terminal-output');
+    const detectiveResultEl = document.getElementById('detective-result');
+    const replBodyEl = document.getElementById('repl-body');
+    const replBannerEl = replBodyEl.querySelector('.repl-output-text');
+    const replHistoryLocal = [];
+    let replHistoryIndex = -1;
+    let detectiveTimerLocal = null;
+    let detectiveTicket = 0;
+
+    liveButtonEl.disabled = true;
+    replInputEl.disabled = true;
+    replInputEl.placeholder = 'Cargando Python real...';
+
+    pythonReadyPromise.then(() => {
+      if (pyodide && replGlobals) {
+        liveButtonEl.disabled = false;
+        replInputEl.disabled = false;
+        replInputEl.placeholder = '2 + 2';
+        if (replBannerEl) {
+          replBannerEl.textContent = 'Python 3.12.0 (real) — Estado persistente activo en el navegador';
+        }
+      }
+    }).catch((error) => {
+      if (replBannerEl) {
+        replBannerEl.textContent = `Python no disponible — ${cleanPythonError(error)}`;
+      }
+    });
+
+    function pulseTerminalLocal(element) {
+      element.style.animation = 'none';
+      element.offsetHeight;
+      element.style.animation = 'tokenPop 0.3s cubic-bezier(0.34,1.56,0.64,1) both';
+    }
+
+    async function runLiveEditorReal() {
+      const code = liveInput.value.trim();
+      liveTermEl.style.display = 'block';
+
+      if (!code) {
+        liveOutputEl.innerHTML = '<span class="live-error">&#10071; Escribe algo de Python para ver el resultado</span>';
+        pulseTerminalLocal(liveTermEl);
+        return;
+      }
+
+      liveButtonEl.disabled = true;
+
+      try {
+        await pythonReadyPromise;
+        if (!pyodide) throw new Error('Python real no disponible.');
+
+        const { stdout, stderr, result } = await runPythonSnippet(code, makePythonGlobals(), 'live_editor.py');
+        const chunks = [];
+        const out = normalizeStreamOutput(stdout);
+        const err = normalizeStreamOutput(stderr);
+        const rendered = formatPythonValue(result);
+
+        if (out) chunks.push(out);
+        if (rendered) chunks.push(rendered);
+        if (err) chunks.push(err);
+
+        if (chunks.length === 0) {
+          liveOutputEl.innerHTML = '<span class="live-error">No hubo salida visible. Prueba con <code>print(...)</code> o una expresi&oacute;n como <code>2 + 2</code>.</span>';
+        } else {
+          liveOutputEl.textContent = chunks.join('\n');
+        }
+      } catch (error) {
+        const chunks = [
+          normalizeStreamOutput(error.__stdout || []),
+          normalizeStreamOutput(error.__stderr || []),
+          cleanPythonError(error)
+        ].filter(Boolean);
+        liveOutputEl.innerHTML = `<span class="live-error">${escapeHtml(chunks.join('\n'))}</span>`;
+      } finally {
+        if (pyodide) liveButtonEl.disabled = false;
+        pulseTerminalLocal(liveTermEl);
+      }
+    }
+
+    function renderDetectiveState(html, tone) {
+      detectiveResultEl.className = `detective-result detective-${tone}`;
+      detectiveResultEl.innerHTML = html;
+    }
+
+    function renderDetectivePending() {
+      renderDetectiveState(
+        `<span class="detective-step" style="background:rgba(34,211,238,0.15);color:var(--cyan);">Analizando pipeline</span><br><span style="color:var(--muted);font-size:13px;">Tokenizando, parseando y probando la ejecuci&oacute;n real...</span>`,
+        'ok'
+      );
+    }
+
+    function renderDetectiveOutcome(outcome) {
+      if (outcome.stage === 'syntax') {
+        renderDetectiveState(
+          `<span class="detective-step" style="background:rgba(244,114,182,0.15);color:var(--pink);">&#10060; Paso 2 &mdash; Parsing</span><br><strong style="color:var(--pink);">${escapeHtml(outcome.title)}</strong><br>${escapeHtml(outcome.detail)}<br><span style="color:var(--muted);font-size:13px;">CPython no puede construir el AST. La gram&aacute;tica es inv&aacute;lida.</span>`,
+          'syntax'
+        );
+        return;
+      }
+
+      if (outcome.stage === 'runtime') {
+        renderDetectiveState(
+          `<span class="detective-step" style="background:rgba(251,191,36,0.15);color:var(--yellow);">&#9888;&#65039; Paso 4 &mdash; VM</span><br><strong style="color:var(--yellow);">${escapeHtml(outcome.title)}</strong><br>${escapeHtml(outcome.detail || 'La ejecuci&oacute;n ha fallado.') }<br><span style="color:var(--muted);font-size:13px;">La sintaxis era correcta, pero algo falla al ejecutar en la VM.</span>`,
+          'runtime'
+        );
+        return;
+      }
+
+      renderDetectiveState(
+        `<span class="detective-step" style="background:rgba(74,222,128,0.15);color:var(--green);">&#9989; Pasa los 5 pasos</span><br><span style="color:var(--muted);font-size:13px;">La sintaxis es v&aacute;lida y la ejecuci&oacute;n termina sin errores.</span>`,
+        'ok'
+      );
+    }
+
+    async function runDetectiveReal(ticket) {
+      const code = detectiveInputEl.value.trim();
+      if (!code || ticket !== detectiveTicket) return;
+
+      try {
+        await pythonReadyPromise;
+        if (!pyAnalyzer) throw new Error('El analizador real no est&aacute; disponible.');
+        if (ticket !== detectiveTicket) return;
+
+        const outcomeProxy = pyAnalyzer(code);
+        const outcome = outcomeProxy.toJs({ dict_converter: Object.fromEntries });
+        outcomeProxy.destroy();
+
+        if (ticket !== detectiveTicket) return;
+        renderDetectiveOutcome(outcome);
+      } catch (error) {
+        if (ticket !== detectiveTicket) return;
+        renderDetectiveState(
+          `<span class="detective-step" style="background:rgba(244,114,182,0.15);color:var(--pink);">Error interno</span><br><span style="color:var(--muted);font-size:13px;">${escapeHtml(cleanPythonError(error))}</span>`,
+          'syntax'
+        );
+      }
+    }
+
+    function scheduleDetectiveReal() {
+      clearTimeout(detectiveTimerLocal);
+      const code = detectiveInputEl.value.trim();
+
+      if (!code) {
+        renderDetectiveState('', 'ok');
+        return;
+      }
+
+      const ticket = ++detectiveTicket;
+      renderDetectivePending();
+      detectiveTimerLocal = window.setTimeout(() => {
+        runDetectiveReal(ticket);
+      }, 120);
+    }
+
+    function addReplOutputReal(text, isError = false) {
+      if (!text) return;
+
+      const inputRow = replBodyEl.querySelector('.repl-input-row');
+      String(text).split('\n').forEach((line) => {
+        const row = document.createElement('div');
+        row.className = 'repl-line';
+        row.innerHTML = `<span class="${isError ? 'repl-error-text' : 'repl-output-text'}">${escapeHtml(line)}</span>`;
+        replBodyEl.insertBefore(row, inputRow);
+      });
+    }
+
+    function addReplPromptReal(code) {
+      const inputRow = replBodyEl.querySelector('.repl-input-row');
+      const row = document.createElement('div');
+      row.className = 'repl-line';
+      row.innerHTML = `<span class="repl-prompt">&gt;&gt;&gt;&nbsp;</span><span class="repl-input-text">${escapeHtml(code)}</span>`;
+      replBodyEl.insertBefore(row, inputRow);
+    }
+
+    async function executeReplReal(code) {
+      addReplPromptReal(code);
+
+      try {
+        await pythonReadyPromise;
+        if (!pyodide || !replGlobals) throw new Error('Python real no disponible.');
+
+        const { stdout, stderr, result } = await runPythonSnippet(code, replGlobals, '<repl>');
+        const out = normalizeStreamOutput(stdout);
+        const err = normalizeStreamOutput(stderr);
+        const rendered = formatPythonValue(result);
+
+        if (out) addReplOutputReal(out);
+        if (rendered) addReplOutputReal(rendered);
+        if (err) addReplOutputReal(err, true);
+      } catch (error) {
+        const out = normalizeStreamOutput(error.__stdout || []);
+        const err = normalizeStreamOutput(error.__stderr || []);
+        if (out) addReplOutputReal(out);
+        if (err) addReplOutputReal(err, true);
+        addReplOutputReal(cleanPythonError(error), true);
+      } finally {
+        replBodyEl.scrollTop = replBodyEl.scrollHeight;
+      }
+    }
+
+    liveButtonEl.addEventListener('click', runLiveEditorReal);
+    detectiveInputEl.addEventListener('input', scheduleDetectiveReal);
+    detectiveButtons.forEach((button) => button.addEventListener('click', () => {
+      detectiveInputEl.value = button.dataset.code;
+      scheduleDetectiveReal();
+      detectiveInputEl.focus();
+    }));
+
+    replInputEl.addEventListener('keydown', async (event) => {
+      if (event.key === 'Enter') {
+        const code = replInputEl.value.trim();
+        if (!code) return;
+        replHistoryLocal.push(code);
+        replHistoryIndex = replHistoryLocal.length;
+        replInputEl.value = '';
+        await executeReplReal(code);
+      } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        if (replHistoryIndex > 0) {
+          replHistoryIndex -= 1;
+          replInputEl.value = replHistoryLocal[replHistoryIndex];
+        }
+      } else if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        if (replHistoryIndex < replHistoryLocal.length - 1) {
+          replHistoryIndex += 1;
+          replInputEl.value = replHistoryLocal[replHistoryIndex];
+        } else {
+          replHistoryIndex = replHistoryLocal.length;
+          replInputEl.value = '';
+        }
+      }
+    });
+
+    detectiveInputEl.value = 'print("hola")';
+    scheduleDetectiveReal();
+  })();
+</script>
+</body>
+</html>
