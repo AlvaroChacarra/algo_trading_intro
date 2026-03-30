@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Libraries + OOP - Clase 2</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
 <style>
 :root {
   --bg: #07090d;
@@ -37,9 +38,6 @@ body {
   font-size: 17px;
   overflow-x: hidden;
 }
-
-#bg-canvas { position: fixed; inset: 0; z-index: 0; opacity: 0.85; pointer-events: none; }
-#bg-canvas canvas { display: block; width: 100%; height: 100%; }
 
 nav {
   position: fixed;
@@ -163,6 +161,7 @@ p, li { color: var(--muted); }
 .accent-cyan { color: var(--cyan); }
 .accent-blue { color: var(--blue); }
 .accent-green { color: var(--green); }
+.accent-pink { color: var(--pink); }
 
 .hero-grid, .two-col, .builder-grid, .bridge-grid, .hero-workspace, .stat-grid, .kv-grid, .table-left, .builder-stack, .support-stack, .context-grid, .step-strip, .flow-row, .object-band {
   display: grid;
@@ -214,7 +213,7 @@ p, li { color: var(--muted); }
 
 pre, code {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
+  font-size: 13.5px;
   line-height: 1.7;
   color: #d8e7f6;
   white-space: pre-wrap;
@@ -232,9 +231,10 @@ tr.active td { background: rgba(34, 211, 238, 0.06); }
   border-radius: 18px;
   background: rgba(11, 17, 25, 0.92);
   border: 1px solid rgba(123, 147, 182, 0.12);
+  transition: border-color 0.4s ease;
 }
 .metric-name { color: var(--muted-2); font-size: 11px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
-.metric-value { color: var(--text); font-size: 24px; font-weight: 900; letter-spacing: -0.04em; }
+.metric-value { color: var(--text); font-size: 24px; font-weight: 900; letter-spacing: -0.04em; transition: color 0.4s ease; }
 .context-item {
   padding: 14px;
   border-radius: 18px;
@@ -381,6 +381,91 @@ input:focus, select:focus {
 }
 #bridge .shell { padding-top: 24px; padding-bottom: 24px; }
 
+/* ---- Chaos section ---- */
+.chaos-col-bad .code  { border-color: rgba(244, 114, 182, 0.22); }
+.chaos-col-good .code { border-color: rgba(87, 227, 137, 0.22); }
+.chaos-verdict {
+  margin-top: 12px;
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.5;
+  background: rgba(11, 17, 25, 0.92);
+  border: 1px solid rgba(123, 147, 182, 0.12);
+}
+.verdict-bad  { border-color: rgba(244, 114, 182, 0.22) !important; color: #f79dc5; }
+.verdict-good { border-color: rgba(87, 227, 137, 0.22) !important; color: #80efab; }
+.chaos-insight {
+  margin-top: 18px;
+  padding: 18px;
+  border-radius: 22px;
+  background: rgba(11, 17, 25, 0.94);
+  border: 1px solid rgba(34, 211, 238, 0.18);
+}
+
+/* ---- Objects pain point ---- */
+.pain-panel {
+  margin-bottom: 22px;
+  padding: 20px;
+  border-radius: 22px;
+  background: rgba(11, 17, 25, 0.94);
+  border: 1px solid rgba(244, 114, 182, 0.2);
+}
+.pain-panel .two-col { gap: 14px; }
+.error-pre { color: var(--pink) !important; opacity: 0.9; }
+
+/* ---- Team section ---- */
+.guarantee-item {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(11, 17, 25, 0.92);
+  border: 1px solid rgba(34, 211, 238, 0.12);
+  color: #d5e1f1;
+  font-size: 14px;
+  font-weight: 700;
+}
+.guarantee-item::before { content: '✓  '; color: var(--green); }
+.principle-panel {
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 16px;
+  background: rgba(11, 17, 25, 0.92);
+  border: 1px solid rgba(34, 211, 238, 0.18);
+}
+.without-panel {
+  margin-top: 10px;
+  padding: 14px;
+  border-radius: 16px;
+  background: rgba(11, 17, 25, 0.92);
+  border: 1px solid rgba(244, 114, 182, 0.18);
+}
+.team-grid { display: grid; gap: 12px; margin-top: 14px; }
+
+/* ---- Prism theme overrides ---- */
+code[class*="language-"],
+pre[class*="language-"] {
+  background: transparent !important;
+  text-shadow: none !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 13.5px !important;
+  line-height: 1.7 !important;
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+}
+.token.keyword    { color: #8fa2ff !important; }
+.token.builtin    { color: #22d3ee !important; }
+.token.string     { color: #57e389 !important; }
+.token.number     { color: #f472b6 !important; }
+.token.operator   { color: #c4d1e3 !important; }
+.token.comment    { color: #6b7a8f !important; font-style: italic; }
+.token.function   { color: #22d3ee !important; }
+.token.class-name { color: #f0c060 !important; }
+.token.decorator  { color: #f472b6 !important; }
+.token.punctuation{ color: #a7b4c7 !important; }
+.token.boolean    { color: #8fa2ff !important; }
+.token.none       { color: #8fa2ff !important; }
+
 @media (max-width: 980px) {
   .hero-grid, .two-col, .builder-grid, .bridge-grid, .hero-workspace, .stat-grid, .kv-grid, .context-grid, .step-strip, .flow-row, .object-band { grid-template-columns: 1fr; }
   .hero .shell, .hero-grid { min-height: auto; }
@@ -420,13 +505,12 @@ input:focus, select:focus {
 </style>
 </head>
 <body>
-<div id="bg-canvas"></div>
 <nav>
   <div class="nav-shell">
     <div class="nav-top">
       <div class="brand">Clase 2 - Libraries + OOP</div>
       <div class="nav-actions">
-        <div class="pill">teclas: <- -> | F</div>
+        <div class="pill">teclas: &larr; &rarr; | F</div>
         <button id="fullscreen-btn" class="full-btn" type="button">Pantalla completa</button>
       </div>
     </div>
@@ -435,8 +519,10 @@ input:focus, select:focus {
         <a href="#hero">Inicio</a>
         <a href="#import">Import</a>
         <a href="#pandas">Pandas</a>
+        <a href="#chaos">Caos</a>
         <a href="#objects">Objetos</a>
         <a href="#builder">Order</a>
+        <a href="#team">Equipo</a>
         <a href="#bridge">Sistema</a>
       </div>
     </div>
@@ -444,6 +530,10 @@ input:focus, select:focus {
 </nav>
 <div id="progress" class="progress"></div>
 <main>
+
+  <!-- ============================
+       HERO
+       ============================ -->
   <section id="hero" class="hero">
     <div class="shell">
       <div class="hero-grid">
@@ -517,6 +607,9 @@ input:focus, select:focus {
     </div>
   </section>
 
+  <!-- ============================
+       IMPORT
+       ============================ -->
   <section id="import">
     <div class="shell">
       <div class="label">Bloque 1 - Manual vs herramienta</div>
@@ -552,6 +645,9 @@ input:focus, select:focus {
     </div>
   </section>
 
+  <!-- ============================
+       PANDAS
+       ============================ -->
   <section id="pandas">
     <div class="shell">
       <div class="label">Bloque 2 - Tabla reactiva con pandas</div>
@@ -603,18 +699,90 @@ input:focus, select:focus {
       </div>
       <div class="code support-code" style="margin-top:18px;">
         <div class="code-label">modelo mental</div>
-        <pre id="table-code">trades["notional"] = trades["price"] * trades["size"]
-summary = trades.groupby("side")[["size", "notional"]].sum()</pre>
+        <pre id="table-code"></pre>
       </div>
     </div>
   </section>
 
+  <!-- ============================
+       CHAOS — script caótico vs OOP
+       ============================ -->
+  <section id="chaos">
+    <div class="shell">
+      <div class="label">Bloque 2B - Cuando el script se descontrola</div>
+      <h2>Cada activo nuevo <span class="accent-pink">duplica el codigo</span>. OOP no es filosofia — es la solucion practica.</h2>
+      <p class="lead">Con un solo activo los dos estilos parecen equivalentes. Pulsa "+ ETH" y luego "+ SOL" para ver cuándo el script empieza a doler y la clase escala sin esfuerzo.</p>
+
+      <div id="chaos-controls" class="filter-row" style="margin-top:22px;">
+        <button class="ghost-btn active" type="button" data-assets="1">Solo BTC</button>
+        <button class="ghost-btn" type="button" data-assets="2">+ ETH</button>
+        <button class="ghost-btn" type="button" data-assets="3">+ SOL</button>
+      </div>
+
+      <div class="two-col" style="margin-top:18px;">
+        <div class="chaos-col-bad">
+          <div class="card">
+            <div class="mini-label" style="color:var(--pink);">script plano — variables sueltas</div>
+            <div class="code" style="margin-top:14px;">
+              <pre id="chaos-script-code"></pre>
+            </div>
+            <div class="chaos-verdict verdict-bad" id="chaos-script-verdict"></div>
+          </div>
+        </div>
+        <div class="chaos-col-good">
+          <div class="card">
+            <div class="mini-label" style="color:var(--green);">con OOP — PositionTracker</div>
+            <div class="code" style="margin-top:14px;">
+              <pre id="chaos-oop-code"></pre>
+            </div>
+            <div class="chaos-verdict verdict-good" id="chaos-oop-verdict"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chaos-insight">
+        <div class="mini-label">idea clave en este momento</div>
+        <div id="chaos-insight" class="context-value" style="margin-top:8px;"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+       OBJECTS — de dict a clase
+       ============================ -->
   <section id="objects">
     <div class="shell">
       <div class="label">Bloque 3 - De dict a objeto</div>
       <h2>El mismo dato pasa por tres niveles: raw data, molde y ejemplar.</h2>
       <p class="lead">El punto no es aprender una taxonomia. El punto es notar cuando un diccionario empieza a quedarse corto y una clase te deja juntar datos y comportamiento.</p>
-      <div class="object-band" style="margin-top:18px;">
+
+      <!-- Dict pain point -->
+      <div class="pain-panel" style="margin-top:20px;">
+        <div class="mini-label" style="color:var(--pink);">¿Por que el dict se queda corto?</div>
+        <p style="margin-top:8px; font-size:14px; color:var(--muted);">Intentas anadir comportamiento al dict — la operacion mas natural del mundo — y Python no puede.</p>
+        <div class="two-col" style="margin-top:16px;">
+          <div>
+            <div class="code-label" style="color:var(--muted-2);">intentas esto</div>
+            <div class="code" style="margin-top:8px;">
+              <pre id="objects-dict-fail"></pre>
+            </div>
+          </div>
+          <div>
+            <div class="code-label" style="color:var(--pink);">Python te responde</div>
+            <div class="code" style="margin-top:8px; border-color:rgba(244,114,182,0.25);">
+              <pre class="error-pre">AttributeError: 'dict' object has
+no attribute 'notional'
+
+El dict guarda datos, pero no sabe
+comportarse. La clase junta
+datos + comportamiento bajo
+una forma reusable.</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="object-band" style="margin-top:22px;">
         <div class="summary-item"><strong>Cuando dict basta</strong>Snapshots simples, prototipos rapidos y datos sin comportamiento.</div>
         <div class="summary-item"><strong>Cuando empieza a doler</strong>Repites formulas, descripciones o validaciones fuera del dato.</div>
         <div class="summary-item"><strong>Que gana la class</strong>Contrato visible, metodos junto al dato y menos dispersion mental.</div>
@@ -661,6 +829,9 @@ summary = trades.groupby("side")[["size", "notional"]].sum()</pre>
     </div>
   </section>
 
+  <!-- ============================
+       BUILDER — Order playground
+       ============================ -->
   <section id="builder">
     <div class="shell">
       <div class="label">Bloque 4 - Order playground + tracker</div>
@@ -721,7 +892,7 @@ summary = trades.groupby("side")[["size", "notional"]].sum()</pre>
               <div class="metric"><div class="metric-name">cash</div><div id="tk-cash" class="metric-value">0.00</div></div>
               <div class="metric"><div class="metric-name">position</div><div id="tk-position" class="metric-value">0.00</div></div>
               <div class="metric"><div class="metric-name">mark</div><div id="tk-mark" class="metric-value">100080</div></div>
-              <div class="metric"><div class="metric-name">equity</div><div id="tk-equity" class="metric-value">0.00</div></div>
+              <div class="metric" id="equity-metric"><div class="metric-name">equity</div><div id="tk-equity" class="metric-value">0.00</div></div>
             </div>
           </div>
           <div class="card log-card">
@@ -733,6 +904,52 @@ summary = trades.groupby("side")[["size", "notional"]].sum()</pre>
     </div>
   </section>
 
+  <!-- ============================
+       TEAM — OOP en equipo
+       ============================ -->
+  <section id="team">
+    <div class="shell">
+      <div class="label">Bloque 4B - OOP en proyectos reales</div>
+      <h2>Una clase define un <span class="accent-cyan">contrato</span>. Tu companero no necesita leer el interior para usarla.</h2>
+      <p class="lead">Encapsulacion no es solo una palabra. Es lo que hace posible que tres personas toquen el mismo repositorio sin romperse. Cada clase tiene una responsabilidad. Cada responsabilidad tiene un dueno.</p>
+
+      <div id="team-tabs" class="tab-row" style="margin-top:22px;">
+        <button class="tab-btn active" type="button" data-persona="A">Persona A — usa Order</button>
+        <button class="tab-btn" type="button" data-persona="B">Persona B — mejora Tracker</button>
+        <button class="tab-btn" type="button" data-persona="C">Persona C — extiende Trade</button>
+      </div>
+
+      <div class="two-col" style="margin-top:18px;">
+        <div class="card">
+          <div class="mini-label">lo que ve esta persona</div>
+          <h3 id="team-title" style="margin-top:14px; line-height:1.25;"></h3>
+          <p id="team-copy" style="margin-top:12px; font-size:15px;"></p>
+          <div class="code" style="margin-top:18px;">
+            <div class="code-label">su codigo</div>
+            <pre id="team-code"></pre>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="mini-label">garantias que da OOP</div>
+            <div id="team-guarantees" class="team-grid"></div>
+          </div>
+          <div class="principle-panel">
+            <div class="mini-label">principio activo</div>
+            <div id="team-principle" class="context-value" style="margin-top:8px; color:var(--cyan); font-size:15px;"></div>
+          </div>
+          <div class="without-panel">
+            <div class="mini-label" style="color:var(--pink);">sin OOP esto seria</div>
+            <div id="team-without" class="context-value" style="margin-top:8px; color:#f79dc5; font-size:14px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+       BRIDGE — cierre
+       ============================ -->
   <section id="bridge">
     <div class="shell">
       <div class="label">Bloque 5 - Cierre y puente</div>
@@ -761,8 +978,9 @@ summary = trades.groupby("side")[["size", "notional"]].sum()</pre>
             <ul class="list">
               <li>import abre una caja de herramientas y cambia tu velocidad para operar sobre datos.</li>
               <li>pandas resuelve bien tablas y resumenes, no la arquitectura de tu sistema.</li>
-              <li>una class junta datos y comportamiento bajo una forma reusable.</li>
+              <li>una class junta datos y comportamiento bajo una forma reusable y escalable.</li>
               <li>un Trade cambia el tracker, y el tracker convierte eventos en estado.</li>
+              <li>encapsulacion es el contrato que permite trabajar en equipo sin romper el codigo de los demas.</li>
             </ul>
           </div>
           <div class="next-step">
@@ -778,56 +996,51 @@ summary = trades.groupby("side")[["size", "notional"]].sum()</pre>
       </div>
     </div>
   </section>
+
 </main>
+
+<!-- CDN: GSAP + Prism (loaded before inline script) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
 <script>
+// ============================================================
+// DATA
+// ============================================================
+
 const heroPhases = {
   import: {
-    status: 'import',
-    label: 'herramienta',
+    status: 'import', label: 'herramienta',
     code: 'import pandas as pd\n\n# ahora tienes DataFrame, filtros y groupby',
-    object: 'Toolbox',
-    desc: 'pandas disponible',
-    cash: '0',
-    equity: '0',
+    object: 'Toolbox', desc: 'pandas disponible', cash: '0', equity: '0',
     watch: 'El dataset es el mismo. Lo nuevo es la herramienta que ahora tienes disponible.',
     idea: 'Importar no crea magia; reduce friccion y abre capacidad operativa.',
     effect: 'tool -> data',
     caption: 'Primero amplias capacidad: mismo problema, menos friccion.'
   },
-  table:  {
-    status: 'tabla',
-    label: 'operacion sobre tabla',
+  table: {
+    status: 'tabla', label: 'operacion sobre tabla',
     code: 'trades["notional"] = trades["price"] * trades["size"]\nsummary = trades.groupby("side")["size"].sum()',
-    object: 'DataFrame',
-    desc: '3 filas listas para operar',
-    cash: '0',
-    equity: '0',
+    object: 'DataFrame', desc: '3 filas listas para operar', cash: '0', equity: '0',
     watch: 'Fijate en columnas, filtros y resumenes. La tabla ya responde a decisiones concretas.',
     idea: 'Una estructura pensada para tablas comprime mucho trabajo mental.',
     effect: 'data -> resumen',
     caption: 'La tabla ya responde: filtras, calculas y resumes.'
   },
   object: {
-    status: 'objeto',
-    label: 'estructura',
-    code: 'class Order:\n    def notional(self):\n        return self.price * self.size',
-    object: 'Order',
-    desc: 'buy 0.10 BTCUSDT',
-    cash: '0',
-    equity: '0',
+    status: 'objeto', label: 'estructura',
+    code: 'class Order:\n    def notional(self):\n        return self.price * self.size\n\n    def __repr__(self):\n        return f"Order({self.symbol}, {self.side})"',
+    object: 'Order', desc: 'buy 0.10 BTCUSDT', cash: '0', equity: '0',
     watch: 'Ahora ya no miras solo datos: miras un molde reusable con metodos utiles.',
     idea: 'La class junta datos y comportamiento bajo una forma estable.',
     effect: 'data -> object',
     caption: 'La class aparece cuando ya no quieres formulas desperdigadas.'
   },
-  state:  {
-    status: 'estado',
-    label: 'estado del sistema',
+  state: {
+    status: 'estado', label: 'estado del sistema',
     code: 'tracker.apply_trade(Trade("BTCUSDT", "buy", 100000, 0.10))\nequity = tracker.equity(mark_price=100080)',
-    object: 'PositionTracker',
-    desc: 'cash + position + equity',
-    cash: '-10000',
-    equity: '8',
+    object: 'PositionTracker', desc: 'cash + position + equity', cash: '-10000', equity: '8',
     watch: 'Ya no estas definiendo piezas: estas viendo consecuencias acumuladas en un tracker.',
     idea: 'Un evento no solo describe algo; cambia el estado del sistema.',
     effect: 'object -> event -> state',
@@ -837,8 +1050,7 @@ const heroPhases = {
 
 const importConfigs = {
   before: {
-    kicker: 'trabajo manual',
-    title: 'Sin import, todo es mas artesanal',
+    kicker: 'trabajo manual', title: 'Sin import, todo es mas artesanal',
     copy: 'Sigue siendo resoluble, pero necesitas iterar a mano, acumular resultados y escribir mas glue code.',
     output: 'Misma informacion, mas pasos intermedios.',
     codeLabel: 'loop manual',
@@ -848,8 +1060,7 @@ const importConfigs = {
     observe: 'El esfuerzo no esta en entender la tabla, sino en sostener la logica manual que la recorre.'
   },
   after: {
-    kicker: 'herramienta disponible',
-    title: 'Con pandas, el trabajo se compacta',
+    kicker: 'herramienta disponible', title: 'Con pandas, el trabajo se compacta',
     copy: 'El dataset sigue siendo el mismo, pero ahora entra en una estructura pensada para operar y resumir rapido.',
     output: 'Misma informacion, menos dispersion.',
     codeLabel: 'operaciones de DataFrame',
@@ -861,36 +1072,100 @@ const importConfigs = {
 };
 
 const tableOperations = {
-  overview: {
-    title: 'Primero mira la tabla base.',
-    copy: 'Todavia no has activado ninguna operacion. La pregunta no es que datos hay, sino que tan facil es operarlos.',
-    idea: 'Mismo dataset, distinta ergonomia.',
-    action: 'vista base'
-  },
-  filter: {
-    title: 'El filtro reduce ruido visual.',
-    copy: 'Al quedarte con buy o sell, ya ves que la tabla permite enfocarte en una parte del problema sin reescribir logica.',
-    idea: 'Filtrar rapido cambia la velocidad de analisis.',
-    action: 'filtro por side'
-  },
-  notional: {
-    title: 'Ahora la tabla calcula una columna util.',
-    copy: 'El paso importante no es el numero en si, sino que la operacion vive junto a la estructura tabular.',
-    idea: 'Una columna derivada nace con muy poca friccion.',
-    action: 'calculo de notional'
-  },
-  groupby: {
-    title: 'El resumen ya parece trabajo real.',
-    copy: 'Cuando agrupas por side, dejas de mirar filas aisladas y empiezas a leer el dataset como una historia resumida.',
-    idea: 'Groupby convierte filas en agregados legibles.',
-    action: 'resumen por side'
-  }
+  overview: { title: 'Primero mira la tabla base.', copy: 'Todavia no has activado ninguna operacion. La pregunta no es que datos hay, sino que tan facil es operarlos.', idea: 'Mismo dataset, distinta ergonomia.', action: 'vista base' },
+  filter:   { title: 'El filtro reduce ruido visual.', copy: 'Al quedarte con buy o sell, ya ves que la tabla permite enfocarte en una parte del problema sin reescribir logica.', idea: 'Filtrar rapido cambia la velocidad de analisis.', action: 'filtro por side' },
+  notional: { title: 'Ahora la tabla calcula una columna util.', copy: 'El paso importante no es el numero en si, sino que la operacion vive junto a la estructura tabular.', idea: 'Una columna derivada nace con muy poca friccion.', action: 'calculo de notional' },
+  groupby:  { title: 'El resumen ya parece trabajo real.', copy: 'Cuando agrupas por side, dejas de mirar filas aisladas y empiezas a leer el dataset como una historia resumida.', idea: 'Groupby convierte filas en agregados legibles.', action: 'resumen por side' }
 };
 
 const objectConfigs = {
-  dict: { title: 'Un dict guarda datos y nada mas.', copy: 'Para empezar es perfecto. El problema aparece cuando notional o describe se repiten por fuera.', list: ['rapido para prototipar', 'bueno para snapshots simples', 'malo cuando el comportamiento se repite'], note: 'Lesson 1 termina bien en dicts. Lesson 2 empieza a tensar ese modelo.', code: 'order = {\n    "symbol": "BTCUSDT",\n    "side": "buy",\n    "price": 100000,\n    "size": 0.10,\n}', node: 'dict' },
-  class: { title: 'La clase fija una forma reusable.', copy: 'Aqui defines que atributos necesita el dato y que metodos tienen sentido sobre el.', list: ['hace visible el contrato', 'junta datos y comportamiento', 'reduce logica duplicada'], note: 'La clase no es el dato concreto. Es el molde.', code: 'class Order:\n    def __init__(self, symbol, side, price, size):\n        self.symbol = symbol\n        self.side = side\n        self.price = price\n        self.size = size\n\n    def notional(self):\n        return self.price * self.size', node: 'class' },
-  object: { title: 'El objeto es una instancia con valores reales.', copy: 'Una vez tienes el molde, puedes crear una orden concreta que ya sabe describirse y calcular su propio nocional.', list: ['tiene estado concreto', 'ejecuta metodos con sus propios datos', 'se puede pasar a otras piezas del sistema'], note: 'Aqui ya tienes una pieza que se parece a un sistema real de trading.', code: 'order = Order("BTCUSDT", "buy", 100000, 0.10)\nprint(order.notional())\nprint(order.describe())', node: 'object' }
+  dict: {
+    title: 'Un dict guarda datos y nada mas.',
+    copy: 'Para empezar es perfecto. El problema aparece cuando notional o describe se repiten por fuera.',
+    list: ['rapido para prototipar', 'bueno para snapshots simples', 'malo cuando el comportamiento se repite'],
+    note: 'Lesson 1 termina bien en dicts. Lesson 2 empieza a tensar ese modelo.',
+    code: 'order = {\n    "symbol": "BTCUSDT",\n    "side": "buy",\n    "price": 100000,\n    "size": 0.10,\n}\n\n# quieres describir la orden:\ndesc = f\"{order[\'side\']} {order[\'size\']} {order[\'symbol\']}\"\n# cada vez que necesitas esto, lo repites',
+    node: 'dict'
+  },
+  class: {
+    title: 'La clase fija una forma reusable.',
+    copy: 'Aqui defines que atributos necesita el dato y que metodos tienen sentido sobre el. __repr__ hace que el objeto sepa describirse solo.',
+    list: ['hace visible el contrato', 'junta datos y comportamiento', 'reduce logica duplicada', '__repr__ da identidad legible al objeto'],
+    note: 'La clase no es el dato concreto. Es el molde que define todos los posibles datos de ese tipo.',
+    code: 'class Order:\n    def __init__(self, symbol, side, price, size):\n        self.symbol = symbol\n        self.side   = side\n        self.price  = price\n        self.size   = size\n\n    def notional(self):\n        return self.price * self.size\n\n    def describe(self):\n        return f"{self.side} {self.size:.2f} {self.symbol}"\n\n    def __repr__(self):\n        return f"Order({self.symbol}, {self.side}, {self.price})"',
+    node: 'class'
+  },
+  object: {
+    title: 'El objeto es una instancia con valores reales.',
+    copy: 'Una vez tienes el molde, puedes crear una orden concreta que ya sabe describirse y calcular su propio nocional.',
+    list: ['tiene estado concreto', 'ejecuta metodos con sus propios datos', 'se puede pasar a otras piezas del sistema'],
+    note: 'Aqui ya tienes una pieza que se parece a un sistema real de trading.',
+    code: 'order = Order("BTCUSDT", "buy", 100000, 0.10)\n\nprint(order.notional())  # 10000.0\nprint(order.describe())  # buy 0.10 BTCUSDT\nprint(repr(order))       # Order(BTCUSDT, buy, 100000)\n\n# el objeto sabe quien es sin ayuda externa',
+    node: 'object'
+  }
+};
+
+const chaosConfigs = {
+  1: {
+    script: '# BTC\nbtc_cash = 0.0\nbtc_position = 0.0\n\ndef btc_equity(mark):\n    return btc_cash + btc_position * mark\n\n# aplicas una compra\nbtc_cash -= 100000 * 0.10\nbtc_position += 0.10',
+    oop: 'tracker_btc = PositionTracker("BTCUSDT")\n\n# apply_trade encapsula toda la logica\ntracker_btc.apply_trade(\n    Trade("BTCUSDT", "buy", 100000, 0.10)\n)\n\nprint(tracker_btc.equity(100080))  # 8.0',
+    scriptVerdict: '1 activo → 2 variables globales sueltas. Por ahora manejable.',
+    oopVerdict: '1 activo → 1 objeto. Todo el estado encapsulado.',
+    insight: 'Con un solo activo los dos estilos parecen equivalentes. Pulsa "+ ETH" para ver cuando el script empieza a doler.'
+  },
+  2: {
+    script: 'btc_cash = 0.0\nbtc_position = 0.0\n\n# ETH: copia exacta del bloque de BTC\neth_cash = 0.0\neth_position = 0.0\n\ndef apply_buy(symbol, price, size):\n    global btc_cash, btc_position\n    global eth_cash, eth_position  # crece con cada activo\n    if symbol == "BTC":\n        btc_cash -= price * size\n        btc_position += size\n    elif symbol == "ETH":\n        eth_cash -= price * size\n        eth_position += size',
+    oop: 'tracker_btc = PositionTracker("BTCUSDT")\ntracker_eth = PositionTracker("ETHUSDT")\n\n# misma clase reutilizada, cero duplicacion\ntracker_btc.apply_trade(\n    Trade("BTCUSDT", "buy", 100000, 0.10)\n)\ntracker_eth.apply_trade(\n    Trade("ETHUSDT", "buy", 3520, 1.40)\n)',
+    scriptVerdict: '2 activos → 4 variables globales + ifs que crecen. El patron ya se repite.',
+    oopVerdict: '2 activos → 2 objetos. La clase PositionTracker no cambio ni una linea.',
+    insight: 'El script duplica: mismas variables, mismo patron, distinto prefijo. PositionTracker se reutiliza sin copiar nada. Ahora pulsa "+ SOL".'
+  },
+  3: {
+    script: 'btc_cash = 0.0;  btc_position = 0.0\neth_cash = 0.0;  eth_position = 0.0\nsol_cash = 0.0;  sol_position = 0.0  # tercer bloque\n\n# equity total: firma crece con cada activo nuevo\ndef total_equity(btc_mark, eth_mark, sol_mark):\n    return (\n        btc_cash + btc_position * btc_mark +\n        eth_cash + eth_position * eth_mark +\n        sol_cash + sol_position * sol_mark\n    )\n    # anadir SOL2 = otro parametro aqui y otra linea',
+    oop: 'trackers = {\n    "BTC": PositionTracker("BTCUSDT"),\n    "ETH": PositionTracker("ETHUSDT"),\n    "SOL": PositionTracker("SOLUSDT"),\n}\n\n# anadir SOL2 = una linea en el dict\n# equity total: independiente del numero de activos\nmarks = {"BTC": 100090, "ETH": 3540, "SOL": 155}\ntotal = sum(\n    t.equity(marks[s])\n    for s, t in trackers.items()\n)',
+    scriptVerdict: '3 activos → 6 variables + firmas que crecen con N. Anadir SOL2 rompe total_equity.',
+    oopVerdict: 'N activos → dict de trackers. Anadir SOLUSDT2 es una linea. total_equity no cambia.',
+    insight: 'Este es el momento clave: con OOP, escalar es O(1) en esfuerzo de codigo. Con el script, cada activo nuevo duplica la superficie de error.'
+  }
+};
+
+const teamConfigs = {
+  A: {
+    title: 'Persona A usa Order sin saber como esta implementada.',
+    copy: 'Llama a order.notional() y order.describe(). No necesita leer el __init__ ni la logica interna. La clase define el contrato — eso basta.',
+    code: '# Persona A — solo ve la interfaz publica\norder = Order("BTCUSDT", "buy", 100000, 0.10)\n\nprint(order.notional())   # 10000.0\nprint(order.describe())   # buy 0.10 BTCUSDT\nprint(repr(order))        # Order(BTCUSDT, buy, 100000)\n\n# No sabe como se calcula notional por dentro.\n# No necesita saberlo. Eso es encapsulacion.',
+    guarantees: [
+      'puede crear y usar Orders sin leer su implementacion interna',
+      'si Persona B cambia el calculo de notional, su codigo no se rompe',
+      'la clase es el contrato: los metodos publicos son todo lo que importa'
+    ],
+    principle: 'Encapsulacion — el interior esta protegido. La interfaz publica es el acuerdo entre el equipo.',
+    without: 'sin clases, Persona A necesitaria conocer la formula de notional y copiarla en cada sitio donde la use. Un cambio en la formula romperia todos esos sitios.'
+  },
+  B: {
+    title: 'Persona B mejora PositionTracker sin romper a Persona A.',
+    copy: 'Anade soporte para comisiones usando atributos privados (_cash, _fees). La interfaz publica (apply_trade, equity) no cambia. Persona A no se entera del cambio.',
+    code: '# Persona B — modifica el interior, mantiene la interfaz\nclass PositionTracker:\n    def __init__(self):\n        self._cash = 0.0       # privado: convencion Python\n        self._position = 0.0\n        self._fees_paid = 0.0  # nuevo — invisible desde fuera\n\n    def apply_trade(self, trade, fee_rate=0.0002):\n        fee = trade.price * trade.size * fee_rate\n        if trade.side == "buy":\n            self._cash -= trade.price * trade.size + fee\n            self._position += trade.size\n        else:\n            self._cash += trade.price * trade.size - fee\n            self._position -= trade.size\n        self._fees_paid += fee\n\n    def equity(self, mark_price):  # misma firma publica\n        return self._cash + self._position * mark_price',
+    guarantees: [
+      'puede cambiar _cash y _position sin que nadie mas se rompa',
+      'la interfaz publica (apply_trade, equity) es estable — es el contrato',
+      '_cash con guion bajo avisa: "esto es interno, no lo toques desde fuera"'
+    ],
+    principle: 'Encapsulacion — el estado interno es privado. Cambiar la implementacion no rompe a quien usa la interfaz.',
+    without: 'sin clases, anadir fees implicaria variables globales btc_fees, eth_fees... que Persona A y C tambien ven y pueden modificar accidentalmente.'
+  },
+  C: {
+    title: 'Persona C extiende Trade sin tocar Order ni PositionTracker.',
+    copy: 'Anade market_impact() a Trade. Sus companeros no se enteran porque Order y PositionTracker no cambian. Cada clase tiene su responsabilidad y su dueno.',
+    code: '# Persona C — trabaja solo en Trade\nclass Trade:\n    def __init__(self, symbol, side, price, size):\n        self.symbol = symbol\n        self.side   = side\n        self.price  = price\n        self.size   = size\n\n    def cash_flow(self):\n        signed = -1 if self.side == "buy" else 1\n        return signed * self.price * self.size\n\n    def market_impact(self, spread):  # metodo nuevo\n        # Persona C lo anade sin tocar Order ni Tracker\n        return self.size * spread * 0.5\n\n# Persona A y B no ven este cambio — sus clases no cambian',
+    guarantees: [
+      'puede anadir metodos a Trade sin que Order ni PositionTracker cambien',
+      'Trade tiene una responsabilidad clara: modelar la ejecucion',
+      'si Trade da bugs, Persona C sabe que es su dominio — debugging claro'
+    ],
+    principle: 'Separacion de responsabilidades — cada clase tiene un dueno y hace una cosa bien.',
+    without: 'sin clases, market_impact seria una funcion suelta sin dueno claro ni frontera natural. Cualquiera podria modificarla y cualquiera podria romperla.'
+  }
 };
 
 const timelineSteps = [
@@ -902,64 +1177,54 @@ const timelineSteps = [
 ];
 
 const builderMessages = {
-  clean: {
-    watch: 'Todavia no hay evento. El tracker sigue en cero.',
-    effect: 'Crear o editar una Order no cambia el sistema hasta que aplicas un Trade.',
-    flow: { active: 'config', done: [] }
-  },
-  build: {
-    watch: 'La Order ya esta definida. El siguiente paso es disparar un evento.',
-    effect: 'Has preparado una pieza reusable, pero el estado del tracker sigue intacto.',
-    flow: { active: 'event', done: ['config'] }
-  },
-  buy: {
-    watch: 'Observa que cash baja y position sube despues del buy.',
-    effect: 'Un Trade buy resta cash, suma position y deja el equity dependiendo del mark.',
-    flow: { active: 'state', done: ['config', 'event'] }
-  },
-  sell: {
-    watch: 'Observa que una venta parcial devuelve cash y reduce la position.',
-    effect: 'El tracker acumula consecuencias: vender no borra la historia, la actualiza.',
-    flow: { active: 'state', done: ['config', 'event'] }
-  },
-  sequence: {
-    watch: 'Ahora ya ves dos eventos encadenados: compra y luego venta parcial.',
-    effect: 'El sistema no guarda solo datos sueltos; guarda una trayectoria que termina en un equity concreto.',
-    flow: { active: 'state', done: ['config', 'event'] }
-  }
+  clean:    { watch: 'Todavia no hay evento. El tracker sigue en cero.', effect: 'Crear o editar una Order no cambia el sistema hasta que aplicas un Trade.', flow: { active: 'config', done: [] } },
+  build:    { watch: 'La Order ya esta definida. El siguiente paso es disparar un evento.', effect: 'Has preparado una pieza reusable, pero el estado del tracker sigue intacto.', flow: { active: 'event', done: ['config'] } },
+  buy:      { watch: 'Observa que cash baja y position sube despues del buy.', effect: 'Un Trade buy resta cash, suma position y deja el equity dependiendo del mark.', flow: { active: 'state', done: ['config', 'event'] } },
+  sell:     { watch: 'Observa que una venta parcial devuelve cash y reduce la position.', effect: 'El tracker acumula consecuencias: vender no borra la historia, la actualiza.', flow: { active: 'state', done: ['config', 'event'] } },
+  sequence: { watch: 'Ahora ya ves dos eventos encadenados: compra y luego venta parcial.', effect: 'El sistema no guarda solo datos sueltos; guarda una trayectoria que termina en un equity concreto.', flow: { active: 'state', done: ['config', 'event'] } }
 };
 
 const rows = [
-  { symbol: 'BTCUSDT', side: 'buy', price: 99980, size: 0.10 },
+  { symbol: 'BTCUSDT', side: 'buy',  price: 99980,  size: 0.10 },
   { symbol: 'BTCUSDT', side: 'sell', price: 100020, size: 0.08 },
-  { symbol: 'ETHUSDT', side: 'buy', price: 3520, size: 1.40 }
+  { symbol: 'ETHUSDT', side: 'buy',  price: 3520,   size: 1.40 }
 ];
 
+// ============================================================
+// STATE
+// ============================================================
+
 const state = {
-  heroPhase: 'import',
-  heroTouched: false,
+  heroPhase: 'import', heroTouched: false,
   importMode: 'before',
-  filter: 'all',
-  showNotional: false,
-  grouped: false,
-  activeOperation: 'overview',
+  filter: 'all', showNotional: false, grouped: false, activeOperation: 'overview',
   objectFocus: 'dict',
-  cash: 0,
-  position: 0,
-  mark: 100080,
-  lastTrade: null,
-  appliedTrades: [],
-  lastAction: 'clean',
-  log: [],
-  timelineIndex: 0,
-  timelineTouched: false,
-  activeSection: 'hero'
+  cash: 0, position: 0, mark: 100080,
+  lastTrade: null, appliedTrades: [], lastAction: 'clean', log: [],
+  timelineIndex: 0, timelineTouched: false,
+  activeSection: 'hero',
+  chaosAssets: 1,
+  activePersona: 'A'
 };
 
 const sections = [...document.querySelectorAll('main section')];
 const navLinks = [...document.querySelectorAll('.nav-links a')];
 
+// ============================================================
+// HELPERS
+// ============================================================
+
 function fmt(n, d = 2) { return Number(n).toFixed(d); }
+
+function setCode(elementId, code) {
+  const el = document.getElementById(elementId);
+  if (!el) return;
+  if (typeof Prism !== 'undefined' && Prism.languages && Prism.languages.python) {
+    el.innerHTML = Prism.highlight(code, Prism.languages.python, 'python');
+  } else {
+    el.textContent = code;
+  }
+}
 
 function updateProgress() {
   const h = document.documentElement.scrollHeight - window.innerHeight;
@@ -999,18 +1264,22 @@ function currentIndex() {
   return idx;
 }
 
+// ============================================================
+// RENDER FUNCTIONS
+// ============================================================
+
 function renderHero() {
   const cfg = heroPhases[state.heroPhase];
-  document.getElementById('hero-status').textContent = `fase: ${cfg.status}`;
+  document.getElementById('hero-status').textContent     = `fase: ${cfg.status}`;
   document.getElementById('hero-code-label').textContent = cfg.label;
-  document.getElementById('hero-code').textContent = cfg.code;
-  document.getElementById('hero-object').textContent = cfg.object;
-  document.getElementById('hero-desc').textContent = cfg.desc;
-  document.getElementById('hero-cash').textContent = cfg.cash;
-  document.getElementById('hero-equity').textContent = cfg.equity;
-  document.getElementById('hero-watch').textContent = cfg.watch;
-  document.getElementById('hero-idea').textContent = cfg.idea;
-  document.getElementById('hero-effect').textContent = cfg.effect;
+  setCode('hero-code', cfg.code);
+  document.getElementById('hero-object').textContent  = cfg.object;
+  document.getElementById('hero-desc').textContent    = cfg.desc;
+  document.getElementById('hero-cash').textContent    = cfg.cash;
+  document.getElementById('hero-equity').textContent  = cfg.equity;
+  document.getElementById('hero-watch').textContent   = cfg.watch;
+  document.getElementById('hero-idea').textContent    = cfg.idea;
+  document.getElementById('hero-effect').textContent  = cfg.effect;
   document.getElementById('hero-caption').textContent = cfg.caption;
   document.getElementById('hero-table').innerHTML = rows.map((row, i) => {
     const active = (state.heroPhase === 'table' && i !== 1) || (state.heroPhase === 'state' && i < 2);
@@ -1021,13 +1290,13 @@ function renderHero() {
 
 function renderImport() {
   const cfg = importConfigs[state.importMode];
-  document.getElementById('import-kicker').textContent = cfg.kicker;
-  document.getElementById('import-title').textContent = cfg.title;
-  document.getElementById('import-copy').textContent = cfg.copy;
-  document.getElementById('import-output').textContent = cfg.output;
+  document.getElementById('import-kicker').textContent    = cfg.kicker;
+  document.getElementById('import-title').textContent     = cfg.title;
+  document.getElementById('import-copy').textContent      = cfg.copy;
+  document.getElementById('import-output').textContent    = cfg.output;
   document.getElementById('import-code-label').textContent = cfg.codeLabel;
-  document.getElementById('import-code').textContent = cfg.code;
-  document.getElementById('import-list').innerHTML = cfg.list.map(item => `<li>${item}</li>`).join('');
+  setCode('import-code', cfg.code);
+  document.getElementById('import-list').innerHTML    = cfg.list.map(item => `<li>${item}</li>`).join('');
   document.getElementById('import-summary').textContent = cfg.summary;
   document.getElementById('import-observe').textContent = cfg.observe;
   document.querySelectorAll('#import-tabs .tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.mode === state.importMode));
@@ -1048,23 +1317,26 @@ function renderTable() {
 
   const totalVolume = visible.reduce((sum, row) => sum + row.size, 0);
   const gross = visible.reduce((sum, row) => sum + row.price * row.size, 0);
-  document.getElementById('stat-rows').textContent = String(visible.length);
-  document.getElementById('stat-volume').textContent = fmt(totalVolume);
+  document.getElementById('stat-rows').textContent    = String(visible.length);
+  document.getElementById('stat-volume').textContent  = fmt(totalVolume);
   document.getElementById('stat-notional').textContent = state.showNotional ? fmt(gross) : '-';
-  document.getElementById('stat-filter').textContent = state.filter === 'all' ? 'todas' : state.filter;
-  document.getElementById('table-code').textContent = state.grouped
+  document.getElementById('stat-filter').textContent  = state.filter === 'all' ? 'todas' : state.filter;
+
+  const tableCode = state.grouped
     ? 'trades["notional"] = trades["price"] * trades["size"]\nsummary = trades.groupby("side")[["size", "notional"]].sum()'
     : state.showNotional
       ? 'trades["notional"] = trades["price"] * trades["size"]'
       : state.filter !== 'all'
         ? `trades[trades["side"] == "${state.filter}"]`
         : 'trades = pd.DataFrame(rows)\ntrades.head()';
+  setCode('table-code', tableCode);
+
   document.getElementById('table-caption').textContent = state.activeOperation === 'overview'
     ? 'Mismo dataset, distinta ergonomia.'
     : `Operacion actual: ${op.action}.`;
-  document.getElementById('table-op-title').textContent = op.title;
-  document.getElementById('table-op-copy').textContent = op.copy;
-  document.getElementById('table-op-idea').textContent = op.idea;
+  document.getElementById('table-op-title').textContent  = op.title;
+  document.getElementById('table-op-copy').textContent   = op.copy;
+  document.getElementById('table-op-idea').textContent   = op.idea;
   document.getElementById('table-op-action').textContent = op.action;
 
   const groups = ['buy', 'sell'].map(side => {
@@ -1083,13 +1355,25 @@ function renderTable() {
   document.querySelectorAll('#table-filters .ghost-btn[data-filter]').forEach(btn => btn.classList.toggle('active', btn.dataset.filter === state.filter));
 }
 
+function renderChaos() {
+  const cfg = chaosConfigs[state.chaosAssets];
+  setCode('chaos-script-code', cfg.script);
+  setCode('chaos-oop-code', cfg.oop);
+  document.getElementById('chaos-script-verdict').textContent = cfg.scriptVerdict;
+  document.getElementById('chaos-oop-verdict').textContent    = cfg.oopVerdict;
+  document.getElementById('chaos-insight').textContent        = cfg.insight;
+  document.querySelectorAll('#chaos-controls .ghost-btn').forEach(btn =>
+    btn.classList.toggle('active', Number(btn.dataset.assets) === state.chaosAssets)
+  );
+}
+
 function renderObjects() {
   const cfg = objectConfigs[state.objectFocus];
   document.getElementById('object-title').textContent = cfg.title;
-  document.getElementById('object-copy').textContent = cfg.copy;
-  document.getElementById('object-list').innerHTML = cfg.list.map(item => `<li>${item}</li>`).join('');
-  document.getElementById('object-note').textContent = cfg.note;
-  document.getElementById('object-code').textContent = cfg.code;
+  document.getElementById('object-copy').textContent  = cfg.copy;
+  document.getElementById('object-list').innerHTML    = cfg.list.map(item => `<li>${item}</li>`).join('');
+  document.getElementById('object-note').textContent  = cfg.note;
+  setCode('object-code', cfg.code);
   document.querySelectorAll('#object-tabs .tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.focus === state.objectFocus));
   ['dict', 'class', 'object'].forEach(name => document.getElementById(`node-${name}`).classList.toggle('active', name === cfg.node));
 }
@@ -1097,13 +1381,13 @@ function renderObjects() {
 function currentOrder() {
   return {
     symbol: document.getElementById('symbol-input').value || 'BTCUSDT',
-    side: document.getElementById('side-input').value,
-    price: Number(document.getElementById('price-input').value || 0),
-    size: Number(document.getElementById('size-input').value || 0)
+    side:   document.getElementById('side-input').value,
+    price:  Number(document.getElementById('price-input').value || 0),
+    size:   Number(document.getElementById('size-input').value || 0)
   };
 }
 
-function equity() {
+function equityValue() {
   return state.cash + state.position * state.mark;
 }
 
@@ -1116,32 +1400,86 @@ function renderBuilderFlow() {
   });
 }
 
+function animateEquity(newVal) {
+  const equityEl  = document.getElementById('tk-equity');
+  const metricEl  = document.getElementById('equity-metric');
+  if (typeof gsap !== 'undefined') {
+    const prevVal = parseFloat(equityEl.textContent.replace(',', '.')) || 0;
+    const obj = { val: prevVal };
+    gsap.to(obj, {
+      val: newVal, duration: 0.45, ease: 'power2.out',
+      onUpdate() { equityEl.textContent = fmt(obj.val); }
+    });
+    if (newVal < 0) {
+      gsap.to(equityEl,  { color: '#f472b6', duration: 0.1 });
+      gsap.to(metricEl,  { borderColor: 'rgba(244,114,182,0.35)', duration: 0.2 });
+    } else if (newVal > 0) {
+      gsap.fromTo(equityEl, { color: '#57e389' }, { color: '#f7fbff', duration: 1.0 });
+      gsap.to(metricEl,     { borderColor: 'rgba(87,227,137,0.25)', duration: 0.2,
+        onComplete() { gsap.to(metricEl, { borderColor: 'rgba(123,147,182,0.12)', duration: 1.0, delay: 0.8 }); }
+      });
+    } else {
+      gsap.to(equityEl, { color: '#f7fbff', duration: 0.3 });
+      gsap.to(metricEl, { borderColor: 'rgba(123,147,182,0.12)', duration: 0.3 });
+    }
+  } else {
+    equityEl.textContent = fmt(newVal);
+  }
+}
+
 function renderTracker() {
-  const order = currentOrder();
+  const order   = currentOrder();
   const message = builderMessages[state.lastAction];
   state.mark = Number(document.getElementById('mark-input').value || 0);
-  document.getElementById('pv-symbol').textContent = order.symbol;
-  document.getElementById('pv-side').textContent = order.side;
+  document.getElementById('pv-symbol').textContent  = order.symbol;
+  document.getElementById('pv-side').textContent    = order.side;
   document.getElementById('pv-notional').textContent = fmt(order.price * order.size);
-  document.getElementById('pv-desc').textContent = `${order.side} ${fmt(order.size)} ${order.symbol}`;
-  document.getElementById('tk-cash').textContent = fmt(state.cash);
+  document.getElementById('pv-desc').textContent    = `${order.side} ${fmt(order.size)} ${order.symbol}`;
+  document.getElementById('tk-cash').textContent    = fmt(state.cash);
   document.getElementById('tk-position').textContent = fmt(state.position);
-  document.getElementById('tk-mark').textContent = String(state.mark);
-  document.getElementById('tk-equity').textContent = fmt(equity());
-  document.getElementById('builder-watch').textContent = message.watch;
+  document.getElementById('tk-mark').textContent    = String(state.mark);
+  animateEquity(equityValue());
+  document.getElementById('builder-watch').textContent  = message.watch;
   document.getElementById('builder-effect').textContent = message.effect;
+
   const tradeLines = state.appliedTrades.length
-    ? `\n${state.appliedTrades.map(trade => `tracker.apply_trade(Trade("${trade.symbol}", "${trade.side}", ${trade.price}, ${fmt(trade.size)}))`).join('\n')}`
+    ? `\n${state.appliedTrades.map(t => `tracker.apply_trade(Trade("${t.symbol}", "${t.side}", ${t.price}, ${fmt(t.size)}))`).join('\n')}`
     : '';
-  document.getElementById('tracker-code').textContent =
+  setCode('tracker-code',
 `order = Order("${order.symbol}", "${order.side}", ${order.price}, ${fmt(order.size)})
 tracker = PositionTracker()${tradeLines}
-equity = tracker.equity(mark_price=${state.mark})`;
+equity = tracker.equity(mark_price=${state.mark})`);
+
   document.getElementById('log').innerHTML = state.log.length
     ? state.log.map(item => `<div><strong>${item.title}</strong>${item.body}</div>`).join('')
     : '<div><strong>Estado limpio.</strong> Todavia no has aplicado ningun trade al tracker.</div>';
   renderBuilderFlow();
 }
+
+function renderTeam() {
+  const cfg = teamConfigs[state.activePersona];
+  document.getElementById('team-title').textContent = cfg.title;
+  document.getElementById('team-copy').textContent  = cfg.copy;
+  setCode('team-code', cfg.code);
+  document.getElementById('team-guarantees').innerHTML = cfg.guarantees.map(g => `<div class="guarantee-item">${g}</div>`).join('');
+  document.getElementById('team-principle').textContent = cfg.principle;
+  document.getElementById('team-without').textContent   = cfg.without;
+  document.querySelectorAll('#team-tabs .tab-btn').forEach(btn =>
+    btn.classList.toggle('active', btn.dataset.persona === state.activePersona)
+  );
+}
+
+function renderTimeline() {
+  const cfg = timelineSteps[state.timelineIndex];
+  document.getElementById('timeline-title').textContent = cfg.title;
+  document.getElementById('timeline-copy').textContent  = cfg.copy;
+  setCode('timeline-code', cfg.code);
+  document.querySelectorAll('#timeline .timeline-btn').forEach((btn, i) => btn.classList.toggle('active', i === state.timelineIndex));
+}
+
+// ============================================================
+// LOG + TRADE HELPERS
+// ============================================================
 
 function addLog(title, body) {
   state.log.unshift({ title, body });
@@ -1150,10 +1488,10 @@ function addLog(title, body) {
 
 function applyTrade(trade) {
   if (trade.side === 'buy') {
-    state.cash -= trade.price * trade.size;
+    state.cash     -= trade.price * trade.size;
     state.position += trade.size;
   } else {
-    state.cash += trade.price * trade.size;
+    state.cash     += trade.price * trade.size;
     state.position -= trade.size;
   }
   state.lastTrade = trade;
@@ -1163,86 +1501,35 @@ function applyTrade(trade) {
   renderTracker();
 }
 
-function renderTimeline() {
-  const cfg = timelineSteps[state.timelineIndex];
-  document.getElementById('timeline-title').textContent = cfg.title;
-  document.getElementById('timeline-copy').textContent = cfg.copy;
-  document.getElementById('timeline-code').textContent = cfg.code;
-  document.querySelectorAll('#timeline .timeline-btn').forEach((btn, i) => btn.classList.toggle('active', i === state.timelineIndex));
-}
-
-function initCanvas() {
-  const host = document.getElementById('bg-canvas');
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
-  host.appendChild(canvas);
-  const nodes = Array.from({ length: 48 }, () => ({ x: Math.random(), y: Math.random(), vx: (Math.random() - 0.5) * 0.0006, vy: (Math.random() - 0.5) * 0.0006 }));
-
-  function resize() {
-    const ratio = window.devicePixelRatio || 1;
-    canvas.width = window.innerWidth * ratio;
-    canvas.height = window.innerHeight * ratio;
-    canvas.style.width = `${window.innerWidth}px`;
-    canvas.style.height = `${window.innerHeight}px`;
-    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-  }
-
-  function frame() {
-    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-    nodes.forEach(node => {
-      node.x += node.vx;
-      node.y += node.vy;
-      if (node.x < -0.05 || node.x > 1.05) node.vx *= -1;
-      if (node.y < -0.05 || node.y > 1.05) node.vy *= -1;
-    });
-    for (let i = 0; i < nodes.length; i++) {
-      const a = nodes[i];
-      const ax = a.x * window.innerWidth;
-      const ay = a.y * window.innerHeight;
-      for (let j = i + 1; j < nodes.length; j++) {
-        const b = nodes[j];
-        const bx = b.x * window.innerWidth;
-        const by = b.y * window.innerHeight;
-        const d = Math.hypot(ax - bx, ay - by);
-        if (d < 170) {
-          ctx.strokeStyle = `rgba(34,211,238,${0.08 * (1 - d / 170)})`;
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(ax, ay);
-          ctx.lineTo(bx, by);
-          ctx.stroke();
-        }
-      }
-      ctx.fillStyle = 'rgba(143,162,255,0.32)';
-      ctx.beginPath();
-      ctx.arc(ax, ay, 1.7, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    requestAnimationFrame(frame);
-  }
-
-  resize();
-  frame();
-  window.addEventListener('resize', resize);
-}
+// ============================================================
+// INIT
+// ============================================================
 
 function init() {
-  initCanvas();
   observeSections();
   updateProgress();
+
+  // Initial renders
   renderHero();
   renderImport();
   renderTable();
+  renderChaos();
   renderObjects();
   renderTracker();
+  renderTeam();
   renderTimeline();
 
+  // Static code snippets (set once)
+  setCode('objects-dict-fail',
+`order = {\n    "symbol": "BTCUSDT",\n    "side": "buy",\n    "price": 100000,\n    "size": 0.10,\n}\n\n# quieres llamar al metodo de la orden...\nnotional = order.notional()  # AttributeError!\n\n# el dict no tiene metodos propios`);
+
+  // Scroll + keyboard
   window.addEventListener('scroll', updateProgress, { passive: true });
   document.addEventListener('keydown', event => {
     const tag = document.activeElement ? document.activeElement.tagName : '';
     if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) return;
     if (event.key === 'ArrowRight' || event.key === 'PageDown') { event.preventDefault(); goTo(currentIndex() + 1); }
-    if (event.key === 'ArrowLeft' || event.key === 'PageUp') { event.preventDefault(); goTo(currentIndex() - 1); }
+    if (event.key === 'ArrowLeft'  || event.key === 'PageUp')   { event.preventDefault(); goTo(currentIndex() - 1); }
     if (event.key.toLowerCase() === 'f') {
       event.preventDefault();
       if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
@@ -1259,6 +1546,7 @@ function init() {
     document.querySelector(btn.getAttribute('data-jump')).scrollIntoView({ behavior: 'smooth', block: 'start' });
   }));
 
+  // Hero tabs
   document.querySelectorAll('#hero-tabs .tab-btn').forEach(btn => btn.addEventListener('click', () => {
     state.heroTouched = true;
     state.heroPhase = btn.dataset.phase;
@@ -1271,11 +1559,13 @@ function init() {
     renderHero();
   }, 3400);
 
+  // Import tabs
   document.querySelectorAll('#import-tabs .tab-btn').forEach(btn => btn.addEventListener('click', () => {
     state.importMode = btn.dataset.mode;
     renderImport();
   }));
 
+  // Table filters
   document.querySelectorAll('#table-filters .ghost-btn[data-filter]').forEach(btn => btn.addEventListener('click', () => {
     state.filter = btn.dataset.filter;
     renderTable();
@@ -1284,12 +1574,22 @@ function init() {
   document.getElementById('group-btn').addEventListener('click', () => { state.grouped = !state.grouped; renderTable(); });
   document.getElementById('table-reset-btn').addEventListener('click', () => { state.filter = 'all'; state.showNotional = false; state.grouped = false; renderTable(); });
 
+  // Chaos controls
+  document.querySelectorAll('#chaos-controls .ghost-btn').forEach(btn => btn.addEventListener('click', () => {
+    state.chaosAssets = Number(btn.dataset.assets);
+    renderChaos();
+  }));
+
+  // Object tabs
   document.querySelectorAll('#object-tabs .tab-btn').forEach(btn => btn.addEventListener('click', () => {
     state.objectFocus = btn.dataset.focus;
     renderObjects();
   }));
 
-  ['symbol-input', 'side-input', 'price-input', 'size-input', 'mark-input'].forEach(id => document.getElementById(id).addEventListener('input', renderTracker));
+  // Builder inputs
+  ['symbol-input', 'side-input', 'price-input', 'size-input', 'mark-input'].forEach(id =>
+    document.getElementById(id).addEventListener('input', renderTracker)
+  );
   document.getElementById('build-btn').addEventListener('click', () => {
     state.lastAction = 'build';
     addLog('Order lista', ` ${document.getElementById('pv-desc').textContent}`);
@@ -1305,27 +1605,25 @@ function init() {
   });
   document.getElementById('sequence-btn').addEventListener('click', () => {
     const order = currentOrder();
-    state.cash = 0;
-    state.position = 0;
-    state.lastTrade = null;
-    state.appliedTrades = [];
-    state.log = [];
+    state.cash = 0; state.position = 0; state.lastTrade = null; state.appliedTrades = []; state.log = [];
     addLog('Order lista', ` ${order.side} ${fmt(order.size)} ${order.symbol}`);
-    applyTrade({ symbol: order.symbol, side: 'buy', price: order.price, size: order.size });
+    applyTrade({ symbol: order.symbol, side: 'buy',  price: order.price,       size: order.size });
     applyTrade({ symbol: order.symbol, side: 'sell', price: order.price + 120, size: Math.max(order.size / 2, 0.01) });
     state.lastAction = 'sequence';
     renderTracker();
   });
   document.getElementById('reset-btn').addEventListener('click', () => {
-    state.cash = 0;
-    state.position = 0;
-    state.lastTrade = null;
-    state.appliedTrades = [];
-    state.lastAction = 'clean';
-    state.log = [];
+    state.cash = 0; state.position = 0; state.lastTrade = null; state.appliedTrades = []; state.lastAction = 'clean'; state.log = [];
     renderTracker();
   });
 
+  // Team tabs
+  document.querySelectorAll('#team-tabs .tab-btn').forEach(btn => btn.addEventListener('click', () => {
+    state.activePersona = btn.dataset.persona;
+    renderTeam();
+  }));
+
+  // Timeline
   document.querySelectorAll('#timeline .timeline-btn').forEach((btn, i) => btn.addEventListener('click', () => {
     state.timelineTouched = true;
     state.timelineIndex = i;

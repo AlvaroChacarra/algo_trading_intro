@@ -1,6 +1,44 @@
 # Portfolio Architecture Demo
 
-Mini repo for lesson 2: a small portfolio allocation app designed to show how classes and modules collaborate in a clean OOP architecture.
+Mini repo para lesson 2: una app de portfolio allocation que muestra cómo las clases y módulos colaboran en una arquitectura OOP limpia.
+
+## Mapa del tesoro — lee esto primero
+
+```
+Tu entrada (CLI)
+       │
+       ▼
+┌─────────────────────┐
+│  PortfolioOptimizerApp  │  ← app.py — orquesta todo, maneja errores
+└─────────┬───────────┘
+          │ usa
+    ┌─────┼──────────────┐
+    ▼     ▼              ▼
+┌──────┐ ┌──────────┐ ┌──────────────┐
+│Univer│ │Selector  │ │DataProvider  │  ← cada uno hace una sola cosa
+│se    │ │          │ │              │
+└──────┘ └────┬─────┘ └──────┬───────┘
+universe.py   │ valida        │ datos mock
+         selector.py    data_provider.py
+                              │
+                              ▼
+                    ┌─────────────────┐
+                    │  OptimizerModel │  ← model.py — calcula pesos
+                    └─────────────────┘
+```
+
+**Regla de debugging:** si algo falla, el traceback te dice el módulo dueño.
+- Error en validación → `selector.py`
+- Error en datos → `data_provider.py`
+- Error en pesos → `model.py`
+- Error de orquestación → `app.py`
+
+## Flujo recomendado para el alumno
+
+1. Ejecuta `--scenario happy` primero — entiende el flujo normal
+2. Ejecuta `--scenario data_fail` — ¿qué clase falla y por qué?
+3. Ejecuta `--scenario bad_selection` — ¿en qué módulo se detecta el error?
+4. Lee `teaching_notes.md` solo si quieres más contexto
 
 ## Teaching goal
 
