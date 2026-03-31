@@ -3,1640 +3,834 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Libraries + OOP - Clase 2</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<title>Libraries + OOP — Clase 2</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2309090b'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Arial,sans-serif' font-size='28' font-weight='700' fill='%2322d3ee'%3EOOP%3C/text%3E%3C/svg%3E">
 <style>
-:root {
-  --bg: #07090d;
-  --panel: rgba(14, 19, 28, 0.94);
-  --panel-2: rgba(18, 26, 37, 0.96);
-  --line: rgba(123, 147, 182, 0.16);
-  --text: #f7fbff;
-  --muted: #a7b4c7;
-  --muted-2: #8090a3;
-  --cyan: #22d3ee;
-  --blue: #8fa2ff;
-  --green: #57e389;
-  --pink: #f472b6;
-  --shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
-  --nav-h: 92px;
-  --wrap: min(1240px, calc(100vw - 32px));
-}
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body {
-  font-family: 'Inter', system-ui, sans-serif;
-  background:
-    radial-gradient(circle at 15% 10%, rgba(34, 211, 238, 0.08), transparent 24%),
-    radial-gradient(circle at 78% 18%, rgba(143, 162, 255, 0.10), transparent 22%),
-    linear-gradient(180deg, #06090e 0%, #08111a 45%, #06090d 100%);
-  color: var(--text);
-  line-height: 1.65;
-  font-size: 17px;
-  overflow-x: hidden;
+:root {
+  --bg: #09090b;
+  --surface: #18181b;
+  --surface-2: #27272a;
+  --border: #3f3f46;
+  --text: #fafafa;
+  --muted: #a1a1aa;
+  --cyan: #22d3ee;
+  --blue: #818cf8;
+  --green: #4ade80;
+  --pink: #f472b6;
+  --yellow: #fbbf24;
+  --red: #f87171;
+  --nav-h: 64px;
+  --wrap: min(1200px, calc(100vw - 48px));
+  --shadow: 0 20px 60px rgba(0,0,0,0.35);
 }
 
-nav {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 50;
-  background: rgba(7, 9, 13, 0.84);
-  backdrop-filter: blur(18px);
-  border-bottom: 1px solid var(--line);
-}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; scroll-snap-type:y proximity; scrollbar-width:thin; scrollbar-color:var(--surface-2) var(--bg); }
+body { background:var(--bg); color:var(--text); font-family:'Inter',system-ui,sans-serif; line-height:1.7; font-size:17px; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
 
-.nav-shell { width: var(--wrap); margin: 0 auto; padding: 14px 0 10px; }
-.nav-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.brand { color: var(--cyan); font-weight: 800; font-size: 16px; letter-spacing: -0.02em; }
-.brand::before {
-  content: '';
-  display: inline-block;
-  width: 8px; height: 8px;
-  margin-right: 10px;
-  border-radius: 999px;
-  background: var(--cyan);
-  box-shadow: 0 0 16px rgba(34, 211, 238, 0.8);
-  vertical-align: middle;
-}
+nav { position:fixed; top:0; left:0; right:0; z-index:100; background:rgba(9,9,11,0.85); backdrop-filter:blur(16px) saturate(1.4); border-bottom:1px solid rgba(63,63,70,0.5); padding:0 40px; height:var(--nav-h); display:flex; align-items:center; justify-content:space-between; }
+.nav-brand { font-weight:800; font-size:16px; color:var(--cyan); letter-spacing:-0.02em; }
+.nav-brand::before { content:''; display:inline-block; width:8px; height:8px; margin-right:10px; border-radius:999px; background:var(--cyan); box-shadow:0 0 14px rgba(34,211,238,0.7); vertical-align:middle; }
+.nav-links { display:flex; gap:6px; list-style:none; }
+.nav-links a { color:var(--muted); text-decoration:none; font-size:14px; font-weight:600; padding:8px 14px; border-radius:10px; transition:all 0.2s; }
+.nav-links a:hover, .nav-links a.active { color:var(--text); background:var(--surface); }
+.nav-actions { display:flex; align-items:center; gap:10px; }
+.full-btn { background:var(--surface); color:var(--text); border:1px solid var(--border); border-radius:10px; padding:8px 14px; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s; }
+.full-btn:hover { border-color:rgba(34,211,238,0.4); }
+#progress { position:fixed; top:var(--nav-h); left:0; height:2px; width:0%; z-index:101; background:linear-gradient(90deg,var(--cyan),var(--blue),var(--pink)); transition:width 0.15s; }
 
-.nav-actions { display: flex; align-items: center; gap: 10px; }
-.pill, .full-btn, .nav-links a, .tab-btn, .action-btn, .ghost-btn, .timeline-btn {
-  border: 1px solid var(--line);
-  background: rgba(17, 24, 34, 0.88);
-  color: var(--muted);
-  border-radius: 999px;
-  padding: 9px 13px;
-  font-size: 13px;
-  font-weight: 700;
-  text-decoration: none;
-}
+main { width:var(--wrap); margin:0 auto; padding:calc(var(--nav-h) + 32px) 0 120px; }
+section { margin:0 0 80px; scroll-snap-align:start; scroll-margin-top:calc(var(--nav-h) + 24px); opacity:0; transform:translateY(20px); transition:opacity 0.5s ease, transform 0.5s ease; }
+section.visible { opacity:1; transform:translateY(0); }
+.shell { background:linear-gradient(180deg,rgba(24,24,27,0.95),rgba(18,18,21,0.9)); border:1px solid rgba(63,63,70,0.4); border-radius:28px; box-shadow:var(--shadow); padding:32px; position:relative; overflow:hidden; }
+.shell::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(34,211,238,0.04),transparent 30%); pointer-events:none; }
 
-.full-btn, .tab-btn, .action-btn, .ghost-btn, .timeline-btn { cursor: pointer; }
-.full-btn:hover, .tab-btn:hover, .action-btn:hover, .ghost-btn:hover, .timeline-btn:hover, .nav-links a:hover {
-  color: var(--text);
-  border-color: rgba(34, 211, 238, 0.28);
-}
+.label { display:inline-flex; align-items:center; gap:8px; padding:7px 14px; border-radius:999px; background:rgba(34,211,238,0.08); border:1px solid rgba(34,211,238,0.18); color:var(--cyan); font-size:12px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:18px; }
+h1 { font-size:clamp(42px,6vw,80px); font-weight:900; letter-spacing:-0.045em; line-height:0.95; }
+h2 { font-size:clamp(30px,4vw,52px); font-weight:850; letter-spacing:-0.04em; line-height:1; }
+h3 { font-size:22px; font-weight:800; letter-spacing:-0.03em; }
+p, li { color:var(--muted); }
+.lead { max-width:700px; font-size:clamp(18px,2vw,22px); color:#d4d4d8; margin-top:16px; }
+.accent { color:var(--cyan); }
 
-.nav-scroll { margin-top: 12px; overflow-x: auto; scrollbar-width: none; }
-.nav-scroll::-webkit-scrollbar { display: none; }
-.nav-links { display: inline-flex; gap: 8px; min-width: max-content; padding-bottom: 2px; }
-.nav-links a.active, .tab-btn.active, .timeline-btn.active, .ghost-btn.active {
-  color: var(--text);
-  border-color: rgba(34, 211, 238, 0.3);
-  background: rgba(23, 35, 49, 0.96);
-}
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:start; }
+.hero-grid { display:grid; grid-template-columns:1.1fr 0.9fr; gap:32px; align-items:center; min-height:calc(100vh - var(--nav-h) - 64px); }
 
-.progress {
-  position: fixed;
-  top: var(--nav-h);
-  left: 0;
-  height: 2px;
-  width: 0%;
-  z-index: 51;
-  background: linear-gradient(90deg, var(--cyan), var(--blue), var(--pink));
-}
+.card { background:rgba(24,24,27,0.8); border:1px solid rgba(63,63,70,0.35); border-radius:20px; padding:20px; }
+.card-label { color:var(--cyan); font-size:11px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:10px; }
 
-main {
-  position: relative;
-  z-index: 1;
-  width: var(--wrap);
-  margin: 0 auto;
-  padding: calc(var(--nav-h) + 24px) 0 120px;
-}
+pre, code { font-family:'JetBrains Mono',monospace; font-size:13.5px; line-height:1.7; }
+.code-block { background:rgba(9,9,11,0.8); border:1px solid rgba(63,63,70,0.3); border-radius:16px; padding:18px 20px; overflow-x:auto; white-space:pre-wrap; word-break:break-word; }
+.code-block code { color:#e4e4e7; }
+.code-block.bad { border-color:rgba(244,114,182,0.25); }
+.code-block.good { border-color:rgba(74,222,128,0.25); }
 
-section {
-  margin: 0 0 84px;
-  min-height: auto;
-  scroll-margin-top: calc(var(--nav-h) + 18px);
-  opacity: 0;
-  transform: translateY(18px);
-  transition: opacity 0.45s ease, transform 0.45s ease;
-}
+.btn { display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; transition:all 0.2s; border:1px solid var(--border); background:var(--surface); color:var(--text); }
+.btn:hover { border-color:rgba(34,211,238,0.3); }
+.btn.active { border-color:rgba(34,211,238,0.4); background:rgba(34,211,238,0.08); color:var(--cyan); }
+.btn-primary { background:linear-gradient(135deg,var(--cyan),#06b6d4); color:#09090b; border:none; }
+.btn-primary:hover { box-shadow:0 4px 16px rgba(34,211,238,0.25); }
+.btn-row { display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
 
-section.visible { opacity: 1; transform: translateY(0); }
+.metric { padding:16px; border-radius:16px; background:rgba(9,9,11,0.7); border:1px solid rgba(63,63,70,0.25); }
+.metric-name { color:var(--muted); font-size:11px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:6px; }
+.metric-value { font-size:26px; font-weight:900; letter-spacing:-0.04em; color:var(--text); transition:all 0.3s; }
+.metric-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; }
 
-.shell {
-  position: relative;
-  background: linear-gradient(180deg, rgba(10, 14, 21, 0.90), rgba(8, 12, 19, 0.84));
-  border: 1px solid rgba(123, 147, 182, 0.12);
-  border-radius: 30px;
-  box-shadow: var(--shadow);
-  padding: 28px;
-  overflow: hidden;
-}
+.verdict { margin-top:12px; padding:14px 18px; border-radius:14px; font-size:13px; font-weight:700; line-height:1.6; }
+.verdict.bad { background:rgba(244,114,182,0.06); border:1px solid rgba(244,114,182,0.2); color:var(--pink); }
+.verdict.good { background:rgba(74,222,128,0.06); border:1px solid rgba(74,222,128,0.2); color:var(--green); }
+.verdict.insight { background:rgba(129,140,248,0.06); border:1px solid rgba(129,140,248,0.2); color:var(--blue); }
 
-.shell::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(34, 211, 238, 0.05), transparent 26%);
-  pointer-events: none;
-}
+/* ── Transform animation ── */
+.transform-container { position:relative; min-height:360px; }
+.transform-panel { position:absolute; top:0; left:0; right:0; transition:opacity 0.5s, transform 0.5s; }
+.transform-panel.hidden { opacity:0; transform:translateX(40px); pointer-events:none; }
 
-.label {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 7px 14px;
-  border-radius: 999px;
-  background: rgba(34, 211, 238, 0.08);
-  border: 1px solid rgba(34, 211, 238, 0.18);
-  color: var(--cyan);
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-bottom: 18px;
+/* ── Playground ── */
+.playground-form { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.playground-form label { display:grid; gap:6px; color:var(--muted); font-size:12px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; }
+.playground-form input, .playground-form select {
+  width:100%; border-radius:12px; border:1px solid var(--border); background:var(--surface);
+  color:var(--text); padding:10px 14px; font-family:'JetBrains Mono',monospace; font-size:14px;
 }
+.playground-form input:focus, .playground-form select:focus { outline:none; border-color:rgba(34,211,238,0.4); }
 
-h1, h2, h3, h4 { letter-spacing: -0.045em; line-height: 0.98; }
-h1 { font-size: clamp(44px, 6.4vw, 86px); font-weight: 900; max-width: 760px; }
-h2 { font-size: clamp(32px, 4vw, 56px); font-weight: 850; max-width: 840px; }
-h3 { font-size: 24px; font-weight: 800; }
-p, li { color: var(--muted); }
-.lead { max-width: 820px; font-size: clamp(19px, 2vw, 24px); color: #c4d1e3; margin-top: 18px; }
-.accent-cyan { color: var(--cyan); }
-.accent-blue { color: var(--blue); }
-.accent-green { color: var(--green); }
-.accent-pink { color: var(--pink); }
+.log-entry { padding:10px 14px; border-radius:12px; background:rgba(9,9,11,0.7); border:1px solid rgba(63,63,70,0.2); font-family:'JetBrains Mono',monospace; font-size:12px; color:#d4d4d8; margin-bottom:8px; }
 
-.hero-grid, .two-col, .builder-grid, .bridge-grid, .hero-workspace, .stat-grid, .kv-grid, .table-left, .builder-stack, .support-stack, .context-grid, .step-strip, .flow-row, .object-band {
-  display: grid;
-  gap: 18px;
-}
-.hero-grid, .two-col, .builder-grid, .bridge-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.hero-workspace, .stat-grid, .kv-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.two-col, .builder-grid, .bridge-grid, .hero-workspace { align-items: start; }
-.bridge-grid { grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr); }
-.context-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-.context-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.step-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-.flow-row { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-.object-band { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-.chip-row, .btn-row, .tab-row, .filter-row, .timeline-row { display: flex; flex-wrap: wrap; gap: 10px; }
-.chip {
-  padding: 9px 13px;
-  border-radius: 999px;
-  background: rgba(17, 24, 34, 0.86);
-  border: 1px solid var(--line);
-  color: #d6e0ef;
-  font-size: 13px;
-  font-weight: 700;
-}
+.timeline-row { display:grid; grid-template-columns:repeat(5, 1fr); gap:8px; margin-top:24px; }
+.tl-step { padding:14px; border-radius:16px; background:rgba(9,9,11,0.7); border:1px solid rgba(63,63,70,0.25); text-align:center; font-size:12px; font-weight:700; transition:all 0.3s; }
+.tl-step.active { border-color:rgba(34,211,238,0.35); background:rgba(34,211,238,0.05); }
+.tl-step .tl-icon { font-size:20px; margin-bottom:6px; }
 
-.action-btn {
-  color: #071018;
-  background: linear-gradient(90deg, var(--cyan), #8fdcff);
-  border: 0;
-}
-
-.note { margin-top: 16px; color: var(--muted-2); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
-.card, .code, .panel {
-  background: linear-gradient(180deg, var(--panel), var(--panel-2));
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  box-shadow: var(--shadow);
-  padding: 20px;
-}
-
-.code-label, .mini-label {
-  color: var(--cyan);
-  font-size: 12px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 12px;
-}
-
-pre, code {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13.5px;
-  line-height: 1.7;
-  color: #d8e7f6;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-th, td { text-align: left; padding: 11px 8px; border-bottom: 1px solid rgba(123, 147, 182, 0.12); font-size: 14px; }
-th { color: var(--muted-2); font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 800; }
-td { color: #d3dfef; }
-tr.active td { background: rgba(34, 211, 238, 0.06); }
-
-.metric {
-  padding: 14px;
-  border-radius: 18px;
-  background: rgba(11, 17, 25, 0.92);
-  border: 1px solid rgba(123, 147, 182, 0.12);
-  transition: border-color 0.4s ease;
-}
-.metric-name { color: var(--muted-2); font-size: 11px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
-.metric-value { color: var(--text); font-size: 24px; font-weight: 900; letter-spacing: -0.04em; transition: color 0.4s ease; }
-.context-item {
-  padding: 14px;
-  border-radius: 18px;
-  background: rgba(11, 17, 25, 0.92);
-  border: 1px solid rgba(123, 147, 182, 0.12);
-}
-.context-value {
-  color: #e7f0fb;
-  font-size: 15px;
-  line-height: 1.5;
-  font-weight: 700;
-}
-
-.list { display: grid; gap: 10px; margin-top: 14px; list-style: none; }
-.list li { position: relative; padding-left: 18px; }
-.list li::before { content: '>'; position: absolute; left: 0; top: 0; color: var(--cyan); font-weight: 900; }
-
-.summary { display: grid; gap: 12px; margin-top: 16px; }
-.summary-item {
-  padding: 14px;
-  border-radius: 18px;
-  background: rgba(11, 17, 25, 0.92);
-  border: 1px solid rgba(123, 147, 182, 0.12);
-}
-.summary-item strong { display: block; color: var(--text); margin-bottom: 6px; }
-.bar { margin-top: 10px; height: 8px; border-radius: 999px; background: rgba(255,255,255,0.06); overflow: hidden; }
-.bar span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--cyan), var(--blue)); }
-
-.diagram svg { width: 100%; height: auto; display: block; }
-.node { fill: rgba(12, 18, 27, 0.96); stroke: rgba(123, 147, 182, 0.18); stroke-width: 2; }
-.node.active { fill: rgba(21, 42, 60, 0.96); stroke: rgba(34, 211, 238, 0.32); }
-.arrow { stroke: rgba(34, 211, 238, 0.28); stroke-width: 3; stroke-linecap: round; }
-.dtext { fill: #d6e1f0; font-family: Inter, sans-serif; font-size: 14px; font-weight: 700; }
-.dsub { fill: #91a2b8; font-family: Inter, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
-
-.builder-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-label { display: grid; gap: 8px; color: var(--muted); font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
-input, select {
-  width: 100%;
-  border-radius: 14px;
-  border: 1px solid var(--line);
-  background: rgba(17, 24, 34, 0.86);
-  color: var(--text);
-  padding: 12px 14px;
-}
-input:focus, select:focus {
-  outline: none;
-  border-color: rgba(34, 211, 238, 0.35);
-  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.08);
-}
-
-.log { display: grid; gap: 10px; margin-top: 12px; }
-.log div {
-  padding: 12px 14px;
-  border-radius: 16px;
-  background: rgba(11, 17, 25, 0.92);
-  border: 1px solid rgba(123, 147, 182, 0.12);
-  color: #d5e1f1;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.hero { min-height: calc(100vh - var(--nav-h) - 16px); }
-.hero .shell { min-height: calc(100vh - var(--nav-h) - 20px); padding: 34px; }
-.hero-grid { align-items: center; min-height: calc(100vh - var(--nav-h) - 96px); }
-.hero-copy { max-width: 660px; }
-.hero-copy p { margin-top: 18px; font-size: clamp(20px, 2.05vw, 25px); color: #c7d4e6; max-width: 620px; }
-.hero-agenda { margin-top: 22px; }
-.step-card {
-  padding: 14px 16px;
-  border-radius: 18px;
-  background: rgba(17, 24, 34, 0.86);
-  border: 1px solid var(--line);
-}
-.step-card strong, .flow-pill strong {
-  display: block;
-  color: var(--text);
-  font-size: 16px;
-  margin-bottom: 4px;
-}
-.step-card span, .flow-pill span {
-  color: #dbe6f6;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.45;
-}
-.teacher-banner {
-  margin-top: 16px;
-  padding: 16px 18px;
-  border-radius: 20px;
-  background: rgba(11, 17, 25, 0.94);
-  border: 1px solid rgba(123, 147, 182, 0.12);
-}
-.teacher-banner strong,
-.next-step strong {
-  display: block;
-  color: var(--text);
-  margin-bottom: 6px;
-}
-.table-left,
-.builder-stack,
-.support-stack {
-  align-content: start;
-}
-.table-card { padding-bottom: 14px; }
-.table-caption {
-  margin-top: 12px;
-  color: var(--muted-2);
-  font-size: 13px;
-  font-weight: 700;
-}
-.operation-card h3 {
-  font-size: 21px;
-  line-height: 1.1;
-}
-.operation-card p { margin-top: 10px; }
-.operation-card .context-grid { margin-top: 14px; }
-.support-code {
-  opacity: 0.84;
-  border-style: dashed;
-}
-.support-code pre { font-size: 13px; }
-.flow-pill {
-  padding: 14px 16px;
-  border-radius: 18px;
-  border: 1px solid var(--line);
-  background: rgba(17, 24, 34, 0.86);
-  color: var(--muted);
-}
-.flow-pill.active {
-  border-color: rgba(34, 211, 238, 0.3);
-  background: rgba(21, 34, 47, 0.96);
-}
-.flow-pill.done {
-  border-color: rgba(87, 227, 137, 0.22);
-}
-.feedback-panel { margin-top: 16px; }
-.log-card .log { margin-top: 0; }
-.next-step {
-  padding: 18px;
-  border-radius: 20px;
-  background: rgba(11, 17, 25, 0.94);
-  border: 1px solid rgba(123, 147, 182, 0.12);
-}
-#bridge .shell { padding-top: 24px; padding-bottom: 24px; }
-
-/* ---- Chaos section ---- */
-.chaos-col-bad .code  { border-color: rgba(244, 114, 182, 0.22); }
-.chaos-col-good .code { border-color: rgba(87, 227, 137, 0.22); }
-.chaos-verdict {
-  margin-top: 12px;
-  padding: 12px 16px;
-  border-radius: 16px;
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 1.5;
-  background: rgba(11, 17, 25, 0.92);
-  border: 1px solid rgba(123, 147, 182, 0.12);
-}
-.verdict-bad  { border-color: rgba(244, 114, 182, 0.22) !important; color: #f79dc5; }
-.verdict-good { border-color: rgba(87, 227, 137, 0.22) !important; color: #80efab; }
-.chaos-insight {
-  margin-top: 18px;
-  padding: 18px;
-  border-radius: 22px;
-  background: rgba(11, 17, 25, 0.94);
-  border: 1px solid rgba(34, 211, 238, 0.18);
-}
-
-/* ---- Objects pain point ---- */
-.pain-panel {
-  margin-bottom: 22px;
-  padding: 20px;
-  border-radius: 22px;
-  background: rgba(11, 17, 25, 0.94);
-  border: 1px solid rgba(244, 114, 182, 0.2);
-}
-.pain-panel .two-col { gap: 14px; }
-.error-pre { color: var(--pink) !important; opacity: 0.9; }
-
-/* ---- Team section ---- */
-.guarantee-item {
-  padding: 12px 14px;
-  border-radius: 14px;
-  background: rgba(11, 17, 25, 0.92);
-  border: 1px solid rgba(34, 211, 238, 0.12);
-  color: #d5e1f1;
-  font-size: 14px;
-  font-weight: 700;
-}
-.guarantee-item::before { content: '✓  '; color: var(--green); }
-.principle-panel {
-  margin-top: 14px;
-  padding: 14px;
-  border-radius: 16px;
-  background: rgba(11, 17, 25, 0.92);
-  border: 1px solid rgba(34, 211, 238, 0.18);
-}
-.without-panel {
-  margin-top: 10px;
-  padding: 14px;
-  border-radius: 16px;
-  background: rgba(11, 17, 25, 0.92);
-  border: 1px solid rgba(244, 114, 182, 0.18);
-}
-.team-grid { display: grid; gap: 12px; margin-top: 14px; }
-
-/* ---- Prism theme overrides ---- */
-code[class*="language-"],
-pre[class*="language-"] {
-  background: transparent !important;
-  text-shadow: none !important;
-  font-family: 'JetBrains Mono', monospace !important;
-  font-size: 13.5px !important;
-  line-height: 1.7 !important;
-  white-space: pre-wrap !important;
-  word-break: break-word !important;
-}
-.token.keyword    { color: #8fa2ff !important; }
-.token.builtin    { color: #22d3ee !important; }
-.token.string     { color: #57e389 !important; }
-.token.number     { color: #f472b6 !important; }
-.token.operator   { color: #c4d1e3 !important; }
-.token.comment    { color: #6b7a8f !important; font-style: italic; }
-.token.function   { color: #22d3ee !important; }
-.token.class-name { color: #f0c060 !important; }
-.token.decorator  { color: #f472b6 !important; }
-.token.punctuation{ color: #a7b4c7 !important; }
-.token.boolean    { color: #8fa2ff !important; }
-.token.none       { color: #8fa2ff !important; }
-
-@media (max-width: 980px) {
-  .hero-grid, .two-col, .builder-grid, .bridge-grid, .hero-workspace, .stat-grid, .kv-grid, .context-grid, .step-strip, .flow-row, .object-band { grid-template-columns: 1fr; }
-  .hero .shell, .hero-grid { min-height: auto; }
-}
-
-@media (max-width: 760px) {
-  :root { --nav-h: 88px; --wrap: calc(100vw - 18px); }
-  .pill { display: none; }
-  .brand { font-size: 14px; }
-  .nav-shell { padding: 8px 0 6px; }
-  .nav-actions { gap: 8px; }
-  .nav-scroll { margin-top: 8px; }
-  .full-btn, .nav-links a, .tab-btn, .action-btn, .ghost-btn, .timeline-btn { padding: 8px 11px; font-size: 12px; }
-  .progress { top: var(--nav-h); }
-  main { padding-top: calc(var(--nav-h) + 12px); padding-bottom: 78px; }
-  section { min-height: auto; margin-bottom: 64px; }
-  .shell { padding: 20px 15px; border-radius: 24px; }
-  .hero .shell { padding: 20px 15px; }
-  h1 { font-size: 31px; }
-  h2 { font-size: 30px; }
-  .hero-copy p { font-size: 18px; margin-top: 16px; }
-  .hero-agenda { margin-top: 18px; }
-  .step-strip {
-    display: flex;
-    overflow-x: auto;
-    gap: 10px;
-    scrollbar-width: none;
-    padding-bottom: 2px;
-  }
-  .step-strip::-webkit-scrollbar { display: none; }
-  .step-card { min-width: 220px; }
-  .step-card, .flow-pill, .teacher-banner, .next-step { padding: 14px; }
-  .context-item { padding: 12px; }
-  .metric-value { font-size: 22px; }
-  .builder-form { grid-template-columns: 1fr; }
+@media (max-width:768px) {
+  .two-col, .hero-grid, .metric-grid, .playground-form, .timeline-row { grid-template-columns:1fr; }
+  nav { padding:0 16px; }
+  .shell { padding:20px; border-radius:20px; }
 }
 </style>
 </head>
 <body>
+
 <nav>
-  <div class="nav-shell">
-    <div class="nav-top">
-      <div class="brand">Clase 2 - Libraries + OOP</div>
-      <div class="nav-actions">
-        <div class="pill">teclas: &larr; &rarr; | F</div>
-        <button id="fullscreen-btn" class="full-btn" type="button">Pantalla completa</button>
+  <span class="nav-brand">Clase 2 — Libraries + OOP</span>
+  <ul class="nav-links">
+    <li><a href="#hero">Inicio</a></li>
+    <li><a href="#escala">Escalar</a></li>
+    <li><a href="#transformar">Dict → Class</a></li>
+    <li><a href="#playground">Playground</a></li>
+    <li><a href="#cierre">Cierre</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="full-btn" id="fullscreen-btn">⛶</button>
+  </div>
+</nav>
+<div id="progress"></div>
+
+<main>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- HERO                                    -->
+<!-- ═══════════════════════════════════════ -->
+<section id="hero">
+  <div class="shell">
+    <div class="hero-grid">
+      <div>
+        <div class="label">Clase 2</div>
+        <h1>Cuando tu código necesita estructura</h1>
+        <p class="lead">En Lesson 1 todo funcionaba con variables sueltas. Hoy vas a ver qué pasa cuando intentas escalar ese código — y cómo las clases lo resuelven.</p>
+
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:32px;">
+          <div class="card" style="text-align:center;">
+            <div style="font-size:28px; margin-bottom:6px;">📦</div>
+            <h3 style="font-size:14px;">Import</h3>
+            <p style="font-size:12px;">Herramientas externas</p>
+          </div>
+          <div class="card" style="text-align:center;">
+            <div style="font-size:28px; margin-bottom:6px;">🏗️</div>
+            <h3 style="font-size:14px;">Class</h3>
+            <p style="font-size:12px;">Estructura reusable</p>
+          </div>
+          <div class="card" style="text-align:center;">
+            <div style="font-size:28px; margin-bottom:6px;">⚡</div>
+            <h3 style="font-size:14px;">State</h3>
+            <p style="font-size:12px;">Eventos → equity</p>
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="nav-scroll">
-      <div class="nav-links">
-        <a href="#hero">Inicio</a>
-        <a href="#import">Import</a>
-        <a href="#pandas">Pandas</a>
-        <a href="#chaos">Caos</a>
-        <a href="#objects">Objetos</a>
-        <a href="#builder">Order</a>
-        <a href="#team">Equipo</a>
-        <a href="#bridge">Sistema</a>
+
+      <div>
+        <div class="card" style="background:rgba(244,114,182,0.04); border-color:rgba(244,114,182,0.15);">
+          <div class="card-label" style="color:var(--pink); background:rgba(244,114,182,0.08); border-color:rgba(244,114,182,0.18);">El problema</div>
+          <div class="code-block bad">
+            <code>btc_cash = 0.0
+btc_position = 0.0
+eth_cash = 0.0      # duplicado
+eth_position = 0.0  # duplicado
+sol_cash = 0.0      # otra vez...
+sol_position = 0.0  # otra vez...</code>
+          </div>
+          <p style="font-size:14px; margin-top:12px; color:var(--pink);">N activos = 2N variables + lógica duplicada</p>
+        </div>
+        <div class="card" style="margin-top:12px; background:rgba(74,222,128,0.04); border-color:rgba(74,222,128,0.15);">
+          <div class="card-label" style="color:var(--green); background:rgba(74,222,128,0.08); border-color:rgba(74,222,128,0.18);">La solución</div>
+          <div class="code-block good">
+            <code>trackers = {
+    "BTC": PositionTracker(),
+    "ETH": PositionTracker(),
+    "SOL": PositionTracker(),
+}
+# N activos = N líneas. Cero duplicación.</code>
+          </div>
+          <p style="font-size:14px; margin-top:12px; color:var(--green);">Añadir un activo = una línea</p>
+        </div>
       </div>
     </div>
   </div>
-</nav>
-<div id="progress" class="progress"></div>
-<main>
+</section>
 
-  <!-- ============================
-       HERO
-       ============================ -->
-  <section id="hero" class="hero">
-    <div class="shell">
-      <div class="hero-grid">
-        <div class="hero-copy">
-          <div class="label">Lesson 02 - systems and structure</div>
-          <h1>Usar <span class="accent-cyan">librerias</span> te da herramientas. Crear <span class="accent-blue">objetos</span> te da estructura. Gestionar <span class="accent-green">estado</span> te acerca a un sistema.</h1>
-          <p>Hoy vas a hacer tres movimientos concretos: importar una herramienta, modelar una Order y ver como un Trade cambia cash, position y equity.</p>
-          <div class="hero-agenda">
-            <div class="mini-label">Hoy vas a hacer 3 cosas</div>
-            <div class="step-strip">
-              <div class="step-card"><strong>1.</strong><span>Importar pandas para trabajar una tabla sin friccion.</span></div>
-              <div class="step-card"><strong>2.</strong><span>Pasar de dict a una class que organiza datos y metodos.</span></div>
-              <div class="step-card"><strong>3.</strong><span>Aplicar eventos y leer como cambia el estado del tracker.</span></div>
-            </div>
-          </div>
-          <div class="btn-row" style="margin-top:24px;">
-            <button class="action-btn" type="button" data-jump="#import">Ver import</button>
-            <button class="ghost-btn" type="button" data-jump="#builder">Ir al playground</button>
-          </div>
-          <div class="note">Mira el panel derecho: la misma historia se recorre como tool -> data -> object -> state.</div>
-        </div>
+<!-- ═══════════════════════════════════════ -->
+<!-- BLOQUE 1: EL PROBLEMA DE ESCALAR       -->
+<!-- ═══════════════════════════════════════ -->
+<section id="escala">
+  <div class="shell">
+    <div class="label">Bloque 1 — El problema de escalar</div>
+    <h2>Script plano vs. OOP</h2>
+    <p class="lead">El código de Lesson 1 funciona perfecto para un activo. Pulsa los botones para ver qué pasa cuando añades más.</p>
 
+    <div class="btn-row" style="margin-top:20px; margin-bottom:24px;">
+      <button class="btn active chaos-btn" data-level="1">1 activo (BTC)</button>
+      <button class="btn chaos-btn" data-level="2">+ ETH</button>
+      <button class="btn chaos-btn" data-level="3">+ SOL</button>
+    </div>
+
+    <div class="two-col">
+      <div>
         <div class="card">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;">
-            <div class="mini-label">workspace vivo</div>
-            <div id="hero-status" class="pill" style="display:block;">fase: import</div>
-          </div>
-          <div id="hero-tabs" class="tab-row" style="margin-bottom:14px;">
-            <button class="tab-btn active" type="button" data-phase="import">import</button>
-            <button class="tab-btn" type="button" data-phase="table">tabla</button>
-            <button class="tab-btn" type="button" data-phase="object">objeto</button>
-            <button class="tab-btn" type="button" data-phase="state">estado</button>
-          </div>
-          <div class="hero-workspace">
-            <div>
-              <div class="code">
-                <div id="hero-code-label" class="code-label">tooling</div>
-                <pre id="hero-code"></pre>
-              </div>
-              <div class="panel" style="margin-top:14px;">
-                <div class="mini-label">dataset</div>
-                <table>
-                  <thead><tr><th>symbol</th><th>side</th><th>price</th><th>size</th></tr></thead>
-                  <tbody id="hero-table"></tbody>
-                </table>
-              </div>
-            </div>
-            <div>
-              <div class="panel">
-                <div class="mini-label">snapshot</div>
-                <div class="stat-grid">
-                  <div class="metric"><div class="metric-name">objeto actual</div><div id="hero-object" class="metric-value">Order</div></div>
-                  <div class="metric"><div class="metric-name">describe()</div><div id="hero-desc" class="metric-value" style="font-size:18px;">buy 0.10 BTCUSDT</div></div>
-                  <div class="metric"><div class="metric-name">cash</div><div id="hero-cash" class="metric-value">0</div></div>
-                  <div class="metric"><div class="metric-name">equity</div><div id="hero-equity" class="metric-value">0</div></div>
-                </div>
-              </div>
-              <div class="panel" style="margin-top:14px;">
-                <div class="mini-label">guia de lectura</div>
-                <div class="context-grid">
-                  <div class="context-item"><div class="metric-name">que mirar ahora</div><div id="hero-watch" class="context-value"></div></div>
-                  <div class="context-item"><div class="metric-name">idea clave</div><div id="hero-idea" class="context-value"></div></div>
-                  <div class="context-item"><div class="metric-name">progresion</div><div id="hero-effect" class="context-value"></div></div>
-                </div>
-                <div id="hero-caption" class="table-caption"></div>
-              </div>
-            </div>
-          </div>
+          <div class="card-label" style="color:var(--pink);">Script plano</div>
+          <div class="code-block bad" id="chaos-script"></div>
+          <div class="verdict bad" id="chaos-script-verdict"></div>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- ============================
-       IMPORT
-       ============================ -->
-  <section id="import">
-    <div class="shell">
-      <div class="label">Bloque 1 - Manual vs herramienta</div>
-      <h2>Mismo dataset. Muy distinta capacidad operativa.</h2>
-      <p class="lead">Import no crea magia. Hace disponible una herramienta que cambia la velocidad con la que lees, calculas y resumes.</p>
-      <div id="import-tabs" class="tab-row" style="margin-top:22px;">
-        <button class="tab-btn active" type="button" data-mode="before">Sin libreria</button>
-        <button class="tab-btn" type="button" data-mode="after">Con pandas</button>
-      </div>
-      <div class="teacher-banner">
-        <div class="mini-label">que deberias notar</div>
-        <div id="import-observe" class="context-value"></div>
-      </div>
-      <div class="two-col" style="margin-top:18px;">
-        <div>
-          <div class="card">
-            <div id="import-kicker" class="mini-label">trabajo manual</div>
-            <h3 id="import-title">Sin import, todo es mas artesanal</h3>
-            <p id="import-copy" style="margin-top:10px;"></p>
-            <div id="import-output" class="panel" style="margin-top:16px;"></div>
-          </div>
-          <div class="code" style="margin-top:18px;">
-            <div id="import-code-label" class="code-label">snippet</div>
-            <pre id="import-code"></pre>
-          </div>
-        </div>
+      <div>
         <div class="card">
-          <div class="mini-label">que cambia</div>
-          <ul id="import-list" class="list"></ul>
-          <div id="import-summary" class="panel" style="margin-top:18px;"></div>
+          <div class="card-label" style="color:var(--green);">Con OOP</div>
+          <div class="code-block good" id="chaos-oop"></div>
+          <div class="verdict good" id="chaos-oop-verdict"></div>
         </div>
       </div>
     </div>
-  </section>
 
-  <!-- ============================
-       PANDAS
-       ============================ -->
-  <section id="pandas">
-    <div class="shell">
-      <div class="label">Bloque 2 - Tabla reactiva con pandas</div>
-      <h2>La tabla responde a tus decisiones.</h2>
-      <p class="lead">No es una clase de pandas. Es una demostracion de una sensacion: el mismo dataset se vuelve operable y resumible mucho mas rapido.</p>
-      <div class="filter-row" id="table-filters" style="margin-top:22px;">
-        <button class="ghost-btn active" type="button" data-filter="all">Todas</button>
-        <button class="ghost-btn" type="button" data-filter="buy">Solo buy</button>
-        <button class="ghost-btn" type="button" data-filter="sell">Solo sell</button>
-        <button class="action-btn" id="calc-notional-btn" type="button">Calcular notional</button>
-        <button class="ghost-btn" id="group-btn" type="button">Agrupar por side</button>
-        <button class="ghost-btn" id="table-reset-btn" type="button">Reiniciar</button>
+    <div class="verdict insight" id="chaos-insight" style="margin-top:20px;"></div>
+
+    <div class="metric-grid" style="margin-top:20px;" id="chaos-metrics">
+      <div class="metric">
+        <div class="metric-name">Variables (script)</div>
+        <div class="metric-value" style="color:var(--pink);" id="chaos-vars">2</div>
       </div>
-      <div class="two-col" style="margin-top:18px;">
-        <div class="table-left">
-          <div class="card table-card">
-            <div class="mini-label">trades DataFrame</div>
-            <table>
-              <thead><tr><th>symbol</th><th>side</th><th>price</th><th>size</th><th>notional</th></tr></thead>
-              <tbody id="table-body"></tbody>
-            </table>
-            <div id="table-caption" class="table-caption">Mismo dataset, distinta ergonomia.</div>
-          </div>
-          <div class="panel operation-card">
-            <div class="mini-label">lectura guiada</div>
-            <h3 id="table-op-title">Primero mira la tabla base.</h3>
-            <p id="table-op-copy">Todavia no has activado nada. La pregunta no es que datos hay, sino que tan facil es operarlos.</p>
-            <div class="context-grid two">
-              <div class="context-item"><div class="metric-name">idea clave</div><div id="table-op-idea" class="context-value"></div></div>
-              <div class="context-item"><div class="metric-name">accion activa</div><div id="table-op-action" class="context-value"></div></div>
-            </div>
-          </div>
-        </div>
-        <div>
-          <div class="card">
-            <div class="mini-label">metricas reactivas</div>
-            <div class="stat-grid">
-              <div class="metric"><div class="metric-name">filas visibles</div><div id="stat-rows" class="metric-value">3</div></div>
-              <div class="metric"><div class="metric-name">volumen total</div><div id="stat-volume" class="metric-value">1.58</div></div>
-              <div class="metric"><div class="metric-name">notional bruto</div><div id="stat-notional" class="metric-value">-</div></div>
-              <div class="metric"><div class="metric-name">filtro activo</div><div id="stat-filter" class="metric-value">todas</div></div>
-            </div>
-          </div>
-          <div class="card" style="margin-top:18px;">
-            <div class="mini-label">resumen por side</div>
-            <div id="group-summary" class="summary"></div>
-          </div>
-        </div>
+      <div class="metric">
+        <div class="metric-name">Objetos (OOP)</div>
+        <div class="metric-value" style="color:var(--green);" id="chaos-objs">1</div>
       </div>
-      <div class="code support-code" style="margin-top:18px;">
-        <div class="code-label">modelo mental</div>
-        <pre id="table-code"></pre>
+      <div class="metric">
+        <div class="metric-name">Bloques duplicados</div>
+        <div class="metric-value" style="color:var(--yellow);" id="chaos-dupes">0</div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ============================
-       CHAOS — script caótico vs OOP
-       ============================ -->
-  <section id="chaos">
-    <div class="shell">
-      <div class="label">Bloque 2B - Cuando el script se descontrola</div>
-      <h2>Cada activo nuevo <span class="accent-pink">duplica el codigo</span>. OOP no es filosofia — es la solucion practica.</h2>
-      <p class="lead">Con un solo activo los dos estilos parecen equivalentes. Pulsa "+ ETH" y luego "+ SOL" para ver cuándo el script empieza a doler y la clase escala sin esfuerzo.</p>
+<!-- ═══════════════════════════════════════ -->
+<!-- BLOQUE 2: DICT → CLASS → OBJECT        -->
+<!-- ═══════════════════════════════════════ -->
+<section id="transformar">
+  <div class="shell">
+    <div class="label">Bloque 2 — De diccionario a clase</div>
+    <h2>Las claves se convierten en atributos</h2>
+    <p class="lead">En Lesson 1 una orden era un diccionario. Ahora las claves pasan a ser atributos y la lógica pasa a vivir dentro del objeto.</p>
 
-      <div id="chaos-controls" class="filter-row" style="margin-top:22px;">
-        <button class="ghost-btn active" type="button" data-assets="1">Solo BTC</button>
-        <button class="ghost-btn" type="button" data-assets="2">+ ETH</button>
-        <button class="ghost-btn" type="button" data-assets="3">+ SOL</button>
-      </div>
-
-      <div class="two-col" style="margin-top:18px;">
-        <div class="chaos-col-bad">
-          <div class="card">
-            <div class="mini-label" style="color:var(--pink);">script plano — variables sueltas</div>
-            <div class="code" style="margin-top:14px;">
-              <pre id="chaos-script-code"></pre>
-            </div>
-            <div class="chaos-verdict verdict-bad" id="chaos-script-verdict"></div>
-          </div>
-        </div>
-        <div class="chaos-col-good">
-          <div class="card">
-            <div class="mini-label" style="color:var(--green);">con OOP — PositionTracker</div>
-            <div class="code" style="margin-top:14px;">
-              <pre id="chaos-oop-code"></pre>
-            </div>
-            <div class="chaos-verdict verdict-good" id="chaos-oop-verdict"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="chaos-insight">
-        <div class="mini-label">idea clave en este momento</div>
-        <div id="chaos-insight" class="context-value" style="margin-top:8px;"></div>
-      </div>
+    <div class="btn-row" style="margin-top:20px; margin-bottom:24px;">
+      <button class="btn active transform-btn" data-step="dict">Dict (Lesson 1)</button>
+      <button class="btn transform-btn" data-step="class">Class (molde)</button>
+      <button class="btn transform-btn" data-step="object">Object (instancia)</button>
     </div>
-  </section>
 
-  <!-- ============================
-       OBJECTS — de dict a clase
-       ============================ -->
-  <section id="objects">
-    <div class="shell">
-      <div class="label">Bloque 3 - De dict a objeto</div>
-      <h2>El mismo dato pasa por tres niveles: raw data, molde y ejemplar.</h2>
-      <p class="lead">El punto no es aprender una taxonomia. El punto es notar cuando un diccionario empieza a quedarse corto y una clase te deja juntar datos y comportamiento.</p>
+    <div class="two-col">
+      <div>
+        <div class="card" id="transform-code-card">
+          <div class="card-label" id="transform-code-label">Diccionario — Lesson 1</div>
+          <div class="code-block" id="transform-code"></div>
+        </div>
 
-      <!-- Dict pain point -->
-      <div class="pain-panel" style="margin-top:20px;">
-        <div class="mini-label" style="color:var(--pink);">¿Por que el dict se queda corto?</div>
-        <p style="margin-top:8px; font-size:14px; color:var(--muted);">Intentas anadir comportamiento al dict — la operacion mas natural del mundo — y Python no puede.</p>
-        <div class="two-col" style="margin-top:16px;">
-          <div>
-            <div class="code-label" style="color:var(--muted-2);">intentas esto</div>
-            <div class="code" style="margin-top:8px;">
-              <pre id="objects-dict-fail"></pre>
-            </div>
-          </div>
-          <div>
-            <div class="code-label" style="color:var(--pink);">Python te responde</div>
-            <div class="code" style="margin-top:8px; border-color:rgba(244,114,182,0.25);">
-              <pre class="error-pre">AttributeError: 'dict' object has
-no attribute 'notional'
-
-El dict guarda datos, pero no sabe
-comportarse. La clase junta
-datos + comportamiento bajo
-una forma reusable.</pre>
-            </div>
-          </div>
+        <div class="card" style="margin-top:16px;" id="transform-list-card">
+          <div class="card-label">Qué observar</div>
+          <ul id="transform-list" style="list-style:none; display:grid; gap:8px;"></ul>
         </div>
       </div>
 
-      <div class="object-band" style="margin-top:22px;">
-        <div class="summary-item"><strong>Cuando dict basta</strong>Snapshots simples, prototipos rapidos y datos sin comportamiento.</div>
-        <div class="summary-item"><strong>Cuando empieza a doler</strong>Repites formulas, descripciones o validaciones fuera del dato.</div>
-        <div class="summary-item"><strong>Que gana la class</strong>Contrato visible, metodos junto al dato y menos dispersion mental.</div>
-      </div>
-      <div class="two-col" style="margin-top:18px;">
-        <div class="card diagram">
-          <svg viewBox="0 0 620 230" role="img" aria-label="dict class object">
-            <line class="arrow" x1="185" y1="116" x2="280" y2="116"></line>
-            <line class="arrow" x1="350" y1="116" x2="445" y2="116"></line>
-            <rect id="node-dict" class="node active" x="20" y="42" rx="22" ry="22" width="165" height="148"></rect>
-            <rect id="node-class" class="node" x="227" y="42" rx="22" ry="22" width="165" height="148"></rect>
-            <rect id="node-object" class="node" x="434" y="42" rx="22" ry="22" width="165" height="148"></rect>
-            <text class="dsub" x="42" y="76">lesson 1</text>
-            <text class="dtext" x="42" y="106">dict</text>
-            <text class="dtext" x="42" y="134">symbol / side /</text>
-            <text class="dtext" x="42" y="160">price / size</text>
-            <text class="dsub" x="249" y="76">lesson 2</text>
-            <text class="dtext" x="249" y="106">class Order</text>
-            <text class="dtext" x="249" y="134">atributos +</text>
-            <text class="dtext" x="249" y="160">metodos</text>
-            <text class="dsub" x="456" y="76">instancia</text>
-            <text class="dtext" x="456" y="106">order_a</text>
-            <text class="dtext" x="456" y="134">buy 0.10 BTC</text>
-            <text class="dtext" x="456" y="160">notional()</text>
+      <div>
+        <div class="card">
+          <div class="card-label">Diagrama</div>
+          <svg viewBox="0 0 440 300" style="width:100%; height:auto;">
+            <!-- Dict node -->
+            <rect id="svg-dict" x="160" y="10" width="120" height="50" rx="12"
+                  fill="rgba(24,24,27,0.9)" stroke="rgba(34,211,238,0.4)" stroke-width="2"/>
+            <text x="220" y="40" text-anchor="middle" fill="#fafafa" font-family="Inter" font-size="14" font-weight="700">dict</text>
+
+            <!-- Arrow -->
+            <line x1="220" y1="60" x2="220" y2="100" stroke="rgba(34,211,238,0.3)" stroke-width="2" stroke-dasharray="6,4"/>
+            <polygon points="215,96 220,106 225,96" fill="rgba(34,211,238,0.4)"/>
+
+            <!-- Class node -->
+            <rect id="svg-class" x="120" y="110" width="200" height="50" rx="12"
+                  fill="rgba(24,24,27,0.9)" stroke="rgba(63,63,70,0.3)" stroke-width="2"/>
+            <text x="220" y="140" text-anchor="middle" fill="#a1a1aa" font-family="Inter" font-size="14" font-weight="700">class Order</text>
+
+            <!-- Arrows to objects -->
+            <line x1="170" y1="160" x2="100" y2="200" stroke="rgba(63,63,70,0.2)" stroke-width="2" stroke-dasharray="6,4"/>
+            <line x1="270" y1="160" x2="340" y2="200" stroke="rgba(63,63,70,0.2)" stroke-width="2" stroke-dasharray="6,4"/>
+
+            <!-- Object nodes -->
+            <rect id="svg-obj1" x="20" y="205" width="170" height="70" rx="12"
+                  fill="rgba(24,24,27,0.9)" stroke="rgba(63,63,70,0.2)" stroke-width="2"/>
+            <text x="105" y="232" text-anchor="middle" fill="#a1a1aa" font-family="Inter" font-size="12" font-weight="700">btc_order</text>
+            <text x="105" y="256" text-anchor="middle" fill="#71717a" font-family="JetBrains Mono" font-size="11">buy 0.10 @ 99980</text>
+
+            <rect id="svg-obj2" x="250" y="205" width="170" height="70" rx="12"
+                  fill="rgba(24,24,27,0.9)" stroke="rgba(63,63,70,0.2)" stroke-width="2"/>
+            <text x="335" y="232" text-anchor="middle" fill="#a1a1aa" font-family="Inter" font-size="12" font-weight="700">eth_order</text>
+            <text x="335" y="256" text-anchor="middle" fill="#71717a" font-family="JetBrains Mono" font-size="11">buy 1.40 @ 3520</text>
           </svg>
         </div>
+
+        <div class="card" style="margin-top:16px;" id="transform-note-card">
+          <h3 style="font-size:14px; color:var(--blue);" id="transform-note-title">Nota</h3>
+          <p style="font-size:14px; margin-top:6px;" id="transform-note"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- BLOQUE 3: PLAYGROUND                    -->
+<!-- ═══════════════════════════════════════ -->
+<section id="playground">
+  <div class="shell">
+    <div class="label">Bloque 3 — Playground interactivo</div>
+    <h2>Order → Trade → Estado</h2>
+    <p class="lead">Crea una orden, dispara un trade y observa cómo el PositionTracker acumula consecuencias.</p>
+
+    <div class="two-col" style="margin-top:24px;">
+      <div>
         <div class="card">
-          <div class="mini-label">guia de lectura</div>
-          <div id="object-tabs" class="tab-row">
-            <button class="tab-btn active" type="button" data-focus="dict">dict</button>
-            <button class="tab-btn" type="button" data-focus="class">class</button>
-            <button class="tab-btn" type="button" data-focus="object">object</button>
+          <div class="card-label">Configura la orden</div>
+          <div class="playground-form">
+            <label>Symbol
+              <select id="pg-symbol"><option>BTCUSDT</option><option>ETHUSDT</option></select>
+            </label>
+            <label>Side
+              <select id="pg-side"><option value="buy">Buy</option><option value="sell">Sell</option></select>
+            </label>
+            <label>Price
+              <input id="pg-price" type="number" value="100000">
+            </label>
+            <label>Size
+              <input id="pg-size" type="number" value="0.10" step="0.01">
+            </label>
           </div>
-          <h3 id="object-title" style="margin-top:18px;">Un dict guarda datos y nada mas.</h3>
-          <p id="object-copy" style="margin-top:12px;"></p>
-          <ul id="object-list" class="list"></ul>
-          <div id="object-note" class="panel" style="margin-top:18px;"></div>
-          <div class="code support-code" style="margin-top:18px;">
-            <div class="code-label">snippet focal</div>
-            <pre id="object-code"></pre>
+
+          <div class="btn-row" style="margin-top:20px;">
+            <button class="btn-primary btn" id="pg-buy">Compra demo</button>
+            <button class="btn" id="pg-sell">Venta parcial</button>
+            <button class="btn" id="pg-sequence">Secuencia completa</button>
+            <button class="btn" id="pg-reset" style="color:var(--red); border-color:rgba(248,113,113,0.25);">Reset</button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <div class="card-label">Código equivalente</div>
+          <div class="code-block" id="pg-code-display">
+            <code># Pulsa un botón para ver el código</code>
           </div>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- ============================
-       BUILDER — Order playground
-       ============================ -->
-  <section id="builder">
-    <div class="shell">
-      <div class="label">Bloque 4 - Order playground + tracker</div>
-      <h2>Aqui ya mueves estado: <span class="accent-cyan">cash</span>, <span class="accent-blue">position</span>, <span class="accent-green">equity</span>.</h2>
-      <p class="lead">El playground junta las dos mitades de la clase: defines un objeto reusable y luego lo conviertes en eventos que afectan un tracker.</p>
-      <div id="builder-flow" class="flow-row">
-        <div class="flow-pill active" data-flow-step="config"><strong>1. Configura Order</strong><span>Define symbol, side, price y size.</span></div>
-        <div class="flow-pill" data-flow-step="event"><strong>2. Aplica un evento</strong><span>Dispara una compra, una venta o una secuencia.</span></div>
-        <div class="flow-pill" data-flow-step="state"><strong>3. Lee el estado</strong><span>Mira como cambian cash, position y equity.</span></div>
-      </div>
-      <div class="builder-grid" style="margin-top:18px;">
-        <div class="builder-stack">
-          <div class="card">
-            <div class="mini-label">1. Configura Order</div>
-            <div class="builder-form">
-              <label>Symbol<input id="symbol-input" value="BTCUSDT"></label>
-              <label>Side<select id="side-input"><option value="buy">buy</option><option value="sell">sell</option></select></label>
-              <label>Price<input id="price-input" type="number" value="100000"></label>
-              <label>Size<input id="size-input" type="number" step="0.01" value="0.10"></label>
-              <label style="grid-column:1 / -1;">Mark price<input id="mark-input" type="number" value="100080"></label>
-            </div>
-          </div>
-          <div class="card">
-            <div class="mini-label">2. Aplica un evento</div>
-            <div class="btn-row">
-              <button id="build-btn" class="action-btn" type="button">Crear order</button>
-              <button id="buy-btn" class="ghost-btn" type="button">Compra demo</button>
-              <button id="sell-btn" class="ghost-btn" type="button">Venta parcial</button>
-              <button id="sequence-btn" class="ghost-btn" type="button">Secuencia completa</button>
-              <button id="reset-btn" class="ghost-btn" type="button">Reiniciar</button>
-            </div>
-            <div class="table-caption">Configurar la Order no cambia el tracker. Aplicar un Trade, si.</div>
-          </div>
-          <div class="code support-code">
-            <div class="code-label">snippet de apoyo</div>
-            <pre id="tracker-code"></pre>
-          </div>
-        </div>
-        <div class="builder-stack">
-          <div class="card">
-            <div class="mini-label">order actual</div>
-            <div class="kv-grid">
-              <div class="metric"><div class="metric-name">symbol</div><div id="pv-symbol" class="metric-value">BTCUSDT</div></div>
-              <div class="metric"><div class="metric-name">side</div><div id="pv-side" class="metric-value">buy</div></div>
-              <div class="metric"><div class="metric-name">notional()</div><div id="pv-notional" class="metric-value">10000.00</div></div>
-              <div class="metric"><div class="metric-name">describe()</div><div id="pv-desc" class="metric-value" style="font-size:18px;">buy 0.10 BTCUSDT</div></div>
-            </div>
-          </div>
-          <div class="card" style="margin-top:18px;">
-            <div class="mini-label">3. Lee el estado del tracker</div>
-            <div class="feedback-panel">
-              <div class="context-grid two">
-                <div class="context-item"><div class="metric-name">que mirar ahora</div><div id="builder-watch" class="context-value"></div></div>
-                <div class="context-item"><div class="metric-name">consecuencia en el sistema</div><div id="builder-effect" class="context-value"></div></div>
-              </div>
-            </div>
-            <div class="stat-grid">
-              <div class="metric"><div class="metric-name">cash</div><div id="tk-cash" class="metric-value">0.00</div></div>
-              <div class="metric"><div class="metric-name">position</div><div id="tk-position" class="metric-value">0.00</div></div>
-              <div class="metric"><div class="metric-name">mark</div><div id="tk-mark" class="metric-value">100080</div></div>
-              <div class="metric" id="equity-metric"><div class="metric-name">equity</div><div id="tk-equity" class="metric-value">0.00</div></div>
-            </div>
-          </div>
-          <div class="card log-card">
-            <div class="mini-label">eventos recientes</div>
-            <div id="log" class="log"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================
-       TEAM — OOP en equipo
-       ============================ -->
-  <section id="team">
-    <div class="shell">
-      <div class="label">Bloque 4B - OOP en proyectos reales</div>
-      <h2>Una clase define un <span class="accent-cyan">contrato</span>. Tu companero no necesita leer el interior para usarla.</h2>
-      <p class="lead">Encapsulacion no es solo una palabra. Es lo que hace posible que tres personas toquen el mismo repositorio sin romperse. Cada clase tiene una responsabilidad. Cada responsabilidad tiene un dueno.</p>
-
-      <div id="team-tabs" class="tab-row" style="margin-top:22px;">
-        <button class="tab-btn active" type="button" data-persona="A">Persona A — usa Order</button>
-        <button class="tab-btn" type="button" data-persona="B">Persona B — mejora Tracker</button>
-        <button class="tab-btn" type="button" data-persona="C">Persona C — extiende Trade</button>
-      </div>
-
-      <div class="two-col" style="margin-top:18px;">
+      <div>
         <div class="card">
-          <div class="mini-label">lo que ve esta persona</div>
-          <h3 id="team-title" style="margin-top:14px; line-height:1.25;"></h3>
-          <p id="team-copy" style="margin-top:12px; font-size:15px;"></p>
-          <div class="code" style="margin-top:18px;">
-            <div class="code-label">su codigo</div>
-            <pre id="team-code"></pre>
-          </div>
-        </div>
-        <div>
-          <div class="card">
-            <div class="mini-label">garantias que da OOP</div>
-            <div id="team-guarantees" class="team-grid"></div>
-          </div>
-          <div class="principle-panel">
-            <div class="mini-label">principio activo</div>
-            <div id="team-principle" class="context-value" style="margin-top:8px; color:var(--cyan); font-size:15px;"></div>
-          </div>
-          <div class="without-panel">
-            <div class="mini-label" style="color:var(--pink);">sin OOP esto seria</div>
-            <div id="team-without" class="context-value" style="margin-top:8px; color:#f79dc5; font-size:14px;"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================
-       BRIDGE — cierre
-       ============================ -->
-  <section id="bridge">
-    <div class="shell">
-      <div class="label">Bloque 5 - Cierre y puente</div>
-      <h2>Si puedes explicar esto, ya tienes el mapa: tool -> data -> object -> event -> state.</h2>
-      <p class="lead bridge-copy">No hace falta memorizar toda OOP hoy. Hace falta salir con una secuencia mental clara para entrar al notebook con sentido.</p>
-      <div class="bridge-grid" style="margin-top:18px;">
-        <div class="card">
-          <div class="mini-label">pipeline mental</div>
-          <div id="timeline" class="timeline-row">
-            <button class="timeline-btn active" type="button" data-step="0">Import</button>
-            <button class="timeline-btn" type="button" data-step="1">Tabla</button>
-            <button class="timeline-btn" type="button" data-step="2">Order</button>
-            <button class="timeline-btn" type="button" data-step="3">Trade</button>
-            <button class="timeline-btn" type="button" data-step="4">Estado</button>
-          </div>
-          <h3 id="timeline-title" style="margin-top:18px;">Import cambia el espacio de trabajo.</h3>
-          <p id="timeline-copy" style="margin-top:12px;"></p>
-          <div class="teacher-banner bridge-note">
-            <div class="mini-label">checksum mental</div>
-            <div id="timeline-code" class="context-value"></div>
-          </div>
-        </div>
-        <div class="support-stack">
-          <div class="card">
-            <div class="mini-label">takeaway</div>
-            <ul class="list">
-              <li>import abre una caja de herramientas y cambia tu velocidad para operar sobre datos.</li>
-              <li>pandas resuelve bien tablas y resumenes, no la arquitectura de tu sistema.</li>
-              <li>una class junta datos y comportamiento bajo una forma reusable y escalable.</li>
-              <li>un Trade cambia el tracker, y el tracker convierte eventos en estado.</li>
-              <li>encapsulacion es el contrato que permite trabajar en equipo sin romper el codigo de los demas.</li>
-            </ul>
-          </div>
-          <div class="next-step">
-            <strong>Siguiente paso: notebook</strong>
-            Pasa de la intuicion visual al codigo guiado: import, DataFrame, Order, Trade y PositionTracker.
-            <div class="btn-row" style="margin-top:16px;">
-              <button class="action-btn" type="button" data-jump="#builder">Volver al playground</button>
-              <button class="ghost-btn" type="button" data-jump="#hero">Ir al inicio</button>
+          <div class="card-label">Estado del Tracker</div>
+          <div class="metric-grid" style="grid-template-columns:1fr 1fr 1fr;">
+            <div class="metric">
+              <div class="metric-name">Cash</div>
+              <div class="metric-value" id="pg-cash">0.00</div>
             </div>
-            <div class="note">puente natural: notebook + ejercicios guiados</div>
+            <div class="metric">
+              <div class="metric-name">Position</div>
+              <div class="metric-value" id="pg-position">0.0000</div>
+            </div>
+            <div class="metric">
+              <div class="metric-name">Equity</div>
+              <div class="metric-value accent" id="pg-equity">0.00</div>
+            </div>
           </div>
+
+          <div style="margin-top:16px;">
+            <label style="display:grid; gap:6px; color:var(--muted); font-size:12px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase;">
+              Mark Price
+              <input id="pg-mark" type="number" value="100080" style="width:100%; border-radius:12px; border:1px solid var(--border); background:var(--surface); color:var(--text); padding:10px 14px; font-family:'JetBrains Mono',monospace; font-size:14px;">
+            </label>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <div class="card-label">Log de operaciones</div>
+          <div id="pg-log" style="max-height:220px; overflow-y:auto;">
+            <div class="log-entry" style="color:var(--muted);">Sin operaciones aún</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px; background:rgba(129,140,248,0.05); border-color:rgba(129,140,248,0.15);">
+          <h3 style="font-size:14px; color:var(--blue);" id="pg-insight-title">Observa</h3>
+          <p style="font-size:14px; margin-top:6px;" id="pg-insight">Pulsa un botón para ver cómo cada evento cambia el estado del tracker.</p>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- CIERRE                                  -->
+<!-- ═══════════════════════════════════════ -->
+<section id="cierre">
+  <div class="shell" style="text-align:center; padding:48px 32px;">
+    <div class="label">Cierre</div>
+    <h2>De variables sueltas a sistema</h2>
+    <p class="lead" style="margin:16px auto 0; max-width:640px;">Hoy no has aprendido toda OOP. Has aprendido <strong>por qué aparece</strong> y cómo convierte código frágil en piezas de sistema.</p>
+
+    <div class="timeline-row" style="max-width:900px; margin:32px auto 0;">
+      <div class="tl-step active">
+        <div class="tl-icon">📦</div>
+        <div style="color:var(--cyan);">Import</div>
+        <div style="color:var(--muted); font-size:11px;">herramienta</div>
+      </div>
+      <div class="tl-step active">
+        <div class="tl-icon">📊</div>
+        <div style="color:var(--cyan);">Tabla</div>
+        <div style="color:var(--muted); font-size:11px;">DataFrame</div>
+      </div>
+      <div class="tl-step active">
+        <div class="tl-icon">🏗️</div>
+        <div style="color:var(--cyan);">Order</div>
+        <div style="color:var(--muted); font-size:11px;">datos + métodos</div>
+      </div>
+      <div class="tl-step active">
+        <div class="tl-icon">⚡</div>
+        <div style="color:var(--cyan);">Trade</div>
+        <div style="color:var(--muted); font-size:11px;">evento</div>
+      </div>
+      <div class="tl-step active">
+        <div class="tl-icon">📈</div>
+        <div style="color:var(--cyan);">Tracker</div>
+        <div style="color:var(--muted); font-size:11px;">estado</div>
+      </div>
+    </div>
+
+    <div class="card" style="max-width:640px; margin:32px auto 0; background:rgba(34,211,238,0.04); border-color:rgba(34,211,238,0.15);">
+      <p style="color:var(--cyan); font-weight:700; font-size:15px;">Ahora toca practicar. Abre el notebook y construye Order, Trade y PositionTracker pieza a pieza.</p>
+    </div>
+
+    <div class="card" style="max-width:640px; margin:16px auto 0; background:rgba(129,140,248,0.04); border-color:rgba(129,140,248,0.15);">
+      <p style="color:var(--blue); font-weight:700; font-size:14px;">Siguiente clase: has escrito ~60 líneas de clases a mano. ¿Y si pudieras describir lo que quieres en español y que un LLM las genere? Eso es vibe coding.</p>
+    </div>
+  </div>
+</section>
 
 </main>
 
-<!-- CDN: GSAP + Prism (loaded before inline script) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-
 <script>
-// ============================================================
+// ═══════════════════════════════════════
 // DATA
-// ============================================================
+// ═══════════════════════════════════════
 
-const heroPhases = {
-  import: {
-    status: 'import', label: 'herramienta',
-    code: 'import pandas as pd\n\n# ahora tienes DataFrame, filtros y groupby',
-    object: 'Toolbox', desc: 'pandas disponible', cash: '0', equity: '0',
-    watch: 'El dataset es el mismo. Lo nuevo es la herramienta que ahora tienes disponible.',
-    idea: 'Importar no crea magia; reduce friccion y abre capacidad operativa.',
-    effect: 'tool -> data',
-    caption: 'Primero amplias capacidad: mismo problema, menos friccion.'
-  },
-  table: {
-    status: 'tabla', label: 'operacion sobre tabla',
-    code: 'trades["notional"] = trades["price"] * trades["size"]\nsummary = trades.groupby("side")["size"].sum()',
-    object: 'DataFrame', desc: '3 filas listas para operar', cash: '0', equity: '0',
-    watch: 'Fijate en columnas, filtros y resumenes. La tabla ya responde a decisiones concretas.',
-    idea: 'Una estructura pensada para tablas comprime mucho trabajo mental.',
-    effect: 'data -> resumen',
-    caption: 'La tabla ya responde: filtras, calculas y resumes.'
-  },
-  object: {
-    status: 'objeto', label: 'estructura',
-    code: 'class Order:\n    def notional(self):\n        return self.price * self.size\n\n    def __repr__(self):\n        return f"Order({self.symbol}, {self.side})"',
-    object: 'Order', desc: 'buy 0.10 BTCUSDT', cash: '0', equity: '0',
-    watch: 'Ahora ya no miras solo datos: miras un molde reusable con metodos utiles.',
-    idea: 'La class junta datos y comportamiento bajo una forma estable.',
-    effect: 'data -> object',
-    caption: 'La class aparece cuando ya no quieres formulas desperdigadas.'
-  },
-  state: {
-    status: 'estado', label: 'estado del sistema',
-    code: 'tracker.apply_trade(Trade("BTCUSDT", "buy", 100000, 0.10))\nequity = tracker.equity(mark_price=100080)',
-    object: 'PositionTracker', desc: 'cash + position + equity', cash: '-10000', equity: '8',
-    watch: 'Ya no estas definiendo piezas: estas viendo consecuencias acumuladas en un tracker.',
-    idea: 'Un evento no solo describe algo; cambia el estado del sistema.',
-    effect: 'object -> event -> state',
-    caption: 'El cierre es este: eventos que mueven estado.'
-  }
-};
-
-const importConfigs = {
-  before: {
-    kicker: 'trabajo manual', title: 'Sin import, todo es mas artesanal',
-    copy: 'Sigue siendo resoluble, pero necesitas iterar a mano, acumular resultados y escribir mas glue code.',
-    output: 'Misma informacion, mas pasos intermedios.',
-    codeLabel: 'loop manual',
-    code: 'buy_volume = 0\nsell_volume = 0\nfor row in rows:\n    if row["side"] == "buy":\n        buy_volume += row["size"]\n    else:\n        sell_volume += row["size"]',
-    list: ['iteras fila a fila', 'acumulas en variables separadas', 'cada resumen requiere mas logica auxiliar'],
-    summary: 'La capacidad existe, pero la superficie de trabajo es mas rugosa.',
-    observe: 'El esfuerzo no esta en entender la tabla, sino en sostener la logica manual que la recorre.'
-  },
-  after: {
-    kicker: 'herramienta disponible', title: 'Con pandas, el trabajo se compacta',
-    copy: 'El dataset sigue siendo el mismo, pero ahora entra en una estructura pensada para operar y resumir rapido.',
-    output: 'Misma informacion, menos dispersion.',
-    codeLabel: 'operaciones de DataFrame',
-    code: 'trades = pd.DataFrame(rows)\ntrades["notional"] = trades["price"] * trades["size"]\nsummary = trades.groupby("side")[["size", "notional"]].sum()',
-    list: ['filtras por columna', 'calculas notional de golpe', 'resumes por side con groupby'],
-    summary: 'El salto no es de magia: es de ergonomia y velocidad mental.',
-    observe: 'La tabla no cambia. Cambia el tipo de operaciones que puedes hacer sin arrastrar codigo auxiliar.'
-  }
-};
-
-const tableOperations = {
-  overview: { title: 'Primero mira la tabla base.', copy: 'Todavia no has activado ninguna operacion. La pregunta no es que datos hay, sino que tan facil es operarlos.', idea: 'Mismo dataset, distinta ergonomia.', action: 'vista base' },
-  filter:   { title: 'El filtro reduce ruido visual.', copy: 'Al quedarte con buy o sell, ya ves que la tabla permite enfocarte en una parte del problema sin reescribir logica.', idea: 'Filtrar rapido cambia la velocidad de analisis.', action: 'filtro por side' },
-  notional: { title: 'Ahora la tabla calcula una columna util.', copy: 'El paso importante no es el numero en si, sino que la operacion vive junto a la estructura tabular.', idea: 'Una columna derivada nace con muy poca friccion.', action: 'calculo de notional' },
-  groupby:  { title: 'El resumen ya parece trabajo real.', copy: 'Cuando agrupas por side, dejas de mirar filas aisladas y empiezas a leer el dataset como una historia resumida.', idea: 'Groupby convierte filas en agregados legibles.', action: 'resumen por side' }
-};
-
-const objectConfigs = {
-  dict: {
-    title: 'Un dict guarda datos y nada mas.',
-    copy: 'Para empezar es perfecto. El problema aparece cuando notional o describe se repiten por fuera.',
-    list: ['rapido para prototipar', 'bueno para snapshots simples', 'malo cuando el comportamiento se repite'],
-    note: 'Lesson 1 termina bien en dicts. Lesson 2 empieza a tensar ese modelo.',
-    code: 'order = {\n    "symbol": "BTCUSDT",\n    "side": "buy",\n    "price": 100000,\n    "size": 0.10,\n}\n\n# quieres describir la orden:\ndesc = f\"{order[\'side\']} {order[\'size\']} {order[\'symbol\']}\"\n# cada vez que necesitas esto, lo repites',
-    node: 'dict'
-  },
-  class: {
-    title: 'La clase fija una forma reusable.',
-    copy: 'Aqui defines que atributos necesita el dato y que metodos tienen sentido sobre el. __repr__ hace que el objeto sepa describirse solo.',
-    list: ['hace visible el contrato', 'junta datos y comportamiento', 'reduce logica duplicada', '__repr__ da identidad legible al objeto'],
-    note: 'La clase no es el dato concreto. Es el molde que define todos los posibles datos de ese tipo.',
-    code: 'class Order:\n    def __init__(self, symbol, side, price, size):\n        self.symbol = symbol\n        self.side   = side\n        self.price  = price\n        self.size   = size\n\n    def notional(self):\n        return self.price * self.size\n\n    def describe(self):\n        return f"{self.side} {self.size:.2f} {self.symbol}"\n\n    def __repr__(self):\n        return f"Order({self.symbol}, {self.side}, {self.price})"',
-    node: 'class'
-  },
-  object: {
-    title: 'El objeto es una instancia con valores reales.',
-    copy: 'Una vez tienes el molde, puedes crear una orden concreta que ya sabe describirse y calcular su propio nocional.',
-    list: ['tiene estado concreto', 'ejecuta metodos con sus propios datos', 'se puede pasar a otras piezas del sistema'],
-    note: 'Aqui ya tienes una pieza que se parece a un sistema real de trading.',
-    code: 'order = Order("BTCUSDT", "buy", 100000, 0.10)\n\nprint(order.notional())  # 10000.0\nprint(order.describe())  # buy 0.10 BTCUSDT\nprint(repr(order))       # Order(BTCUSDT, buy, 100000)\n\n# el objeto sabe quien es sin ayuda externa',
-    node: 'object'
-  }
-};
-
-const chaosConfigs = {
+const chaosData = {
   1: {
-    script: '# BTC\nbtc_cash = 0.0\nbtc_position = 0.0\n\ndef btc_equity(mark):\n    return btc_cash + btc_position * mark\n\n# aplicas una compra\nbtc_cash -= 100000 * 0.10\nbtc_position += 0.10',
-    oop: 'tracker_btc = PositionTracker("BTCUSDT")\n\n# apply_trade encapsula toda la logica\ntracker_btc.apply_trade(\n    Trade("BTCUSDT", "buy", 100000, 0.10)\n)\n\nprint(tracker_btc.equity(100080))  # 8.0',
-    scriptVerdict: '1 activo → 2 variables globales sueltas. Por ahora manejable.',
-    oopVerdict: '1 activo → 1 objeto. Todo el estado encapsulado.',
-    insight: 'Con un solo activo los dos estilos parecen equivalentes. Pulsa "+ ETH" para ver cuando el script empieza a doler.'
+    script: `# BTC
+btc_cash = 0.0
+btc_position = 0.0
+
+fill = {'side': 'buy', 'price': 100000, 'size': 0.10}
+
+if fill['side'] == 'buy':
+    btc_cash -= fill['price'] * fill['size']
+    btc_position += fill['size']
+
+btc_equity = btc_cash + btc_position * 100080`,
+    oop: `tracker = PositionTracker()
+
+tracker.apply_trade(
+    Trade("BTCUSDT", "buy", 100000, 0.10)
+)
+
+print(tracker.equity(100080))  # 8.0`,
+    scriptV: '1 activo → 2 variables globales. Manejable por ahora.',
+    oopV: '1 activo → 1 objeto. Estado encapsulado.',
+    insight: 'Con un solo activo ambos estilos parecen equivalentes. Pulsa "+ ETH" para ver cuándo el script empieza a doler.',
+    vars: 2, objs: 1, dupes: 0
   },
   2: {
-    script: 'btc_cash = 0.0\nbtc_position = 0.0\n\n# ETH: copia exacta del bloque de BTC\neth_cash = 0.0\neth_position = 0.0\n\ndef apply_buy(symbol, price, size):\n    global btc_cash, btc_position\n    global eth_cash, eth_position  # crece con cada activo\n    if symbol == "BTC":\n        btc_cash -= price * size\n        btc_position += size\n    elif symbol == "ETH":\n        eth_cash -= price * size\n        eth_position += size',
-    oop: 'tracker_btc = PositionTracker("BTCUSDT")\ntracker_eth = PositionTracker("ETHUSDT")\n\n# misma clase reutilizada, cero duplicacion\ntracker_btc.apply_trade(\n    Trade("BTCUSDT", "buy", 100000, 0.10)\n)\ntracker_eth.apply_trade(\n    Trade("ETHUSDT", "buy", 3520, 1.40)\n)',
-    scriptVerdict: '2 activos → 4 variables globales + ifs que crecen. El patron ya se repite.',
-    oopVerdict: '2 activos → 2 objetos. La clase PositionTracker no cambio ni una linea.',
-    insight: 'El script duplica: mismas variables, mismo patron, distinto prefijo. PositionTracker se reutiliza sin copiar nada. Ahora pulsa "+ SOL".'
+    script: `btc_cash = 0.0
+btc_position = 0.0
+
+# ETH: copia exacta del bloque BTC
+eth_cash = 0.0
+eth_position = 0.0
+
+def apply_buy(symbol, price, size):
+    global btc_cash, btc_position
+    global eth_cash, eth_position
+    if symbol == "BTC":
+        btc_cash -= price * size
+        btc_position += size
+    elif symbol == "ETH":
+        eth_cash -= price * size
+        eth_position += size`,
+    oop: `tracker_btc = PositionTracker()
+tracker_eth = PositionTracker()
+
+# Misma clase, cero duplicación
+tracker_btc.apply_trade(
+    Trade("BTCUSDT", "buy", 100000, 0.10)
+)
+tracker_eth.apply_trade(
+    Trade("ETHUSDT", "buy", 3520, 1.40)
+)`,
+    scriptV: '2 activos → 4 variables + globals + ifs que crecen.',
+    oopV: '2 activos → 2 objetos. PositionTracker no cambió ni una línea.',
+    insight: 'El script duplica: mismas variables, mismo patrón, distinto prefijo. PositionTracker se reutiliza sin copiar. Pulsa "+ SOL".',
+    vars: 4, objs: 2, dupes: 1
   },
   3: {
-    script: 'btc_cash = 0.0;  btc_position = 0.0\neth_cash = 0.0;  eth_position = 0.0\nsol_cash = 0.0;  sol_position = 0.0  # tercer bloque\n\n# equity total: firma crece con cada activo nuevo\ndef total_equity(btc_mark, eth_mark, sol_mark):\n    return (\n        btc_cash + btc_position * btc_mark +\n        eth_cash + eth_position * eth_mark +\n        sol_cash + sol_position * sol_mark\n    )\n    # anadir SOL2 = otro parametro aqui y otra linea',
-    oop: 'trackers = {\n    "BTC": PositionTracker("BTCUSDT"),\n    "ETH": PositionTracker("ETHUSDT"),\n    "SOL": PositionTracker("SOLUSDT"),\n}\n\n# anadir SOL2 = una linea en el dict\n# equity total: independiente del numero de activos\nmarks = {"BTC": 100090, "ETH": 3540, "SOL": 155}\ntotal = sum(\n    t.equity(marks[s])\n    for s, t in trackers.items()\n)',
-    scriptVerdict: '3 activos → 6 variables + firmas que crecen con N. Anadir SOL2 rompe total_equity.',
-    oopVerdict: 'N activos → dict de trackers. Anadir SOLUSDT2 es una linea. total_equity no cambia.',
-    insight: 'Este es el momento clave: con OOP, escalar es O(1) en esfuerzo de codigo. Con el script, cada activo nuevo duplica la superficie de error.'
+    script: `btc_cash = 0.0;  btc_position = 0.0
+eth_cash = 0.0;  eth_position = 0.0
+sol_cash = 0.0;  sol_position = 0.0
+
+def total_equity(btc_mark, eth_mark, sol_mark):
+    return (
+        btc_cash + btc_position * btc_mark +
+        eth_cash + eth_position * eth_mark +
+        sol_cash + sol_position * sol_mark
+    )
+    # Añadir SOL2 = otro parámetro + línea`,
+    oop: `trackers = {
+    "BTC": PositionTracker(),
+    "ETH": PositionTracker(),
+    "SOL": PositionTracker(),
+}
+
+# Añadir SOL2 = una línea en el dict
+marks = {"BTC": 100090, "ETH": 3540, "SOL": 155}
+total = sum(
+    t.equity(marks[s]) for s, t in trackers.items()
+)`,
+    scriptV: '3 activos → 6 variables + firmas que crecen con N.',
+    oopV: 'N activos → dict de trackers. total_equity no cambia.',
+    insight: 'Este es el momento clave: con OOP, escalar es O(1) en esfuerzo de código. Con el script, cada activo nuevo duplica la superficie de error.',
+    vars: 6, objs: 3, dupes: 2
   }
 };
 
-const teamConfigs = {
-  A: {
-    title: 'Persona A usa Order sin saber como esta implementada.',
-    copy: 'Llama a order.notional() y order.describe(). No necesita leer el __init__ ni la logica interna. La clase define el contrato — eso basta.',
-    code: '# Persona A — solo ve la interfaz publica\norder = Order("BTCUSDT", "buy", 100000, 0.10)\n\nprint(order.notional())   # 10000.0\nprint(order.describe())   # buy 0.10 BTCUSDT\nprint(repr(order))        # Order(BTCUSDT, buy, 100000)\n\n# No sabe como se calcula notional por dentro.\n# No necesita saberlo. Eso es encapsulacion.',
-    guarantees: [
-      'puede crear y usar Orders sin leer su implementacion interna',
-      'si Persona B cambia el calculo de notional, su codigo no se rompe',
-      'la clase es el contrato: los metodos publicos son todo lo que importa'
+const transformData = {
+  dict: {
+    label: 'Diccionario — Lesson 1',
+    code: `order = {
+    "symbol": "BTCUSDT",
+    "side": "buy",
+    "price": 99980,
+    "size": 0.10,
+}
+
+# Calcular notional por fuera
+notional = order["price"] * order["size"]
+desc = f"{order['side']} {order['size']} {order['symbol']}"`,
+    list: [
+      'Las claves son strings — no hay contrato fijo',
+      'notional y describe viven fuera del dict',
+      'Cada vez que necesitas notional, repites la fórmula',
+      'Para empezar está bien — es rápido de prototipar'
     ],
-    principle: 'Encapsulacion — el interior esta protegido. La interfaz publica es el acuerdo entre el equipo.',
-    without: 'sin clases, Persona A necesitaria conocer la formula de notional y copiarla en cada sitio donde la use. Un cambio en la formula romperia todos esos sitios.'
+    noteTitle: 'El dict no estaba mal',
+    note: 'En Lesson 1 era la decisión correcta. El problema aparece cuando las fórmulas se repiten por fuera del dato.',
+    svgHighlight: 'dict'
   },
-  B: {
-    title: 'Persona B mejora PositionTracker sin romper a Persona A.',
-    copy: 'Anade soporte para comisiones usando atributos privados (_cash, _fees). La interfaz publica (apply_trade, equity) no cambia. Persona A no se entera del cambio.',
-    code: '# Persona B — modifica el interior, mantiene la interfaz\nclass PositionTracker:\n    def __init__(self):\n        self._cash = 0.0       # privado: convencion Python\n        self._position = 0.0\n        self._fees_paid = 0.0  # nuevo — invisible desde fuera\n\n    def apply_trade(self, trade, fee_rate=0.0002):\n        fee = trade.price * trade.size * fee_rate\n        if trade.side == "buy":\n            self._cash -= trade.price * trade.size + fee\n            self._position += trade.size\n        else:\n            self._cash += trade.price * trade.size - fee\n            self._position -= trade.size\n        self._fees_paid += fee\n\n    def equity(self, mark_price):  # misma firma publica\n        return self._cash + self._position * mark_price',
-    guarantees: [
-      'puede cambiar _cash y _position sin que nadie mas se rompa',
-      'la interfaz publica (apply_trade, equity) es estable — es el contrato',
-      '_cash con guion bajo avisa: "esto es interno, no lo toques desde fuera"'
+  class: {
+    label: 'Clase — el molde',
+    code: `class Order:
+    def __init__(self, symbol, side, price, size):
+        self.symbol = symbol
+        self.side = side
+        self.price = price
+        self.size = size
+
+    def notional(self):
+        return self.price * self.size
+
+    def describe(self):
+        return f"{self.side} {self.size:.2f} {self.symbol}"`,
+    list: [
+      'Las claves → atributos con self.',
+      'notional() y describe() viven dentro',
+      'La lógica está junto al dato — no desperdigada',
+      '__init__ define el contrato: qué necesita el objeto'
     ],
-    principle: 'Encapsulacion — el estado interno es privado. Cambiar la implementacion no rompe a quien usa la interfaz.',
-    without: 'sin clases, anadir fees implicaria variables globales btc_fees, eth_fees... que Persona A y C tambien ven y pueden modificar accidentalmente.'
+    noteTitle: 'La clase no complica — ordena',
+    note: 'Fija una forma reusable. Cada Order que crees tendrá los mismos atributos y métodos, sin repetir fórmulas.',
+    svgHighlight: 'class'
   },
-  C: {
-    title: 'Persona C extiende Trade sin tocar Order ni PositionTracker.',
-    copy: 'Anade market_impact() a Trade. Sus companeros no se enteran porque Order y PositionTracker no cambian. Cada clase tiene su responsabilidad y su dueno.',
-    code: '# Persona C — trabaja solo en Trade\nclass Trade:\n    def __init__(self, symbol, side, price, size):\n        self.symbol = symbol\n        self.side   = side\n        self.price  = price\n        self.size   = size\n\n    def cash_flow(self):\n        signed = -1 if self.side == "buy" else 1\n        return signed * self.price * self.size\n\n    def market_impact(self, spread):  # metodo nuevo\n        # Persona C lo anade sin tocar Order ni Tracker\n        return self.size * spread * 0.5\n\n# Persona A y B no ven este cambio — sus clases no cambian',
-    guarantees: [
-      'puede anadir metodos a Trade sin que Order ni PositionTracker cambien',
-      'Trade tiene una responsabilidad clara: modelar la ejecucion',
-      'si Trade da bugs, Persona C sabe que es su dominio — debugging claro'
+  object: {
+    label: 'Objeto — instancia concreta',
+    code: `btc_order = Order("BTCUSDT", "buy", 99980, 0.10)
+eth_order = Order("ETHUSDT", "buy", 3520, 1.40)
+
+print(btc_order.notional())   # 9998.0
+print(eth_order.describe())   # buy 1.40 ETHUSDT
+print(repr(btc_order))        # Order(BTCUSDT, buy, 99980)
+
+# Dos objetos, misma clase, datos distintos`,
+    list: [
+      'El objeto tiene estado concreto (valores reales)',
+      'Ejecuta métodos con sus propios datos',
+      'Se puede pasar a otras piezas del sistema',
+      'Crear otro Order no requiere repetir fórmulas'
     ],
-    principle: 'Separacion de responsabilidades — cada clase tiene un dueno y hace una cosa bien.',
-    without: 'sin clases, market_impact seria una funcion suelta sin dueno claro ni frontera natural. Cualquiera podria modificarla y cualquiera podria romperla.'
+    noteTitle: 'Ahora parece un sistema real',
+    note: 'Una Order que sabe describirse y calcular su propio notional. Trade y PositionTracker siguen el mismo patrón.',
+    svgHighlight: 'object'
   }
 };
 
-const timelineSteps = [
-  { title: 'Import cambia el espacio de trabajo.', copy: 'El primer salto de la clase es operativo: traes una herramienta a tu entorno.', code: 'import pandas as pd' },
-  { title: 'La tabla deja de ser solo texto ordenado.', copy: 'El dataset ya se puede filtrar, enriquecer y resumir con mucha menos logica auxiliar.', code: 'trades["notional"] = trades["price"] * trades["size"]' },
-  { title: 'La clase define la forma reusable.', copy: 'Fijas un contrato: que guarda el dato y que operaciones tienen sentido sobre el.', code: 'class Order:\n    def notional(self):\n        return self.price * self.size' },
-  { title: 'El trade representa un evento.', copy: 'El sistema ya no solo tiene estructuras. Tiene sucesos concretos con efecto economico.', code: 'trade = Trade("BTCUSDT", "buy", 100000, 0.10)' },
-  { title: 'El tracker convierte eventos en estado.', copy: 'Aqui aparece la intuicion realmente util: el codigo acumula consecuencias.', code: 'tracker.apply_trade(trade)\nequity = tracker.equity(mark_price=100080)' }
-];
+// ═══════════════════════════════════════
+// CHAOS COMPARISON
+// ═══════════════════════════════════════
 
-const builderMessages = {
-  clean:    { watch: 'Todavia no hay evento. El tracker sigue en cero.', effect: 'Crear o editar una Order no cambia el sistema hasta que aplicas un Trade.', flow: { active: 'config', done: [] } },
-  build:    { watch: 'La Order ya esta definida. El siguiente paso es disparar un evento.', effect: 'Has preparado una pieza reusable, pero el estado del tracker sigue intacto.', flow: { active: 'event', done: ['config'] } },
-  buy:      { watch: 'Observa que cash baja y position sube despues del buy.', effect: 'Un Trade buy resta cash, suma position y deja el equity dependiendo del mark.', flow: { active: 'state', done: ['config', 'event'] } },
-  sell:     { watch: 'Observa que una venta parcial devuelve cash y reduce la position.', effect: 'El tracker acumula consecuencias: vender no borra la historia, la actualiza.', flow: { active: 'state', done: ['config', 'event'] } },
-  sequence: { watch: 'Ahora ya ves dos eventos encadenados: compra y luego venta parcial.', effect: 'El sistema no guarda solo datos sueltos; guarda una trayectoria que termina en un equity concreto.', flow: { active: 'state', done: ['config', 'event'] } }
-};
+function renderChaos(level) {
+  const d = chaosData[level];
+  document.getElementById('chaos-script').innerHTML = `<code>${d.script}</code>`;
+  document.getElementById('chaos-oop').innerHTML = `<code>${d.oop}</code>`;
+  document.getElementById('chaos-script-verdict').textContent = d.scriptV;
+  document.getElementById('chaos-oop-verdict').textContent = d.oopV;
+  document.getElementById('chaos-insight').textContent = d.insight;
+  document.getElementById('chaos-vars').textContent = d.vars;
+  document.getElementById('chaos-objs').textContent = d.objs;
+  document.getElementById('chaos-dupes').textContent = d.dupes;
 
-const rows = [
-  { symbol: 'BTCUSDT', side: 'buy',  price: 99980,  size: 0.10 },
-  { symbol: 'BTCUSDT', side: 'sell', price: 100020, size: 0.08 },
-  { symbol: 'ETHUSDT', side: 'buy',  price: 3520,   size: 1.40 }
-];
+  document.querySelectorAll('.chaos-btn').forEach(b => b.classList.toggle('active', parseInt(b.dataset.level) === level));
+}
 
-// ============================================================
-// STATE
-// ============================================================
+document.querySelectorAll('.chaos-btn').forEach(btn => {
+  btn.addEventListener('click', () => renderChaos(parseInt(btn.dataset.level)));
+});
+renderChaos(1);
 
-const state = {
-  heroPhase: 'import', heroTouched: false,
-  importMode: 'before',
-  filter: 'all', showNotional: false, grouped: false, activeOperation: 'overview',
-  objectFocus: 'dict',
-  cash: 0, position: 0, mark: 100080,
-  lastTrade: null, appliedTrades: [], lastAction: 'clean', log: [],
-  timelineIndex: 0, timelineTouched: false,
-  activeSection: 'hero',
-  chaosAssets: 1,
-  activePersona: 'A'
-};
+// ═══════════════════════════════════════
+// TRANSFORM ANIMATION
+// ═══════════════════════════════════════
 
-const sections = [...document.querySelectorAll('main section')];
-const navLinks = [...document.querySelectorAll('.nav-links a')];
+function renderTransform(step) {
+  const d = transformData[step];
+  document.getElementById('transform-code-label').textContent = d.label;
+  document.getElementById('transform-code').innerHTML = `<code>${d.code}</code>`;
 
-// ============================================================
-// HELPERS
-// ============================================================
+  const list = document.getElementById('transform-list');
+  list.innerHTML = d.list.map(item =>
+    `<li style="position:relative; padding-left:18px;"><span style="position:absolute; left:0; color:var(--cyan); font-weight:900;">›</span><span style="font-size:14px;">${item}</span></li>`
+  ).join('');
 
-function fmt(n, d = 2) { return Number(n).toFixed(d); }
+  document.getElementById('transform-note-title').textContent = d.noteTitle;
+  document.getElementById('transform-note').textContent = d.note;
 
-function setCode(elementId, code) {
-  const el = document.getElementById(elementId);
-  if (!el) return;
-  if (typeof Prism !== 'undefined' && Prism.languages && Prism.languages.python) {
-    el.innerHTML = Prism.highlight(code, Prism.languages.python, 'python');
+  // SVG highlights
+  const colors = { dict: 'dict', class: 'class', object: 'object' };
+  const dictStroke = step === 'dict' ? 'rgba(34,211,238,0.5)' : 'rgba(63,63,70,0.3)';
+  const classStroke = step === 'class' ? 'rgba(34,211,238,0.5)' : 'rgba(63,63,70,0.3)';
+  const objStroke = (step === 'object') ? 'rgba(34,211,238,0.5)' : 'rgba(63,63,70,0.2)';
+  const dictFill = step === 'dict' ? '#fafafa' : '#a1a1aa';
+  const classFill = step === 'class' ? '#fafafa' : '#a1a1aa';
+  const objFill = step === 'object' ? '#d4d4d8' : '#a1a1aa';
+
+  document.getElementById('svg-dict').setAttribute('stroke', dictStroke);
+  document.getElementById('svg-dict').nextElementSibling.setAttribute('fill', dictFill);
+  document.getElementById('svg-class').setAttribute('stroke', classStroke);
+  document.getElementById('svg-class').nextElementSibling.setAttribute('fill', classFill);
+  document.getElementById('svg-obj1').setAttribute('stroke', objStroke);
+  document.getElementById('svg-obj2').setAttribute('stroke', objStroke);
+
+  document.querySelectorAll('.transform-btn').forEach(b => b.classList.toggle('active', b.dataset.step === step));
+}
+
+document.querySelectorAll('.transform-btn').forEach(btn => {
+  btn.addEventListener('click', () => renderTransform(btn.dataset.step));
+});
+renderTransform('dict');
+
+// ═══════════════════════════════════════
+// PLAYGROUND
+// ═══════════════════════════════════════
+
+let pgState = { cash: 0, position: 0, trades: [] };
+
+function pgRender() {
+  const mark = parseFloat(document.getElementById('pg-mark').value) || 100080;
+  const equity = pgState.cash + pgState.position * mark;
+
+  document.getElementById('pg-cash').textContent = pgState.cash.toFixed(2);
+  document.getElementById('pg-position').textContent = pgState.position.toFixed(4);
+  document.getElementById('pg-equity').textContent = equity.toFixed(2);
+
+  // Color equity
+  const eqEl = document.getElementById('pg-equity');
+  if (equity > 0) { eqEl.style.color = 'var(--green)'; }
+  else if (equity < 0) { eqEl.style.color = 'var(--red)'; }
+  else { eqEl.style.color = 'var(--cyan)'; }
+
+  // Log
+  const log = document.getElementById('pg-log');
+  if (pgState.trades.length === 0) {
+    log.innerHTML = '<div class="log-entry" style="color:var(--muted);">Sin operaciones aún</div>';
   } else {
-    el.textContent = code;
+    log.innerHTML = pgState.trades.map((t, i) => {
+      const color = t.side === 'buy' ? 'var(--green)' : 'var(--red)';
+      const sign = t.side === 'buy' ? '-' : '+';
+      return `<div class="log-entry"><span style="color:${color}; font-weight:800;">${t.side.toUpperCase()}</span> ${t.size} ${t.symbol} @ ${t.price} → cash ${sign}${(t.price * t.size).toFixed(2)}</div>`;
+    }).join('');
+    log.scrollTop = log.scrollHeight;
   }
 }
 
-function updateProgress() {
+function pgApplyTrade(symbol, side, price, size) {
+  if (side === 'buy') {
+    pgState.cash -= price * size;
+    pgState.position += size;
+  } else {
+    pgState.cash += price * size;
+    pgState.position -= size;
+  }
+  pgState.trades.push({ symbol, side, price, size });
+  pgRender();
+}
+
+function pgShowCode(code, insightTitle, insight) {
+  document.getElementById('pg-code-display').innerHTML = `<code>${code}</code>`;
+  document.getElementById('pg-insight-title').textContent = insightTitle;
+  document.getElementById('pg-insight').textContent = insight;
+}
+
+document.getElementById('pg-buy').addEventListener('click', () => {
+  const sym = document.getElementById('pg-symbol').value;
+  const price = parseFloat(document.getElementById('pg-price').value);
+  const size = parseFloat(document.getElementById('pg-size').value);
+  pgApplyTrade(sym, 'buy', price, size);
+  pgShowCode(
+    `trade = Trade("${sym}", "buy", ${price}, ${size})\ntracker.apply_trade(trade)\n\n# cash: ${pgState.cash.toFixed(2)}\n# position: ${pgState.position.toFixed(4)}`,
+    'Compra ejecutada',
+    `Cash baja (pagas ${(price * size).toFixed(2)}) y position sube. El equity depende del mark price.`
+  );
+});
+
+document.getElementById('pg-sell').addEventListener('click', () => {
+  const sym = document.getElementById('pg-symbol').value;
+  const price = parseFloat(document.getElementById('pg-price').value);
+  const size = parseFloat(document.getElementById('pg-size').value) * 0.4;  // partial
+  pgApplyTrade(sym, 'sell', price * 1.001, parseFloat(size.toFixed(4)));
+  pgShowCode(
+    `trade = Trade("${sym}", "sell", ${(price*1.001).toFixed(0)}, ${size.toFixed(4)})\ntracker.apply_trade(trade)\n\n# cash: ${pgState.cash.toFixed(2)}\n# position: ${pgState.position.toFixed(4)}`,
+    'Venta parcial',
+    'Una venta devuelve cash y reduce position. El tracker acumula consecuencias — vender no borra la historia, la actualiza.'
+  );
+});
+
+document.getElementById('pg-sequence').addEventListener('click', () => {
+  pgState = { cash: 0, position: 0, trades: [] };
+  pgApplyTrade('BTCUSDT', 'buy', 100000, 0.10);
+  pgApplyTrade('BTCUSDT', 'sell', 100120, 0.04);
+  pgShowCode(
+    `tracker = PositionTracker()\ntracker.apply_trade(Trade("BTCUSDT", "buy", 100000, 0.10))\ntracker.apply_trade(Trade("BTCUSDT", "sell", 100120, 0.04))\n\nprint(tracker.equity(100080))`,
+    'Secuencia completa',
+    'Compra 0.10 y luego vende 0.04. El tracker muestra la posición neta y el equity resultante. Esto es exactamente lo que construirás en el notebook.'
+  );
+});
+
+document.getElementById('pg-reset').addEventListener('click', () => {
+  pgState = { cash: 0, position: 0, trades: [] };
+  pgRender();
+  pgShowCode('# Tracker reseteado', 'Reset', 'El tracker vuelve a cero. Prueba otra combinación de trades.');
+});
+
+document.getElementById('pg-mark').addEventListener('input', pgRender);
+
+pgRender();
+
+// ═══════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════
+
+const bar = document.getElementById('progress');
+window.addEventListener('scroll', () => {
   const h = document.documentElement.scrollHeight - window.innerHeight;
-  const p = h > 0 ? (window.scrollY / h) * 100 : 0;
-  document.getElementById('progress').style.width = `${p}%`;
-}
+  if (h > 0) bar.style.width = (window.scrollY / h * 100) + '%';
+});
 
-function setActiveNav(id) {
-  navLinks.forEach(link => link.classList.toggle('active', link.getAttribute('href') === `#${id}`));
-}
-
-function observeSections() {
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        if (entry.intersectionRatio >= 0.35) {
-          state.activeSection = entry.target.id;
-          setActiveNav(entry.target.id);
-        }
-      }
-    });
-  }, { threshold: [0.15, 0.35, 0.6] });
-  sections.forEach(section => observer.observe(section));
-}
-
-function goTo(index) {
-  const clamped = Math.max(0, Math.min(index, sections.length - 1));
-  sections[clamped].scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-function currentIndex() {
-  let idx = 0;
-  sections.forEach((section, i) => {
-    if (section.getBoundingClientRect().top <= 140) idx = i;
-  });
-  return idx;
-}
-
-// ============================================================
-// RENDER FUNCTIONS
-// ============================================================
-
-function renderHero() {
-  const cfg = heroPhases[state.heroPhase];
-  document.getElementById('hero-status').textContent     = `fase: ${cfg.status}`;
-  document.getElementById('hero-code-label').textContent = cfg.label;
-  setCode('hero-code', cfg.code);
-  document.getElementById('hero-object').textContent  = cfg.object;
-  document.getElementById('hero-desc').textContent    = cfg.desc;
-  document.getElementById('hero-cash').textContent    = cfg.cash;
-  document.getElementById('hero-equity').textContent  = cfg.equity;
-  document.getElementById('hero-watch').textContent   = cfg.watch;
-  document.getElementById('hero-idea').textContent    = cfg.idea;
-  document.getElementById('hero-effect').textContent  = cfg.effect;
-  document.getElementById('hero-caption').textContent = cfg.caption;
-  document.getElementById('hero-table').innerHTML = rows.map((row, i) => {
-    const active = (state.heroPhase === 'table' && i !== 1) || (state.heroPhase === 'state' && i < 2);
-    return `<tr class="${active ? 'active' : ''}"><td>${row.symbol}</td><td>${row.side}</td><td>${row.price}</td><td>${fmt(row.size)}</td></tr>`;
-  }).join('');
-  document.querySelectorAll('#hero-tabs .tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.phase === state.heroPhase));
-}
-
-function renderImport() {
-  const cfg = importConfigs[state.importMode];
-  document.getElementById('import-kicker').textContent    = cfg.kicker;
-  document.getElementById('import-title').textContent     = cfg.title;
-  document.getElementById('import-copy').textContent      = cfg.copy;
-  document.getElementById('import-output').textContent    = cfg.output;
-  document.getElementById('import-code-label').textContent = cfg.codeLabel;
-  setCode('import-code', cfg.code);
-  document.getElementById('import-list').innerHTML    = cfg.list.map(item => `<li>${item}</li>`).join('');
-  document.getElementById('import-summary').textContent = cfg.summary;
-  document.getElementById('import-observe').textContent = cfg.observe;
-  document.querySelectorAll('#import-tabs .tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.mode === state.importMode));
-}
-
-function filteredRows() {
-  return state.filter === 'all' ? rows : rows.filter(row => row.side === state.filter);
-}
-
-function renderTable() {
-  const visible = filteredRows();
-  state.activeOperation = state.grouped ? 'groupby' : state.showNotional ? 'notional' : state.filter !== 'all' ? 'filter' : 'overview';
-  const op = tableOperations[state.activeOperation];
-  document.getElementById('table-body').innerHTML = visible.map(row => `
-    <tr class="${state.filter === 'all' || row.side === state.filter ? 'active' : ''}">
-      <td>${row.symbol}</td><td>${row.side}</td><td>${row.price}</td><td>${fmt(row.size)}</td><td>${state.showNotional ? fmt(row.price * row.size) : '...'}</td>
-    </tr>`).join('');
-
-  const totalVolume = visible.reduce((sum, row) => sum + row.size, 0);
-  const gross = visible.reduce((sum, row) => sum + row.price * row.size, 0);
-  document.getElementById('stat-rows').textContent    = String(visible.length);
-  document.getElementById('stat-volume').textContent  = fmt(totalVolume);
-  document.getElementById('stat-notional').textContent = state.showNotional ? fmt(gross) : '-';
-  document.getElementById('stat-filter').textContent  = state.filter === 'all' ? 'todas' : state.filter;
-
-  const tableCode = state.grouped
-    ? 'trades["notional"] = trades["price"] * trades["size"]\nsummary = trades.groupby("side")[["size", "notional"]].sum()'
-    : state.showNotional
-      ? 'trades["notional"] = trades["price"] * trades["size"]'
-      : state.filter !== 'all'
-        ? `trades[trades["side"] == "${state.filter}"]`
-        : 'trades = pd.DataFrame(rows)\ntrades.head()';
-  setCode('table-code', tableCode);
-
-  document.getElementById('table-caption').textContent = state.activeOperation === 'overview'
-    ? 'Mismo dataset, distinta ergonomia.'
-    : `Operacion actual: ${op.action}.`;
-  document.getElementById('table-op-title').textContent  = op.title;
-  document.getElementById('table-op-copy').textContent   = op.copy;
-  document.getElementById('table-op-idea').textContent   = op.idea;
-  document.getElementById('table-op-action').textContent = op.action;
-
-  const groups = ['buy', 'sell'].map(side => {
-    const sideRows = visible.filter(row => row.side === side);
-    return { side, size: sideRows.reduce((s, row) => s + row.size, 0), notional: sideRows.reduce((s, row) => s + row.price * row.size, 0) };
-  });
-  const max = Math.max(...groups.map(g => g.size), 0.01);
-  document.getElementById('group-summary').innerHTML = groups.map(group => `
-    <div class="summary-item" style="opacity:${state.grouped ? 1 : 0.55}">
-      <strong>${group.side}</strong>
-      <div>size: ${fmt(group.size)}</div>
-      <div>notional: ${state.showNotional ? fmt(group.notional) : 'pendiente'}</div>
-      <div class="bar"><span style="width:${(group.size / max) * 100}%"></span></div>
-    </div>`).join('');
-
-  document.querySelectorAll('#table-filters .ghost-btn[data-filter]').forEach(btn => btn.classList.toggle('active', btn.dataset.filter === state.filter));
-}
-
-function renderChaos() {
-  const cfg = chaosConfigs[state.chaosAssets];
-  setCode('chaos-script-code', cfg.script);
-  setCode('chaos-oop-code', cfg.oop);
-  document.getElementById('chaos-script-verdict').textContent = cfg.scriptVerdict;
-  document.getElementById('chaos-oop-verdict').textContent    = cfg.oopVerdict;
-  document.getElementById('chaos-insight').textContent        = cfg.insight;
-  document.querySelectorAll('#chaos-controls .ghost-btn').forEach(btn =>
-    btn.classList.toggle('active', Number(btn.dataset.assets) === state.chaosAssets)
-  );
-}
-
-function renderObjects() {
-  const cfg = objectConfigs[state.objectFocus];
-  document.getElementById('object-title').textContent = cfg.title;
-  document.getElementById('object-copy').textContent  = cfg.copy;
-  document.getElementById('object-list').innerHTML    = cfg.list.map(item => `<li>${item}</li>`).join('');
-  document.getElementById('object-note').textContent  = cfg.note;
-  setCode('object-code', cfg.code);
-  document.querySelectorAll('#object-tabs .tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.focus === state.objectFocus));
-  ['dict', 'class', 'object'].forEach(name => document.getElementById(`node-${name}`).classList.toggle('active', name === cfg.node));
-}
-
-function currentOrder() {
-  return {
-    symbol: document.getElementById('symbol-input').value || 'BTCUSDT',
-    side:   document.getElementById('side-input').value,
-    price:  Number(document.getElementById('price-input').value || 0),
-    size:   Number(document.getElementById('size-input').value || 0)
-  };
-}
-
-function equityValue() {
-  return state.cash + state.position * state.mark;
-}
-
-function renderBuilderFlow() {
-  const cfg = builderMessages[state.lastAction].flow;
-  document.querySelectorAll('#builder-flow [data-flow-step]').forEach(step => {
-    const name = step.dataset.flowStep;
-    step.classList.toggle('active', name === cfg.active);
-    step.classList.toggle('done', cfg.done.includes(name));
-  });
-}
-
-function animateEquity(newVal) {
-  const equityEl  = document.getElementById('tk-equity');
-  const metricEl  = document.getElementById('equity-metric');
-  if (typeof gsap !== 'undefined') {
-    const prevVal = parseFloat(equityEl.textContent.replace(',', '.')) || 0;
-    const obj = { val: prevVal };
-    gsap.to(obj, {
-      val: newVal, duration: 0.45, ease: 'power2.out',
-      onUpdate() { equityEl.textContent = fmt(obj.val); }
-    });
-    if (newVal < 0) {
-      gsap.to(equityEl,  { color: '#f472b6', duration: 0.1 });
-      gsap.to(metricEl,  { borderColor: 'rgba(244,114,182,0.35)', duration: 0.2 });
-    } else if (newVal > 0) {
-      gsap.fromTo(equityEl, { color: '#57e389' }, { color: '#f7fbff', duration: 1.0 });
-      gsap.to(metricEl,     { borderColor: 'rgba(87,227,137,0.25)', duration: 0.2,
-        onComplete() { gsap.to(metricEl, { borderColor: 'rgba(123,147,182,0.12)', duration: 1.0, delay: 0.8 }); }
-      });
-    } else {
-      gsap.to(equityEl, { color: '#f7fbff', duration: 0.3 });
-      gsap.to(metricEl, { borderColor: 'rgba(123,147,182,0.12)', duration: 0.3 });
-    }
-  } else {
-    equityEl.textContent = fmt(newVal);
-  }
-}
-
-function renderTracker() {
-  const order   = currentOrder();
-  const message = builderMessages[state.lastAction];
-  state.mark = Number(document.getElementById('mark-input').value || 0);
-  document.getElementById('pv-symbol').textContent  = order.symbol;
-  document.getElementById('pv-side').textContent    = order.side;
-  document.getElementById('pv-notional').textContent = fmt(order.price * order.size);
-  document.getElementById('pv-desc').textContent    = `${order.side} ${fmt(order.size)} ${order.symbol}`;
-  document.getElementById('tk-cash').textContent    = fmt(state.cash);
-  document.getElementById('tk-position').textContent = fmt(state.position);
-  document.getElementById('tk-mark').textContent    = String(state.mark);
-  animateEquity(equityValue());
-  document.getElementById('builder-watch').textContent  = message.watch;
-  document.getElementById('builder-effect').textContent = message.effect;
-
-  const tradeLines = state.appliedTrades.length
-    ? `\n${state.appliedTrades.map(t => `tracker.apply_trade(Trade("${t.symbol}", "${t.side}", ${t.price}, ${fmt(t.size)}))`).join('\n')}`
-    : '';
-  setCode('tracker-code',
-`order = Order("${order.symbol}", "${order.side}", ${order.price}, ${fmt(order.size)})
-tracker = PositionTracker()${tradeLines}
-equity = tracker.equity(mark_price=${state.mark})`);
-
-  document.getElementById('log').innerHTML = state.log.length
-    ? state.log.map(item => `<div><strong>${item.title}</strong>${item.body}</div>`).join('')
-    : '<div><strong>Estado limpio.</strong> Todavia no has aplicado ningun trade al tracker.</div>';
-  renderBuilderFlow();
-}
-
-function renderTeam() {
-  const cfg = teamConfigs[state.activePersona];
-  document.getElementById('team-title').textContent = cfg.title;
-  document.getElementById('team-copy').textContent  = cfg.copy;
-  setCode('team-code', cfg.code);
-  document.getElementById('team-guarantees').innerHTML = cfg.guarantees.map(g => `<div class="guarantee-item">${g}</div>`).join('');
-  document.getElementById('team-principle').textContent = cfg.principle;
-  document.getElementById('team-without').textContent   = cfg.without;
-  document.querySelectorAll('#team-tabs .tab-btn').forEach(btn =>
-    btn.classList.toggle('active', btn.dataset.persona === state.activePersona)
-  );
-}
-
-function renderTimeline() {
-  const cfg = timelineSteps[state.timelineIndex];
-  document.getElementById('timeline-title').textContent = cfg.title;
-  document.getElementById('timeline-copy').textContent  = cfg.copy;
-  setCode('timeline-code', cfg.code);
-  document.querySelectorAll('#timeline .timeline-btn').forEach((btn, i) => btn.classList.toggle('active', i === state.timelineIndex));
-}
-
-// ============================================================
-// LOG + TRADE HELPERS
-// ============================================================
-
-function addLog(title, body) {
-  state.log.unshift({ title, body });
-  state.log = state.log.slice(0, 5);
-}
-
-function applyTrade(trade) {
-  if (trade.side === 'buy') {
-    state.cash     -= trade.price * trade.size;
-    state.position += trade.size;
-  } else {
-    state.cash     += trade.price * trade.size;
-    state.position -= trade.size;
-  }
-  state.lastTrade = trade;
-  state.appliedTrades.push(trade);
-  state.lastAction = trade.side;
-  addLog(`Trade ${trade.side}`, ` ${fmt(trade.size)} ${trade.symbol} @ ${trade.price}`);
-  renderTracker();
-}
-
-// ============================================================
-// INIT
-// ============================================================
-
-function init() {
-  observeSections();
-  updateProgress();
-
-  // Initial renders
-  renderHero();
-  renderImport();
-  renderTable();
-  renderChaos();
-  renderObjects();
-  renderTracker();
-  renderTeam();
-  renderTimeline();
-
-  // Static code snippets (set once)
-  setCode('objects-dict-fail',
-`order = {\n    "symbol": "BTCUSDT",\n    "side": "buy",\n    "price": 100000,\n    "size": 0.10,\n}\n\n# quieres llamar al metodo de la orden...\nnotional = order.notional()  # AttributeError!\n\n# el dict no tiene metodos propios`);
-
-  // Scroll + keyboard
-  window.addEventListener('scroll', updateProgress, { passive: true });
-  document.addEventListener('keydown', event => {
-    const tag = document.activeElement ? document.activeElement.tagName : '';
-    if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) return;
-    if (event.key === 'ArrowRight' || event.key === 'PageDown') { event.preventDefault(); goTo(currentIndex() + 1); }
-    if (event.key === 'ArrowLeft'  || event.key === 'PageUp')   { event.preventDefault(); goTo(currentIndex() - 1); }
-    if (event.key.toLowerCase() === 'f') {
-      event.preventDefault();
-      if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
-      else document.exitFullscreen().catch(() => {});
+const sections = document.querySelectorAll('section');
+const navLinks = document.querySelectorAll('.nav-links a');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      navLinks.forEach(a => a.classList.remove('active'));
+      const link = document.querySelector(`.nav-links a[href="#${e.target.id}"]`);
+      if (link) link.classList.add('active');
     }
   });
+}, { threshold: 0.2 });
+sections.forEach(s => obs.observe(s));
 
-  document.getElementById('fullscreen-btn').addEventListener('click', () => {
-    if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
-    else document.exitFullscreen().catch(() => {});
+const sectionEls = Array.from(sections);
+function currentIdx() {
+  const anchor = window.scrollY + window.innerHeight * 0.3;
+  let best = 0, bestDist = Infinity;
+  sectionEls.forEach((el, i) => {
+    const d = Math.abs(el.getBoundingClientRect().top + window.scrollY - anchor);
+    if (d < bestDist) { bestDist = d; best = i; }
   });
-
-  document.querySelectorAll('[data-jump]').forEach(btn => btn.addEventListener('click', () => {
-    document.querySelector(btn.getAttribute('data-jump')).scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }));
-
-  // Hero tabs
-  document.querySelectorAll('#hero-tabs .tab-btn').forEach(btn => btn.addEventListener('click', () => {
-    state.heroTouched = true;
-    state.heroPhase = btn.dataset.phase;
-    renderHero();
-  }));
-  setInterval(() => {
-    if (state.activeSection !== 'hero' || state.heroTouched) return;
-    const order = ['import', 'table', 'object', 'state'];
-    state.heroPhase = order[(order.indexOf(state.heroPhase) + 1) % order.length];
-    renderHero();
-  }, 3400);
-
-  // Import tabs
-  document.querySelectorAll('#import-tabs .tab-btn').forEach(btn => btn.addEventListener('click', () => {
-    state.importMode = btn.dataset.mode;
-    renderImport();
-  }));
-
-  // Table filters
-  document.querySelectorAll('#table-filters .ghost-btn[data-filter]').forEach(btn => btn.addEventListener('click', () => {
-    state.filter = btn.dataset.filter;
-    renderTable();
-  }));
-  document.getElementById('calc-notional-btn').addEventListener('click', () => { state.showNotional = true; renderTable(); });
-  document.getElementById('group-btn').addEventListener('click', () => { state.grouped = !state.grouped; renderTable(); });
-  document.getElementById('table-reset-btn').addEventListener('click', () => { state.filter = 'all'; state.showNotional = false; state.grouped = false; renderTable(); });
-
-  // Chaos controls
-  document.querySelectorAll('#chaos-controls .ghost-btn').forEach(btn => btn.addEventListener('click', () => {
-    state.chaosAssets = Number(btn.dataset.assets);
-    renderChaos();
-  }));
-
-  // Object tabs
-  document.querySelectorAll('#object-tabs .tab-btn').forEach(btn => btn.addEventListener('click', () => {
-    state.objectFocus = btn.dataset.focus;
-    renderObjects();
-  }));
-
-  // Builder inputs
-  ['symbol-input', 'side-input', 'price-input', 'size-input', 'mark-input'].forEach(id =>
-    document.getElementById(id).addEventListener('input', renderTracker)
-  );
-  document.getElementById('build-btn').addEventListener('click', () => {
-    state.lastAction = 'build';
-    addLog('Order lista', ` ${document.getElementById('pv-desc').textContent}`);
-    renderTracker();
-  });
-  document.getElementById('buy-btn').addEventListener('click', () => {
-    const order = currentOrder();
-    applyTrade({ symbol: order.symbol, side: 'buy', price: order.price, size: order.size });
-  });
-  document.getElementById('sell-btn').addEventListener('click', () => {
-    const order = currentOrder();
-    applyTrade({ symbol: order.symbol, side: 'sell', price: order.price + 120, size: Math.max(order.size / 2, 0.01) });
-  });
-  document.getElementById('sequence-btn').addEventListener('click', () => {
-    const order = currentOrder();
-    state.cash = 0; state.position = 0; state.lastTrade = null; state.appliedTrades = []; state.log = [];
-    addLog('Order lista', ` ${order.side} ${fmt(order.size)} ${order.symbol}`);
-    applyTrade({ symbol: order.symbol, side: 'buy',  price: order.price,       size: order.size });
-    applyTrade({ symbol: order.symbol, side: 'sell', price: order.price + 120, size: Math.max(order.size / 2, 0.01) });
-    state.lastAction = 'sequence';
-    renderTracker();
-  });
-  document.getElementById('reset-btn').addEventListener('click', () => {
-    state.cash = 0; state.position = 0; state.lastTrade = null; state.appliedTrades = []; state.lastAction = 'clean'; state.log = [];
-    renderTracker();
-  });
-
-  // Team tabs
-  document.querySelectorAll('#team-tabs .tab-btn').forEach(btn => btn.addEventListener('click', () => {
-    state.activePersona = btn.dataset.persona;
-    renderTeam();
-  }));
-
-  // Timeline
-  document.querySelectorAll('#timeline .timeline-btn').forEach((btn, i) => btn.addEventListener('click', () => {
-    state.timelineTouched = true;
-    state.timelineIndex = i;
-    renderTimeline();
-  }));
-  setInterval(() => {
-    if (state.activeSection !== 'bridge' || state.timelineTouched) return;
-    state.timelineIndex = (state.timelineIndex + 1) % timelineSteps.length;
-    renderTimeline();
-  }, 3600);
+  return best;
 }
 
-init();
+document.addEventListener('keydown', async (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.key === 'ArrowRight' || e.key === 'PageDown' || (e.key === ' ' && !e.shiftKey)) {
+    e.preventDefault();
+    sectionEls[Math.min(currentIdx() + 1, sectionEls.length - 1)].scrollIntoView({ behavior:'smooth', block:'start' });
+  } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+    e.preventDefault();
+    sectionEls[Math.max(currentIdx() - 1, 0)].scrollIntoView({ behavior:'smooth', block:'start' });
+  } else if (e.key.toLowerCase() === 'f') {
+    e.preventDefault();
+    if (!document.fullscreenElement) await document.documentElement.requestFullscreen().catch(()=>{});
+    else await document.exitFullscreen().catch(()=>{});
+  }
+});
+
+document.getElementById('fullscreen-btn').addEventListener('click', async () => {
+  if (!document.fullscreenElement) await document.documentElement.requestFullscreen().catch(()=>{});
+  else await document.exitFullscreen().catch(()=>{});
+});
+
+// ── GSAP entrance ──
+gsap.from('#hero h1', { y:30, opacity:0, duration:0.8, delay:0.2 });
+gsap.from('#hero .lead', { y:20, opacity:0, duration:0.6, delay:0.4 });
+gsap.from('#hero .card', { y:20, opacity:0, duration:0.5, delay:0.5, stagger:0.1 });
 </script>
 </body>
 </html>

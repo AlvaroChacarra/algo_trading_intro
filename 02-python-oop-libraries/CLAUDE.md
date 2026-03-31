@@ -9,8 +9,8 @@
 ├── README.md                               # Objectives and quick reference
 ├── lesson.ipynb                            # Main teaching notebook (10 cells + solution)
 ├── presentation/
-│   ├── python-oop-libraries-interactive.html  # Visual intro with live state tabs
-│   └── guion.md                               # Instructor script (212 lines, 5 blocks)
+│   ├── python-oop-libraries-interactive.html  # 3-block interactive presentation (GSAP)
+│   └── guion.md                               # Instructor script (3 blocks, ~130 lines)
 ├── exercises/
 │   ├── oop_trading_system_exercises.ipynb     # 10 exercises + bonus (Exercise 10b)
 │   └── portfolio_architecture_demo/           # Standalone Python package (optional demo)
@@ -30,15 +30,24 @@
 ```
 
 ## Lesson flow
-1. `presentation/python-oop-libraries-interactive.html` — tabs: import → table → dict→class→object → live Order playground
+1. `presentation/python-oop-libraries-interactive.html` — 20-min presentation: 3 blocks
 2. `lesson.ipynb` — starts with the flat-script problem, then builds Order / Trade / PositionTracker
 3. `exercises/oop_trading_system_exercises.ipynb` — 10 steps + bonus (MultiAssetTracker)
 4. `portfolio_architecture_demo/` — optional extended demo on modular architecture
 
 ## Key design decisions
 
+### Presentation (3 blocks, 20 minutes)
+| Block | Content | Interaction |
+|---|---|---|
+| 1. El problema de escalar (5 min) | Script plano vs OOP: 1→2→3 activos | Interactive comparison with metrics (vars, objects, duplication) |
+| 2. Dict → Class → Object (5 min) | Transformation from L1 dict to class to instance | Tabbed code view + SVG diagram with highlights |
+| 3. Playground (7 min) | Order/Trade/PositionTracker in action | Form inputs → buy/sell/sequence → live cash/position/equity |
+
+Tech stack: GSAP (animations), vanilla JS. Same dark theme as L1 (#09090b + cyan). Consistent nav, progress bar, keyboard shortcuts.
+
 ### lesson.ipynb
-Opens with a motivating cell: a flat BTC script where adding ETH would require duplicating 4+ variables and all logic. Then builds:
+Opens with a motivating cell: explicitly references L1 Exercise 9 (flat cash/position tracking) and shows the same code with prefixed variables for ETH. Then builds:
 
 1. `import pandas as pd` → DataFrame with 3 orders → `.notional` column → `.groupby("side")`
 2. `class Order` → `__init__`, `notional()`, `describe()`, `__repr__`
@@ -47,9 +56,10 @@ Opens with a motivating cell: a flat BTC script where adding ETH would require d
 5. Mini story: 3 orders + 3 fills → equity calculation
 
 Encapsulation is named explicitly after building PositionTracker, not before.
+Closing references vibe coding as bridge to Lesson 3.
 
 ### exercises/oop_trading_system_exercises.ipynb
-Exercise 0 is a "feel the problem" cell — not a coding exercise, but a motivating anti-pattern with questions (how many variables for ETH? for SOL? how many places change if equity formula changes?).
+Exercise 0 is an **active** exercise: student uncomments ETH code and tries to scale the flat script. Not just reading — doing.
 
 | Tier | Exercises | Content |
 |---|---|---|
@@ -57,12 +67,17 @@ Exercise 0 is a "feel the problem" cell — not a coding exercise, but a motivat
 | Si vamos bien | 6–7 | Order methods (notional, describe), Trade class |
 | Bonus / casa | 8–10b | PositionTracker with private state, apply_trade, equity, MultiAssetTracker |
 
-Exercise 10b (MultiAssetTracker) teaches composition: a dict of `{symbol: PositionTracker}`, showing that N assets = N entries, not N duplicated code blocks.
+Experiential callbacks from L1 (not just textual):
+- Exercise 4: shows the L1 dict inline, then asks "convert keys to attributes"
+- Exercise 6: references `compute_notional()` from L1 Ex6 → now `Order.notional()`
+- Exercise 8: references flat cash/position from L1 Ex9 → now `PositionTracker`
 
-Each exercise follows the same cell pattern as Lesson 1: problem → validation → guided solution.
+Exercise 10b (MultiAssetTracker) teaches composition: `{symbol: PositionTracker}`.
+
+Closing plants concrete vibe coding seed: "you wrote ~60 lines of classes. What if you could describe what you want in Spanish and an LLM generates them?"
 
 ### portfolio_architecture_demo/ (optional extended demo)
-Self-contained Python package. No external dependencies. No internet. Used to teach debugging by ownership — the idea that every error has a natural home in the codebase.
+Self-contained Python package. No external dependencies. No internet. Teaches debugging by ownership.
 
 Run with: `python run_demo.py --scenario <name>`
 
@@ -74,12 +89,17 @@ Run with: `python run_demo.py --scenario <name>`
 | `model_fail` | Negative returns → ModelComputationError | `model.py` |
 | `interactive` | User picks tickers | — |
 
-The app catches each exception type separately and prints: error title, owner file, and reasoning ("the data layer failed — no point looking at the model yet").
+## Continuity
 
-Teaching message: "when code grows, the question stops being 'does it work?' and becomes 'which piece owns this?'"
+### From Lesson 1
+- `symbol` in all dicts → `Order.__init__` first parameter
+- `compute_notional(price, size)` → `Order.notional()` method
+- Exercise 9 flat tracking → `PositionTracker.apply_trade()`
+- Mixed-asset buy_volume problem → motivates OOP
 
-### presentation HTML
-Interactive tabs: Before/After import, dict→class→object flow, live Order playground (change price/size/mark, click Crear orden / Compra demo / Venta parcial, watch cash/position/equity update in real time).
+### To Lesson 3
+- "You wrote ~60 lines by hand. What if an LLM generates them?"
+- Bridge plants vibe coding concept concretely
 
 ## Conventions
 - Solutions embedded in exercise notebook — no separate `solutions/` folder
