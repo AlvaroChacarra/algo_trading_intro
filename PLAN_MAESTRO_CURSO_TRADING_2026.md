@@ -54,23 +54,25 @@ Cada sesion tendra esta estructura:
 
 ## 3. Formato del repo
 
-Se propone una carpeta por clase:
+Una carpeta por clase con prefijo numerico y nombre descriptivo:
 
-- `first-lesson/`
-- `second-lesson/`
-- `third-lesson/`
-- `fourth-lesson/`
-- `fifth-lesson/`
-- `sixth-lesson/`
-- `seventh-lesson/`
-- `eighth-lesson/`
-- `ninth-lesson/`
-- `tenth-lesson/`
-- `eleventh-lesson/`
-- `twelfth-lesson/`
-- `thirteenth-lesson/`
-- `fourteenth-lesson/`
-- `fifteenth-lesson/`
+- `01-python-basics/`
+- `02-python-oop-libraries/`
+- `03-vibe-coding-llms-tools-agents/`
+- `04-market-microstructure-btc/`
+- `05-order-types-matching/`
+- `06-lob-data-science-pipeline/`
+- `07-lob-data-science-examples/`
+- `08-vwap-execution-i/`
+- `09-vwap-execution-ii/`
+- `10-government-bonds/`
+- `11-rfq-close-probability/`
+- `12-market-making-intro/`
+- `13-avellaneda-stoikov/`
+- `14-exam-quiz-i/`
+- `15-exam-quiz-ii/`
+
+El patron `NN-nombre-descriptivo/` permite ordenar correctamente en cualquier explorador de archivos y hace el proposito de cada carpeta legible sin abrir nada.
 
 ### Estructura base por carpeta
 Cada clase deberia intentar seguir esta estructura minima:
@@ -81,21 +83,38 @@ Cada clase deberia intentar seguir esta estructura minima:
 - `data/` - datos locales de apoyo.
 - `assets/` - imagenes, csv, gifs o json.
 - `exercises/` - ejercicios guiados o mini build path.
-- `solutions/` - opcional o embebido al final del notebook.
+
+Las soluciones van **embebidas dentro del notebook de ejercicios** (celda de solucion guiada despues de cada validador), no en una carpeta `solutions/` separada. Esto mantiene el flujo de practica en un solo archivo.
 
 ### Convencion por tipo de clase
 
 - Clases de Python, microestructura, ejecucion y modelizacion: **Jupyter Notebook**.
-- Clases mas visuales o tipo presentacion interactiva: **HTML + p5.js**.
+- Clases de introduccion conceptual con poco codigo (foundation): **HTML scroll-snap con dark theme** (Inter + JetBrains Mono, sin p5.js).
+- Clases visuales con simulaciones y animaciones complejas: **HTML + p5.js**.
 
 ### Patron recomendado para clases foundation
 Para las primeras clases de programacion, el patron que mejor encaja es:
 
-1. **Presentacion pedagogica** - mapa mental e intuicion.
+1. **Presentacion HTML** - mapa mental e intuicion (scroll-snap, dark theme, sin p5.js).
 2. **Notebook principal** - demo corta y construccion guiada.
-3. **Ejercicios** - progresion paso a paso para tocar codigo.
+3. **Cuaderno de ejercicios** - progresion paso a paso con 3 tiers.
 
-Este patron ya funciona especialmente bien para clases 1 y 2, donde el alumno todavia necesita mucho contexto antes de construir solo.
+Este patron ya funciona en produccion para clases 1 y 2.
+
+### Estructura del cuaderno de ejercicios (patron confirmado)
+
+Cada ejercicio sigue este orden de celdas:
+1. Enunciado + codigo inicial con `pass` o `None`
+2. Celda de validacion automatica (comprueba tipo, valor, existencia; mensajes de error especificos)
+3. Celda de solucion guiada (para consultar si el alumno se atasca)
+
+Los ejercicios se dividen en tres tiers declarados al principio del cuaderno:
+
+| Tier | Cuando completar |
+|---|---|
+| **Nucleo** | Obligatorio en clase |
+| **Si vamos bien** | Si el ritmo lo permite |
+| **Bonus / casa** | Tarea o alumnos adelantados |
 
 ---
 
@@ -142,37 +161,49 @@ Uso recomendado:
 
 ## Clase 1 - Python basico
 **Formato:** Presentacion HTML + Notebook + Ejercicios
+**Estado:** Produccion (completa)
+**Carpeta:** `01-python-basics/`
 
 ### Objetivo
 Llevar a una persona desde cero absoluto a entender que Python es texto que interpreta un lenguaje capaz de automatizar tareas.
 
-### Debe cubrir
+### Cubre
 
 - que es un programa,
-- que significa ejecutar codigo,
-- variables,
-- tipos basicos,
-- listas,
-- diccionarios,
-- `for loops`,
-- `if`,
-- funciones,
+- que significa ejecutar codigo (tokenizacion → AST → bytecode → VM),
+- variables y tipos basicos (str, int, float),
+- listas (indexacion, `len()`, iteracion),
+- diccionarios (acceso por clave, anadir campos),
+- `for loops` y acumuladores,
+- `if / elif / else`,
+- funciones (parametros, return),
 - automatizacion de tareas simples.
 
-### Intuicion clave
-Python no es "programar por programar", sino escribir instrucciones repetibles para quitar trabajo manual.
+### Frase central de la sesion
+"Python no es magia. Python es un programa que lee texto, lo interpreta y produce una accion real."
 
-### Estructura pedagogica recomendada
-1. Presentacion HTML para fijar que Python es un programa real que lee texto.
-2. Notebook corto para pasar de variables y listas a una mini lectura de mercado.
-3. Cuaderno de ejercicios guiados para construir un sistema toy paso a paso.
+### Implementacion real
 
-### Demo sugerida
+**Presentacion (`python-intro-interactive.html`):**
+- 7 slides con scroll-snap, dark theme, sin p5.js
+- Cubre: que es CPython, pipeline interno, tipos de error, REPL y Jupyter
 
-- recorrer una lista de precios,
-- calcular medias simples,
-- procesar trades ficticios,
-- crear una funcion que compute spread o PnL basico.
+**Notebook principal (`lesson.ipynb`):**
+- 9 celdas, cero imports
+- Contexto BTCUSDT desde la celda 1 (bid=99950, ask=100000)
+- Progresion: snapshot → spread → mid → ordenes → bucle → funciones → mini sistema
+- Cierra con ejercicio en clase: calcular `average_size` y `buy_share`
+
+**Ejercicios (`trading_system_exercises.ipynb`):**
+- 10 ejercicios + validadores automaticos + soluciones guiadas embebidas
+- Nucleo (1-5): variables, spread/mid, orden, open_orders, buy_volume/sell_volume
+- Si vamos bien (6-7): `compute_notional()`, `add_limit_order()`
+- Bonus/casa (8-10): cancel por id, actualizar cash/position/equity, estrategia toy con signals
+
+El ejercicio 10 cierra con: "si quisieras anadir ETH, cuantos sitios cambiarias?" — puente natural a clase 2.
+
+### Datos
+Sin datos externos. Todo inline con valores BTCUSDT sinteticos.
 
 ### Takeaway
 El alumno sale sabiendo leer y tocar codigo sin miedo.
@@ -181,43 +212,72 @@ El alumno sale sabiendo leer y tocar codigo sin miedo.
 
 ## Clase 2 - Python OOP + librerias
 **Formato:** Presentacion HTML + Notebook + Ejercicios
+**Estado:** Produccion (completa)
+**Carpeta:** `02-python-oop-libraries/`
 
 ### Objetivo
 Explicar primero que es una libreria y por que `import pandas as pd` cambia lo que uno puede hacer. Despues, pasar de listas y diccionarios a objetos propios de trading.
 
-### Debe cubrir
+### Cubre
 
-- que es una libreria,
-- que hace un `import`,
-- idea practica de `pandas`,
-- clase,
-- objeto,
-- atributos,
-- metodos,
-- crear un mini sistema con objetos tipo `Order`, `Trade` y `PositionTracker`.
+- que es una libreria y que hace `import`,
+- idea practica de `pandas` (DataFrame, columna calculada, groupby),
+- clase, objeto, atributos, metodos,
+- convencion `_underscore` para estado privado (encapsulacion sin `__dunder`),
+- crear un mini sistema con `Order`, `Trade` y `PositionTracker`.
 
-### Secuencia ideal
-1. Librerias como "codigo que otros ya escribieron".
-2. Ejemplo practico con `pandas` sobre una tabla simple.
-3. Limite de trabajar solo con listas y diccionarios.
-4. Diferencia entre usar una libreria y crear nuestro propio objeto.
-5. Construccion de un mini sistema OOP de trading.
+### Pregunta central de la sesion
+"Si quisieras anadir ETH a tu script de BTC, cuantos sitios tendrias que cambiar?"
 
-### Demo sugerida
+### Implementacion real
 
-- leer una tabla simple con `pandas`,
-- crear una clase `Order`,
-- anadir un metodo como `notional()`,
-- crear una clase `Trade`,
-- actualizar `cash`, `position` y `equity` con `PositionTracker`.
+**Presentacion (`python-oop-libraries-interactive.html`):**
+- 5 bloques: hero (tool→object→state), before/after import, pandas live table, dict→class→object, cierre
+- Playground interactivo: cambiar price/size/mark, ver cash/position/equity actualizarse en tiempo real
+- Dark theme consistente con clase 1
 
-### Estructura pedagogica recomendada
-1. Presentacion HTML para explicar intuitivamente que es una libreria, que hace `import` y por que las clases ayudan a organizar codigo.
-2. Notebook principal con un bloque corto de `pandas` y una transicion clara hacia OOP.
-3. Cuaderno de ejercicios guiados donde el alumno construye el mini proyecto paso a paso.
+**Notebook principal (`lesson.ipynb`):**
+- Abre con un script plano BTC que no escala a ETH (el problema)
+- pandas: 3 filas de ordenes → columna notional → groupby side
+- `class Order`: `__init__`, `notional()`, `describe()`, `__repr__`
+- `class Trade`: `cash_flow()` (buy=negativo, sell=positivo)
+- `class PositionTracker`: `_cash`, `_position` privados, `apply_trade()`, `equity(mark_price)`
+- Nombra encapsulacion despues de construirla, no antes
+- Mini historia final: 3 ordenes + 3 fills → equity
+
+**Ejercicios (`oop_trading_system_exercises.ipynb`):**
+- Ejercicio 0: anti-patron motivacional (sin codigo — solo preguntas: cuantas variables para ETH? para SOL? cuantos sitios cambian si equity cambia?)
+- Nucleo (1-5): import pandas, DataFrame, columna notional, clase Order basica, instanciar objetos
+- Si vamos bien (6-7): metodos en Order (notional, describe), clase Trade
+- Bonus/casa (8-10): PositionTracker con estado privado, apply_trade, equity, MultiAssetTracker
+- Ejercicio 10b (bonus avanzado): `MultiAssetTracker` como composicion — dict interno `{symbol: PositionTracker}`, N activos = N entradas, no N bloques duplicados
+
+**Demo de arquitectura (`exercises/portfolio_architecture_demo/`):**
+Package Python autonomo (sin dependencias externas, sin internet) para ensenyar debugging por ownership.
+
+5 clases con responsabilidades separadas:
+
+| Clase | Archivo | Responsabilidad |
+|---|---|---|
+| `AssetUniverse` | `universe.py` | Define 17 tickers en 4 categorias |
+| `UnderlyingSelector` | `selector.py` | Frontera usuario-sistema, valida input |
+| `YahooFinanceDataProvider` | `data_provider.py` | Snapshot de mercado mock |
+| `PortfolioOptimizerModel` | `model.py` | score = expected_return / volatility |
+| `PortfolioOptimizerApp` | `app.py` | Orquesta el flujo, captura errores por tipo |
+
+5 escenarios ejecutables: `python run_demo.py --scenario [happy|data_fail|bad_selection|model_fail|interactive]`
+
+Cada excepcion (`SelectionError`, `DataRetrievalError`, `ModelComputationError`) tiene un archivo duenyo. La app imprime: titulo del error, archivo responsable, razonamiento de por que no buscar en otro sitio.
+
+Mensaje pedagogico: "cuando el codigo crece, la pregunta deja de ser 'funciona?' y pasa a ser 'que pieza es responsable de esto?'"
+
+Este demo es **opcional** en la sesion de clase — se usa si hay tiempo o como lectura posterior.
+
+### Datos
+Sin datos externos. Todo inline con valores BTCUSDT/ETHUSDT sinteticos. El demo de arquitectura usa datos mock deterministas.
 
 ### Takeaway
-El alumno entiende que el codigo puede ampliarse con librerias y organizarse con objetos reutilizables.
+El alumno entiende que el codigo puede ampliarse con librerias y organizarse con objetos reutilizables. Empieza a ver que cada clase tiene una responsabilidad.
 
 ---
 
@@ -642,18 +702,31 @@ Cada concepto importante deberia tener al menos uno de estos:
 
 ### Decisiones por clase
 
-- Clase 1 seguira el patron presentation -> notebook -> ejercicios.
-- Clase 2 seguira el mismo patron y usara un mini proyecto OOP de trading.
-- Clase 3 sera HTML centrado en LLMs, tools y agentes.
-- Clase 4 tendra foco crypto, preferiblemente BTC, con datos actualizados.
-- Clase 5 incluira matching behavior y simulacion interactiva.
-- Clases 6 y 7 usaran mezcla de datos reales y sinteticos.
-- Clases 8 y 9 separaran baselines de volumen y modelo dinamico.
-- Clase 10 sera visual con HTML + p5.js.
-- Clase 11 hara modelizacion monotonic de cierre por spread y tier.
-- Clase 12 introducira utilidad y CARA antes del modelo formal.
-- Clase 13 conectara intuicion, HJB y formula con simulacion.
-- Clases 14 y 15 quedan para el final.
+- Clase 1: patron presentation → notebook → ejercicios. **Implementado en produccion.**
+- Clase 2: mismo patron, mini proyecto OOP (Order / Trade / PositionTracker) + demo de arquitectura opcional. **Implementado en produccion.**
+- Clase 3: HTML centrado en LLMs, tools y agentes.
+- Clase 4: foco crypto, preferiblemente BTC, con datos actualizados.
+- Clase 5: matching behavior y simulacion interactiva.
+- Clases 6 y 7: mezcla de datos reales y sinteticos.
+- Clases 8 y 9: separar baselines de volumen y modelo dinamico.
+- Clase 10: visual con HTML + p5.js.
+- Clase 11: modelizacion monotonica de cierre por spread y tier.
+- Clase 12: utilidad y CARA antes del modelo formal.
+- Clase 13: conectar intuicion, HJB y formula con simulacion.
+- Clases 14 y 15: quedan para el final.
+
+### Decisiones de diseno confirmadas en produccion (clases 1 y 2)
+
+Estas decisiones se tomaron al implementar las primeras clases y deben aplicarse al resto del curso:
+
+- **Nomenclatura de carpetas:** `NN-nombre-descriptivo/` (no `ordinal-lesson/`). Permite orden y legibilidad simultaneos.
+- **Soluciones embebidas:** Las soluciones van dentro del cuaderno de ejercicios, no en carpeta separada. Cada ejercicio tiene: enunciado → validador → solucion guiada.
+- **Validadores automaticos:** Cada ejercicio del cuaderno incluye una celda que verifica existencia, tipo y valor. Mensajes de error especificos, no generico "incorrecto".
+- **3 tiers en ejercicios:** Nucleo / Si vamos bien / Bonus-casa. Se declaran al principio del cuaderno. Permite ritmos distintos sin dejar a nadie atras ni aburrir a los adelantados.
+- **Ejercicio 0 motivacional:** Antes de los ejercicios tecnicos, un bloque que muestra el problema que van a resolver. No pide codigo — pide reflexion. Especialmente util cuando se introduce un nuevo paradigma (OOP, algoritmos de ejecucion, market making).
+- **HTML de clases foundation (1 y 2):** Scroll-snap, dark theme (`#09090b`), Inter + JetBrains Mono. Sin p5.js. p5.js queda reservado para clases con animaciones de simulacion (5, 10, 12).
+- **Datos inline para clases foundation:** Clases 1 y 2 usan cero datos externos. Todo inline sintetico. Evita setup friction en el primer contacto con el curso.
+- **Consistencia de contexto:** BTCUSDT como activo base en clases 1 y 2. Favorece continuidad cognitiva entre clases.
 
 ---
 
@@ -693,9 +766,9 @@ Cada concepto importante deberia tener al menos uno de estos:
 
 ### Fase 3 - Bloque foundation
 
-- clase 1,
-- clase 2,
-- clase 3.
+- clase 1 — **COMPLETADA** (`01-python-basics/`)
+- clase 2 — **COMPLETADA** (`02-python-oop-libraries/`)
+- clase 3 — pendiente
 
 ### Fase 4 - Bloque microestructura y ordenes
 
