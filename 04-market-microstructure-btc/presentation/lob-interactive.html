@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Microestructura de Mercado — Clase 4</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2309090b'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Arial,sans-serif' font-size='20' font-weight='700' fill='%2322d3ee'%3ELOB%3C/text%3E%3C/svg%3E">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root {
+  --bg: #09090b;
+  --surface: #18181b;
+  --surface-2: #27272a;
+  --border: #3f3f46;
+  --text: #fafafa;
+  --muted: #a1a1aa;
+  --cyan: #22d3ee;
+  --blue: #818cf8;
+  --green: #4ade80;
+  --pink: #f472b6;
+  --yellow: #fbbf24;
+  --red: #f87171;
+  --bid: #4ade80;
+  --ask: #f87171;
+  --nav-h: 64px;
+  --wrap: min(1200px, calc(100vw - 48px));
+  --shadow: 0 20px 60px rgba(0,0,0,0.35);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; scroll-snap-type:y proximity; scrollbar-width:thin; scrollbar-color:var(--surface-2) var(--bg); }
+body { background:var(--bg); color:var(--text); font-family:'Inter',system-ui,sans-serif; line-height:1.7; font-size:17px; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+
+nav { position:fixed; top:0; left:0; right:0; z-index:100; background:rgba(9,9,11,0.85); backdrop-filter:blur(16px) saturate(1.4); border-bottom:1px solid rgba(63,63,70,0.5); padding:0 40px; height:var(--nav-h); display:flex; align-items:center; justify-content:space-between; }
+.nav-brand { font-weight:800; font-size:16px; color:var(--cyan); letter-spacing:-0.02em; }
+.nav-brand::before { content:''; display:inline-block; width:8px; height:8px; margin-right:10px; border-radius:999px; background:var(--cyan); box-shadow:0 0 14px rgba(34,211,238,0.7); vertical-align:middle; }
+.nav-links { display:flex; gap:6px; list-style:none; }
+.nav-links a { color:var(--muted); text-decoration:none; font-size:14px; font-weight:600; padding:8px 14px; border-radius:10px; transition:all 0.2s; }
+.nav-links a:hover, .nav-links a.active { color:var(--text); background:var(--surface); }
+.nav-actions { display:flex; align-items:center; gap:10px; }
+.full-btn { background:var(--surface); color:var(--text); border:1px solid var(--border); border-radius:10px; padding:8px 14px; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s; }
+.full-btn:hover { border-color:rgba(34,211,238,0.4); }
+#progress { position:fixed; top:var(--nav-h); left:0; height:2px; width:0%; z-index:101; background:linear-gradient(90deg,var(--cyan),var(--blue),var(--pink)); transition:width 0.15s; }
+
+main { width:var(--wrap); margin:0 auto; padding:calc(var(--nav-h) + 32px) 0 120px; }
+section { margin:0 0 80px; scroll-snap-align:start; scroll-margin-top:calc(var(--nav-h) + 24px); opacity:0; transform:translateY(20px); transition:opacity 0.5s ease, transform 0.5s ease; }
+section.visible { opacity:1; transform:translateY(0); }
+.shell { background:linear-gradient(180deg,rgba(24,24,27,0.95),rgba(18,18,21,0.9)); border:1px solid rgba(63,63,70,0.4); border-radius:28px; box-shadow:var(--shadow); padding:32px; position:relative; overflow:hidden; }
+.shell::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(34,211,238,0.04),transparent 30%); pointer-events:none; }
+
+.label { display:inline-flex; align-items:center; gap:8px; padding:7px 14px; border-radius:999px; background:rgba(34,211,238,0.08); border:1px solid rgba(34,211,238,0.18); color:var(--cyan); font-size:12px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:18px; }
+h1 { font-size:clamp(42px,6vw,80px); font-weight:900; letter-spacing:-0.045em; line-height:0.95; }
+h2 { font-size:clamp(30px,4vw,52px); font-weight:850; letter-spacing:-0.04em; line-height:1; }
+h3 { font-size:22px; font-weight:800; letter-spacing:-0.03em; }
+p, li { color:var(--muted); }
+.lead { max-width:700px; font-size:clamp(18px,2vw,22px); color:#d4d4d8; margin-top:16px; }
+.accent { color:var(--cyan); }
+
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:start; }
+.hero-grid { display:grid; grid-template-columns:1.1fr 0.9fr; gap:32px; align-items:center; min-height:calc(100vh - var(--nav-h) - 64px); }
+
+.card { background:rgba(24,24,27,0.8); border:1px solid rgba(63,63,70,0.35); border-radius:20px; padding:20px; }
+.card-label { color:var(--cyan); font-size:11px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:10px; }
+
+pre, code { font-family:'JetBrains Mono',monospace; font-size:13.5px; line-height:1.7; }
+.code-block { background:rgba(9,9,11,0.8); border:1px solid rgba(63,63,70,0.3); border-radius:16px; padding:18px 20px; overflow-x:auto; white-space:pre-wrap; word-break:break-word; }
+.code-block code { color:#e4e4e7; }
+
+.btn { display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; transition:all 0.2s; border:1px solid var(--border); background:var(--surface); color:var(--text); }
+.btn:hover { border-color:rgba(34,211,238,0.3); }
+.btn.active { border-color:rgba(34,211,238,0.4); background:rgba(34,211,238,0.08); color:var(--cyan); }
+.btn-primary { background:linear-gradient(135deg,var(--cyan),#06b6d4); color:#09090b; border:none; }
+.btn-primary:hover { box-shadow:0 4px 16px rgba(34,211,238,0.25); }
+.btn-row { display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
+
+.metric { padding:16px; border-radius:16px; background:rgba(9,9,11,0.7); border:1px solid rgba(63,63,70,0.25); }
+.metric-name { color:var(--muted); font-size:11px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:6px; }
+.metric-value { font-size:26px; font-weight:900; letter-spacing:-0.04em; color:var(--text); transition:all 0.3s; }
+.metric-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(140px,1fr)); gap:12px; }
+
+.verdict { margin-top:12px; padding:14px 18px; border-radius:14px; font-size:13px; font-weight:700; line-height:1.6; }
+.verdict.insight { background:rgba(129,140,248,0.06); border:1px solid rgba(129,140,248,0.2); color:var(--blue); }
+
+.timeline-row { display:grid; grid-template-columns:repeat(5, 1fr); gap:8px; margin-top:24px; }
+.tl-step { padding:14px; border-radius:16px; background:rgba(9,9,11,0.7); border:1px solid rgba(63,63,70,0.25); text-align:center; font-size:12px; font-weight:700; transition:all 0.3s; }
+.tl-step.active { border-color:rgba(34,211,238,0.35); background:rgba(34,211,238,0.05); }
+.tl-step .tl-icon { font-size:20px; margin-bottom:6px; }
+
+/* ── LOB TABLE ── */
+.lob-table { width:100%; border-collapse:separate; border-spacing:0 3px; font-family:'JetBrains Mono',monospace; font-size:13px; }
+.lob-table th { color:var(--muted); font-size:10px; font-weight:800; letter-spacing:0.1em; text-transform:uppercase; padding:8px 12px; text-align:right; }
+.lob-table th:first-child { text-align:left; }
+.lob-table td { padding:8px 12px; border-radius:8px; transition:all 0.3s; }
+.lob-row-bid td { background:rgba(74,222,128,0.04); }
+.lob-row-ask td { background:rgba(248,113,113,0.04); }
+.lob-price { font-weight:700; text-align:right; }
+.lob-price.bid { color:var(--bid); }
+.lob-price.ask { color:var(--ask); }
+.lob-size { text-align:right; color:var(--muted); }
+.lob-bar-cell { width:40%; padding:0 12px !important; }
+.lob-bar { height:20px; border-radius:4px; transition:width 0.5s ease; }
+.lob-bar.bid { background:rgba(74,222,128,0.25); float:right; }
+.lob-bar.ask { background:rgba(248,113,113,0.25); float:left; }
+
+/* ── DEPTH CHART ── */
+.depth-canvas { width:100%; height:280px; background:rgba(9,9,11,0.8); border:1px solid rgba(63,63,70,0.3); border-radius:16px; }
+
+/* ── IMBALANCE GAUGE ── */
+.imbalance-bar-wrap { width:100%; height:36px; background:rgba(9,9,11,0.6); border-radius:18px; overflow:hidden; position:relative; display:flex; }
+.imbalance-bid-fill { height:100%; background:linear-gradient(90deg, rgba(74,222,128,0.15), rgba(74,222,128,0.4)); transition:width 0.5s; }
+.imbalance-ask-fill { height:100%; background:linear-gradient(90deg, rgba(248,113,113,0.4), rgba(248,113,113,0.15)); transition:width 0.5s; }
+.imbalance-needle { position:absolute; top:-4px; bottom:-4px; width:3px; background:var(--text); border-radius:2px; transition:left 0.5s; box-shadow:0 0 8px rgba(250,250,250,0.3); }
+.imbalance-labels { display:flex; justify-content:space-between; margin-top:8px; font-size:12px; font-weight:700; }
+
+/* ── HISTORY CHART ── */
+.history-chart { width:100%; height:200px; position:relative; background:rgba(9,9,11,0.8); border:1px solid rgba(63,63,70,0.3); border-radius:16px; overflow:hidden; }
+.history-canvas { width:100%; height:100%; }
+
+@media (max-width:768px) {
+  .two-col, .hero-grid, .metric-grid, .timeline-row { grid-template-columns:1fr; }
+  nav { padding:0 16px; }
+  .shell { padding:20px; border-radius:20px; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-brand">Clase 4 — Microestructura</span>
+  <ul class="nav-links">
+    <li><a href="#hero">Inicio</a></li>
+    <li><a href="#lob">LOB</a></li>
+    <li><a href="#depth">Profundidad</a></li>
+    <li><a href="#imbalance">Imbalance</a></li>
+    <li><a href="#cierre">Cierre</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="full-btn" id="fullscreen-btn">&#x26F6;</button>
+  </div>
+</nav>
+<div id="progress"></div>
+
+<main>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- HERO                                    -->
+<!-- ═══════════════════════════════════════ -->
+<section id="hero">
+  <div class="shell">
+    <div class="hero-grid">
+      <div>
+        <div class="label">Clase 4</div>
+        <h1>El Limit Order Book</h1>
+        <p class="lead">El precio que ves en una pantalla no es un hecho. Es el resultado de una subasta continua entre compradores y vendedores. El LOB es esa subasta.</p>
+
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:32px;">
+          <div class="card" style="text-align:center;">
+            <div style="font-size:28px; margin-bottom:6px;">&#x1F4D7;</div>
+            <h3 style="font-size:14px;">Bids</h3>
+            <p style="font-size:12px;">Compradores esperando</p>
+          </div>
+          <div class="card" style="text-align:center;">
+            <div style="font-size:28px; margin-bottom:6px;">&#x1F4D5;</div>
+            <h3 style="font-size:14px;">Asks</h3>
+            <p style="font-size:12px;">Vendedores esperando</p>
+          </div>
+          <div class="card" style="text-align:center;">
+            <div style="font-size:28px; margin-bottom:6px;">&#x2696;&#xFE0F;</div>
+            <h3 style="font-size:14px;">Spread</h3>
+            <p style="font-size:12px;">El coste de operar</p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card" style="background:rgba(34,211,238,0.04); border-color:rgba(34,211,238,0.15);">
+          <div class="card-label">BTCUSDT — Snapshot</div>
+          <div style="display:grid; grid-template-columns:1fr auto 1fr; gap:8px; align-items:center; margin-top:8px;">
+            <div style="text-align:center;">
+              <div style="font-size:11px; font-weight:800; color:var(--bid); letter-spacing:0.08em;">BEST BID</div>
+              <div style="font-size:32px; font-weight:900; color:var(--bid); letter-spacing:-0.03em;" id="hero-bid">99,995</div>
+              <div style="font-size:12px; color:var(--muted);">0.85 BTC</div>
+            </div>
+            <div style="text-align:center; padding:0 12px;">
+              <div style="font-size:11px; font-weight:800; color:var(--cyan); letter-spacing:0.08em;">SPREAD</div>
+              <div style="font-size:20px; font-weight:900; color:var(--cyan);" id="hero-spread">$10</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-size:11px; font-weight:800; color:var(--ask); letter-spacing:0.08em;">BEST ASK</div>
+              <div style="font-size:32px; font-weight:900; color:var(--ask); letter-spacing:-0.03em;" id="hero-ask">100,005</div>
+              <div style="font-size:12px; color:var(--muted);">1.20 BTC</div>
+            </div>
+          </div>
+          <div style="text-align:center; margin-top:16px; padding-top:16px; border-top:1px solid rgba(63,63,70,0.3);">
+            <div style="font-size:11px; font-weight:800; color:var(--muted); letter-spacing:0.08em;">MID PRICE</div>
+            <div style="font-size:24px; font-weight:900; color:var(--text);" id="hero-mid">100,000</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- BLOQUE 1: QUE ES UN LOB                 -->
+<!-- ═══════════════════════════════════════ -->
+<section id="lob">
+  <div class="shell">
+    <div class="label">Bloque 1 &mdash; Que es un LOB</div>
+    <h2>La subasta continua</h2>
+    <p class="lead">Un LOB organiza todas las ordenes de compra y venta por precio. Bids a la izquierda (verde), asks a la derecha (rojo). Donde se tocan esta el precio.</p>
+
+    <div class="btn-row" style="margin-top:20px; margin-bottom:20px;">
+      <button class="btn-primary btn" id="lob-refresh">Nuevo snapshot</button>
+      <button class="btn" id="lob-add-bid">+ Bid grande</button>
+      <button class="btn" id="lob-add-ask">+ Ask grande</button>
+      <button class="btn" id="lob-shock" style="color:var(--yellow); border-color:rgba(251,191,36,0.25);">Shock de volatilidad</button>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <div class="card">
+          <div class="card-label">Libro de ordenes — BTCUSDT</div>
+          <table class="lob-table" id="lob-display">
+            <thead>
+              <tr>
+                <th style="text-align:left;">Bid Size</th>
+                <th></th>
+                <th>Bid Price</th>
+                <th style="color:var(--muted);">|</th>
+                <th style="text-align:left;">Ask Price</th>
+                <th></th>
+                <th style="text-align:right;">Ask Size</th>
+              </tr>
+            </thead>
+            <tbody id="lob-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-label">Metricas en vivo</div>
+          <div class="metric-grid" style="grid-template-columns:1fr 1fr;">
+            <div class="metric">
+              <div class="metric-name">Best Bid</div>
+              <div class="metric-value" style="color:var(--bid); font-size:22px;" id="m-best-bid">—</div>
+            </div>
+            <div class="metric">
+              <div class="metric-name">Best Ask</div>
+              <div class="metric-value" style="color:var(--ask); font-size:22px;" id="m-best-ask">—</div>
+            </div>
+            <div class="metric">
+              <div class="metric-name">Spread</div>
+              <div class="metric-value accent" style="font-size:22px;" id="m-spread">—</div>
+            </div>
+            <div class="metric">
+              <div class="metric-name">Mid Price</div>
+              <div class="metric-value" style="font-size:22px;" id="m-mid">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <div class="card-label">Codigo equivalente</div>
+          <div class="code-block">
+            <code>best_bid = max(bids.keys())
+best_ask = min(asks.keys())
+spread   = best_ask - best_bid
+mid      = (best_bid + best_ask) / 2</code>
+          </div>
+        </div>
+
+        <div class="verdict insight" id="lob-insight" style="margin-top:16px;">
+          Pulsa <strong>Nuevo snapshot</strong> para ver como cambia el libro. Los precios y tamanos se mueven continuamente — el mercado nunca esta quieto.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- BLOQUE 2: LEER EL LIBRO                 -->
+<!-- ═══════════════════════════════════════ -->
+<section id="depth">
+  <div class="shell">
+    <div class="label">Bloque 2 &mdash; Leer el libro</div>
+    <h2>Profundidad y market orders</h2>
+    <p class="lead">El volumen acumulado por nivel muestra donde esta la liquidez. Una market order consume niveles del libro de arriba hacia abajo.</p>
+
+    <div class="btn-row" style="margin-top:20px; margin-bottom:20px;">
+      <button class="btn-primary btn" id="depth-market-buy">Market Buy 0.5 BTC</button>
+      <button class="btn" id="depth-market-buy-big">Market Buy 3.0 BTC</button>
+      <button class="btn" id="depth-reset">Reset libro</button>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <div class="card">
+          <div class="card-label">Depth Chart — Volumen acumulado</div>
+          <canvas class="depth-canvas" id="depth-chart"></canvas>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-label">Estado despues de market order</div>
+          <div class="metric-grid" style="grid-template-columns:1fr 1fr;">
+            <div class="metric">
+              <div class="metric-name">Niveles consumidos</div>
+              <div class="metric-value" style="color:var(--yellow);" id="d-levels">0</div>
+            </div>
+            <div class="metric">
+              <div class="metric-name">Precio promedio</div>
+              <div class="metric-value" id="d-avg-price">—</div>
+            </div>
+            <div class="metric">
+              <div class="metric-name">Nuevo spread</div>
+              <div class="metric-value accent" id="d-new-spread">—</div>
+            </div>
+            <div class="metric">
+              <div class="metric-name">Slippage</div>
+              <div class="metric-value" style="color:var(--pink);" id="d-slippage">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <div class="card-label">Que esta pasando</div>
+          <div id="depth-explain" style="font-size:14px; color:var(--muted); line-height:1.7;">
+            El depth chart muestra el volumen acumulado en cada nivel de precio. <strong style="color:var(--bid);">Verde</strong> = bids acumulados (izquierda a derecha). <strong style="color:var(--ask);">Rojo</strong> = asks acumulados (derecha a izquierda). Pulsa <strong style="color:var(--cyan);">Market Buy</strong> para ver como una orden come niveles.
+          </div>
+        </div>
+
+        <div class="verdict insight" id="depth-insight" style="margin-top:16px;">
+          Cuanto mas volumen necesitas ejecutar, mas niveles consumes y peor precio obtienes. Eso es <strong>slippage</strong> — el coste oculto de la urgencia.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- BLOQUE 3: IMBALANCE                     -->
+<!-- ═══════════════════════════════════════ -->
+<section id="imbalance">
+  <div class="shell">
+    <div class="label">Bloque 3 &mdash; Que nos dice el imbalance</div>
+    <h2>Presion de mercado</h2>
+    <p class="lead">El imbalance mide la presion relativa de compradores vs vendedores. Cuando hay mucho mas volumen en bids que en asks, el precio tiende a subir.</p>
+
+    <div class="two-col" style="margin-top:24px;">
+      <div>
+        <div class="card">
+          <div class="card-label">Formula</div>
+          <div class="code-block" style="font-size:15px; text-align:center;">
+            <code>imbalance = bid_vol / (bid_vol + ask_vol)</code>
+          </div>
+
+          <div style="margin-top:20px;">
+            <div class="card-label">Imbalance actual</div>
+            <div class="imbalance-bar-wrap">
+              <div class="imbalance-bid-fill" id="imb-bid-fill" style="width:50%;"></div>
+              <div class="imbalance-ask-fill" id="imb-ask-fill" style="width:50%;"></div>
+              <div class="imbalance-needle" id="imb-needle" style="left:50%;"></div>
+            </div>
+            <div class="imbalance-labels">
+              <span style="color:var(--ask);">Presion vendedora</span>
+              <span style="color:var(--muted);" id="imb-value">0.50</span>
+              <span style="color:var(--bid);">Presion compradora</span>
+            </div>
+          </div>
+
+          <div class="metric-grid" style="grid-template-columns:repeat(3,1fr); margin-top:20px;">
+            <div class="metric">
+              <div class="metric-name">Bid Vol (top 5)</div>
+              <div class="metric-value" style="color:var(--bid); font-size:18px;" id="imb-bid-vol">—</div>
+            </div>
+            <div class="metric">
+              <div class="metric-name">Ask Vol (top 5)</div>
+              <div class="metric-value" style="color:var(--ask); font-size:18px;" id="imb-ask-vol">—</div>
+            </div>
+            <div class="metric">
+              <div class="metric-name">Senal</div>
+              <div class="metric-value" style="font-size:18px;" id="imb-signal">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-primary btn" id="imb-refresh">Nuevo snapshot</button>
+          <button class="btn" id="imb-bid-heavy">Simular presion compradora</button>
+          <button class="btn" id="imb-ask-heavy">Simular presion vendedora</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-label">Semaforo de imbalance</div>
+          <div style="display:grid; gap:12px; margin-top:8px;">
+            <div id="sem-buy" style="padding:14px 18px; border-radius:14px; border:2px solid rgba(63,63,70,0.3); transition:all 0.4s;">
+              <div style="display:flex; align-items:center; gap:12px;">
+                <div style="width:16px; height:16px; border-radius:50%; background:var(--bid); box-shadow:0 0 10px rgba(74,222,128,0.3);"></div>
+                <div>
+                  <div style="font-weight:800; font-size:14px; color:var(--bid);">Imbalance &gt; 0.6 — Presion compradora</div>
+                  <div style="font-size:12px; color:var(--muted);">Mas volumen en bids. El precio tiende a subir.</div>
+                </div>
+              </div>
+            </div>
+            <div id="sem-neutral" style="padding:14px 18px; border-radius:14px; border:2px solid rgba(63,63,70,0.3); transition:all 0.4s;">
+              <div style="display:flex; align-items:center; gap:12px;">
+                <div style="width:16px; height:16px; border-radius:50%; background:var(--yellow); box-shadow:0 0 10px rgba(251,191,36,0.3);"></div>
+                <div>
+                  <div style="font-weight:800; font-size:14px; color:var(--yellow);">Imbalance 0.4–0.6 — Equilibrio</div>
+                  <div style="font-size:12px; color:var(--muted);">Volumen similar en ambos lados. Sin senal clara.</div>
+                </div>
+              </div>
+            </div>
+            <div id="sem-sell" style="padding:14px 18px; border-radius:14px; border:2px solid rgba(63,63,70,0.3); transition:all 0.4s;">
+              <div style="display:flex; align-items:center; gap:12px;">
+                <div style="width:16px; height:16px; border-radius:50%; background:var(--ask); box-shadow:0 0 10px rgba(248,113,113,0.3);"></div>
+                <div>
+                  <div style="font-weight:800; font-size:14px; color:var(--ask);">Imbalance &lt; 0.4 — Presion vendedora</div>
+                  <div style="font-size:12px; color:var(--muted);">Mas volumen en asks. El precio tiende a bajar.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <div class="card-label">Historico imbalance vs precio</div>
+          <div class="history-chart">
+            <canvas class="history-canvas" id="imb-history-canvas"></canvas>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:11px; font-weight:700;">
+            <span style="color:var(--muted);">t-20</span>
+            <span style="color:var(--cyan);">&#x2014; Mid Price &nbsp;&nbsp;</span>
+            <span style="color:var(--yellow);">&#x2014; Imbalance</span>
+            <span style="color:var(--muted);">ahora</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- CIERRE                                  -->
+<!-- ═══════════════════════════════════════ -->
+<section id="cierre">
+  <div class="shell" style="text-align:center; padding:48px 32px;">
+    <div class="label">Cierre</div>
+    <h2>Del precio al sistema</h2>
+    <p class="lead" style="margin:16px auto 0; max-width:640px;">Hoy has entendido que <strong>detras de cada precio hay un libro de ordenes</strong>, y que el imbalance te da informacion sobre hacia donde puede moverse.</p>
+
+    <div class="timeline-row" style="max-width:900px; margin:32px auto 0;">
+      <div class="tl-step active">
+        <div class="tl-icon">&#x1F4D7;</div>
+        <div style="color:var(--cyan);">LOB</div>
+        <div style="color:var(--muted); font-size:11px;">bids + asks</div>
+      </div>
+      <div class="tl-step active">
+        <div class="tl-icon">&#x1F4CF;</div>
+        <div style="color:var(--cyan);">Spread</div>
+        <div style="color:var(--muted); font-size:11px;">coste de operar</div>
+      </div>
+      <div class="tl-step active">
+        <div class="tl-icon">&#x1F4CA;</div>
+        <div style="color:var(--cyan);">Profundidad</div>
+        <div style="color:var(--muted); font-size:11px;">liquidez acumulada</div>
+      </div>
+      <div class="tl-step active">
+        <div class="tl-icon">&#x2696;&#xFE0F;</div>
+        <div style="color:var(--cyan);">Imbalance</div>
+        <div style="color:var(--muted); font-size:11px;">presion de mercado</div>
+      </div>
+      <div class="tl-step active">
+        <div class="tl-icon">&#x1F4B9;</div>
+        <div style="color:var(--cyan);">Slippage</div>
+        <div style="color:var(--muted); font-size:11px;">coste de urgencia</div>
+      </div>
+    </div>
+
+    <div class="card" style="max-width:640px; margin:32px auto 0; background:rgba(34,211,238,0.04); border-color:rgba(34,211,238,0.15);">
+      <p style="color:var(--cyan); font-weight:700; font-size:15px;">Ahora toca practicar. Abre el notebook y explora 500 snapshots reales de LOB de BTC.</p>
+    </div>
+
+    <div class="card" style="max-width:640px; margin:16px auto 0; background:rgba(129,140,248,0.04); border-color:rgba(129,140,248,0.15);">
+      <p style="color:var(--blue); font-weight:700; font-size:14px;">Siguiente clase: ya entiendes el libro. Ahora toca tipos de ordenes — limit, market, IOC — y ver como se cruzan.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+// ═══════════════════════════════════════
+// SCROLL OBSERVER + PROGRESS + NAV
+// ═══════════════════════════════════════
+const sections = document.querySelectorAll('section');
+const navLinks = document.querySelectorAll('.nav-links a');
+const progressBar = document.getElementById('progress');
+
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+sections.forEach(s => io.observe(s));
+
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  progressBar.style.width = ((h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100) + '%';
+  let cur = '';
+  sections.forEach(s => { if (s.getBoundingClientRect().top < 200) cur = s.id; });
+  navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + cur));
+});
+
+document.getElementById('fullscreen-btn').addEventListener('click', () => {
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+  else document.exitFullscreen();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'f' || e.key === 'F') {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+  const ids = [...sections].map(s => s.id);
+  let c = 0;
+  sections.forEach((s, i) => { if (s.getBoundingClientRect().top < 200) c = i; });
+  if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); document.getElementById(ids[Math.min(c+1, ids.length-1)]).scrollIntoView({behavior:'smooth'}); }
+  if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); document.getElementById(ids[Math.max(c-1, 0)]).scrollIntoView({behavior:'smooth'}); }
+});
+
+
+// ═══════════════════════════════════════
+// LOB DATA ENGINE
+// ═══════════════════════════════════════
+
+let lobState = { bids: [], asks: [] };
+const N_LEVELS = 10;
+let basePrice = 100000;
+
+function rnd(min, max) { return min + Math.random() * (max - min); }
+
+function generateLOB(bp) {
+  basePrice = bp || basePrice;
+  const halfSpread = rnd(3, 12);
+  const bestBid = basePrice - halfSpread;
+  const bestAsk = basePrice + halfSpread;
+
+  const bids = [], asks = [];
+  let bp_ = bestBid, ap_ = bestAsk;
+
+  for (let i = 0; i < N_LEVELS; i++) {
+    const bSize = i < 3 ? rnd(0.05, 2.5) : rnd(0.02, 5);
+    bids.push({ price: Math.round(bp_ * 100) / 100, size: Math.round(bSize * 10000) / 10000 });
+    bp_ -= rnd(1, 3 + i * 1.5);
+
+    const aSize = i < 3 ? rnd(0.05, 2.5) : rnd(0.02, 5);
+    asks.push({ price: Math.round(ap_ * 100) / 100, size: Math.round(aSize * 10000) / 10000 });
+    ap_ += rnd(1, 3 + i * 1.5);
+  }
+
+  lobState = { bids, asks };
+  return lobState;
+}
+
+function calcMetrics(lob) {
+  const bb = lob.bids[0].price;
+  const ba = lob.asks[0].price;
+  return { bestBid: bb, bestAsk: ba, spread: Math.round((ba - bb) * 100) / 100, mid: Math.round(((bb + ba) / 2) * 100) / 100 };
+}
+
+function calcImbalance(lob, levels) {
+  levels = levels || 5;
+  let bidVol = 0, askVol = 0;
+  for (let i = 0; i < Math.min(levels, lob.bids.length); i++) bidVol += lob.bids[i].size;
+  for (let i = 0; i < Math.min(levels, lob.asks.length); i++) askVol += lob.asks[i].size;
+  return { bidVol, askVol, imbalance: bidVol / (bidVol + askVol) };
+}
+
+
+// ═══════════════════════════════════════
+// BLOQUE 1: LOB DISPLAY
+// ═══════════════════════════════════════
+
+function renderLOB(lob) {
+  const m = calcMetrics(lob);
+  document.getElementById('m-best-bid').textContent = m.bestBid.toLocaleString('en-US', {minimumFractionDigits:2});
+  document.getElementById('m-best-ask').textContent = m.bestAsk.toLocaleString('en-US', {minimumFractionDigits:2});
+  document.getElementById('m-spread').textContent = '$' + m.spread.toFixed(2);
+  document.getElementById('m-mid').textContent = m.mid.toLocaleString('en-US', {minimumFractionDigits:2});
+
+  const maxSize = Math.max(...lob.bids.map(b => b.size), ...lob.asks.map(a => a.size));
+  const tbody = document.getElementById('lob-tbody');
+  tbody.innerHTML = '';
+
+  for (let i = 0; i < N_LEVELS; i++) {
+    const bid = lob.bids[i];
+    const ask = lob.asks[i];
+    const tr = document.createElement('tr');
+
+    const bidBarW = (bid.size / maxSize * 100).toFixed(1);
+    const askBarW = (ask.size / maxSize * 100).toFixed(1);
+
+    tr.innerHTML = `
+      <td class="lob-size">${bid.size.toFixed(4)}</td>
+      <td class="lob-bar-cell"><div class="lob-bar bid" style="width:${bidBarW}%"></div></td>
+      <td class="lob-price bid">${bid.price.toLocaleString('en-US',{minimumFractionDigits:2})}</td>
+      <td style="color:var(--surface-2); text-align:center;">${i === 0 ? '&#x2194;' : ''}</td>
+      <td class="lob-price ask">${ask.price.toLocaleString('en-US',{minimumFractionDigits:2})}</td>
+      <td class="lob-bar-cell"><div class="lob-bar ask" style="width:${askBarW}%"></div></td>
+      <td class="lob-size">${ask.size.toFixed(4)}</td>
+    `;
+    tbody.appendChild(tr);
+  }
+}
+
+document.getElementById('lob-refresh').addEventListener('click', () => {
+  basePrice += rnd(-15, 15);
+  generateLOB(basePrice);
+  renderLOB(lobState);
+  document.getElementById('lob-insight').innerHTML = 'Nuevo snapshot. Fijate como cambian los precios, los tamanos y el spread. El mercado nunca esta quieto.';
+});
+
+document.getElementById('lob-add-bid').addEventListener('click', () => {
+  lobState.bids[0].size += rnd(2, 5);
+  lobState.bids[0].size = Math.round(lobState.bids[0].size * 10000) / 10000;
+  renderLOB(lobState);
+  document.getElementById('lob-insight').innerHTML = '<span style="color:var(--bid);">Un comprador grande aparecio en el best bid.</span> Mas volumen en bids = mas soporte. Si alguien quiere vender, hay liquidez esperando.';
+});
+
+document.getElementById('lob-add-ask').addEventListener('click', () => {
+  lobState.asks[0].size += rnd(2, 5);
+  lobState.asks[0].size = Math.round(lobState.asks[0].size * 10000) / 10000;
+  renderLOB(lobState);
+  document.getElementById('lob-insight').innerHTML = '<span style="color:var(--ask);">Un vendedor grande aparecio en el best ask.</span> Mas volumen en asks = mas resistencia. El precio tendra que absorber esa oferta antes de subir.';
+});
+
+document.getElementById('lob-shock').addEventListener('click', () => {
+  // Widen spread, reduce sizes
+  for (let i = 0; i < lobState.bids.length; i++) {
+    lobState.bids[i].price -= rnd(5, 20);
+    lobState.bids[i].size *= rnd(0.2, 0.5);
+    lobState.bids[i].size = Math.round(lobState.bids[i].size * 10000) / 10000;
+  }
+  for (let i = 0; i < lobState.asks.length; i++) {
+    lobState.asks[i].price += rnd(5, 20);
+    lobState.asks[i].size *= rnd(0.2, 0.5);
+    lobState.asks[i].size = Math.round(lobState.asks[i].size * 10000) / 10000;
+  }
+  renderLOB(lobState);
+  document.getElementById('lob-insight').innerHTML = '<span style="color:var(--yellow);">Shock de volatilidad.</span> Los market makers retiran liquidez, el spread se ensancha y los tamanos se reducen. Operar ahora es mucho mas caro.';
+});
+
+
+// ═══════════════════════════════════════
+// BLOQUE 2: DEPTH CHART
+// ═══════════════════════════════════════
+
+let depthLOB = null;
+
+function drawDepth(lob) {
+  const canvas = document.getElementById('depth-chart');
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.clientWidth;
+  const h = canvas.clientHeight;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, w, h);
+
+  // Compute cumulative volumes
+  const bidCum = [], askCum = [];
+  let cumB = 0, cumA = 0;
+  for (let i = 0; i < lob.bids.length; i++) { cumB += lob.bids[i].size; bidCum.push({ price: lob.bids[i].price, cum: cumB }); }
+  for (let i = 0; i < lob.asks.length; i++) { cumA += lob.asks[i].size; askCum.push({ price: lob.asks[i].price, cum: cumA }); }
+
+  const allPrices = [...bidCum.map(b => b.price), ...askCum.map(a => a.price)];
+  const minP = Math.min(...allPrices);
+  const maxP = Math.max(...allPrices);
+  const maxCum = Math.max(cumB, cumA);
+  const pad = 40;
+
+  function px(price) { return pad + (price - minP) / (maxP - minP) * (w - 2 * pad); }
+  function py(cum) { return h - pad - (cum / maxCum) * (h - 2 * pad); }
+
+  // Grid
+  ctx.strokeStyle = 'rgba(63,63,70,0.2)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad + i * (h - 2 * pad) / 4;
+    ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(w - pad, y); ctx.stroke();
+  }
+
+  // Bid area (green)
+  ctx.beginPath();
+  ctx.moveTo(px(bidCum[0].price), h - pad);
+  for (const b of bidCum) { ctx.lineTo(px(b.price), py(b.cum)); }
+  ctx.lineTo(px(bidCum[bidCum.length - 1].price), h - pad);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(74,222,128,0.15)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(74,222,128,0.6)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  for (let i = 0; i < bidCum.length; i++) {
+    const x = px(bidCum[i].price), y = py(bidCum[i].cum);
+    if (i === 0) ctx.moveTo(x, y); else { ctx.lineTo(x, y); }
+  }
+  ctx.stroke();
+
+  // Ask area (red)
+  ctx.beginPath();
+  ctx.moveTo(px(askCum[0].price), h - pad);
+  for (const a of askCum) { ctx.lineTo(px(a.price), py(a.cum)); }
+  ctx.lineTo(px(askCum[askCum.length - 1].price), h - pad);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(248,113,113,0.15)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(248,113,113,0.6)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  for (let i = 0; i < askCum.length; i++) {
+    const x = px(askCum[i].price), y = py(askCum[i].cum);
+    if (i === 0) ctx.moveTo(x, y); else { ctx.lineTo(x, y); }
+  }
+  ctx.stroke();
+
+  // Mid line
+  const midP = (lob.bids[0].price + lob.asks[0].price) / 2;
+  ctx.strokeStyle = 'rgba(34,211,238,0.4)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath(); ctx.moveTo(px(midP), pad); ctx.lineTo(px(midP), h - pad); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Labels
+  ctx.fillStyle = '#a1a1aa';
+  ctx.font = '11px Inter';
+  ctx.textAlign = 'center';
+  ctx.fillText(lob.bids[0].price.toLocaleString(), px(lob.bids[0].price), h - pad + 16);
+  ctx.fillText(lob.asks[0].price.toLocaleString(), px(lob.asks[0].price), h - pad + 16);
+  ctx.fillText('mid', px(midP), pad - 8);
+}
+
+function simulateMarketBuy(size) {
+  let remaining = size;
+  let totalCost = 0;
+  let levelsConsumed = 0;
+  const origAsk = depthLOB.asks[0].price;
+
+  while (remaining > 0 && depthLOB.asks.length > 0) {
+    const level = depthLOB.asks[0];
+    const fill = Math.min(remaining, level.size);
+    totalCost += fill * level.price;
+    remaining -= fill;
+    level.size -= fill;
+    level.size = Math.round(level.size * 10000) / 10000;
+    levelsConsumed++;
+    if (level.size <= 0.0001) depthLOB.asks.shift();
+  }
+
+  const filled = size - remaining;
+  const avgPrice = filled > 0 ? totalCost / filled : 0;
+  const newSpread = depthLOB.asks.length > 0 ? depthLOB.asks[0].price - depthLOB.bids[0].price : 999;
+  const slippage = avgPrice - origAsk;
+
+  document.getElementById('d-levels').textContent = levelsConsumed;
+  document.getElementById('d-avg-price').textContent = avgPrice > 0 ? avgPrice.toLocaleString('en-US', {minimumFractionDigits:2}) : '—';
+  document.getElementById('d-new-spread').textContent = '$' + newSpread.toFixed(2);
+  document.getElementById('d-slippage').textContent = slippage > 0 ? '+$' + slippage.toFixed(2) : '$' + slippage.toFixed(2);
+
+  if (levelsConsumed > 3) {
+    document.getElementById('depth-explain').innerHTML = '<span style="color:var(--pink);">La market order consumio <strong>' + levelsConsumed + ' niveles</strong>. El precio promedio fue $' + avgPrice.toFixed(2) + ' — mucho peor que el best ask original. Eso es slippage en accion.</span>';
+  } else {
+    document.getElementById('depth-explain').innerHTML = 'La market order se ejecuto en <strong>' + levelsConsumed + ' nivel(es)</strong>. Con poco volumen, el slippage es minimo. Pero prueba con 3.0 BTC para ver la diferencia.';
+  }
+
+  drawDepth(depthLOB);
+}
+
+function resetDepth() {
+  depthLOB = JSON.parse(JSON.stringify(lobState));
+  drawDepth(depthLOB);
+  document.getElementById('d-levels').textContent = '0';
+  document.getElementById('d-avg-price').textContent = '—';
+  document.getElementById('d-new-spread').textContent = '—';
+  document.getElementById('d-slippage').textContent = '—';
+  document.getElementById('depth-explain').innerHTML = 'El depth chart muestra el volumen acumulado en cada nivel. <strong style="color:var(--bid);">Verde</strong> = bids. <strong style="color:var(--ask);">Rojo</strong> = asks. Pulsa <strong style="color:var(--cyan);">Market Buy</strong> para ver como una orden come niveles.';
+}
+
+document.getElementById('depth-market-buy').addEventListener('click', () => simulateMarketBuy(0.5));
+document.getElementById('depth-market-buy-big').addEventListener('click', () => simulateMarketBuy(3.0));
+document.getElementById('depth-reset').addEventListener('click', resetDepth);
+
+
+// ═══════════════════════════════════════
+// BLOQUE 3: IMBALANCE
+// ═══════════════════════════════════════
+
+let imbHistory = [];
+let midHistory = [];
+
+function updateImbalance(lob) {
+  const { bidVol, askVol, imbalance } = calcImbalance(lob, 5);
+
+  document.getElementById('imb-bid-fill').style.width = (imbalance * 100) + '%';
+  document.getElementById('imb-ask-fill').style.width = ((1 - imbalance) * 100) + '%';
+  document.getElementById('imb-needle').style.left = (imbalance * 100) + '%';
+  document.getElementById('imb-value').textContent = imbalance.toFixed(3);
+  document.getElementById('imb-bid-vol').textContent = bidVol.toFixed(2);
+  document.getElementById('imb-ask-vol').textContent = askVol.toFixed(2);
+
+  // Signal
+  let signal, sigColor;
+  if (imbalance > 0.6) { signal = 'COMPRA'; sigColor = 'var(--bid)'; }
+  else if (imbalance < 0.4) { signal = 'VENTA'; sigColor = 'var(--ask)'; }
+  else { signal = 'NEUTRO'; sigColor = 'var(--yellow)'; }
+  document.getElementById('imb-signal').textContent = signal;
+  document.getElementById('imb-signal').style.color = sigColor;
+
+  // Semaphore highlight
+  ['sem-buy', 'sem-neutral', 'sem-sell'].forEach(id => {
+    document.getElementById(id).style.borderColor = 'rgba(63,63,70,0.3)';
+    document.getElementById(id).style.background = 'transparent';
+  });
+  if (imbalance > 0.6) {
+    document.getElementById('sem-buy').style.borderColor = 'rgba(74,222,128,0.4)';
+    document.getElementById('sem-buy').style.background = 'rgba(74,222,128,0.06)';
+  } else if (imbalance < 0.4) {
+    document.getElementById('sem-sell').style.borderColor = 'rgba(248,113,113,0.4)';
+    document.getElementById('sem-sell').style.background = 'rgba(248,113,113,0.06)';
+  } else {
+    document.getElementById('sem-neutral').style.borderColor = 'rgba(251,191,36,0.4)';
+    document.getElementById('sem-neutral').style.background = 'rgba(251,191,36,0.06)';
+  }
+
+  // History
+  const m = calcMetrics(lob);
+  imbHistory.push(imbalance);
+  midHistory.push(m.mid);
+  if (imbHistory.length > 30) { imbHistory.shift(); midHistory.shift(); }
+  drawImbHistory();
+}
+
+function drawImbHistory() {
+  const canvas = document.getElementById('imb-history-canvas');
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.clientWidth;
+  const h = canvas.clientHeight;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, w, h);
+
+  if (imbHistory.length < 2) return;
+
+  const pad = 30;
+  const n = imbHistory.length;
+
+  // Mid price line (cyan)
+  const minMid = Math.min(...midHistory) - 5;
+  const maxMid = Math.max(...midHistory) + 5;
+  ctx.strokeStyle = 'rgba(34,211,238,0.7)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  for (let i = 0; i < n; i++) {
+    const x = pad + i / (n - 1) * (w - 2 * pad);
+    const y = h - pad - ((midHistory[i] - minMid) / (maxMid - minMid)) * (h - 2 * pad);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  // Imbalance line (yellow)
+  ctx.strokeStyle = 'rgba(251,191,36,0.7)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  for (let i = 0; i < n; i++) {
+    const x = pad + i / (n - 1) * (w - 2 * pad);
+    const y = h - pad - (imbHistory[i]) * (h - 2 * pad);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  // 0.5 reference line
+  ctx.strokeStyle = 'rgba(63,63,70,0.3)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  const y50 = h - pad - 0.5 * (h - 2 * pad);
+  ctx.beginPath(); ctx.moveTo(pad, y50); ctx.lineTo(w - pad, y50); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#71717a';
+  ctx.font = '10px JetBrains Mono';
+  ctx.fillText('0.5', 6, y50 + 4);
+}
+
+document.getElementById('imb-refresh').addEventListener('click', () => {
+  basePrice += rnd(-10, 10);
+  generateLOB(basePrice);
+  renderLOB(lobState);
+  resetDepth();
+  updateImbalance(lobState);
+});
+
+document.getElementById('imb-bid-heavy').addEventListener('click', () => {
+  for (let i = 0; i < 5; i++) lobState.bids[i].size += rnd(1, 4);
+  for (let i = 0; i < 3; i++) lobState.asks[i].size *= rnd(0.3, 0.6);
+  lobState.asks.forEach(a => a.size = Math.round(Math.max(a.size, 0.01) * 10000) / 10000);
+  lobState.bids.forEach(b => b.size = Math.round(b.size * 10000) / 10000);
+  renderLOB(lobState);
+  updateImbalance(lobState);
+});
+
+document.getElementById('imb-ask-heavy').addEventListener('click', () => {
+  for (let i = 0; i < 5; i++) lobState.asks[i].size += rnd(1, 4);
+  for (let i = 0; i < 3; i++) lobState.bids[i].size *= rnd(0.3, 0.6);
+  lobState.bids.forEach(b => b.size = Math.round(Math.max(b.size, 0.01) * 10000) / 10000);
+  lobState.asks.forEach(a => a.size = Math.round(a.size * 10000) / 10000);
+  renderLOB(lobState);
+  updateImbalance(lobState);
+});
+
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+
+generateLOB(100000);
+renderLOB(lobState);
+depthLOB = JSON.parse(JSON.stringify(lobState));
+drawDepth(depthLOB);
+updateImbalance(lobState);
+
+</script>
+</body>
+</html>

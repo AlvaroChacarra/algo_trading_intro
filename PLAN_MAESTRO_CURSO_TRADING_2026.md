@@ -62,14 +62,14 @@ Una carpeta por clase con prefijo numerico y nombre descriptivo:
 - `04-market-microstructure-btc/`
 - `05-order-types-matching/`
 - `06-lob-data-science-pipeline/`
-- `07-lob-data-science-examples/`
-- `08-vwap-execution-i/`
-- `09-vwap-execution-ii/`
-- `10-government-bonds/`
-- `11-rfq-close-probability/`
-- `12-market-making-intro/`
-- `13-avellaneda-stoikov/`
-- `14-exam-quiz-i/`
+- `07-lob-modeling-examples/`
+- `08-vwap-volume-baselines/`
+- `09-vwap-dynamic-models/`
+- `10-exam-quiz-i/`
+- `11-government-bonds/`  ← antes `10-government-bonds-basics`
+- `12-rfq-close-probability/`
+- `13-market-making-intro/`
+- `14-avellaneda-stoikov/`
 - `15-exam-quiz-ii/`
 
 El patron `NN-nombre-descriptivo/` permite ordenar correctamente en cualquier explorador de archivos y hace el proposito de cada carpeta legible sin abrir nada.
@@ -467,8 +467,31 @@ No basta con mirar medias historicas; el flujo reciente tambien informa.
 
 ---
 
-## Clase 10 - Bonos del gobierno
+## Clase 10 - Exam-Quiz I
+**Formato:** Quiz
+**Carpeta:** `10-exam-quiz-i/`
+
+### Cierre del bloque L1–L9
+
+Examen de cierre del primer bloque del curso. Cubre todo lo construido desde Python básico hasta VWAP dinámico.
+
+### Áreas evaluadas
+
+- Python (L1-L2): funciones, OOP, `Order`, `PositionTracker`
+- Herramientas y LLMs (L3): criterio de uso, verificación de outputs
+- Microestructura (L4-L5): LOB, spread, imbalance, tipos de orden, fill probability
+- LOB Data Science (L6-L7): pipeline ML, data leakage, overfitting, walk-forward temporal
+- Ejecución VWAP (L8-L9): `build_vwap_schedule`, `compute_correction_factor`, `walk_forward_dynamic`, `ExecutionDecision`
+
+### Formato
+
+Quiz conceptual con preguntas de código, interpretación de resultados y razonamiento sobre trade-offs.
+
+---
+
+## Clase 11 - Bonos del gobierno
 **Formato:** HTML + p5.js
+**Carpeta:** `11-government-bonds/`
 
 ### Objetivo
 Explicar la logica economica y matematica basica de los bonos soberanos de forma visual y trader-friendly.
@@ -506,8 +529,9 @@ Explicar la logica economica y matematica basica de los bonos soberanos de forma
 
 ---
 
-## Clase 11 - RFQs y curva de probabilidad de cierre
+## Clase 12 - RFQs y curva de probabilidad de cierre
 **Formato:** Notebook
+**Carpeta:** `12-rfq-close-probability/`
 
 ### Objetivo
 Modelar la probabilidad de cierre de una RFQ en funcion del spread y otras features de cliente.
@@ -535,8 +559,9 @@ Comparar curvas de cierre por tier y mostrar como cambian con el spread.
 
 ---
 
-## Clase 12 - Market making intro
+## Clase 13 - Market making intro
 **Formato:** HTML + p5.js
+**Carpeta:** `13-market-making-intro/`
 
 ### Objetivo
 Introducir el market making con foco en inventario, utilidad y aversion al riesgo.
@@ -564,8 +589,9 @@ Primero intuicion muy visual. Nada de entrar demasiado pronto en derivaciones.
 
 ---
 
-## Clase 13 - Market making Avellaneda-Stoikov
+## Clase 14 - Market making Avellaneda-Stoikov
 **Formato:** Notebook o HTML hibrido con apoyo de simulacion
+**Carpeta:** `14-avellaneda-stoikov/`
 
 ### Objetivo
 Dar intuicion, explicar el origen del modelo y aterrizarlo en la formula y simulaciones.
@@ -588,33 +614,20 @@ El alumno entiende de donde sale la formula y que hace cada parametro.
 
 ---
 
-## Clase 14 - Exam I
+## Clase 15 - Exam-Quiz II (Examen Final)
 **Formato:** Quiz
+**Carpeta:** `15-exam-quiz-ii/`
 
 ### Estado
 Se deja para el final del proyecto.
 
 ### Idea preliminar
-Quiz conceptual corto con foco en:
+Examen final del curso. Cubre el bloque completo L10–L14:
 
-- Python,
-- microestructura,
-- ordenes,
-- ejecucion,
-- bonos,
-- RFQ,
-- market making.
-
----
-
-## Clase 15 - Exam II
-**Formato:** Quiz
-
-### Estado
-Se deja para el final del proyecto.
-
-### Idea preliminar
-Segunda parte del examen o quiz complementario con algo mas de interpretacion y razonamiento.
+- Bonos soberanos: precio, yield, DV01
+- RFQ: probabilidad de cierre, curvas monotonicas por tier
+- Market making: inventario, adverse selection, funcion de utilidad CARA
+- Avellaneda-Stoikov: reservation price, optimal spread, rol del inventario
 
 ---
 
@@ -630,8 +643,10 @@ El curso debe sentirse como una historia continua:
 6. Empiezas a modelar datos del libro.
 7. Pasas de microestructura a prediccion.
 8. Conectas prediccion con ejecucion.
-9. Te mueves a pricing y cierre en RFQ.
-10. Cierras con market making y control de inventario.
+9. Consolidas el bloque con un Exam-Quiz (L10).
+10. Te mueves a pricing y cierre en RFQ (bonos, RFQ).
+11. Cierras con market making y control de inventario.
+12. Examen final del curso (L15).
 
 ---
 
@@ -709,11 +724,12 @@ Cada concepto importante deberia tener al menos uno de estos:
 - Clase 5: matching behavior y simulacion interactiva.
 - Clases 6 y 7: mezcla de datos reales y sinteticos.
 - Clases 8 y 9: separar baselines de volumen y modelo dinamico.
-- Clase 10: visual con HTML + p5.js.
-- Clase 11: modelizacion monotonica de cierre por spread y tier.
-- Clase 12: utilidad y CARA antes del modelo formal.
-- Clase 13: conectar intuicion, HJB y formula con simulacion.
-- Clases 14 y 15: quedan para el final.
+- Clase 10: Exam-Quiz I — cierre del bloque L1–L9.
+- Clase 11: bonos soberanos, visual con HTML + p5.js.
+- Clase 12: modelizacion monotonica de cierre por spread y tier.
+- Clase 13: utilidad y CARA antes del modelo formal.
+- Clase 14: conectar intuicion, HJB y formula con simulacion.
+- Clase 15: Exam-Quiz II (examen final del curso).
 
 ### Decisiones de diseno confirmadas en produccion (clases 1 y 2)
 
@@ -779,13 +795,17 @@ Estas decisiones se tomaron al implementar las primeras clases y deben aplicarse
 
 - clases 6, 7, 8 y 9.
 
+### Fase 5b - Exam-Quiz I (cierre primer bloque)
+
+- clase 10 (`10-exam-quiz-i/`).
+
 ### Fase 6 - Bloque rates / RFQ / market making
 
-- clases 10, 11, 12 y 13.
+- clases 11, 12, 13 y 14.
 
-### Fase 7 - Evaluacion
+### Fase 7 - Exam-Quiz II (examen final)
 
-- clases 14 y 15.
+- clase 15 (`15-exam-quiz-ii/`).
 
 ---
 
@@ -813,9 +833,10 @@ Una vez aprobado este plan maestro, el orden ideal de trabajo es:
 2. redactar un `README.md` breve para cada clase,
 3. construir primero las clases 1, 2 y 3,
 4. fijar datasets de BTC para las clases 4 a 9,
-5. disenar los HTMLs visuales de las clases 10 y 12,
-6. dejar la 13 para despues de tener bien armada la 12,
-7. disenar examenes al final, no antes.
+5. disenar el Exam-Quiz I (clase 10) como cierre del primer bloque,
+6. disenar los HTMLs visuales de las clases 11 y 13,
+7. dejar la 14 para despues de tener bien armada la 13,
+8. disenar el Exam-Quiz II (clase 15) al final, no antes.
 
 ---
 

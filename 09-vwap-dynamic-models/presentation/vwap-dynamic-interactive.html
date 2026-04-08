@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>L9 — VWAP Dinámico + Cierre de Ciclo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+  <style>
+    :root {
+      --bg: #09090b; --surface: #18181b; --border: #27272a;
+      --cyan: #22d3ee; --green: #4ade80; --red: #f87171;
+      --amber: #f59e0b; --purple: #a78bfa; --muted: #a1a1aa; --text: #e4e4e7;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; overflow-x: hidden; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(9,9,11,0.9);
+          backdrop-filter: blur(12px); border-bottom: 1px solid var(--border);
+          display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; height: 52px; }
+    .nav-logo { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--cyan); font-weight: 600; }
+    .nav-links { display: flex; gap: 1.5rem; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.8rem; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--text); }
+    #progress-bar { position: fixed; top: 52px; left: 0; height: 2px; background: var(--cyan); z-index: 101; width: 0%; }
+
+    section { min-height: 100vh; padding: 5rem 4rem 4rem; display: flex; flex-direction: column;
+              justify-content: center; border-bottom: 1px solid var(--border); }
+    .section-badge { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem;
+                     font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--cyan);
+                     border: 1px solid var(--cyan); padding: 0.25rem 0.75rem; border-radius: 4px; margin-bottom: 1.5rem; }
+    h2 { font-size: 2.2rem; font-weight: 700; margin-bottom: 0.75rem; }
+    .subtitle { font-size: 1rem; color: var(--muted); margin-bottom: 2.5rem; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem; }
+    .btn { display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; border-radius: 6px;
+           font-weight: 600; transition: all 0.2s; border: none; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; }
+    .btn-primary { background: var(--cyan); color: #000; padding: 0.65rem 1.4rem; }
+    .btn-primary:hover { background: #67e8f9; }
+    .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); padding: 0.5rem 1rem; }
+    .btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); }
+    input[type=range] { accent-color: var(--cyan); cursor: pointer; width: 100%; }
+
+    /* ── HERO: MISSION CONTROL ── */
+    #hero { background: radial-gradient(ellipse at 30% 50%, rgba(34,211,238,0.04) 0%, transparent 60%),
+                        radial-gradient(ellipse at 70% 20%, rgba(74,222,128,0.03) 0%, transparent 50%),
+                        var(--bg); }
+    .mc-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 3rem; align-items: center; }
+    .hero-tag { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--cyan);
+                letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 1.5rem; opacity: 0; }
+    .hero-title { font-size: 3rem; font-weight: 900; line-height: 1.1; margin-bottom: 1.25rem; opacity: 0; }
+    .hero-title span { color: var(--cyan); }
+    .hero-sub { font-size: 0.95rem; color: var(--muted); line-height: 1.7; margin-bottom: 2rem; opacity: 0; }
+    .terminal { background: #0a0a0f; border: 1px solid var(--border); border-radius: 12px;
+                padding: 1.5rem; font-family: 'JetBrains Mono', monospace; }
+    .terminal-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.25rem; }
+    .t-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .terminal-label { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.1em; margin-left: 0.5rem; }
+    .terminal-row { display: flex; justify-content: space-between; padding: 0.4rem 0;
+                    border-bottom: 1px solid rgba(39,39,42,0.5); font-size: 0.82rem; }
+    .terminal-row:last-child { border-bottom: none; }
+    .t-key { color: var(--muted); }
+    .t-val { font-weight: 700; }
+    .t-val.cyan { color: var(--cyan); }
+    .t-val.green { color: var(--green); }
+    .t-val.red { color: var(--red); }
+    .t-val.amber { color: var(--amber); }
+    #progress-ring-container { display: flex; justify-content: center; margin: 1rem 0; }
+    #intervals-text { text-align: center; font-size: 0.8rem; color: var(--muted); margin-top: 0.5rem; }
+    .mc-btns { display: flex; gap: 0.75rem; margin-top: 1.25rem; flex-wrap: wrap; }
+    .hero-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 1.25rem; opacity: 0; }
+    .hstat { background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+             padding: 0.85rem 1rem; }
+    .hstat-label { font-size: 0.7rem; color: var(--muted); margin-bottom: 0.3rem; text-transform: uppercase; }
+    .hstat-val { font-family: 'JetBrains Mono', monospace; font-size: 1.4rem; font-weight: 700; }
+
+    /* ── B1: CORRECCIÓN DINÁMICA ── */
+    .slider-group { margin-bottom: 1.25rem; }
+    .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+    .slider-label { font-size: 0.82rem; color: var(--muted); }
+    .slider-current { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; }
+    .cf-badge { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 1rem;
+                border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem;
+                font-weight: 700; margin: 0.75rem 0; transition: all 0.3s; }
+    .verdict-box { background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+                   padding: 0.85rem 1.25rem; margin-top: 0.75rem; font-size: 0.85rem; line-height: 1.5; }
+
+    /* ── B2: BACKTEST RACE ── */
+    .race-track { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+    .race-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .racer { display: flex; flex-direction: column; gap: 0.75rem; }
+    .racer-row { display: flex; align-items: center; gap: 1rem; }
+    .racer-label { font-size: 0.82rem; font-weight: 600; min-width: 70px; font-family: 'JetBrains Mono', monospace; }
+    .racer-bar-bg { flex: 1; background: var(--border); border-radius: 4px; height: 22px; overflow: hidden; }
+    .racer-bar { height: 100%; border-radius: 4px; transition: width 0.3s; width: 0%; display: flex;
+                 align-items: center; justify-content: flex-end; padding-right: 8px; font-size: 0.72rem;
+                 font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #000; }
+    .racer-score { font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; font-weight: 700; min-width: 80px; text-align: right; }
+    .day-counter { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--muted); }
+    .winner-badge { display: none; padding: 0.5rem 1.25rem; border-radius: 6px; font-weight: 700;
+                    font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; margin-top: 1rem; }
+
+    /* ── B3: DASHBOARD ── */
+    .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+    .gauge-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+                  padding: 1.25rem; text-align: center; }
+    .gauge-title { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em;
+                   margin-bottom: 0.75rem; }
+    .gauge-canvas { position: relative; width: 140px; height: 140px; margin: 0 auto 0.75rem; }
+    .gauge-value { font-family: 'JetBrains Mono', monospace; font-size: 1.6rem; font-weight: 700; }
+    .gauge-sublabel { font-size: 0.72rem; color: var(--muted); margin-top: 0.2rem; }
+    .gauge-slider { margin-top: 0.75rem; }
+
+    .decision-display { background: var(--surface); border: 2px solid var(--border); border-radius: 16px;
+                        padding: 2rem; text-align: center; transition: border-color 0.4s, background 0.4s; }
+    .decision-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase;
+                      letter-spacing: 0.15em; margin-bottom: 0.75rem; }
+    .decision-value { font-family: 'JetBrains Mono', monospace; font-size: 3.5rem; font-weight: 900;
+                      letter-spacing: 0.05em; transition: color 0.4s; }
+    .decision-reason { font-size: 0.85rem; color: var(--muted); margin-top: 0.75rem; line-height: 1.5; }
+    .logic-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem; }
+    .logic-card { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 1rem;
+                  font-size: 0.8rem; line-height: 1.6; }
+    .logic-card code { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--cyan); }
+
+    /* ── CIERRE TIMELINE ── */
+    #cierre { min-height: 70vh; }
+    .timeline { display: flex; align-items: flex-start; gap: 0; margin: 2.5rem 0; position: relative; overflow-x: auto; }
+    .timeline::before { content: ''; position: absolute; top: 20px; left: 40px; right: 40px; height: 2px;
+                         background: var(--border); z-index: 0; }
+    .timeline-node { flex: 1; min-width: 120px; display: flex; flex-direction: column; align-items: center;
+                     gap: 0.75rem; position: relative; z-index: 1; opacity: 0; }
+    .t-circle { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center;
+                justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;
+                font-weight: 700; border: 2px solid; cursor: pointer; transition: transform 0.2s;
+                background: var(--bg); }
+    .t-circle:hover { transform: scale(1.15); }
+    .t-class { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--muted); }
+    .t-concept { font-size: 0.72rem; color: var(--text); text-align: center; line-height: 1.4; }
+    .bridge-card { background: var(--surface); border: 1.5px solid var(--cyan); border-radius: 12px;
+                   padding: 2rem; margin-top: 2rem; opacity: 0; }
+    .bridge-label { font-size: 0.72rem; color: var(--cyan); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.75rem; }
+    .bridge-text { font-size: 1.05rem; line-height: 1.6; }
+    .bridge-text strong { color: var(--cyan); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo">L9 · VWAP Dinámico + Cierre</span>
+  <div class="nav-links">
+    <a href="#hero">Control</a>
+    <a href="#correction">Corrección</a>
+    <a href="#backtest">Backtest</a>
+    <a href="#dashboard">Dashboard</a>
+    <a href="#cierre">Cierre</a>
+  </div>
+</nav>
+<div id="progress-bar"></div>
+
+<!-- ======== HERO: MISSION CONTROL ======== -->
+<section id="hero">
+  <div class="mc-grid">
+    <div>
+      <div class="hero-tag">Clase 9 · Cierre de Ciclo · Mission Control</div>
+      <h1 class="hero-title">
+        El schedule<br>
+        <span>se adapta</span><br>
+        en tiempo real.
+      </h1>
+      <p class="hero-sub">
+        En L8 fijamos el plan antes de empezar.<br>
+        Hoy el algoritmo <strong>observa, corrige y decide</strong> mientras ejecuta.<br>
+        Y al final, ensamblamos todos los módulos en un cuadro de mando.
+      </p>
+      <div class="hero-stats">
+        <div class="hstat">
+          <div class="hstat-label">Tracking estático (día 21)</div>
+          <div class="hstat-val" style="color:var(--red)">127 mBTC</div>
+        </div>
+        <div class="hstat">
+          <div class="hstat-label">Tracking dinámico (día 21)</div>
+          <div class="hstat-val" style="color:var(--green)">27 mBTC</div>
+        </div>
+        <div class="hstat">
+          <div class="hstat-label">Mejora tracking</div>
+          <div class="hstat-val" style="color:var(--cyan)">−78.5%</div>
+        </div>
+        <div class="hstat">
+          <div class="hstat-label">Backtest: días ganados</div>
+          <div class="hstat-val" style="color:var(--green)">15 / 16</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TERMINAL -->
+    <div>
+      <div class="terminal" id="mc-terminal">
+        <div class="terminal-header">
+          <div class="t-dot" style="background:#f87171"></div>
+          <div class="t-dot" style="background:#f59e0b"></div>
+          <div class="t-dot" style="background:#4ade80"></div>
+          <span class="terminal-label">EXECUTION TERMINAL · BTC/USDT</span>
+        </div>
+        <div id="progress-ring-container">
+          <svg width="130" height="130" viewBox="0 0 130 130">
+            <circle cx="65" cy="65" r="54" fill="none" stroke="#27272a" stroke-width="8"/>
+            <circle id="ring-progress" cx="65" cy="65" r="54" fill="none" stroke="#22d3ee"
+                    stroke-width="8" stroke-linecap="round"
+                    stroke-dasharray="339.3" stroke-dashoffset="339.3"
+                    transform="rotate(-90 65 65)" style="transition: stroke-dashoffset 0.3s;"/>
+            <text x="65" y="58" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#a1a1aa">Ejecutado</text>
+            <text id="ring-pct" x="65" y="78" text-anchor="middle" font-family="JetBrains Mono" font-size="22" font-weight="700" fill="#22d3ee">0%</text>
+          </svg>
+        </div>
+        <div class="terminal-row">
+          <span class="t-key">TARGET</span>
+          <span class="t-val cyan">10.0000 BTC</span>
+        </div>
+        <div class="terminal-row">
+          <span class="t-key">EJECUTADO</span>
+          <span class="t-val green" id="executed-val">0.0000 BTC</span>
+        </div>
+        <div class="terminal-row">
+          <span class="t-key">PENDIENTE</span>
+          <span class="t-val amber" id="pending-val">10.0000 BTC</span>
+        </div>
+        <div class="terminal-row">
+          <span class="t-key">INTERVALO</span>
+          <span class="t-val" id="interval-val">0 / 288</span>
+        </div>
+        <div class="terminal-row">
+          <span class="t-key">CF ACTUAL</span>
+          <span class="t-val" id="cf-val" style="color:var(--muted)">—</span>
+        </div>
+        <div class="terminal-row">
+          <span class="t-key">DECISIÓN</span>
+          <span class="t-val" id="decision-val" style="color:var(--muted)">WAIT</span>
+        </div>
+        <div class="mc-btns">
+          <button class="btn btn-primary" onclick="startTradingDay()">▶ Iniciar día</button>
+          <button class="btn btn-ghost" onclick="resetTerminal()">↺ Reset</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== B1: CORRECCIÓN DINÁMICA ======== -->
+<section id="correction">
+  <div class="section-badge">Bloque 1 · 6 min</div>
+  <h2>La corrección dinámica</h2>
+  <p class="subtitle">CF = realizado / predicho — actualiza el schedule cada 25 minutos.</p>
+
+  <div class="two-col">
+    <div>
+      <div class="slider-group">
+        <div class="slider-header">
+          <span class="slider-label">Volumen real últimos 5 intervalos</span>
+          <span class="slider-current" id="realized-val" style="color:var(--cyan)">1.00×</span>
+        </div>
+        <input type="range" id="realized-slider" min="0.3" max="3.0" step="0.05" value="1.0"
+               oninput="updateCorrectionDemo(this.value)">
+        <div style="display:flex;justify-content:space-between;font-size:0.7rem;color:var(--muted)">
+          <span>0.3× (muy bajo)</span><span>1.0× (en línea)</span><span>3.0× (muy activo)</span>
+        </div>
+      </div>
+
+      <div id="cf-badge-display" class="cf-badge" style="background:rgba(34,211,238,0.1);border:1px solid var(--cyan)">
+        <span>CF =</span>
+        <span id="cf-num" style="font-size:1.2rem">1.00</span>
+        <span id="cf-arrow" style="font-size:1.1rem">→</span>
+        <span id="cf-effect" style="font-size:0.82rem">sin corrección</span>
+      </div>
+
+      <div class="verdict-box" id="correction-verdict">
+        <strong style="color:var(--text)">Situación:</strong> El mercado va exactamente como previsto.
+        El schedule del resto del día no cambia.
+      </div>
+
+      <div style="margin-top:1.5rem;">
+        <canvas id="correction-chart" height="200"></canvas>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div style="font-size:0.85rem;font-weight:600;color:var(--cyan);margin-bottom:1rem;">
+          Mecánica de la corrección
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:0.8rem;line-height:2;background:var(--bg);
+                    border-radius:6px;padding:1rem;margin-bottom:1rem;">
+          <div><span style="color:var(--purple)">cf</span> <span style="color:var(--text)">=</span>
+               <span style="color:var(--cyan)"> realized.sum()</span><span style="color:var(--text)"> /</span>
+               <span style="color:var(--green)"> predicted.sum()</span></div>
+          <div style="color:var(--muted);padding-left:0;margin-top:0.5rem;">
+            schedule_remaining *= cf
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.75rem;">
+          <div style="text-align:center;padding:0.75rem;background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.3);border-radius:6px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:1rem;color:var(--green);font-weight:700;">CF > 1</div>
+            <div style="font-size:0.75rem;color:var(--muted);margin-top:0.25rem;">Más activo → acelera</div>
+          </div>
+          <div style="text-align:center;padding:0.75rem;background:rgba(34,211,238,0.05);border:1px solid rgba(34,211,238,0.2);border-radius:6px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:1rem;color:var(--cyan);font-weight:700;">CF = 1</div>
+            <div style="font-size:0.75rem;color:var(--muted);margin-top:0.25rem;">Igual → sin cambio</div>
+          </div>
+          <div style="text-align:center;padding:0.75rem;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.3);border-radius:6px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:1rem;color:var(--red);font-weight:700;">CF < 1</div>
+            <div style="font-size:0.75rem;color:var(--muted);margin-top:0.25rem;">Menos activo → reduce</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="font-size:0.85rem;font-weight:600;color:var(--text);margin-bottom:0.75rem;">
+          La métrica que importa: tracking deviation
+        </div>
+        <p style="font-size:0.85rem;color:var(--muted);line-height:1.6;margin-bottom:0.75rem;">
+          El RMSE del perfil mide predicción. Para <strong style="color:var(--text)">ejecución</strong>,
+          la pregunta es: ¿qué tan cerca estuviste del VWAP ideal en cada momento?
+        </p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+          <div style="background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.3);border-radius:6px;padding:0.75rem;text-align:center;">
+            <div style="font-size:0.72rem;color:var(--muted)">Estático (día 21)</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:1.3rem;font-weight:700;color:var(--red)">127 mBTC</div>
+            <div style="font-size:0.7rem;color:var(--muted)">desviación máxima</div>
+          </div>
+          <div style="background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.3);border-radius:6px;padding:0.75rem;text-align:center;">
+            <div style="font-size:0.72rem;color:var(--muted)">Dinámico (día 21)</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:1.3rem;font-weight:700;color:var(--green)">27 mBTC</div>
+            <div style="font-size:0.7rem;color:var(--muted)">desviación máxima</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== B2: BACKTEST RACE ======== -->
+<section id="backtest">
+  <div class="section-badge">Bloque 2 · 6 min</div>
+  <h2>Backtest walk-forward: la carrera</h2>
+  <p class="subtitle">16 días de evaluación. El dinámico gana 15 de 16.</p>
+
+  <div class="two-col">
+    <div>
+      <div class="race-track">
+        <div class="race-header">
+          <span style="font-size:0.85rem;font-weight:600;">Tracking deviation acumulada</span>
+          <span class="day-counter mono" id="race-day">Día 0 / 16</span>
+        </div>
+
+        <div class="racer" id="racer-container">
+          <div class="racer-row">
+            <span class="racer-label" style="color:var(--red)">Estático</span>
+            <div class="racer-bar-bg">
+              <div class="racer-bar" id="bar-static" style="background:var(--red);width:0%">—</div>
+            </div>
+            <span class="racer-score" id="score-static" style="color:var(--red)">—</span>
+          </div>
+          <div class="racer-row">
+            <span class="racer-label" style="color:var(--green)">Dinámico</span>
+            <div class="racer-bar-bg">
+              <div class="racer-bar" id="bar-dynamic" style="background:var(--green);width:0%">—</div>
+            </div>
+            <span class="racer-score" id="score-dynamic" style="color:var(--green)">—</span>
+          </div>
+        </div>
+
+        <div style="margin-top:1.5rem;"><canvas id="race-chart" height="180"></canvas></div>
+
+        <div id="winner-badge" class="winner-badge" style="background:rgba(74,222,128,0.15);
+             color:var(--green);border:1px solid var(--green);">
+          ✓ Dinámico: 15/16 días ganados · mejora media 45%
+        </div>
+
+        <div style="display:flex;gap:0.75rem;margin-top:1rem;">
+          <button class="btn btn-primary" id="race-btn" onclick="startRace()">▶ Iniciar backtest</button>
+          <button class="btn btn-ghost" onclick="resetRace()">↺ Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div style="font-size:0.85rem;font-weight:600;color:var(--cyan);margin-bottom:0.75rem;">
+          Metodología walk-forward
+        </div>
+        <div style="font-size:0.85rem;color:var(--muted);line-height:1.7;">
+          <p style="margin-bottom:0.75rem;">Para cada día de test (día 6 → día 21):</p>
+          <ol style="padding-left:1.2rem;">
+            <li style="margin-bottom:0.4rem;">Train = todos los días anteriores</li>
+            <li style="margin-bottom:0.4rem;">Static profile = media de train</li>
+            <li style="margin-bottom:0.4rem;">Simula ejecución estática y dinámica</li>
+            <li>Compara tracking deviation máxima</li>
+          </ol>
+          <p style="margin-top:0.75rem;color:var(--text);">
+            No hay <em>look-ahead bias</em>: cuando predices el día N,<br>
+            solo tienes datos de los días 1 a N-1.
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-size:0.85rem;font-weight:600;color:var(--text);margin-bottom:1rem;">
+          Resultados
+        </div>
+        <div style="display:grid;gap:0.5rem;">
+          <div style="display:flex;justify-content:space-between;font-size:0.85rem;padding:0.4rem 0;border-bottom:1px solid var(--border);">
+            <span style="color:var(--muted)">Días dinámico gana</span>
+            <span class="mono" style="color:var(--green);font-weight:700;">15 / 16</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.85rem;padding:0.4rem 0;border-bottom:1px solid var(--border);">
+            <span style="color:var(--muted)">Tracking media estática</span>
+            <span class="mono" style="color:var(--red);">76.2 mBTC</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.85rem;padding:0.4rem 0;border-bottom:1px solid var(--border);">
+            <span style="color:var(--muted)">Tracking media dinámica</span>
+            <span class="mono" style="color:var(--green);">41.7 mBTC</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.85rem;padding:0.4rem 0;">
+            <span style="color:var(--muted)">Mejora media</span>
+            <span class="mono" style="color:var(--cyan);font-weight:700;">−45.3%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== B3: DASHBOARD ======== -->
+<section id="dashboard">
+  <div class="section-badge">Bloque 3 · 6 min · Cierre de Ciclo</div>
+  <h2>El Cuadro de Mando</h2>
+  <p class="subtitle">Tres señales de L6–L9 en una decisión. Mueve los sliders.</p>
+
+  <div class="dashboard-grid">
+    <!-- Gauge 1: Imbalance -->
+    <div class="gauge-card">
+      <div class="gauge-title">LOB Imbalance · L6/L7</div>
+      <div class="gauge-canvas">
+        <canvas id="gauge-imbalance" width="140" height="140"></canvas>
+      </div>
+      <div class="gauge-value" id="val-imbalance" style="color:var(--cyan)">0.50</div>
+      <div class="gauge-sublabel">bid / (bid + ask)</div>
+      <div class="gauge-slider">
+        <input type="range" id="sl-imbalance" min="0" max="1" step="0.01" value="0.5"
+               oninput="updateDashboard()">
+      </div>
+    </div>
+
+    <!-- Gauge 2: Fill Probability -->
+    <div class="gauge-card">
+      <div class="gauge-title">Fill Probability · L7</div>
+      <div class="gauge-canvas">
+        <canvas id="gauge-fill" width="140" height="140"></canvas>
+      </div>
+      <div class="gauge-value" id="val-fill" style="color:var(--amber)">50%</div>
+      <div class="gauge-sublabel">prob. fill en 3 intervalos</div>
+      <div class="gauge-slider">
+        <input type="range" id="sl-fill" min="0" max="1" step="0.01" value="0.5"
+               oninput="updateDashboard()">
+      </div>
+    </div>
+
+    <!-- Gauge 3: Volume Ratio -->
+    <div class="gauge-card">
+      <div class="gauge-title">Volume Ratio · L8/L9</div>
+      <div class="gauge-canvas">
+        <canvas id="gauge-vol" width="140" height="140"></canvas>
+      </div>
+      <div class="gauge-value" id="val-vol" style="color:var(--muted)">1.00×</div>
+      <div class="gauge-sublabel">realizado / predicho</div>
+      <div class="gauge-slider">
+        <input type="range" id="sl-vol" min="0.3" max="3.0" step="0.05" value="1.0"
+               oninput="updateDashboard()">
+      </div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="decision-display" id="decision-panel">
+      <div class="decision-label">Decisión del algoritmo</div>
+      <div class="decision-value" id="big-decision">WAIT</div>
+      <div class="decision-reason" id="decision-reason">
+        Señal neutral — conservar munición, seguir el schedule
+      </div>
+    </div>
+
+    <div>
+      <div style="font-size:0.85rem;font-weight:600;color:var(--text);margin-bottom:1rem;">
+        Lógica de <code class="mono" style="color:var(--cyan);font-size:0.8rem;">ExecutionDecision.decide()</code>
+      </div>
+      <div class="logic-grid">
+        <div class="logic-card" style="border-color:rgba(74,222,128,0.3);">
+          <div style="color:var(--green);font-weight:700;margin-bottom:0.4rem;">🟢 LIMIT</div>
+          <code>imbalance > 0.55</code><br>
+          <code>AND fill_prob > 0.50</code><br>
+          <div style="color:var(--muted);font-size:0.75rem;margin-top:0.4rem;">LOB alcista + alta prob fill → orden pasiva</div>
+        </div>
+        <div class="logic-card" style="border-color:rgba(248,113,113,0.3);">
+          <div style="color:var(--red);font-weight:700;margin-bottom:0.4rem;">🔴 MARKET</div>
+          <code>vol_ratio > 1.20</code><br>
+          <code>AND NOT alcista</code><br>
+          <div style="color:var(--muted);font-size:0.75rem;margin-top:0.4rem;">Liquidez disponible ahora → ejecutar activamente</div>
+        </div>
+        <div class="logic-card" style="grid-column:1/-1;border-color:rgba(245,158,11,0.3);">
+          <div style="color:var(--amber);font-weight:700;margin-bottom:0.4rem;">🟡 WAIT — cualquier otro caso</div>
+          <div style="color:var(--muted);font-size:0.75rem;">Señal neutral o contradictoria → seguir el schedule estático</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======== CIERRE ======== -->
+<section id="cierre">
+  <div style="max-width:900px;margin:0 auto;width:100%;">
+    <div class="section-badge">Cierre · El Arco Completo</div>
+    <h2>L4 → L9: el ciclo completo</h2>
+    <p class="subtitle">De leer el LOB a decidir cómo ejecutar.</p>
+
+    <div class="timeline" id="timeline">
+      <div class="timeline-node">
+        <div class="t-circle" style="color:var(--muted);border-color:var(--muted);">L4</div>
+        <div class="t-class">LOB Data</div>
+        <div class="t-concept">Leer el libro de órdenes</div>
+      </div>
+      <div class="timeline-node">
+        <div class="t-circle" style="color:var(--muted);border-color:var(--muted);">L5</div>
+        <div class="t-class">Orders</div>
+        <div class="t-concept">Fill probability empírica</div>
+      </div>
+      <div class="timeline-node">
+        <div class="t-circle" style="color:var(--amber);border-color:var(--amber);">L6</div>
+        <div class="t-class">Pipeline</div>
+        <div class="t-concept">ML pipeline + leakage</div>
+      </div>
+      <div class="timeline-node">
+        <div class="t-circle" style="color:var(--amber);border-color:var(--amber);">L7</div>
+        <div class="t-class">Modeling</div>
+        <div class="t-concept">Overfitting + RF + fill target</div>
+      </div>
+      <div class="timeline-node">
+        <div class="t-circle" style="color:var(--cyan);border-color:var(--cyan);">L8</div>
+        <div class="t-class">VWAP Static</div>
+        <div class="t-concept">Perfil U + build_vwap_schedule</div>
+      </div>
+      <div class="timeline-node">
+        <div class="t-circle" style="color:var(--green);border-color:var(--green);background:rgba(74,222,128,0.1);">L9</div>
+        <div class="t-class">VWAP Dynamic</div>
+        <div class="t-concept">CF + ExecutionDecision</div>
+      </div>
+    </div>
+
+    <div class="bridge-card">
+      <div class="bridge-label">→ Clase 10: Exam-Quiz I</div>
+      <div class="bridge-text">
+        En <strong>L10</strong> cerramos el primer bloque del curso con el <strong>Exam-Quiz I</strong>.<br>
+        El examen cubre conceptos, código y razonamiento sobre L1–L9.<br><br>
+        Repasa: <strong>build_vwap_schedule</strong> · <strong>compute_correction_factor</strong> ·
+        <strong>ExecutionDecision</strong> · diferencia overfitting/leakage/tracking deviation.
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+// Progress bar
+window.addEventListener('scroll', () => {
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+  document.getElementById('progress-bar').style.width = pct + '%';
+});
+
+// Hero entrance
+gsap.timeline({ delay: 0.2 })
+  .to('.hero-tag',   { opacity: 1, y: 0, duration: 0.5 })
+  .to('.hero-title', { opacity: 1, y: 0, duration: 0.6 }, '-=0.2')
+  .to('.hero-sub',   { opacity: 1, y: 0, duration: 0.5 }, '-=0.2')
+  .to('.hero-stats', { opacity: 1, y: 0, duration: 0.5 }, '-=0.2');
+
+// Timeline animation
+ScrollTrigger.create({
+  trigger: '#cierre', start: 'top 70%',
+  onEnter: () => {
+    gsap.to('.timeline-node', { opacity: 1, y: 0, stagger: 0.12, duration: 0.5 });
+    gsap.to('.bridge-card',   { opacity: 1, duration: 0.6, delay: 0.8 });
+  }
+});
+
+// ── HERO TERMINAL SIMULATION ──
+let tradingInterval = null;
+let tradingStep = 0;
+const TOTAL = 10.0;
+const N_INTERVALS = 288;
+
+function startTradingDay() {
+  if (tradingInterval) return;
+  tradingStep = 0;
+  const stepsPerTick = 4;
+
+  tradingInterval = setInterval(() => {
+    tradingStep = Math.min(tradingStep + stepsPerTick, N_INTERVALS);
+    const pct = tradingStep / N_INTERVALS;
+    const executed = TOTAL * pct;
+    const pending  = TOTAL - executed;
+
+    document.getElementById('executed-val').textContent = executed.toFixed(4) + ' BTC';
+    document.getElementById('pending-val').textContent  = pending.toFixed(4) + ' BTC';
+    document.getElementById('interval-val').textContent = tradingStep + ' / ' + N_INTERVALS;
+
+    // Ring
+    const circumference = 339.3;
+    const offset = circumference * (1 - pct);
+    document.getElementById('ring-progress').style.strokeDashoffset = offset;
+    document.getElementById('ring-pct').textContent = Math.round(pct * 100) + '%';
+
+    // CF simulation
+    const block = Math.floor(tradingStep / 5);
+    const cfValue = 1 + (Math.sin(block * 0.7) * 0.15);
+    document.getElementById('cf-val').textContent = cfValue.toFixed(3);
+    document.getElementById('cf-val').style.color = cfValue > 1 ? '#4ade80' : cfValue < 0.9 ? '#f87171' : '#a1a1aa';
+
+    // Decision
+    const imb = 0.5 + 0.1 * Math.sin(block * 0.5);
+    const fillP = 0.5 + 0.08 * Math.cos(block * 0.8);
+    const volR = cfValue;
+    let dec = 'WAIT';
+    if (imb > 0.55 && fillP > 0.5) dec = 'LIMIT';
+    else if (volR > 1.2 && (imb < 0.45 || fillP <= 0.5)) dec = 'MARKET';
+    const decEl = document.getElementById('decision-val');
+    decEl.textContent = dec;
+    decEl.style.color = dec === 'LIMIT' ? '#4ade80' : dec === 'MARKET' ? '#f87171' : '#f59e0b';
+
+    if (tradingStep >= N_INTERVALS) {
+      clearInterval(tradingInterval);
+      tradingInterval = null;
+      document.getElementById('executed-val').textContent = '10.0000 BTC ✓';
+      document.getElementById('decision-val').textContent = 'DONE';
+      document.getElementById('decision-val').style.color = '#22d3ee';
+    }
+  }, 50);
+}
+
+function resetTerminal() {
+  if (tradingInterval) { clearInterval(tradingInterval); tradingInterval = null; }
+  tradingStep = 0;
+  document.getElementById('executed-val').textContent = '0.0000 BTC';
+  document.getElementById('pending-val').textContent  = '10.0000 BTC';
+  document.getElementById('interval-val').textContent = '0 / 288';
+  document.getElementById('cf-val').textContent = '—';
+  document.getElementById('cf-val').style.color = '#a1a1aa';
+  document.getElementById('decision-val').textContent = 'WAIT';
+  document.getElementById('decision-val').style.color = '#a1a1aa';
+  document.getElementById('ring-progress').style.strokeDashoffset = '339.3';
+  document.getElementById('ring-pct').textContent = '0%';
+}
+
+// ── B1: CORRECTION CHART ──
+const BASE_PROFILE = Array.from({length: 48}, (_, i) => {
+  const t = i / 48;
+  return 1 + 1.2 * Math.pow(Math.cos(Math.PI * t), 2);
+}).map(v => v / 48 / (1 + 1.2 * 0.5));
+
+let correctionChart;
+function buildCorrectionChart(cf) {
+  const ctx = document.getElementById('correction-chart').getContext('2d');
+  if (correctionChart) correctionChart.destroy();
+  const labels = Array.from({length: 48}, (_, i) => {
+    const h = Math.floor(i * 0.5), m = i % 2 === 0 ? '00' : '30';
+    return i % 6 === 0 ? `${String(h).padStart(2,'0')}:00` : '';
+  });
+  const staticSched = BASE_PROFILE.map(v => v);
+  const pivot = 6;
+  const dynamicSched = BASE_PROFILE.map((v, i) => i < pivot ? v : v * cf);
+  correctionChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Estático', data: staticSched, borderColor: '#a1a1aa', borderWidth: 1.5,
+          borderDash: [4,4], pointRadius: 0, tension: 0.3, fill: false },
+        { label: 'Dinámico (post-CF)', data: dynamicSched, borderColor: cf > 1 ? '#4ade80' : cf < 0.85 ? '#f87171' : '#22d3ee',
+          borderWidth: 2.5, pointRadius: 0, tension: 0.3, fill: false },
+      ]
+    },
+    options: {
+      responsive: true, animation: { duration: 200 },
+      plugins: { legend: { display: true, labels: { color: '#a1a1aa', font: { family: 'JetBrains Mono', size: 10 } } } },
+      scales: {
+        x: { ticks: { color: '#52525b', font: { size: 9 } }, grid: { color: '#27272a' } },
+        y: { ticks: { color: '#52525b', font: { size: 9 } }, grid: { color: '#27272a' } }
+      }
+    }
+  });
+}
+buildCorrectionChart(1.0);
+
+function updateCorrectionDemo(val) {
+  val = parseFloat(val);
+  document.getElementById('realized-val').textContent = val.toFixed(2) + '×';
+  const cf = val;
+  document.getElementById('cf-num').textContent = cf.toFixed(2);
+
+  const badge = document.getElementById('cf-badge-display');
+  let color, effect, verdict;
+  if (cf > 1.15) {
+    color = '#4ade80'; effect = 'acelera el schedule'; badge.style.background = 'rgba(74,222,128,0.1)';
+    badge.style.borderColor = '#4ade80';
+    verdict = `<strong style="color:#e4e4e7">Mercado muy activo (${cf.toFixed(2)}×).</strong> El schedule restante se multiplica por ${cf.toFixed(2)}. Ejecutas más rápido para aprovechar la liquidez.`;
+  } else if (cf < 0.80) {
+    color = '#f87171'; effect = 'reduce el schedule'; badge.style.background = 'rgba(248,113,113,0.1)';
+    badge.style.borderColor = '#f87171';
+    verdict = `<strong style="color:#e4e4e7">Mercado muy quieto (${cf.toFixed(2)}×).</strong> El schedule restante se multiplica por ${cf.toFixed(2)}. Distribuyes más hacia el cierre.`;
+  } else {
+    color = '#22d3ee'; effect = 'sin corrección significativa'; badge.style.background = 'rgba(34,211,238,0.1)';
+    badge.style.borderColor = '#22d3ee';
+    verdict = `<strong style="color:#e4e4e7">Mercado en línea con lo previsto (${cf.toFixed(2)}×).</strong> La corrección es pequeña. El schedule continúa prácticamente sin cambios.`;
+  }
+  document.getElementById('cf-num').style.color = color;
+  document.getElementById('cf-arrow').textContent = cf > 1.05 ? '↑' : cf < 0.95 ? '↓' : '→';
+  document.getElementById('cf-effect').textContent = effect;
+  document.getElementById('correction-verdict').innerHTML = verdict;
+  buildCorrectionChart(cf);
+}
+
+// ── B2: BACKTEST RACE ──
+const RACE_DATA = [
+  { date:'12-06', static: 112.7, dynamic: 42.0 },
+  { date:'12-07', static: 77.7,  dynamic: 37.9 },
+  { date:'12-08', static: 56.5,  dynamic: 57.7 },
+  { date:'12-09', static: 70.7,  dynamic: 50.1 },
+  { date:'12-10', static: 72.3,  dynamic: 59.2 },
+  { date:'12-11', static: 54.1,  dynamic: 39.0 },
+  { date:'12-12', static: 81.9,  dynamic: 40.3 },
+  { date:'12-13', static: 80.2,  dynamic: 33.1 },
+  { date:'12-14', static: 57.1,  dynamic: 42.5 },
+  { date:'12-15', static: 48.8,  dynamic: 40.8 },
+  { date:'12-16', static: 92.5,  dynamic: 29.5 },
+  { date:'12-17', static: 79.0,  dynamic: 50.1 },
+  { date:'12-18', static: 69.8,  dynamic: 36.5 },
+  { date:'12-19', static: 54.5,  dynamic: 38.6 },
+  { date:'12-20', static: 84.9,  dynamic: 42.1 },
+  { date:'12-21', static: 126.7, dynamic: 27.3 },
+];
+const MAX_VAL = 130;
+let raceChart;
+let raceRunning = false;
+
+function buildRaceChart(days) {
+  const ctx = document.getElementById('race-chart').getContext('2d');
+  if (raceChart) raceChart.destroy();
+  const labels = days.map(d => d.date);
+  raceChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Estático', data: days.map(d => d.static), backgroundColor: 'rgba(248,113,113,0.7)', borderWidth: 0 },
+        { label: 'Dinámico', data: days.map(d => d.dynamic), backgroundColor: 'rgba(74,222,128,0.7)', borderWidth: 0 },
+      ]
+    },
+    options: {
+      responsive: true, animation: { duration: 300 },
+      plugins: { legend: { display: true, labels: { color: '#a1a1aa', font: { family: 'JetBrains Mono', size: 10 } } } },
+      scales: {
+        x: { ticks: { color: '#52525b', font: { size: 9 } }, grid: { display: false } },
+        y: { ticks: { color: '#52525b', font: { size: 9 } }, grid: { color: '#27272a' },
+             title: { display: true, text: 'mBTC', color: '#52525b', font: { size: 9 } } }
+      }
+    }
+  });
+}
+
+function startRace() {
+  if (raceRunning) return;
+  raceRunning = true;
+  document.getElementById('race-btn').disabled = true;
+  let day = 0;
+  let totalStatic = 0, totalDynamic = 0;
+  const shown = [];
+
+  const tick = () => {
+    if (day >= RACE_DATA.length) {
+      document.getElementById('winner-badge').style.display = 'block';
+      gsap.from('#winner-badge', { opacity: 0, scale: 0.9, duration: 0.5 });
+      raceRunning = false;
+      return;
+    }
+    const d = RACE_DATA[day];
+    shown.push(d);
+    totalStatic  += d.static;
+    totalDynamic += d.dynamic;
+
+    buildRaceChart(shown);
+    document.getElementById('race-day').textContent = `Día ${day+1} / 16`;
+
+    const sBar = Math.min(totalStatic / (MAX_VAL * 16) * 100, 100);
+    const dBar = Math.min(totalDynamic / (MAX_VAL * 16) * 100, 100);
+    document.getElementById('bar-static').style.width  = sBar + '%';
+    document.getElementById('bar-dynamic').style.width = dBar + '%';
+    document.getElementById('score-static').textContent  = totalStatic.toFixed(0) + ' mBTC';
+    document.getElementById('score-dynamic').textContent = totalDynamic.toFixed(0) + ' mBTC';
+
+    day++;
+    setTimeout(tick, day === 16 ? 800 : 300);
+  };
+  tick();
+}
+
+function resetRace() {
+  raceRunning = false;
+  document.getElementById('race-btn').disabled = false;
+  document.getElementById('race-day').textContent = 'Día 0 / 16';
+  document.getElementById('bar-static').style.width = '0%';
+  document.getElementById('bar-dynamic').style.width = '0%';
+  document.getElementById('score-static').textContent = '—';
+  document.getElementById('score-dynamic').textContent = '—';
+  document.getElementById('winner-badge').style.display = 'none';
+  if (raceChart) raceChart.destroy();
+}
+
+// ── B3: GAUGES ──
+function drawGauge(canvasId, value, minVal, maxVal, color, label) {
+  const canvas = document.getElementById(canvasId);
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, 140, 140);
+  const cx = 70, cy = 75, r = 52;
+  const startAngle = Math.PI * 0.75;
+  const endAngle   = Math.PI * 2.25;
+  const pct = (value - minVal) / (maxVal - minVal);
+  const fillAngle  = startAngle + pct * (endAngle - startAngle);
+
+  // BG arc
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, startAngle, endAngle);
+  ctx.strokeStyle = '#27272a'; ctx.lineWidth = 10; ctx.lineCap = 'round';
+  ctx.stroke();
+
+  // Fill arc
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, startAngle, fillAngle);
+  ctx.strokeStyle = color; ctx.lineWidth = 10; ctx.lineCap = 'round';
+  ctx.stroke();
+
+  // Center dot
+  ctx.beginPath();
+  ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+  ctx.fillStyle = color; ctx.fill();
+}
+
+function updateDashboard() {
+  const imb = parseFloat(document.getElementById('sl-imbalance').value);
+  const fp  = parseFloat(document.getElementById('sl-fill').value);
+  const vr  = parseFloat(document.getElementById('sl-vol').value);
+
+  // Update labels
+  document.getElementById('val-imbalance').textContent = imb.toFixed(2);
+  document.getElementById('val-fill').textContent = Math.round(fp * 100) + '%';
+  document.getElementById('val-vol').textContent = vr.toFixed(2) + '×';
+
+  // Colors for imbalance
+  const imbColor = imb > 0.55 ? '#4ade80' : imb < 0.45 ? '#f87171' : '#a1a1aa';
+  const fpColor  = fp > 0.55 ? '#4ade80' : fp < 0.4 ? '#f87171' : '#f59e0b';
+  const vrColor  = vr > 1.2 ? '#22d3ee' : vr < 0.8 ? '#f87171' : '#a1a1aa';
+
+  document.getElementById('val-imbalance').style.color = imbColor;
+  document.getElementById('val-vol').style.color = vrColor;
+
+  drawGauge('gauge-imbalance', imb, 0, 1, imbColor, 'imbalance');
+  drawGauge('gauge-fill', fp, 0, 1, fpColor, 'fill_prob');
+  drawGauge('gauge-vol', vr, 0.3, 3.0, vrColor, 'vol_ratio');
+
+  // Decision logic
+  let decision, reason, borderColor, textColor;
+  if (imb > 0.55 && fp > 0.50) {
+    decision = 'LIMIT'; borderColor = '#4ade80'; textColor = '#4ade80';
+    reason = `LOB alcista (imb=${imb.toFixed(2)} > 0.55) + fill alto (${Math.round(fp*100)}% > 50%) → orden pasiva beneficiosa`;
+  } else if (vr > 1.20 && (imb < 0.45 || fp <= 0.50)) {
+    decision = 'MARKET'; borderColor = '#f87171'; textColor = '#f87171';
+    reason = `Liquidez alta (vol_ratio=${vr.toFixed(2)} > 1.20) + señal no alcista → ejecutar activamente ahora`;
+  } else {
+    decision = 'WAIT'; borderColor = '#f59e0b'; textColor = '#f59e0b';
+    reason = `Señal neutral o contradictoria → seguir el schedule estático`;
+  }
+
+  const panel = document.getElementById('decision-panel');
+  gsap.to(panel, { borderColor, duration: 0.3 });
+  panel.style.background = decision === 'LIMIT' ? 'rgba(74,222,128,0.04)' :
+                           decision === 'MARKET' ? 'rgba(248,113,113,0.04)' :
+                           'rgba(245,158,11,0.04)';
+
+  const bigDec = document.getElementById('big-decision');
+  const prevDec = bigDec.textContent;
+  if (prevDec !== decision) {
+    gsap.to(bigDec, { scale: 0.85, duration: 0.15, onComplete: () => {
+      bigDec.textContent = decision;
+      bigDec.style.color = textColor;
+      gsap.to(bigDec, { scale: 1, duration: 0.2, ease: 'back.out(1.7)' });
+    }});
+  }
+  document.getElementById('decision-reason').textContent = reason;
+}
+
+// Init gauges
+drawGauge('gauge-imbalance', 0.5, 0, 1, '#a1a1aa', 'imbalance');
+drawGauge('gauge-fill', 0.5, 0, 1, '#f59e0b', 'fill_prob');
+drawGauge('gauge-vol', 1.0, 0.3, 3.0, '#a1a1aa', 'vol_ratio');
+</script>
+</body>
+</html>

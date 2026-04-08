@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>L7 — LOB Modeling Examples</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#09090b;--surface:#18181b;--border:#27272a;--border2:#3f3f46;
+  --cyan:#22d3ee;--green:#4ade80;--red:#f87171;--amber:#f59e0b;--purple:#a78bfa;--muted:#a1a1aa;--text:#f4f4f5;
+}
+html{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;scroll-behavior:smooth}
+body{overflow-x:hidden}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:12px 32px;background:rgba(9,9,11,.88);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav-logo{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);font-weight:600}
+.nav-links{display:flex;gap:28px}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:13px;font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--cyan)}
+.progress-bar{position:fixed;top:49px;left:0;height:2px;background:linear-gradient(90deg,var(--cyan),var(--purple));z-index:101;width:0%;transition:width .1s}
+
+section{min-height:100vh;padding:80px 40px 60px;display:flex;flex-direction:column;justify-content:center}
+.container{max-width:1140px;margin:0 auto;width:100%}
+.section-label{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--cyan);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+h1{font-size:clamp(26px,4vw,50px);font-weight:700;line-height:1.15;margin-bottom:14px}
+h2{font-size:clamp(20px,3vw,36px);font-weight:700;line-height:1.2;margin-bottom:10px}
+h3{font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px}
+p{color:var(--muted);font-size:14px;line-height:1.7}
+
+/* ── HERO ── */
+#hero{background:var(--bg);position:relative;overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.big-number{font-family:'JetBrains Mono',monospace;font-size:clamp(60px,10vw,110px);font-weight:700;color:var(--red);line-height:1;opacity:0}
+.hero-label{font-size:14px;color:var(--muted);margin-top:8px;margin-bottom:24px}
+.hero-q{font-size:clamp(16px,2vw,22px);font-weight:700;color:var(--text);margin-bottom:12px;line-height:1.4}
+.hero-q em{color:var(--cyan);font-style:normal}
+.palanca-cards{display:flex;gap:12px;margin-top:20px}
+.palanca{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;transition:border-color .25s}
+.palanca:hover{border-color:var(--cyan)}
+.palanca-icon{font-size:24px;margin-bottom:6px}
+.palanca-title{font-size:12px;font-weight:700;color:var(--text)}
+.palanca-sub{font-size:11px;color:var(--muted);margin-top:4px}
+.hero-chart-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px}
+.hero-chart-title{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:12px}
+
+/* ── BLOCK 1: MEMORIA ── */
+#memoria{background:#0a0a0e;border-top:1px solid var(--border)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px}
+.chart-card h3{font-size:12px;color:var(--text);margin-bottom:4px}
+.chart-card .sub{font-size:11px;color:var(--muted);margin-bottom:14px}
+.slider-row{display:flex;align-items:center;gap:12px;margin-top:14px}
+.slider-row label{font-size:12px;color:var(--muted);white-space:nowrap}
+input[type=range]{-webkit-appearance:none;appearance:none;flex:1;height:4px;background:var(--border);border-radius:2px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;background:var(--amber);border-radius:50%;cursor:pointer}
+.slider-val{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--amber);min-width:24px}
+
+.insight-card{background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.2);border-radius:10px;padding:16px;margin-top:16px}
+.insight-card .ic-label{font-size:10px;color:var(--cyan);letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:6px}
+.insight-card p{font-size:13px;color:var(--muted);line-height:1.6}
+.insight-card strong{color:var(--text)}
+
+/* ── BLOCK 2: OVERFITTING ── */
+#overfitting{background:var(--bg);border-top:1px solid var(--border)}
+.overfit-grid{display:grid;grid-template-columns:3fr 2fr;gap:32px;align-items:start}
+.depth-display{text-align:center;margin-bottom:16px}
+.depth-label{font-size:12px;color:var(--muted);margin-bottom:4px}
+.depth-val{font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:700;color:var(--cyan);line-height:1}
+.acc-row{display:flex;gap:12px;margin-top:12px}
+.acc-box{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center}
+.acc-box .al{font-size:10px;color:var(--muted);margin-bottom:4px}
+.acc-box .av{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700}
+.verdict{margin-top:14px;padding:10px 14px;border-radius:8px;font-size:12px;font-weight:600;text-align:center;transition:all .4s}
+
+/* D3 tree */
+#tree-svg{width:100%;height:300px;overflow:visible}
+.tree-node rect{rx:6;ry:6;stroke-width:1.5}
+.tree-node text{font-family:'JetBrains Mono',monospace;font-size:9px;fill:var(--text)}
+.tree-link{fill:none;stroke:var(--border2);stroke-width:1.5}
+.tree-label{font-family:'Inter',sans-serif;font-size:9px;fill:var(--muted)}
+
+.compare-cards{display:flex;gap:10px;margin-top:16px}
+.compare-card{flex:1;border-radius:9px;padding:12px 10px;border:1px solid}
+.compare-card .cc-icon{font-size:18px;margin-bottom:5px}
+.compare-card .cc-title{font-size:11px;font-weight:700;margin-bottom:4px}
+.compare-card .cc-body{font-size:11px;color:var(--muted);line-height:1.5}
+
+/* ── BLOCK 3: FILL PROBABILITY ── */
+#fillprob{background:#0a0a0e;border-top:1px solid var(--border)}
+.fill-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+
+/* Animated LOB */
+.lob-anim{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;font-family:'JetBrains Mono',monospace;font-size:12px}
+.lob-anim-title{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
+.lob-row-anim{display:flex;justify-content:space-between;margin-bottom:4px;padding:3px 6px;border-radius:4px;transition:background .3s}
+.lob-row-anim.ask{color:var(--red)}
+.lob-row-anim.bid{color:var(--green)}
+.limit-row{background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.4);color:var(--amber);font-weight:600}
+.fill-badge{display:inline-block;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;margin-top:8px;transition:all .4s}
+.fill-badge.pending{background:rgba(245,158,11,.15);color:var(--amber);border:1px solid var(--amber)}
+.fill-badge.filled{background:rgba(74,222,128,.15);color:var(--green);border:1px solid var(--green)}
+.fill-badge.unfilled{background:rgba(248,113,113,.15);color:var(--red);border:1px solid var(--red)}
+
+.bucket-bars{margin-top:8px}
+.bucket-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.bucket-label{font-size:11px;color:var(--muted);width:80px;text-align:right;flex-shrink:0}
+.bucket-bar-bg{flex:1;height:22px;background:var(--border);border-radius:4px;overflow:hidden;position:relative}
+.bucket-bar-fill{height:100%;border-radius:4px;transition:width .8s ease;display:flex;align-items:center;justify-content:flex-end;padding-right:8px}
+.bucket-bar-fill span{font-size:11px;font-weight:700;color:var(--bg)}
+
+/* Gauge */
+.gauge-wrap{text-align:center;margin-top:12px}
+.gauge-canvas{display:block;margin:0 auto}
+.gauge-label{font-size:12px;color:var(--muted);margin-top:6px}
+.gauge-prob{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:700;color:var(--cyan);margin-top:4px}
+.recommendation{margin-top:12px;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:600;text-align:center;transition:all .4s}
+
+/* ── CIERRE ── */
+#cierre{background:var(--bg);border-top:1px solid var(--border)}
+.timeline-wrap{display:flex;gap:0;position:relative;margin:28px 0}
+.timeline-wrap::before{content:'';position:absolute;top:20px;left:20px;right:20px;height:2px;background:var(--border)}
+.tl-item{flex:1;text-align:center;opacity:0;transform:translateY(16px)}
+.tl-dot{width:40px;height:40px;border-radius:50%;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;margin:0 auto 10px;position:relative;z-index:1;transition:border-color .3s,background .3s}
+.tl-item.done .tl-dot{border-color:var(--cyan);background:rgba(34,211,238,.12)}
+.tl-title{font-size:11px;font-weight:700;color:var(--text);margin-bottom:3px}
+.tl-sub{font-size:10px;color:var(--muted);line-height:1.4}
+.bridge-card{background:rgba(34,211,238,.05);border:1px solid rgba(34,211,238,.2);border-radius:12px;padding:22px 26px;margin-top:28px;opacity:0;transform:translateY(14px)}
+.bridge-card .bl{font-size:10px;color:var(--cyan);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+.bridge-card p{font-size:13px;color:var(--muted);line-height:1.7}
+.bridge-card strong{color:var(--text)}
+
+/* misc */
+.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.3);border-radius:999px;padding:5px 12px;font-size:11px;color:var(--cyan);font-weight:600;margin-bottom:18px}
+@media(max-width:768px){.hero-grid,.two-col,.overfit-grid,.fill-grid{grid-template-columns:1fr}section{padding:80px 20px 50px}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">L7 · LOB Modeling</div>
+  <div class="nav-links">
+    <a href="#hero">Inicio</a>
+    <a href="#memoria">Memoria</a>
+    <a href="#overfitting">Overfitting</a>
+    <a href="#fillprob">Fill Prob</a>
+    <a href="#cierre">Cierre</a>
+  </div>
+</nav>
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- ═══════════ HERO ═══════════ -->
+<section id="hero">
+  <div class="container hero-grid">
+    <div>
+      <div class="badge">📊 Clase 7 — Dos palancas</div>
+      <div class="big-number" id="bigNumber">49.3%</div>
+      <div class="hero-label">Accuracy del LR en L6 — por debajo del azar</div>
+      <div class="hero-q">Mismo pipeline. Dos palancas.<br><em>¿Podemos hacerlo mejor?</em></div>
+      <p style="margin-bottom:20px">Hoy no cambiamos el pipeline — lo mejoramos. Con features que capturan la <strong style="color:var(--text)">historia del LOB</strong> y modelos que aprenden <strong style="color:var(--text)">relaciones no lineales</strong>.</p>
+      <div class="palanca-cards">
+        <div class="palanca">
+          <div class="palanca-icon">⏱️</div>
+          <div class="palanca-title">Features temporales</div>
+          <div class="palanca-sub">El LOB tiene memoria. Un snapshot no cuenta toda la historia.</div>
+        </div>
+        <div class="palanca">
+          <div class="palanca-icon">🌳</div>
+          <div class="palanca-title">Comparación de modelos</div>
+          <div class="palanca-sub">LR, Decision Tree, Random Forest. ¿Cuál generaliza mejor?</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="hero-chart-wrap">
+        <div class="hero-chart-title">IMBALANCE — 20 snapshots recientes</div>
+        <canvas id="heroChart" height="130"></canvas>
+        <div style="margin-top:12px;display:flex;gap:12px;font-size:11px;color:var(--muted)">
+          <span><span style="color:rgba(34,211,238,.4)">●</span> raw (ruidoso)</span>
+          <span><span style="color:var(--amber)">●</span> rolling mean 5 (tendencia)</span>
+        </div>
+        <div style="margin-top:10px;padding:10px 12px;background:var(--bg);border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)">
+          Tendencia: <span id="heroTrend" style="color:var(--cyan)">↑ 0.56</span> · Señal: <span id="heroSignal" style="color:var(--green)">COMPRADOR</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ BLOQUE 1: MEMORIA ═══════════ -->
+<section id="memoria">
+  <div class="container">
+    <div class="section-label">Bloque 1 — 6 min</div>
+    <h2>El LOB tiene memoria</h2>
+    <p style="max-width:600px;margin-bottom:28px">Un solo snapshot captura el estado actual. Pero el mercado tiene inercia — si el imbalance lleva 5 snapshots subiendo, eso importa. La media rolling captura esa tendencia.</p>
+
+    <div class="two-col">
+      <div>
+        <div class="chart-card">
+          <h3>Imbalance: instantáneo vs tendencia</h3>
+          <div class="sub">100 snapshots de BTC. Ajusta la ventana temporal.</div>
+          <canvas id="rollingChart" height="220"></canvas>
+          <div class="slider-row">
+            <label>Ventana N =</label>
+            <input type="range" id="windowSlider" min="1" max="10" value="5" oninput="updateWindow(this.value)"/>
+            <span class="slider-val" id="windowVal">5</span>
+          </div>
+          <div class="insight-card" id="windowInsight">
+            <div class="ic-label">Insight</div>
+            <p id="windowInsightText"><strong>N = 5</strong>: Buen equilibrio entre suavizar el ruido y mantener reactividad. La media rolling sigue la tendencia sin retrasar demasiado la señal.</p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="chart-card" style="margin-bottom:16px">
+          <h3>Los 3 features temporales</h3>
+          <div class="sub">Nuevas dimensiones que L6 no tenía</div>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px">
+            <div style="background:var(--bg);border-radius:8px;padding:12px 14px;border-left:3px solid var(--amber)">
+              <div style="font-size:11px;font-weight:700;color:var(--amber);margin-bottom:3px">imbalance_mean_5</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">rolling(5).mean()</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:3px">Tendencia de presión compradora</div>
+            </div>
+            <div style="background:var(--bg);border-radius:8px;padding:12px 14px;border-left:3px solid var(--purple)">
+              <div style="font-size:11px;font-weight:700;color:var(--purple);margin-bottom:3px">mid_momentum_5</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">mid[t] − mid[t−5]</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:3px">Velocidad del precio en USD</div>
+            </div>
+            <div style="background:var(--bg);border-radius:8px;padding:12px 14px;border-left:3px solid var(--cyan)">
+              <div style="font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:3px">imbalance_std_5</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">rolling(5).std()</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:3px">Volatilidad del imbalance (régimen)</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <h3>¿Mejora el resultado?</h3>
+          <div class="sub">L6 vs L7 con LR</div>
+          <canvas id="improvChart" height="130"></canvas>
+          <p style="font-size:11px;color:var(--muted);margin-top:8px">De 49.3% a 55.5%. <strong style="color:var(--text)">+6.2pp</strong> solo con añadir historia temporal.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ BLOQUE 2: OVERFITTING ═══════════ -->
+<section id="overfitting">
+  <div class="container">
+    <div class="section-label">Bloque 2 — 6 min</div>
+    <h2>Overfitting: memorizar vs aprender</h2>
+    <p style="max-width:620px;margin-bottom:24px">Un árbol de decisión puede memorizar perfectamente el training set — pero eso no significa que haya aprendido nada. Arrastra el slider para ver cómo crece la brecha entre train y test.</p>
+
+    <div class="overfit-grid">
+      <div>
+        <div class="chart-card">
+          <div class="depth-display">
+            <div class="depth-label">max_depth</div>
+            <div class="depth-val" id="depthDisplay">2</div>
+          </div>
+
+          <canvas id="overfitChart" height="220"></canvas>
+
+          <div class="slider-row" style="margin-top:16px">
+            <label>Complejidad →</label>
+            <input type="range" id="depthSlider" min="0" max="9" value="1" oninput="updateDepth(this.value)"/>
+            <label>Máximo</label>
+          </div>
+
+          <div class="acc-row">
+            <div class="acc-box">
+              <div class="al">Train</div>
+              <div class="av" id="trainAccVal" style="color:var(--green)">57.1%</div>
+            </div>
+            <div class="acc-box">
+              <div class="al">Test</div>
+              <div class="av" id="testAccVal" style="color:var(--cyan)">52.7%</div>
+            </div>
+            <div class="acc-box">
+              <div class="al">Brecha</div>
+              <div class="av" id="gapVal" style="color:var(--muted)">4.4pp</div>
+            </div>
+          </div>
+
+          <div class="verdict" id="verdict" style="background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);color:var(--green)">
+            ✓ Buena generalización
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="chart-card" style="margin-bottom:16px">
+          <h3>Árbol de decisión (depth=2)</h3>
+          <div class="sub">Visualización real del modelo entrenado</div>
+          <svg id="tree-svg" viewBox="0 0 340 260"></svg>
+        </div>
+
+        <div class="compare-cards">
+          <div class="compare-card" style="background:rgba(74,222,128,.07);border-color:rgba(74,222,128,.3)">
+            <div class="cc-icon">📚</div>
+            <div class="cc-title" style="color:var(--green)">Aprender</div>
+            <div class="cc-body">DT depth=2: 57% train, 53% test. Captura patrones reales. Generaliza.</div>
+          </div>
+          <div class="compare-card" style="background:rgba(248,113,113,.07);border-color:rgba(248,113,113,.3)">
+            <div class="cc-icon">📝</div>
+            <div class="cc-title" style="color:var(--red)">Memorizar</div>
+            <div class="cc-body">DT max: 100% train, 47% test. Memorizó el examen. Falla en producción.</div>
+          </div>
+        </div>
+
+        <div style="margin-top:16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:10px;font-weight:600">COMPARATIVA FINAL — TEST ACCURACY</div>
+          <div id="modelCompare"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ BLOQUE 3: FILL PROBABILITY ═══════════ -->
+<section id="fillprob">
+  <div class="container">
+    <div class="section-label">Bloque 3 — 5 min</div>
+    <h2>Fill probability: predice si se ejecuta tu orden</h2>
+    <p style="max-width:600px;margin-bottom:24px">En L5 colocaste una limit bid y observaste si se ejecutaba. Hoy lo predecimos. Cambiar el target puede ser más valioso que cambiar el modelo.</p>
+
+    <div class="fill-grid">
+      <div>
+        <div class="lob-anim">
+          <div class="lob-anim-title">BTC/USDT · Simulación de fill</div>
+          <div id="lob-live"></div>
+          <div style="margin-top:8px;display:flex;align-items:center;gap:10px">
+            <span class="fill-badge pending" id="fillBadge">⏳ PENDIENTE</span>
+            <button onclick="runFillSim()" style="font-family:'Inter',sans-serif;font-size:11px;padding:5px 12px;border-radius:6px;cursor:pointer;background:rgba(34,211,238,.12);border:1px solid var(--cyan);color:var(--cyan);font-weight:600">Simular →</button>
+          </div>
+        </div>
+
+        <div style="margin-top:16px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px">
+          <h3 style="margin-bottom:8px">Fill rate por nivel de imbalance</h3>
+          <p class="sub" style="margin-bottom:12px">Datos empíricos del dataset de BTC</p>
+          <div class="bucket-bars" id="bucketBars"></div>
+          <p style="font-size:11px;color:var(--muted);margin-top:8px">
+            Imbalance bajo = muchos vendedores → precio baja → bid se ejecuta ✓<br>
+            Imbalance alto = muchos compradores → precio sube → bid no se ejecuta ✗
+          </p>
+        </div>
+      </div>
+
+      <div>
+        <div class="chart-card" style="margin-bottom:16px">
+          <h3>¿Cuánta probabilidad tiene tu limit bid?</h3>
+          <div class="sub">Modelo RF entrenado con fill_in_3 target</div>
+
+          <div class="slider-row" style="margin-bottom:16px">
+            <label>imbalance =</label>
+            <input type="range" id="fillSlider" min="0" max="22" value="11" oninput="updateFillProb(this.value)"/>
+            <span class="slider-val" id="fillImbalanceVal" style="color:var(--cyan)">0.50</span>
+          </div>
+
+          <div class="gauge-wrap">
+            <canvas id="gaugeChart" width="220" height="130" class="gauge-canvas"></canvas>
+            <div class="gauge-label">P(fill en 3 snapshots)</div>
+            <div class="gauge-prob" id="gaugeProbVal">91%</div>
+          </div>
+
+          <div class="recommendation" id="fillRecommendation" style="background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);color:var(--green)">
+            ✓ LIMIT ORDER — Alta probabilidad de fill
+          </div>
+        </div>
+
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:10px;font-weight:600">RESULTADOS DEL MODELO</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div style="background:var(--bg);border-radius:8px;padding:10px;text-align:center">
+              <div style="font-size:10px;color:var(--muted)">Target dirección</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--cyan);margin-top:2px">55.5%</div>
+              <div style="font-size:10px;color:var(--muted)">LR temporal</div>
+            </div>
+            <div style="background:var(--bg);border-radius:8px;padding:10px;text-align:center">
+              <div style="font-size:10px;color:var(--muted)">Target fill_in_3</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--green);margin-top:2px">54.8%</div>
+              <div style="font-size:10px;color:var(--muted)">RF +2.7pp vs base</div>
+            </div>
+          </div>
+          <p style="font-size:11px;color:var(--muted);margin-top:10px">El target importa tanto como el modelo. Fill probability tiene una lógica causal más limpia — el imbalance explica directamente si el precio va a cruzar tu orden.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ CIERRE ═══════════ -->
+<section id="cierre">
+  <div class="container" style="max-width:740px">
+    <div class="section-label">Cierre</div>
+    <h2>Lo que aprendimos hoy</h2>
+
+    <div class="timeline-wrap" id="tlWrap">
+      <div class="tl-item" id="tl1"><div class="tl-dot">⏱️</div><div class="tl-title">Historia importa</div><div class="tl-sub">Rolling features: 49% → 55.5%</div></div>
+      <div class="tl-item" id="tl2"><div class="tl-dot">🌳</div><div class="tl-title">Overfitting real</div><div class="tl-sub">DT sin podar: 100% train, 47% test</div></div>
+      <div class="tl-item" id="tl3"><div class="tl-dot">🌲</div><div class="tl-title">Regulariza</div><div class="tl-sub">Árbol simple o LR generaliza mejor con pocos datos</div></div>
+      <div class="tl-item" id="tl4"><div class="tl-dot">🎯</div><div class="tl-title">El target importa</div><div class="tl-sub">Fill probability: causalidad más limpia que dirección</div></div>
+      <div class="tl-item" id="tl5"><div class="tl-dot">📊</div><div class="tl-title">338 ejemplos</div><div class="tl-sub">Señal real pero pequeña. Más datos, mejor señal.</div></div>
+    </div>
+
+    <div class="bridge-card" id="bridgeCard">
+      <div class="bl">→ Puente a L8</div>
+      <p>
+        Hemos predicho señales <strong>micro</strong>: si el precio sube en el próximo minuto.
+        Para ejecutar una orden grande (1000 BTC sin mover el mercado), necesitamos predecir
+        el <strong>perfil de volumen intradia</strong> — una señal macro y más estable.<br><br>
+        Eso es <strong>VWAP</strong>, y es el tema de L8: ¿cuándo viene el volumen durante el día?
+      </p>
+    </div>
+  </div>
+</section>
+
+<script>
+// ── PROGRESS BAR ──────────────────────────────────────
+window.addEventListener('scroll', () => {
+  const p = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+  document.getElementById('progressBar').style.width = (p * 100) + '%';
+});
+
+gsap.registerPlugin(ScrollTrigger);
+
+// ── DATA ──────────────────────────────────────────────
+const IMB_RAW = [0.5179,0.3831,0.5579,0.5597,0.4695,0.553,0.5067,0.406,0.4254,0.5074,0.3859,0.3528,0.254,0.4298,0.3459,0.5371,0.477,0.4726,0.4459,0.3537,0.472,0.5953,0.3593,0.5235,0.6829,0.4916,0.4807,0.4694,0.5215,0.4829,0.6653,0.5761,0.4505,0.5939,0.4889,0.4878,0.6493,0.5591,0.5628,0.5168,0.5345,0.5079,0.5924,0.3914,0.4019,0.5353,0.5048,0.5256,0.4639,0.6409,0.4629,0.6446,0.3317,0.4131,0.3697,0.4492,0.5394,0.3965,0.5132,0.6226,0.4479,0.621,0.537,0.4625,0.5435,0.5811,0.6064,0.5205,0.5349,0.6148,0.3633,0.3837,0.6,0.4706,0.6834,0.6575,0.3674,0.5387,0.5723,0.5555,0.6195,0.5969,0.3549,0.4533,0.3652,0.5979,0.5188,0.6026,0.4489,0.3459,0.6092,0.4913,0.6549,0.3641,0.5117,0.4907,0.5199,0.457,0.4727,0.4988];
+const IMB_R5  = [null,null,null,null,0.4976,0.5046,0.5293,0.499,0.4721,0.4797,0.4463,0.4155,0.3851,0.386,0.3537,0.3839,0.4087,0.4525,0.4557,0.4573,0.4443,0.4679,0.4452,0.4608,0.5266,0.5305,0.5076,0.5296,0.5292,0.4892,0.524,0.543,0.5393,0.5537,0.555,0.5195,0.5341,0.5558,0.5496,0.5551,0.5645,0.5362,0.5429,0.5086,0.4856,0.4858,0.4852,0.4718,0.4863,0.5341,0.5196,0.5476,0.5088,0.4986,0.4444,0.4417,0.4206,0.4336,0.4536,0.5042,0.5039,0.5202,0.5483,0.5382,0.5224,0.549,0.5461,0.5428,0.5573,0.5715,0.528,0.4835,0.4994,0.4865,0.5002,0.559,0.5558,0.5435,0.5639,0.5383,0.5307,0.5766,0.5398,0.516,0.478,0.4736,0.458,0.5076,0.5067,0.5028,0.5051,0.4996,0.51,0.4931,0.5262,0.5025,0.5083,0.4687,0.4904,0.4878];
+
+// Complexity curve (actual computed values)
+const CURVE_DEPTHS = ['1','2','3','4','5','6','8','10','20','Max'];
+const CURVE_TRAIN  = [0.5325,0.571,0.6124,0.6213,0.6834,0.7396,0.8077,0.8935,1.0,1.0];
+const CURVE_TEST   = [0.5,0.5274,0.5,0.5,0.4384,0.5411,0.4863,0.5205,0.4726,0.4726];
+
+// Fill prob by imbalance (RF model predictions at evenly spaced imbalance values)
+const FILL_IMBALANCES  = [0.25,0.275,0.3,0.325,0.35,0.375,0.4,0.425,0.45,0.475,0.5,0.525,0.55,0.575,0.6,0.625,0.65,0.675,0.7,0.725,0.75,0.775,0.8];
+const FILL_PROBS       = [0.93,0.93,0.93,0.93,0.95,0.81,0.88,0.91,0.88,0.89,0.91,0.92,0.91,0.9,0.89,0.89,0.85,0.86,0.79,0.79,0.81,0.81,0.81];
+
+// Empirical bucket data
+const BUCKET_LABELS = ['< 0.35','0.35–0.45','0.45–0.55','0.55–0.65','> 0.65'];
+const BUCKET_RATES  = [81.5,74.8,69.7,73.0,62.5];
+
+// ── HERO CHART ─────────────────────────────────────────
+const heroCtx = document.getElementById('heroChart').getContext('2d');
+const heroSlice = IMB_RAW.slice(0, 20);
+const heroR5    = IMB_R5.slice(0, 20);
+new Chart(heroCtx, {
+  type: 'line',
+  data: {
+    labels: heroSlice.map((_,i) => 't+'+i),
+    datasets: [
+      { data: heroSlice, borderColor: 'rgba(34,211,238,0.35)', borderWidth: 1.5, pointRadius: 2, tension: 0.3, fill: false, label: 'raw' },
+      { data: heroR5,    borderColor: '#f59e0b', borderWidth: 2.5, pointRadius: 0, tension: 0.4, fill: false, label: 'rolling5' }
+    ]
+  },
+  options: {
+    animation: { duration: 1200, easing: 'easeOutQuart' },
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { display: false },
+      y: { min: 0.2, max: 0.85, grid: { color: '#27272a' }, ticks: { color: '#a1a1aa', font:{size:10} } }
+    }
+  }
+});
+
+// Trend indicator
+const last5 = heroR5.filter(v => v !== null).slice(-3);
+const trend = last5[last5.length-1];
+document.getElementById('heroTrend').textContent = '↑ ' + trend.toFixed(2);
+document.getElementById('heroSignal').textContent = trend > 0.52 ? 'COMPRADOR' : trend < 0.48 ? 'VENDEDOR' : 'NEUTRAL';
+document.getElementById('heroSignal').style.color = trend > 0.52 ? '#4ade80' : trend < 0.48 ? '#f87171' : '#a1a1aa';
+
+// Hero number entrance
+gsap.to('#bigNumber', { opacity: 1, duration: 0.8, delay: 0.3, ease: 'power2.out' });
+gsap.from('.hero-grid > div', { opacity: 0, y: 40, duration: 0.9, stagger: 0.2, ease: 'power3.out', delay: 0.1 });
+
+// ── ROLLING CHART ─────────────────────────────────────
+function computeRolling(arr, n) {
+  return arr.map((_, i) => {
+    if (i < n - 1) return null;
+    const s = arr.slice(i - n + 1, i + 1).reduce((a, b) => a + b, 0);
+    return Math.round(s / n * 10000) / 10000;
+  });
+}
+
+const rollingCtx = document.getElementById('rollingChart').getContext('2d');
+const rollingChart = new Chart(rollingCtx, {
+  type: 'line',
+  data: {
+    labels: Array.from({length: 100}, (_, i) => i),
+    datasets: [
+      { data: IMB_RAW, borderColor: 'rgba(34,211,238,0.3)', borderWidth: 1.2, pointRadius: 0, tension: 0.2, fill: false, label: 'raw' },
+      { data: IMB_R5,  borderColor: '#f59e0b', borderWidth: 2.5, pointRadius: 0, tension: 0.4, fill: false, label: 'rolling' }
+    ]
+  },
+  options: {
+    animation: { duration: 400 },
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { color: '#a1a1aa', maxTicksLimit: 10, font:{size:9} }, grid: { color: '#27272a' } },
+      y: { min: 0.15, max: 0.85, ticks: { color: '#a1a1aa', font:{size:10} }, grid: { color: '#27272a' } }
+    }
+  }
+});
+
+const windowInsights = {
+  1: '<strong>N = 1</strong>: Sin suavizado. El raw y la "media" son idénticos. Señal ruidosa.',
+  2: '<strong>N = 2</strong>: Mínimo suavizado. Reduce el ruido leve pero todavía reactivo.',
+  3: '<strong>N = 3</strong>: Suavizado moderado. Empieza a verse la tendencia.',
+  4: '<strong>N = 4</strong>: Buen compromiso. La tendencia es visible con poca latencia.',
+  5: '<strong>N = 5</strong>: Equilibrio óptimo. Suaviza el ruido sin retrasar la señal.',
+  6: '<strong>N = 6</strong>: Ligeramente suave. La señal sigue siendo útil.',
+  7: '<strong>N = 7</strong>: La media empieza a retrasarse notablemente respecto al raw.',
+  8: '<strong>N = 8</strong>: Lag importante. Los cambios bruscos llegan tarde.',
+  9: '<strong>N = 9</strong>: Muy suave. Pérdida significativa de reactividad.',
+  10: '<strong>N = 10</strong>: Máximo suavizado disponible. La señal casi no reacciona a cambios rápidos.',
+};
+
+function updateWindow(val) {
+  const n = parseInt(val);
+  document.getElementById('windowVal').textContent = n;
+  const rolling = computeRolling(IMB_RAW, n);
+  rollingChart.data.datasets[1].data = rolling;
+  rollingChart.update('none');
+  document.getElementById('windowInsightText').innerHTML = windowInsights[n] || `<strong>N = ${n}</strong>: Ventana personalizada.`;
+}
+
+// ── IMPROVEMENT CHART ─────────────────────────────────
+const impCtx = document.getElementById('improvChart').getContext('2d');
+new Chart(impCtx, {
+  type: 'bar',
+  data: {
+    labels: ['LR L6\n(2 feats)', 'LR L7\n(7 feats)'],
+    datasets: [{
+      data: [49.3, 55.5],
+      backgroundColor: ['rgba(161,161,170,0.7)', 'rgba(34,211,238,0.75)'],
+      borderColor: ['#a1a1aa', '#22d3ee'],
+      borderWidth: 1, borderRadius: 6
+    }]
+  },
+  options: {
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { min: 44, max: 62, ticks: { color: '#a1a1aa', callback: v => v+'%', font:{size:10} }, grid: { color:'#27272a' } },
+      x: { ticks: { color: '#f4f4f5', font:{size:10} }, grid: { display:false } }
+    },
+    animation: { duration: 800 }
+  }
+});
+
+// ── OVERFITTING CHART ─────────────────────────────────
+const ovCtx = document.getElementById('overfitChart').getContext('2d');
+const ovChart = new Chart(ovCtx, {
+  type: 'line',
+  data: {
+    labels: CURVE_DEPTHS,
+    datasets: [
+      { label: 'Train', data: CURVE_TRAIN.map(v=>v*100), borderColor:'#4ade80', borderWidth:2.5, pointRadius:4, tension:0.3, fill:false },
+      { label: 'Test',  data: CURVE_TEST.map(v=>v*100),  borderColor:'#f87171', borderWidth:2.5, pointRadius:4, tension:0.3, fill:false }
+    ]
+  },
+  options: {
+    plugins: {
+      legend: { labels: { color:'#f4f4f5', font:{size:11} } },
+      annotation: {}
+    },
+    scales: {
+      y: { min: 35, max: 105, ticks: { color:'#a1a1aa', callback: v=>v+'%', font:{size:10} }, grid:{color:'#27272a'} },
+      x: { ticks: { color:'#f4f4f5', font:{size:10} }, grid:{color:'#27272a'} }
+    },
+    animation: { duration: 300 }
+  }
+});
+
+// Highlight point on chart
+function highlightPoint(idx) {
+  ovChart.data.datasets[0].pointBackgroundColor = CURVE_DEPTHS.map((_,i) => i===idx ? '#4ade80' : 'transparent');
+  ovChart.data.datasets[1].pointBackgroundColor = CURVE_DEPTHS.map((_,i) => i===idx ? '#f87171' : 'transparent');
+  ovChart.data.datasets[0].pointRadius = CURVE_DEPTHS.map((_,i) => i===idx ? 8 : 4);
+  ovChart.data.datasets[1].pointRadius = CURVE_DEPTHS.map((_,i) => i===idx ? 8 : 4);
+  ovChart.update('none');
+}
+
+function updateDepth(idx) {
+  const i = parseInt(idx);
+  const tr = CURVE_TRAIN[i], te = CURVE_TEST[i];
+  const gap = (tr - te) * 100;
+  const label = CURVE_DEPTHS[i];
+
+  document.getElementById('depthDisplay').textContent = label === 'Max' ? '∞' : label;
+  gsap.to('#trainAccVal', { textContent: (tr*100).toFixed(1)+'%', snap:{textContent:0.1}, duration:0.4 });
+  gsap.to('#testAccVal',  { textContent: (te*100).toFixed(1)+'%', snap:{textContent:0.1}, duration:0.4 });
+  document.getElementById('testAccVal').textContent  = (te*100).toFixed(1)+'%';
+  document.getElementById('trainAccVal').textContent = (tr*100).toFixed(1)+'%';
+  document.getElementById('gapVal').textContent = gap.toFixed(1)+'pp';
+  document.getElementById('gapVal').style.color = gap > 30 ? '#f87171' : gap > 10 ? '#f59e0b' : '#a1a1aa';
+
+  const v = document.getElementById('verdict');
+  if (gap > 40) {
+    v.style.background='rgba(248,113,113,.1)'; v.style.borderColor='rgba(248,113,113,.3)';
+    v.style.color='#f87171'; v.textContent='✗ Overfitting severo — memorización total';
+  } else if (gap > 15) {
+    v.style.background='rgba(245,158,11,.1)'; v.style.borderColor='rgba(245,158,11,.3)';
+    v.style.color='#f59e0b'; v.textContent='⚠ Señales de overfitting';
+  } else {
+    v.style.background='rgba(74,222,128,.1)'; v.style.borderColor='rgba(74,222,128,.3)';
+    v.style.color='#4ade80'; v.textContent='✓ Buena generalización';
+  }
+
+  highlightPoint(i);
+}
+updateDepth(1);
+
+// ── D3 DECISION TREE ──────────────────────────────────
+const treeData = {
+  id: 0, feature: 'wmid', threshold: '100200.5', gini: 0.50, samples: 338,
+  left: {
+    id: 1, feature: 'imbalance_mean_5', threshold: '0.426', gini: 0.49, samples: 171,
+    left:  { id: 3, leaf: true, value: 'DOWN', prob: 0.54, samples: 89 },
+    right: { id: 4, leaf: true, value: 'UP',   prob: 0.57, samples: 82 }
+  },
+  right: {
+    id: 2, feature: 'mid_momentum_5', threshold: '-2.0', gini: 0.50, samples: 167,
+    left:  { id: 5, leaf: true, value: 'DOWN', prob: 0.62, samples: 53 },
+    right: { id: 6, leaf: true, value: 'UP',   prob: 0.55, samples: 114 }
+  }
+};
+
+const svgEl = d3.select('#tree-svg');
+const W=340, H=260, nodeW=70, nodeH=36;
+const hierarchy = d3.hierarchy(treeData, d => [d.left, d.right].filter(Boolean));
+const treeLayout = d3.tree().size([W - 60, H - 80]);
+treeLayout(hierarchy);
+
+const g = svgEl.append('g').attr('transform','translate(30,20)');
+
+// Links
+g.selectAll('.tree-link').data(hierarchy.links()).enter()
+  .append('path').attr('class','tree-link')
+  .attr('d', d3.linkVertical().x(d=>d.x).y(d=>d.y))
+  .attr('stroke-dasharray', function() { return this.getTotalLength(); })
+  .attr('stroke-dashoffset', function() { return this.getTotalLength(); })
+  .transition().delay((_,i) => i*200).duration(500).ease(d3.easeQuadOut)
+  .attr('stroke-dashoffset', 0);
+
+// Branch labels
+hierarchy.links().forEach(link => {
+  const mx = (link.source.x + link.target.x) / 2;
+  const my = (link.source.y + link.target.y) / 2;
+  const isLeft = link.target.x < link.source.x;
+  g.append('text').attr('class','tree-label')
+    .attr('x', mx + (isLeft ? -12 : 10)).attr('y', my)
+    .text(isLeft ? '≤ threshold' : '> threshold')
+    .attr('opacity',0).transition().delay(600).duration(400).attr('opacity',1);
+});
+
+// Nodes
+hierarchy.descendants().forEach((d, i) => {
+  const isLeaf = d.data.leaf;
+  const nodeCol = isLeaf ? (d.data.value === 'UP' ? '#4ade80' : '#f87171') : '#22d3ee';
+  const ng = g.append('g').attr('class','tree-node')
+    .attr('transform',`translate(${d.x - nodeW/2},${d.y - nodeH/2})`)
+    .attr('opacity',0);
+  ng.transition().delay(i * 150).duration(400).attr('opacity',1);
+
+  ng.append('rect').attr('width',nodeW).attr('height',nodeH)
+    .attr('rx',6).attr('ry',6)
+    .attr('fill','#18181b')
+    .attr('stroke', nodeCol)
+    .attr('stroke-width',1.5);
+
+  if (isLeaf) {
+    ng.append('text').attr('x',nodeW/2).attr('y',14).attr('text-anchor','middle')
+      .text(d.data.value).attr('fill',nodeCol).attr('font-size',11).attr('font-weight','bold');
+    ng.append('text').attr('x',nodeW/2).attr('y',26).attr('text-anchor','middle')
+      .text(`n=${d.data.samples}`).attr('fill','#a1a1aa').attr('font-size',9);
+  } else {
+    const feat = d.data.feature.replace('_mean_5','_m5').replace('_std_5','_s5').replace('_momentum_5','_mom5');
+    ng.append('text').attr('x',nodeW/2).attr('y',13).attr('text-anchor','middle')
+      .text(feat).attr('fill','#22d3ee').attr('font-size',9);
+    ng.append('text').attr('x',nodeW/2).attr('y',24).attr('text-anchor','middle')
+      .text(`≤ ${d.data.threshold}`).attr('fill','#a1a1aa').attr('font-size',9);
+  }
+});
+
+// ── MODEL COMPARE TABLE ────────────────────────────────
+const modelData = [
+  {name:'LR temporal',    test:0.5548, color:'#22d3ee'},
+  {name:'RF n=100',       test:0.5274, color:'#a78bfa'},
+  {name:'DT depth=2',     test:0.5274, color:'#f59e0b'},
+  {name:'DT sin podar',   test:0.4726, color:'#f87171'},
+];
+const mc = document.getElementById('modelCompare');
+modelData.forEach(m => {
+  const pct = (m.test*100).toFixed(1);
+  mc.innerHTML += `<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+    <div style="font-size:11px;color:${m.color};width:110px;flex-shrink:0">${m.name}</div>
+    <div style="flex:1;height:14px;background:var(--border);border-radius:3px;overflow:hidden">
+      <div style="width:${pct/60*100}%;height:100%;background:${m.color};border-radius:3px;opacity:0.8"></div>
+    </div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:${m.color};width:38px">${pct}%</div>
+  </div>`;
+});
+
+// ── LOB FILL SIMULATION ────────────────────────────────
+const lobScenarios = [
+  { bids: [[99998.3,'0.62'],[99992.1,'1.15'],[99985.5,'2.30']], asks: [[100009.5,'0.41'],[100016.4,'0.93'],[100024.1,'1.82']], imb: 0.35, fills: true  },
+  { bids: [[99996.2,'0.41'],[99989.0,'0.77'],[99981.1,'1.22']], asks: [[100007.8,'1.81'],[100015.3,'2.44'],[100023.9,'3.01']], imb: 0.72, fills: false },
+  { bids: [[99994.7,'1.20'],[99988.2,'2.05'],[99979.9,'3.11']], asks: [[100005.1,'0.38'],[100012.7,'0.61'],[100020.3,'0.95']], imb: 0.42, fills: true  },
+];
+let simIdx = 0;
+
+function renderLOB(scenario, limitBid, status) {
+  const el = document.getElementById('lob-live');
+  let html = '';
+  scenario.asks.slice().reverse().forEach(([p, s]) =>
+    html += `<div class="lob-row-anim ask"><span>ask</span><span>${p.toFixed(2)}</span><span>${s}</span></div>`);
+  html += `<div class="lob-row-anim limit-row"><span>⭐ LIMIT BID</span><span>${limitBid.toFixed(2)}</span><span>1.00</span></div>`;
+  scenario.bids.slice(1).forEach(([p,s]) =>
+    html += `<div class="lob-row-anim bid"><span>bid</span><span>${p.toFixed(2)}</span><span>${s}</span></div>`);
+  el.innerHTML = html;
+}
+
+function runFillSim() {
+  const sc = lobScenarios[simIdx % lobScenarios.length];
+  simIdx++;
+  const limitBid = parseFloat(sc.bids[0][0]);
+  renderLOB(sc, limitBid, 'pending');
+  const badge = document.getElementById('fillBadge');
+  badge.className = 'fill-badge pending'; badge.textContent = '⏳ PENDIENTE';
+
+  setTimeout(() => {
+    badge.className = 'fill-badge ' + (sc.fills ? 'filled' : 'unfilled');
+    badge.textContent = sc.fills ? '✅ EJECUTADA — bid cruzado' : '❌ NO EJECUTADA — precio subió';
+    gsap.from(badge, { scale: 0.8, opacity: 0, duration: 0.4, ease: 'back.out(1.5)' });
+  }, 1400);
+}
+renderLOB(lobScenarios[0], parseFloat(lobScenarios[0].bids[0][0]), 'pending');
+
+// ── BUCKET BARS ───────────────────────────────────────
+const bb = document.getElementById('bucketBars');
+BUCKET_LABELS.forEach((label, i) => {
+  const rate = BUCKET_RATES[i];
+  const color = rate > 75 ? '#4ade80' : rate > 65 ? '#f59e0b' : '#f87171';
+  bb.innerHTML += `<div class="bucket-row">
+    <div class="bucket-label">${label}</div>
+    <div class="bucket-bar-bg">
+      <div class="bucket-bar-fill" style="width:0%;background:${color}" data-width="${rate}%">
+        <span>${rate}%</span>
+      </div>
+    </div>
+  </div>`;
+});
+
+// Animate bucket bars on scroll
+ScrollTrigger.create({
+  trigger: '#fillprob', start: 'top 70%',
+  onEnter: () => {
+    document.querySelectorAll('.bucket-bar-fill').forEach(el => {
+      el.style.width = el.dataset.width;
+    });
+  }
+});
+
+// ── GAUGE CHART ───────────────────────────────────────
+const gaugeCtx = document.getElementById('gaugeChart').getContext('2d');
+let gaugeChart = null;
+
+function renderGauge(prob) {
+  if (gaugeChart) gaugeChart.destroy();
+  const angle = Math.PI * prob;
+  gaugeChart = new Chart(gaugeCtx, {
+    type: 'doughnut',
+    data: {
+      datasets: [{
+        data: [prob, 1 - prob],
+        backgroundColor: [
+          prob > 0.7 ? '#4ade80' : prob > 0.5 ? '#f59e0b' : '#f87171',
+          '#27272a'
+        ],
+        borderWidth: 0,
+        circumference: 180,
+        rotation: 270
+      }]
+    },
+    options: {
+      responsive: false,
+      cutout: '70%',
+      plugins: { legend: { display: false }, tooltip: { enabled: false } },
+      animation: { duration: 400 }
+    }
+  });
+}
+
+function updateFillProb(idx) {
+  const i = parseInt(idx);
+  const imb = FILL_IMBALANCES[i];
+  const prob = FILL_PROBS[i];
+
+  document.getElementById('fillImbalanceVal').textContent = imb.toFixed(3);
+  document.getElementById('gaugeProbVal').textContent = Math.round(prob * 100) + '%';
+  renderGauge(prob);
+
+  const rec = document.getElementById('fillRecommendation');
+  if (prob > 0.75) {
+    rec.style.background='rgba(74,222,128,.1)'; rec.style.borderColor='rgba(74,222,128,.3)';
+    rec.style.color='#4ade80'; rec.textContent='✓ LIMIT ORDER — Alta probabilidad de fill';
+  } else if (prob > 0.55) {
+    rec.style.background='rgba(245,158,11,.1)'; rec.style.borderColor='rgba(245,158,11,.3)';
+    rec.style.color='#f59e0b'; rec.textContent='⚠ DEPENDE — Considera el coste de oportunidad';
+  } else {
+    rec.style.background='rgba(248,113,113,.1)'; rec.style.borderColor='rgba(248,113,113,.3)';
+    rec.style.color='#f87171'; rec.textContent='✗ MARKET ORDER — Fill probability baja';
+  }
+}
+renderGauge(0.91);
+updateFillProb(11);
+
+// ── SCROLL ANIMATIONS ────────────────────────────────
+document.querySelectorAll('section h2').forEach(el => {
+  gsap.from(el, { scrollTrigger:{trigger:el,start:'top 85%'}, opacity:0, y:20, duration:0.6, ease:'power2.out' });
+});
+
+ScrollTrigger.create({
+  trigger: '#tlWrap', start: 'top 75%',
+  onEnter: () => {
+    ['tl1','tl2','tl3','tl4','tl5'].forEach((id, i) => {
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        el.classList.add('done');
+        gsap.to(el, { opacity:1, y:0, duration:0.5, ease:'power2.out' });
+      }, i * 180);
+    });
+  }
+});
+
+ScrollTrigger.create({
+  trigger: '#bridgeCard', start: 'top 80%',
+  onEnter: () => gsap.to('#bridgeCard', { opacity:1, y:0, duration:0.6, ease:'power2.out' })
+});
+
+// Animate palanca cards
+gsap.from('.palanca', { scrollTrigger:{trigger:'.palanca-cards',start:'top 85%'}, opacity:0, y:20, stagger:0.15, duration:0.5, ease:'power2.out' });
+</script>
+</body>
+</html>

@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vibe Coding — Clase 3</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2309090b'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Arial,sans-serif' font-size='24' font-weight='700' fill='%2322d3ee'%3EAI%3C/text%3E%3C/svg%3E">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root {
+  --bg: #09090b;
+  --surface: #18181b;
+  --surface-2: #27272a;
+  --border: #3f3f46;
+  --text: #fafafa;
+  --muted: #a1a1aa;
+  --cyan: #22d3ee;
+  --blue: #818cf8;
+  --green: #4ade80;
+  --pink: #f472b6;
+  --yellow: #fbbf24;
+  --red: #f87171;
+  --nav-h: 64px;
+  --wrap: min(1200px, calc(100vw - 48px));
+  --shadow: 0 20px 60px rgba(0,0,0,0.35);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; scroll-snap-type:y proximity; scrollbar-width:thin; scrollbar-color:var(--surface-2) var(--bg); }
+body { background:var(--bg); color:var(--text); font-family:'Inter',system-ui,sans-serif; line-height:1.7; font-size:17px; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+
+nav { position:fixed; top:0; left:0; right:0; z-index:100; background:rgba(9,9,11,0.85); backdrop-filter:blur(16px) saturate(1.4); border-bottom:1px solid rgba(63,63,70,0.5); padding:0 40px; height:var(--nav-h); display:flex; align-items:center; justify-content:space-between; }
+.nav-brand { font-weight:800; font-size:16px; color:var(--cyan); letter-spacing:-0.02em; }
+.nav-brand::before { content:''; display:inline-block; width:8px; height:8px; margin-right:10px; border-radius:999px; background:var(--cyan); box-shadow:0 0 14px rgba(34,211,238,0.7); vertical-align:middle; }
+.nav-links { display:flex; gap:6px; list-style:none; }
+.nav-links a { color:var(--muted); text-decoration:none; font-size:14px; font-weight:600; padding:8px 14px; border-radius:10px; transition:all 0.2s; }
+.nav-links a:hover, .nav-links a.active { color:var(--text); background:var(--surface); }
+.nav-actions { display:flex; align-items:center; gap:10px; }
+.full-btn { background:var(--surface); color:var(--text); border:1px solid var(--border); border-radius:10px; padding:8px 14px; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s; }
+.full-btn:hover { border-color:rgba(34,211,238,0.4); }
+#progress { position:fixed; top:var(--nav-h); left:0; height:2px; width:0%; z-index:101; background:linear-gradient(90deg,var(--cyan),var(--blue),var(--pink)); transition:width 0.15s; }
+
+main { width:var(--wrap); margin:0 auto; padding:calc(var(--nav-h) + 32px) 0 120px; }
+section { margin:0 0 80px; scroll-snap-align:start; scroll-margin-top:calc(var(--nav-h) + 24px); opacity:0; transform:translateY(20px); transition:opacity 0.5s ease, transform 0.5s ease; }
+section.visible { opacity:1; transform:translateY(0); }
+.shell { background:linear-gradient(180deg,rgba(24,24,27,0.95),rgba(18,18,21,0.9)); border:1px solid rgba(63,63,70,0.4); border-radius:28px; box-shadow:var(--shadow); padding:32px; position:relative; overflow:hidden; }
+.shell::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(34,211,238,0.04),transparent 30%); pointer-events:none; }
+
+.label { display:inline-flex; align-items:center; gap:8px; padding:7px 14px; border-radius:999px; background:rgba(34,211,238,0.08); border:1px solid rgba(34,211,238,0.18); color:var(--cyan); font-size:12px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:18px; }
+h1 { font-size:clamp(42px,6vw,80px); font-weight:900; letter-spacing:-0.045em; line-height:0.95; }
+h2 { font-size:clamp(30px,4vw,52px); font-weight:850; letter-spacing:-0.04em; line-height:1; }
+h3 { font-size:22px; font-weight:800; letter-spacing:-0.03em; }
+p, li { color:var(--muted); }
+.lead { max-width:700px; font-size:clamp(18px,2vw,22px); color:#d4d4d8; margin-top:16px; }
+.accent { color:var(--cyan); }
+
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:start; }
+.hero-grid { display:grid; grid-template-columns:1.1fr 0.9fr; gap:32px; align-items:center; min-height:calc(100vh - var(--nav-h) - 64px); }
+
+.card { background:rgba(24,24,27,0.8); border:1px solid rgba(63,63,70,0.35); border-radius:20px; padding:20px; }
+.card-label { color:var(--cyan); font-size:11px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:10px; }
+
+pre, code { font-family:'JetBrains Mono',monospace; font-size:13.5px; line-height:1.7; }
+.code-block { background:rgba(9,9,11,0.8); border:1px solid rgba(63,63,70,0.3); border-radius:16px; padding:18px 20px; overflow-x:auto; white-space:pre-wrap; word-break:break-word; }
+.code-block code { color:#e4e4e7; }
+
+.btn { display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; transition:all 0.2s; border:1px solid var(--border); background:var(--surface); color:var(--text); }
+.btn:hover { border-color:rgba(34,211,238,0.3); }
+.btn.active { border-color:rgba(34,211,238,0.4); background:rgba(34,211,238,0.08); color:var(--cyan); }
+.btn-primary { background:linear-gradient(135deg,var(--cyan),#06b6d4); color:#09090b; border:none; }
+.btn-primary:hover { box-shadow:0 4px 16px rgba(34,211,238,0.25); }
+.btn-row { display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
+
+.metric { padding:16px; border-radius:16px; background:rgba(9,9,11,0.7); border:1px solid rgba(63,63,70,0.25); }
+.metric-name { color:var(--muted); font-size:11px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:6px; }
+.metric-value { font-size:26px; font-weight:900; letter-spacing:-0.04em; color:var(--text); transition:all 0.3s; }
+.metric-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(140px,1fr)); gap:12px; }
+
+.verdict { margin-top:12px; padding:14px 18px; border-radius:14px; font-size:13px; font-weight:700; line-height:1.6; }
+.verdict.bad { background:rgba(244,114,182,0.06); border:1px solid rgba(244,114,182,0.2); color:var(--pink); }
+.verdict.good { background:rgba(74,222,128,0.06); border:1px solid rgba(74,222,128,0.2); color:var(--green); }
+.verdict.insight { background:rgba(129,140,248,0.06); border:1px solid rgba(129,140,248,0.2); color:var(--blue); }
+
+.timeline-row { display:grid; grid-template-columns:repeat(5, 1fr); gap:8px; margin-top:24px; }
+.tl-step { padding:14px; border-radius:16px; background:rgba(9,9,11,0.7); border:1px solid rgba(63,63,70,0.25); text-align:center; font-size:12px; font-weight:700; transition:all 0.3s; }
+.tl-step.active { border-color:rgba(34,211,238,0.35); background:rgba(34,211,238,0.05); }
+.tl-step .tl-icon { font-size:20px; margin-bottom:6px; }
+
+/* ── Token animation ── */
+.token-stream { display:flex; flex-wrap:wrap; gap:4px; padding:18px 20px; background:rgba(9,9,11,0.9); border:1px solid rgba(63,63,70,0.3); border-radius:16px; min-height:140px; align-content:flex-start; font-family:'JetBrains Mono',monospace; font-size:14px; line-height:2; }
+.token { padding:2px 6px; border-radius:6px; transition:all 0.3s; opacity:0; transform:translateY(8px); }
+.token.visible { opacity:1; transform:translateY(0); }
+.token.keyword { color:var(--pink); background:rgba(244,114,182,0.08); }
+.token.string { color:var(--green); background:rgba(74,222,128,0.08); }
+.token.number { color:var(--yellow); background:rgba(251,191,36,0.08); }
+.token.function { color:var(--blue); background:rgba(129,140,248,0.08); }
+.token.plain { color:#e4e4e7; }
+.token.punct { color:var(--muted); }
+.token.newline { width:100%; height:0; }
+.token.cursor { animation:blink 0.8s infinite; color:var(--cyan); }
+@keyframes blink { 0%,50% { opacity:1; } 51%,100% { opacity:0; } }
+
+/* ── Temperature slider ── */
+.temp-control { display:flex; align-items:center; gap:16px; margin-top:16px; }
+.temp-control input[type=range] { flex:1; accent-color:var(--cyan); height:6px; }
+.temp-label { font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:700; color:var(--cyan); min-width:90px; text-align:right; }
+
+/* ── Agent diagram ── */
+.agent-flow { display:flex; align-items:center; gap:0; justify-content:center; flex-wrap:wrap; margin:24px 0; }
+.agent-node { padding:14px 20px; border-radius:16px; background:rgba(9,9,11,0.8); border:2px solid rgba(63,63,70,0.3); font-size:13px; font-weight:700; text-align:center; transition:all 0.5s; min-width:110px; }
+.agent-node.active { border-color:rgba(34,211,238,0.5); box-shadow:0 0 20px rgba(34,211,238,0.15); }
+.agent-node .node-icon { font-size:22px; margin-bottom:6px; }
+.agent-arrow { color:var(--muted); font-size:20px; padding:0 8px; transition:color 0.3s; }
+.agent-arrow.active { color:var(--cyan); }
+
+/* ── Semaphore ── */
+.semaphore { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:24px; }
+.sem-card { padding:20px; border-radius:20px; border:2px solid rgba(63,63,70,0.3); background:rgba(24,24,27,0.6); transition:all 0.4s; cursor:pointer; }
+.sem-card:hover { transform:translateY(-2px); }
+.sem-card.active { transform:translateY(-2px); }
+.sem-card[data-level="green"].active { border-color:rgba(74,222,128,0.4); background:rgba(74,222,128,0.06); }
+.sem-card[data-level="yellow"].active { border-color:rgba(251,191,36,0.4); background:rgba(251,191,36,0.06); }
+.sem-card[data-level="red"].active { border-color:rgba(248,113,113,0.4); background:rgba(248,113,113,0.06); }
+.sem-dot { width:20px; height:20px; border-radius:50%; margin-bottom:12px; transition:all 0.3s; }
+.sem-card[data-level="green"] .sem-dot { background:var(--green); box-shadow:0 0 12px rgba(74,222,128,0.4); }
+.sem-card[data-level="yellow"] .sem-dot { background:var(--yellow); box-shadow:0 0 12px rgba(251,191,36,0.4); }
+.sem-card[data-level="red"] .sem-dot { background:var(--red); box-shadow:0 0 12px rgba(248,113,113,0.4); }
+.sem-title { font-weight:800; font-size:16px; margin-bottom:6px; }
+.sem-desc { font-size:13px; color:var(--muted); line-height:1.5; }
+
+/* ── Bug hunt ── */
+.bug-code { position:relative; }
+.bug-line { padding:4px 12px; border-radius:8px; cursor:pointer; transition:background 0.2s; font-family:'JetBrains Mono',monospace; font-size:13px; color:#e4e4e7; }
+.bug-line:hover { background:rgba(34,211,238,0.06); }
+.bug-line.selected { background:rgba(248,113,113,0.1); border:1px solid rgba(248,113,113,0.25); }
+.bug-line.correct { background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.25); }
+
+@media (max-width:768px) {
+  .two-col, .hero-grid, .metric-grid, .semaphore, .timeline-row { grid-template-columns:1fr; }
+  nav { padding:0 16px; }
+  .shell { padding:20px; border-radius:20px; }
+  .agent-flow { flex-direction:column; }
+  .agent-arrow { transform:rotate(90deg); }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-brand">Clase 3 — Vibe Coding</span>
+  <ul class="nav-links">
+    <li><a href="#hero">Inicio</a></li>
+    <li><a href="#tokens">LLM</a></li>
+    <li><a href="#agente">Agente</a></li>
+    <li><a href="#confianza">Confianza</a></li>
+    <li><a href="#cierre">Cierre</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="full-btn" id="fullscreen-btn">&#x26F6;</button>
+  </div>
+</nav>
+<div id="progress"></div>
+
+<main>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- HERO                                    -->
+<!-- ═══════════════════════════════════════ -->
+<section id="hero">
+  <div class="shell">
+    <div class="hero-grid">
+      <div>
+        <div class="label">Clase 3</div>
+        <h1>Vibe Coding</h1>
+        <p class="lead">En Lesson 2 escribiste ~60 lineas de clases a mano. Hoy vas a entender como un LLM puede generarlas — y cuando confiar en lo que produce.</p>
+
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:32px;">
+          <div class="card" style="text-align:center;">
+            <div style="font-size:28px; margin-bottom:6px;">&#x1F9E0;</div>
+            <h3 style="font-size:14px;">LLM</h3>
+            <p style="font-size:12px;">Genera token a token</p>
+          </div>
+          <div class="card" style="text-align:center;">
+            <div style="font-size:28px; margin-bottom:6px;">&#x1F6E0;&#xFE0F;</div>
+            <h3 style="font-size:14px;">Agente</h3>
+            <p style="font-size:12px;">LLM + herramientas</p>
+          </div>
+          <div class="card" style="text-align:center;">
+            <div style="font-size:28px; margin-bottom:6px;">&#x1F6A6;</div>
+            <h3 style="font-size:14px;">Criterio</h3>
+            <p style="font-size:12px;">Saber cuando verificar</p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card" style="background:rgba(129,140,248,0.04); border-color:rgba(129,140,248,0.15);">
+          <div class="card-label" style="color:var(--blue);">Lo que escribiste en L2</div>
+          <div class="code-block">
+            <code>class PositionTracker:
+    def __init__(self):
+        self._cash = 0.0
+        self._position = 0.0
+
+    def apply_trade(self, trade):
+        ...
+
+    def equity(self, mark_price):
+        return self._cash + self._position * mark_price</code>
+          </div>
+          <p style="font-size:14px; margin-top:12px; color:var(--blue);">~60 lineas escritas a mano</p>
+        </div>
+        <div class="card" style="margin-top:12px; background:rgba(34,211,238,0.04); border-color:rgba(34,211,238,0.15);">
+          <div class="card-label">Lo que puedes pedir</div>
+          <div class="code-block" style="border-color:rgba(34,211,238,0.2);">
+            <code style="color:var(--cyan);">"Genera una clase PositionTracker
+ con type hints, @property para cash
+ y position, y apply_trade que acepte
+ un Trade."</code>
+          </div>
+          <p style="font-size:14px; margin-top:12px; color:var(--cyan);">El LLM genera &mdash; tu evaluas</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- BLOQUE 1: COMO PIENSA UN LLM           -->
+<!-- ═══════════════════════════════════════ -->
+<section id="tokens">
+  <div class="shell">
+    <div class="label">Bloque 1 &mdash; Como piensa un LLM</div>
+    <h2>Un token a la vez</h2>
+    <p class="lead">Un LLM no piensa como tu. No tiene un plan. Predice la siguiente palabra mas probable &mdash; y la concatena. Eso explica que sea potente y fragil a la vez.</p>
+
+    <div class="two-col" style="margin-top:24px;">
+      <div>
+        <div class="card">
+          <div class="card-label">Prompt</div>
+          <div class="code-block" style="font-size:14px;">
+            <code id="prompt-display" style="color:var(--cyan);">"Genera una funcion que calcule el notional de una orden"</code>
+          </div>
+
+          <div class="btn-row" style="margin-top:16px;">
+            <button class="btn-primary btn" id="gen-btn">Generar</button>
+            <button class="btn" id="gen-again-btn">Generar otra vez</button>
+            <button class="btn" id="gen-clear-btn" style="color:var(--red); border-color:rgba(248,113,113,0.25);">Limpiar</button>
+          </div>
+
+          <div class="temp-control">
+            <span style="color:var(--muted); font-size:12px; font-weight:800; letter-spacing:0.06em;">TEMPERATURE</span>
+            <input type="range" id="temp-slider" min="0" max="100" value="20">
+            <span class="temp-label" id="temp-value">0.2</span>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <div class="card-label">Que esta pasando</div>
+          <div id="explain-panel" style="font-size:14px; color:var(--muted); line-height:1.7;">
+            Pulsa <strong style="color:var(--cyan);">Generar</strong> para ver como un LLM construye codigo token a token. Despues, pulsa <strong>Generar otra vez</strong> con la misma temperature y observa: el resultado puede cambiar.
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-label">Output del LLM</div>
+          <div class="token-stream" id="token-output">
+            <span class="token cursor visible">|</span>
+          </div>
+          <div class="metric-grid" style="margin-top:16px; grid-template-columns:repeat(3,1fr);">
+            <div class="metric">
+              <div class="metric-name">Tokens</div>
+              <div class="metric-value" id="token-count">0</div>
+            </div>
+            <div class="metric">
+              <div class="metric-name">Temperature</div>
+              <div class="metric-value accent" id="token-temp">0.2</div>
+            </div>
+            <div class="metric">
+              <div class="metric-name">Generacion #</div>
+              <div class="metric-value" id="gen-number">0</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="verdict insight" id="token-insight" style="margin-top:16px;">
+          Mismo prompt + misma temperature = output <strong>potencialmente distinto</strong>. Un LLM es estocastico: no calcula, predice. Por eso hay que verificar.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- BLOQUE 2: LLM VS AGENTE                -->
+<!-- ═══════════════════════════════════════ -->
+<section id="agente">
+  <div class="shell">
+    <div class="label">Bloque 2 &mdash; LLM vs Agente</div>
+    <h2>La diferencia clave</h2>
+    <p class="lead">Un LLM genera texto. Un agente usa el LLM como cerebro, pero ademas puede ejecutar herramientas, leer archivos y actuar en el mundo.</p>
+
+    <div class="btn-row" style="margin-top:20px; margin-bottom:24px;">
+      <button class="btn active agent-mode-btn" data-mode="llm">Solo LLM</button>
+      <button class="btn agent-mode-btn" data-mode="agent">LLM + Agente</button>
+    </div>
+
+    <div id="agent-diagram-wrap">
+      <div class="agent-flow" id="agent-flow">
+        <!-- populated by JS -->
+      </div>
+
+      <div class="two-col" style="margin-top:24px;">
+        <div>
+          <div class="card" id="agent-left-card">
+            <div class="card-label" id="agent-left-label">Tu prompt</div>
+            <div class="code-block" id="agent-left-code"></div>
+          </div>
+        </div>
+        <div>
+          <div class="card" id="agent-right-card">
+            <div class="card-label" id="agent-right-label">Output</div>
+            <div class="code-block" id="agent-right-code"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="verdict insight" id="agent-insight" style="margin-top:16px;"></div>
+    </div>
+
+    <div class="card" style="margin-top:24px;">
+      <div class="card-label">Herramientas tipicas de un agente</div>
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:12px;" id="tools-grid">
+        <div class="metric" id="tool-read">
+          <div style="font-size:22px; text-align:center; margin-bottom:6px;">&#x1F4C4;</div>
+          <div class="metric-name" style="text-align:center;">Leer archivos</div>
+        </div>
+        <div class="metric" id="tool-write">
+          <div style="font-size:22px; text-align:center; margin-bottom:6px;">&#x270F;&#xFE0F;</div>
+          <div class="metric-name" style="text-align:center;">Escribir codigo</div>
+        </div>
+        <div class="metric" id="tool-run">
+          <div style="font-size:22px; text-align:center; margin-bottom:6px;">&#x25B6;&#xFE0F;</div>
+          <div class="metric-name" style="text-align:center;">Ejecutar</div>
+        </div>
+        <div class="metric" id="tool-search">
+          <div style="font-size:22px; text-align:center; margin-bottom:6px;">&#x1F50D;</div>
+          <div class="metric-name" style="text-align:center;">Buscar en web</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- BLOQUE 3: CUANDO CONFIAR                -->
+<!-- ═══════════════════════════════════════ -->
+<section id="confianza">
+  <div class="shell">
+    <div class="label">Bloque 3 &mdash; Cuando confiar, cuando verificar</div>
+    <h2>El semaforo de confianza</h2>
+    <p class="lead">No todo el codigo de una IA merece el mismo nivel de revision. Aprende a calibrar tu confianza segun lo que pides.</p>
+
+    <div class="semaphore" id="semaphore">
+      <div class="sem-card active" data-level="green">
+        <div class="sem-dot"></div>
+        <div class="sem-title" style="color:var(--green);">Verde &mdash; Confiar</div>
+        <div class="sem-desc">Boilerplate, formateo, funciones puras simples. Facil de verificar con los ojos.</div>
+      </div>
+      <div class="sem-card" data-level="yellow">
+        <div class="sem-dot"></div>
+        <div class="sem-title" style="color:var(--yellow);">Amarillo &mdash; Revisar</div>
+        <div class="sem-desc">Logica de negocio, calculos financieros, estado mutable. Requiere tests o ejecucion manual.</div>
+      </div>
+      <div class="sem-card" data-level="red">
+        <div class="sem-dot"></div>
+        <div class="sem-title" style="color:var(--red);">Rojo &mdash; No confiar</div>
+        <div class="sem-desc">Seguridad, autenticacion, datos sensibles, operaciones irreversibles. Siempre verificar a fondo.</div>
+      </div>
+    </div>
+
+    <div class="two-col" style="margin-top:24px;">
+      <div>
+        <div class="card">
+          <div class="card-label" id="sem-example-label">Ejemplo: verde</div>
+          <div class="code-block" id="sem-example-code"></div>
+          <div class="verdict" id="sem-verdict" style="margin-top:12px;"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-label">Encuentra el bug</div>
+          <p style="font-size:13px; margin-bottom:12px;">Este codigo lo genero una IA. Hay un bug. Pulsa la linea que falla.</p>
+          <div class="code-block" style="padding:8px 0;" id="bug-hunt">
+            <!-- populated by JS -->
+          </div>
+          <div id="bug-result" style="margin-top:12px; font-size:14px; font-weight:700;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- CIERRE                                  -->
+<!-- ═══════════════════════════════════════ -->
+<section id="cierre">
+  <div class="shell" style="text-align:center; padding:48px 32px;">
+    <div class="label">Cierre</div>
+    <h2>De escribir codigo a evaluar codigo</h2>
+    <p class="lead" style="margin:16px auto 0; max-width:640px;">Hoy has entendido <strong>como genera un LLM</strong>, <strong>que aniade un agente</strong>, y <strong>cuando confiar</strong> en lo que produce. Ahora toca aprender los patrones que la IA usa.</p>
+
+    <div class="timeline-row" style="max-width:900px; margin:32px auto 0;">
+      <div class="tl-step active">
+        <div class="tl-icon">&#x1F9E0;</div>
+        <div style="color:var(--cyan);">LLM</div>
+        <div style="color:var(--muted); font-size:11px;">genera tokens</div>
+      </div>
+      <div class="tl-step active">
+        <div class="tl-icon">&#x1F321;&#xFE0F;</div>
+        <div style="color:var(--cyan);">Temperature</div>
+        <div style="color:var(--muted); font-size:11px;">controla varianza</div>
+      </div>
+      <div class="tl-step active">
+        <div class="tl-icon">&#x1F6E0;&#xFE0F;</div>
+        <div style="color:var(--cyan);">Agente</div>
+        <div style="color:var(--muted); font-size:11px;">LLM + tools</div>
+      </div>
+      <div class="tl-step active">
+        <div class="tl-icon">&#x1F6A6;</div>
+        <div style="color:var(--cyan);">Semaforo</div>
+        <div style="color:var(--muted); font-size:11px;">calibrar confianza</div>
+      </div>
+      <div class="tl-step active">
+        <div class="tl-icon">&#x1F4BB;</div>
+        <div style="color:var(--cyan);">Evaluar</div>
+        <div style="color:var(--muted); font-size:11px;">leer lo que genera</div>
+      </div>
+    </div>
+
+    <div class="card" style="max-width:640px; margin:32px auto 0; background:rgba(34,211,238,0.04); border-color:rgba(34,211,238,0.15);">
+      <p style="color:var(--cyan); font-weight:700; font-size:15px;">Ahora toca practicar. Abre el notebook y aprende los patrones que un LLM usa al generar codigo: try/except, type hints, @property, comprehensions.</p>
+    </div>
+
+    <div class="card" style="max-width:640px; margin:16px auto 0; background:rgba(129,140,248,0.04); border-color:rgba(129,140,248,0.15);">
+      <p style="color:var(--blue); font-weight:700; font-size:14px;">Siguiente clase: ya sabes Python, OOP y como trabajar con IA. Ahora toca datos reales: microestructura de mercado con BTC.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+// ═══════════════════════════════════════
+// SCROLL OBSERVER + PROGRESS + NAV
+// ═══════════════════════════════════════
+const sections = document.querySelectorAll('section');
+const navLinks = document.querySelectorAll('.nav-links a');
+const progressBar = document.getElementById('progress');
+
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+sections.forEach(s => io.observe(s));
+
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+  progressBar.style.width = pct + '%';
+
+  let currentId = '';
+  sections.forEach(s => { if (s.getBoundingClientRect().top < 200) currentId = s.id; });
+  navLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + currentId);
+  });
+});
+
+// Fullscreen
+document.getElementById('fullscreen-btn').addEventListener('click', () => {
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+  else document.exitFullscreen();
+});
+
+// Keyboard nav
+document.addEventListener('keydown', e => {
+  if (e.key === 'f' || e.key === 'F') {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+  const ids = [...sections].map(s => s.id);
+  let cur = 0;
+  sections.forEach((s, i) => { if (s.getBoundingClientRect().top < 200) cur = i; });
+  if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+    e.preventDefault();
+    const next = Math.min(cur + 1, ids.length - 1);
+    document.getElementById(ids[next]).scrollIntoView({ behavior: 'smooth' });
+  } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+    e.preventDefault();
+    const prev = Math.max(cur - 1, 0);
+    document.getElementById(ids[prev]).scrollIntoView({ behavior: 'smooth' });
+  }
+});
+
+
+// ═══════════════════════════════════════
+// BLOQUE 1: TOKEN GENERATION
+// ═══════════════════════════════════════
+
+const tokenVariants = [
+  // Variant 0 (low temp, clean)
+  [
+    { text: 'def', type: 'keyword' },
+    { text: ' ', type: 'plain' },
+    { text: 'compute_notional', type: 'function' },
+    { text: '(', type: 'punct' },
+    { text: 'price', type: 'plain' },
+    { text: ':', type: 'punct' },
+    { text: ' float', type: 'keyword' },
+    { text: ',', type: 'punct' },
+    { text: ' size', type: 'plain' },
+    { text: ':', type: 'punct' },
+    { text: ' float', type: 'keyword' },
+    { text: ')', type: 'punct' },
+    { text: ' ->', type: 'punct' },
+    { text: ' float', type: 'keyword' },
+    { text: ':', type: 'punct' },
+    { text: '\n', type: 'newline' },
+    { text: '    ', type: 'plain' },
+    { text: '"""', type: 'string' },
+    { text: 'Calcula el nocional', type: 'string' },
+    { text: '."""', type: 'string' },
+    { text: '\n', type: 'newline' },
+    { text: '    ', type: 'plain' },
+    { text: 'return', type: 'keyword' },
+    { text: ' price', type: 'plain' },
+    { text: ' * ', type: 'punct' },
+    { text: 'size', type: 'plain' },
+  ],
+  // Variant 1 (different style)
+  [
+    { text: 'def', type: 'keyword' },
+    { text: ' ', type: 'plain' },
+    { text: 'notional', type: 'function' },
+    { text: '(', type: 'punct' },
+    { text: 'price', type: 'plain' },
+    { text: ',', type: 'punct' },
+    { text: ' size', type: 'plain' },
+    { text: ')', type: 'punct' },
+    { text: ':', type: 'punct' },
+    { text: '\n', type: 'newline' },
+    { text: '    ', type: 'plain' },
+    { text: '# Nocional = precio x tamano', type: 'string' },
+    { text: '\n', type: 'newline' },
+    { text: '    ', type: 'plain' },
+    { text: 'result', type: 'plain' },
+    { text: ' = ', type: 'punct' },
+    { text: 'price', type: 'plain' },
+    { text: ' * ', type: 'punct' },
+    { text: 'size', type: 'plain' },
+    { text: '\n', type: 'newline' },
+    { text: '    ', type: 'plain' },
+    { text: 'return', type: 'keyword' },
+    { text: ' result', type: 'plain' },
+  ],
+  // Variant 2 (more verbose, higher temp feel)
+  [
+    { text: 'def', type: 'keyword' },
+    { text: ' ', type: 'plain' },
+    { text: 'calculate_order_notional', type: 'function' },
+    { text: '(', type: 'punct' },
+    { text: '\n', type: 'newline' },
+    { text: '    ', type: 'plain' },
+    { text: 'price', type: 'plain' },
+    { text: ':', type: 'punct' },
+    { text: ' float', type: 'keyword' },
+    { text: ',', type: 'punct' },
+    { text: '\n', type: 'newline' },
+    { text: '    ', type: 'plain' },
+    { text: 'size', type: 'plain' },
+    { text: ':', type: 'punct' },
+    { text: ' float', type: 'keyword' },
+    { text: '\n', type: 'newline' },
+    { text: ')', type: 'punct' },
+    { text: ' ->', type: 'punct' },
+    { text: ' float', type: 'keyword' },
+    { text: ':', type: 'punct' },
+    { text: '\n', type: 'newline' },
+    { text: '    ', type: 'plain' },
+    { text: '"""', type: 'string' },
+    { text: '\n', type: 'newline' },
+    { text: '    Calculate the notional value.', type: 'string' },
+    { text: '\n', type: 'newline' },
+    { text: '    """', type: 'string' },
+    { text: '\n', type: 'newline' },
+    { text: '    ', type: 'plain' },
+    { text: 'return', type: 'keyword' },
+    { text: ' price', type: 'plain' },
+    { text: ' * ', type: 'punct' },
+    { text: 'size', type: 'plain' },
+  ],
+  // Variant 3 (wrong — high temp artifact)
+  [
+    { text: 'def', type: 'keyword' },
+    { text: ' ', type: 'plain' },
+    { text: 'notional_value', type: 'function' },
+    { text: '(', type: 'punct' },
+    { text: 'order', type: 'plain' },
+    { text: ':', type: 'punct' },
+    { text: ' dict', type: 'keyword' },
+    { text: ')', type: 'punct' },
+    { text: ':', type: 'punct' },
+    { text: '\n', type: 'newline' },
+    { text: '    ', type: 'plain' },
+    { text: 'return', type: 'keyword' },
+    { text: ' order', type: 'plain' },
+    { text: '[', type: 'punct' },
+    { text: '"price"', type: 'string' },
+    { text: ']', type: 'punct' },
+    { text: ' * ', type: 'punct' },
+    { text: 'order', type: 'plain' },
+    { text: '[', type: 'punct' },
+    { text: '"quantity"', type: 'string' },
+    { text: ']', type: 'punct' },
+    { text: '\n', type: 'newline' },
+    { text: '    ', type: 'plain' },
+    { text: '# BUG: "quantity" != "size"', type: 'string' },
+  ],
+];
+
+let genCount = 0;
+let animating = false;
+
+function getTemperature() {
+  return parseInt(document.getElementById('temp-slider').value) / 100;
+}
+
+function pickVariant(temp) {
+  if (temp < 0.3) return tokenVariants[genCount % 2];
+  if (temp < 0.7) return tokenVariants[1 + (genCount % 2)];
+  return tokenVariants[2 + (genCount % 2)];
+}
+
+function animateTokens(variant) {
+  if (animating) return;
+  animating = true;
+  genCount++;
+
+  const output = document.getElementById('token-output');
+  output.innerHTML = '';
+  document.getElementById('token-count').textContent = '0';
+  document.getElementById('gen-number').textContent = genCount;
+
+  const temp = getTemperature();
+  document.getElementById('token-temp').textContent = temp.toFixed(1);
+
+  const baseDelay = temp < 0.3 ? 60 : temp < 0.7 ? 80 : 100;
+  let count = 0;
+
+  variant.forEach((tok, i) => {
+    const span = document.createElement('span');
+    span.className = 'token ' + tok.type;
+    span.textContent = tok.text;
+    output.appendChild(span);
+
+    setTimeout(() => {
+      span.classList.add('visible');
+      if (tok.type !== 'newline') {
+        count++;
+        document.getElementById('token-count').textContent = count;
+      }
+      if (i === variant.length - 1) {
+        const cursor = document.createElement('span');
+        cursor.className = 'token cursor visible';
+        cursor.textContent = '|';
+        output.appendChild(cursor);
+        animating = false;
+
+        // Update explanation
+        if (temp >= 0.7 && variant === tokenVariants[3]) {
+          document.getElementById('explain-panel').innerHTML = '<span style="color:var(--red);">Temperature alta = mas creatividad pero tambien mas riesgo. Fijate: el LLM invento <code>"quantity"</code> en vez de <code>"size"</code>. Ese es el tipo de bug sutil que genera.</span>';
+        } else if (genCount > 1) {
+          document.getElementById('explain-panel').innerHTML = 'Generacion #' + genCount + ': mismo prompt, <strong style="color:var(--cyan);">output diferente</strong>. El LLM no memoriza — predice. Cada ejecucion puede variar en estilo, nombres, e incluso correccion.';
+        } else {
+          document.getElementById('explain-panel').innerHTML = 'El LLM genera de izquierda a derecha, token a token. Cada token depende de los anteriores + el prompt. Pulsa <strong style="color:var(--cyan);">Generar otra vez</strong> para ver la variacion.';
+        }
+      }
+    }, i * baseDelay);
+  });
+}
+
+document.getElementById('gen-btn').addEventListener('click', () => {
+  const temp = getTemperature();
+  animateTokens(pickVariant(temp));
+});
+
+document.getElementById('gen-again-btn').addEventListener('click', () => {
+  const temp = getTemperature();
+  animateTokens(pickVariant(temp));
+});
+
+document.getElementById('gen-clear-btn').addEventListener('click', () => {
+  document.getElementById('token-output').innerHTML = '<span class="token cursor visible">|</span>';
+  document.getElementById('token-count').textContent = '0';
+  document.getElementById('explain-panel').innerHTML = 'Pulsa <strong style="color:var(--cyan);">Generar</strong> para ver como un LLM construye codigo token a token.';
+  animating = false;
+});
+
+document.getElementById('temp-slider').addEventListener('input', function() {
+  const val = (this.value / 100).toFixed(1);
+  document.getElementById('temp-value').textContent = val;
+  document.getElementById('token-temp').textContent = val;
+
+  const insight = document.getElementById('token-insight');
+  if (this.value < 30) {
+    insight.innerHTML = 'Temperature baja = output mas predecible y consistente. Ideal para codigo donde quieres fiabilidad.';
+  } else if (this.value < 70) {
+    insight.innerHTML = 'Temperature media = balance entre creatividad y consistencia. Util para explorar soluciones alternativas.';
+  } else {
+    insight.innerHTML = '<span style="color:var(--red);">Temperature alta = mas variacion, mas riesgo de errores sutiles.</span> El LLM inventa con mas libertad — incluyendo nombres de variables que no existen.';
+  }
+});
+
+
+// ═══════════════════════════════════════
+// BLOQUE 2: LLM VS AGENTE
+// ═══════════════════════════════════════
+
+const agentData = {
+  llm: {
+    flow: [
+      { icon: '&#x1F464;', label: 'Tu', id: 'n-user' },
+      { icon: '&#x27A1;&#xFE0F;', label: '', arrow: true },
+      { icon: '&#x1F9E0;', label: 'LLM', id: 'n-llm' },
+      { icon: '&#x27A1;&#xFE0F;', label: '', arrow: true },
+      { icon: '&#x1F4C4;', label: 'Texto', id: 'n-output' },
+    ],
+    leftLabel: 'Tu prompt',
+    leftCode: `"Genera una clase Order con
+symbol, side, price, size
+y un metodo notional()"`,
+    rightLabel: 'Output (texto)',
+    rightCode: `class Order:
+    def __init__(self, symbol, side, price, size):
+        self.symbol = symbol
+        self.side = side
+        self.price = price
+        self.size = size
+
+    def notional(self):
+        return self.price * self.size
+
+# El LLM genera texto. Tu decides
+# si copiarlo, editarlo o descartarlo.`,
+    insight: 'El LLM recibe texto y devuelve texto. No ejecuta nada. No sabe si el codigo funciona. Tu eres quien verifica.',
+    toolsActive: false
+  },
+  agent: {
+    flow: [
+      { icon: '&#x1F464;', label: 'Tu', id: 'n-user' },
+      { icon: '&#x27A1;&#xFE0F;', label: '', arrow: true },
+      { icon: '&#x1F9E0;', label: 'LLM', id: 'n-llm' },
+      { icon: '&#x1F504;', label: '', arrow: true },
+      { icon: '&#x1F6E0;&#xFE0F;', label: 'Tools', id: 'n-tools' },
+      { icon: '&#x1F504;', label: '', arrow: true },
+      { icon: '&#x2705;', label: 'Resultado', id: 'n-output' },
+    ],
+    leftLabel: 'Tu instruccion',
+    leftCode: `"Crea un PositionTracker con tests.
+Ejecuta los tests y corrige
+si algo falla."`,
+    rightLabel: 'El agente ejecuta',
+    rightCode: `# Paso 1: LLM genera el codigo
+# Paso 2: Tool "escribir archivo" -> tracker.py
+# Paso 3: Tool "ejecutar" -> python -m pytest
+# Paso 4: Test falla -> LLM lee el error
+# Paso 5: LLM corrige -> reescribe archivo
+# Paso 6: Tool "ejecutar" -> tests pasan
+# Paso 7: Devuelve resultado verificado
+
+# El agente usa un BUCLE:
+#   pensar -> actuar -> observar -> repetir`,
+    insight: 'El agente tiene un bucle: piensa (LLM), actua (tools), observa (resultado), y repite hasta completar la tarea. El LLM solo tiene una pasada.',
+    toolsActive: true
+  }
+};
+
+function renderAgentMode(mode) {
+  const data = agentData[mode];
+  const flow = document.getElementById('agent-flow');
+  flow.innerHTML = '';
+
+  data.flow.forEach((node, i) => {
+    if (node.arrow) {
+      const arrow = document.createElement('div');
+      arrow.className = 'agent-arrow';
+      arrow.innerHTML = node.icon;
+      flow.appendChild(arrow);
+    } else {
+      const div = document.createElement('div');
+      div.className = 'agent-node';
+      div.id = node.id;
+      div.innerHTML = `<div class="node-icon">${node.icon}</div><div>${node.label}</div>`;
+      flow.appendChild(div);
+    }
+  });
+
+  document.getElementById('agent-left-label').textContent = data.leftLabel;
+  document.getElementById('agent-left-code').innerHTML = `<code>${data.leftCode}</code>`;
+  document.getElementById('agent-right-label').textContent = data.rightLabel;
+  document.getElementById('agent-right-code').innerHTML = `<code>${data.rightCode}</code>`;
+  document.getElementById('agent-insight').innerHTML = data.insight;
+
+  // Animate tools
+  const tools = document.querySelectorAll('#tools-grid .metric');
+  tools.forEach(t => {
+    t.style.opacity = data.toolsActive ? '1' : '0.25';
+    t.style.borderColor = data.toolsActive ? 'rgba(34,211,238,0.3)' : 'rgba(63,63,70,0.25)';
+  });
+
+  // Animate flow nodes
+  setTimeout(() => {
+    document.querySelectorAll('.agent-node').forEach((n, i) => {
+      setTimeout(() => {
+        n.classList.add('active');
+      }, i * 300);
+    });
+    document.querySelectorAll('.agent-arrow').forEach((a, i) => {
+      setTimeout(() => {
+        a.classList.add('active');
+      }, i * 300 + 150);
+    });
+  }, 100);
+}
+
+document.querySelectorAll('.agent-mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.agent-mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderAgentMode(btn.dataset.mode);
+  });
+});
+
+renderAgentMode('llm');
+
+
+// ═══════════════════════════════════════
+// BLOQUE 3: SEMAFORO DE CONFIANZA
+// ═══════════════════════════════════════
+
+const semExamples = {
+  green: {
+    label: 'Ejemplo: verde — boilerplate',
+    code: `class Order:
+    def __repr__(self):
+        return f"Order({self.symbol}, {self.side})"
+
+    def __str__(self):
+        return self.describe()
+
+# Boilerplate: __repr__ y __str__ son
+# formatos estandar. Facil de verificar.`,
+    verdict: 'Este codigo es mecanico. Si el LLM lo genera bien, ahorra tiempo sin riesgo.',
+    verdictClass: 'good'
+  },
+  yellow: {
+    label: 'Ejemplo: amarillo — logica de negocio',
+    code: `def apply_trade(self, trade: Trade) -> None:
+    if trade.side == "buy":
+        self._cash -= trade.price * trade.size
+        self._position += trade.size
+    else:
+        self._cash += trade.price * trade.size
+        self._position -= trade.size
+
+# Logica financiera: el signo importa.
+# Un error aqui = perdidas reales.`,
+    verdict: 'Aqui un bug puede pasar desapercibido. Verifica con un ejemplo numerico: compra 0.10 BTC @ 100k, cash deberia bajar 10k.',
+    verdictClass: 'bad'
+  },
+  red: {
+    label: 'Ejemplo: rojo — seguridad',
+    code: `def authenticate(api_key: str) -> bool:
+    # NUNCA confies en esto de una IA
+    if api_key == "sk-live-abc123":
+        return True
+    return False
+
+# Hardcoded secrets, sin hashing,
+# sin rate limiting, sin logging.
+# Cada linea es un riesgo.`,
+    verdict: 'Nunca copies codigo de seguridad de una IA sin revision experta. Los bugs aqui tienen consecuencias irreversibles.',
+    verdictClass: 'bad'
+  }
+};
+
+function renderSemaphore(level) {
+  const data = semExamples[level];
+  document.getElementById('sem-example-label').textContent = data.label;
+  document.getElementById('sem-example-code').innerHTML = `<code>${data.code}</code>`;
+  const verdict = document.getElementById('sem-verdict');
+  verdict.textContent = data.verdict;
+  verdict.className = 'verdict ' + data.verdictClass;
+}
+
+document.querySelectorAll('.sem-card').forEach(card => {
+  card.addEventListener('click', () => {
+    document.querySelectorAll('.sem-card').forEach(c => c.classList.remove('active'));
+    card.classList.add('active');
+    renderSemaphore(card.dataset.level);
+  });
+});
+
+renderSemaphore('green');
+
+
+// ═══════════════════════════════════════
+// BUG HUNT
+// ═══════════════════════════════════════
+
+const bugLines = [
+  { text: 'class PositionTracker:', buggy: false },
+  { text: '    def __init__(self):', buggy: false },
+  { text: '        self._cash = 0.0', buggy: false },
+  { text: '        self._position = 0.0', buggy: false },
+  { text: '', buggy: false },
+  { text: '    def apply_trade(self, trade):', buggy: false },
+  { text: '        if trade.side == "buy":', buggy: false },
+  { text: '            self._cash -= trade.price * trade.size', buggy: false },
+  { text: '            self._position += trade.size', buggy: false },
+  { text: '        else:', buggy: false },
+  { text: '            self._cash += trade.price * trade.size', buggy: false },
+  { text: '            self._position += trade.size  # BUG', buggy: true },
+  { text: '', buggy: false },
+  { text: '    def equity(self, mark_price):', buggy: false },
+  { text: '        return self._cash + self._position * mark_price', buggy: false },
+];
+
+const bugHunt = document.getElementById('bug-hunt');
+bugLines.forEach((line, i) => {
+  const div = document.createElement('div');
+  div.className = 'bug-line';
+  div.textContent = line.text || '\u00A0';
+  div.dataset.index = i;
+  div.addEventListener('click', () => {
+    document.querySelectorAll('.bug-line').forEach(l => l.classList.remove('selected', 'correct'));
+    if (line.buggy) {
+      div.classList.add('correct');
+      document.getElementById('bug-result').innerHTML = '<span style="color:var(--green);">Correcto. En una venta, position deberia restar (<code>-= trade.size</code>), no sumar. Este es un bug tipico de IA: copia el patron del bloque de arriba sin invertir el signo.</span>';
+    } else {
+      div.classList.add('selected');
+      document.getElementById('bug-result').innerHTML = '<span style="color:var(--red);">Esa linea esta bien. Busca donde el signo de la operacion no tiene sentido para una venta.</span>';
+    }
+  });
+  bugHunt.appendChild(div);
+});
+
+</script>
+</body>
+</html>

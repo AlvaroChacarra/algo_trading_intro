@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>L6 — LOB Data Science Pipeline</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #09090b;
+      --surface: #18181b;
+      --border: #27272a;
+      --cyan: #22d3ee;
+      --green: #4ade80;
+      --red: #f87171;
+      --amber: #f59e0b;
+      --purple: #a78bfa;
+      --muted: #a1a1aa;
+      --text: #f4f4f5;
+    }
+
+    html { scroll-behavior: smooth; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
+
+    body { overflow-x: hidden; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 32px;
+      background: rgba(9,9,11,0.85); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--cyan); font-weight: 600; }
+    .nav-links { display: flex; gap: 28px; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: 13px; font-weight: 500; transition: color .2s; }
+    .nav-links a:hover { color: var(--cyan); }
+    .progress-bar { position: fixed; top: 49px; left: 0; height: 2px; background: var(--cyan); z-index: 101; width: 0%; transition: width .1s; }
+
+    /* SECTIONS */
+    section {
+      min-height: 100vh; padding: 80px 40px 60px;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .section-label {
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
+      color: var(--cyan); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px;
+    }
+    h1 { font-size: clamp(28px,4vw,52px); font-weight: 700; line-height: 1.15; margin-bottom: 16px; }
+    h2 { font-size: clamp(22px,3vw,38px); font-weight: 700; line-height: 1.2; margin-bottom: 12px; }
+    h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; color: var(--text); }
+    p { color: var(--muted); font-size: 15px; line-height: 1.7; }
+
+    .container { max-width: 1100px; margin: 0 auto; width: 100%; }
+
+    /* HERO */
+    #hero { background: var(--bg); position: relative; overflow: hidden; }
+    .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(34,211,238,.1); border: 1px solid rgba(34,211,238,.3);
+      border-radius: 999px; padding: 6px 14px; font-size: 12px; color: var(--cyan);
+      font-weight: 600; margin-bottom: 20px;
+    }
+    .hero-question {
+      font-size: clamp(18px, 2.5vw, 28px); font-weight: 700;
+      line-height: 1.4; color: var(--text); margin-bottom: 24px;
+    }
+    .hero-question em { color: var(--cyan); font-style: normal; }
+    .hero-sub { color: var(--muted); font-size: 15px; line-height: 1.7; }
+
+    /* LOB mini preview */
+    .lob-preview {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 20px; font-family: 'JetBrains Mono', monospace;
+    }
+    .lob-title { font-size: 11px; color: var(--muted); margin-bottom: 14px; letter-spacing: 1px; text-transform: uppercase; }
+    .lob-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px; }
+    .lob-ask { color: var(--red); }
+    .lob-bid { color: var(--green); }
+    .lob-arrow {
+      text-align: center; margin: 12px 0; font-size: 20px;
+      animation: pulse-arrow 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse-arrow { 0%,100% { opacity:.4; transform: translateX(0); } 50% { opacity:1; transform: translateX(8px); } }
+    .pred-box {
+      background: rgba(34,211,238,.08); border: 1px solid rgba(34,211,238,.35);
+      border-radius: 10px; padding: 16px 20px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .pred-label { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+    .pred-dir { font-size: 22px; font-weight: 700; color: var(--green); }
+    .pred-prob { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+    /* SECTIONS BG */
+    #pipeline  { background: var(--bg); border-top: 1px solid var(--border); }
+    #temporal  { background: #0c0c0f; border-top: 1px solid var(--border); }
+    #baselines { background: var(--bg); border-top: 1px solid var(--border); }
+    #cierre    { background: #0c0c0f; border-top: 1px solid var(--border); }
+
+    /* PIPELINE */
+    #pipeline-canvas { border-radius: 12px; display: block; }
+    .pipeline-cards {
+      display: grid; grid-template-columns: repeat(5,1fr); gap: 10px; margin-top: 20px;
+    }
+    .pipeline-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+      padding: 14px 12px; cursor: pointer; transition: border-color .2s, transform .15s;
+    }
+    .pipeline-card:hover { border-color: var(--cyan); transform: translateY(-2px); }
+    .pipeline-card.active { border-color: var(--cyan); background: rgba(34,211,238,.07); }
+    .pipeline-card .card-icon { font-size: 18px; margin-bottom: 6px; }
+    .pipeline-card .card-title { font-size: 11px; font-weight: 700; color: var(--text); margin-bottom: 4px; letter-spacing: .5px; }
+    .pipeline-card .card-desc { font-size: 11px; color: var(--muted); line-height: 1.5; }
+    .detail-panel {
+      background: var(--surface); border: 1px solid var(--cyan);
+      border-radius: 12px; padding: 20px 24px; margin-top: 16px;
+      opacity: 0; transform: translateY(8px);
+    }
+    .detail-panel h4 { color: var(--cyan); font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+    .detail-panel p { font-size: 13px; color: var(--muted); line-height: 1.7; margin-bottom: 8px; }
+    .detail-panel code {
+      font-family: 'JetBrains Mono', monospace; font-size: 12px;
+      background: var(--bg); padding: 8px 12px; border-radius: 6px;
+      display: block; color: var(--cyan); margin-top: 8px;
+    }
+
+    /* TEMPORAL */
+    #temporal-canvas { border-radius: 12px; display: block; }
+    .temporal-controls {
+      display: flex; gap: 10px; margin-bottom: 16px; align-items: center; flex-wrap: wrap;
+    }
+    .btn {
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+      padding: 8px 18px; border-radius: 8px; cursor: pointer; border: 1px solid;
+      transition: all .2s;
+    }
+    .btn-primary { background: rgba(34,211,238,.15); border-color: var(--cyan); color: var(--cyan); }
+    .btn-primary:hover { background: rgba(34,211,238,.25); }
+    .btn-primary.active { background: var(--cyan); color: var(--bg); }
+    .btn-danger { background: rgba(248,113,113,.12); border-color: var(--red); color: var(--red); }
+    .btn-danger:hover { background: rgba(248,113,113,.22); }
+    .btn-danger.active { background: var(--red); color: var(--bg); }
+    .btn-amber { background: rgba(245,158,11,.12); border-color: var(--amber); color: var(--amber); }
+    .btn-amber:hover { background: rgba(245,158,11,.22); }
+
+    .split-stats {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px;
+    }
+    .stat-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px 16px;
+    }
+    .stat-box .stat-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+    .stat-box .stat-val { font-size: 18px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+
+    /* LEAKAGE */
+    .leakage-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 24px;
+    }
+    .leakage-formula {
+      font-family: 'JetBrains Mono', monospace; font-size: 14px;
+      background: var(--bg); padding: 14px 18px; border-radius: 8px;
+      margin: 16px 0; border-left: 3px solid var(--border);
+      transition: border-color .4s;
+    }
+    .leakage-formula .future { color: var(--muted); transition: color .4s; }
+    .leakage-formula.revealed .future { color: var(--red); }
+    .leakage-formula.revealed { border-left-color: var(--red); }
+
+    .leak-revealed-info {
+      background: rgba(248,113,113,.08); border: 1px solid rgba(248,113,113,.3);
+      border-radius: 10px; padding: 16px 20px; margin-top: 16px;
+      display: none;
+    }
+    .leak-revealed-info p { color: var(--red); font-size: 13px; line-height: 1.7; }
+    .leak-accuracy-compare {
+      display: flex; gap: 12px; margin-top: 20px;
+    }
+    .acc-pill {
+      flex: 1; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px 16px; text-align: center;
+      transition: border-color .4s;
+    }
+    .acc-pill .acc-label { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+    .acc-pill .acc-val {
+      font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700;
+    }
+    .acc-pill.good .acc-val { color: var(--cyan); }
+    .acc-pill.bad  .acc-val { color: var(--red); }
+    .acc-pill.bad  { border-color: rgba(248,113,113,.4); }
+
+    /* BASELINES */
+    .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+    .chart-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 20px;
+    }
+    .chart-card h3 { font-size: 13px; color: var(--text); margin-bottom: 4px; }
+    .chart-card .chart-sub { font-size: 12px; color: var(--muted); margin-bottom: 16px; }
+    canvas.chart-canvas { max-height: 260px; }
+
+    .threshold-control { margin-top: 16px; }
+    .threshold-control label { font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; margin-bottom: 8px; }
+    input[type=range] {
+      -webkit-appearance: none; appearance: none;
+      width: 100%; height: 4px; background: var(--border); border-radius: 2px; outline: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 16px; height: 16px;
+      background: var(--cyan); border-radius: 50%; cursor: pointer;
+    }
+
+    /* CIERRE */
+    .takeaway-timeline {
+      display: flex; align-items: flex-start; gap: 0;
+      position: relative; margin: 32px 0;
+    }
+    .takeaway-timeline::before {
+      content: ''; position: absolute; top: 20px; left: 0; right: 0; height: 2px;
+      background: var(--border);
+    }
+    .takeaway-item {
+      flex: 1; padding: 0 12px; text-align: center;
+      opacity: 0; transform: translateY(16px);
+    }
+    .takeaway-dot {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--surface); border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; margin: 0 auto 12px; position: relative; z-index: 1;
+      transition: border-color .3s, background .3s;
+    }
+    .takeaway-item.done .takeaway-dot { border-color: var(--cyan); background: rgba(34,211,238,.15); }
+    .takeaway-title { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .takeaway-sub { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+    .bridge-card {
+      background: rgba(34,211,238,.06); border: 1px solid rgba(34,211,238,.25);
+      border-radius: 12px; padding: 24px 28px; margin-top: 32px;
+      opacity: 0; transform: translateY(16px);
+    }
+    .bridge-card .bridge-label { font-size: 11px; color: var(--cyan); font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; }
+    .bridge-card p { color: var(--muted); font-size: 14px; line-height: 1.7; }
+    .bridge-card strong { color: var(--text); }
+
+    /* MISC */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+    .alert-box {
+      display: flex; align-items: flex-start; gap: 12px;
+      background: rgba(248,113,113,.08); border: 1px solid rgba(248,113,113,.25);
+      border-radius: 10px; padding: 14px 16px; margin: 16px 0;
+    }
+    .alert-box .alert-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+    .alert-box p { font-size: 13px; color: var(--red); line-height: 1.6; }
+    .good-box {
+      background: rgba(74,222,128,.08); border: 1px solid rgba(74,222,128,.25);
+      border-radius: 10px; padding: 14px 16px; margin: 16px 0;
+    }
+    .good-box p { font-size: 13px; color: var(--green); line-height: 1.6; }
+
+    @media (max-width: 768px) {
+      .hero-grid, .two-col, .pipeline-cards, .charts-grid, .split-stats { grid-template-columns: 1fr; }
+      section { padding: 80px 20px 50px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">L6 · LOB DS Pipeline</div>
+  <div class="nav-links">
+    <a href="#hero">Inicio</a>
+    <a href="#pipeline">Pipeline</a>
+    <a href="#temporal">Train/Test</a>
+    <a href="#baselines">Baseline</a>
+    <a href="#cierre">Cierre</a>
+  </div>
+</nav>
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- ═══════════════════════════════════════════════════════
+     HERO
+═══════════════════════════════════════════════════════ -->
+<section id="hero">
+  <div class="container hero-grid">
+    <div>
+      <div class="hero-badge">📊 Clase 6 — 40 min</div>
+      <div class="hero-question">
+        Sabes leer el libro.<br>
+        Sabes enviar órdenes.<br>
+        <em>¿Puedes predecir lo que pasará después?</em>
+      </div>
+      <p class="hero-sub">
+        En L4 aprendiste a leer el LOB. En L5, a enviar órdenes y observar fills.
+        Hoy construimos el pipeline que convierte esa intuición en un modelo:<br>
+        <strong style="color:var(--text)">datos → features → target → split temporal → baseline.</strong>
+      </p>
+      <div class="alert-box" style="margin-top:24px">
+        <span class="alert-icon">⚠️</span>
+        <p>El protagonista de hoy no es el modelo. Es el pipeline. Un modelo potente con un split mal hecho es inútil — o peor, peligroso.</p>
+      </div>
+    </div>
+    <div>
+      <div style="display:flex; gap:16px; align-items:center; margin-bottom:16px;">
+        <div class="lob-preview" style="flex:1">
+          <div class="lob-title">BTC/USDT · Snapshot t</div>
+          <div class="lob-row lob-ask"><span>ask 3</span><span>100,024.10</span><span>1.82</span></div>
+          <div class="lob-row lob-ask"><span>ask 2</span><span>100,016.40</span><span>0.93</span></div>
+          <div class="lob-row lob-ask"><span>ask 1</span><span>100,009.55</span><span>0.41</span></div>
+          <div style="text-align:center;font-size:10px;color:var(--muted);padding:4px 0">── spread: $11.2 ──</div>
+          <div class="lob-row lob-bid"><span>bid 1</span><span>99,998.35</span><span>0.62</span></div>
+          <div class="lob-row lob-bid"><span>bid 2</span><span>99,990.10</span><span>1.15</span></div>
+          <div class="lob-row lob-bid"><span>bid 3</span><span>99,981.77</span><span>2.30</span></div>
+        </div>
+        <div>
+          <div class="lob-arrow">→</div>
+          <div style="font-size:11px; color:var(--muted); text-align:center; font-family: 'JetBrains Mono', monospace; margin-top:4px">features</div>
+          <div style="text-align:center; margin-top:4px; font-size:18px; color:var(--cyan)">→</div>
+          <div style="font-size:11px; color:var(--muted); text-align:center; font-family: 'JetBrains Mono', monospace; margin-top:4px">modelo</div>
+        </div>
+        <div class="pred-box">
+          <div class="pred-label">PREDICCIÓN t+1</div>
+          <div class="pred-dir">▲ UP</div>
+          <div class="pred-prob">p = 0.61</div>
+          <div style="margin-top:12px; padding-top:12px; border-top:1px solid var(--border)">
+            <div style="font-size:10px; color:var(--muted); margin-bottom:4px">FEATURES</div>
+            <div style="font-size:11px; font-family:'JetBrains Mono',monospace; color:var(--muted)">imbalance: 0.62</div>
+            <div style="font-size:11px; font-family:'JetBrains Mono',monospace; color:var(--muted)">spread_pct: 0.00011</div>
+            <div style="font-size:11px; font-family:'JetBrains Mono',monospace; color:var(--muted)">depth_ratio: 1.18</div>
+          </div>
+        </div>
+      </div>
+      <p style="font-size:12px; color:var(--muted); text-align:center">Esto es lo que vamos a construir hoy. Paso a paso.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     BLOQUE 1: PIPELINE
+═══════════════════════════════════════════════════════ -->
+<section id="pipeline">
+  <div class="container">
+    <div class="section-label">Bloque 1 — 6 min</div>
+    <h2>El pipeline: de datos a decisión</h2>
+    <p style="margin-bottom:28px; max-width:600px">Un pipeline de ML tiene cinco etapas. Si fallas en cualquiera, el modelo puede parecer que funciona y en realidad no sirve para nada. Haz clic en cada etapa para ver los detalles.</p>
+
+    <canvas id="pipeline-canvas" width="1000" height="200"></canvas>
+
+    <div class="pipeline-cards" id="pipelineCards">
+      <div class="pipeline-card" data-step="0" onclick="selectPipelineStep(0)">
+        <div class="card-icon">📂</div>
+        <div class="card-title">1. LOB Snapshot</div>
+        <div class="card-desc">500 snapshots de BTC. 41 columnas (10 niveles × bid/ask × precio/size + timestamp).</div>
+      </div>
+      <div class="pipeline-card" data-step="1" onclick="selectPipelineStep(1)">
+        <div class="card-icon">⚙️</div>
+        <div class="card-title">2. Feature Eng.</div>
+        <div class="card-desc">mid, spread, imbalance, wmid, depth_ratio, spread_pct. De 41 columnas a 6 señales.</div>
+      </div>
+      <div class="pipeline-card" data-step="2" onclick="selectPipelineStep(2)">
+        <div class="card-icon">🎯</div>
+        <div class="card-title">3. Target</div>
+        <div class="card-desc">¿mid sube o baja en t+1? Clasificación binaria. Más estable que predecir el precio exacto.</div>
+      </div>
+      <div class="pipeline-card" data-step="3" onclick="selectPipelineStep(3)">
+        <div class="card-icon">✂️</div>
+        <div class="card-title">4. Split Temporal</div>
+        <div class="card-desc">Train: primeras 349 filas. Test: últimas 150. El test siempre está en el futuro.</div>
+      </div>
+      <div class="pipeline-card" data-step="4" onclick="selectPipelineStep(4)">
+        <div class="card-icon">📈</div>
+        <div class="card-title">5. Baseline</div>
+        <div class="card-desc">El suelo mínimo: siempre UP, threshold, LogisticRegression. Si no lo superas, no sirve.</div>
+      </div>
+    </div>
+
+    <div class="detail-panel" id="detailPanel"></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     BLOQUE 2: TRAIN/TEST + LEAKAGE
+═══════════════════════════════════════════════════════ -->
+<section id="temporal">
+  <div class="container">
+    <div class="section-label">Bloque 2 — 6 min</div>
+    <h2>Split temporal y data leakage</h2>
+
+    <div class="two-col">
+      <div>
+        <h3 style="margin-bottom:12px">¿Por qué NO usar split aleatorio?</h3>
+        <div class="temporal-controls">
+          <button class="btn btn-primary active" id="btnTemporal" onclick="setSplitMode('temporal')">✓ Split Temporal</button>
+          <button class="btn btn-danger" id="btnAleatorio" onclick="setSplitMode('aleatorio')">✗ Split Aleatorio</button>
+        </div>
+        <canvas id="temporal-canvas" width="500" height="220"></canvas>
+        <div class="split-stats">
+          <div class="stat-box">
+            <div class="stat-label">Train set</div>
+            <div class="stat-val" style="color:var(--green)" id="trainStat">349 snapshots</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Test set</div>
+            <div class="stat-val" style="color:var(--red)" id="testStat">150 snapshots</div>
+          </div>
+        </div>
+        <div id="splitWarning" style="display:none; margin-top:12px">
+          <div class="alert-box">
+            <span class="alert-icon">🔴</span>
+            <p id="splitWarningText"></p>
+          </div>
+        </div>
+        <div id="splitGood" style="display:none; margin-top:12px">
+          <div class="good-box">
+            <p>✓ El modelo nunca ve datos del futuro durante el entrenamiento. El test set representa condiciones inéditas.</p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h3 style="margin-bottom:12px">Data Leakage: el feature que miente</h3>
+        <p style="margin-bottom:16px">Un feature que usa información del futuro produce resultados de evaluación perfectos — y falla en producción.</p>
+
+        <div class="leakage-box">
+          <div style="font-size:13px; color:var(--muted); margin-bottom:12px">Feature candidato:</div>
+          <div class="leakage-formula" id="leakageFormula">
+            realized_spread = <span class="future">ask_price_1[t+1]</span> − bid_price_1[t]
+          </div>
+          <button class="btn btn-amber" onclick="revealLeakage()" id="btnLeak">Revela el leak →</button>
+
+          <div class="leak-revealed-info" id="leakInfo">
+            <p>🔴 <strong>ask_price_1[t+1]</strong> es el ask price del siguiente snapshot.<br>
+            En el momento de la predicción (t), ese precio todavía no existe.<br><br>
+            El modelo aprende a predecir el pasado usando información del futuro.</p>
+          </div>
+
+          <div class="leak-accuracy-compare" style="margin-top:16px">
+            <div class="acc-pill good">
+              <div class="acc-label">Sin leakage</div>
+              <div class="acc-val">~49%</div>
+            </div>
+            <div class="acc-pill bad" id="leakyPill">
+              <div class="acc-label">Con leakage</div>
+              <div class="acc-val" id="leakyVal">???</div>
+            </div>
+          </div>
+          <p style="font-size:12px; color:var(--muted); margin-top:12px">
+            Si añadir un feature mejora la accuracy de forma inesperada, pregúntate:<br>
+            <em style="color:var(--text)">¿este dato existía en el momento t?</em>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     BLOQUE 3: BASELINES
+═══════════════════════════════════════════════════════ -->
+<section id="baselines">
+  <div class="container">
+    <div class="section-label">Bloque 3 — 5 min</div>
+    <h2>Baseline: el suelo mínimo</h2>
+    <p style="margin-bottom:28px; max-width:600px">Un baseline es lo que obtienes sin esfuerzo. Si tu modelo sofisticado no lo supera, vuelve al paso 2.</p>
+
+    <div class="charts-grid">
+      <!-- Scatter imbalance vs dirección -->
+      <div class="chart-card">
+        <h3>Imbalance vs dirección del precio</h3>
+        <p class="chart-sub">Cada punto es un snapshot del test set (150 puntos). ¿Hay señal?</p>
+        <canvas id="scatterChart" class="chart-canvas"></canvas>
+        <div style="display:flex; gap:12px; margin-top:12px; font-size:12px; color:var(--muted)">
+          <span><span style="color:var(--green)">●</span> Precio subió (UP)</span>
+          <span><span style="color:var(--red)">●</span> Precio bajó (DOWN)</span>
+        </div>
+        <p style="font-size:12px; color:var(--muted); margin-top:8px">
+          Señal débil pero real. Alta dispersión — los mercados no son predecibles con un solo feature.
+        </p>
+      </div>
+
+      <!-- Bar chart baselines con slider -->
+      <div class="chart-card">
+        <h3>Comparación de baselines</h3>
+        <p class="chart-sub">Accuracy en test set (150 snapshots). Arrastra el umbral para actualizar.</p>
+        <canvas id="barChart" class="chart-canvas"></canvas>
+
+        <div class="threshold-control">
+          <label>
+            <span>Umbral de imbalance</span>
+            <span id="threshLabel" style="color:var(--cyan); font-family:'JetBrains Mono',monospace;">0.60</span>
+          </label>
+          <input type="range" id="threshSlider" min="0" max="20" value="15" oninput="updateThreshold(this.value)" />
+        </div>
+
+        <div style="margin-top:16px; padding:14px; background:var(--bg); border-radius:8px; font-family:'JetBrains Mono',monospace;">
+          <div style="font-size:11px; color:var(--muted); margin-bottom:8px">MEJOR RESULTADO</div>
+          <div style="font-size:13px; color:var(--text)">Threshold (<span id="bestThreshVal">imbalance > 0.60</span>): <span style="color:var(--cyan)" id="bestThreshAcc">54.0%</span></div>
+          <div style="font-size:12px; color:var(--muted); margin-top:4px">vs siempre UP: 50.7% · vs LR: 49.3%</div>
+        </div>
+
+        <div class="alert-box" style="margin-top:12px">
+          <span class="alert-icon">💡</span>
+          <p>54% no es impresionante. Pero es honesto. Un modelo que bate al baseline en evaluación limpia tiene valor potencial.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     CIERRE
+═══════════════════════════════════════════════════════ -->
+<section id="cierre">
+  <div class="container" style="max-width:720px">
+    <div class="section-label">Cierre</div>
+    <h2>3 ideas para llevarse</h2>
+
+    <div class="takeaway-timeline" id="takeawayTimeline">
+      <div class="takeaway-item" id="t1">
+        <div class="takeaway-dot">⚙️</div>
+        <div class="takeaway-title">Pipeline primero</div>
+        <div class="takeaway-sub">Un modelo potente con pipeline roto produce basura. La arquitectura es el modelo.</div>
+      </div>
+      <div class="takeaway-item" id="t2">
+        <div class="takeaway-dot">⏱️</div>
+        <div class="takeaway-title">Split respeta el tiempo</div>
+        <div class="takeaway-sub">train_test_split con shuffle=True es un error en series temporales.</div>
+      </div>
+      <div class="takeaway-item" id="t3">
+        <div class="takeaway-dot">🔍</div>
+        <div class="takeaway-title">Baseline antes que modelo</div>
+        <div class="takeaway-sub">Si no superas el baseline, vuelve a los features. No al modelo.</div>
+      </div>
+      <div class="takeaway-item" id="t4">
+        <div class="takeaway-dot">⚠️</div>
+        <div class="takeaway-title">Sospecha del salto de accuracy</div>
+        <div class="takeaway-sub">+35pp de golpe al añadir un feature = leakage. Siempre.</div>
+      </div>
+      <div class="takeaway-item" id="t5">
+        <div class="takeaway-dot">🎯</div>
+        <div class="takeaway-title">54% es el punto de partida</div>
+        <div class="takeaway-sub">Honesto, sin trampas. L7 lo mejora con más features y más modelos.</div>
+      </div>
+    </div>
+
+    <div class="bridge-card" id="bridgeCard">
+      <div class="bridge-label">→ Puente a L7</div>
+      <p>
+        En L7 aplicamos exactamente <strong>este mismo pipeline</strong> a escenarios con más features,
+        más modelos (árboles, ensambles) y una comparación estructurada.<br><br>
+        La pregunta abierta: la LR apenas supera el azar. ¿Necesitamos mejores features,
+        más datos, o un modelo distinto? <strong>En L7 lo averiguamos.</strong>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════════════════════ -->
+<script>
+// ── Progress bar ──────────────────────────────────────
+window.addEventListener('scroll', () => {
+  const total = document.body.scrollHeight - window.innerHeight;
+  document.getElementById('progressBar').style.width = (window.scrollY / total * 100) + '%';
+});
+
+// ── GSAP Scroll animations ─────────────────────────────
+gsap.registerPlugin(ScrollTrigger);
+
+// Hero entrance
+gsap.from('.hero-grid > div', {
+  opacity: 0, y: 40, duration: 0.9, stagger: 0.2, ease: 'power3.out', delay: 0.1
+});
+
+// Section titles
+document.querySelectorAll('section h2').forEach(el => {
+  gsap.from(el, {
+    scrollTrigger: { trigger: el, start: 'top 85%' },
+    opacity: 0, y: 24, duration: 0.7, ease: 'power2.out'
+  });
+});
+
+// Pipeline cards
+gsap.from('.pipeline-card', {
+  scrollTrigger: { trigger: '#pipelineCards', start: 'top 80%' },
+  opacity: 0, y: 30, stagger: 0.08, duration: 0.6, ease: 'power2.out'
+});
+
+// Takeaway items — triggered from cierre
+ScrollTrigger.create({
+  trigger: '#takeawayTimeline',
+  start: 'top 75%',
+  onEnter: () => {
+    ['t1','t2','t3','t4','t5'].forEach((id, i) => {
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        el.classList.add('done');
+        gsap.to(el, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' });
+      }, i * 200);
+    });
+  }
+});
+
+ScrollTrigger.create({
+  trigger: '#bridgeCard',
+  start: 'top 80%',
+  onEnter: () => gsap.to('#bridgeCard', { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' })
+});
+
+// ── PIPELINE p5.js ─────────────────────────────────────
+const pipelineData = [
+  { label: 'LOB\nSnapshot', icon: '📂', color: '#22d3ee' },
+  { label: 'Feature\nEng.', icon: '⚙️', color: '#a78bfa' },
+  { label: 'Target\nDefin.', icon: '🎯', color: '#f59e0b' },
+  { label: 'Split\nTemporal', icon: '✂️', color: '#4ade80' },
+  { label: 'Baseline\nModel', icon: '📈', color: '#f87171' },
+];
+
+const pipelineDetails = [
+  {
+    title: '1. LOB Snapshot — Los datos crudos',
+    body: 'El CSV tiene 500 filas. Cada fila es un snapshot del LOB de BTC con 10 niveles de bid y ask (precios + sizes). Son 40 columnas de datos de mercado + timestamp.',
+    code: 'df = pd.read_csv("btc_lob_snapshots.csv")\n# Shape: (500, 41)'
+  },
+  {
+    title: '2. Feature Engineering — Señales interpretables',
+    body: 'Convertimos las 40 columnas crudas en 6 features con significado económico: mid, spread, imbalance (presión compradora), wmid (mid ponderado por sizes), depth_ratio (profundidad total), spread_pct.',
+    code: 'imbalance = bid_vol_5 / (bid_vol_5 + ask_vol_5)\nwmid = (bid_p1*ask_s1 + ask_p1*bid_s1) / (bid_s1 + ask_s1)'
+  },
+  {
+    title: '3. Target Definition — Qué queremos predecir',
+    body: 'Predecimos si el mid price subirá o bajará en el siguiente snapshot (t+1). Clasificación binaria: 1 = sube, 0 = baja o igual. Más estable que predecir el precio exacto.',
+    code: 'direction = (mid.shift(-1) > mid).astype(int)\n# 246 UPs (49.3%), 253 DOWNs (50.7%)'
+  },
+  {
+    title: '4. Split Temporal — Train en el pasado, test en el futuro',
+    body: 'Primeras 349 filas → train. Últimas 150 → test. La frontera temporal garantiza que el modelo nunca ve datos futuros durante el entrenamiento. Usar sklearn.train_test_split() sin shuffle=False es un error aquí.',
+    code: 'split = int(len(df) * 0.7)   # 349\ntrain = df.iloc[:split]       # pasado\ntest  = df.iloc[split:]       # futuro'
+  },
+  {
+    title: '5. Baseline Model — El suelo mínimo',
+    body: 'Antes de cualquier modelo complejo, medimos tres baselines: siempre predecir UP (50.7%), threshold de imbalance (54% con threshold=0.6), y LogisticRegression (49.3%). Si un modelo no supera estos, no sirve.',
+    code: '# Threshold baseline\npreds = (test["imbalance"] > 0.6).astype(int)\nacc = (preds == y_test).mean()  # 0.54'
+  }
+];
+
+let activeStep = -1;
+let particles = [];
+
+new p5(function(sk) {
+  const W = 1000, H = 200;
+  const nodeW = 120, nodeH = 70, gap = (W - 5*nodeW) / 6;
+  const nodeY = H/2 - nodeH/2;
+  let nodeX = [];
+
+  sk.setup = function() {
+    let cnv = sk.createCanvas(W, H);
+    cnv.parent('pipeline-canvas');
+    cnv.style('width', '100%');
+    cnv.style('height', 'auto');
+    sk.textFont('Inter');
+    sk.noLoop();
+
+    for (let i = 0; i < 5; i++) {
+      nodeX[i] = gap + i * (nodeW + gap);
+    }
+    initParticles();
+    sk.redraw();
+  };
+
+  function initParticles() {
+    particles = [];
+    for (let i = 0; i < 18; i++) {
+      spawnParticle(i * 22);
+    }
+  }
+
+  function spawnParticle(offset) {
+    const seg = Math.floor(Math.random() * 4);
+    const startX = nodeX[seg] + nodeW;
+    const endX   = nodeX[seg + 1];
+    const t = offset / (18 * 22);
+    particles.push({
+      seg, x: startX + (endX - startX) * t,
+      startX, endX,
+      y: H/2 + (Math.random() - 0.5) * 20,
+      speed: 0.8 + Math.random() * 0.6,
+      size: 3 + Math.random() * 2,
+      col: pipelineData[seg].color,
+      t: t
+    });
+  }
+
+  sk.draw = function() {
+    sk.background(9, 9, 11);
+
+    // Connecting lines
+    for (let i = 0; i < 4; i++) {
+      const x1 = nodeX[i] + nodeW, x2 = nodeX[i+1];
+      sk.stroke(39, 39, 42); sk.strokeWeight(2);
+      sk.line(x1, H/2, x2, H/2);
+      // Arrowhead
+      sk.fill(39,39,42); sk.noStroke();
+      sk.triangle(x2-1, H/2, x2-8, H/2-5, x2-8, H/2+5);
+    }
+
+    // Particles
+    particles.forEach(p => {
+      p.t += p.speed / ((p.endX - p.startX) || 1) * 0.015;
+      if (p.t >= 1) {
+        p.seg = (p.seg + 1) % 4;
+        p.startX = nodeX[p.seg] + nodeW;
+        p.endX   = nodeX[p.seg + 1];
+        p.t = 0;
+        p.col = pipelineData[p.seg].color;
+      }
+      p.x = p.startX + (p.endX - p.startX) * p.t;
+      const c = sk.color(p.col);
+      sk.noStroke();
+      sk.fill(sk.red(c), sk.green(c), sk.blue(c), 200);
+      sk.circle(p.x, p.y, p.size);
+    });
+
+    // Nodes
+    pipelineData.forEach((nd, i) => {
+      const isActive = i === activeStep;
+      const x = nodeX[i], y = nodeY;
+      const col = sk.color(nd.color);
+
+      // Shadow glow for active
+      if (isActive) {
+        sk.noStroke();
+        sk.fill(sk.red(col), sk.green(col), sk.blue(col), 30);
+        sk.rect(x-6, y-6, nodeW+12, nodeH+12, 16);
+      }
+
+      // Node bg
+      sk.fill(24, 24, 27);
+      sk.stroke(isActive ? nd.color : '#3f3f46');
+      sk.strokeWeight(isActive ? 2 : 1);
+      sk.rect(x, y, nodeW, nodeH, 10);
+
+      // Icon
+      sk.noStroke(); sk.fill(255);
+      sk.textSize(20); sk.textAlign(sk.CENTER, sk.TOP);
+      sk.text(nd.icon, x + nodeW/2, y + 8);
+
+      // Label
+      const lines = nd.label.split('\n');
+      sk.textSize(10); sk.textAlign(sk.CENTER, sk.CENTER);
+      const col2 = isActive ? nd.color : '#a1a1aa';
+      sk.fill(sk.color(col2));
+      lines.forEach((line, li) => sk.text(line, x + nodeW/2, y + nodeH - 22 + li*13));
+    });
+
+    // Step numbers
+    pipelineData.forEach((nd, i) => {
+      sk.fill(sk.color(nd.color)); sk.noStroke();
+      sk.textSize(9); sk.textAlign(sk.CENTER, sk.CENTER);
+      sk.circle(nodeX[i] + 10, nodeY + 10, 14);
+      sk.fill(0); sk.textSize(8);
+      sk.text(i+1, nodeX[i] + 10, nodeY + 10);
+    });
+  };
+
+  // Animation loop
+  setInterval(() => { sk.redraw(); }, 50);
+}, 'pipeline-canvas');
+
+function selectPipelineStep(step) {
+  activeStep = activeStep === step ? -1 : step;
+
+  // Update card styles
+  document.querySelectorAll('.pipeline-card').forEach((el, i) => {
+    el.classList.toggle('active', i === activeStep);
+  });
+
+  const panel = document.getElementById('detailPanel');
+  if (activeStep === -1) {
+    gsap.to(panel, { opacity: 0, y: 8, duration: 0.2 });
+    return;
+  }
+
+  const d = pipelineDetails[activeStep];
+  panel.innerHTML = `<h4>${d.title}</h4><p>${d.body}</p><code>${d.code}</code>`;
+  gsap.fromTo(panel, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' });
+}
+
+// ── TEMPORAL SPLIT p5.js ───────────────────────────────
+let splitMode = 'temporal';
+const N = 499, splitAt = 349;
+let temporalSketch;
+
+// Pre-generate random shuffle indices (seed-like, deterministic)
+const shuffledIdx = Array.from({length: N}, (_,i) => i);
+(function seededShuffle(arr) {
+  let s = 42;
+  const rng = () => { s = (s * 1664525 + 1013904223) & 0xffffffff; return ((s >>> 0) / 0xffffffff); };
+  for (let i = arr.length-1; i > 0; i--) {
+    const j = Math.floor(rng() * (i+1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+})(shuffledIdx);
+
+new p5(function(sk) {
+  const W = 500, H = 220;
+
+  sk.setup = function() {
+    let cnv = sk.createCanvas(W, H);
+    cnv.parent('temporal-canvas');
+    cnv.style('width', '100%');
+    cnv.style('height', 'auto');
+    sk.noLoop();
+    sk.redraw();
+  };
+
+  sk.draw = function() {
+    sk.background(9, 9, 11);
+
+    const margin = 30, dotArea = W - 2*margin;
+    const rowY = H/2 - 20;
+
+    // Timeline axis
+    sk.stroke(39,39,42); sk.strokeWeight(1);
+    sk.line(margin, rowY, W-margin, rowY);
+
+    // Axis labels
+    sk.fill(100); sk.noStroke(); sk.textSize(9); sk.textFont('JetBrains Mono');
+    sk.textAlign(sk.LEFT, sk.TOP);  sk.text('t=0', margin, rowY+8);
+    sk.textAlign(sk.RIGHT, sk.TOP); sk.text('t=498', W-margin, rowY+8);
+
+    const TRAIN_COL = sk.color('#4ade80');
+    const TEST_COL  = sk.color('#f87171');
+
+    if (splitMode === 'temporal') {
+      // Draw split line
+      const splitX = margin + (splitAt / N) * dotArea;
+      sk.stroke(255,255,255,60); sk.strokeWeight(1); sk.drawingContext.setLineDash([4,4]);
+      sk.line(splitX, 20, splitX, rowY - 20);
+      sk.drawingContext.setLineDash([]);
+      sk.fill(200); sk.noStroke(); sk.textSize(9); sk.textAlign(sk.CENTER, sk.BOTTOM);
+      sk.text('frontera', splitX, 18);
+
+      // Dots
+      for (let i = 0; i < N; i++) {
+        const x = margin + (i / N) * dotArea;
+        const isTrain = i < splitAt;
+        const col = isTrain ? TRAIN_COL : TEST_COL;
+        sk.noStroke(); sk.fill(sk.red(col), sk.green(col), sk.blue(col), isTrain ? 140 : 200);
+        sk.circle(x, rowY, isTrain ? 4 : 5);
+      }
+
+      // Legend
+      sk.textAlign(sk.LEFT, sk.TOP);
+      sk.fill(sk.red(TRAIN_COL), sk.green(TRAIN_COL), sk.blue(TRAIN_COL)); sk.textSize(10);
+      sk.noStroke(); sk.circle(margin, rowY+30, 8);
+      sk.fill(150); sk.text('Train: t=0→348', margin+12, rowY+26);
+
+      sk.fill(sk.red(TEST_COL), sk.green(TEST_COL), sk.blue(TEST_COL));
+      sk.circle(margin+140, rowY+30, 8);
+      sk.fill(150); sk.text('Test: t=349→498', margin+152, rowY+26);
+
+    } else {
+      // Aleatorio — test indices scattered
+      const testIdxSet = new Set(shuffledIdx.slice(splitAt));
+      let crossCount = 0;
+
+      for (let i = 0; i < N; i++) {
+        const origIdx = shuffledIdx[i];
+        const x = margin + (origIdx / N) * dotArea;
+        const isTrain = i < splitAt;
+        const col = isTrain ? TRAIN_COL : TEST_COL;
+        if (!isTrain && origIdx < splitAt) crossCount++;
+        sk.noStroke(); sk.fill(sk.red(col), sk.green(col), sk.blue(col), isTrain ? 100 : 220);
+        sk.circle(x, rowY, isTrain ? 3 : 5);
+      }
+
+      // Warning label
+      sk.fill(248,113,113); sk.noStroke(); sk.textSize(10); sk.textAlign(sk.CENTER, sk.TOP);
+      sk.text(`${crossCount} test points en zona de entrenamiento`, W/2, rowY+30);
+      sk.text('(el modelo entrenó con el futuro)', W/2, rowY+44);
+    }
+  };
+  temporalSketch = sk;
+}, 'temporal-canvas');
+
+function setSplitMode(mode) {
+  splitMode = mode;
+  const btnT = document.getElementById('btnTemporal');
+  const btnA = document.getElementById('btnAleatorio');
+  const warn = document.getElementById('splitWarning');
+  const good = document.getElementById('splitGood');
+
+  if (mode === 'temporal') {
+    btnT.classList.add('active'); btnA.classList.remove('active');
+    warn.style.display = 'none'; good.style.display = 'block';
+    gsap.from(good, { opacity:0, y:8, duration:0.3 });
+  } else {
+    btnA.classList.add('active'); btnT.classList.remove('active');
+    good.style.display = 'none'; warn.style.display = 'block';
+    document.getElementById('splitWarningText').textContent =
+      'Con split aleatorio, puntos del test set aparecen en la zona temporal de train. El modelo puede "ver el futuro" durante el entrenamiento.';
+    gsap.from(warn, { opacity:0, y:8, duration:0.3 });
+  }
+  temporalSketch.redraw();
+}
+setSplitMode('temporal');
+
+// ── LEAKAGE REVEAL ─────────────────────────────────────
+let leakRevealed = false;
+function revealLeakage() {
+  if (leakRevealed) return;
+  leakRevealed = true;
+  document.getElementById('leakageFormula').classList.add('revealed');
+  document.getElementById('leakInfo').style.display = 'block';
+  gsap.from('#leakInfo', { opacity:0, y:8, duration:0.4 });
+  const pill = document.getElementById('leakyPill');
+  gsap.to('#leakyVal', {
+    duration: 1.2, ease: 'power2.out',
+    onUpdate: function() {
+      const p = this.progress();
+      const val = Math.round(49 + p * 39);
+      document.getElementById('leakyVal').textContent = val + '%';
+    },
+    onComplete: () => {
+      document.getElementById('leakyVal').textContent = '88%';
+    }
+  });
+  document.getElementById('btnLeak').textContent = '⚠️ Leak revelado';
+  document.getElementById('btnLeak').disabled = true;
+}
+
+// ── CHART.JS — SCATTER ─────────────────────────────────
+const scatterRaw = [{"x":0.4009,"y":4.35,"dir":1},{"x":0.5965,"y":9.16,"dir":1},{"x":0.3425,"y":-3.0,"dir":0},{"x":0.2859,"y":8.57,"dir":1},{"x":0.5941,"y":2.42,"dir":1},{"x":0.5031,"y":17.48,"dir":1},{"x":0.5617,"y":11.38,"dir":1},{"x":0.3197,"y":30.27,"dir":1},{"x":0.5468,"y":-9.4,"dir":0},{"x":0.4188,"y":13.22,"dir":1},{"x":0.5655,"y":3.54,"dir":1},{"x":0.3527,"y":4.55,"dir":1},{"x":0.5851,"y":-2.38,"dir":0},{"x":0.4221,"y":-3.32,"dir":0},{"x":0.6044,"y":0.36,"dir":1},{"x":0.4569,"y":-7.42,"dir":0},{"x":0.5922,"y":-13.66,"dir":0},{"x":0.5742,"y":-4.37,"dir":0},{"x":0.5181,"y":18.95,"dir":1},{"x":0.5547,"y":-6.48,"dir":0},{"x":0.6106,"y":2.15,"dir":1},{"x":0.5921,"y":-7.73,"dir":0},{"x":0.4089,"y":5.66,"dir":1},{"x":0.5716,"y":-7.76,"dir":0},{"x":0.5558,"y":-1.97,"dir":0},{"x":0.4059,"y":0.68,"dir":1},{"x":0.3813,"y":-10.98,"dir":0},{"x":0.591,"y":-17.22,"dir":0},{"x":0.4549,"y":-5.3,"dir":0},{"x":0.4987,"y":15.84,"dir":1},{"x":0.6229,"y":15.13,"dir":1},{"x":0.4882,"y":5.74,"dir":1},{"x":0.4768,"y":8.7,"dir":1},{"x":0.727,"y":17.85,"dir":1},{"x":0.3072,"y":-0.7,"dir":0},{"x":0.4732,"y":4.8,"dir":1},{"x":0.5227,"y":-8.02,"dir":0},{"x":0.5673,"y":-2.06,"dir":0},{"x":0.4596,"y":15.19,"dir":1},{"x":0.5161,"y":-7.32,"dir":0},{"x":0.5079,"y":-2.33,"dir":0},{"x":0.4497,"y":11.77,"dir":1},{"x":0.5304,"y":-10.85,"dir":0},{"x":0.4657,"y":-15.9,"dir":0},{"x":0.5437,"y":9.7,"dir":1},{"x":0.4012,"y":-1.21,"dir":0},{"x":0.3222,"y":6.77,"dir":1},{"x":0.4415,"y":-4.37,"dir":0},{"x":0.4102,"y":0.47,"dir":1},{"x":0.2688,"y":-9.32,"dir":0},{"x":0.5848,"y":-3.02,"dir":0},{"x":0.4469,"y":4.85,"dir":1},{"x":0.4775,"y":11.65,"dir":1},{"x":0.5863,"y":0.54,"dir":1},{"x":0.5808,"y":-2.2,"dir":0},{"x":0.516,"y":3.14,"dir":1},{"x":0.4712,"y":-7.16,"dir":0},{"x":0.3966,"y":9.46,"dir":1},{"x":0.5069,"y":-0.97,"dir":0},{"x":0.6027,"y":-13.47,"dir":0},{"x":0.4096,"y":-8.49,"dir":0},{"x":0.3445,"y":-8.52,"dir":0},{"x":0.3685,"y":-1.22,"dir":0},{"x":0.5419,"y":-2.39,"dir":0},{"x":0.4264,"y":-3.6,"dir":0},{"x":0.593,"y":-6.26,"dir":0},{"x":0.548,"y":10.68,"dir":1},{"x":0.5773,"y":9.72,"dir":1},{"x":0.4849,"y":-12.48,"dir":0},{"x":0.5078,"y":-2.41,"dir":0},{"x":0.4179,"y":-13.01,"dir":0},{"x":0.469,"y":10.53,"dir":1},{"x":0.8214,"y":4.95,"dir":1},{"x":0.5023,"y":0.05,"dir":1},{"x":0.4647,"y":-8.31,"dir":0},{"x":0.4589,"y":6.28,"dir":1},{"x":0.6343,"y":-5.99,"dir":0},{"x":0.6366,"y":13.92,"dir":1},{"x":0.3822,"y":4.28,"dir":1},{"x":0.358,"y":6.21,"dir":1},{"x":0.5849,"y":8.0,"dir":1},{"x":0.4769,"y":1.74,"dir":1},{"x":0.4159,"y":3.02,"dir":1},{"x":0.5686,"y":1.19,"dir":1},{"x":0.4713,"y":17.81,"dir":1},{"x":0.5294,"y":38.36,"dir":1},{"x":0.4841,"y":5.85,"dir":1},{"x":0.806,"y":-16.17,"dir":0},{"x":0.3617,"y":-6.8,"dir":0},{"x":0.4397,"y":2.73,"dir":1},{"x":0.5366,"y":-5.31,"dir":0},{"x":0.4344,"y":2.87,"dir":1},{"x":0.4745,"y":-6.8,"dir":0},{"x":0.6472,"y":6.19,"dir":1},{"x":0.4745,"y":-22.28,"dir":0},{"x":0.2334,"y":-11.23,"dir":0},{"x":0.7361,"y":-3.34,"dir":0},{"x":0.4922,"y":-5.21,"dir":0},{"x":0.6927,"y":0.09,"dir":1},{"x":0.6457,"y":-2.36,"dir":0},{"x":0.3593,"y":5.59,"dir":1},{"x":0.5569,"y":-3.55,"dir":0},{"x":0.5597,"y":-6.65,"dir":0},{"x":0.2551,"y":9.3,"dir":1},{"x":0.3975,"y":-1.96,"dir":0},{"x":0.5899,"y":-11.37,"dir":0},{"x":0.4522,"y":9.67,"dir":1},{"x":0.3974,"y":-6.4,"dir":0},{"x":0.5205,"y":-11.21,"dir":0},{"x":0.4545,"y":-6.02,"dir":0},{"x":0.5185,"y":0.14,"dir":1},{"x":0.4009,"y":-4.75,"dir":0},{"x":0.6019,"y":9.92,"dir":1},{"x":0.7092,"y":-1.54,"dir":0},{"x":0.4924,"y":-0.44,"dir":0},{"x":0.4311,"y":15.13,"dir":1},{"x":0.6908,"y":0.03,"dir":1},{"x":0.3623,"y":-7.09,"dir":0},{"x":0.5692,"y":13.41,"dir":1},{"x":0.4412,"y":16.3,"dir":1},{"x":0.5006,"y":20.9,"dir":1},{"x":0.6026,"y":-2.53,"dir":0},{"x":0.6305,"y":0.44,"dir":1},{"x":0.5419,"y":-1.19,"dir":0},{"x":0.4511,"y":-5.47,"dir":0},{"x":0.4083,"y":-10.46,"dir":0},{"x":0.4401,"y":3.7,"dir":1},{"x":0.4621,"y":46.67,"dir":1},{"x":0.3383,"y":-6.79,"dir":0},{"x":0.4724,"y":0.57,"dir":1},{"x":0.5758,"y":2.89,"dir":1},{"x":0.7497,"y":-2.6,"dir":0},{"x":0.6233,"y":7.81,"dir":1},{"x":0.455,"y":-3.09,"dir":0},{"x":0.4509,"y":8.82,"dir":1},{"x":0.6725,"y":5.81,"dir":1},{"x":0.56,"y":6.63,"dir":1},{"x":0.4874,"y":7.86,"dir":1},{"x":0.5461,"y":-2.8,"dir":0},{"x":0.2313,"y":-3.16,"dir":0},{"x":0.3915,"y":1.85,"dir":1},{"x":0.5425,"y":1.96,"dir":1},{"x":0.4943,"y":-0.63,"dir":0},{"x":0.5558,"y":14.97,"dir":1},{"x":0.5952,"y":-4.85,"dir":0},{"x":0.4654,"y":-21.26,"dir":0},{"x":0.4205,"y":-6.08,"dir":0},{"x":0.7049,"y":1.53,"dir":1},{"x":0.6334,"y":3.81,"dir":1},{"x":0.5082,"y":-5.96,"dir":0}];
+
+const upPoints   = scatterRaw.filter(d => d.dir === 1).map(d => ({x: d.x, y: d.y}));
+const downPoints = scatterRaw.filter(d => d.dir === 0).map(d => ({x: d.x, y: d.y}));
+
+new Chart(document.getElementById('scatterChart'), {
+  type: 'scatter',
+  data: {
+    datasets: [
+      { label: 'UP', data: upPoints, backgroundColor: 'rgba(74,222,128,0.55)', pointRadius: 4, pointHoverRadius: 6 },
+      { label: 'DOWN', data: downPoints, backgroundColor: 'rgba(248,113,113,0.55)', pointRadius: 4, pointHoverRadius: 6 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: true,
+    plugins: { legend: { display: false }, tooltip: {
+      callbacks: { label: ctx => `imbalance: ${ctx.parsed.x.toFixed(3)}, Δmid: ${ctx.parsed.y.toFixed(1)}` }
+    }},
+    scales: {
+      x: { title: { display: true, text: 'imbalance', color: '#a1a1aa' },
+           grid: { color: '#27272a' }, ticks: { color: '#a1a1aa' } },
+      y: { title: { display: true, text: 'Δ mid (USD)', color: '#a1a1aa' },
+           grid: { color: '#27272a' }, ticks: { color: '#a1a1aa' } }
+    }
+  }
+});
+
+// ── CHART.JS — BAR (BASELINES) ─────────────────────────
+const thresholds = [0.3,0.32,0.34,0.36,0.38,0.4,0.42,0.44,0.46,0.48,0.5,0.52,0.54,0.56,0.58,0.6,0.62,0.64,0.66,0.68,0.7];
+const threshAccs = [0.5133,0.5133,0.5133,0.5067,0.5267,0.5267,0.52,0.52,0.5067,0.4933,0.4933,0.4867,0.5067,0.5267,0.5067,0.54,0.5333,0.5067,0.5067,0.5,0.4867];
+
+const barCtx = document.getElementById('barChart').getContext('2d');
+const barChart = new Chart(barCtx, {
+  type: 'bar',
+  data: {
+    labels: ['Siempre UP', 'Threshold', 'Log. Reg.'],
+    datasets: [{
+      data: [50.67, 54.0, 49.33],
+      backgroundColor: ['rgba(161,161,170,0.7)', 'rgba(74,222,128,0.75)', 'rgba(34,211,238,0.7)'],
+      borderColor: ['#a1a1aa', '#4ade80', '#22d3ee'],
+      borderWidth: 1, borderRadius: 6
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: true,
+    plugins: {
+      legend: { display: false },
+      annotation: { annotations: {
+        line1: { type: 'line', yMin: 50, yMax: 50, borderColor: 'rgba(248,113,113,0.7)', borderWidth: 1.5, borderDash: [6,3],
+                 label: { display: true, content: 'Azar 50%', color: '#f87171', font:{size:10} } }
+      }}
+    },
+    scales: {
+      y: { min: 45, max: 60, grid: { color: '#27272a' }, ticks: { color: '#a1a1aa', callback: v => v + '%' } },
+      x: { grid: { display: false }, ticks: { color: '#f4f4f5', font: { size: 11 } } }
+    }
+  }
+});
+
+function updateThreshold(idx) {
+  const i = parseInt(idx);
+  const t = thresholds[i];
+  const acc = (threshAccs[i] * 100).toFixed(1);
+  document.getElementById('threshLabel').textContent = t.toFixed(2);
+  document.getElementById('bestThreshVal').textContent = `imbalance > ${t.toFixed(2)}`;
+  document.getElementById('bestThreshAcc').textContent = acc + '%';
+  barChart.data.datasets[0].data[1] = parseFloat(acc);
+  barChart.update('none');
+}
+</script>
+</body>
+</html>

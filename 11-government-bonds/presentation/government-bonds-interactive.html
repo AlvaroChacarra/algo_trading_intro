@@ -1,0 +1,1949 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L11 — Bonos del Gobierno</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:      #09090b;
+  --surface: #18181b;
+  --border:  #27272a;
+  --amber:   #f59e0b;
+  --amber2:  #fbbf24;
+  --cyan:    #22d3ee;
+  --green:   #4ade80;
+  --red:     #f87171;
+  --muted:   #a1a1aa;
+  --text:    #e4e4e7;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+}
+.mono { font-family: 'JetBrains Mono', monospace; }
+
+/* ── SCROLL SNAP ── */
+.snap-container {
+  height: 100vh;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+}
+section {
+  scroll-snap-align: start;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 40px 60px;
+  position: relative;
+}
+
+/* ── TYPOGRAPHY ── */
+.label-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+h1 { font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 700; line-height: 1.1; }
+h2 { font-size: clamp(1.4rem, 2.5vw, 2rem); font-weight: 600; line-height: 1.2; }
+h3 { font-size: 1.1rem; font-weight: 600; }
+.accent-amber { color: var(--amber); }
+.accent-cyan  { color: var(--cyan); }
+.accent-green { color: var(--green); }
+.accent-red   { color: var(--red); }
+.text-muted   { color: var(--muted); }
+
+/* ── TWO-COLUMN LAYOUT ── */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 60px;
+  align-items: center;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.two-col.flip { grid-template-columns: 1.4fr 1fr; }
+
+/* ── CARDS & SURFACES ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+}
+.card-amber { border-color: rgba(245,158,11,0.3); }
+.card-cyan  { border-color: rgba(34,211,238,0.25); }
+
+/* ── HERO SECTION ── */
+#hero {
+  background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(245,158,11,0.08) 0%, transparent 70%);
+}
+.auction-terminal {
+  background: var(--surface);
+  border: 1px solid var(--amber);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 40px rgba(245,158,11,0.08);
+}
+.auction-header {
+  background: rgba(245,158,11,0.1);
+  border-bottom: 1px solid rgba(245,158,11,0.3);
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.auction-header-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--amber);
+  font-weight: 700;
+}
+.status-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--amber);
+  animation: pulse-amber 1.5s infinite;
+}
+@keyframes pulse-amber {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(245,158,11,0.4); }
+  50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(245,158,11,0); }
+}
+.auction-meta {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+}
+.auction-meta-item {
+  padding: 12px 16px;
+  border-right: 1px solid var(--border);
+}
+.auction-meta-item:last-child { border-right: none; }
+.auction-meta-key {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+}
+.auction-meta-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--amber);
+}
+.auction-bids-table {
+  padding: 8px 0;
+  max-height: 220px;
+  overflow: hidden;
+}
+.auction-col-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  padding: 6px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.auction-col-header span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.bid-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  padding: 7px 16px;
+  border-bottom: 1px solid rgba(39,39,42,0.5);
+  opacity: 0;
+  transform: translateX(-8px);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+}
+.bid-row .investor { color: var(--text); }
+.bid-row .amount   { color: var(--amber); }
+.bid-row .rate     { color: var(--cyan); }
+.bid-row .status   { color: var(--muted); }
+.demand-bar-wrap {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+}
+.demand-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+}
+.demand-bar-bg {
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.demand-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--amber), var(--amber2));
+  border-radius: 3px;
+  width: 0%;
+  transition: width 0.3s ease;
+}
+.auction-result {
+  display: none;
+  padding: 20px;
+  background: rgba(245,158,11,0.06);
+  border-top: 1px solid rgba(245,158,11,0.3);
+}
+.auction-result-grid {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 12px;
+}
+.result-item { text-align: center; }
+.result-key {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.result-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--amber);
+}
+.hero-cta {
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--muted);
+}
+.start-btn {
+  background: rgba(245,158,11,0.1);
+  border: 1px solid var(--amber);
+  color: var(--amber);
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.start-btn:hover { background: rgba(245,158,11,0.2); }
+
+/* ── CONTROLS ── */
+.control-group { margin-bottom: 20px; }
+.control-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.control-label span:last-child {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  color: var(--amber);
+}
+.range-input {
+  width: 100%;
+  -webkit-appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border);
+  outline: none;
+  cursor: pointer;
+}
+.range-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--amber);
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(245,158,11,0.4);
+}
+.range-input.cyan-thumb::-webkit-slider-thumb { background: var(--cyan); box-shadow: 0 0 8px rgba(34,211,238,0.4); }
+
+.toggle-group {
+  display: flex;
+  gap: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 4px;
+  margin-bottom: 20px;
+}
+.toggle-btn {
+  flex: 1;
+  padding: 7px 12px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.toggle-btn.active {
+  background: rgba(245,158,11,0.15);
+  color: var(--amber);
+}
+
+/* ── B1 CASH FLOWS ── */
+#b1 { background: radial-gradient(ellipse 60% 50% at 80% 50%, rgba(245,158,11,0.04) 0%, transparent 70%); }
+#cashflow-svg { width: 100%; }
+.cf-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 20px;
+}
+.stat-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 16px;
+}
+.stat-box-label {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.05em;
+}
+.stat-box-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--amber);
+}
+
+/* ── B2 PRICE & YTM ── */
+#b2 { background: radial-gradient(ellipse 60% 50% at 20% 50%, rgba(34,211,238,0.04) 0%, transparent 70%); }
+.formula-reveal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+}
+.formula-line {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  line-height: 1.8;
+  opacity: 0;
+}
+.formula-line.visible { opacity: 1; }
+.formula-line .frac {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  vertical-align: middle;
+  margin: 0 4px;
+}
+.formula-line .frac span:first-child {
+  border-bottom: 1px solid var(--muted);
+  padding-bottom: 2px;
+  margin-bottom: 2px;
+  line-height: 1;
+}
+.formula-line .frac span:last-child { line-height: 1; }
+.f-amber { color: var(--amber); }
+.f-cyan  { color: var(--cyan); }
+.f-muted { color: var(--muted); }
+
+.price-display {
+  text-align: center;
+  padding: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+.price-big {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1;
+  transition: color 0.3s;
+}
+.price-vs-par {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  margin-top: 8px;
+  transition: color 0.3s;
+}
+.chart-area { position: relative; }
+.zone-label {
+  position: absolute;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  pointer-events: none;
+}
+
+/* ── B3 INTEREST RATES ── */
+#b3 { background: radial-gradient(ellipse 60% 50% at 50% 80%, rgba(34,211,238,0.04) 0%, transparent 70%); }
+.pyramid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.pyramid-level {
+  border-radius: 10px;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  opacity: 0;
+}
+.pyramid-level.l0 {
+  background: rgba(245,158,11,0.1);
+  border: 1px solid rgba(245,158,11,0.35);
+}
+.pyramid-level.l1 {
+  background: rgba(34,211,238,0.07);
+  border: 1px solid rgba(34,211,238,0.25);
+}
+.pyramid-level.l2 {
+  background: rgba(74,222,128,0.07);
+  border: 1px solid rgba(74,222,128,0.25);
+}
+.pyramid-arrow {
+  text-align: center;
+  color: var(--muted);
+  font-size: 18px;
+  opacity: 0;
+  margin: -4px 0;
+}
+.pyr-name { font-weight: 600; font-size: 14px; }
+.pyr-detail { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.pyr-rate {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 20px;
+  font-weight: 700;
+}
+.bce-controls {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+.bce-btn {
+  flex: 1;
+  padding: 14px;
+  border-radius: 10px;
+  border: 1px solid;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+.bce-btn-up {
+  background: rgba(241,87,87,0.08);
+  border-color: rgba(248,113,113,0.4);
+  color: var(--red);
+}
+.bce-btn-up:hover { background: rgba(248,113,113,0.15); }
+.bce-btn-down {
+  background: rgba(74,222,128,0.08);
+  border-color: rgba(74,222,128,0.4);
+  color: var(--green);
+}
+.bce-btn-down:hover { background: rgba(74,222,128,0.15); }
+.bce-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.impact-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 16px;
+}
+.impact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+.impact-item { text-align: center; }
+.impact-key {
+  font-size: 11px;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+.impact-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 20px;
+  font-weight: 700;
+  transition: color 0.4s;
+}
+.impact-change {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  margin-top: 2px;
+  min-height: 16px;
+  transition: color 0.4s;
+}
+
+/* ── B4 DV01 ── */
+#b4 { background: radial-gradient(ellipse 70% 50% at 50% 100%, rgba(74,222,128,0.04) 0%, transparent 70%); }
+.dv01-container {
+  display: grid;
+  grid-template-columns: 1fr 120px 1fr;
+  gap: 24px;
+  align-items: center;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.bond-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+.bond-card-header {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.bond-card-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: rgba(245,158,11,0.12);
+  color: var(--amber);
+}
+.bond-card-price {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--muted);
+}
+.bond-card-price span {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  margin-left: 4px;
+  transition: color 0.3s;
+}
+.bond-card-body { padding: 16px 18px; }
+.bond-spec {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+.bond-spec:last-of-type { border: none; margin-bottom: 12px; padding-bottom: 0; }
+.bond-spec-key { color: var(--muted); }
+.bond-spec-val { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--amber); }
+.pnl-bar-wrap { margin-top: 14px; }
+.pnl-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.pnl-amount {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 22px;
+  font-weight: 700;
+  transition: color 0.3s;
+  margin-bottom: 6px;
+}
+.pnl-bar-bg {
+  height: 8px;
+  background: var(--border);
+  border-radius: 4px;
+  overflow: visible;
+  position: relative;
+}
+.pnl-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease, background 0.3s;
+  max-width: 100%;
+}
+.dv01-badge {
+  text-align: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-top: 10px;
+}
+.dv01-key { font-size: 10px; color: var(--muted); font-family: 'JetBrains Mono', monospace; margin-bottom: 2px; }
+.dv01-val { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; color: var(--cyan); }
+
+.dv01-slider-col { text-align: center; }
+.dv01-slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.dv01-bp-display {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--cyan);
+  margin-bottom: 12px;
+  min-height: 30px;
+}
+input[type=range].vertical {
+  writing-mode: vertical-lr;
+  direction: rtl;
+  width: 4px;
+  height: 220px;
+  -webkit-appearance: slider-vertical;
+  background: var(--border);
+  outline: none;
+  cursor: pointer;
+  border-radius: 2px;
+}
+input[type=range].vertical::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 10px rgba(34,211,238,0.5);
+}
+.dv01-note {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 8px;
+  text-align: center;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.nominal-toggle {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+.nom-btn {
+  padding: 5px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.nom-btn.active {
+  background: rgba(34,211,238,0.1);
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+/* ── CIERRE ── */
+#cierre {
+  background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(245,158,11,0.06) 0%, transparent 70%);
+}
+.cierre-inner {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+.takeaway-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 40px 0;
+}
+.takeaway-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 22px;
+  opacity: 0;
+  transform: translateY(20px);
+}
+.takeaway-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--amber);
+  opacity: 0.4;
+  min-width: 30px;
+  line-height: 1.3;
+}
+.takeaway-text { font-size: 15px; line-height: 1.6; }
+.takeaway-text strong { color: var(--amber); }
+.bridge-card {
+  background: rgba(34,211,238,0.05);
+  border: 1px solid rgba(34,211,238,0.25);
+  border-radius: 12px;
+  padding: 24px 28px;
+  text-align: left;
+  opacity: 0;
+  margin-top: 8px;
+}
+.bridge-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--cyan);
+  margin-bottom: 8px;
+}
+.bridge-text { font-size: 14px; line-height: 1.6; color: var(--muted); }
+.bridge-text strong { color: var(--text); }
+
+/* ── NAV DOTS ── */
+.nav-dots {
+  position: fixed;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 100;
+}
+.nav-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--border);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.nav-dot.active { background: var(--amber); box-shadow: 0 0 8px rgba(245,158,11,0.6); }
+
+/* ── SECTION HEADER ── */
+.section-header { margin-bottom: 36px; }
+.section-header h2 { margin-bottom: 8px; }
+.section-header p { color: var(--muted); font-size: 14px; line-height: 1.6; max-width: 480px; }
+
+/* ── SCROLL HINT ── */
+.scroll-hint {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-align: center;
+  animation: bounce 2s infinite;
+}
+@keyframes bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-5px); }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav-dots" id="navDots">
+  <div class="nav-dot active" onclick="scrollToSection(0)" title="Intro"></div>
+  <div class="nav-dot" onclick="scrollToSection(1)" title="Anatomía"></div>
+  <div class="nav-dot" onclick="scrollToSection(2)" title="Precio y YTM"></div>
+  <div class="nav-dot" onclick="scrollToSection(3)" title="Tipos de interés"></div>
+  <div class="nav-dot" onclick="scrollToSection(4)" title="DV01"></div>
+  <div class="nav-dot" onclick="scrollToSection(5)" title="Cierre"></div>
+</nav>
+
+<div class="snap-container" id="snapContainer">
+
+<!-- ══════════════════════════════════════════════════════════════════
+     HERO — La subasta del Tesoro
+══════════════════════════════════════════════════════════════════ -->
+<section id="hero">
+  <div class="two-col" style="max-width:1200px;margin:0 auto;">
+    <div>
+      <p class="label-tag">L11 — Renta Fija</p>
+      <h1>España necesita<br><span class="accent-amber">€10.000.000.000</span><br>esta semana.</h1>
+      <p style="color:var(--muted);margin-top:16px;font-size:15px;line-height:1.7;max-width:420px;">
+        No puede imprimir dinero. Necesita que miles de inversores le presten.
+        La solución: emitir un <strong style="color:var(--text)">bono soberano</strong> —
+        un contrato estandarizado que convierte una promesa de pago en algo negociable.
+      </p>
+      <div class="hero-cta">
+        <button class="start-btn" id="startAuction">▶ Iniciar subasta</button>
+        <span>Observa cómo el mercado fija el tipo</span>
+      </div>
+    </div>
+    <div>
+      <div class="auction-terminal" id="auctionTerminal">
+        <div class="auction-header">
+          <span class="auction-header-title">TESORO PÚBLICO — SUBASTA BONO 5A</span>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);" id="auctionClock">09:00:00</span>
+            <div class="status-dot" id="statusDot"></div>
+          </div>
+        </div>
+        <div class="auction-meta">
+          <div class="auction-meta-item">
+            <div class="auction-meta-key">Emisor</div>
+            <div class="auction-meta-val">ESP</div>
+          </div>
+          <div class="auction-meta-item">
+            <div class="auction-meta-key">Nominal obj.</div>
+            <div class="auction-meta-val">€10.000M</div>
+          </div>
+          <div class="auction-meta-item">
+            <div class="auction-meta-key">Cupón</div>
+            <div class="auction-meta-val">4.00%</div>
+          </div>
+          <div class="auction-meta-item">
+            <div class="auction-meta-key">Vencimiento</div>
+            <div class="auction-meta-val">5 años</div>
+          </div>
+        </div>
+        <div class="auction-bids-table">
+          <div class="auction-col-header">
+            <span>Inversor</span>
+            <span>Importe</span>
+            <span>Tipo pujado</span>
+            <span>Estado</span>
+          </div>
+          <div id="bidsContainer"></div>
+        </div>
+        <div class="demand-bar-wrap">
+          <div class="demand-label">
+            <span>Demanda acumulada</span>
+            <span id="demandPct" class="mono">0%</span>
+          </div>
+          <div class="demand-bar-bg">
+            <div class="demand-bar-fill" id="demandFill"></div>
+          </div>
+        </div>
+        <div class="auction-result" id="auctionResult">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--amber);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;">▌ LIBRO CERRADO — RESULTADO FINAL</div>
+          <div class="auction-result-grid">
+            <div class="result-item">
+              <div class="result-key">Tipo asignado</div>
+              <div class="result-val">3.42%</div>
+            </div>
+            <div class="result-item">
+              <div class="result-key">Precio</div>
+              <div class="result-val">102.71</div>
+            </div>
+            <div class="result-item">
+              <div class="result-key">Sobresusc.</div>
+              <div class="result-val">2.3×</div>
+            </div>
+          </div>
+          <p style="font-size:12px;color:var(--muted);margin-top:14px;font-family:'JetBrains Mono',monospace;">
+            ¿Cómo se calcula el precio 102.71 a partir del tipo 3.42%? → Bloque siguiente
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint">scroll para continuar ↓</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     B1 — Anatomía del bono: cash flows
+══════════════════════════════════════════════════════════════════ -->
+<section id="b1">
+  <div class="two-col" style="max-width:1200px;margin:0 auto;">
+    <div>
+      <div class="section-header">
+        <p class="label-tag">Bloque 1 — Anatomía</p>
+        <h2>Un bono es una<br><span class="accent-amber">promesa de pagos</span><br>futuros</h2>
+        <p style="margin-top:12px;">Conoces exactamente cuánto recibirás y cuándo. Esa certeza es la esencia de la renta <em>fija</em>.</p>
+      </div>
+      <div class="card card-amber" style="margin-bottom:20px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div>
+            <div style="font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;text-transform:uppercase;margin-bottom:4px;">Emisor</div>
+            <div style="font-weight:600;font-size:14px;">Reino de España</div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;text-transform:uppercase;margin-bottom:4px;">Notional</div>
+            <div style="font-weight:600;font-size:14px;color:var(--amber);">€1.000</div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;text-transform:uppercase;margin-bottom:4px;">Cupón</div>
+            <div style="font-weight:600;font-size:14px;color:var(--amber);" id="couponDisplay">4.0%</div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;text-transform:uppercase;margin-bottom:4px;">Vencimiento</div>
+            <div style="font-weight:600;font-size:14px;color:var(--amber);" id="maturityDisplay">5 años</div>
+          </div>
+        </div>
+      </div>
+      <div class="control-group">
+        <div class="control-label">
+          <span>Cupón anual</span>
+          <span id="couponVal">4.0%</span>
+        </div>
+        <input type="range" class="range-input" id="couponSlider" min="0" max="10" step="0.5" value="4">
+      </div>
+      <div class="control-group">
+        <div class="control-label">
+          <span>Vencimiento</span>
+          <span id="maturityVal">5 años</span>
+        </div>
+        <input type="range" class="range-input" id="maturitySlider" min="1" max="30" step="1" value="5">
+      </div>
+      <div class="toggle-group">
+        <button class="toggle-btn active" id="btnCouponFixed" onclick="setZeroCoupon(false)">Cupón fijo</button>
+        <button class="toggle-btn" id="btnZeroCoupon" onclick="setZeroCoupon(true)">Cupón cero</button>
+      </div>
+      <div class="cf-stats">
+        <div class="stat-box">
+          <div class="stat-box-label">Total cupones</div>
+          <div class="stat-box-val" id="totalCoupons">€200</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-label">Cash flow total</div>
+          <div class="stat-box-val" id="totalCF">€1.200</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <p style="font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:12px;text-align:right;">
+        ← Hoy &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Vencimiento →
+      </p>
+      <svg id="cashflowSvg" style="width:100%;display:block;"></svg>
+      <div style="display:flex;gap:20px;margin-top:12px;justify-content:center;">
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);">
+          <div style="width:12px;height:12px;border-radius:2px;background:var(--amber);opacity:0.7;"></div>
+          Cupón periódico
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);">
+          <div style="width:12px;height:12px;border-radius:2px;background:var(--amber);"></div>
+          Cupón + Notional
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     B2 — Precio, descuento y YTM
+══════════════════════════════════════════════════════════════════ -->
+<section id="b2">
+  <div class="two-col flip" style="max-width:1200px;margin:0 auto;">
+    <div>
+      <p class="label-tag">Bloque 2 — Precio y YTM</p>
+      <h2>¿Cuánto valen hoy<br>esos pagos futuros?</h2>
+      <p style="color:var(--muted);margin-top:8px;margin-bottom:20px;font-size:14px;line-height:1.6;">
+        €40 en el año 3 no son €40 hoy. Descontamos cada flujo para traerlo al presente.
+        El YTM es la tasa de descuento que el mercado impone.
+      </p>
+      <div class="formula-reveal">
+        <div style="font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.1em;">Precio del bono (5Y, cupón 4%, N=1.000)</div>
+        <div class="formula-line" id="fl1" style="color:var(--muted);font-size:13px;">
+          P = &nbsp;
+          <span class="f-amber">40</span><span class="f-muted">/(1+</span><span class="f-cyan">y</span><span class="f-muted">)</span>
+          &nbsp;+&nbsp;
+          <span class="f-amber">40</span><span class="f-muted">/(1+</span><span class="f-cyan">y</span><span class="f-muted">)²</span>
+          &nbsp;+&nbsp;
+          <span class="f-amber">40</span><span class="f-muted">/(1+</span><span class="f-cyan">y</span><span class="f-muted">)³</span>
+          &nbsp;+&nbsp;
+          <span class="f-amber">40</span><span class="f-muted">/(1+</span><span class="f-cyan">y</span><span class="f-muted">)⁴</span>
+          &nbsp;+&nbsp;
+          <span class="f-amber">1.040</span><span class="f-muted">/(1+</span><span class="f-cyan">y</span><span class="f-muted">)⁵</span>
+        </div>
+        <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);">
+          <div style="font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:8px;">Desglose al YTM actual:</div>
+          <div id="cfDesglose" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);line-height:1.8;"></div>
+        </div>
+      </div>
+      <div class="control-group" style="margin-top:16px;">
+        <div class="control-label">
+          <span>YTM (rendimiento al vencimiento)</span>
+          <span id="ytmVal" style="color:var(--cyan);">4.00%</span>
+        </div>
+        <input type="range" class="range-input cyan-thumb" id="ytmSlider" min="1" max="10" step="0.1" value="4">
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:4px;">
+          <span>1%</span><span>5%</span><span>10%</span>
+        </div>
+      </div>
+      <div class="price-display">
+        <div style="font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">Precio calculado</div>
+        <div class="price-big" id="priceBig">1.000,00</div>
+        <div class="price-vs-par" id="priceVsPar">— a la par —</div>
+      </div>
+    </div>
+    <div>
+      <div style="position:relative;">
+        <div style="font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:12px;">Curva precio-yield (5Y, cupón 4%, N=€1.000)</div>
+        <div style="position:relative;height:420px;">
+          <canvas id="priceYieldChart"></canvas>
+        </div>
+        <div style="margin-top:16px;display:flex;justify-content:center;gap:24px;">
+          <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--green);">
+            <div style="width:10px;height:10px;border-radius:50%;background:var(--green);"></div>
+            A prima (YTM &lt; cupón)
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);">
+            <div style="width:10px;height:10px;border-radius:50%;border:1px solid var(--muted);"></div>
+            A la par
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--red);">
+            <div style="width:10px;height:10px;border-radius:50%;background:var(--red);"></div>
+            A descuento (YTM &gt; cupón)
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     B3 — Tipos de interés y BCE
+══════════════════════════════════════════════════════════════════ -->
+<section id="b3">
+  <div class="two-col" style="max-width:1200px;margin:0 auto;">
+    <div>
+      <div class="section-header">
+        <p class="label-tag">Bloque 3 — Tipos de interés</p>
+        <h2>¿Quién mueve<br>el <span class="accent-cyan">YTM</span>?</h2>
+        <p style="margin-top:10px;">El BCE fija el precio base del dinero. Ese tipo se transmite en cascada hasta el mercado de bonos soberanos.</p>
+      </div>
+      <div class="pyramid">
+        <div class="pyramid-level l0" id="pl0">
+          <div>
+            <div class="pyr-name" style="color:var(--amber);">Banco Central Europeo (BCE)</div>
+            <div class="pyr-detail">Crea dinero · Fija el tipo de política · No acepta depósitos de particulares</div>
+          </div>
+          <div class="pyr-rate" style="color:var(--amber);" id="pyrRate0">4.00%</div>
+        </div>
+        <div class="pyramid-arrow" id="pa1">↓</div>
+        <div class="pyramid-level l1" id="pl1">
+          <div>
+            <div class="pyr-name" style="color:var(--cyan);">Bancos Comerciales</div>
+            <div class="pyr-detail">Intermedian ahorro/crédito · Se financian en el BCE · EURIBOR ≈ BCE + prima</div>
+          </div>
+          <div class="pyr-rate" style="color:var(--cyan);" id="pyrRate1">4.10%</div>
+        </div>
+        <div class="pyramid-arrow" id="pa2">↓</div>
+        <div class="pyramid-level l2" id="pl2">
+          <div>
+            <div class="pyr-name" style="color:var(--green);">Mercado de Bonos Soberanos</div>
+            <div class="pyr-detail">YTM referencia al tipo libre de riesgo · Prima por plazo y emisor</div>
+          </div>
+          <div class="pyr-rate" style="color:var(--green);" id="pyrRate2">4.25%</div>
+        </div>
+      </div>
+      <div class="bce-controls">
+        <button class="bce-btn bce-btn-up" id="bceUp" onclick="bceMove(+50)">↑ BCE +50 bp</button>
+        <button class="bce-btn bce-btn-down" id="bceDown" onclick="bceMove(-50)">↓ BCE −50 bp</button>
+      </div>
+      <div style="font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:6px;text-align:center;">
+        BCE mín: 1.00% · BCE máx: 8.00% · Tipo actual: <span id="bceCurrentDisplay" style="color:var(--text);">4.00%</span>
+      </div>
+    </div>
+    <div>
+      <p style="font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:16px;">Impacto sobre tu bono (5Y, 4%, €1.000 nominal)</p>
+      <div class="impact-panel">
+        <div class="impact-grid">
+          <div class="impact-item">
+            <div class="impact-key">Tipo BCE</div>
+            <div class="impact-val" id="impBce">4.00%</div>
+            <div class="impact-change" id="impBceChg">&nbsp;</div>
+          </div>
+          <div class="impact-item">
+            <div class="impact-key">YTM bono</div>
+            <div class="impact-val" id="impYtm">4.25%</div>
+            <div class="impact-change" id="impYtmChg">&nbsp;</div>
+          </div>
+          <div class="impact-item">
+            <div class="impact-key">Precio</div>
+            <div class="impact-val" id="impPrice">988.89</div>
+            <div class="impact-change" id="impPriceChg">&nbsp;</div>
+          </div>
+        </div>
+        <div style="border-top:1px solid var(--border);margin-top:16px;padding-top:16px;">
+          <div style="font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:8px;">P&L sobre €1.000 invertidos</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:700;transition:color 0.4s;" id="impPnl">−€11.11</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin-top:4px;" id="impPnlPct">−1.11% sobre nominal</div>
+        </div>
+      </div>
+      <div style="margin-top:20px;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+        <div style="padding:12px 16px;border-bottom:1px solid var(--border);font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;">Evolución del precio (historial de movimientos BCE)</div>
+        <div style="padding:8px;height:160px;">
+          <canvas id="bceHistoryChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     B4 — DV01: cuantificar el riesgo de tipos
+══════════════════════════════════════════════════════════════════ -->
+<section id="b4">
+  <div style="max-width:1100px;margin:0 auto;width:100%;">
+    <div style="text-align:center;margin-bottom:28px;">
+      <p class="label-tag">Bloque 4 — Sensibilidad</p>
+      <h2>DV01: <span class="accent-green">¿cuánto pierdes</span> por cada punto básico?</h2>
+      <p style="color:var(--muted);font-size:14px;margin-top:8px;max-width:600px;margin-left:auto;margin-right:auto;">
+        Mismo emisor, mismo cupón — distinto plazo. Los bonos largos sufren mucho más ante una subida de tipos.
+      </p>
+    </div>
+    <div class="nominal-toggle">
+      <button class="nom-btn active" id="nomBtn1M" onclick="setNominal(1e6)">€1M</button>
+      <button class="nom-btn" id="nomBtn100M" onclick="setNominal(100e6)">€100M</button>
+      <button class="nom-btn" id="nomBtn1B" onclick="setNominal(1e9)">€1.000M</button>
+    </div>
+    <div class="dv01-container">
+      <!-- Bono Corto -->
+      <div class="bond-card" id="card2y">
+        <div class="bond-card-header">
+          <span class="bond-card-tag">BONO CORTO</span>
+          <div class="bond-card-price">Precio: <span id="price2y">1.000,00</span></div>
+        </div>
+        <div class="bond-card-body">
+          <div class="bond-spec"><span class="bond-spec-key">Plazo</span><span class="bond-spec-val">2 años</span></div>
+          <div class="bond-spec"><span class="bond-spec-key">Cupón</span><span class="bond-spec-val">4.00%</span></div>
+          <div class="bond-spec"><span class="bond-spec-key">YTM base</span><span class="bond-spec-val">4.00%</span></div>
+          <div class="bond-spec"><span class="bond-spec-key">Nominal</span><span class="bond-spec-val" id="nomDisplay2y">€1.000.000</span></div>
+          <div class="pnl-bar-wrap">
+            <div class="pnl-label">P&L acumulado</div>
+            <div class="pnl-amount" id="pnl2y">€0</div>
+            <div class="pnl-bar-bg" style="position:relative;">
+              <div style="position:absolute;left:50%;top:0;width:1px;height:100%;background:var(--border);"></div>
+              <div class="pnl-bar-fill" id="bar2y" style="background:var(--muted);width:0%;margin-left:50%;"></div>
+            </div>
+          </div>
+          <div class="dv01-badge">
+            <div class="dv01-key">DV01 por €1M</div>
+            <div class="dv01-val" id="dv2y">≈ −€190</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slider central -->
+      <div class="dv01-slider-col">
+        <div class="dv01-slider-label">Cambio<br>tipos</div>
+        <div class="dv01-bp-display" id="bpDisplay">0 bp</div>
+        <input type="range" class="vertical" id="bpSlider" min="-200" max="200" step="5" value="0">
+        <div style="font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:8px;">+200 bp</div>
+        <div style="font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:180px;position:relative;top:-220px;">−200 bp</div>
+      </div>
+
+      <!-- Bono Largo -->
+      <div class="bond-card" id="card10y">
+        <div class="bond-card-header">
+          <span class="bond-card-tag">BONO LARGO</span>
+          <div class="bond-card-price">Precio: <span id="price10y">1.000,00</span></div>
+        </div>
+        <div class="bond-card-body">
+          <div class="bond-spec"><span class="bond-spec-key">Plazo</span><span class="bond-spec-val">10 años</span></div>
+          <div class="bond-spec"><span class="bond-spec-key">Cupón</span><span class="bond-spec-val">4.00%</span></div>
+          <div class="bond-spec"><span class="bond-spec-key">YTM base</span><span class="bond-spec-val">4.00%</span></div>
+          <div class="bond-spec"><span class="bond-spec-key">Nominal</span><span class="bond-spec-val" id="nomDisplay10y">€1.000.000</span></div>
+          <div class="pnl-bar-wrap">
+            <div class="pnl-label">P&L acumulado</div>
+            <div class="pnl-amount" id="pnl10y">€0</div>
+            <div class="pnl-bar-bg" style="position:relative;">
+              <div style="position:absolute;left:50%;top:0;width:1px;height:100%;background:var(--border);"></div>
+              <div class="pnl-bar-fill" id="bar10y" style="background:var(--muted);width:0%;margin-left:50%;"></div>
+            </div>
+          </div>
+          <div class="dv01-badge">
+            <div class="dv01-key">DV01 por €1M</div>
+            <div class="dv01-val" id="dv10y">≈ −€811</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="dv01-note" id="dv01note" style="margin-top:24px;">
+      Mueve el slider → observa la diferencia. A <strong>+25 bp</strong> (una subida típica del BCE), el bono largo pierde <strong>4.3×</strong> más que el corto.
+    </p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     CIERRE — Takeaways + Bridge
+══════════════════════════════════════════════════════════════════ -->
+<section id="cierre">
+  <div class="cierre-inner">
+    <p class="label-tag" style="text-align:center;">Cierre</p>
+    <h2 style="text-align:center;">3 ideas que te llevas</h2>
+    <div class="takeaway-list">
+      <div class="takeaway-item" id="tk1">
+        <span class="takeaway-num">1</span>
+        <span class="takeaway-text">
+          <strong>Un bono es una promesa de flujos futuros</strong> — su precio hoy es el valor presente
+          de esos flujos descontados a la tasa que exige el mercado.
+        </span>
+      </div>
+      <div class="takeaway-item" id="tk2">
+        <span class="takeaway-num">2</span>
+        <span class="takeaway-text">
+          <strong>Precio y yield son siempre inversos</strong> — si el BCE sube tipos,
+          los bonos existentes se abaratan porque ofrecen menos rentabilidad que los nuevos.
+        </span>
+      </div>
+      <div class="takeaway-item" id="tk3">
+        <span class="takeaway-num">3</span>
+        <span class="takeaway-text">
+          <strong>DV01 cuantifica el riesgo de tipos</strong> — los bonos largos son ~4–5× más
+          sensibles que los cortos. A +25 bp el bono a 10 años pierde €20.000 por millón de nominal.
+        </span>
+      </div>
+    </div>
+    <div class="bridge-card" id="bridgeCard">
+      <div class="bridge-label">→ Siguiente clase: L12 — RFQ y probabilidad de cierre</div>
+      <div class="bridge-text">
+        Los bonos soberanos no cotizan en bolsa. En el mercado secundario el inversor
+        llama a un banco, que le <strong>cotiza un precio</strong> y decide si cierra la operación.
+        En L12 modelamos esa decisión: <strong>¿cuándo acepta el banco y a qué spread?</strong>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div><!-- /snap-container -->
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+// ── BOND PRICING ──────────────────────────────────────────────────
+function bondPrice(couponRate, notional, maturity, ytm) {
+  const c = couponRate * notional;
+  let p = 0;
+  for (let t = 1; t <= maturity; t++) {
+    p += c / Math.pow(1 + ytm, t);
+  }
+  p += notional / Math.pow(1 + ytm, maturity);
+  return p;
+}
+
+function dv01PerUnit(couponRate, notional, maturity, ytm) {
+  return bondPrice(couponRate, notional, maturity, ytm + 0.0001)
+       - bondPrice(couponRate, notional, maturity, ytm);
+}
+
+function fmt(n, decimals = 2) {
+  return n.toLocaleString('es-ES', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+}
+function fmtEur(n) {
+  const abs = Math.abs(n);
+  let s;
+  if (abs >= 1e9)      s = '€' + fmt(n/1e9, 2) + 'B';
+  else if (abs >= 1e6) s = '€' + fmt(n/1e6, 2) + 'M';
+  else if (abs >= 1e3) s = '€' + fmt(n/1e3, 1) + 'K';
+  else                 s = '€' + fmt(n, 0);
+  return (n < 0 ? '−' : '+') + s.replace('€-','€');
+}
+
+// ── NAV DOTS ─────────────────────────────────────────────────────
+const sections = ['hero','b1','b2','b3','b4','cierre'];
+const snapEl = document.getElementById('snapContainer');
+const dots = document.querySelectorAll('.nav-dot');
+
+function scrollToSection(i) {
+  document.getElementById(sections[i]).scrollIntoView({ behavior: 'smooth' });
+}
+snapEl.addEventListener('scroll', () => {
+  const scrollTop = snapEl.scrollTop;
+  const vh = window.innerHeight;
+  const idx = Math.round(scrollTop / vh);
+  dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+});
+
+// ══════════════════════════════════════════════════════════════════
+// HERO — Subasta animada
+// ══════════════════════════════════════════════════════════════════
+const BIDS = [
+  { investor: 'Goldman Sachs AM',  amount: '€450M', rate: '3.38%', status: '✓' },
+  { investor: 'Deutsche Bank',     amount: '€320M', rate: '3.40%', status: '✓' },
+  { investor: 'BBVA AM',           amount: '€280M', rate: '3.41%', status: '✓' },
+  { investor: 'BNP Paribas',       amount: '€600M', rate: '3.42%', status: '✓' },
+  { investor: 'Banco Santander',   amount: '€350M', rate: '3.42%', status: '✓' },
+  { investor: 'JPMorgan AM',       amount: '€420M', rate: '3.43%', status: '✓' },
+  { investor: 'CaixaBank',         amount: '€180M', rate: '3.44%', status: '✓' },
+  { investor: 'HSBC Global',       amount: '€390M', rate: '3.45%', status: '✗' },
+  { investor: 'Société Générale',  amount: '€260M', rate: '3.47%', status: '✗' },
+  { investor: 'UniCredit',         amount: '€310M', rate: '3.49%', status: '✗' },
+];
+// Demanda total aceptada ≈ €2.6B de los primeros 7 → sobresc. 2.3×
+const DEMAND_STEPS = [4.5, 7.7, 10.5, 16.5, 20.0, 24.2, 26.0, 30.0, 33.0, 36.1];
+
+let auctionRunning = false;
+document.getElementById('startAuction').addEventListener('click', function() {
+  if (auctionRunning) return;
+  auctionRunning = true;
+  this.disabled = true;
+  this.textContent = '⏳ Procesando...';
+  runAuction();
+});
+
+function runAuction() {
+  const container = document.getElementById('bidsContainer');
+  container.innerHTML = '';
+  let clockSec = 0;
+  const clockEl = document.getElementById('auctionClock');
+
+  const clockInterval = setInterval(() => {
+    clockSec += 3;
+    const h = String(9 + Math.floor(clockSec/3600)).padStart(2,'0');
+    const m = String(Math.floor((clockSec%3600)/60)).padStart(2,'0');
+    const s = String(clockSec%60).padStart(2,'0');
+    clockEl.textContent = `${h}:${m}:${s}`;
+  }, 200);
+
+  BIDS.forEach((bid, i) => {
+    const row = document.createElement('div');
+    row.className = 'bid-row';
+    row.innerHTML = `<span class="investor">${bid.investor}</span>
+                     <span class="amount">${bid.amount}</span>
+                     <span class="rate">${bid.rate}</span>
+                     <span class="status" style="color:${bid.status==='✓'?'var(--green)':'var(--muted)'};">${bid.status}</span>`;
+    container.appendChild(row);
+
+    setTimeout(() => {
+      gsap.to(row, { opacity: 1, x: 0, duration: 0.3, ease: 'power2.out' });
+      const pct = Math.min(DEMAND_STEPS[i], 100);
+      document.getElementById('demandFill').style.width = pct + '%';
+      document.getElementById('demandPct').textContent = pct.toFixed(1) + '%';
+
+      if (i === BIDS.length - 1) {
+        clearInterval(clockInterval);
+        setTimeout(() => {
+          document.getElementById('statusDot').style.animation = 'none';
+          document.getElementById('statusDot').style.background = 'var(--green)';
+          clockEl.textContent = '09:02:38';
+          const result = document.getElementById('auctionResult');
+          result.style.display = 'block';
+          gsap.from(result, { opacity: 0, y: 10, duration: 0.5 });
+          document.getElementById('startAuction').textContent = '✓ Subasta completada';
+        }, 600);
+      }
+    }, i * 300);
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════
+// B1 — Cash flow timeline (D3)
+// ══════════════════════════════════════════════════════════════════
+let cfState = { coupon: 4, maturity: 5, zeroCoupon: false };
+
+function drawCashFlows() {
+  const { coupon, maturity, zeroCoupon } = cfState;
+  const notional = 1000;
+  const couponAmt = zeroCoupon ? 0 : coupon / 100 * notional;
+
+  const container = document.getElementById('cashflowSvg');
+  const W = container.parentElement.getBoundingClientRect().width || 600;
+  const H = 260;
+  const margin = { top: 30, right: 20, bottom: 40, left: 50 };
+  const w = W - margin.left - margin.right;
+  const h = H - margin.top - margin.bottom;
+
+  d3.select('#cashflowSvg').selectAll('*').remove();
+
+  const svg = d3.select('#cashflowSvg')
+    .attr('width', W)
+    .attr('height', H)
+    .append('g')
+    .attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const years = d3.range(1, maturity + 1);
+  const maxVal = couponAmt + notional;
+
+  const xScale = d3.scaleBand()
+    .domain(years)
+    .range([0, w])
+    .padding(maturity > 15 ? 0.15 : 0.3);
+
+  const yScale = d3.scaleLinear()
+    .domain([0, maxVal * 1.12])
+    .range([h, 0]);
+
+  // Grid lines
+  svg.append('g').attr('class', 'grid')
+    .selectAll('line').data(yScale.ticks(4)).enter()
+    .append('line')
+    .attr('x1', 0).attr('x2', w)
+    .attr('y1', d => yScale(d)).attr('y2', d => yScale(d))
+    .attr('stroke', '#27272a').attr('stroke-dasharray', '3,3');
+
+  // Y axis
+  svg.append('g')
+    .call(d3.axisLeft(yScale).ticks(4).tickFormat(d => '€' + d))
+    .call(g => g.select('.domain').remove())
+    .call(g => g.selectAll('text').style('fill','#a1a1aa').style('font-size','11px').style('font-family','JetBrains Mono,monospace'));
+
+  // X axis
+  const xAxis = svg.append('g')
+    .attr('transform', `translate(0,${h})`)
+    .call(d3.axisBottom(xScale).tickFormat(d => maturity > 10 ? (d % 5 === 0 ? 'A' + d : '') : 'Año ' + d));
+  xAxis.select('.domain').remove();
+  xAxis.selectAll('text').style('fill','#a1a1aa').style('font-size','10px').style('font-family','JetBrains Mono,monospace');
+
+  // Bars
+  const bars = svg.selectAll('.cfbar').data(years);
+  const isLast = d => d === maturity;
+
+  bars.enter().append('rect')
+    .attr('class', 'cfbar')
+    .attr('x', d => xScale(d))
+    .attr('width', xScale.bandwidth())
+    .attr('y', h)
+    .attr('height', 0)
+    .attr('rx', 3)
+    .attr('fill', d => isLast(d) ? '#f59e0b' : 'rgba(245,158,11,0.65)')
+    .transition().duration(500).delay((d, i) => i * 40)
+    .attr('y', d => yScale(isLast(d) ? couponAmt + notional : couponAmt))
+    .attr('height', d => h - yScale(isLast(d) ? couponAmt + notional : couponAmt));
+
+  // Labels — only when bars are wide enough
+  if (xScale.bandwidth() > 20) {
+    svg.selectAll('.cflabel').data(years).enter().append('text')
+      .attr('class', 'cflabel')
+      .attr('x', d => xScale(d) + xScale.bandwidth() / 2)
+      .attr('y', d => yScale(isLast(d) ? couponAmt + notional : couponAmt) - 5)
+      .attr('text-anchor', 'middle')
+      .attr('fill', '#e4e4e7')
+      .attr('font-size', maturity > 15 ? 0 : 10)
+      .attr('font-family', 'JetBrains Mono,monospace')
+      .attr('opacity', 0)
+      .text(d => {
+        const v = isLast(d) ? couponAmt + notional : couponAmt;
+        return '€' + Math.round(v);
+      })
+      .transition().duration(500).delay((d,i) => i*40 + 300)
+      .attr('opacity', 1);
+  }
+
+  // Stats
+  const totalCoupons = couponAmt * maturity;
+  const totalCF = totalCoupons + notional;
+  document.getElementById('totalCoupons').textContent = '€' + fmt(totalCoupons, 0);
+  document.getElementById('totalCF').textContent = '€' + fmt(totalCF, 0);
+}
+
+document.getElementById('couponSlider').addEventListener('input', function() {
+  cfState.coupon = parseFloat(this.value);
+  document.getElementById('couponVal').textContent = cfState.coupon.toFixed(1) + '%';
+  document.getElementById('couponDisplay').textContent = cfState.coupon.toFixed(1) + '%';
+  drawCashFlows();
+  updatePriceYield();
+});
+
+document.getElementById('maturitySlider').addEventListener('input', function() {
+  cfState.maturity = parseInt(this.value);
+  document.getElementById('maturityVal').textContent = cfState.maturity + (cfState.maturity === 1 ? ' año' : ' años');
+  document.getElementById('maturityDisplay').textContent = cfState.maturity + (cfState.maturity === 1 ? ' año' : ' años');
+  drawCashFlows();
+});
+
+function setZeroCoupon(val) {
+  cfState.zeroCoupon = val;
+  document.getElementById('btnCouponFixed').classList.toggle('active', !val);
+  document.getElementById('btnZeroCoupon').classList.toggle('active', val);
+  drawCashFlows();
+}
+
+// Initial draw
+drawCashFlows();
+window.addEventListener('resize', drawCashFlows);
+
+// ══════════════════════════════════════════════════════════════════
+// B2 — Price / YTM Chart
+// ══════════════════════════════════════════════════════════════════
+const PY_BOND = { coupon: 0.04, notional: 1000, maturity: 5 };
+let currentYtm = 0.04;
+
+// Generate curve data
+function generateCurveData() {
+  const data = [];
+  for (let ytmPct = 0.5; ytmPct <= 12; ytmPct += 0.1) {
+    data.push({ x: ytmPct, y: bondPrice(PY_BOND.coupon, PY_BOND.notional, PY_BOND.maturity, ytmPct/100) });
+  }
+  return data;
+}
+
+const curveData = generateCurveData();
+
+// Build chart
+const ctxPY = document.getElementById('priceYieldChart').getContext('2d');
+
+// Gradient for the line
+function makeGradient(ctx, chart) {
+  const grad = ctx.createLinearGradient(0, 0, chart.width, 0);
+  grad.addColorStop(0, '#4ade80');
+  grad.addColorStop(0.37, '#4ade80');
+  grad.addColorStop(0.38, '#a1a1aa');
+  grad.addColorStop(0.39, '#f87171');
+  grad.addColorStop(1, '#f87171');
+  return grad;
+}
+
+const priceYieldChart = new Chart(ctxPY, {
+  type: 'line',
+  data: {
+    datasets: [
+      {
+        label: 'Precio',
+        data: curveData,
+        borderColor: '#22d3ee',
+        borderWidth: 2.5,
+        pointRadius: 0,
+        tension: 0.4,
+        fill: false,
+      },
+      {
+        label: 'YTM actual',
+        data: [],
+        borderColor: '#f59e0b',
+        backgroundColor: '#f59e0b',
+        borderWidth: 2,
+        pointRadius: 7,
+        pointHoverRadius: 9,
+        showLine: false,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: { duration: 0 },
+    scales: {
+      x: {
+        type: 'linear',
+        title: { display: true, text: 'YTM (%)', color: '#a1a1aa', font: { family: 'JetBrains Mono', size: 11 } },
+        ticks: { color: '#a1a1aa', font: { family: 'JetBrains Mono', size: 10 }, callback: v => v + '%' },
+        grid: { color: '#27272a' },
+        min: 0.5, max: 12
+      },
+      y: {
+        title: { display: true, text: 'Precio (€)', color: '#a1a1aa', font: { family: 'JetBrains Mono', size: 11 } },
+        ticks: { color: '#a1a1aa', font: { family: 'JetBrains Mono', size: 10 }, callback: v => '€' + v.toFixed(0) },
+        grid: { color: '#27272a' },
+      }
+    },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#18181b',
+        borderColor: '#27272a',
+        borderWidth: 1,
+        titleColor: '#a1a1aa',
+        bodyColor: '#e4e4e7',
+        bodyFont: { family: 'JetBrains Mono', size: 12 },
+        callbacks: {
+          title: items => 'YTM: ' + items[0].parsed.x.toFixed(2) + '%',
+          label: item => 'Precio: €' + item.parsed.y.toFixed(2)
+        }
+      }
+    }
+  }
+});
+
+// Par line annotation (manual)
+const PAR_PLUGIN = {
+  id: 'parLine',
+  afterDraw(chart) {
+    const { ctx, chartArea, scales } = chart;
+    if (!chartArea) return;
+    const x = scales.x.getPixelForValue(4);
+    ctx.save();
+    ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = 'rgba(161,161,170,0.4)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x, chartArea.top);
+    ctx.lineTo(x, chartArea.bottom);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#a1a1aa';
+    ctx.font = '10px JetBrains Mono';
+    ctx.textAlign = 'center';
+    ctx.fillText('par', x, chartArea.top - 6);
+    ctx.restore();
+  }
+};
+Chart.register(PAR_PLUGIN);
+
+function updatePriceYield() {
+  const ytm = currentYtm;
+  const price = bondPrice(PY_BOND.coupon, PY_BOND.notional, PY_BOND.maturity, ytm);
+  const ytmPct = ytm * 100;
+
+  // Update dot
+  priceYieldChart.data.datasets[1].data = [{ x: ytmPct, y: price }];
+  priceYieldChart.update('none');
+
+  // Update price display
+  const priceEl = document.getElementById('priceBig');
+  const vsParEl = document.getElementById('priceVsPar');
+  priceEl.textContent = '€' + fmt(price, 2);
+
+  const diff = price - 1000;
+  const pct = (diff / 1000 * 100).toFixed(2);
+  if (Math.abs(diff) < 0.05) {
+    priceEl.style.color = 'var(--text)';
+    vsParEl.style.color = 'var(--muted)';
+    vsParEl.textContent = '— a la par —';
+  } else if (diff > 0) {
+    priceEl.style.color = 'var(--green)';
+    vsParEl.style.color = 'var(--green)';
+    vsParEl.textContent = `+${pct}% (prima sobre par)`;
+  } else {
+    priceEl.style.color = 'var(--red)';
+    vsParEl.style.color = 'var(--red)';
+    vsParEl.textContent = `${pct}% (descuento sobre par)`;
+  }
+
+  // Desglose
+  const c = PY_BOND.coupon * PY_BOND.notional;
+  let html = '';
+  let runningSum = 0;
+  for (let t = 1; t <= PY_BOND.maturity; t++) {
+    const cf = t === PY_BOND.maturity ? c + PY_BOND.notional : c;
+    const pv = cf / Math.pow(1 + ytm, t);
+    runningSum += pv;
+    html += `<span style="color:var(--muted);">  Año ${t}: </span><span style="color:var(--amber);">€${fmt(cf,0)}</span>`;
+    html += `<span style="color:var(--muted);"> / (1+</span><span style="color:var(--cyan);">${(ytmPct).toFixed(2)}%</span><span style="color:var(--muted);">)^${t}</span>`;
+    html += ` <span style="color:var(--muted);">= </span><span style="color:var(--text);">€${fmt(pv,2)}</span>\n`;
+  }
+  html += `<span style="color:var(--muted);">  ──────────────────────\n  Total = </span><span style="color:${diff>0?'var(--green)':diff<-0.01?'var(--red)':'var(--text)'};">€${fmt(runningSum,2)}</span>`;
+  document.getElementById('cfDesglose').innerHTML = html;
+  document.getElementById('fl1').style.opacity = 1;
+}
+
+document.getElementById('ytmSlider').addEventListener('input', function() {
+  currentYtm = parseFloat(this.value) / 100;
+  document.getElementById('ytmVal').textContent = (currentYtm * 100).toFixed(2) + '%';
+  updatePriceYield();
+});
+
+updatePriceYield();
+
+// ══════════════════════════════════════════════════════════════════
+// B3 — BCE Transmission
+// ══════════════════════════════════════════════════════════════════
+let bceRate = 4.00;   // %
+let bondYtm = 4.25;   // %
+let priceHistory = [];
+const BCE_BOND = { coupon: 0.04, notional: 1000, maturity: 5 };
+
+function bceInitialPrice() {
+  return bondPrice(BCE_BOND.coupon, BCE_BOND.notional, BCE_BOND.maturity, bondYtm/100);
+}
+
+let currentBcePrice = bceInitialPrice();
+priceHistory.push(currentBcePrice);
+
+// BCE history chart
+const ctxBCE = document.getElementById('bceHistoryChart').getContext('2d');
+const bceChart = new Chart(ctxBCE, {
+  type: 'line',
+  data: {
+    labels: ['Inicio'],
+    datasets: [{
+      data: [currentBcePrice],
+      borderColor: '#22d3ee',
+      borderWidth: 2,
+      pointRadius: 3,
+      pointBackgroundColor: '#22d3ee',
+      fill: { target: 'origin', above: 'rgba(74,222,128,0.06)', below: 'rgba(248,113,113,0.06)' },
+      tension: 0.3
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: { duration: 400 },
+    scales: {
+      x: { display: false },
+      y: {
+        ticks: { color: '#a1a1aa', font: { family: 'JetBrains Mono', size: 9 }, callback: v => '€' + v.toFixed(0) },
+        grid: { color: '#27272a' }
+      }
+    },
+    plugins: { legend: { display: false } }
+  }
+});
+
+function bceMove(bpChange) {
+  const newBceRate = Math.max(1.00, Math.min(8.00, bceRate + bpChange / 100));
+  if (newBceRate === bceRate) return;
+
+  const prevBce  = bceRate;
+  const prevYtm  = bondYtm;
+  const prevPrice = currentBcePrice;
+
+  bceRate  = parseFloat(newBceRate.toFixed(2));
+  bondYtm  = parseFloat((bceRate + 0.25).toFixed(2));
+  currentBcePrice = bondPrice(BCE_BOND.coupon, BCE_BOND.notional, BCE_BOND.maturity, bondYtm/100);
+
+  // Pyramid rates
+  document.getElementById('pyrRate0').textContent = bceRate.toFixed(2) + '%';
+  document.getElementById('pyrRate1').textContent = (bceRate + 0.10).toFixed(2) + '%';
+  document.getElementById('pyrRate2').textContent = bondYtm.toFixed(2) + '%';
+  document.getElementById('bceCurrentDisplay').textContent = bceRate.toFixed(2) + '%';
+
+  // Animate pyramid arrows
+  ['pa1','pa2'].forEach(id => {
+    gsap.to('#' + id, { color: bpChange > 0 ? 'var(--red)' : 'var(--green)', duration: 0.3, yoyo: true, repeat: 1 });
+  });
+
+  // Impact panel
+  const priceDiff = currentBcePrice - 1000;
+  const pricePct = priceDiff / 1000 * 100;
+  const isUp = bpChange > 0;
+
+  animateCounter('impBce',   prevBce,    bceRate,         '%',  2);
+  animateCounter('impYtm',   prevYtm,    bondYtm,         '%',  2);
+  animateCounter('impPrice', prevPrice,  currentBcePrice, '',   2);
+
+  document.getElementById('impBceChg').textContent   = (isUp ? '+' : '') + bpChange + ' bp';
+  document.getElementById('impBceChg').style.color   = isUp ? 'var(--red)' : 'var(--green)';
+  document.getElementById('impYtmChg').textContent   = (isUp ? '+' : '') + bpChange + ' bp';
+  document.getElementById('impYtmChg').style.color   = isUp ? 'var(--red)' : 'var(--green)';
+  document.getElementById('impPriceChg').textContent = (currentBcePrice - prevPrice > 0 ? '+' : '') + fmt(currentBcePrice - prevPrice, 2);
+  document.getElementById('impPriceChg').style.color = currentBcePrice >= prevPrice ? 'var(--green)' : 'var(--red)';
+
+  const pnlEl = document.getElementById('impPnl');
+  const pnlPctEl = document.getElementById('impPnlPct');
+  gsap.to(pnlEl, { innerText: 0, duration: 0.5, snap: { innerText: 0.01 },
+    onUpdate: function() {
+      const v = priceDiff;
+      pnlEl.textContent = (v >= 0 ? '+€' : '−€') + fmt(Math.abs(v), 2);
+    }
+  });
+  pnlEl.style.color = priceDiff >= 0 ? 'var(--green)' : 'var(--red)';
+  pnlPctEl.textContent = (pricePct >= 0 ? '+' : '') + fmt(pricePct, 2) + '% sobre nominal';
+
+  // History chart
+  priceHistory.push(currentBcePrice);
+  bceChart.data.labels.push('mov.' + priceHistory.length);
+  bceChart.data.datasets[0].data.push(currentBcePrice);
+  bceChart.update();
+
+  // Button limits
+  document.getElementById('bceUp').disabled   = bceRate >= 8.00;
+  document.getElementById('bceDown').disabled = bceRate <= 1.00;
+}
+
+function animateCounter(id, from, to, suffix, decimals) {
+  const el = document.getElementById(id);
+  const duration = 0.5;
+  const start = performance.now();
+  function step(now) {
+    const t = Math.min((now - start) / (duration * 1000), 1);
+    const val = from + (to - from) * t;
+    el.textContent = fmt(val, decimals) + suffix;
+    if (t < 1) requestAnimationFrame(step);
+    el.style.color = to >= from ? 'var(--green)' : 'var(--red)';
+  }
+  requestAnimationFrame(step);
+}
+
+// Init BCE panel
+document.getElementById('impPrice').textContent = fmt(currentBcePrice, 2);
+
+// Pyramid entrance (ScrollTrigger)
+ScrollTrigger.create({
+  trigger: '#b3',
+  scroller: '#snapContainer',
+  start: 'top 80%',
+  onEnter: () => {
+    gsap.to(['#pl0','#pa1','#pl1','#pa2','#pl2'], {
+      opacity: 1, y: 0, duration: 0.5, stagger: 0.15, ease: 'power2.out'
+    });
+  }
+});
+
+// ══════════════════════════════════════════════════════════════════
+// B4 — DV01
+// ══════════════════════════════════════════════════════════════════
+const BOND_2Y  = { coupon: 0.04, notional: 1000, maturity: 2,  ytmBase: 0.04 };
+const BOND_10Y = { coupon: 0.04, notional: 1000, maturity: 10, ytmBase: 0.04 };
+
+let currentNominal = 1e6;
+let currentBp = 0;
+
+// Compute DV01s at par
+const DV01_2Y  = dv01PerUnit(BOND_2Y.coupon,  BOND_2Y.notional,  BOND_2Y.maturity,  BOND_2Y.ytmBase);
+const DV01_10Y = dv01PerUnit(BOND_10Y.coupon, BOND_10Y.notional, BOND_10Y.maturity, BOND_10Y.ytmBase);
+
+const UNITS_PER_M = 1e6 / 1000;  // 1000 bonds per €1M nominal
+
+document.getElementById('dv2y').textContent  = '≈ €' + fmt(Math.abs(DV01_2Y)  * UNITS_PER_M, 0);
+document.getElementById('dv10y').textContent = '≈ €' + fmt(Math.abs(DV01_10Y) * UNITS_PER_M, 0);
+
+function setNominal(val) {
+  currentNominal = val;
+  ['1M','100M','1B'].forEach(s => {
+    document.getElementById('nomBtn'+s).classList.toggle('active',
+      (s==='1M' && val===1e6) || (s==='100M' && val===100e6) || (s==='1B' && val===1e9));
+  });
+  const units = currentNominal / 1000;
+  const label = val >= 1e9 ? '€1.000M' : val >= 1e6 ? '€' + fmt(val/1e6,0) + 'M' : '€' + fmt(val/1e3,0) + 'K';
+  document.getElementById('nomDisplay2y').textContent  = label;
+  document.getElementById('nomDisplay10y').textContent = label;
+  document.getElementById('dv2y').textContent  = '≈ €' + fmt(Math.abs(DV01_2Y)  * units, 0);
+  document.getElementById('dv10y').textContent = '≈ €' + fmt(Math.abs(DV01_10Y) * units, 0);
+  updateDV01(currentBp);
+}
+
+function updateDV01(bp) {
+  currentBp = bp;
+  const bpDisplay = document.getElementById('bpDisplay');
+  bpDisplay.textContent = (bp >= 0 ? '+' : '') + bp + ' bp';
+  bpDisplay.style.color = bp > 0 ? 'var(--red)' : bp < 0 ? 'var(--green)' : 'var(--cyan)';
+
+  const ytmChange = bp / 10000;
+  const units = currentNominal / 1000;
+
+  [BOND_2Y, BOND_10Y].forEach((bond, idx) => {
+    const suffix = idx === 0 ? '2y' : '10y';
+    const newYtm = bond.ytmBase + ytmChange;
+    const newPrice = bondPrice(bond.coupon, bond.notional, bond.maturity, newYtm);
+    const pnlPerUnit = newPrice - bond.notional;
+    const totalPnl = pnlPerUnit * units;
+    const maxPnl = Math.abs(dv01PerUnit(bond.coupon, bond.notional, bond.maturity, bond.ytmBase)) * units * 200;
+
+    document.getElementById('price' + suffix).textContent = fmt(newPrice, 2);
+    document.getElementById('price' + suffix).style.color = newPrice >= bond.notional ? 'var(--text)' : 'var(--red)';
+
+    const pnlEl = document.getElementById('pnl' + suffix);
+    const sign = totalPnl >= 0;
+    pnlEl.textContent = fmtEur(totalPnl);
+    pnlEl.style.color = sign ? 'var(--green)' : 'var(--red)';
+
+    const barEl = document.getElementById('bar' + suffix);
+    const pct = Math.min(Math.abs(totalPnl) / maxPnl * 50, 50);
+    barEl.style.width = pct + '%';
+    barEl.style.background = sign ? 'var(--green)' : 'var(--red)';
+    // Align bar: gains go right of center, losses go left
+    barEl.style.marginLeft = sign ? '50%' : (50 - pct) + '%';
+
+    document.getElementById('card' + (idx === 0 ? '2y' : '10y')).style.borderColor =
+      bp === 0 ? 'var(--border)' : (sign ? 'rgba(74,222,128,0.3)' : 'rgba(248,113,113,0.3)');
+  });
+
+  // Note at +25bp
+  if (bp === 25) {
+    const pnl2  = (bondPrice(BOND_2Y.coupon,  BOND_2Y.notional,  BOND_2Y.maturity,  0.04 + 0.0025) - 1000) * (currentNominal/1000);
+    const pnl10 = (bondPrice(BOND_10Y.coupon, BOND_10Y.notional, BOND_10Y.maturity, 0.04 + 0.0025) - 1000) * (currentNominal/1000);
+    const ratio = Math.abs(pnl10 / pnl2).toFixed(1);
+    document.getElementById('dv01note').innerHTML =
+      `Una subida del BCE de <strong>+25 bp</strong>: Bono corto ${fmtEur(pnl2)} · Bono largo ${fmtEur(pnl10)}. El largo pierde <strong style="color:var(--red);">${ratio}×</strong> más.`;
+  } else if (bp === 0) {
+    document.getElementById('dv01note').innerHTML =
+      `Mueve el slider → observa la diferencia. A <strong>+25 bp</strong> (una subida típica del BCE), el bono largo pierde <strong>4.3×</strong> más que el corto.`;
+  }
+}
+
+document.getElementById('bpSlider').addEventListener('input', function() {
+  updateDV01(parseInt(this.value));
+});
+
+updateDV01(0);
+
+// ══════════════════════════════════════════════════════════════════
+// CIERRE — GSAP Takeaways
+// ══════════════════════════════════════════════════════════════════
+ScrollTrigger.create({
+  trigger: '#cierre',
+  scroller: '#snapContainer',
+  start: 'top 80%',
+  onEnter: () => {
+    gsap.to(['#tk1','#tk2','#tk3'], {
+      opacity: 1, y: 0, duration: 0.6, stagger: 0.25, ease: 'power3.out'
+    });
+    gsap.to('#bridgeCard', { opacity: 1, duration: 0.5, delay: 1.0, ease: 'power2.out' });
+  }
+});
+
+// ══════════════════════════════════════════════════════════════════
+// GSAP — Entrance animations
+// ══════════════════════════════════════════════════════════════════
+gsap.set(['#pl0','#pa1','#pl1','#pa2','#pl2'], { opacity: 0, y: 15 });
+gsap.set(['#tk1','#tk2','#tk3','#bridgeCard'], { opacity: 0, y: 20 });
+
+// Hero entrance
+gsap.from('#hero h1', { opacity: 0, y: 30, duration: 0.8, ease: 'power3.out' });
+gsap.from('#hero p',  { opacity: 0, y: 20, duration: 0.7, delay: 0.3, ease: 'power2.out' });
+gsap.from('#auctionTerminal', { opacity: 0, x: 30, duration: 0.8, delay: 0.2, ease: 'power3.out' });
+gsap.from('.hero-cta', { opacity: 0, y: 15, duration: 0.6, delay: 0.6, ease: 'power2.out' });
+
+// B1 entrance
+ScrollTrigger.create({
+  trigger: '#b1',
+  scroller: '#snapContainer',
+  start: 'top 80%',
+  onEnter: () => {
+    gsap.from('#b1 .section-header', { opacity: 0, y: 25, duration: 0.7, ease: 'power2.out' });
+    gsap.from('#b1 .card', { opacity: 0, y: 15, duration: 0.5, delay: 0.2, ease: 'power2.out' });
+    drawCashFlows();
+  }
+});
+
+// B2 entrance
+ScrollTrigger.create({
+  trigger: '#b2',
+  scroller: '#snapContainer',
+  start: 'top 80%',
+  onEnter: () => {
+    gsap.from('#b2 h2', { opacity: 0, y: 20, duration: 0.6, ease: 'power2.out' });
+    gsap.to('#fl1', { opacity: 1, duration: 0.5, delay: 0.3 });
+    updatePriceYield();
+  }
+});
+
+// B4 entrance
+ScrollTrigger.create({
+  trigger: '#b4',
+  scroller: '#snapContainer',
+  start: 'top 80%',
+  onEnter: () => {
+    gsap.from('#card2y',  { opacity: 0, x: -30, duration: 0.6, ease: 'power3.out' });
+    gsap.from('#card10y', { opacity: 0, x:  30, duration: 0.6, delay: 0.15, ease: 'power3.out' });
+    gsap.from('.dv01-slider-col', { opacity: 0, y: 20, duration: 0.5, delay: 0.3, ease: 'power2.out' });
+  }
+});
+
+</script>
+</body>
+</html>

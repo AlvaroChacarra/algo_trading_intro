@@ -24,3 +24,11 @@ Thumbs.db
 output/
 .playwright-cli/
 favicon.ico
+
+# Exámenes con respuestas (no subir al repo)
+10-exam-quiz-i/examen_*.pdf
+10-exam-quiz-i/examen_*.html
+10-exam-quiz-i/generate_exams*.py
+15-exam-quiz-ii/examen_*.pdf
+15-exam-quiz-ii/examen_*.html
+15-exam-quiz-ii/generate_exams*.py
