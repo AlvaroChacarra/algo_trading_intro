@@ -20,10 +20,10 @@ Presentación interactiva (Pyodide). No te preocupes del tiempo: usa las diaposi
 Sigue el raíl Texto → Tokens → AST → Bytecode → VM → 1s/0s.
 - **2.1 Tokens:** "Primero Python trocea la línea en piezas con significado: nombres, operadores, números. Aún no calcula nada." (chips de la línea).
 - **2.2 AST:** árbol dibujado (suma bid+ask, luego divide entre 2, guarda en mid). Botón "Ver AST" → `ast.dump` real. "El árbol captura QUÉ se opera con qué."
-- **2.3 Bytecode:** tabla en cristiano (LOAD bid, LOAD ask, súmalos, …) + botón "Ver bytecode" (`dis` real). "Son las instrucciones que ejecuta la máquina virtual."
-- **2.4 VM → 1s/0s:** "La VM ejecuta el bytecode instrucción a instrucción; cada una acaba en operaciones binarias de la CPU. Resultado: 99975.0. Viaje cerrado."
-- **2.5 Playground:** que escriban su propia línea (`spread = ask - bid`, un `if`…) y vean tokens/AST/bytecode en vivo. **Es real, lo calcula Python en el navegador.**
-- **Riesgo:** no explicar cada opcode; quédate con "instrucciones de la VM".
+- **2.3 Bytecode:** **primero pídeles que predigan** cuántos pasos de cálculo creen que hay (4/6/9 → 6); luego revela la tabla en cristiano (LOAD bid, LOAD ask, súmalos, …) + "Ver bytecode" (`dis` real). Caption: fíjate solo en LOAD/BINARY_OP/STORE; RESUME y RETURN son arranque y final.
+- **2.4 VM → 1s/0s:** "La VM ejecuta el bytecode; el resultado, 99975, vive en memoria como bits (se muestran)." **Sé honesto:** la VM está escrita en C y es ella quien baja a binario; los decimales usan IEEE-754. Lo importante: todo acaba en 1s y 0s. Viaje cerrado.
+- **2.5 Playground:** que **predigan el nº de tokens**, escriban su línea y vean tokens/AST/bytecode en vivo. **Es real, lo calcula Python en el navegador.**
+- **Riesgo:** no explicar cada opcode; quédate con "instrucciones de la VM". Aviso de aula: Pyodide tarda unos segundos la primera vez y necesita internet; las diapositivas explicativas (chips/árbol/tabla) funcionan aunque falle.
 
 ## Bloque 3 · Compilar vs interpretar (dos diapositivas, 4 min)
 - **3.1 Compilado (C):** "traduce TODO a binario una vez, antes de ejecutar. Rápido, pero hay que compilar y el binario es de esa máquina."
@@ -39,12 +39,15 @@ Ve despacio, una idea por diapositiva, construyendo el bid/offer. Cada una tiene
 - **4.5 if/elif/else:** clasificar el mercado. "El programa decide. Cambia el spread y vuelve a ejecutar."
 
 ## Bloque extra · Errores son pistas (4 min)
-- 4 retos en orden. **Engancha con el bloque 2:** "SyntaxError = no llegó ni a compilar; NameError/TypeError/ZeroDivisionError = compiló pero la VM tropezó." El tipo de error te dice en qué fase mirar.
+- 4 retos en orden. **El output ya etiqueta la fase** ("⛔ Falló al COMPILAR" / "⛔ Falló al EJECUTAR"), así que la lección cala aunque acierten a la primera. Engancha con el bloque 2.
 - **Riesgo:** son 4 ejemplos, no una taxonomía.
 
 ## Bloque 5 · Tu primer algoritmo (5 min)
-- Rule builder + editor con el algoritmo completo. "dato → cálculo → decisión. En el centro, la misma `mid` que seguimos desde el minuto uno."
+- Rule builder + editor. **Cierra el hilo:** el `spread` da el *estado* del mercado; el `mid` —la línea que perseguimos todo el viaje— es ahora la *señal* que decide (`if mid <= 100000: buy`).
 - Cambia el mercado y ve cómo cambia la decisión. Recalca: la regla es un toy pedagógico.
+
+## Mini test (3 min)
+- 5 preguntas A/B/C que cubren los 6 puntos. Feedback inmediato y resultado final. Úsalo para detectar qué no quedó claro antes de cerrar.
 
 ## Cierre (1 min)
 Repasa los 6 puntos del panel y manda al notebook (guardar snapshot/orden como datos + medir presión).

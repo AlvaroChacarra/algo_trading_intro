@@ -148,6 +148,7 @@ pre,code{font-family:'JetBrains Mono',monospace;font-size:14px;}
     <li><a href="#lenguaje">El lenguaje</a></li>
     <li><a href="#errores">Errores</a></li>
     <li><a href="#algoritmo">Algoritmo</a></li>
+    <li><a href="#quiz">Test</a></li>
   </ul>
   <button class="full-btn" id="fullscreen-btn" title="Pantalla completa (F)">⛶</button>
 </nav>
@@ -282,6 +283,7 @@ print(mid)</div>
           <button class="run-btn" id="ast-run">▶ Ver AST</button>
         </div>
         <div class="pipe-out" id="ast-out">Pulsa "Ver AST" para que Python te muestre el árbol de verdad.</div>
+        <div class="note blue" style="margin-top:10px;">No te asustes con el texto: fíjate solo en <b>Assign</b> (la asignación a <code>mid</code>), <b>BinOp</b> (las operaciones <code>+</code> y <code>/</code>) y <b>Name</b> (tus variables <code>bid</code>, <code>ask</code>). Es el mismo árbol del dibujo, escrito por Python.</div>
       </div>
     </div>
   </div>
@@ -294,6 +296,11 @@ print(mid)</div>
     <div class="label alt">Bloque 2 · El viaje de tu línea</div>
     <h2>Paso 3 — Bytecode: instrucciones para la máquina virtual</h2>
     <p class="lead">Del árbol, Python genera una lista de <span class="b">instrucciones simples</span> — el <span class="b">bytecode</span>. Son las órdenes que ejecutará la máquina virtual de Python, una a una, como una receta.</p>
+    <div class="note blue" style="margin-top:0;">
+      <b>Antes de mirar la tabla:</b> ¿cuántos pasos de cálculo —cargar, operar, guardar— crees que necesita <code>mid = (bid + ask) / 2</code>?
+      <div class="btn-row" id="bc-predict"><button class="btn" data-v="4">4</button><button class="btn" data-v="6">6</button><button class="btn" data-v="9">9</button></div>
+      <div id="bc-predict-fb" style="font-size:14px;margin-top:8px;"></div>
+    </div>
     <div class="two-col">
       <div class="card">
         <div class="card-label">Qué dice el bytecode (en cristiano)</div>
@@ -313,6 +320,7 @@ print(mid)</div>
           <button class="run-btn" id="bc-run">▶ Ver bytecode</button>
         </div>
         <div class="pipe-out" id="bc-out">Pulsa "Ver bytecode" para el desensamblado real que ejecuta la VM.</div>
+        <div class="note blue" style="margin-top:10px;">No te asustes con el volcado: fíjate solo en <b>LOAD</b> (cargar), <b>BINARY_OP</b> (operar) y <b>STORE</b> (guardar). El <code>RESUME</code> y el <code>RETURN</code> son solo el arranque y el final — por eso ves alguno más que en la tabla.</div>
       </div>
     </div>
   </div>
@@ -325,13 +333,21 @@ print(mid)</div>
     <div class="label alt">Bloque 2 · El viaje de tu línea</div>
     <h2>Paso 4 — La VM ejecuta, y abajo del todo: 1s y 0s</h2>
     <p class="lead">La <span class="b">máquina virtual</span> de Python lee el bytecode instrucción a instrucción. Cada una se traduce, ya sí, en operaciones reales de la CPU — sumar, dividir, mover datos — que son <span class="b">1s y 0s</span>. Ahí se cierra el viaje.</p>
-    <div class="card">
-      <div class="stage lit"><span class="ic">📄</span> tu texto: <code>mid = (bid + ask) / 2</code></div>
-      <div class="stage lit"><span class="ic">⇩</span> tokens → árbol (AST) → bytecode</div>
-      <div class="stage lit"><span class="ic">🐍</span> la VM ejecuta el bytecode, instrucción a instrucción</div>
-      <div class="stage lit"><span class="ic">01</span> cada instrucción → operaciones binarias en la CPU → <b>resultado: 99975.0</b></div>
-      <div class="note cyan">Recuerda: <b>compilar</b> = tu texto → bytecode. <b>Interpretar</b> = la VM ejecutando ese bytecode. Python hace las dos. Lo vemos en el siguiente bloque.</div>
+    <div class="two-col" style="margin-top:8px;">
+      <div class="card">
+        <div class="stage lit"><span class="ic">📄</span> tu texto: <code>mid = (bid + ask) / 2</code></div>
+        <div class="stage lit"><span class="ic">⇩</span> tokens → árbol (AST) → bytecode</div>
+        <div class="stage lit"><span class="ic">🐍</span> la VM lee el bytecode, instrucción a instrucción</div>
+        <div class="stage lit"><span class="ic">▶</span> y produce el <b>resultado: 99975.0</b></div>
+      </div>
+      <div class="card">
+        <div class="card-label">¿Y los 1s y 0s? (cerramos el viaje)</div>
+        <p style="font-size:14px;">Ese resultado vive en memoria como bits. El entero <b>99975</b> es, literalmente:</p>
+        <div class="byte" style="flex-wrap:wrap;gap:3px;margin-top:10px;"><div class="bit one">1</div><div class="bit one">1</div><div class="bit zero">0</div><div class="bit zero">0</div><div class="bit zero">0</div><div class="bit zero">0</div><div class="bit one">1</div><div class="bit one">1</div><div class="bit zero">0</div><div class="bit one">1</div><div class="bit zero">0</div><div class="bit zero">0</div><div class="bit zero">0</div><div class="bit zero">0</div><div class="bit one">1</div><div class="bit one">1</div><div class="bit one">1</div></div>
+        <div class="note cyan" style="margin-top:12px;"><b>Sé honesto aquí:</b> la VM de Python está escrita en C, y es ella quien baja cada instrucción a binario. El <code>.0</code> decimal usa un formato un pelín más complejo (IEEE-754). Lo que importa: <b>todo acaba en 1s y 0s</b>.</div>
+      </div>
     </div>
+    <div class="note blue" style="margin-top:18px;">Recuerda: <b>compilar</b> = tu texto → bytecode. <b>Interpretar</b> = la VM ejecutando ese bytecode. Python hace las dos — lo vemos ahora.</div>
   </div>
 </section>
 
@@ -345,6 +361,11 @@ print(mid)</div>
       <div class="editor-wrap">
         <textarea class="editor" id="pipe-editor" spellcheck="false" style="min-height:60px;">spread = ask - bid</textarea>
         <button class="run-btn" id="pipe-run">▶ Analizar</button>
+      </div>
+      <div class="note blue" style="margin-top:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        Antes de pulsar, predice: ¿cuántos <b>tokens</b> tendrá tu línea?
+        <input class="rule-input" id="pipe-predict" type="number" placeholder="?" style="width:78px;">
+        <span id="pipe-predict-fb" style="font-weight:700;"></span>
       </div>
       <div class="tabs" id="pipe-tabs">
         <div class="tab active" data-tab="tokens">1 · Tokens</div>
@@ -563,7 +584,7 @@ print(buy / total)</textarea><button class="run-btn challenge-run" data-ch="3">�
   <div class="shell">
     <div class="label">Bloque 5 · Tu primer algoritmo</div>
     <h2>Dato → cálculo → decisión</h2>
-    <p class="lead">Juntémoslo todo. Un algoritmo lee un dato, calcula algo y decide. Y sí: en el centro está la <span class="codeline" style="font-size:13px;">mid = (bid + ask) / 2</span> que seguimos desde el primer minuto.</p>
+    <p class="lead">Juntémoslo todo. Un algoritmo lee un dato, calcula algo y decide. El <span class="b">spread</span> nos dice el <span class="b">estado</span> del mercado; y el <span class="codeline" style="font-size:13px;">mid = (bid + ask) / 2</span> que perseguimos desde el primer minuto es ahora nuestra <span class="b">señal de decisión</span>.</p>
     <div class="two-col">
       <div>
         <div class="card">
@@ -580,9 +601,9 @@ print(buy / total)</textarea><button class="run-btn challenge-run" data-ch="3">�
           <div class="btn-row" style="justify-content:center;"><button class="btn" id="dec-shuffle">↻ Cambiar mercado</button></div>
           <div class="rule-builder" style="margin-top:14px;">
             <div class="rule-row"><span>Si</span>
-              <select class="rule-select" id="rule-var"><option value="spread">spread</option><option value="mid">mid</option></select>
+              <select class="rule-select" id="rule-var"><option value="spread">spread</option><option value="mid" selected>mid</option></select>
               <select class="rule-select" id="rule-op"><option value="<">&lt;</option><option value="<=" selected>&le;</option><option value=">">&gt;</option><option value=">=">&ge;</option></select>
-              <input class="rule-input" id="rule-val" type="number" value="50"><span>→</span>
+              <input class="rule-input" id="rule-val" type="number" value="100000"><span>→</span>
               <select class="rule-select" id="rule-action"><option value="buy">comprar</option><option value="sell">vender</option><option value="hold">esperar</option></select>
             </div>
           </div>
@@ -606,7 +627,8 @@ elif spread <= 60:
 else:
     market_state = "wide"
 
-if spread <= 50:
+# spread = estado del mercado ; mid = nuestra señal de decisión
+if mid <= 100000:
     action = "buy"
 else:
     action = "hold"
@@ -618,9 +640,20 @@ print("action:", action)</textarea>
           </div>
           <div class="output-box">Pulsa Ejecutar o Ctrl+Enter</div>
         </div>
-        <div class="note blue">dato (bid/ask) → cálculo (spread, mid) → clasificación (market_state) → decisión (action). En el notebook lo guardas como datos: el primer ladrillo del motor que construirás todo el curso.</div>
+        <div class="note blue">dato (bid/ask) → cálculo (spread = estado, <b>mid = señal</b>) → decisión (action). En el notebook guardarás esto como datos: el primer ladrillo del motor que construirás todo el curso.</div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ════ MINI TEST ════ -->
+<section id="quiz">
+  <div class="shell">
+    <div class="label">Antes del cierre · Mini test</div>
+    <h2>5 preguntas para fijar lo de hoy</h2>
+    <p class="lead">Elige una opción en cada pregunta. Te digo al momento si es correcta.</p>
+    <div id="quiz-box" style="margin-top:20px;"></div>
+    <div id="quiz-score" style="font-weight:800;font-size:19px;margin-top:18px;color:var(--cyan);"></div>
   </div>
 </section>
 
@@ -748,10 +781,24 @@ document.getElementById('pipe-run').addEventListener('click',async()=>{
   const btn=document.getElementById('pipe-run'),out=document.getElementById('pipe-out');
   if(!pyodide){out.textContent='Python aún no está listo. Espera unos segundos.';return;}
   btn.disabled=true;btn.textContent='⏳';out.textContent='Analizando…';
-  try{pyodide.globals.set('SRC',document.getElementById('pipe-editor').value);pyodide.runPython(PIPE_PY);pipeData.tokens=pyodide.globals.get('tokens_str');pipeData.ast=pyodide.globals.get('ast_str2');pipeData.bytecode=pyodide.globals.get('bytecode_str');showPipe();}
-  catch(e){out.textContent=String(e);}
+  try{
+    pyodide.globals.set('SRC',document.getElementById('pipe-editor').value);pyodide.runPython(PIPE_PY);
+    pipeData.tokens=pyodide.globals.get('tokens_str');pipeData.ast=pyodide.globals.get('ast_str2');pipeData.bytecode=pyodide.globals.get('bytecode_str');
+    pipeTab='tokens';showPipe();
+    const n=pipeData.tokens.split('\n').filter(l=>l.trim()).length, pred=document.getElementById('pipe-predict').value, fb=document.getElementById('pipe-predict-fb');
+    if(pred==='') fb.innerHTML='son <b>'+n+'</b> tokens';
+    else if(parseInt(pred)===n) fb.innerHTML='<span style="color:var(--green)">¡exacto! '+n+' tokens</span>';
+    else fb.innerHTML='<span style="color:var(--muted)">predijiste '+pred+' · son <b>'+n+'</b></span>';
+  }catch(e){out.textContent=String(e);}
   btn.disabled=false;btn.textContent='▶ Analizar';
 });
+// predicción del bytecode
+document.querySelectorAll('#bc-predict .btn').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#bc-predict .btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+  const fb=document.getElementById('bc-predict-fb');
+  if(b.dataset.v==='6') fb.innerHTML='<span style="color:var(--green)">✓ Exacto: 6 pasos (carga bid, carga ask, suma, carga 2, divide, guarda). Compruébalo en la tabla.</span>';
+  else fb.innerHTML='<span style="color:var(--muted)">Casi — son <b>6</b> pasos de cálculo. Cuéntalos en la tabla de la izquierda.</span>';
+}));
 // lanes animation
 document.getElementById('lanes-play').addEventListener('click',()=>{
   const st=[0,1,2,3].map(i=>document.getElementById('py-stage-'+i));
@@ -766,7 +813,11 @@ document.querySelectorAll('.challenge-run').forEach(btn=>{
     const ed=document.getElementById(`ch-${i}-editor`),out=document.getElementById(`ch-${i}-output`),st=document.getElementById(`ch-${i}-status`),hint=document.getElementById(`ch-${i}-hint`),ch=document.getElementById(`ch-${i}`);
     btn.disabled=true;btn.textContent='⏳';
     const r=await runPython(ed.value);
-    out.textContent=r.output;out.className=r.error?'output-box error':'output-box';
+    if(r.error){
+      const compile=/SyntaxError|IndentationError/.test(r.output);
+      const phase=compile?'⛔ Falló al COMPILAR (no llegó ni a bytecode)':'⛔ Falló al EJECUTAR (compiló, pero la VM tropezó)';
+      out.textContent=phase+'\n\n'+r.output;out.className='output-box error';
+    }else{out.textContent='✓ Compiló y ejecutó:\n\n'+r.output;out.className='output-box';}
     if(!r.error){ch.classList.add('solved');st.textContent='✓ Resuelto';hint.style.display='none';document.getElementById(`dot-${i}`).classList.remove('active');document.getElementById(`dot-${i}`).classList.add('done');if(i<3){setTimeout(()=>{document.getElementById(`ch-${i+1}`).style.display='block';document.getElementById(`dot-${i+1}`).classList.add('active');gsap.from(`#ch-${i+1}`,{y:20,opacity:0,duration:.4});},600);}}
     else{hint.style.display='block';}
     btn.disabled=false;btn.textContent='▶ Probar';
@@ -780,7 +831,7 @@ function fmt(n){return n.toLocaleString('es-ES');}
 function render(bid,ask,p){const sp=ask-bid,mid=(bid+ask)/2;document.getElementById(p+'-bid').textContent=fmt(bid);document.getElementById(p+'-ask').textContent=fmt(ask);document.getElementById(p+'-spread').textContent=fmt(sp);document.getElementById(p+'-mid').textContent=fmt(mid);if(document.getElementById(p+'-state'))document.getElementById(p+'-state').textContent=cls(sp);return {bid,ask,spread:sp,mid};}
 render(99950,100000,'hero');render(99950,100000,'dec');
 document.getElementById('shuffle-btn').addEventListener('click',()=>{si=(si+1)%snaps.length;render(snaps[si].bid,snaps[si].ask,'hero');});
-document.getElementById('dec-shuffle').addEventListener('click',()=>{si=(si+1)%snaps.length;const m=render(snaps[si].bid,snaps[si].ask,'dec');updateRule(m);const s=snaps[si];document.getElementById('editor-decision').value=`bid = ${s.bid}\nask = ${s.ask}\n\nspread = ask - bid\nmid = (bid + ask) / 2\n\nif spread <= 20:\n    market_state = "tight"\nelif spread <= 60:\n    market_state = "normal"\nelse:\n    market_state = "wide"\n\nif spread <= 50:\n    action = "buy"\nelse:\n    action = "hold"\n\nprint("mid:", mid)\nprint("market_state:", market_state)\nprint("action:", action)`;});
+document.getElementById('dec-shuffle').addEventListener('click',()=>{si=(si+1)%snaps.length;const m=render(snaps[si].bid,snaps[si].ask,'dec');updateRule(m);const s=snaps[si];document.getElementById('editor-decision').value=`bid = ${s.bid}\nask = ${s.ask}\n\nspread = ask - bid\nmid = (bid + ask) / 2\n\nif spread <= 20:\n    market_state = "tight"\nelif spread <= 60:\n    market_state = "normal"\nelse:\n    market_state = "wide"\n\n# spread = estado ; mid = señal\nif mid <= 100000:\n    action = "buy"\nelse:\n    action = "hold"\n\nprint("mid:", mid)\nprint("market_state:", market_state)\nprint("action:", action)`;});
 function updateRule(m){
   if(!m){const s=snaps[si];m={bid:s.bid,ask:s.ask,spread:s.ask-s.bid,mid:(s.bid+s.ask)/2};}
   const v=document.getElementById('rule-var').value,op=document.getElementById('rule-op').value,val=parseFloat(document.getElementById('rule-val').value)||0,ac=document.getElementById('rule-action').value;
@@ -807,6 +858,34 @@ document.addEventListener('keydown',async(e)=>{
   else if(e.key.toLowerCase()==='f'){e.preventDefault();if(!document.fullscreenElement)await document.documentElement.requestFullscreen().catch(()=>{});else await document.exitFullscreen().catch(()=>{});}
 });
 document.getElementById('fullscreen-btn').addEventListener('click',async()=>{if(!document.fullscreenElement)await document.documentElement.requestFullscreen().catch(()=>{});else await document.exitFullscreen().catch(()=>{});});
+// mini test
+const QUIZ=[
+ {q:'¿Qué es Python, en realidad?',o:['Un lenguaje que la CPU entiende directamente','Un programa que lee tu texto y lo ejecuta','Un editor de código'],c:1},
+ {q:'¿En qué orden viaja tu línea de texto hasta la máquina?',o:['texto → bytecode → tokens → AST','texto → tokens → AST → bytecode','bytecode → AST → tokens → texto'],c:1},
+ {q:'Un SyntaxError ocurre…',o:['al compilar: Python no entiende el texto (no llega ni a bytecode)','al ejecutar el bytecode en la VM','solo si no hay conexión a internet'],c:0},
+ {q:'¿En qué se diferencian compilar e interpretar?',o:['Python traduce todo a binario antes de ejecutar, como C','Python compila a bytecode y una máquina virtual lo interpreta al vuelo','Son exactamente lo mismo'],c:1},
+ {q:'¿Qué estructura usarías para una orden con symbol, side, price y size?',o:['Una lista','Un diccionario','Una variable suelta'],c:1},
+];
+(function(){
+  const box=document.getElementById('quiz-box');let answered=0,correct=0;
+  QUIZ.forEach((it,qi)=>{
+    const card=document.createElement('div');card.className='challenge';card.style.marginBottom='14px';
+    const opts=it.o.map((t,oi)=>`<button class="btn quiz-opt" data-q="${qi}" data-o="${oi}" style="display:block;width:100%;text-align:left;margin:6px 0;"><b>${'ABC'[oi]}.</b> ${t}</button>`).join('');
+    card.innerHTML=`<div class="challenge-title" style="margin-bottom:10px;">${qi+1}. ${it.q}</div>${opts}<div id="qfb-${qi}" style="font-size:14px;margin-top:6px;font-weight:700;"></div>`;
+    box.appendChild(card);
+  });
+  box.querySelectorAll('.quiz-opt').forEach(btn=>btn.addEventListener('click',()=>{
+    const qi=+btn.dataset.q,oi=+btn.dataset.o,it=QUIZ[qi];
+    const group=box.querySelectorAll('.quiz-opt[data-q="'+qi+'"]');
+    if([...group].some(b=>b.disabled))return;
+    group.forEach(b=>{b.disabled=true;if(+b.dataset.o===it.c){b.style.borderColor='rgba(74,222,128,.6)';b.style.background='rgba(74,222,128,.1)';b.style.color='var(--green)';}});
+    const fb=document.getElementById('qfb-'+qi);
+    if(oi===it.c){fb.innerHTML='<span style="color:var(--green)">✓ Correcto</span>';correct++;}
+    else{btn.style.borderColor='rgba(248,113,113,.6)';btn.style.background='rgba(248,113,113,.1)';btn.style.color='var(--red)';fb.innerHTML='<span style="color:var(--red)">✗ La correcta es '+'ABC'[it.c]+'</span>';}
+    answered++;
+    if(answered===QUIZ.length)document.getElementById('quiz-score').textContent='Resultado: '+correct+' / '+QUIZ.length+' correctas';
+  }));
+})();
 gsap.from('#hero h1',{y:28,opacity:0,duration:.8,delay:.2});
 gsap.from('#hero .lead',{y:18,opacity:0,duration:.6,delay:.4});
 </script>
