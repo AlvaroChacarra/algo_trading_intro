@@ -4,23 +4,34 @@ Pieza del framework: **order y snapshot como dicts**.
 
 ## Teoría que cubre
 
-Ejecutar código es solo esto: un programa (el intérprete de Python) lee texto, lo
-entiende y produce una acción. No hay magia. Los errores no son castigos: son el
-intérprete diciéndote dónde no puede continuar.
+**Tu código es texto; una máquina solo entiende 1s y 0s. Python es el puente.** Un
+procesador no lee "buy" ni "99950": solo maneja bits. Cada carácter es, por debajo, un número
+(su código ASCII/Unicode) y ese número es una secuencia de bits.
 
-En trading, el dato más básico es un **snapshot** del mercado (mejor bid, mejor ask) y una
-**orden** (lado, precio, tamaño). Con eso ya aparece el esqueleto de cualquier algoritmo:
-**dato → cálculo → decisión**. Un snapshot da `spread = ask - bid` y `mid = (bid+ask)/2`; un
-`if` sobre el spread ya es una decisión automática.
+Hay dos formas de salvar esa distancia: **compilar** (traducir todo el programa a binario de
+una vez, como C) o **interpretar** (un programa lee y ejecuta sobre la marcha). Python es
+**híbrido**: compila tu texto a un intermedio, el **bytecode**, y una **máquina virtual** (la
+de CPython) interpreta ese bytecode. El viaje de una línea: texto → tokens → árbol (AST) →
+bytecode → ejecución en la VM → instrucciones binarias en la CPU.
+
+Esto explica hasta los errores: un **SyntaxError** es que Python no pudo ni *compilar* tu
+texto; un **NameError/TypeError/ZeroDivisionError** es que compiló pero la VM *tropezó al
+ejecutar*. Y sobre eso construimos la idea de algoritmo: **dato → cálculo → decisión**
+(snapshot → `spread`/`mid` → un `if` que decide).
 
 ## Implementación técnica
 
-Sin paquete todavía: se trabaja con tipos básicos (`int`, `float`, `str`), listas,
-diccionarios, `for` e `if`, y funciones. Una orden es un `dict` con `symbol`, `side`, `price`,
-`size`; un libro es una lista de esos dicts.
+Sin paquete todavía: tipos básicos (`int`, `float`, `str`), listas, diccionarios, `for`,
+`if` y funciones. Una orden es un `dict` con `symbol`, `side`, `price`, `size`; un libro es una
+lista de esos dicts.
 
-Continuidad: este vocabulario (`symbol/side/price/size`) será **literalmente** el de los
-atributos de la clase `Order` en L3. Los dicts de hoy son los objetos de pasado mañana.
+La presentación HTML (a medida, con **Pyodide** ejecutando Python real en el navegador) lleva 5
+simuladores: texto→bits (`ord`/`bin`), compilado vs interpretado, el viaje de una línea con
+**tokens/AST/bytecode reales** (`tokenize`/`ast`/`dis`), el editor en vivo, los retos de
+romper-código y el rule builder. El notebook refuerza con `ord`/`bin` y `dis` (auxiliares A4-A5).
+
+Continuidad: el vocabulario (`symbol/side/price/size`) será **literalmente** el de los atributos
+de la clase `Order` en L3. Los dicts de hoy son los objetos de pasado mañana.
 
 ## Presentación (3 bloques)
 

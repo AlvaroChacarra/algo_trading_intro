@@ -213,13 +213,24 @@ def emit(lesson: dict) -> None:
         f.write(readme(lesson, has_pkg))
     with open(os.path.join(folder, "CLAUDE.md"), "w") as f:
         f.write(claude_md(lesson, has_pkg))
-    with open(os.path.join(pres, "guion.md"), "w") as f:
-        f.write(guion_md(lesson))
 
-    # html
+    # assets a medida (rescatados / hechos a mano) tienen prioridad sobre el template
+    custom_dir = os.path.join(HERE, "custom")
+    custom_html = os.path.join(custom_dir, f"{lesson['n']:02d}.html")
+    custom_guion = os.path.join(custom_dir, f"{lesson['n']:02d}_guion.md")
     slugname = lesson["slug"].split("-", 1)[1]
-    with open(os.path.join(pres, f"{slugname}-interactive.html"), "w") as f:
-        f.write(nbgen.build_html(lesson))
+
+    if os.path.exists(custom_guion):
+        shutil.copy(custom_guion, os.path.join(pres, "guion.md"))
+    else:
+        with open(os.path.join(pres, "guion.md"), "w") as f:
+            f.write(guion_md(lesson))
+
+    if os.path.exists(custom_html):
+        shutil.copy(custom_html, os.path.join(pres, f"{slugname}-interactive.html"))
+    else:
+        with open(os.path.join(pres, f"{slugname}-interactive.html"), "w") as f:
+            f.write(nbgen.build_html(lesson))
 
     # notebooks
     intro = (f"# Clase {lesson['n']} — {lesson['title']}\n\n{lesson['objective']}\n\n"
