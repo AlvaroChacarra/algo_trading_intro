@@ -1,50 +1,43 @@
-# Introducción al Algo Trading con Python - ICAI 2026
+# Introducción al Algo Trading con Python — ICAI 2026
 
-Repositorio del curso para la introducción al Trading Algorítmico. Contiene lecciones interactivas, presentaciones y ejercicios prácticos en Python.
+Curso de 15 clases. **Toda la asignatura es un solo proyecto**: clase a clase construyes `exchange`, un motor de microestructura de mercado y un framework de estrategias, y sobre él enchufas un VWAP y un market maker. Acabas escribiendo tu propia estrategia.
 
-## Estructura del Repositorio
+Instructor: **Álvaro López Chacarra** · ICAI.
 
-- **01-python-basics**: Introducción a la sintaxis de Python, estructuras de datos y lógica aplicada al trading.
-- **02-python-oop-libraries**: Programación Orientada a Objetos y librerías esenciales (Pandas, NumPy, Matplotlib).
-- **03-13**: Lecciones teóricas y prácticas sobre microestructura de mercado, modelos de ejecución (VWAP), market making y algoritmos de optimización.
-- **Comillas legacy**: Material adicional y ejercicios de ediciones anteriores.
+## Mapa del curso
 
-## Requisitos Previos
+| Bloque | Clases | Qué construyes |
+|--------|--------|----------------|
+| Fundamentos | 1–4 | Python y OOP → el modelo de datos (`Order`, `OrderBook`, `PositionTracker`) |
+| Motor | 5–7 | Métricas del libro, matching de órdenes, loop de simulación |
+| Framework | 8–9 | `Strategy` + `Backtest`: estrategias enchufables |
+| VWAP | 10–11 | Ejecución por perfil de volumen |
+| Market making | 12–14 | Cotizar, inventario y Avellaneda-Stoikov |
+| Examen | 15 | Test final |
 
-- Python 3.10 o superior.
-- Recomendado: Uso de un entorno virtual (venv).
+`annex-bonds-rfq/` contiene material opcional (bonos y RFQ) fuera del arco principal.
 
-## Instalación y Configuración
+## Cada clase
 
-Siga estos pasos para configurar el entorno de desarrollo localmente:
+1. **Presentación** (`presentation/*.html`) — la intuición y qué pieza añadimos hoy.
+2. **Construcción** (`exercises/NN_build_exercises.ipynb`) — montas la pieza con validadores automáticos.
+3. **Auxiliares** (`exercises/NN_auxiliary.ipynb`) — profundización opcional.
 
-1. **Clonar el repositorio**:
-   ```bash
-   git clone https://github.com/AlvaroChacarra/algo_trading_intro.git
-   cd algo_trading_intro
-   ```
+El paquete que vienes construyendo viaja contigo en `exercises/exchange/` (a partir de la clase 3).
 
-2. **Crear y activar un entorno virtual**:
-   ```bash
-   python -m venv .venv
-   # En Windows
-   .\.venv\Scripts\activate
-   # En macOS/Linux
-   source .venv/bin/activate
-   ```
+## Instalación
 
-3. **Instalar dependencias**:
-   ```bash
-   pip install -r requirements.txt
-   ```
+```bash
+git clone <repo> && cd algo_trading_intro
+python -m venv .venv
+# macOS/Linux:  source .venv/bin/activate
+# Windows:      .\.venv\Scripts\activate
+pip install -r requirements.txt
+jupyter notebook
+```
 
-4. **Lanzar las lecciones**:
-   Las lecciones se encuentran en formato Jupyter Notebook (.ipynb). Puedes abrirlas con VS Code o ejecutando:
-   ```bash
-   jupyter notebook
-   ```
+El núcleo de `exchange` es **solo librería estándar** — los notebooks corren sin dependencias externas (pandas/matplotlib solo para visualización opcional).
 
-## Contacto
+## Para el profesor
 
-**Instructor**: Álvaro López Chacarra
-**Institución**: ICAI
+La implementación de referencia y las herramientas de generación están en `framework/`. Ver `CLAUDE.md` y `PLAN_MAESTRO_CURSO_TRADING_2026.md`.

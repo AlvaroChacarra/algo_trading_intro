@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python I — El modelo de datos</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+  :root {
+    --bg:#09090b; --panel:#101014; --fg:#f4f4f5; --muted:#a1a1aa;
+    --accent:#22d3ee; --green:#4ade80; --red:#f87171; --line:#27272a;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--fg); font-family:'Inter',sans-serif;
+         scroll-snap-type:y mandatory; overflow-y:scroll; height:100vh; }
+  section { min-height:100vh; scroll-snap-align:start; display:flex; flex-direction:column;
+            justify-content:center; padding:8vh 7vw; border-bottom:1px solid var(--line); }
+  .tag { color:var(--accent); font-weight:600; letter-spacing:.12em; text-transform:uppercase;
+         font-size:.8rem; margin-bottom:1.2rem; }
+  h1 { font-size:clamp(2.2rem,6vw,4rem); font-weight:800; line-height:1.05; }
+  h2 { font-size:clamp(1.6rem,4vw,2.6rem); font-weight:800; margin-bottom:1.2rem; }
+  p { color:var(--muted); font-size:clamp(1rem,2vw,1.25rem); max-width:60ch; line-height:1.6;
+      margin-top:1rem; }
+  .piece { display:inline-block; margin-top:2rem; padding:.5rem 1rem; border:1px solid var(--accent);
+           border-radius:8px; color:var(--accent); font-family:'JetBrains Mono',monospace; font-size:.95rem; }
+  pre { margin-top:1.5rem; background:var(--panel); border:1px solid var(--line); border-radius:10px;
+        padding:1.2rem 1.4rem; overflow-x:auto; font-family:'JetBrains Mono',monospace;
+        font-size:.95rem; color:#e4e4e7; line-height:1.55; max-width:70ch; }
+  .k { color:var(--accent); } .c { color:var(--muted); font-style:italic; }
+  .frase { font-size:clamp(1.3rem,3vw,2rem); color:var(--fg); font-weight:600; max-width:50ch; }
+  .dot { color:var(--accent); }
+  footer { color:var(--muted); font-size:.85rem; margin-top:3rem; font-family:'JetBrains Mono',monospace; }
+</style>
+</head>
+<body>
+<section>
+  <div class="tag">Clase 1 · Algo Trading · ICAI 2026</div>
+  <h1>Python I — El modelo de datos</h1>
+  <p>De cero a entender que Python es texto que se ejecuta, y usarlo para guardar el primer dato de mercado: un snapshot y una orden.</p>
+  <span class="piece">Hoy construyes: order y snapshot como dicts</span>
+</section>
+<section>
+  <div class="tag">Bloque 1</div>
+  <h2>Tu código es texto que un programa ejecuta</h2>
+  <p>Un archivo .py no es magia: es texto. Python lo lee de arriba abajo y produce un resultado. Si algo falla, el error te dice exactamente dónde mirar — es información, no un castigo.</p>
+  <pre>bid = 99950
+ask = 100000
+spread = ask - bid   # 50
+mid = (bid + ask) / 2  # 99975</pre>
+</section><section>
+  <div class="tag">Bloque 2</div>
+  <h2>Datos con nombre: variables, listas y diccionarios</h2>
+  <p>Una variable guarda un valor. Una lista agrupa varios. Un diccionario agrupa piezas con significado — justo lo que es una orden: side, price, size.</p>
+  <pre>order = {
+  &#x27;symbol&#x27;: &#x27;BTCUSDT&#x27;,
+  &#x27;side&#x27;: &#x27;buy&#x27;,
+  &#x27;price&#x27;: 99980,
+  &#x27;size&#x27;: 0.10,
+}</pre>
+</section><section>
+  <div class="tag">Bloque 3</div>
+  <h2>Del dato a la decisión: for e if</h2>
+  <p>Un for repite trabajo sobre muchos datos; un if convierte una observación en una decisión. Con esas dos piezas ya puedes recorrer un libro de órdenes y reaccionar.</p>
+  <pre>if spread &lt;= 50:
+    market_state = &#x27;tight&#x27;
+else:
+    market_state = &#x27;wide&#x27;</pre>
+</section>
+<section>
+  <div class="tag">Cierre</div>
+  <p class="frase">Un algoritmo es siempre lo mismo: dato <span class='dot'>→</span> cálculo <span class='dot'>→</span> decisión.</p>
+  <footer>→ siguiente: abre <span class="k">exercises/</span> y construye la pieza.</footer>
+</section>
+<script>
+  gsap.utils.toArray('section').forEach(s => {
+    gsap.from(s.children, { opacity:0, y:24, duration:.6, stagger:.08,
+      scrollTrigger:{ trigger:s, start:'top 70%' } });
+  });
+  document.querySelectorAll('section').forEach(s =>
+    gsap.from(s.children, {opacity:0, y:20, duration:.5, stagger:.07,
+      onStart(){}, scrollTrigger:undefined}));
+</script>
+</body>
+</html>

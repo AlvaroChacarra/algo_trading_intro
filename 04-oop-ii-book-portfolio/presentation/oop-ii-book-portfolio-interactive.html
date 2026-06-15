@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OOP II — OrderBook y PositionTracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+  :root {
+    --bg:#09090b; --panel:#101014; --fg:#f4f4f5; --muted:#a1a1aa;
+    --accent:#22d3ee; --green:#4ade80; --red:#f87171; --line:#27272a;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--fg); font-family:'Inter',sans-serif;
+         scroll-snap-type:y mandatory; overflow-y:scroll; height:100vh; }
+  section { min-height:100vh; scroll-snap-align:start; display:flex; flex-direction:column;
+            justify-content:center; padding:8vh 7vw; border-bottom:1px solid var(--line); }
+  .tag { color:var(--accent); font-weight:600; letter-spacing:.12em; text-transform:uppercase;
+         font-size:.8rem; margin-bottom:1.2rem; }
+  h1 { font-size:clamp(2.2rem,6vw,4rem); font-weight:800; line-height:1.05; }
+  h2 { font-size:clamp(1.6rem,4vw,2.6rem); font-weight:800; margin-bottom:1.2rem; }
+  p { color:var(--muted); font-size:clamp(1rem,2vw,1.25rem); max-width:60ch; line-height:1.6;
+      margin-top:1rem; }
+  .piece { display:inline-block; margin-top:2rem; padding:.5rem 1rem; border:1px solid var(--accent);
+           border-radius:8px; color:var(--accent); font-family:'JetBrains Mono',monospace; font-size:.95rem; }
+  pre { margin-top:1.5rem; background:var(--panel); border:1px solid var(--line); border-radius:10px;
+        padding:1.2rem 1.4rem; overflow-x:auto; font-family:'JetBrains Mono',monospace;
+        font-size:.95rem; color:#e4e4e7; line-height:1.55; max-width:70ch; }
+  .k { color:var(--accent); } .c { color:var(--muted); font-style:italic; }
+  .frase { font-size:clamp(1.3rem,3vw,2rem); color:var(--fg); font-weight:600; max-width:50ch; }
+  .dot { color:var(--accent); }
+  footer { color:var(--muted); font-size:.85rem; margin-top:3rem; font-family:'JetBrains Mono',monospace; }
+</style>
+</head>
+<body>
+<section>
+  <div class="tag">Clase 4 · Algo Trading · ICAI 2026</div>
+  <h1>OOP II — OrderBook y PositionTracker</h1>
+  <p>Construir el libro como objeto que contiene niveles, con métricas como métodos. Y un PositionTracker que consume objetos Fill. Aquí ves cómo los objetos se entrelazan.</p>
+  <span class="piece">Hoy construyes: clases OrderBook y PositionTracker (composición)</span>
+</section>
+<section>
+  <div class="tag">Bloque 1</div>
+  <h2>Un objeto que contiene objetos</h2>
+  <p>El OrderBook guarda dos listas (bids y asks). Esas cinco funciones de la clase 2 que recibían book ahora son métodos: book.spread(), book.mid().</p>
+  <pre>class OrderBook:
+    def __init__(self, bids, asks):
+        self.bids = bids   # [(price, size), ...]
+        self.asks = asks</pre>
+</section><section>
+  <div class="tag">Bloque 2</div>
+  <h2>Estado privado y encapsulación</h2>
+  <p>El PositionTracker guarda _cash y _position con guión bajo: 'no me toques desde fuera, usa mis métodos'. apply_fill recibe un objeto Fill y actualiza el estado.</p>
+  <pre>class PositionTracker:
+    def __init__(self):
+        self._cash = 0.0
+        self._position = 0.0</pre>
+</section><section>
+  <div class="tag">Bloque 3</div>
+  <h2>Los objetos colaboran</h2>
+  <p>tracker.apply_fill(fill): el tracker no sabe de precios sueltos, sabe de Fills. equity(mark) marca el inventario a mercado. Cada pieza tiene una responsabilidad.</p>
+  <pre>    def equity(self, mark_price):
+        return self._cash + self._position * mark_price</pre>
+</section>
+<section>
+  <div class="tag">Cierre</div>
+  <p class="frase">Composición: un OrderBook contiene niveles; un PositionTracker consume Fills. Los objetos se hablan entre sí.</p>
+  <footer>→ siguiente: abre <span class="k">exercises/</span> y construye la pieza.</footer>
+</section>
+<script>
+  gsap.utils.toArray('section').forEach(s => {
+    gsap.from(s.children, { opacity:0, y:24, duration:.6, stagger:.08,
+      scrollTrigger:{ trigger:s, start:'top 70%' } });
+  });
+  document.querySelectorAll('section').forEach(s =>
+    gsap.from(s.children, {opacity:0, y:20, duration:.5, stagger:.07,
+      onStart(){}, scrollTrigger:undefined}));
+</script>
+</body>
+</html>
