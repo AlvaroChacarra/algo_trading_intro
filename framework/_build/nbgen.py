@@ -22,16 +22,20 @@ def md(text: str) -> dict:
     return {"cell_type": "markdown", "metadata": {}, "source": text.splitlines(keepends=True)}
 
 
-def code(text: str) -> dict:
-    return {"cell_type": "code", "metadata": {}, "execution_count": None,
+def code(text: str, hidden: bool = False) -> dict:
+    # hidden=True pliega el código fuente de la celda en Jupyter (source_hidden):
+    # se ejecuta igual, pero aparece como una pestañita que se puede desplegar.
+    meta = {"jupyter": {"source_hidden": True}} if hidden else {}
+    return {"cell_type": "code", "metadata": meta, "execution_count": None,
             "outputs": [], "source": text.rstrip("\n").splitlines(keepends=True)}
 
 
 def _exercise_cells(ex: dict) -> list[dict]:
     cells = []
-    head = f"## {ex['title']}\n\n**Practicas:** {ex['practice']}.\n\n{ex['statement']}"
+    head = f"### {ex['title']}\n\n{ex['statement']}"
     if ex.get("hint"):
-        head += f"\n\n**Pista:** {ex['hint']}"
+        head += f"\n\n> 💡 {ex['hint']}"
+    head += f"\n\n<sub>practicas: {ex['practice']}</sub>"
     cells.append(md(head))
 
     starter = ex.get("given", "")
@@ -39,8 +43,12 @@ def _exercise_cells(ex: dict) -> list[dict]:
         starter += "\n"
     starter += ex.get("starter", "# Escribe aquí\n")
     cells.append(code(starter))
-    cells.append(code(ex["validator"]))
-    cells.append(md(f"### Solución guiada\n\n```python\n{ex['solution'].rstrip()}\n```"))
+    # validador plegado (escondido pero ejecutable)
+    cells.append(code("# ✅ Comprobación — ejecútala (Shift+Enter). Está plegada a propósito.\n"
+                      + ex["validator"], hidden=True))
+    # solución oculta tras una pestaña desplegable
+    cells.append(md("<details>\n<summary>💡 Ver solución</summary>\n\n"
+                    f"```python\n{ex['solution'].rstrip()}\n```\n\n</details>"))
     return cells
 
 

@@ -122,13 +122,15 @@ def stage_package(n: int, dest_exercises: str) -> bool:
 
 def tiers_md(kind: str) -> str:
     if kind == "build":
-        return ("## Cómo usar este cuaderno\n\n"
-                "- **Núcleo (en clase):** ejercicios 1 a 3.\n"
-                "- **Si vamos bien:** ejercicios 4 en adelante.\n"
-                "- **Casa / auxiliares:** el cuaderno `*_auxiliary.ipynb`.\n\n"
-                "Inténtalo, ejecuta la comprobación (`assert`) y mira la solución solo si te atascas.")
-    return ("## Ejercicios auxiliares\n\n"
-            "Profundización opcional para consolidar fuera de clase. No hacen falta para seguir el curso.")
+        return ("### Cómo funciona este cuaderno\n\n"
+                "1. Escribe tu respuesta en la celda de código.\n"
+                "2. Debajo hay una **✅ comprobación plegada**: ejecútala con `Shift+Enter` para validarte "
+                "(despliégala si quieres ver el `assert`).\n"
+                "3. ¿Atascado? Abre **💡 Ver solución**.\n\n"
+                "**Núcleo:** ej. 1–3 · **Si vamos bien:** el resto · **Más:** el cuaderno de auxiliares.")
+    return ("### Auxiliares\n\n"
+            "Profundización opcional, mismo formato: comprobación plegada + solución desplegable. "
+            "No hacen falta para seguir el curso.")
 
 
 def _strip_html(text: str) -> str:
@@ -233,10 +235,30 @@ def emit(lesson: dict) -> None:
             f.write(nbgen.build_html(lesson))
 
     # notebooks
-    intro = (f"# Clase {lesson['n']} — {lesson['title']}\n\n{lesson['objective']}\n\n"
+    intro = (f"# 🐍 Clase {lesson['n']} · {lesson['title']}\n\n"
+             f"> {lesson['objective']}\n\n"
              f"**Hoy construyes:** {lesson['piece']}.")
     build_nb = nbgen.build_notebook(intro, tiers_md("build"), lesson["build"],
                                     closing_build(lesson))
+
+    # .py consolidado: que el alumno vea código en un archivo, no solo en celdas
+    if lesson.get("script"):
+        sname = lesson["script_name"]
+        with open(os.path.join(exer, sname), "w") as f:
+            f.write(lesson["script"])
+        build_nb["cells"] += [
+            nbgen.md(
+                "## 🚀 Llévatelo a un `.py`\n\n"
+                "Un notebook va genial para explorar, pero el código de verdad vive en archivos "
+                f"`.py` que se ejecutan enteros de una vez. Abre **`{sname}`**: es lo que acabas de "
+                "construir, ordenado en funciones reutilizables.\n\n"
+                "Ejecútalo desde una terminal:\n\n"
+                f"```bash\npython {sname}\n```\n\n"
+                "…o aquí mismo, en la siguiente celda:"),
+            nbgen.code(f"!python {sname}"),
+            nbgen.md("> En la **clase 3** esas funciones darán el salto a **clases** (POO): "
+                     "el mismo código, mejor organizado."),
+        ]
     nbgen.write_notebook(os.path.join(exer, f"{lesson['n']:02d}_build_exercises.ipynb"), build_nb)
 
     aux_intro = (f"# Clase {lesson['n']} — Auxiliares\n\nProfundización opcional sobre "
