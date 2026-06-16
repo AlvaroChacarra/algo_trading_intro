@@ -38,10 +38,12 @@ de la clase `Order` en L3. Los dicts de hoy son los objetos de pasado mañana.
 ## Ejercicios de construcción
 
 - **1. Enciende el mercado** — variables
-- **2. Pon precio al snapshot** — aritmética
-- **3. Crea tu primera orden** — diccionarios
-- **4. Abre el libro** — listas de dicts
-- **5. Mide la presión** — for e if
+- **2. Spread y mid** — operaciones y tipos
+- **3. Una lista de mids** — listas e indexing
+- **4. Media con un bucle** — for y acumuladores
+- **5. Una orden, y cómo leerla** — diccionarios: crear y acceder
+- **6. Clasifica el mercado** — if / elif / else
+- **7. Tu primer algoritmo** — dato → cálculo → decisión
 
 ## Estructura de la carpeta
 
