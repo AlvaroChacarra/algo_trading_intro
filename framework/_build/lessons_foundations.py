@@ -192,54 +192,128 @@ LESSONS.append({
          "# book + book + book en cada función...\n# -> next class: book.add(order)"),
     ],
     "build": [
-        {"title": "1. Fábrica de órdenes", "practice": "funciones que devuelven dicts",
-         "statement": "Escribe `make_order(symbol, side, price, size)` que devuelva el dict de orden.",
+        {"title": "1. Tu fábrica de órdenes", "practice": "funciones que devuelven datos",
+         "statement": "Escribe `make_order(symbol, side, price, size)` que **devuelva** el dict de la orden. Una función-fábrica: la llamas con distintos datos y te construye la orden.",
+         "hint": "El cuerpo es un solo `return` con el dict.",
          "starter": "def make_order(symbol, side, price, size):\n    pass\n",
-         "validator": "o = make_order('BTCUSDT','buy',100,0.5)\nassert o == {'symbol':'BTCUSDT','side':'buy','price':100,'size':0.5}\nprint('ok')",
+         "validator": "o = make_order('BTCUSDT','buy',99950,0.10)\nassert o == {'symbol':'BTCUSDT','side':'buy','price':99950,'size':0.10}\nprint('ok')",
          "solution": "def make_order(symbol, side, price, size):\n    return {'symbol': symbol, 'side': side, 'price': price, 'size': size}"},
-        {"title": "2. Añade al libro", "practice": "mutar una lista",
-         "statement": "Escribe `add_order(book, order)` que añada la orden y devuelva el libro.",
+        {"title": "2. Añade al libro", "practice": "listas: append",
+         "statement": "Escribe `add_order(book, order)` que añada la orden al libro y lo **devuelva**.",
+         "hint": "`book.append(order)` y luego `return book`.",
          "starter": "def add_order(book, order):\n    pass\n",
          "validator": "b = add_order([], {'side':'buy'})\nassert b == [{'side':'buy'}]\nprint('ok')",
          "solution": "def add_order(book, order):\n    book.append(order)\n    return book"},
-        {"title": "3. Cancela por id", "practice": "filtrar una lista",
-         "statement": "Escribe `cancel_order(book, order_id)` que devuelva un libro sin la orden cuyo `id` coincide.",
+        {"title": "3. Cancela una orden", "practice": "filtrar (comprensión de lista)",
+         "statement": "Escribe `cancel_order(book, order_id)` que devuelva un libro **nuevo** sin la orden cuyo `id` coincide.",
+         "hint": "Quédate solo con las órdenes cuyo `id` es distinto.",
          "given": "book = [{'id':1,'side':'buy'},{'id':2,'side':'sell'}]\n",
          "starter": "def cancel_order(book, order_id):\n    pass\n",
          "validator": "out = cancel_order(book, 1)\nassert out == [{'id':2,'side':'sell'}]\nprint('ok')",
          "solution": "def cancel_order(book, order_id):\n    return [o for o in book if o['id'] != order_id]"},
-        {"title": "4. Mejor bid y mejor ask", "practice": "recorrer con condición",
-         "statement": "Escribe `best_bid(book)` y `best_ask(book)` (precio buy más alto, sell más bajo).",
+        {"title": "4. Mejor bid y mejor ask", "practice": "max / min con filtro",
+         "statement": "Escribe `best_bid(book)` (precio de compra más **alto**) y `best_ask(book)` (precio de venta más **bajo**).",
          "given": "book = [{'side':'buy','price':99980},{'side':'sell','price':100010},{'side':'buy','price':99990}]\n",
          "starter": "def best_bid(book):\n    pass\n\ndef best_ask(book):\n    pass\n",
          "validator": "assert best_bid(book) == 99990\nassert best_ask(book) == 100010\nprint('ok')",
          "solution": "def best_bid(book):\n    return max(o['price'] for o in book if o['side']=='buy')\n\ndef best_ask(book):\n    return min(o['price'] for o in book if o['side']=='sell')"},
-        {"title": "5. Imbalance del libro", "practice": "ratio compra/venta",
-         "statement": "Escribe `imbalance(book)` = (vol_buy - vol_sell) / (vol_buy + vol_sell), en [-1, 1].",
+        {"title": "5. Imbalance del libro", "practice": "presión compra/venta",
+         "statement": "Escribe `imbalance(book)` = (vol_compra − vol_venta) / (vol_compra + vol_venta), en [−1, 1]. Cerca de +1 = empuja a comprar.",
          "given": "book = [{'side':'buy','size':3},{'side':'sell','size':1}]\n",
          "starter": "def imbalance(book):\n    pass\n",
          "validator": "assert abs(imbalance(book) - 0.5) < 1e-9, 'imbalance debe ser 0.5'\nprint('ok')",
          "solution": "def imbalance(book):\n    b = sum(o['size'] for o in book if o['side']=='buy')\n    s = sum(o['size'] for o in book if o['side']=='sell')\n    return (b - s) / (b + s)"},
+        {"title": "6. Spread y mid, componiendo funciones", "practice": "componer funciones",
+         "statement": "Usando `best_bid` y `best_ask` ya escritas, define `spread(book)` y `mid(book)`. Una función puede llamar a otras.",
+         "given": "def best_bid(book):\n    return max(o['price'] for o in book if o['side']=='buy')\ndef best_ask(book):\n    return min(o['price'] for o in book if o['side']=='sell')\nbook = [{'side':'buy','price':100},{'side':'sell','price':102}]\n",
+         "starter": "def spread(book):\n    pass\n\ndef mid(book):\n    pass\n",
+         "validator": "assert spread(book) == 2\nassert mid(book) == 101\nprint('ok')",
+         "solution": "def spread(book):\n    return best_ask(book) - best_bid(book)\n\ndef mid(book):\n    return (best_bid(book) + best_ask(book)) / 2"},
+        {"title": "7. Construye y lee tu libro", "practice": "juntar todas las funciones",
+         "statement": "Júntalo todo. Con `make_order` y `add_order`, monta un libro con: compra 99980 (0.10), compra 99990 (0.20), venta 100010 (0.15). Luego léelo: guarda `bb = best_bid`, `sp = spread (best_ask − best_bid)` e `imb = imbalance`.",
+         "hint": "Empieza `book = []` y añade tres órdenes.",
+         "given": "def make_order(symbol, side, price, size):\n    return {'symbol': symbol, 'side': side, 'price': price, 'size': size}\ndef add_order(book, order):\n    book.append(order); return book\ndef best_bid(book):\n    return max(o['price'] for o in book if o['side']=='buy')\ndef best_ask(book):\n    return min(o['price'] for o in book if o['side']=='sell')\ndef imbalance(book):\n    b=sum(o['size'] for o in book if o['side']=='buy'); s=sum(o['size'] for o in book if o['side']=='sell'); return (b-s)/(b+s)\n",
+         "starter": "book = []\n# anade 3 ordenes y calcula bb, sp, imb\n",
+         "validator": "assert bb == 99990, 'best_bid debe ser 99990'\nassert abs(sp - 20) < 1e-9, 'spread debe ser 20'\nassert abs(imb - 1/3) < 1e-9, 'imbalance debe ser 0.333...'\nprint('ok  libro leido ->', bb, sp, round(imb,3))",
+         "solution": "book = []\nbook = add_order(book, make_order('BTCUSDT','buy',99980,0.10))\nbook = add_order(book, make_order('BTCUSDT','buy',99990,0.20))\nbook = add_order(book, make_order('BTCUSDT','sell',100010,0.15))\nbb = best_bid(book)\nsp = best_ask(book) - best_bid(book)\nimb = imbalance(book)"},
     ],
     "aux": [
-        {"title": "A1. Spread y mid", "practice": "componer funciones",
-         "statement": "Usando best_bid/best_ask, escribe `spread(book)` y `mid(book)`.",
-         "given": "def best_bid(book):\n    return max(o['price'] for o in book if o['side']=='buy')\ndef best_ask(book):\n    return min(o['price'] for o in book if o['side']=='sell')\nbook = [{'side':'buy','price':100},{'side':'sell','price':102}]\n",
-         "starter": "def spread(book):\n    pass\ndef mid(book):\n    pass\n",
-         "validator": "assert spread(book) == 2\nassert mid(book) == 101\nprint('ok')",
-         "solution": "def spread(book):\n    return best_ask(book) - best_bid(book)\ndef mid(book):\n    return (best_bid(book) + best_ask(book)) / 2"},
-        {"title": "A2. Nocional total", "practice": "acumular sobre el libro",
-         "statement": "Escribe `total_notional(book)` = suma de price*size de todas las órdenes.",
+        {"title": "A1. Nocional total del libro", "practice": "acumular sobre el libro",
+         "statement": "Escribe `total_notional(book)` = suma de `price * size` de todas las órdenes.",
          "given": "book = [{'price':100,'size':0.5},{'price':200,'size':0.25}]\n",
          "starter": "def total_notional(book):\n    pass\n",
          "validator": "assert abs(total_notional(book) - 100) < 1e-9\nprint('ok')",
          "solution": "def total_notional(book):\n    return sum(o['price'] * o['size'] for o in book)"},
-        {"title": "A3. Cuenta el problema", "practice": "reflexión + conteo",
-         "statement": "Define `funcs_que_reciben_book = 5` (add, cancel, best_bid, best_ask, imbalance). En la próxima clase, todas serán métodos de un objeto `OrderBook`.",
-         "starter": "funcs_que_reciben_book = None\n",
-         "validator": "assert funcs_que_reciben_book == 5\nprint('ok — eso es composición pidiendo una clase')",
-         "solution": "funcs_que_reciben_book = 5"},
+        {"title": "A2. Órdenes con seguridad", "practice": "validar en una función",
+         "statement": "Haz que `make_order` lance `ValueError` si `side` no es `'buy'` ni `'sell'`. Las funciones también protegen tus datos.",
+         "starter": "def make_order(symbol, side, price, size):\n    pass\n",
+         "validator": "try:\n    make_order('X','byu',1,1)\n    raise SystemExit('deberia haber fallado')\nexcept ValueError:\n    pass\nassert make_order('X','buy',1,1)['side'] == 'buy'\nprint('ok')",
+         "solution": "def make_order(symbol, side, price, size):\n    if side not in ('buy','sell'):\n        raise ValueError('side debe ser buy o sell')\n    return {'symbol': symbol, 'side': side, 'price': price, 'size': size}"},
+        {"title": "A3. Cuenta el problema", "practice": "reflexión → POO",
+         "statement": "¿Cuántas de tus funciones reciben `book` como primer argumento (add, cancel, best_bid, best_ask, imbalance, spread, mid)? Guárdalo en `funcs_con_book`. En la clase 3 todas serán **métodos** de un objeto `OrderBook`.",
+         "starter": "funcs_con_book = None\n",
+         "validator": "assert funcs_con_book == 7\nprint('ok -> un dato + las funciones que lo manosean = un OBJETO (clase 3)')",
+         "solution": "funcs_con_book = 7"},
     ],
+    "script_name": "order_book.py",
+    "script": '''# Clase 2 - El libro funcional, en un archivo .py
+# Las funciones que construiste en el notebook, mas un main que arma y lee un libro.
+# Ejecuta desde la terminal:  python order_book.py
+
+
+def make_order(symbol, side, price, size):   # ej. 1
+    return {"symbol": symbol, "side": side, "price": price, "size": size}
+
+
+def add_order(book, order):                  # ej. 2
+    book.append(order)
+    return book
+
+
+def cancel_order(book, order_id):            # ej. 3
+    return [o for o in book if o.get("id") != order_id]
+
+
+def best_bid(book):                          # ej. 4
+    return max(o["price"] for o in book if o["side"] == "buy")
+
+
+def best_ask(book):                          # ej. 4
+    return min(o["price"] for o in book if o["side"] == "sell")
+
+
+def spread(book):                            # ej. 6
+    return best_ask(book) - best_bid(book)
+
+
+def mid(book):                               # ej. 6
+    return (best_bid(book) + best_ask(book)) / 2
+
+
+def imbalance(book):                         # ej. 5
+    buy = sum(o["size"] for o in book if o["side"] == "buy")
+    sell = sum(o["size"] for o in book if o["side"] == "sell")
+    return (buy - sell) / (buy + sell)
+
+
+def main():                                  # ej. 7: construir y leer el libro
+    book = []
+    book = add_order(book, make_order("BTCUSDT", "buy", 99980, 0.10))
+    book = add_order(book, make_order("BTCUSDT", "buy", 99990, 0.20))
+    book = add_order(book, make_order("BTCUSDT", "sell", 100010, 0.15))
+
+    print("ordenes:", len(book))
+    print("best_bid:", best_bid(book))
+    print("best_ask:", best_ask(book))
+    print("spread:", spread(book))
+    print("mid:", mid(book))
+    print("imbalance:", round(imbalance(book), 4))
+    # Fijate: TODAS estas funciones reciben book. En la clase 3, book sera un objeto.
+
+
+if __name__ == "__main__":
+    main()
+''',
 })
 
 # ---------------------------------------------------------------------------

@@ -17,17 +17,25 @@ de ser un dato pasivo y se convierta en un **objeto con métodos**. Ese es el pu
 **funciones add_order / cancel / imbalance**
 
 Funciones puras que construyen y transforman datos: `make_order`, `add_order(book, order)`,
-`cancel_order(book, id)`, `best_bid/best_ask(book)`, `imbalance(book)`. Todas reciben `book`
-explícitamente — anticipan exactamente los métodos de `OrderBook` en L4 (`book.best_bid()`,
-`book.imbalance()`). Cero clases: el objetivo es *sentir el dolor* del estado compartido.
+`cancel_order(book, id)`, `best_bid/best_ask(book)`, `spread/mid(book)`, `imbalance(book)`. Todas
+reciben `book` explícitamente — anticipan exactamente los métodos de `OrderBook` en L4
+(`book.best_bid()`, `book.imbalance()`). Cero clases: el objetivo es *sentir el dolor* del estado
+compartido.
+
+El deck a medida (Pyodide) trae un **libro vivo** interactivo: añades/cancelas órdenes y ves
+best_bid/ask, spread, mid e imbalance reaccionar. El núcleo son 7 ejercicios que culminan en
+"construye y lee tu libro"; el auxiliar cuenta cuántas funciones reciben `book` (7 → puente a
+POO). `order_book.py` consolida las funciones + un `main` 1:1 con el núcleo.
 
 ## Ejercicios de construcción
 
-- **1. Fábrica de órdenes** — funciones que devuelven dicts
-- **2. Añade al libro** — mutar una lista
-- **3. Cancela por id** — filtrar una lista
-- **4. Mejor bid y mejor ask** — recorrer con condición
-- **5. Imbalance del libro** — ratio compra/venta
+- **1. Tu fábrica de órdenes** — funciones que devuelven datos
+- **2. Añade al libro** — listas: append
+- **3. Cancela una orden** — filtrar (comprensión de lista)
+- **4. Mejor bid y mejor ask** — max / min con filtro
+- **5. Imbalance del libro** — presión compra/venta
+- **6. Spread y mid, componiendo funciones** — componer funciones
+- **7. Construye y lee tu libro** — juntar todas las funciones
 
 ## Estructura de la carpeta
 

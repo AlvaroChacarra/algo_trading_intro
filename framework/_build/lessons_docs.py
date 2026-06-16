@@ -42,9 +42,15 @@ El momento clave es pedagógico: cuando cinco funciones distintas reciben todas 
 `book` como primer argumento y lo manosean, el código está pidiendo a gritos que `book` deje
 de ser un dato pasivo y se convierta en un **objeto con métodos**. Ese es el puente a OOP.""",
 "technical": """Funciones puras que construyen y transforman datos: `make_order`, `add_order(book, order)`,
-`cancel_order(book, id)`, `best_bid/best_ask(book)`, `imbalance(book)`. Todas reciben `book`
-explícitamente — anticipan exactamente los métodos de `OrderBook` en L4 (`book.best_bid()`,
-`book.imbalance()`). Cero clases: el objetivo es *sentir el dolor* del estado compartido.""",
+`cancel_order(book, id)`, `best_bid/best_ask(book)`, `spread/mid(book)`, `imbalance(book)`. Todas
+reciben `book` explícitamente — anticipan exactamente los métodos de `OrderBook` en L4
+(`book.best_bid()`, `book.imbalance()`). Cero clases: el objetivo es *sentir el dolor* del estado
+compartido.
+
+El deck a medida (Pyodide) trae un **libro vivo** interactivo: añades/cancelas órdenes y ves
+best_bid/ask, spread, mid e imbalance reaccionar. El núcleo son 7 ejercicios que culminan en
+"construye y lee tu libro"; el auxiliar cuenta cuántas funciones reciben `book` (7 → puente a
+POO). `order_book.py` consolida las funciones + un `main` 1:1 con el núcleo.""",
 },
 3: {
 "theory": """Programación orientada a objetos: una **clase** es una plantilla; un **objeto** es una
