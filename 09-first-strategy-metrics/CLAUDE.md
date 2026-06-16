@@ -29,7 +29,7 @@ L1–L9: el motor está completo y se puede medir. Checkpoint integrador.
 ## Cuaderno de construcción
 
 Patrón por ejercicio: enunciado → starter (`pass`/`None`) → validador (`assert` con mensaje claro, tolerancia `1e-9`) → solución guiada embebida.
-Tiers: **Núcleo** = ej. 1-3 (en clase), **Si vamos bien** = resto, **Auxiliares** = cuaderno `09_auxiliary.ipynb`.
+Tiers: **Núcleo** = los primeros (en clase), **Si vamos bien** = el resto, **Auxiliares** = cuaderno `09_auxiliary.ipynb`.
 
 El contenido se genera desde `framework/_build/` — para editar esta clase, edita su spec y regenera con `build_course.py`. No edites a mano los notebooks.
 

@@ -127,7 +127,7 @@ def tiers_md(kind: str) -> str:
                 "2. Debajo hay una **✅ comprobación plegada**: ejecútala con `Shift+Enter` para validarte "
                 "(despliégala si quieres ver el `assert`).\n"
                 "3. ¿Atascado? Abre **💡 Ver solución**.\n\n"
-                "**Núcleo:** ej. 1–3 · **Si vamos bien:** el resto · **Más:** el cuaderno de auxiliares.")
+                "**Núcleo:** los primeros (en clase) · **Si vamos bien:** el resto · **Más:** el cuaderno de auxiliares.")
     return ("### Auxiliares\n\n"
             "Profundización opcional, mismo formato: comprobación plegada + solución desplegable. "
             "No hacen falta para seguir el curso.")
@@ -168,7 +168,7 @@ def claude_md(lesson: dict, has_pkg: bool) -> str:
             f"## Cuaderno de construcción\n\n"
             f"Patrón por ejercicio: enunciado → starter (`pass`/`None`) → validador (`assert` con "
             f"mensaje claro, tolerancia `1e-9`) → solución guiada embebida.\n"
-            f"Tiers: **Núcleo** = ej. 1-3 (en clase), **Si vamos bien** = resto, **Auxiliares** = "
+            f"Tiers: **Núcleo** = los primeros (en clase), **Si vamos bien** = el resto, **Auxiliares** = "
             f"cuaderno `{lesson['n']:02d}_auxiliary.ipynb`.\n\n"
             f"El contenido se genera desde `framework/_build/` — para editar esta clase, edita su "
             f"spec y regenera con `build_course.py`. No edites a mano los notebooks.\n\n"
