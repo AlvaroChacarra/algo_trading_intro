@@ -456,7 +456,7 @@ if __name__ == "__main__":
 # ---------------------------------------------------------------------------
 LESSONS.append({
     "n": 4, "slug": "04-oop-i-order-trade",
-    "title": "OOP I — Order y Trade",
+    "title": "OOP I — Order y Fill",
     "piece": "clases Order y Fill (exchange/orders.py, trades.py)",
     "objective": "Convertir el dict de orden en una clase Order con métodos, y modelar el resultado de un cruce con Fill. Primer módulo de verdad del paquete exchange.",
     "frase": "Un objeto empaqueta datos y comportamiento: la orden ya sabe calcular su nocional.",
@@ -472,49 +472,109 @@ LESSONS.append({
          "    def cash_flow(self):\n        sign = -1 if self.side=='buy' else 1\n        return sign * self.price * self.size"),
     ],
     "build": [
-        {"title": "1. La clase Order", "practice": "class e __init__",
-         "statement": "Define `Order` con `__init__(self, symbol, side, price, size)` que guarde los 4 como atributos.",
+        {"title": "1. La clase Order", "practice": "class, __init__ y self",
+         "statement": "Convierte el dict de orden en una clase. Define `Order` con `__init__(self, symbol, side, price, size)` que guarde los 4 como atributos (`self.symbol = symbol`, etc.).",
+         "hint": "`self` es el objeto que estás rellenando.",
          "starter": "class Order:\n    def __init__(self, symbol, side, price, size):\n        pass\n",
          "validator": "o = Order('BTCUSDT','buy',100,0.5)\nassert o.symbol=='BTCUSDT' and o.side=='buy' and o.price==100 and o.size==0.5\nprint('ok')",
          "solution": "class Order:\n    def __init__(self, symbol, side, price, size):\n        self.symbol = symbol\n        self.side = side\n        self.price = price\n        self.size = size"},
-        {"title": "2. Método notional", "practice": "métodos",
-         "statement": "Añade `notional(self)` que devuelva `price * size`.",
+        {"title": "2. Un método: notional", "practice": "el dato opera consigo mismo",
+         "statement": "Antes tenías `compute_notional(order)`. Ahora la orden lo hace sola: añade el método `notional(self)` que devuelva `price * size`.",
          "starter": "class Order:\n    def __init__(self, symbol, side, price, size):\n        self.symbol = symbol; self.side = side\n        self.price = price; self.size = size\n    def notional(self):\n        pass\n",
          "validator": "o = Order('X','buy',100,0.5)\nassert abs(o.notional() - 50) < 1e-9\nprint('ok')",
          "solution": "class Order:\n    def __init__(self, symbol, side, price, size):\n        self.symbol = symbol; self.side = side\n        self.price = price; self.size = size\n    def notional(self):\n        return self.price * self.size"},
-        {"title": "3. __repr__ legible", "practice": "dunder methods",
-         "statement": "Añade `__repr__(self)` que devuelva, p.ej., `'Order(buy 0.5 X @ 100)'`.",
+        {"title": "3. __repr__: que sepa describirse", "practice": "dunder methods",
+         "statement": "Añade `__repr__(self)` que devuelva, p.ej., `'Order(buy 0.5 X @ 100)'`. Así el objeto se imprime legible.",
          "starter": "class Order:\n    def __init__(self, symbol, side, price, size):\n        self.symbol=symbol; self.side=side; self.price=price; self.size=size\n    def __repr__(self):\n        pass\n",
          "validator": "o = Order('X','buy',100,0.5)\nassert repr(o) == 'Order(buy 0.5 X @ 100)', repr(o)\nprint('ok')",
          "solution": "class Order:\n    def __init__(self, symbol, side, price, size):\n        self.symbol=symbol; self.side=side; self.price=price; self.size=size\n    def __repr__(self):\n        return f'Order({self.side} {self.size} {self.symbol} @ {self.price})'"},
-        {"title": "4. La clase Fill", "practice": "segunda clase + método",
-         "statement": "Define `Fill(symbol, side, price, size)` con método `cash_flow()` (buy negativo, sell positivo).",
+        {"title": "4. La clase Fill y su cash_flow", "practice": "segunda clase + signo",
+         "statement": "Cuando una orden se ejecuta, genera un `Fill`. Define `Fill(symbol, side, price, size)` con `cash_flow()`: **negativo** si compras (sale caja), **positivo** si vendes.",
          "starter": "class Fill:\n    def __init__(self, symbol, side, price, size):\n        pass\n    def cash_flow(self):\n        pass\n",
-         "validator": "assert abs(Fill('X','buy',100,0.5).cash_flow() + 50) < 1e-9\nassert abs(Fill('X','sell',100,0.5).cash_flow() - 50) < 1e-9\nprint('ok')",
+         "validator": "assert abs(Fill('X','buy',100,0.5).cash_flow() + 50) < 1e-9, 'compra -> -50'\nassert abs(Fill('X','sell',100,0.5).cash_flow() - 50) < 1e-9, 'venta -> +50'\nprint('ok')",
          "solution": "class Fill:\n    def __init__(self, symbol, side, price, size):\n        self.symbol=symbol; self.side=side; self.price=price; self.size=size\n    def cash_flow(self):\n        sign = -1 if self.side=='buy' else 1\n        return sign * self.price * self.size"},
-        {"title": "5. Úsalas juntas", "practice": "instanciar y operar",
-         "statement": "Crea una `Order` de compra y un `Fill` de esa compra; guarda el cash_flow en `flow`.",
-         "given": "class Order:\n    def __init__(self,symbol,side,price,size):\n        self.symbol=symbol;self.side=side;self.price=price;self.size=size\nclass Fill:\n    def __init__(self,symbol,side,price,size):\n        self.symbol=symbol;self.side=side;self.price=price;self.size=size\n    def cash_flow(self):\n        return (-1 if self.side=='buy' else 1)*self.price*self.size\n",
-         "starter": "order = None\nfill = None\nflow = None\n",
-         "validator": "assert isinstance(order, Order) and isinstance(fill, Fill)\nassert abs(flow + order.notional() if hasattr(order,'notional') else flow + 50) < 1e-9 or abs(flow + 50) < 1e-9\nprint('ok')",
-         "solution": "order = Order('BTCUSDT','buy',100,0.5)\nfill = Fill('BTCUSDT','buy',100,0.5)\nflow = fill.cash_flow()  # -50.0"},
+        {"title": "5. Instánciala y opérala", "practice": "crear objetos y llamar métodos",
+         "statement": "Crea una `Order` de compra (BTCUSDT, 100, 0.5). Guarda su `nocional` (`order.notional()`) y su `texto` (`repr(order)`).",
+         "given": "class Order:\n    def __init__(self, symbol, side, price, size):\n        self.symbol=symbol; self.side=side; self.price=price; self.size=size\n    def notional(self):\n        return self.price*self.size\n    def __repr__(self):\n        return f'Order({self.side} {self.size} {self.symbol} @ {self.price})'\n",
+         "starter": "order = None\nnocional = None\ntexto = None\n",
+         "validator": "assert isinstance(order, Order)\nassert abs(nocional - 50) < 1e-9\nassert texto == 'Order(buy 0.5 BTCUSDT @ 100)', texto\nprint('ok ', texto)",
+         "solution": "order = Order('BTCUSDT','buy',100,0.5)\nnocional = order.notional()\ntexto = repr(order)"},
+        {"title": "6. De la orden al dinero", "practice": "juntar Order, Fill y cash_flow",
+         "statement": "Modela una vuelta completa: compras 0.5 @ 100 y luego vendes 0.5 @ 110. Crea los dos `Fill` y guarda `total_cash` = suma de sus `cash_flow()`.",
+         "hint": "Compra resta (-50), venta suma (+55) -> total +5.",
+         "given": "class Fill:\n    def __init__(self, symbol, side, price, size):\n        self.symbol=symbol; self.side=side; self.price=price; self.size=size\n    def cash_flow(self):\n        return (-1 if self.side=='buy' else 1)*self.price*self.size\n",
+         "starter": "buy = None\nsell = None\ntotal_cash = None\n",
+         "validator": "assert abs(total_cash - 5.0) < 1e-9, 'compra -50, venta +55 -> +5'\nprint('ok  total_cash=%.1f' % total_cash)",
+         "solution": "buy = Fill('BTCUSDT','buy',100,0.5)\nsell = Fill('BTCUSDT','sell',110,0.5)\ntotal_cash = buy.cash_flow() + sell.cash_flow()"},
     ],
     "aux": [
         {"title": "A1. Lados con seguridad", "practice": "validar en __init__",
-         "statement": "Haz que `Order.__init__` lance `ValueError` si `side` no es 'buy' ni 'sell'.",
+         "statement": "Haz que `Order.__init__` lance `ValueError` si `side` no es 'buy' ni 'sell'. Un objeto puede proteger sus propios datos.",
          "starter": "class Order:\n    def __init__(self, symbol, side, price, size):\n        pass\n",
-         "validator": "try:\n    Order('X','byu',1,1); raise SystemExit('deberia fallar')\nexcept ValueError:\n    print('ok')",
+         "validator": "try:\n    Order('X','byu',1,1); raise SystemExit('deberia fallar')\nexcept ValueError:\n    pass\nassert Order('X','buy',1,1).side == 'buy'\nprint('ok')",
          "solution": "class Order:\n    def __init__(self, symbol, side, price, size):\n        if side not in ('buy','sell'):\n            raise ValueError('side debe ser buy o sell')\n        self.symbol=symbol; self.side=side; self.price=price; self.size=size"},
-        {"title": "A2. El paquete real", "practice": "usar exchange.orders",
-         "statement": "Importa `Order` y `Side` de `exchange.orders` y crea una orden de compra. Comprueba `order.notional()`.",
+        {"title": "A2. El Order real del paquete", "practice": "usar exchange.orders",
+         "statement": "Importa `Order` y `Side` de `exchange.orders` (la versión pulida que arrastrarás todo el curso) y crea una orden de compra. Comprueba `order.notional()`.",
          "starter": "from exchange.orders import Order, Side\norder = None\n",
          "validator": "from exchange.orders import Order\nassert isinstance(order, Order)\nassert abs(order.notional() - order.price*order.size) < 1e-9\nprint('ok')",
          "solution": "from exchange.orders import Order, Side\norder = Order('BTCUSDT', Side.BUY, 0.5, price=100)"},
+        {"title": "A3. Side como Enum", "practice": "enums seguros",
+         "statement": "Importa `Side` de `exchange.orders`. Comprueba que `Side.BUY` se compara con el texto `'buy'` (hereda de str) pero evita errores como `'byu'`. Guarda `es_buy = (Side.BUY == 'buy')`.",
+         "starter": "from exchange.orders import Side\nes_buy = None\n",
+         "validator": "from exchange.orders import Side\nassert es_buy is True\nprint('ok  Side.BUY ==', Side.BUY.value)",
+         "solution": "from exchange.orders import Side\nes_buy = (Side.BUY == 'buy')"},
     ],
+    "script_name": "orders_demo.py",
+    "script": '''# orders_demo.py - clase 4: el dict de orden se vuelve un OBJETO.
+# Datos + comportamiento juntos. Ejecuta:  python orders_demo.py
+
+
+class Order:
+    def __init__(self, symbol, side, price, size):   # ej. 1
+        self.symbol = symbol
+        self.side = side
+        self.price = price
+        self.size = size
+
+    def notional(self):                              # ej. 2
+        return self.price * self.size
+
+    def __repr__(self):                              # ej. 3
+        return f"Order({self.side} {self.size} {self.symbol} @ {self.price})"
+
+
+class Fill:
+    def __init__(self, symbol, side, price, size):   # ej. 4
+        self.symbol = symbol
+        self.side = side
+        self.price = price
+        self.size = size
+
+    def cash_flow(self):
+        sign = -1 if self.side == "buy" else 1
+        return sign * self.price * self.size
+
+
+def main():                                          # ej. 5 y 6
+    order = Order("BTCUSDT", "buy", 99950, 0.10)
+    print(order)
+    print("notional:", order.notional())
+
+    buy = Fill("BTCUSDT", "buy", 99950, 0.10)
+    sell = Fill("BTCUSDT", "sell", 100050, 0.10)
+    print("cash compra:", buy.cash_flow())
+    print("cash venta:", sell.cash_flow())
+    print("total:", round(buy.cash_flow() + sell.cash_flow(), 2))
+    # Quien suma todos los cash_flows en el tiempo? El PositionTracker (clase 5).
+
+
+if __name__ == "__main__":
+    main()
+''',
 })
 
 # ---------------------------------------------------------------------------
-# L4 — OOP II — OrderBook y PositionTracker
+# L5 — OOP II — OrderBook y PositionTracker
 # ---------------------------------------------------------------------------
 LESSONS.append({
     "n": 5, "slug": "05-oop-ii-book-portfolio",

@@ -1,4 +1,4 @@
-# Clase 4 — OOP I — Order y Trade (guía de implementación)
+# Clase 4 — OOP I — Order y Fill (guía de implementación)
 
 Pieza del framework: **clases Order y Fill (exchange/orders.py, trades.py)**.
 
@@ -20,8 +20,14 @@ Primeros módulos reales del paquete: `exchange/orders.py` (`Order`, `Side`, `Or
 `"buy"`/`"sell"` como antes, pero rechazan valores inválidos. `Order.notional()` reemplaza la
 función `compute_notional` de L1; `Fill.cash_flow()` formaliza el signo por lado.
 
+El deck a medida (Pyodide) trae el morph dict→clase, un **Order inspector** (cambias
+side/price/size y ves notional y `__repr__`) y un visualizador del **signo del cash_flow**. El
+núcleo son 6 ejercicios que culminan en "de la orden al dinero" (Order→Fill→cash_flow); el `.py`
+entregable es `orders_demo.py`.
+
 Continuidad: los atributos son los campos del dict de L1. En el cuaderno se construyen las
 clases *inline* (estilo L1-L2); el paquete `exchange/` las trae ya pulidas como referencia.
+Puente: una orden suelta; ¿quién suma los cash_flows y lleva la cuenta? El PositionTracker (L5).
 
 ## Presentación (3 bloques)
 
