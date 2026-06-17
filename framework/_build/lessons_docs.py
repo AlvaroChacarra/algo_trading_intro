@@ -283,8 +283,10 @@ ya dominada, no a presión.""",
 "technical": """Pura OOP, sin dependencias: una base abstracta `Strategy` con `@abstractmethod decide` y
 subclases que la implementan; un bucle polimórfico (`[s.decide(imb) for s in strategies]`).
 Conceptos: herencia, override, `super().__init__`, `ABC`/`@abstractmethod`, `isinstance`,
-polimorfismo. El `.py` entregable es `strategies_toy.py` (base + Momentum + Contrarian + bucle
-polimórfico). Puente directo a L10: ese `Strategy` de juguete se formaliza como la interfaz del
-framework y se enchufa al `Backtest`.""",
+polimorfismo. El deck a medida (Pyodide) trae un **simulador de polimorfismo** en vivo: mueves el
+imbalance y Momentum/Contrarian/Flat deciden cada uno lo suyo con la misma llamada. El `.py`
+entregable es `strategies_toy.py` (base + Momentum + Contrarian + bucle polimórfico). Puente
+directo a L10: ese `Strategy` de juguete se formaliza como la interfaz del framework y se enchufa
+al `Backtest`.""",
 },
 }
