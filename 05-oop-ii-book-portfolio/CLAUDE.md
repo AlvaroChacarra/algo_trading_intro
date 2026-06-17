@@ -23,6 +23,12 @@ Composición explícita: `OrderBook` contiene `Level`; `PositionTracker.apply_fi
 objetos `Fill` de L3. Aquí el alumno *ve* a los objetos hablándose entre sí — el objetivo
 declarado del curso.
 
+El deck a medida (Pyodide) trae un inspector del `OrderBook` (métricas como métodos) y un widget
+del `PositionTracker` (pulsas fills y ves cash/posición/equity, con slider de mark). El núcleo
+son 6 ejercicios que culminan en "los dos objetos, juntos"; el `.py` entregable es `book_demo.py`.
+Puente: ya creas (L4) y compones (L5) objetos; falta la última pieza de OOP — compartir un
+esqueleto entre muchos objetos: herencia (L6).
+
 ## Presentación (3 bloques)
 
 1. **Un objeto que contiene objetos** — El OrderBook guarda dos listas (bids y asks). Esas cinco funciones de la clase 2 que recibían book ahora son métodos: book.spread(), book.mid().
