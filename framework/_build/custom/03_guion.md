@@ -33,8 +33,8 @@ Presentación interactiva (Pyodide, con import en vivo desde el FS del navegador
 - **Salida:** "Una librería de verdad no se cae con un dato raro."
 
 ## Bloque 5 · El puente (3 min)
-- **Decir:** "Tu código ya es una librería. Pero el `book` (datos) y las funciones van por separado: `order_book.spread(book)`. ¿Y si el libro supiera hacerlo solo? `book.spread()`. Juntar datos + funciones = un OBJETO. Eso es la clase 4."
-- **Salida (puente):** "order_book.py se convertirá en la clase OrderBook."
+- **Decir:** "Tu código ya es una librería. Pero el `book` (datos) y las funciones van por separado: `order_book.spread(book)`. ¿Y si el libro supiera hacerlo solo? `book.spread()`. Juntar datos + funciones = un OBJETO. Esas funciones se vuelven la orden (`Order`, clase 4) y el libro (`OrderBook`, clase 5)."
+- **Salida (puente):** "order_book.py se vuelve objetos: Order (L4) y OrderBook (L5)."
 
 ## Mini test (3 min)
 - 5 A/B/C: módulo, from-import, try/except, __main__, raise.

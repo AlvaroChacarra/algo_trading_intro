@@ -119,7 +119,7 @@ pre,code{font-family:'JetBrains Mono',monospace;font-size:14px;}
         <div class="card">
           <div class="card-label">El objetivo de hoy</div>
           <p style="font-size:15px;">Un libro de órdenes vivo que puedas <span class="b">construir</span>, <span class="b">recortar</span> y <span class="b">leer</span> — todo con funciones que escribes tú.</p>
-          <div class="note cyan" style="margin-top:14px;">Y al final notarás algo raro: <b>todas</b> tus funciones reciben <code>book</code>. Esa pista abre la clase 3.</div>
+          <div class="note cyan" style="margin-top:14px;">Y al final notarás algo raro: <b>todas</b> tus funciones reciben <code>book</code>. Esa pista marca el camino de las próximas clases.</div>
         </div>
       </div>
     </div>
@@ -207,7 +207,7 @@ print(book)</textarea>
         <button class="run-btn">▶ Ejecutar</button>
       </div>
       <div class="output-box">Pulsa Ejecutar o Ctrl+Enter</div>
-      <div class="note cyan"><b>Honestidad:</b> <code>add_order</code> modifica el libro (lo muta); <code>cancel_order</code> devuelve uno nuevo. Mezclar las dos formas es fácil de liar… en la clase 3, el objeto lo gestionará por dentro y dejará de ser tu problema.</div>
+      <div class="note cyan"><b>Honestidad:</b> <code>add_order</code> modifica el libro (lo muta); <code>cancel_order</code> devuelve uno nuevo. Mezclar las dos formas es fácil de liar… más adelante, cuando esto sea un objeto, lo gestionará por dentro y dejará de ser tu problema.</div>
     </div>
   </div>
 </section>
@@ -270,7 +270,7 @@ imbalance(<span class="bk">book</span>)</div>
 <span class="bk">book</span>.best_bid()
 <span class="bk">book</span>.best_ask()
 <span class="bk">book</span>.imbalance()</div>
-        <div class="note pink">Cuando un dato y las funciones que lo manosean siempre van juntos, están pidiendo ser <b>una sola cosa</b>: un <b>objeto</b>. Eso es la Programación Orientada a Objetos — y es <b>la clase 3</b>.</div>
+        <div class="note pink">Tienes muchas funciones que reciben <code>book</code> y se multiplican. El camino que viene: en la <b>clase 3</b> las sacas del notebook a un <b>módulo</b> reutilizable; en la <b>clase 4</b> el dato y sus funciones se funden en un <b>objeto</b> (eso es la POO).</div>
       </div>
     </div>
   </div>
@@ -295,9 +295,9 @@ imbalance(<span class="bk">book</span>)</div>
     <div class="timeline" style="max-width:900px;margin:28px auto 0;">
       <div class="timeline-card"><div class="timeline-num" style="background:rgba(34,211,238,.15);color:var(--cyan);">1</div><h3 style="font-size:14px;">Una función empaqueta y devuelve (return)</h3></div>
       <div class="timeline-card"><div class="timeline-num" style="background:rgba(34,211,238,.15);color:var(--cyan);">2</div><h3 style="font-size:14px;">Un libro es una lista: añadir, cancelar (filtrar), leer</h3></div>
-      <div class="timeline-card"><div class="timeline-num" style="background:rgba(244,114,182,.15);color:var(--pink);">★</div><h3 style="font-size:14px;">Todo recibe <code>book</code> → pide ser un objeto (clase 3)</h3></div>
+      <div class="timeline-card"><div class="timeline-num" style="background:rgba(244,114,182,.15);color:var(--pink);">★</div><h3 style="font-size:14px;">Todo recibe <code>book</code> → un módulo (L3) y luego un objeto (L4)</h3></div>
     </div>
-    <div class="note cyan" style="max-width:620px;margin:28px auto 0;text-align:left;">Ahora al notebook: construye el libro funcional con tus manos y mídelo. Y guárdalo en un <code>.py</code>: ese código es justo el que en la clase 3 se convertirá en una clase <code>OrderBook</code>.</div>
+    <div class="note cyan" style="max-width:620px;margin:28px auto 0;text-align:left;">Ahora al notebook: construye el libro funcional con tus manos y mídelo. Y guárdalo en un <code>.py</code>: en la <b>clase 3</b> lo sacarás a un módulo reutilizable, y de ahí (clases 4-5) se volverá un objeto.</div>
   </div>
 </section>
 

@@ -775,6 +775,12 @@ LESSONS.append({
          "starter": "fallo = None  # ponlo a True si Incompleta() lanza TypeError\n",
          "validator": "assert fallo is True\nprint('ok — la ABC te protege de subclases a medio hacer')",
          "solution": "try:\n    Incompleta()\n    fallo = False\nexcept TypeError:\n    fallo = True"},
+        {"title": "A3. Una estrategia con umbral", "practice": "subclase con parámetro (anticipa L10)",
+         "statement": "Define `ImbalanceStrategy(Strategy)` con un umbral `thr` en `__init__`: `decide(imbalance)` devuelve `'buy'` si `imbalance > thr`, `'sell'` si `< -thr`, si no `'hold'`. Es justo la idea que en la clase 11 se enchufa al motor.",
+         "given": "from abc import ABC, abstractmethod\nclass Strategy(ABC):\n    @abstractmethod\n    def decide(self, imbalance): ...\n",
+         "starter": "class ImbalanceStrategy(Strategy):\n    def __init__(self, thr=0.3):\n        pass\n    def decide(self, imbalance):\n        pass\n",
+         "validator": "s = ImbalanceStrategy(0.3)\nassert s.decide(0.5) == 'buy'\nassert s.decide(-0.5) == 'sell'\nassert s.decide(0.0) == 'hold'\nprint('ok')",
+         "solution": "class ImbalanceStrategy(Strategy):\n    def __init__(self, thr=0.3):\n        self.thr = thr\n    def decide(self, imbalance):\n        if imbalance > self.thr:\n            return 'buy'\n        if imbalance < -self.thr:\n            return 'sell'\n        return 'hold'"},
     ],
     "script_name": "strategies_toy.py",
     "script": '''# strategies_toy.py - tu primera familia de estrategias (clase 6).

@@ -216,11 +216,11 @@ print("con compra:", safe_best_bid([{"side": "buy", "price": 100}]))</textarea>
         <div class="file" style="min-width:0;"><div class="fn">order_book.spread(book)</div>la función y el dato, separados.</div>
       </div>
       <div class="card">
-        <div class="card-label alt">La clase 4</div>
+        <div class="card-label alt">Las clases 4 y 5</div>
         <div class="file" style="min-width:0;"><div class="fn alt">book.spread()</div>el dato y su comportamiento, juntos: un <b>objeto</b>.</div>
       </div>
     </div>
-    <div class="note pink">Juntar los datos con las funciones que los manosean en una sola cosa es la <b>Programación Orientada a Objetos</b>. Tu <code>order_book.py</code> se convertirá en la clase <code>OrderBook</code>. Eso es la clase 4.</div>
+    <div class="note pink">Juntar los datos con las funciones que los manosean en una sola cosa es la <b>Programación Orientada a Objetos</b>. Esas funciones de <code>order_book.py</code> se vuelven objetos: la <b>orden</b> (<code>Order</code>, clase 4) y el <b>libro</b> (<code>OrderBook</code>, clase 5).</div>
   </div>
 </section>
 
@@ -243,9 +243,9 @@ print("con compra:", safe_best_bid([{"side": "buy", "price": 100}]))</textarea>
     <div class="timeline" style="max-width:900px;margin:28px auto 0;">
       <div class="timeline-card"><div class="timeline-num" style="background:rgba(34,211,238,.15);color:var(--cyan);">1</div><h3 style="font-size:14px;">Un módulo (.py) se importa y se reutiliza</h3></div>
       <div class="timeline-card"><div class="timeline-num" style="background:rgba(34,211,238,.15);color:var(--cyan);">2</div><h3 style="font-size:14px;">try/except y raise: una librería no se cae</h3></div>
-      <div class="timeline-card"><div class="timeline-num" style="background:rgba(244,114,182,.15);color:var(--pink);">★</div><h3 style="font-size:14px;">datos + funciones juntos = objetos (clase 4)</h3></div>
+      <div class="timeline-card"><div class="timeline-num" style="background:rgba(244,114,182,.15);color:var(--pink);">★</div><h3 style="font-size:14px;">datos + funciones juntos = objetos (clases 4 y 5)</h3></div>
     </div>
-    <div class="note cyan" style="max-width:620px;margin:28px auto 0;text-align:left;">Al notebook: importa tu módulo, blíndalo con try/except, y ejecuta `main.py` que lo usa. Ese `order_book.py` será un objeto en la clase 4.</div>
+    <div class="note cyan" style="max-width:620px;margin:28px auto 0;text-align:left;">Al notebook: importa tu módulo, blíndalo con try/except, y ejecuta `main.py` que lo usa. Esas funciones se vuelven objetos: `Order` (clase 4) y `OrderBook` (clase 5).</div>
   </div>
 </section>
 

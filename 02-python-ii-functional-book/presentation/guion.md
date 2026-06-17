@@ -1,6 +1,6 @@
 # Guion — Clase 2: El libro funcional
 
-**Idea central:** organizamos el código con **funciones** y construimos un libro de órdenes (lista) que se puede añadir, cancelar y leer. Hilo único: el **`book`** y las funciones que lo manosean. Clímax: *todas reciben `book` → pide ser un objeto* (puente a L3).
+**Idea central:** organizamos el código con **funciones** y construimos un libro de órdenes (lista) que se puede añadir, cancelar y leer. Hilo único: el **`book`** y las funciones que lo manosean. Clímax: *todas reciben `book`* → el camino que viene es sacarlas a un **módulo** (L3) y luego volverlas un **objeto** (L4).
 
 Presentación interactiva (Pyodide + libro vivo en JS). ~18-20 min.
 
@@ -23,7 +23,7 @@ Presentación interactiva (Pyodide + libro vivo en JS). ~18-20 min.
 
 ## Bloque 3 · Cancelar = filtrar (3 min)
 - **Decir:** "Cancelar es quedarte con lo que NO cancelas: un filtro con comprensión de lista."
-- **Honestidad:** `add_order` muta, `cancel_order` devuelve uno nuevo. Mezclar las dos formas lía; en L3 el objeto lo gestiona por dentro.
+- **Honestidad:** `add_order` muta, `cancel_order` devuelve uno nuevo. Mezclar las dos formas lía; más adelante, cuando esto sea un objeto, lo gestiona por dentro.
 - **Salida:** "Sé construir y recortar el libro."
 
 ## Bloque 4 · Leer el libro — LIBRO VIVO (5 min)
@@ -33,19 +33,19 @@ Presentación interactiva (Pyodide + libro vivo en JS). ~18-20 min.
 - **Salida:** "Leer el libro son funciones que calculan sobre la lista."
 
 ## Bloque 5 · El patrón / clímax (4 min)
-- **Decir:** "Mira tus 5 funciones: TODAS reciben `book`. El libro es un dato pasivo que arrastras a todas partes. ¿Y si el libro supiera hacerlo solo? `book.add(...)`, `book.imbalance()`. Eso es un OBJETO. Es la clase 3."
+- **Decir:** "Mira tus 5 funciones: TODAS reciben `book`. El libro es un dato pasivo que arrastras a todas partes. El camino: primero sacarlas a un **módulo** reutilizable (clase 3); luego fundir el dato con sus funciones en un **objeto** (clase 4): `book.add(...)`, `book.imbalance()`."
 - **Pantalla:** las dos columnas de firmas (`func(book)` vs `book.metodo()`).
-- **Salida (el puente):** "Un dato + las funciones que lo manosean = un objeto."
+- **Salida (el puente):** "Tus funciones piden salir a un módulo (L3) y luego volverse un objeto (L4)."
 
 ## Mini test (3 min)
 - 5 preguntas A/B/C: `return`, utilidad de make_order, el patrón `book`, imbalance, best_bid. Feedback inmediato.
 
 ## Cierre (1 min)
-- Recoge los 3 puntos y manda al notebook: construir el libro funcional con sus manos y guardarlo en un `.py` (que en L3 será una clase `OrderBook`).
+- Recoge los 3 puntos y manda al notebook: construir el libro funcional con sus manos y guardarlo en un `.py` (que en L3 sacarás a un módulo, y luego se volverá un objeto).
 
 ## Checklist
 - [ ] Función = entra/return; make_order escala a ETH cambiando argumentos.
 - [ ] Libro = lista; add (append) y cancel (filtro).
 - [ ] Leer: best_bid/ask, spread, imbalance (libro vivo).
-- [ ] Clímax: todo recibe `book` → objeto (puente a L3).
+- [ ] Clímax: todo recibe `book` → módulo (L3) y luego objeto (L4).
 - [ ] Mini test pasado.
