@@ -317,10 +317,145 @@ if __name__ == "__main__":
 })
 
 # ---------------------------------------------------------------------------
-# L3 — OOP I — Order y Trade
+# L3 — Python III — Módulos y errores
 # ---------------------------------------------------------------------------
 LESSONS.append({
-    "n": 3, "slug": "03-oop-i-order-trade",
+    "n": 3, "slug": "03-python-iii-modules",
+    "title": "Python III — Módulos y errores",
+    "piece": "tu order_book.py se vuelve un módulo importable y robusto",
+    "objective": "Sacar las funciones del libro del notebook y meterlas en un módulo .py reutilizable que puedes importar desde otro archivo. Y blindarlo: que un libro vacío no lo reviente.",
+    "frase": "Tu código deja de vivir en celdas: se vuelve una librería que importas. Y una librería de verdad no se cae con un dato raro.",
+    "concepts": [
+        ("Un módulo es un .py con funciones",
+         "Cuando tus funciones crecen, las guardas en un archivo .py: eso es un módulo. Desde otro sitio lo importas y usas sus funciones, sin copiar nada.",
+         "import order_book\norder_book.spread(book)"),
+        ("import vs from ... import",
+         "`import order_book` trae el módulo entero (usas `order_book.fn`). `from order_book import spread` trae solo lo que pides (usas `spread`).",
+         "from order_book import imbalance\nimbalance(book)"),
+        ("Errores como red de seguridad",
+         "best_bid sobre un libro vacío revienta. `try/except` lo atrapa; `raise` lanza un error claro cuando el dato no tiene sentido.",
+         "try:\n    best_bid(book)\nexcept ValueError:\n    return None"),
+    ],
+    "build": [
+        {"title": "1. Importa una función del módulo", "practice": "from ... import",
+         "statement": "Importa `imbalance` desde el módulo `order_book` y úsala sobre `book`. Guarda el resultado en `imb`.",
+         "hint": "`from order_book import imbalance`.",
+         "given": "book = [{'side':'buy','size':3},{'side':'sell','size':1}]\n",
+         "starter": "imb = None\n",
+         "validator": "assert abs(imb - 0.5) < 1e-9, 'imbalance de ese libro es 0.5'\nprint('ok  imb=%.2f' % imb)",
+         "solution": "from order_book import imbalance\nimb = imbalance(book)"},
+        {"title": "2. Importa el módulo entero", "practice": "import módulo",
+         "statement": "Importa el módulo `order_book` completo y calcula el spread del libro con `order_book.spread(book)`. Guarda `sp`.",
+         "hint": "`import order_book` y luego `order_book.spread(book)`.",
+         "given": "book = [{'side':'buy','price':100},{'side':'sell','price':102}]\n",
+         "starter": "sp = None\n",
+         "validator": "assert sp == 2, 'spread debe ser 2'\nprint('ok  sp=%d' % sp)",
+         "solution": "import order_book\nsp = order_book.spread(book)"},
+        {"title": "3. Blinda con try/except", "practice": "manejo de errores",
+         "statement": "Escribe `safe_best_bid(book)` que devuelva el mejor bid, o `None` si el libro no tiene compras (best_bid revienta con `ValueError`).",
+         "hint": "Llama a `order_book.best_bid` dentro de un `try`.",
+         "starter": "import order_book\n\ndef safe_best_bid(book):\n    pass\n",
+         "validator": "assert safe_best_bid([]) is None, 'libro vacío -> None'\nassert safe_best_bid([{'side':'buy','price':100}]) == 100\nprint('ok')",
+         "solution": "import order_book\n\ndef safe_best_bid(book):\n    try:\n        return order_book.best_bid(book)\n    except ValueError:\n        return None"},
+        {"title": "4. Lanza un error claro", "practice": "raise",
+         "statement": "Escribe `check_size(size)` que devuelva `size` si es positivo, y lance `ValueError` si es <= 0.",
+         "starter": "def check_size(size):\n    pass\n",
+         "validator": "assert check_size(0.1) == 0.1\ntry:\n    check_size(-1); raise SystemExit('deberia fallar')\nexcept ValueError:\n    pass\nprint('ok')",
+         "solution": "def check_size(size):\n    if size <= 0:\n        raise ValueError('size debe ser positivo')\n    return size"},
+        {"title": "5. Combina funciones del módulo", "practice": "usar varias del módulo",
+         "statement": "Usando `best_bid` y `best_ask` del módulo, calcula el `mid` del libro a mano. Guarda `mid`.",
+         "hint": "`from order_book import best_bid, best_ask`.",
+         "given": "book = [{'side':'buy','price':100},{'side':'sell','price':102}]\n",
+         "starter": "mid = None\n",
+         "validator": "assert mid == 101\nprint('ok  mid=%d' % mid)",
+         "solution": "from order_book import best_bid, best_ask\nmid = (best_bid(book) + best_ask(book)) / 2"},
+        {"title": "6. Construye y lee un libro con el módulo", "practice": "juntar el módulo",
+         "statement": "Con `order_book`, monta un libro (compra 99980/0.10, compra 99990/0.20, venta 100010/0.15) y léelo: guarda `bb = best_bid`, `sp = spread`, `imb = imbalance`.",
+         "given": "import order_book\n",
+         "starter": "book = []\n# usa order_book.make_order / add_order y luego lee bb, sp, imb\n",
+         "validator": "assert bb == 99990 and sp == 20\nassert abs(imb - 1/3) < 1e-9\nprint('ok  ->', bb, sp, round(imb,3))",
+         "solution": "import order_book\nbook = []\norder_book.add_order(book, order_book.make_order('BTCUSDT','buy',99980,0.10))\norder_book.add_order(book, order_book.make_order('BTCUSDT','buy',99990,0.20))\norder_book.add_order(book, order_book.make_order('BTCUSDT','sell',100010,0.15))\nbb = order_book.best_bid(book)\nsp = order_book.spread(book)\nimb = order_book.imbalance(book)"},
+    ],
+    "aux": [
+        {"title": "A1. Importa con alias", "practice": "import ... as",
+         "statement": "Importa `order_book` con el alias `ob` y calcula `imbalance` del libro. Guarda `imb`.",
+         "given": "book = [{'side':'buy','size':2},{'side':'sell','size':2}]\n",
+         "starter": "imb = None\n",
+         "validator": "assert abs(imb - 0.0) < 1e-9\nprint('ok')",
+         "solution": "import order_book as ob\nimb = ob.imbalance(book)"},
+        {"title": "A2. Tu propio tipo de error", "practice": "excepción propia",
+         "statement": "Define `class EmptyBookError(Exception)` y una función `top(book)` que la lance si el libro está vacío, o devuelva la primera orden.",
+         "starter": "class EmptyBookError(Exception):\n    pass\n\ndef top(book):\n    pass\n",
+         "validator": "try:\n    top([]); raise SystemExit('deberia fallar')\nexcept EmptyBookError:\n    pass\nassert top([{'id':1}]) == {'id':1}\nprint('ok')",
+         "solution": "class EmptyBookError(Exception):\n    pass\n\ndef top(book):\n    if not book:\n        raise EmptyBookError('el libro está vacío')\n    return book[0]"},
+        {"title": "A3. Argumentos por defecto", "practice": "parámetros con valor por defecto",
+         "statement": "Escribe `make_order(symbol, side, price, size=0.01)` con `size` por defecto. Comprueba que sin pasar `size` vale 0.01.",
+         "starter": "def make_order(symbol, side, price, size=0.01):\n    pass\n",
+         "validator": "assert make_order('X','buy',100)['size'] == 0.01\nassert make_order('X','buy',100, 0.5)['size'] == 0.5\nprint('ok')",
+         "solution": "def make_order(symbol, side, price, size=0.01):\n    return {'symbol': symbol, 'side': side, 'price': price, 'size': size}"},
+    ],
+    "script_name": "main.py",
+    "extra_files": {"order_book.py": '''# order_book.py - el libro funcional de la clase 2, como modulo reutilizable.
+
+
+def make_order(symbol, side, price, size):
+    if side not in ("buy", "sell"):
+        raise ValueError("side debe ser buy o sell")
+    return {"symbol": symbol, "side": side, "price": price, "size": size}
+
+
+def add_order(book, order):
+    book.append(order)
+    return book
+
+
+def cancel_order(book, order_id):
+    return [o for o in book if o.get("id") != order_id]
+
+
+def best_bid(book):
+    return max(o["price"] for o in book if o["side"] == "buy")
+
+
+def best_ask(book):
+    return min(o["price"] for o in book if o["side"] == "sell")
+
+
+def spread(book):
+    return best_ask(book) - best_bid(book)
+
+
+def imbalance(book):
+    buy = sum(o["size"] for o in book if o["side"] == "buy")
+    sell = sum(o["size"] for o in book if o["side"] == "sell")
+    return (buy - sell) / (buy + sell)
+'''},
+    "script": '''# main.py - importa el modulo order_book y arma + lee un libro.
+# Ejecuta desde la terminal:  python main.py
+import order_book
+
+
+def main():
+    book = []
+    order_book.add_order(book, order_book.make_order("BTCUSDT", "buy", 99980, 0.10))
+    order_book.add_order(book, order_book.make_order("BTCUSDT", "buy", 99990, 0.20))
+    order_book.add_order(book, order_book.make_order("BTCUSDT", "sell", 100010, 0.15))
+
+    print("best_bid:", order_book.best_bid(book))
+    print("spread:", order_book.spread(book))
+    print("imbalance:", round(order_book.imbalance(book), 4))
+
+
+if __name__ == "__main__":
+    main()
+''',
+})
+
+# ---------------------------------------------------------------------------
+# L4 — OOP I — Order y Trade
+# ---------------------------------------------------------------------------
+LESSONS.append({
+    "n": 4, "slug": "04-oop-i-order-trade",
     "title": "OOP I — Order y Trade",
     "piece": "clases Order y Fill (exchange/orders.py, trades.py)",
     "objective": "Convertir el dict de orden en una clase Order con métodos, y modelar el resultado de un cruce con Fill. Primer módulo de verdad del paquete exchange.",
@@ -382,7 +517,7 @@ LESSONS.append({
 # L4 — OOP II — OrderBook y PositionTracker
 # ---------------------------------------------------------------------------
 LESSONS.append({
-    "n": 4, "slug": "04-oop-ii-book-portfolio",
+    "n": 5, "slug": "05-oop-ii-book-portfolio",
     "title": "OOP II — OrderBook y PositionTracker",
     "piece": "clases OrderBook y PositionTracker (composición)",
     "objective": "Construir el libro como objeto que contiene niveles, con métricas como métodos. Y un PositionTracker que consume objetos Fill. Aquí ves cómo los objetos se entrelazan.",
@@ -441,4 +576,110 @@ LESSONS.append({
          "validator": "assert abs(tracker.equity(100) - 0) < 1e-6, 'comprar a mid no cambia equity'\nassert tracker.position > 0\nprint('ok')",
          "solution": "from exchange import PositionTracker\nfrom exchange.trades import Fill\ntracker = PositionTracker()\ntracker.apply_fill(Fill(1, 'BTCUSDT', 'buy', 100, 0.5))"},
     ],
+})
+
+# ---------------------------------------------------------------------------
+# L6 — OOP III — Herencia, polimorfismo y ABC
+# ---------------------------------------------------------------------------
+LESSONS.append({
+    "n": 6, "slug": "06-oop-iii-inheritance",
+    "title": "OOP III — Herencia y polimorfismo",
+    "piece": "una familia Strategy de juguete: base + subclases (semilla del framework de L10)",
+    "objective": "La pieza que sostendrá todo el framework: muchas estrategias que comparten un esqueleto. Aprendes herencia, sobrescritura, clases abstractas y polimorfismo construyendo tus primeras estrategias de juguete.",
+    "frase": "Una clase base define el contrato; cada subclase decide a su manera. Llamar al mismo método sobre objetos distintos y que cada uno responda lo suyo: eso es polimorfismo.",
+    "concepts": [
+        ("Herencia: heredar y sobrescribir",
+         "Una subclase hereda los métodos de su base y puede sobrescribir los que quiera. Compartes el esqueleto y cambias solo lo que difiere.",
+         "class Momentum(Strategy):\n    def decide(self, imbalance):\n        return 'buy' if imbalance > 0 else 'sell'"),
+        ("Clase abstracta (ABC): el contrato",
+         "Una base abstracta con @abstractmethod no se puede instanciar: obliga a las subclases a implementar el método. Es la forma de fijar un contrato.",
+         "class Strategy(ABC):\n    @abstractmethod\n    def decide(self, imbalance): ..."),
+        ("Polimorfismo: mismo método, respuestas distintas",
+         "Recorres una lista de estrategias distintas y llamas a .decide() en todas; cada una responde lo suyo. El código que las usa no necesita saber cuál es cuál.",
+         "for s in strategies:\n    print(s.decide(imb))"),
+    ],
+    "build": [
+        {"title": "1. Una clase base con un método", "practice": "clase base",
+         "statement": "Define `Strategy` con un método `decide(self, imbalance)` que por defecto devuelva `'hold'`.",
+         "starter": "class Strategy:\n    def decide(self, imbalance):\n        pass\n",
+         "validator": "assert Strategy().decide(0.5) == 'hold'\nprint('ok')",
+         "solution": "class Strategy:\n    def decide(self, imbalance):\n        return 'hold'"},
+        {"title": "2. Hereda y sobrescribe", "practice": "herencia + override",
+         "statement": "Define `AlwaysBuy(Strategy)` que sobrescriba `decide` para devolver siempre `'buy'`. Debe seguir siendo una `Strategy`.",
+         "given": "class Strategy:\n    def decide(self, imbalance):\n        return 'hold'\n",
+         "starter": "class AlwaysBuy(Strategy):\n    pass\n",
+         "validator": "a = AlwaysBuy()\nassert a.decide(0) == 'buy'\nassert isinstance(a, Strategy), 'AlwaysBuy hereda de Strategy'\nprint('ok')",
+         "solution": "class AlwaysBuy(Strategy):\n    def decide(self, imbalance):\n        return 'buy'"},
+        {"title": "3. El contrato: clase abstracta", "practice": "ABC + @abstractmethod",
+         "statement": "Haz `Strategy` **abstracta** con `@abstractmethod` en `decide`. Ya no se podrá instanciar `Strategy()` directamente; solo subclases que implementen `decide`.",
+         "hint": "`from abc import ABC, abstractmethod` y `class Strategy(ABC)`.",
+         "starter": "from abc import ABC, abstractmethod\n\nclass Strategy(ABC):\n    pass\n\nclass Buyer(Strategy):\n    def decide(self, imbalance):\n        return 'buy'\n",
+         "validator": "try:\n    Strategy(); raise SystemExit('no deberia poder instanciarse')\nexcept TypeError:\n    pass\nassert Buyer().decide(0) == 'buy'\nprint('ok')",
+         "solution": "from abc import ABC, abstractmethod\n\nclass Strategy(ABC):\n    @abstractmethod\n    def decide(self, imbalance):\n        ...\n\nclass Buyer(Strategy):\n    def decide(self, imbalance):\n        return 'buy'"},
+        {"title": "4. Polimorfismo", "practice": "mismo método, objetos distintos",
+         "statement": "Dadas `Momentum` (compra si imbalance>0) y `Contrarian` (vende si imbalance>0), recorre `[Momentum(), Contrarian()]` y guarda en `decisions` lo que decide cada una con `imbalance=0.5`.",
+         "given": "class Momentum:\n    def decide(self, imbalance):\n        return 'buy' if imbalance > 0 else 'sell'\nclass Contrarian:\n    def decide(self, imbalance):\n        return 'sell' if imbalance > 0 else 'buy'\n",
+         "starter": "strategies = [Momentum(), Contrarian()]\ndecisions = None\n",
+         "validator": "assert decisions == ['buy', 'sell'], 'momentum compra, contrarian vende'\nprint('ok ', decisions)",
+         "solution": "strategies = [Momentum(), Contrarian()]\ndecisions = [s.decide(0.5) for s in strategies]"},
+        {"title": "5. super() en el __init__", "practice": "reutilizar la base",
+         "statement": "`Strategy.__init__` guarda un `name`. Haz que `Momentum.__init__` llame a `super().__init__('momentum')`.",
+         "given": "class Strategy:\n    def __init__(self, name):\n        self.name = name\n",
+         "starter": "class Momentum(Strategy):\n    def __init__(self):\n        pass\n",
+         "validator": "assert Momentum().name == 'momentum'\nprint('ok')",
+         "solution": "class Momentum(Strategy):\n    def __init__(self):\n        super().__init__('momentum')"},
+        {"title": "6. Tu familia de estrategias", "practice": "juntar herencia + polimorfismo",
+         "statement": "Define `Strategy` abstracta y dos subclases (`Momentum`, `Contrarian`). Recórrelas con `imbalance=0.5` y guarda `decisions`. Esto es justo el patrón que en L10 conectarás al motor.",
+         "starter": "from abc import ABC, abstractmethod\n# define Strategy (ABC), Momentum, Contrarian y decisions\n",
+         "validator": "assert decisions == ['buy', 'sell']\nfor s in strategies:\n    assert isinstance(s, Strategy)\nprint('ok — tienes una jerarquía de estrategias polimórfica')",
+         "solution": "from abc import ABC, abstractmethod\n\nclass Strategy(ABC):\n    @abstractmethod\n    def decide(self, imbalance):\n        ...\n\nclass Momentum(Strategy):\n    def decide(self, imbalance):\n        return 'buy' if imbalance > 0 else 'sell'\n\nclass Contrarian(Strategy):\n    def decide(self, imbalance):\n        return 'sell' if imbalance > 0 else 'buy'\n\nstrategies = [Momentum(), Contrarian()]\ndecisions = [s.decide(0.5) for s in strategies]"},
+    ],
+    "aux": [
+        {"title": "A1. isinstance y la familia", "practice": "comprobar el tipo",
+         "statement": "Con `Momentum(Strategy)`, comprueba que una instancia es a la vez `Momentum` y `Strategy`. Guarda `es_momentum` y `es_strategy`.",
+         "given": "class Strategy:\n    pass\nclass Momentum(Strategy):\n    pass\nm = Momentum()\n",
+         "starter": "es_momentum = None\nes_strategy = None\n",
+         "validator": "assert es_momentum is True and es_strategy is True\nprint('ok')",
+         "solution": "es_momentum = isinstance(m, Momentum)\nes_strategy = isinstance(m, Strategy)"},
+        {"title": "A2. La ABC obliga a implementar", "practice": "por qué sirve @abstractmethod",
+         "statement": "Una subclase que NO implementa el método abstracto tampoco se puede instanciar. Comprueba que instanciar `Incompleta()` lanza `TypeError`.",
+         "given": "from abc import ABC, abstractmethod\nclass Strategy(ABC):\n    @abstractmethod\n    def decide(self, imbalance): ...\nclass Incompleta(Strategy):\n    pass\n",
+         "starter": "fallo = None  # ponlo a True si Incompleta() lanza TypeError\n",
+         "validator": "assert fallo is True\nprint('ok — la ABC te protege de subclases a medio hacer')",
+         "solution": "try:\n    Incompleta()\n    fallo = False\nexcept TypeError:\n    fallo = True"},
+    ],
+    "script_name": "strategies_toy.py",
+    "script": '''# strategies_toy.py - tu primera familia de estrategias (clase 6).
+# Herencia + polimorfismo: la semilla del framework Strategy de la clase 10.
+# Ejecuta:  python strategies_toy.py
+from abc import ABC, abstractmethod
+
+
+class Strategy(ABC):
+    @abstractmethod
+    def decide(self, imbalance):
+        ...
+
+
+class Momentum(Strategy):          # sigue al mercado
+    def decide(self, imbalance):
+        return "buy" if imbalance > 0 else "sell"
+
+
+class Contrarian(Strategy):        # apuesta contra el mercado
+    def decide(self, imbalance):
+        return "sell" if imbalance > 0 else "buy"
+
+
+def main():
+    strategies = [Momentum(), Contrarian()]
+    for imbalance in (0.5, -0.5):
+        decisions = [s.decide(imbalance) for s in strategies]
+        print("imbalance", imbalance, "->", decisions)
+    # mismo bucle, estrategias distintas: eso es polimorfismo.
+
+
+if __name__ == "__main__":
+    main()
+''',
 })

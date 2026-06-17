@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Avellaneda-Stoikov — modelo y simulación</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+  :root {
+    --bg:#09090b; --panel:#101014; --fg:#f4f4f5; --muted:#a1a1aa;
+    --accent:#22d3ee; --green:#4ade80; --red:#f87171; --line:#27272a;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--fg); font-family:'Inter',sans-serif;
+         scroll-snap-type:y mandatory; overflow-y:scroll; height:100vh; }
+  section { min-height:100vh; scroll-snap-align:start; display:flex; flex-direction:column;
+            justify-content:center; padding:8vh 7vw; border-bottom:1px solid var(--line); }
+  .tag { color:var(--accent); font-weight:600; letter-spacing:.12em; text-transform:uppercase;
+         font-size:.8rem; margin-bottom:1.2rem; }
+  h1 { font-size:clamp(2.2rem,6vw,4rem); font-weight:800; line-height:1.05; }
+  h2 { font-size:clamp(1.6rem,4vw,2.6rem); font-weight:800; margin-bottom:1.2rem; }
+  p { color:var(--muted); font-size:clamp(1rem,2vw,1.25rem); max-width:60ch; line-height:1.6;
+      margin-top:1rem; }
+  .piece { display:inline-block; margin-top:2rem; padding:.5rem 1rem; border:1px solid var(--accent);
+           border-radius:8px; color:var(--accent); font-family:'JetBrains Mono',monospace; font-size:.95rem; }
+  pre { margin-top:1.5rem; background:var(--panel); border:1px solid var(--line); border-radius:10px;
+        padding:1.2rem 1.4rem; overflow-x:auto; font-family:'JetBrains Mono',monospace;
+        font-size:.95rem; color:#e4e4e7; line-height:1.55; max-width:70ch; }
+  .k { color:var(--accent); } .c { color:var(--muted); font-style:italic; }
+  .frase { font-size:clamp(1.3rem,3vw,2rem); color:var(--fg); font-weight:600; max-width:50ch; }
+  .dot { color:var(--accent); }
+  footer { color:var(--muted); font-size:.85rem; margin-top:3rem; font-family:'JetBrains Mono',monospace; }
+</style>
+</head>
+<body>
+<section>
+  <div class="tag">Clase 14 · Algo Trading · ICAI 2026</div>
+  <h1>Avellaneda-Stoikov — modelo y simulación</h1>
+  <p>Sustituir el skew heurístico por el resultado del modelo de Avellaneda-Stoikov (reservation price + optimal spread), y ponerlo a correr: simular, ver cómo controla el inventario y barrer gamma.</p>
+  <span class="piece">Hoy construyes: AvellanedaStoikov: reservation price, optimal spread y barridos de gamma</span>
+</section>
+<section>
+  <div class="tag">Bloque 1</div>
+  <h2>De dónde sale el modelo</h2>
+  <p>Maximizas utilidad CARA sobre tu riqueza final con inventario incierto. La solución (vía HJB) da dos fórmulas cerradas.</p>
+  <pre>r = s - q*gamma*sigma^2*(T-t)
+d = gamma*sigma^2*(T-t) + (2/gamma)*ln(1+gamma/kappa)</pre>
+</section><section>
+  <div class="tag">Bloque 2</div>
+  <h2>Reservation price y optimal spread</h2>
+  <p>r es el mid ajustado por inventario y tiempo; d es cuánto separas las cotizaciones. Al cierre, el ajuste por inventario se apaga.</p>
+  <pre>bid = r - d/2
+ask = r + d/2</pre>
+</section><section>
+  <div class="tag">Bloque 3</div>
+  <h2>Simular y barrer gamma</h2>
+  <p>MMSimulation mueve el mid y te ejecuta según la distancia. Más gamma controla mejor el inventario, pero captura menos spread. No hay free lunch.</p>
+  <pre>for gamma in [0.05, 0.2, 0.8]: simula</pre>
+</section>
+<section>
+  <div class="tag">Cierre</div>
+  <p class="frase">El reservation price inclina según inventario y tiempo; el optimal spread cobra por el riesgo. Más gamma = más defensivo, menos inventario, menos PnL.</p>
+  <footer>→ siguiente: abre <span class="k">exercises/</span> y construye la pieza.</footer>
+</section>
+<script>
+  gsap.utils.toArray('section').forEach(s => {
+    gsap.from(s.children, { opacity:0, y:24, duration:.6, stagger:.08,
+      scrollTrigger:{ trigger:s, start:'top 70%' } });
+  });
+  document.querySelectorAll('section').forEach(s =>
+    gsap.from(s.children, {opacity:0, y:20, duration:.5, stagger:.07,
+      onStart(){}, scrollTrigger:undefined}));
+</script>
+</body>
+</html>

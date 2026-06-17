@@ -10,7 +10,7 @@ LESSONS = []
 # L5 — Microstructure — Leer el libro
 # ---------------------------------------------------------------------------
 LESSONS.append({
-    "n": 5, "slug": "05-microstructure-reading-book",
+    "n": 7, "slug": "07-microstructure-reading-book",
     "title": "Microestructura — Leer el libro",
     "piece": "métricas de mercado sobre snapshots reales de BTC",
     "objective": "Cargar 500 snapshots reales de BTCUSDT y leer el mercado: spread, mid, imbalance, microprice y profundidad. El OrderBook deja de ser una foto y se vuelve una lente.",
@@ -75,7 +75,7 @@ LESSONS.append({
 # L6 — Órdenes y matching
 # ---------------------------------------------------------------------------
 LESSONS.append({
-    "n": 6, "slug": "06-order-types-matching",
+    "n": 8, "slug": "08-order-types-matching",
     "title": "Órdenes y matching",
     "piece": "MatchingEngine: cómo se cruzan las órdenes",
     "objective": "Enviar órdenes contra el libro y ver cómo se cruzan. Market, limit, IOC y FOK: cada tipo cambia el coste, la probabilidad de ejecución y el riesgo.",
@@ -136,7 +136,7 @@ LESSONS.append({
 # L7 — Loop de simulación
 # ---------------------------------------------------------------------------
 LESSONS.append({
-    "n": 7, "slug": "07-market-simulation-loop",
+    "n": 9, "slug": "09-market-simulation-loop",
     "title": "El loop de simulación",
     "piece": "Market: reproducir snapshots y ejecutar en el tiempo",
     "objective": "Poner el tiempo en marcha: recorrer los snapshots, enviar órdenes en cada paso y llevar la cuenta de caja, inventario y equity con PositionTracker.",
@@ -190,7 +190,7 @@ LESSONS.append({
 # L8 — Strategy + Backtest (el pico arquitectónico)
 # ---------------------------------------------------------------------------
 LESSONS.append({
-    "n": 8, "slug": "08-strategy-framework",
+    "n": 10, "slug": "10-strategy-framework",
     "title": "El framework: Strategy + Backtest",
     "piece": "interfaz Strategy (ABC) y el runner Backtest",
     "objective": "El corazón del curso: una estrategia solo reacciona al libro y devuelve acciones. El Backtest la cablea con el mercado y el portfolio. Cualquier estrategia se enchufa igual.",
@@ -245,7 +245,7 @@ LESSONS.append({
 # L9 — Primera estrategia + métricas
 # ---------------------------------------------------------------------------
 LESSONS.append({
-    "n": 9, "slug": "09-first-strategy-metrics",
+    "n": 11, "slug": "11-first-strategy-metrics",
     "title": "Primera estrategia + métricas",
     "piece": "medir una estrategia contra un benchmark",
     "objective": "Cerrar el motor: una estrategia con señal real, y métricas honestas — PnL, posición y slippage contra el mid de llegada. Checkpoint integrador de todo L1-L9.",

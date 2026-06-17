@@ -25,7 +25,14 @@ import nbgen  # noqa: E402
 from lessons_foundations import LESSONS as L_FOUND  # noqa: E402
 from lessons_engine import LESSONS as L_ENG  # noqa: E402
 from lessons_strategies import LESSONS as L_STRAT  # noqa: E402
-from lessons_docs import DOCS  # noqa: E402
+from lessons_docs import DOCS as _RAW_DOCS, EXTRA_DOCS  # noqa: E402
+
+# Los DOCS se escribieron con la numeración previa (4 fundamentos). Tras pasar a
+# 6 fundamentos, se remapean a la `n` actual; old 11 (VWAP II) y old 14 (A-S II)
+# se funden en 12 y 14, así que se descartan.
+_DOCS_REMAP = {1: 1, 2: 2, 3: 4, 4: 5, 5: 7, 6: 8, 7: 9, 8: 10, 9: 11, 10: 12, 12: 13, 13: 14}
+DOCS = {_DOCS_REMAP[k]: v for k, v in _RAW_DOCS.items() if k in _DOCS_REMAP}
+DOCS.update(EXTRA_DOCS)  # textos de las clases nuevas (L3 módulos, L6 herencia)
 
 LESSONS = L_FOUND + L_ENG + L_STRAT
 EXCHANGE_SRC = os.path.join(FRAMEWORK, "exchange")
@@ -58,22 +65,22 @@ def self_test() -> list[str]:
 
 def modules_for(n: int):
     core, strat, top = [], [], []
-    if n >= 3:
+    if n >= 4:
         core += ["orders.py", "trades.py"]
         top += [("orders", "Order, Side, OrderType"), ("trades", "Fill")]
-    if n >= 4:
+    if n >= 5:
         core += ["book.py", "portfolio.py"]
         top += [("book", "OrderBook, Level"), ("portfolio", "PositionTracker")]
-    if n >= 5:
+    if n >= 7:
         core += ["matching.py", "market.py"]
         top += [("matching", "MatchingEngine"), ("market", "Market")]
-    if n >= 8:
+    if n >= 10:
         core += ["strategy.py", "backtest.py"]
         top += [("strategy", "Strategy, NewOrder, Cancel, Action"),
                 ("backtest", "Backtest, BacktestResult")]
-    if n >= 10:
-        strat += [("vwap", "VWAPStrategy")]
     if n >= 12:
+        strat += [("vwap", "VWAPStrategy")]
+    if n >= 13:
         strat += [("market_maker", "MarketMaker, AvellanedaStoikov")]
         core += ["simulation.py"]
     return core, strat, top
@@ -88,7 +95,7 @@ def stage_package(n: int, dest_exercises: str) -> bool:
 
     for f in core:
         shutil.copy(os.path.join(EXCHANGE_SRC, f), os.path.join(pkg, f))
-    if n >= 5:  # datos para Market.sample()
+    if n >= 7:  # datos para Market.sample()
         data_dst = os.path.join(pkg, "_data")
         os.makedirs(data_dst, exist_ok=True)
         shutil.copy(os.path.join(EXCHANGE_SRC, "_data", "btc_lob_snapshots.csv"),
@@ -240,6 +247,11 @@ def emit(lesson: dict) -> None:
              f"**Hoy construyes:** {lesson['piece']}.")
     build_nb = nbgen.build_notebook(intro, tiers_md("build"), lesson["build"],
                                     closing_build(lesson))
+
+    # archivos extra (p.ej. un módulo que el alumno importa)
+    for fname, content in lesson.get("extra_files", {}).items():
+        with open(os.path.join(exer, fname), "w") as f:
+            f.write(content)
 
     # .py consolidado: que el alumno vea código en un archivo, no solo en celdas
     if lesson.get("script"):

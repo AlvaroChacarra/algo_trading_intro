@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Clase 3 — Módulos y errores</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2309090b'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Arial' font-size='28' font-weight='700' fill='%2322d3ee'%3EPy%3C/text%3E%3C/svg%3E">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+:root{--bg:#09090b;--surface:#18181b;--surface-2:#27272a;--border:#3f3f46;--text:#fafafa;--muted:#a1a1aa;--cyan:#22d3ee;--blue:#818cf8;--green:#4ade80;--pink:#f472b6;--yellow:#fbbf24;--red:#f87171;--nav-h:60px;--wrap:min(1180px,calc(100vw - 48px));--shadow:0 20px 60px rgba(0,0,0,.35);}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:var(--surface-2) var(--bg);}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;line-height:1.7;font-size:17px;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(9,9,11,.85);backdrop-filter:blur(16px) saturate(1.4);border-bottom:1px solid rgba(63,63,70,.5);padding:0 32px;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;}
+.nav-brand{font-weight:800;font-size:15px;color:var(--cyan);}
+.nav-brand::before{content:'';display:inline-block;width:8px;height:8px;margin-right:9px;border-radius:999px;background:var(--cyan);box-shadow:0 0 14px rgba(34,211,238,.7);vertical-align:middle;}
+.nav-links{display:flex;gap:2px;list-style:none;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:13px;font-weight:600;padding:7px 11px;border-radius:9px;transition:.2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--text);background:var(--surface);}
+.full-btn{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:7px 13px;font-size:13px;font-weight:700;cursor:pointer;}
+#progress{position:fixed;top:var(--nav-h);left:0;height:2px;width:0%;z-index:101;background:linear-gradient(90deg,var(--cyan),var(--blue),var(--pink));transition:width .15s;}
+main{width:var(--wrap);margin:0 auto;padding:calc(var(--nav-h) + 28px) 0 120px;}
+section{margin:0 0 56px;scroll-margin-top:calc(var(--nav-h) + 20px);opacity:0;transform:translateY(18px);transition:opacity .5s,transform .5s;}
+section.visible{opacity:1;transform:translateY(0);}
+.shell{background:linear-gradient(180deg,rgba(24,24,27,.95),rgba(18,18,21,.9));border:1px solid rgba(63,63,70,.4);border-radius:26px;box-shadow:var(--shadow);padding:30px;position:relative;overflow:hidden;}
+.shell::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(34,211,238,.04),transparent 30%);pointer-events:none;}
+.label{display:inline-flex;align-items:center;gap:8px;padding:6px 13px;border-radius:999px;background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.18);color:var(--cyan);font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;margin-bottom:16px;}
+.label.alt{background:rgba(129,140,248,.08);border-color:rgba(129,140,248,.2);color:var(--blue);}
+h1{font-size:clamp(38px,5.5vw,68px);font-weight:900;letter-spacing:-.045em;line-height:.98;}
+h2{font-size:clamp(26px,3.6vw,44px);font-weight:850;letter-spacing:-.04em;line-height:1.04;}
+h3{font-size:19px;font-weight:800;letter-spacing:-.03em;}
+p,li{color:var(--muted);}
+.lead{max-width:780px;font-size:clamp(16px,1.7vw,20px);color:#d4d4d8;margin-top:14px;}
+.accent{color:var(--cyan);}.b{color:var(--text);font-weight:700;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;margin-top:24px;}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:30px;align-items:center;min-height:calc(100vh - var(--nav-h) - 60px);}
+.card{background:rgba(24,24,27,.8);border:1px solid rgba(63,63,70,.35);border-radius:18px;padding:20px;}
+.card-label{color:var(--cyan);font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;}
+.card-label.alt{color:var(--blue);}
+pre,code{font-family:'JetBrains Mono',monospace;font-size:14px;}
+.codeline{display:inline-block;background:rgba(9,9,11,.85);border:1px solid rgba(34,211,238,.25);border-radius:10px;padding:6px 12px;font-family:'JetBrains Mono',monospace;color:var(--cyan);font-size:15px;}
+.editor-wrap{position:relative;}
+.editor{width:100%;min-height:96px;background:rgba(9,9,11,.9);border:1px solid rgba(63,63,70,.4);border-radius:14px;padding:16px 18px;font-family:'JetBrains Mono',monospace;font-size:14px;line-height:1.7;color:#e4e4e7;resize:vertical;outline:none;transition:border-color .3s;}
+.editor:focus{border-color:rgba(34,211,238,.4);box-shadow:0 0 0 3px rgba(34,211,238,.08);}
+.editor.mod{min-height:150px;color:#a5f3fc;}
+.output-box{background:rgba(9,9,11,.8);border:1px solid rgba(63,63,70,.25);border-radius:14px;padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;color:var(--green);min-height:44px;margin-top:12px;white-space:pre-wrap;word-break:break-word;overflow-x:auto;}
+.output-box.error{color:var(--red);}
+.run-btn{position:absolute;top:10px;right:10px;background:linear-gradient(135deg,var(--cyan),#06b6d4);color:#09090b;border:none;border-radius:9px;padding:7px 14px;font-size:13px;font-weight:800;cursor:pointer;transition:.15s;z-index:2;}
+.run-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(34,211,238,.3);}
+.run-btn:disabled{opacity:.5;cursor:wait;}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer;transition:.2s;border:1px solid var(--border);background:var(--surface);color:var(--text);}
+.btn:hover{border-color:rgba(34,211,238,.3);}
+.btn-primary{background:linear-gradient(135deg,var(--cyan),#06b6d4);color:#09090b;border:none;}
+.btn-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px;}
+.note{margin-top:16px;padding:14px 16px;border-radius:12px;font-size:14px;}
+.note.cyan{background:rgba(34,211,238,.05);border:1px solid rgba(34,211,238,.15);color:#a5f3fc;}
+.note.blue{background:rgba(129,140,248,.05);border:1px solid rgba(129,140,248,.15);color:#c7d2fe;}
+.note.pink{background:rgba(244,114,182,.05);border:1px solid rgba(244,114,182,.15);color:#fbcfe8;}
+.files{display:flex;gap:14px;flex-wrap:wrap;margin-top:6px;}
+.file{flex:1;min-width:200px;background:rgba(9,9,11,.7);border:1px solid rgba(63,63,70,.3);border-radius:12px;padding:12px 14px;}
+.file .fn{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);font-weight:700;margin-bottom:6px;}
+.file .fn.alt{color:var(--blue);}
+.challenge{border:1px solid rgba(63,63,70,.4);border-radius:18px;padding:20px;background:rgba(24,24,27,.6);}
+.challenge-title{font-weight:800;font-size:16px;}
+.timeline{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px;}
+.timeline-card{padding:16px;border-radius:14px;background:rgba(9,9,11,.7);border:1px solid rgba(63,63,70,.25);text-align:center;}
+.timeline-num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:999px;background:var(--surface-2);color:var(--muted);font-weight:900;font-size:13px;margin-bottom:8px;}
+.pyodide-status{position:fixed;bottom:18px;right:18px;z-index:200;padding:9px 16px;border-radius:11px;font-size:13px;font-weight:700;transition:.4s;}
+.pyodide-status.loading{background:rgba(251,191,36,.15);border:1px solid rgba(251,191,36,.3);color:var(--yellow);}
+.pyodide-status.ready{background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.25);color:var(--green);opacity:0;pointer-events:none;}
+@media (max-width:820px){.two-col,.hero-grid,.files{grid-template-columns:1fr;}nav{padding:0 14px;}.nav-links{display:none;}.shell{padding:18px;border-radius:18px;}}
+</style>
+</head>
+<body>
+<nav>
+  <span class="nav-brand">Clase 3 — Módulos y errores</span>
+  <ul class="nav-links">
+    <li><a href="#hero">Inicio</a></li>
+    <li><a href="#modulo">Módulo</a></li>
+    <li><a href="#importar">Importar</a></li>
+    <li><a href="#main">__main__</a></li>
+    <li><a href="#errores">Errores</a></li>
+    <li><a href="#cierre-b">El puente</a></li>
+    <li><a href="#quiz">Test</a></li>
+  </ul>
+  <button class="full-btn" id="fullscreen-btn" title="Pantalla completa (F)">⛶</button>
+</nav>
+<div id="progress"></div>
+
+<main>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="shell">
+    <div class="hero-grid">
+      <div>
+        <div class="label">Clase 3 · El reto</div>
+        <h1>Tu código está atrapado en el notebook.<br>Hazlo una <span class="accent">librería</span>.</h1>
+        <p class="lead">La clase pasada escribiste `make_order`, `add_order`, `best_bid`, `imbalance`… pero viven sueltas en celdas. ¿Cómo las reutilizas en otro archivo sin copiar y pegar? ¿Y cómo evitas que un libro vacío te reviente el programa?</p>
+        <p class="lead">Hoy las metes en un <span class="b">módulo</span> (`order_book.py`), lo <span class="b">importas</span>, y lo blindas con <span class="b">try/except</span>.</p>
+        <p style="margin-top:16px;"><span class="codeline">import order_book</span> &nbsp; <span class="codeline">order_book.spread(book)</span></p>
+      </div>
+      <div>
+        <div class="card">
+          <div class="card-label">El objetivo de hoy</div>
+          <p style="font-size:15px;">Convertir tus funciones en una librería que <span class="b">importas</span> desde cualquier sitio, y que no se cae con datos raros.</p>
+          <div class="note cyan" style="margin-top:14px;">Esto es exactamente lo que harás con el paquete <code>exchange</code> desde la clase 7: <code>import exchange</code>. Hoy aprendes qué significa eso.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MÓDULO -->
+<section id="modulo">
+  <div class="shell">
+    <div class="label alt">Bloque 1 · ¿Qué es un módulo?</div>
+    <h2>Un módulo es un archivo .py con funciones</h2>
+    <p class="lead">Guardas tus funciones en un archivo — ese archivo es un <span class="b">módulo</span>. Aquí abajo tienes el contenido de <code>order_book.py</code>. Pulsa <b>Guardar</b> para crearlo de verdad (en el navegador), y en el siguiente bloque lo importaremos.</p>
+    <div class="card">
+      <div class="card-label">order_book.py</div>
+      <div class="editor-wrap">
+        <textarea class="editor mod" id="mod-src" spellcheck="false" readonly></textarea>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary" id="mod-save">💾 Guardar order_book.py</button><span id="mod-fb" style="font-size:14px;align-self:center;"></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- IMPORTAR -->
+<section id="importar">
+  <div class="shell">
+    <div class="label alt">Bloque 2 · Importar</div>
+    <h2>import order_book — y ya tienes tus funciones</h2>
+    <p class="lead">Una vez guardado el módulo, lo <span class="b">importas</span> y usas sus funciones desde otro código, sin copiar nada. Dos formas:</p>
+    <div class="files">
+      <div class="file"><div class="fn">import order_book</div>trae el módulo entero. Usas <code>order_book.spread(book)</code>.</div>
+      <div class="file"><div class="fn alt">from order_book import spread</div>trae solo lo que pides. Usas <code>spread(book)</code> directo.</div>
+    </div>
+    <div class="card" style="margin-top:16px;">
+      <div class="card-label">Pruébalo (necesita el módulo guardado arriba)</div>
+      <div class="editor-wrap">
+        <textarea class="editor" id="ed-import" spellcheck="false">import order_book
+
+book = [
+    {"side": "buy",  "price": 99980, "size": 0.1},
+    {"side": "sell", "price": 100010, "size": 0.15},
+]
+print("best_bid:", order_book.best_bid(book))
+print("spread:", order_book.spread(book))
+print("imbalance:", round(order_book.imbalance(book), 3))</textarea>
+        <button class="run-btn">▶ Ejecutar</button>
+      </div>
+      <div class="output-box">Pulsa Ejecutar o Ctrl+Enter</div>
+      <div class="note blue">¿Error <code>ModuleNotFoundError</code>? Es la prueba de que un módulo tiene que <b>existir</b> para importarlo: vuelve arriba y pulsa Guardar.</div>
+    </div>
+  </div>
+</section>
+
+<!-- __main__ -->
+<section id="main">
+  <div class="shell">
+    <div class="label alt">Bloque 3 · ¿Por qué un módulo no se ejecuta al importarlo?</div>
+    <h2>if __name__ == "__main__"</h2>
+    <p class="lead">Cuando importas un módulo, Python ejecuta su código… pero tú no quieres que se ponga a imprimir cosas solo por importarlo. El truco: el código de prueba va dentro de <code>if __name__ == "__main__":</code>, que <span class="b">solo corre si ejecutas el archivo directamente</span>, no al importarlo.</p>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-label">order_book.py (el módulo)</div>
+        <div class="file" style="min-width:0;"><div class="fn">def spread(book): ...</div>solo define funciones. Importarlo no imprime nada.</div>
+      </div>
+      <div class="card">
+        <div class="card-label alt">main.py (el que se ejecuta)</div>
+        <div class="file" style="min-width:0;"><div class="fn alt">import order_book</div><div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#c7d2fe;">if __name__ == "__main__":<br>&nbsp;&nbsp;&nbsp;&nbsp;main()</div></div>
+      </div>
+    </div>
+    <div class="note cyan">Regla práctica: el módulo <b>define</b>; el script con <code>__main__</code> <b>hace</b>. En el notebook acabarás ejecutando un <code>main.py</code> que importa tu <code>order_book.py</code>.</div>
+  </div>
+</section>
+
+<!-- ERRORES -->
+<section id="errores">
+  <div class="shell">
+    <div class="label alt">Bloque 4 · Errores como red de seguridad</div>
+    <h2>Que un dato raro no te tire el programa</h2>
+    <p class="lead">`best_bid` sobre un libro vacío revienta (no hay máximo de nada). Una librería de verdad lo prevé: <span class="b">try/except</span> atrapa el fallo y devuelve un plan B; <span class="b">raise</span> lanza un error claro cuando el dato no tiene sentido.</p>
+    <div class="card">
+      <div class="card-label">Pruébalo (con el módulo guardado)</div>
+      <div class="editor-wrap">
+        <textarea class="editor" id="ed-try" spellcheck="false">import order_book
+
+def safe_best_bid(book):
+    try:
+        return order_book.best_bid(book)
+    except ValueError:
+        return None   # plan B: el libro no tiene compras
+
+print("libro vacío:", safe_best_bid([]))
+print("con compra:", safe_best_bid([{"side": "buy", "price": 100}]))</textarea>
+        <button class="run-btn">▶ Ejecutar</button>
+      </div>
+      <div class="output-box">Pulsa Ejecutar o Ctrl+Enter</div>
+      <div class="note blue"><b>try</b>: intenta esto. <b>except ValueError</b>: si falla así, haz el plan B. Sin el try, el programa entero se detendría.</div>
+    </div>
+  </div>
+</section>
+
+<!-- PUENTE -->
+<section id="cierre-b">
+  <div class="shell">
+    <div class="label">Bloque 5 · El puente</div>
+    <h2>Tienes una librería… pero datos y funciones siguen separados</h2>
+    <p class="lead">Tu código ya es una librería robusta. Pero fíjate: el <code>book</code> (los datos) va por un lado, y las funciones (<code>order_book.spread(book)</code>) por otro — tienes que pasarle el libro a todo.</p>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-label">Hoy</div>
+        <div class="file" style="min-width:0;"><div class="fn">order_book.spread(book)</div>la función y el dato, separados.</div>
+      </div>
+      <div class="card">
+        <div class="card-label alt">La clase 4</div>
+        <div class="file" style="min-width:0;"><div class="fn alt">book.spread()</div>el dato y su comportamiento, juntos: un <b>objeto</b>.</div>
+      </div>
+    </div>
+    <div class="note pink">Juntar los datos con las funciones que los manosean en una sola cosa es la <b>Programación Orientada a Objetos</b>. Tu <code>order_book.py</code> se convertirá en la clase <code>OrderBook</code>. Eso es la clase 4.</div>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="shell">
+    <div class="label">Antes del cierre · Mini test</div>
+    <h2>5 preguntas para fijar lo de hoy</h2>
+    <p class="lead">Elige una opción. Feedback al momento.</p>
+    <div id="quiz-box" style="margin-top:20px;"></div>
+    <div id="quiz-score" style="font-weight:800;font-size:19px;margin-top:18px;color:var(--cyan);"></div>
+  </div>
+</section>
+
+<!-- CIERRE -->
+<section id="cierre">
+  <div class="shell" style="text-align:center;padding:44px 30px;">
+    <div class="label">Cierre</div>
+    <h2>Lo que te llevas</h2>
+    <div class="timeline" style="max-width:900px;margin:28px auto 0;">
+      <div class="timeline-card"><div class="timeline-num" style="background:rgba(34,211,238,.15);color:var(--cyan);">1</div><h3 style="font-size:14px;">Un módulo (.py) se importa y se reutiliza</h3></div>
+      <div class="timeline-card"><div class="timeline-num" style="background:rgba(34,211,238,.15);color:var(--cyan);">2</div><h3 style="font-size:14px;">try/except y raise: una librería no se cae</h3></div>
+      <div class="timeline-card"><div class="timeline-num" style="background:rgba(244,114,182,.15);color:var(--pink);">★</div><h3 style="font-size:14px;">datos + funciones juntos = objetos (clase 4)</h3></div>
+    </div>
+    <div class="note cyan" style="max-width:620px;margin:28px auto 0;text-align:left;">Al notebook: importa tu módulo, blíndalo con try/except, y ejecuta `main.py` que lo usa. Ese `order_book.py` será un objeto en la clase 4.</div>
+  </div>
+</section>
+
+</main>
+
+<div class="pyodide-status loading" id="pyodide-status">⏳ Cargando Python…</div>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.27.4/full/pyodide.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+const MODULE_SRC = `# order_book.py - el libro funcional de la clase 2, como modulo.
+
+def make_order(symbol, side, price, size):
+    return {"symbol": symbol, "side": side, "price": price, "size": size}
+
+def add_order(book, order):
+    book.append(order)
+    return book
+
+def best_bid(book):
+    return max(o["price"] for o in book if o["side"] == "buy")
+
+def best_ask(book):
+    return min(o["price"] for o in book if o["side"] == "sell")
+
+def spread(book):
+    return best_ask(book) - best_bid(book)
+
+def imbalance(book):
+    buy = sum(o["size"] for o in book if o["side"] == "buy")
+    sell = sum(o["size"] for o in book if o["side"] == "sell")
+    return (buy - sell) / (buy + sell)
+`;
+document.getElementById('mod-src').value = MODULE_SRC;
+
+let pyodide=null;
+async function initPyodide(){
+  try{
+    pyodide=await loadPyodide();
+    saveModule();  // deja el modulo disponible desde el principio
+    const el=document.getElementById('pyodide-status');el.textContent='✓ Python listo';el.className='pyodide-status ready';setTimeout(()=>el.remove(),2000);
+  }catch(e){const el=document.getElementById('pyodide-status');el.textContent='⚠ Python no disponible (offline)';el.style.opacity='.6';}
+}
+initPyodide();
+function saveModule(){
+  if(!pyodide) return false;
+  pyodide.FS.writeFile('order_book.py', MODULE_SRC);
+  pyodide.runPython('import importlib, sys\nsys.modules.pop("order_book", None)\nimportlib.invalidate_caches()');
+  return true;
+}
+document.getElementById('mod-save').addEventListener('click',()=>{
+  const fb=document.getElementById('mod-fb');
+  if(saveModule()) fb.innerHTML='<span style="color:var(--green)">✓ order_book.py guardado — ya puedes importarlo</span>';
+  else fb.innerHTML='<span style="color:var(--muted)">Python aún cargando…</span>';
+});
+async function runPython(code){
+  if(!pyodide) return {output:'Python aún no está listo. Espera unos segundos.',error:true};
+  try{
+    pyodide.runPython(`import sys,io\n_o=io.StringIO()\nsys.stdout=_o`);
+    pyodide.runPython(code);
+    const out=pyodide.runPython('_o.getvalue()');
+    pyodide.runPython('sys.stdout=sys.__stdout__');
+    return {output:out||'(sin salida)',error:false};
+  }catch(e){
+    pyodide.runPython('sys.stdout=sys.__stdout__');
+    let m=(e.message||String(e)).split('\n').filter(l=>l.trim()&&!l.startsWith('  File "<exec>"'));
+    return {output:m.slice(-2).join('\n'),error:true};
+  }
+}
+document.querySelectorAll('.run-btn').forEach(btn=>{
+  const wrap=btn.closest('.editor-wrap'); if(!wrap) return;
+  const editor=wrap.querySelector('.editor');
+  const output=wrap.parentElement.querySelector('.output-box'); if(!output) return;
+  btn.addEventListener('click',async()=>{
+    btn.disabled=true;btn.textContent='⏳';output.textContent='Ejecutando…';output.className='output-box';
+    const r=await runPython(editor.value);
+    output.textContent=r.output;output.className=r.error?'output-box error':'output-box';
+    btn.disabled=false;btn.textContent='▶ Ejecutar';
+  });
+});
+document.querySelectorAll('.editor').forEach(ed=>{
+  ed.addEventListener('keydown',(e)=>{
+    if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();const b=ed.closest('.editor-wrap').querySelector('.run-btn');if(b)b.click();}
+    if(e.key==='Tab'){e.preventDefault();const s=ed.selectionStart;ed.value=ed.value.substring(0,s)+'    '+ed.value.substring(ed.selectionEnd);ed.selectionStart=ed.selectionEnd=s+4;}
+  });
+});
+const QUIZ=[
+ {q:'¿Qué es un módulo en Python?',o:['Un tipo de variable','Un archivo .py con funciones que puedes importar','Un mensaje de error'],c:1},
+ {q:'`from order_book import spread` te permite usar…',o:['order_book.spread(book)','spread(book) directamente','nada, da error'],c:1},
+ {q:'¿Para qué sirve `try / except`?',o:['Acelerar el código','Atrapar un error y seguir con un plan B','Crear variables nuevas'],c:1},
+ {q:'`if __name__ == "__main__":` hace que ese código…',o:['solo corra si ejecutas el archivo directamente, no al importarlo','no se pueda importar nunca','borre las funciones del módulo'],c:0},
+ {q:'`raise ValueError("...")` sirve para…',o:['ignorar el error en silencio','lanzar un error claro cuando el dato no tiene sentido','devolver None siempre'],c:1},
+];
+(function(){
+  const box=document.getElementById('quiz-box');let answered=0,correct=0;
+  QUIZ.forEach((it,qi)=>{
+    const card=document.createElement('div');card.className='challenge';card.style.marginBottom='14px';
+    const opts=it.o.map((t,oi)=>`<button class="btn quiz-opt" data-q="${qi}" data-o="${oi}" style="display:block;width:100%;text-align:left;margin:6px 0;"><b>${'ABC'[oi]}.</b> ${t}</button>`).join('');
+    card.innerHTML=`<div class="challenge-title" style="margin-bottom:10px;">${qi+1}. ${it.q}</div>${opts}<div id="qfb-${qi}" style="font-size:14px;margin-top:6px;font-weight:700;"></div>`;
+    box.appendChild(card);
+  });
+  box.querySelectorAll('.quiz-opt').forEach(btn=>btn.addEventListener('click',()=>{
+    const qi=+btn.dataset.q,oi=+btn.dataset.o,it=QUIZ[qi];
+    const group=box.querySelectorAll('.quiz-opt[data-q="'+qi+'"]');
+    if([...group].some(b=>b.disabled))return;
+    group.forEach(b=>{b.disabled=true;if(+b.dataset.o===it.c){b.style.borderColor='rgba(74,222,128,.6)';b.style.background='rgba(74,222,128,.1)';b.style.color='var(--green)';}});
+    const fb=document.getElementById('qfb-'+qi);
+    if(oi===it.c){fb.innerHTML='<span style="color:var(--green)">✓ Correcto</span>';correct++;}
+    else{btn.style.borderColor='rgba(248,113,113,.6)';btn.style.background='rgba(248,113,113,.1)';btn.style.color='var(--red)';fb.innerHTML='<span style="color:var(--red)">✗ La correcta es '+'ABC'[it.c]+'</span>';}
+    answered++;
+    if(answered===QUIZ.length)document.getElementById('quiz-score').textContent='Resultado: '+correct+' / '+QUIZ.length+' correctas';
+  }));
+})();
+const bar=document.getElementById('progress');
+window.addEventListener('scroll',()=>{const h=document.documentElement.scrollHeight-window.innerHeight;if(h>0)bar.style.width=(window.scrollY/h*100)+'%';});
+const sections=document.querySelectorAll('section'),navLinks=document.querySelectorAll('.nav-links a');
+const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');const l=document.querySelector('.nav-links a[href="#'+e.target.id+'"]');if(l){navLinks.forEach(a=>a.classList.remove('active'));l.classList.add('active');}}});},{threshold:0.12});
+sections.forEach(s=>obs.observe(s));
+const els=Array.from(sections);
+function curIdx(){const an=window.scrollY+window.innerHeight*0.3;let b=0,bd=Infinity;els.forEach((el,i)=>{const d=Math.abs(el.getBoundingClientRect().top+window.scrollY-an);if(d<bd){bd=d;b=i;}});return b;}
+document.addEventListener('keydown',async(e)=>{
+  if(['TEXTAREA','INPUT','SELECT'].includes(e.target.tagName))return;
+  if(e.key==='ArrowRight'||e.key==='PageDown'||(e.key===' '&&!e.shiftKey)){e.preventDefault();els[Math.min(curIdx()+1,els.length-1)].scrollIntoView({behavior:'smooth',block:'start'});}
+  else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();els[Math.max(curIdx()-1,0)].scrollIntoView({behavior:'smooth',block:'start'});}
+  else if(e.key.toLowerCase()==='f'){e.preventDefault();if(!document.fullscreenElement)await document.documentElement.requestFullscreen().catch(()=>{});else await document.exitFullscreen().catch(()=>{});}
+});
+document.getElementById('fullscreen-btn').addEventListener('click',async()=>{if(!document.fullscreenElement)await document.documentElement.requestFullscreen().catch(()=>{});else await document.exitFullscreen().catch(()=>{});});
+gsap.from('#hero h1',{y:28,opacity:0,duration:.8,delay:.2});
+gsap.from('#hero .lead',{y:18,opacity:0,duration:.6,delay:.4});
+</script>
+</body>
+</html>

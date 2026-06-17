@@ -235,3 +235,44 @@ semilla), magnitud del reservation price vs γ. Auxiliar: subclasear `MarketMake
 `FlatMaker`) y simularlo — el alumno cierra el círculo escribiendo y enchufando lo suyo.""",
 },
 }
+
+
+# Textos de las clases NUEVAS del rediseño a 6 fundamentos (numeración actual).
+EXTRA_DOCS = {
+3: {
+"theory": """Cuando tus funciones crecen, no pueden vivir sueltas en un notebook: las guardas en un
+archivo `.py` — un **módulo** — y lo **importas** desde donde lo necesites. `import order_book`
+trae el módulo entero; `from order_book import spread` trae solo una función. Así reutilizas
+código sin copiarlo, que es justo lo que harás con el paquete `exchange/` desde la clase 7
+(`import exchange`).
+
+La segunda mitad de la clase son los **errores**: una función como `best_bid` revienta con un
+libro vacío. `try/except` atrapa el fallo y devuelve algo sensato; `raise` lanza un error claro
+cuando el dato no tiene sentido. Una librería de verdad no se cae con un dato raro.""",
+"technical": """Pre-paquete: se trabaja con el módulo `order_book.py` (las funciones de L2) y un `main.py`
+que lo importa. El deck a medida (Pyodide) escribe el módulo en el sistema de archivos virtual y
+lo importa en vivo. Conceptos: `import` vs `from ... import`, alias, `try/except`, `raise`,
+excepciones propias, `if __name__ == "__main__"` y argumentos por defecto. El núcleo (6) culmina
+construyendo y leyendo un libro a través del módulo importado; el `.py` entregable es
+`order_book.py` (módulo) + `main.py` (lo importa). Puente: el código ya es una librería, pero
+datos y funciones siguen separados → juntarlos = objetos (L4).""",
+},
+6: {
+"theory": """La pieza que sostiene todo el framework: vas a tener **muchas estrategias** que comparten un
+esqueleto. La **herencia** deja que una subclase reutilice y **sobrescriba** los métodos de una
+base. Una **clase abstracta** (`ABC` + `@abstractmethod`) fija un contrato: no se puede
+instanciar hasta implementar el método. Y el **polimorfismo** es llamar al mismo método sobre
+objetos distintos y que cada uno responda lo suyo — el código que los usa no necesita saber cuál
+es cuál.
+
+Se enseña construyendo una familia `Strategy` de juguete (Momentum, Contrarian): exactamente el
+patrón que en la clase 10 se conecta al motor real. El alumno llega al framework con la herencia
+ya dominada, no a presión.""",
+"technical": """Pura OOP, sin dependencias: una base abstracta `Strategy` con `@abstractmethod decide` y
+subclases que la implementan; un bucle polimórfico (`[s.decide(imb) for s in strategies]`).
+Conceptos: herencia, override, `super().__init__`, `ABC`/`@abstractmethod`, `isinstance`,
+polimorfismo. El `.py` entregable es `strategies_toy.py` (base + Momentum + Contrarian + bucle
+polimórfico). Puente directo a L10: ese `Strategy` de juguete se formaliza como la interfaz del
+framework y se enchufa al `Backtest`.""",
+},
+}

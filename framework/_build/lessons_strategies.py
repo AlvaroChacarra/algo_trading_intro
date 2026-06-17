@@ -1,4 +1,4 @@
-"""Specs de las lecciones de estrategias: VWAP (L10-L11) y market making (L12-L14).
+"""Specs de las lecciones de ejecución y market making (L12 VWAP, L13 MM, L14 A-S).
 
 Todas las estrategias son subclases de Strategy y se enchufan al mismo motor.
 El market making usa MMSimulation (modelo de intensidad de fills).
@@ -7,24 +7,24 @@ El market making usa MMSimulation (modelo de intensidad de fills).
 LESSONS = []
 
 # ---------------------------------------------------------------------------
-# L10 — VWAP I
+# L12 — VWAP (baselines + dinámico)
 # ---------------------------------------------------------------------------
 LESSONS.append({
-    "n": 10, "slug": "10-vwap-baselines",
-    "title": "VWAP I — Baselines de volumen",
-    "piece": "VWAPStrategy: repartir una orden por el perfil de volumen",
-    "objective": "Primer algoritmo de ejecución: repartir una orden grande en trozos a lo largo de la sesión. TWAP (uniforme) y VWAP (siguiendo el perfil de volumen) como baselines.",
-    "frase": "No mandes la orden de golpe: repártela. TWAP reparte en el tiempo; VWAP reparte donde hay volumen.",
+    "n": 12, "slug": "12-vwap-execution",
+    "title": "VWAP — Ejecución",
+    "piece": "VWAPStrategy: repartir una orden por el perfil de volumen (estático y dinámico)",
+    "objective": "Primer algoritmo de ejecución: repartir una orden grande en trozos a lo largo de la sesión. Empezamos con baselines (TWAP, VWAP) y subimos a predecir el volumen con el flujo reciente.",
+    "frase": "No mandes la orden de golpe: repártela. TWAP reparte en el tiempo; VWAP, donde hay volumen; y el flujo reciente afina el plan.",
     "concepts": [
         ("Por qué trocear",
-         "Una orden grande de golpe barre el libro y paga slippage. Repartirla en el tiempo reduce el impacto. Esa es la idea de un algoritmo de ejecución.",
+         "Una orden grande de golpe barre el libro y paga slippage. Repartirla en el tiempo reduce el impacto.",
          "VWAPStrategy('BTC', Side.BUY,\n    total_size=1.0, horizon=20)"),
-        ("TWAP: trozos iguales",
-         "El baseline más simple: parte el objetivo en N trozos iguales, uno por intervalo. Ignora el volumen, pero es honesto y difícil de batir sin información.",
-         "profile = [1/N] * N   # pesos uniformes"),
-        ("VWAP: pondera por volumen",
-         "El mercado no negocia igual todo el día. VWAP pone más cantidad donde hay más volumen, para acercarse al precio medio ponderado por volumen.",
-         "profile = [0.05, 0.10, 0.20, ...]\n# más peso donde se espera más volumen"),
+        ("TWAP vs VWAP",
+         "TWAP parte en trozos iguales; VWAP pondera por el perfil de volumen para acercarse al precio medio ponderado por volumen.",
+         "profile = [1/N]*N        # TWAP\nprofile = [.05,.10,.20,...] # VWAP"),
+        ("Volumen dinámico",
+         "El perfil fijo asume que hoy es como la media. Predecir el volumen del próximo intervalo con los últimos k afina el schedule.",
+         "pred = sum(volumes[-k:]) / k"),
     ],
     "build": [
         {"title": "1. Schedule TWAP", "practice": "pesos uniformes",
@@ -50,62 +50,36 @@ LESSONS.append({
          "starter": "vwap_price = None\n",
          "validator": "assert 90000 < vwap_price < 110000\nprint('ok  vwap_price=%.2f' % vwap_price)",
          "solution": "r = Backtest(Market.sample(), VWAPStrategy('BTCUSDT', Side.BUY, 1.0, 20)).run()\nvwap_price = sum(f.price*f.size for f in r.fills) / sum(f.size for f in r.fills)"},
-    ],
-    "aux": [
-        {"title": "A1. El perfil se normaliza solo", "practice": "pesos relativos",
-         "statement": "Comprueba que un perfil sin normalizar `[2,2,2,2,2]` ejecuta lo mismo que `[1,1,1,1,1]`: guarda ambos `executed` en `a` y `b`.",
-         "starter": "from exchange import Market, Backtest, Side\nfrom exchange.strategies import VWAPStrategy\na = None\nb = None\n",
-         "validator": "assert abs(a - b) < 1e-9\nprint('ok')",
-         "solution": "from exchange import Market, Backtest, Side\nfrom exchange.strategies import VWAPStrategy\ndef run(p):\n    r = Backtest(Market.sample(), VWAPStrategy('BTCUSDT', Side.BUY, 1.0, 5, profile=p)).run()\n    return sum(f.size for f in r.fills)\na = run([2,2,2,2,2]); b = run([1,1,1,1,1])"},
-    ],
-})
-
-# ---------------------------------------------------------------------------
-# L11 — VWAP II
-# ---------------------------------------------------------------------------
-LESSONS.append({
-    "n": 11, "slug": "11-vwap-dynamic",
-    "title": "VWAP II — Volumen dinámico",
-    "piece": "predecir el perfil de volumen con datos recientes",
-    "objective": "El perfil fijo asume que hoy es como la media. Pero el flujo reciente informa. Predecir el volumen del próximo intervalo a partir de los anteriores afina el schedule.",
-    "frase": "No basta con la media histórica: el volumen de los últimos minutos también te dice qué viene.",
-    "concepts": [
-        ("El límite del perfil fijo",
-         "Un perfil medio ignora que hoy puede ser un día raro. Si el volumen real se desvía, tu schedule se queda corto o se pasa.",
-         "# perfil fijo: mismo plan pase lo que pase"),
-        ("Predicción con ventana rolada",
-         "Estima el volumen del próximo intervalo como la media de los últimos k. Barato, sin ML, y ya reacciona al régimen actual.",
-         "pred = sum(volumes[-k:]) / k"),
-        ("Factor de corrección",
-         "Si vas por detrás del plan, acelera; si vas por delante, frena. Un factor que compara ejecutado vs objetivo mantiene el schedule a tiempo.",
-         "factor = (target_so_far - executed) / remaining"),
-    ],
-    "build": [
-        {"title": "1. Media rolada", "practice": "ventana de los últimos k",
+        {"title": "5. Media rolada", "practice": "ventana de los últimos k",
          "statement": "Escribe `rolling_mean(xs, k)` que devuelva la media de los últimos k elementos.",
          "starter": "def rolling_mean(xs, k):\n    pass\n",
          "validator": "assert abs(rolling_mean([1,2,3,4], 2) - 3.5) < 1e-9\nprint('ok')",
          "solution": "def rolling_mean(xs, k):\n    return sum(xs[-k:]) / k"},
-        {"title": "2. Predice el próximo volumen", "practice": "usar la ventana",
+        {"title": "6. Predice el próximo volumen", "practice": "usar la ventana",
          "statement": "Dada `volumes`, predice el siguiente como la media de los últimos 3. Guarda `pred`.",
          "given": "volumes = [100, 120, 90, 110, 130]\n",
          "starter": "pred = None\n",
          "validator": "assert abs(pred - 110) < 1e-9\nprint('ok  pred=%.1f' % pred)",
          "solution": "pred = sum(volumes[-3:]) / 3"},
-        {"title": "3. Perfil dinámico", "practice": "normalizar predicciones",
+        {"title": "7. Perfil dinámico", "practice": "normalizar predicciones",
          "statement": "Dadas predicciones `preds`, conviértelas en un perfil que sume 1. Guarda `profile`.",
          "given": "preds = [120, 80, 200]\n",
          "starter": "profile = None\n",
          "validator": "assert abs(sum(profile) - 1) < 1e-9\nassert profile[2] > profile[0] > profile[1], 'más peso donde más volumen'\nprint('ok')",
          "solution": "total = sum(preds)\nprofile = [p/total for p in preds]"},
-        {"title": "4. Factor de corrección", "practice": "ir a tiempo",
-         "statement": "Escribe `correction(target_so_far, executed, remaining_slices)`: cuánto mandar ahora para volver al plan. Si vas por detrás, > lo normal.",
+        {"title": "8. Factor de corrección", "practice": "ir a tiempo",
+         "statement": "Escribe `correction(target_so_far, executed, remaining_slices)`: cuánto mandar ahora para volver al plan.",
          "starter": "def correction(target_so_far, executed, remaining_slices):\n    pass\n",
          "validator": "assert abs(correction(0.5, 0.3, 2) - 0.1) < 1e-9, 'faltan 0.2 en 2 trozos -> 0.1'\nprint('ok')",
          "solution": "def correction(target_so_far, executed, remaining_slices):\n    return (target_so_far - executed) / remaining_slices"},
     ],
     "aux": [
-        {"title": "A1. Regresión lineal (extensión ML, stdlib)", "practice": "mínimos cuadrados a mano",
+        {"title": "A1. El perfil se normaliza solo", "practice": "pesos relativos",
+         "statement": "Comprueba que un perfil `[2,2,2,2,2]` ejecuta lo mismo que `[1,1,1,1,1]`: guarda ambos `executed` en `a` y `b`.",
+         "starter": "from exchange import Market, Backtest, Side\nfrom exchange.strategies import VWAPStrategy\na = None\nb = None\n",
+         "validator": "assert abs(a - b) < 1e-9\nprint('ok')",
+         "solution": "from exchange import Market, Backtest, Side\nfrom exchange.strategies import VWAPStrategy\ndef run(p):\n    r = Backtest(Market.sample(), VWAPStrategy('BTCUSDT', Side.BUY, 1.0, 5, profile=p)).run()\n    return sum(f.size for f in r.fills)\na = run([2,2,2,2,2]); b = run([1,1,1,1,1])"},
+        {"title": "A2. Regresión lineal (extensión ML, stdlib)", "practice": "mínimos cuadrados a mano",
          "statement": "Escribe `slope(xs, ys)` = pendiente de la recta de mínimos cuadrados (cov/var). Es la base de predecir volumen con una feature.",
          "starter": "def slope(xs, ys):\n    pass\n",
          "validator": "assert abs(slope([1,2,3],[2,4,6]) - 2) < 1e-9\nprint('ok — esto es lo que hace LinearRegression por dentro')",
@@ -114,23 +88,23 @@ LESSONS.append({
 })
 
 # ---------------------------------------------------------------------------
-# L12 — Market making intro
+# L13 — Market making intro
 # ---------------------------------------------------------------------------
 LESSONS.append({
-    "n": 12, "slug": "12-market-making-intro",
+    "n": 13, "slug": "13-market-making-intro",
     "title": "Market making — Intro",
     "piece": "MarketMaker: cotizar a ambos lados y gestionar inventario",
     "objective": "El otro lado del mercado: en vez de cruzar, cotizas bid y ask y ganas el spread. Pero acumulas inventario, y el inventario es riesgo. Skew por inventario como primera defensa.",
     "frase": "El market maker gana el spread, pero su enemigo es el inventario: cotiza para volver a plano.",
     "concepts": [
         ("De dónde sale el PnL",
-         "Compras en el bid, vendes en el ask, te quedas el spread. Si el flujo es equilibrado, ganas en cada vuelta. El problema es cuando no lo es.",
+         "Compras en el bid, vendes en el ask, te quedas el spread. Si el flujo es equilibrado, ganas en cada vuelta.",
          "MarketMaker('BTC', half_spread=0.5)\n# bid = mid - 0.5, ask = mid + 0.5"),
         ("Riesgo de inventario y adverse selection",
-         "Si solo te compran (te quedas corto) o solo te venden (te quedas largo), acumulas posición justo cuando el mercado va en tu contra. Eso es adverse selection.",
+         "Si solo te compran o solo te venden, acumulas posición justo cuando el mercado va en tu contra. Eso es adverse selection.",
          "inventario alto -> riesgo de que\nel mid se mueva en tu contra"),
         ("Skew por inventario",
-         "La defensa: cuando estás largo, baja tus dos cotizaciones para que te compren menos y te vendan más, y vuelvas a plano. El reservation price hace justo eso.",
+         "Cuando estás largo, baja tus dos cotizaciones para que te compren menos y te vendan más, y vuelvas a plano.",
          "r = mid - skew * inventory\nbid = r - half_spread; ask = r + half_spread"),
     ],
     "build": [
@@ -169,24 +143,24 @@ LESSONS.append({
 })
 
 # ---------------------------------------------------------------------------
-# L13 — Avellaneda-Stoikov I
+# L14 — Avellaneda-Stoikov (modelo + simulación)
 # ---------------------------------------------------------------------------
 LESSONS.append({
-    "n": 13, "slug": "13-avellaneda-stoikov-i",
-    "title": "Avellaneda-Stoikov I — El modelo",
-    "piece": "AvellanedaStoikov: reservation price y optimal spread",
-    "objective": "Sustituir el skew heurístico por el resultado del modelo de Avellaneda-Stoikov: un reservation price y un optimal spread que salen de maximizar utilidad bajo riesgo de inventario.",
-    "frase": "El reservation price inclina tus cotizaciones según inventario y tiempo; el optimal spread fija cuánto cobras por el riesgo.",
+    "n": 14, "slug": "14-avellaneda-stoikov",
+    "title": "Avellaneda-Stoikov — modelo y simulación",
+    "piece": "AvellanedaStoikov: reservation price, optimal spread y barridos de gamma",
+    "objective": "Sustituir el skew heurístico por el resultado del modelo de Avellaneda-Stoikov (reservation price + optimal spread), y ponerlo a correr: simular, ver cómo controla el inventario y barrer gamma.",
+    "frase": "El reservation price inclina según inventario y tiempo; el optimal spread cobra por el riesgo. Más gamma = más defensivo, menos inventario, menos PnL.",
     "concepts": [
         ("De dónde sale el modelo",
-         "Maximizas utilidad CARA sobre tu riqueza final con inventario incierto. La solución (vía HJB) da dos fórmulas cerradas. No hace falta derivarlas para usarlas.",
+         "Maximizas utilidad CARA sobre tu riqueza final con inventario incierto. La solución (vía HJB) da dos fórmulas cerradas.",
          "r = s - q*gamma*sigma^2*(T-t)\nd = gamma*sigma^2*(T-t) + (2/gamma)*ln(1+gamma/kappa)"),
-        ("Reservation price",
-         "Es el mid ajustado por inventario y tiempo: largo de inventario y lejos del cierre -> bajas el centro para soltar. Cerca del cierre, el ajuste se apaga.",
-         "r = mid - q * gamma * sigma**2 * tau"),
-        ("Optimal spread",
-         "Cuánto separas tus cotizaciones del reservation price. Crece con la aversión (gamma) y la volatilidad; depende de la liquidez (kappa).",
+        ("Reservation price y optimal spread",
+         "r es el mid ajustado por inventario y tiempo; d es cuánto separas las cotizaciones. Al cierre, el ajuste por inventario se apaga.",
          "bid = r - d/2\nask = r + d/2"),
+        ("Simular y barrer gamma",
+         "MMSimulation mueve el mid y te ejecuta según la distancia. Más gamma controla mejor el inventario, pero captura menos spread. No hay free lunch.",
+         "for gamma in [0.05, 0.2, 0.8]: simula"),
     ],
     "build": [
         {"title": "1. Reservation price con inventario", "practice": "fórmula r",
@@ -213,6 +187,24 @@ LESSONS.append({
          "starter": "center = None\n",
          "validator": "assert center < 100, 'largo -> centro por debajo del mid'\nprint('ok  center=%.2f' % center)",
          "solution": "bid, ask = strat.quotes(book)\ncenter = (bid + ask) / 2"},
+        {"title": "5. Simula el A-S", "practice": "MMSimulation con A-S",
+         "statement": "Simula `AvellanedaStoikov('BTC', gamma=0.1, sigma=0.5, horizon=400)` con `steps=400`. Guarda `max_inv` y `pnl`.",
+         "given": "from exchange.strategies import AvellanedaStoikov\nfrom exchange.simulation import MMSimulation\n",
+         "starter": "max_inv = None\npnl = None\n",
+         "validator": "assert max_inv >= 0 and isinstance(pnl, float)\nprint('ok  max|inv|=%.2f pnl=%.2f' % (max_inv, pnl))",
+         "solution": "res = MMSimulation(AvellanedaStoikov('BTC', gamma=0.1, sigma=0.5, horizon=400), steps=400).run()\nmax_inv = res.max_inventory\npnl = res.final_pnl"},
+        {"title": "6. El skew reduce el inventario", "practice": "comparar con / sin skew",
+         "statement": "Con la misma semilla, simula un MarketMaker con skew (2.0) y otro sin skew (0.0), half_spread 0.3. Guarda `inv_skew` e `inv_noskew` (max inventario). El skew debe dejar menos inventario.",
+         "given": "from exchange.strategies import MarketMaker\nfrom exchange.simulation import MMSimulation\n",
+         "starter": "inv_skew = None\ninv_noskew = None\n",
+         "validator": "assert inv_skew <= inv_noskew + 1e-9, 'el skew empuja el inventario hacia 0'\nprint('ok  skew=%.3f noskew=%.3f' % (inv_skew, inv_noskew))",
+         "solution": "inv_skew = MMSimulation(MarketMaker('BTC', half_spread=0.3, inventory_skew=2.0), steps=400).run().max_inventory\ninv_noskew = MMSimulation(MarketMaker('BTC', half_spread=0.3, inventory_skew=0.0), steps=400).run().max_inventory"},
+        {"title": "7. Más gamma, más inclina el reservation price", "practice": "trade-off riesgo/PnL",
+         "statement": "Con inventario fijo (5), mide cuánto se aleja el reservation price del mid para gamma 0.05 y 0.8. Guarda `skew_low_gamma` y `skew_high_gamma` (= |r - mid|).",
+         "given": "from exchange.strategies import AvellanedaStoikov\ndef skew_mag(g):\n    s = AvellanedaStoikov('BTC', gamma=g, sigma=10, kappa=1.5, horizon=500)\n    s._inventory = 5; s._t = 0\n    return abs(s.reservation_price(100) - 100)\n",
+         "starter": "skew_low_gamma = None\nskew_high_gamma = None\n",
+         "validator": "assert skew_high_gamma > skew_low_gamma, 'más gamma = más aversión = más inclinación'\nprint('ok  g=0.05 -> %.1f | g=0.8 -> %.1f' % (skew_low_gamma, skew_high_gamma))",
+         "solution": "skew_low_gamma = skew_mag(0.05)\nskew_high_gamma = skew_mag(0.8)"},
     ],
     "aux": [
         {"title": "A1. El tiempo apaga el ajuste", "practice": "decaimiento temporal",
@@ -220,51 +212,7 @@ LESSONS.append({
          "starter": "from exchange.strategies import AvellanedaStoikov\nr_start = None\nr_end = None\n",
          "validator": "assert abs(r_end - 100) < abs(r_start - 100), 'al cierre, r vuelve al mid'\nprint('ok  r_start=%.2f r_end=%.2f' % (r_start, r_end))",
          "solution": "from exchange.strategies import AvellanedaStoikov\ns = AvellanedaStoikov('BTC', gamma=0.1, sigma=10, kappa=1.5, horizon=500)\ns._inventory = 5\ns._t = 0;   r_start = s.reservation_price(100)\ns._t = 500; r_end = s.reservation_price(100)"},
-    ],
-})
-
-# ---------------------------------------------------------------------------
-# L14 — Avellaneda-Stoikov II
-# ---------------------------------------------------------------------------
-LESSONS.append({
-    "n": 14, "slug": "14-avellaneda-stoikov-ii",
-    "title": "Avellaneda-Stoikov II — Simulación",
-    "piece": "simular A-S y barrer parámetros",
-    "objective": "Poner el modelo a correr: simular el market maker A-S contra un mid que se mueve, ver cómo controla el inventario, y barrer gamma para entender el trade-off riesgo/PnL.",
-    "frase": "Más gamma = más miedo al inventario: cotizas más defensivo, cargas menos posición, pero capturas menos spread.",
-    "concepts": [
-        ("Simular para entender",
-         "MMSimulation mueve el mid con un paseo aleatorio y te ejecuta según la distancia de tus cotizaciones. Ves la senda de inventario y el PnL marcado a mercado.",
-         "MMSimulation(AvellanedaStoikov('BTC', horizon=500),\n    steps=500).run()"),
-        ("A-S controla el inventario",
-         "Frente a un market maker naive, el A-S mantiene el inventario mucho más cerca de 0: el reservation price lo empuja a soltar antes de cargar demasiado.",
-         "res.max_inventory   # A-S << naive"),
-        ("El barrido de gamma",
-         "gamma es la perilla de aversión. Súbela y el inventario máximo baja, pero también las vueltas (menos PnL). Bájala y pasa lo contrario. No hay free lunch.",
-         "for gamma in [0.05, 0.2, 0.5]: simula"),
-    ],
-    "build": [
-        {"title": "1. Simula el A-S", "practice": "MMSimulation con A-S",
-         "statement": "Simula `AvellanedaStoikov('BTC', gamma=0.1, sigma=0.5, horizon=400)` con `steps=400`. Guarda `max_inv` y `pnl`.",
-         "given": "from exchange.strategies import AvellanedaStoikov\nfrom exchange.simulation import MMSimulation\n",
-         "starter": "max_inv = None\npnl = None\n",
-         "validator": "assert max_inv >= 0 and isinstance(pnl, float)\nprint('ok  max|inv|=%.2f pnl=%.2f' % (max_inv, pnl))",
-         "solution": "res = MMSimulation(AvellanedaStoikov('BTC', gamma=0.1, sigma=0.5, horizon=400), steps=400).run()\nmax_inv = res.max_inventory\npnl = res.final_pnl"},
-        {"title": "2. El skew reduce el inventario", "practice": "comparar con / sin skew",
-         "statement": "Con la misma semilla, simula un MarketMaker con skew (2.0) y otro sin skew (0.0), half_spread 0.3. Guarda `inv_skew` e `inv_noskew` (max inventario). El skew debe dejar menos inventario.",
-         "given": "from exchange.strategies import MarketMaker\nfrom exchange.simulation import MMSimulation\n",
-         "starter": "inv_skew = None\ninv_noskew = None\n",
-         "validator": "assert inv_skew <= inv_noskew + 1e-9, 'el skew empuja el inventario hacia 0'\nprint('ok  skew=%.3f noskew=%.3f' % (inv_skew, inv_noskew))",
-         "solution": "inv_skew = MMSimulation(MarketMaker('BTC', half_spread=0.3, inventory_skew=2.0), steps=400).run().max_inventory\ninv_noskew = MMSimulation(MarketMaker('BTC', half_spread=0.3, inventory_skew=0.0), steps=400).run().max_inventory"},
-        {"title": "3. Más gamma, más inclina el reservation price", "practice": "trade-off riesgo/PnL",
-         "statement": "Con inventario fijo (5), mide cuánto se aleja el reservation price del mid para gamma 0.05 y 0.8. Guarda `skew_low_gamma` y `skew_high_gamma` (= |r - mid|). Más gamma -> más inclinación -> antes sueltas inventario.",
-         "given": "from exchange.strategies import AvellanedaStoikov\ndef skew_mag(g):\n    s = AvellanedaStoikov('BTC', gamma=g, sigma=10, kappa=1.5, horizon=500)\n    s._inventory = 5; s._t = 0\n    return abs(s.reservation_price(100) - 100)\n",
-         "starter": "skew_low_gamma = None\nskew_high_gamma = None\n",
-         "validator": "assert skew_high_gamma > skew_low_gamma, 'más gamma = más aversión = más inclinación'\nprint('ok  g=0.05 -> %.1f | g=0.8 -> %.1f' % (skew_low_gamma, skew_high_gamma))",
-         "solution": "skew_low_gamma = skew_mag(0.05)\nskew_high_gamma = skew_mag(0.8)"},
-    ],
-    "aux": [
-        {"title": "A1. Tu propio market maker", "practice": "subclasear MarketMaker",
+        {"title": "A2. Tu propio market maker", "practice": "subclasear MarketMaker",
          "statement": "Crea `FlatMaker(MarketMaker)` que cotice siempre simétrico al mid (sin skew): override `reservation_price` para devolver el mid. Simúlalo y guarda `max_inv`.",
          "starter": "from exchange.strategies import MarketMaker\nfrom exchange.simulation import MMSimulation\nclass FlatMaker(MarketMaker):\n    def reservation_price(self, mid):\n        pass\nmax_inv = None\n",
          "validator": "assert max_inv is not None\nprint('ok — has escrito tu propia estrategia y la has enchufado al simulador')",

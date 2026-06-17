@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OOP I — Order y Trade</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+  :root {
+    --bg:#09090b; --panel:#101014; --fg:#f4f4f5; --muted:#a1a1aa;
+    --accent:#22d3ee; --green:#4ade80; --red:#f87171; --line:#27272a;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--fg); font-family:'Inter',sans-serif;
+         scroll-snap-type:y mandatory; overflow-y:scroll; height:100vh; }
+  section { min-height:100vh; scroll-snap-align:start; display:flex; flex-direction:column;
+            justify-content:center; padding:8vh 7vw; border-bottom:1px solid var(--line); }
+  .tag { color:var(--accent); font-weight:600; letter-spacing:.12em; text-transform:uppercase;
+         font-size:.8rem; margin-bottom:1.2rem; }
+  h1 { font-size:clamp(2.2rem,6vw,4rem); font-weight:800; line-height:1.05; }
+  h2 { font-size:clamp(1.6rem,4vw,2.6rem); font-weight:800; margin-bottom:1.2rem; }
+  p { color:var(--muted); font-size:clamp(1rem,2vw,1.25rem); max-width:60ch; line-height:1.6;
+      margin-top:1rem; }
+  .piece { display:inline-block; margin-top:2rem; padding:.5rem 1rem; border:1px solid var(--accent);
+           border-radius:8px; color:var(--accent); font-family:'JetBrains Mono',monospace; font-size:.95rem; }
+  pre { margin-top:1.5rem; background:var(--panel); border:1px solid var(--line); border-radius:10px;
+        padding:1.2rem 1.4rem; overflow-x:auto; font-family:'JetBrains Mono',monospace;
+        font-size:.95rem; color:#e4e4e7; line-height:1.55; max-width:70ch; }
+  .k { color:var(--accent); } .c { color:var(--muted); font-style:italic; }
+  .frase { font-size:clamp(1.3rem,3vw,2rem); color:var(--fg); font-weight:600; max-width:50ch; }
+  .dot { color:var(--accent); }
+  footer { color:var(--muted); font-size:.85rem; margin-top:3rem; font-family:'JetBrains Mono',monospace; }
+</style>
+</head>
+<body>
+<section>
+  <div class="tag">Clase 4 · Algo Trading · ICAI 2026</div>
+  <h1>OOP I — Order y Trade</h1>
+  <p>Convertir el dict de orden en una clase Order con métodos, y modelar el resultado de un cruce con Fill. Primer módulo de verdad del paquete exchange.</p>
+  <span class="piece">Hoy construyes: clases Order y Fill (exchange/orders.py, trades.py)</span>
+</section>
+<section>
+  <div class="tag">Bloque 1</div>
+  <h2>De dict a clase</h2>
+  <p>Una clase es una plantilla. `__init__` guarda los datos (lo que antes eran claves del dict) como atributos. Crear un objeto es rellenar la plantilla.</p>
+  <pre>class Order:
+    def __init__(self, symbol, side, price, size):
+        self.symbol = symbol
+        self.side = side
+        self.price = price
+        self.size = size</pre>
+</section><section>
+  <div class="tag">Bloque 2</div>
+  <h2>Métodos: el dato sabe operar consigo mismo</h2>
+  <p>Antes tenías compute_notional(order). Ahora la orden lo sabe hacer sola: order.notional(). El comportamiento vive junto al dato.</p>
+  <pre>    def notional(self):
+        return self.price * self.size</pre>
+</section><section>
+  <div class="tag">Bloque 3</div>
+  <h2>Fill: el resultado de un cruce</h2>
+  <p>Cuando una orden se ejecuta, genera un Fill. Su cash_flow es negativo si compras (sale caja) y positivo si vendes.</p>
+  <pre>    def cash_flow(self):
+        sign = -1 if self.side==&#x27;buy&#x27; else 1
+        return sign * self.price * self.size</pre>
+</section>
+<section>
+  <div class="tag">Cierre</div>
+  <p class="frase">Un objeto empaqueta datos y comportamiento: la orden ya sabe calcular su nocional.</p>
+  <footer>→ siguiente: abre <span class="k">exercises/</span> y construye la pieza.</footer>
+</section>
+<script>
+  gsap.utils.toArray('section').forEach(s => {
+    gsap.from(s.children, { opacity:0, y:24, duration:.6, stagger:.08,
+      scrollTrigger:{ trigger:s, start:'top 70%' } });
+  });
+  document.querySelectorAll('section').forEach(s =>
+    gsap.from(s.children, {opacity:0, y:20, duration:.5, stagger:.07,
+      onStart(){}, scrollTrigger:undefined}));
+</script>
+</body>
+</html>

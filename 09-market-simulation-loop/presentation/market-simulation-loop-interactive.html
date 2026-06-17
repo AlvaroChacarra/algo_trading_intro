@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El loop de simulación</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+  :root {
+    --bg:#09090b; --panel:#101014; --fg:#f4f4f5; --muted:#a1a1aa;
+    --accent:#22d3ee; --green:#4ade80; --red:#f87171; --line:#27272a;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--fg); font-family:'Inter',sans-serif;
+         scroll-snap-type:y mandatory; overflow-y:scroll; height:100vh; }
+  section { min-height:100vh; scroll-snap-align:start; display:flex; flex-direction:column;
+            justify-content:center; padding:8vh 7vw; border-bottom:1px solid var(--line); }
+  .tag { color:var(--accent); font-weight:600; letter-spacing:.12em; text-transform:uppercase;
+         font-size:.8rem; margin-bottom:1.2rem; }
+  h1 { font-size:clamp(2.2rem,6vw,4rem); font-weight:800; line-height:1.05; }
+  h2 { font-size:clamp(1.6rem,4vw,2.6rem); font-weight:800; margin-bottom:1.2rem; }
+  p { color:var(--muted); font-size:clamp(1rem,2vw,1.25rem); max-width:60ch; line-height:1.6;
+      margin-top:1rem; }
+  .piece { display:inline-block; margin-top:2rem; padding:.5rem 1rem; border:1px solid var(--accent);
+           border-radius:8px; color:var(--accent); font-family:'JetBrains Mono',monospace; font-size:.95rem; }
+  pre { margin-top:1.5rem; background:var(--panel); border:1px solid var(--line); border-radius:10px;
+        padding:1.2rem 1.4rem; overflow-x:auto; font-family:'JetBrains Mono',monospace;
+        font-size:.95rem; color:#e4e4e7; line-height:1.55; max-width:70ch; }
+  .k { color:var(--accent); } .c { color:var(--muted); font-style:italic; }
+  .frase { font-size:clamp(1.3rem,3vw,2rem); color:var(--fg); font-weight:600; max-width:50ch; }
+  .dot { color:var(--accent); }
+  footer { color:var(--muted); font-size:.85rem; margin-top:3rem; font-family:'JetBrains Mono',monospace; }
+</style>
+</head>
+<body>
+<section>
+  <div class="tag">Clase 9 · Algo Trading · ICAI 2026</div>
+  <h1>El loop de simulación</h1>
+  <p>Poner el tiempo en marcha: recorrer los snapshots, enviar órdenes en cada paso y llevar la cuenta de caja, inventario y equity con PositionTracker.</p>
+  <span class="piece">Hoy construyes: Market: reproducir snapshots y ejecutar en el tiempo</span>
+</section>
+<section>
+  <div class="tag">Bloque 1</div>
+  <h2>step() avanza el tiempo</h2>
+  <p>Market.step() reconstruye el libro desde el siguiente snapshot y lo devuelve. Cuando se acaban, devuelve None. Ese es tu reloj.</p>
+  <pre>while True:
+    book = m.step()
+    if book is None: break
+    ...</pre>
+</section><section>
+  <div class="tag">Bloque 2</div>
+  <h2>submit() ejecuta contra el libro actual</h2>
+  <p>En cada paso puedes enviar una orden: m.submit(order) la cruza contra el libro de ese instante y te devuelve los fills.</p>
+  <pre>fills = m.submit(order)</pre>
+</section><section>
+  <div class="tag">Bloque 3</div>
+  <h2>PositionTracker lleva la cuenta</h2>
+  <p>Aplicas cada fill al tracker y en cualquier momento consultas equity(mid). Esa es tu curva de PnL.</p>
+  <pre>for f in fills:
+    tracker.apply_fill(f)
+tracker.equity(book.mid)</pre>
+</section>
+<section>
+  <div class="tag">Cierre</div>
+  <p class="frase">Mercado = estado (libro) + dinámica (matching) + tiempo (el loop). Todo junto, ya simulas.</p>
+  <footer>→ siguiente: abre <span class="k">exercises/</span> y construye la pieza.</footer>
+</section>
+<script>
+  gsap.utils.toArray('section').forEach(s => {
+    gsap.from(s.children, { opacity:0, y:24, duration:.6, stagger:.08,
+      scrollTrigger:{ trigger:s, start:'top 70%' } });
+  });
+  document.querySelectorAll('section').forEach(s =>
+    gsap.from(s.children, {opacity:0, y:20, duration:.5, stagger:.07,
+      onStart(){}, scrollTrigger:undefined}));
+</script>
+</body>
+</html>
