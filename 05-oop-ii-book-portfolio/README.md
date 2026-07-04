@@ -44,7 +44,7 @@ esqueleto entre muchos objetos: herencia (L6).
 
 - `presentation/` — presentación interactiva + guion del profesor
 - `exercises/05_build_exercises.ipynb` — construyes la pieza (núcleo 1-3, luego el resto)
-- `exercises/05_auxiliary.ipynb` — profundización opcional
+- `exercises/05_auxiliary.ipynb` — el gimnasio: drills + profundización opcional
 - `exercises/exchange/` — el paquete que vienes construyendo (starter de hoy)
 
 ## Idea central

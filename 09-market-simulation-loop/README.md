@@ -33,7 +33,7 @@ y equity. Es el andamiaje sobre el que se monta el `Backtest` en L8.
 
 - `presentation/` — presentación interactiva + guion del profesor
 - `exercises/09_build_exercises.ipynb` — construyes la pieza (núcleo 1-3, luego el resto)
-- `exercises/09_auxiliary.ipynb` — profundización opcional
+- `exercises/09_auxiliary.ipynb` — el gimnasio: drills + profundización opcional
 - `exercises/exchange/` — el paquete que vienes construyendo (starter de hoy)
 
 ## Idea central

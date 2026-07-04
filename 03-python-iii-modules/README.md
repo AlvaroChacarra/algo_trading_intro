@@ -39,7 +39,7 @@ datos y funciones siguen separados → juntarlos = objetos (L4).
 
 - `presentation/` — presentación interactiva + guion del profesor
 - `exercises/03_build_exercises.ipynb` — construyes la pieza (núcleo 1-3, luego el resto)
-- `exercises/03_auxiliary.ipynb` — profundización opcional
+- `exercises/03_auxiliary.ipynb` — el gimnasio: drills + profundización opcional
 
 ## Idea central
 

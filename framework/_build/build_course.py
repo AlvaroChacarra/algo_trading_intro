@@ -47,6 +47,8 @@ def self_test() -> list[str]:
     for lesson in LESSONS:
         for kind in ("build", "aux"):
             for ex in lesson.get(kind, []):
+                if "section" in ex:  # separador de bloque, no es un ejercicio
+                    continue
                 ns: dict = {}
                 code = (ex.get("given", "") + "\n" + ex["solution"]
                         + "\n" + ex["validator"])
@@ -135,9 +137,12 @@ def tiers_md(kind: str) -> str:
                 "(despliégala si quieres ver el `assert`).\n"
                 "3. ¿Atascado? Abre **💡 Ver solución**.\n\n"
                 "**Núcleo:** los primeros (en clase) · **Si vamos bien:** el resto · **Más:** el cuaderno de auxiliares.")
-    return ("### Auxiliares\n\n"
-            "Profundización opcional, mismo formato: comprobación plegada + solución desplegable. "
-            "No hacen falta para seguir el curso.")
+    return ("### El gimnasio\n\n"
+            "Drills cortos para automatizar las primitivas de Python con datos de mercado, "
+            "más una profundización final. Mismo formato de siempre: escribe tu código, ejecuta la "
+            "**✅ comprobación plegada** (`Shift+Enter`) y, si te atascas, abre **💡 Ver solución**. "
+            "Ninguno debería llevarte más de un par de minutos. No hacen falta para seguir el "
+            "curso — pero te hacen rápido.")
 
 
 def _strip_html(text: str) -> str:
@@ -159,7 +164,7 @@ def readme(lesson: dict, has_pkg: bool) -> str:
             f"## Estructura de la carpeta\n\n"
             f"- `presentation/` — presentación interactiva + guion del profesor\n"
             f"- `exercises/{lesson['n']:02d}_build_exercises.ipynb` — construyes la pieza (núcleo 1-3, luego el resto)\n"
-            f"- `exercises/{lesson['n']:02d}_auxiliary.ipynb` — profundización opcional\n"
+            f"- `exercises/{lesson['n']:02d}_auxiliary.ipynb` — el gimnasio: drills + profundización opcional\n"
             f"{pkg_line}\n"
             f"## Idea central\n\n> {_strip_html(lesson['frase'])}\n")
 
@@ -273,8 +278,10 @@ def emit(lesson: dict) -> None:
         ]
     nbgen.write_notebook(os.path.join(exer, f"{lesson['n']:02d}_build_exercises.ipynb"), build_nb)
 
-    aux_intro = (f"# Clase {lesson['n']} — Auxiliares\n\nProfundización opcional sobre "
-                 f"*{lesson['title']}*.")
+    n_aux = sum(1 for ex in lesson["aux"] if "section" not in ex)
+    aux_intro = (f"# Clase {lesson['n']} — Auxiliares · el gimnasio\n\n"
+                 f"{n_aux} ejercicios cortos sobre *{lesson['title']}*: drills para ganar "
+                 f"soltura con las primitivas y profundizaciones opcionales.")
     aux_nb = nbgen.build_notebook(aux_intro, tiers_md("aux"), lesson["aux"],
                                   "## Fin de los auxiliares\n\nVuelve al cuaderno principal cuando quieras.")
     nbgen.write_notebook(os.path.join(exer, f"{lesson['n']:02d}_auxiliary.ipynb"), aux_nb)
@@ -298,7 +305,8 @@ def main() -> None:
         for f in failures:
             print(f)
         sys.exit(1)
-    total = sum(len(l["build"]) + len(l["aux"]) for l in LESSONS)
+    total = sum(1 for l in LESSONS for k in ("build", "aux")
+                for ex in l[k] if "section" not in ex)
     print(f"OK — {total} ejercicios validados en {len(LESSONS)} lecciones.")
 
     if "--check-only" in sys.argv:

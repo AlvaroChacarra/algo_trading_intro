@@ -15,7 +15,7 @@ python smoke_test.py        # verifica el motor end-to-end (libro, matching, bac
 El contenido de las clases L1–L14 (notebooks, HTML, README, CLAUDE, guion) se genera desde specs para mantener consistencia y garantizar que **todo el código corre**.
 
 ```bash
-python _build/build_course.py --check-only   # autovalida los 82 ejercicios (solución + validador)
+python _build/build_course.py --check-only   # autovalida todos los ejercicios (solución + validador)
 python _build/build_course.py                # regenera las 15 carpetas de lección
 python _build/build_course.py --clean        # además archiva/borra carpetas antiguas (cuidado)
 ```

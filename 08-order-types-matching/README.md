@@ -38,7 +38,7 @@ Conecta todo lo anterior: recibe `Order` (L3), opera sobre `OrderBook` (L4), pro
 
 - `presentation/` — presentación interactiva + guion del profesor
 - `exercises/08_build_exercises.ipynb` — construyes la pieza (núcleo 1-3, luego el resto)
-- `exercises/08_auxiliary.ipynb` — profundización opcional
+- `exercises/08_auxiliary.ipynb` — el gimnasio: drills + profundización opcional
 - `exercises/exchange/` — el paquete que vienes construyendo (starter de hoy)
 
 ## Idea central

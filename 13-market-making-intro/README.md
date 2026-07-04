@@ -34,7 +34,7 @@ simula contra un mid en paseo aleatorio con **modelo de intensidad de fills**
 
 - `presentation/` — presentación interactiva + guion del profesor
 - `exercises/13_build_exercises.ipynb` — construyes la pieza (núcleo 1-3, luego el resto)
-- `exercises/13_auxiliary.ipynb` — profundización opcional
+- `exercises/13_auxiliary.ipynb` — el gimnasio: drills + profundización opcional
 - `exercises/exchange/` — el paquete que vienes construyendo (starter de hoy)
 
 ## Idea central

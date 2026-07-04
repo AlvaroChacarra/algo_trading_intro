@@ -58,6 +58,11 @@ def build_notebook(intro_md: str, tiers_md: str | None, exercises: list[dict],
     if tiers_md:
         cells.append(md(tiers_md))
     for ex in exercises:
+        if "section" in ex:  # separador de bloque (p. ej. el gimnasio de auxiliares)
+            blurb = ex.get("blurb", "")
+            cells.append(md(f"---\n\n## 🏋️ {ex['section']}"
+                            + (f"\n\n{blurb}" if blurb else "")))
+            continue
         cells.extend(_exercise_cells(ex))
     cells.append(md(closing_md))
     return {

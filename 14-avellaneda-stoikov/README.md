@@ -36,7 +36,7 @@ se enchufa al mismo `MMSimulation`. Demuestra herencia + especialización.
 
 - `presentation/` — presentación interactiva + guion del profesor
 - `exercises/14_build_exercises.ipynb` — construyes la pieza (núcleo 1-3, luego el resto)
-- `exercises/14_auxiliary.ipynb` — profundización opcional
+- `exercises/14_auxiliary.ipynb` — el gimnasio: drills + profundización opcional
 - `exercises/exchange/` — el paquete que vienes construyendo (starter de hoy)
 
 ## Idea central

@@ -49,7 +49,7 @@ de la clase `Order` en L3. Los dicts de hoy son los objetos de pasado mañana.
 
 - `presentation/` — presentación interactiva + guion del profesor
 - `exercises/01_build_exercises.ipynb` — construyes la pieza (núcleo 1-3, luego el resto)
-- `exercises/01_auxiliary.ipynb` — profundización opcional
+- `exercises/01_auxiliary.ipynb` — el gimnasio: drills + profundización opcional
 
 ## Idea central
 

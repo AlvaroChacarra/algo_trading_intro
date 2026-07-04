@@ -37,7 +37,7 @@ paquete acumulado ya incluye el motor de datos completo.
 
 - `presentation/` — presentación interactiva + guion del profesor
 - `exercises/07_build_exercises.ipynb` — construyes la pieza (núcleo 1-3, luego el resto)
-- `exercises/07_auxiliary.ipynb` — profundización opcional
+- `exercises/07_auxiliary.ipynb` — el gimnasio: drills + profundización opcional
 - `exercises/exchange/` — el paquete que vienes construyendo (starter de hoy)
 
 ## Idea central
