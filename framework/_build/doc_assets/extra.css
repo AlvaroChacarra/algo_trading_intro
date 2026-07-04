@@ -1,0 +1,84 @@
+
+/* ══ componentes añadidos tras L1 (docs L2-L6) ══ */
+
+/* mapa del paquete — el macro-hilo del curso, se ilumina la pieza de hoy */
+.pkgmap{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;
+        margin:24px 0}
+.pk{border:1px solid var(--line);border-radius:10px;padding:11px 13px;
+    font-family:var(--mono);font-size:.75rem;color:var(--muted)}
+.pk span{display:block;font-size:.65rem;color:var(--faint);margin-top:3px}
+.pk.done{border-color:rgba(74,222,128,.35)}
+.pk.done:before{content:"✓ ";color:var(--bid)}
+.pk.today{border-color:var(--accent);background:var(--accent-dim);color:var(--accent)}
+.pk.today span{color:var(--muted)}
+.pk.future{opacity:.45}
+
+/* CTA de cierre: del documento a los cuadernos */
+.cta{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:26px 0}
+@media(max-width:700px){.cta{grid-template-columns:1fr}}
+.cta a,.cta .box{display:block;text-decoration:none;border:1px solid rgba(34,211,238,.4);
+     border-radius:12px;padding:16px 20px;color:var(--text)}
+.cta .tag{font-family:var(--mono);font-size:.68rem;letter-spacing:.15em;
+          text-transform:uppercase;color:var(--accent);display:block;margin-bottom:5px}
+.cta code{font-size:.8em}
+
+/* panel de dos archivos (L3: módulo + script) */
+.twofile{display:grid;grid-template-columns:1fr 1fr;gap:2px;height:100%}
+.twofile .file{background:var(--panel2);display:flex;flex-direction:column;min-height:0}
+.twofile .fname{font-family:var(--mono);font-size:.68rem;color:var(--faint);
+                padding:7px 12px;border-bottom:1px solid var(--line)}
+.twofile .fname b{color:var(--accent);font-weight:500}
+.twofile pre{margin:0;padding:10px 12px;font-family:var(--mono);font-size:.72rem;
+             line-height:1.7;overflow:auto;flex:1}
+
+/* tarjetas de simulador (constructor de Order, tracker, estrategias...) */
+.simcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+         padding:20px;margin:22px 0}
+.simcard h4{font-family:var(--mono);font-size:.7rem;letter-spacing:.15em;
+            text-transform:uppercase;color:var(--faint);margin:0 0 12px}
+.simrow{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.simrow label{font-family:var(--mono);font-size:.75rem;color:var(--muted)}
+.simrow input[type=number]{font-family:var(--mono);font-size:.85rem;width:120px;
+     background:var(--panel2);border:1px solid var(--line);border-radius:8px;
+     color:var(--text);padding:7px 10px}
+.simrow input[type=number]:focus{outline:none;border-color:var(--accent)}
+.toggle{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.toggle button{font-family:var(--mono);font-size:.78rem;padding:7px 16px;border:none;
+     background:transparent;color:var(--muted);cursor:pointer}
+.toggle button.on{background:var(--accent-dim);color:var(--accent)}
+.statgrid{display:flex;gap:24px;flex-wrap:wrap;border-top:1px dashed var(--line);
+          padding-top:14px;margin-top:14px;font-family:var(--mono);
+          font-variant-numeric:tabular-nums}
+.statgrid div span{color:var(--faint);font-size:.68rem;display:block;
+                   letter-spacing:.1em;text-transform:uppercase}
+.statgrid div b{color:var(--accent);font-weight:600;font-size:1.02rem}
+.statgrid div b.pos{color:var(--bid)} .statgrid div b.neg{color:var(--ask)}
+
+/* mini-libro de dos lados dentro de simuladores y stages */
+.mini-book{font-family:var(--mono);font-size:.78rem;line-height:1.9;
+           font-variant-numeric:tabular-nums}
+.mini-book .row{display:flex;justify-content:space-between;gap:14px;padding:1px 8px;
+                border-radius:5px}
+.mini-book .row.a{color:var(--ask)} .mini-book .row.b{color:var(--bid)}
+.mini-book .row small{color:var(--faint)}
+.mini-book .sep{border-top:1px dashed var(--line);margin:4px 0}
+
+/* familias de clases (L6): tarjetas de estrategia */
+.stratgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+           gap:12px;margin:16px 0}
+.strat{border:1px solid var(--line);border-radius:12px;padding:14px 16px;
+       background:var(--panel2)}
+.strat h5{margin:0 0 6px;font-family:var(--mono);font-size:.8rem;color:var(--num)}
+.strat h5 small{color:var(--faint);font-weight:400}
+.strat .dec{font-family:var(--mono);font-size:.85rem;margin-top:8px;min-height:1.5em}
+.strat .dec.buy{color:var(--bid)} .strat .dec.sell{color:var(--ask)}
+.strat .dec.hold{color:var(--muted)}
+.strat.base{border-style:dashed;border-color:rgba(192,132,252,.45)}
+.strat.base h5{color:var(--kw)}
+
+/* diagrama árbol simple (herencia) dentro de stages */
+.treebox{font-family:var(--mono);font-size:.75rem;line-height:2}
+.treebox .nodebox{display:inline-block;border:1px solid #3a3a44;border-radius:8px;
+                  padding:4px 12px;background:var(--panel2);margin:2px 0}
+.treebox .nodebox.abs{border-style:dashed;border-color:rgba(192,132,252,.5);color:var(--kw)}
+.treebox .nodebox.hl{border-color:var(--accent);color:var(--accent)}

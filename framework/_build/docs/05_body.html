@@ -1,0 +1,345 @@
+<!-- ══════════════ RAIL ══════════════ -->
+<nav id="rail" aria-label="Progreso">
+  <a href="#s0" class="on"><span class="dot"></span><span class="lab">El reto</span></a>
+  <a href="#s1"><span class="dot"></span><span class="lab">Composición</span></a>
+  <a href="#s2"><span class="dot"></span><span class="lab">Construye el libro</span></a>
+  <a href="#s3"><span class="dot"></span><span class="lab">El tracker vivo</span></a>
+  <a href="#s4"><span class="dot"></span><span class="lab">Encapsulación</span></a>
+  <a href="#s5"><span class="dot"></span><span class="lab">Quiz</span></a>
+  <a href="#s6"><span class="dot"></span><span class="lab">El puente</span></a>
+</nav>
+
+<!-- ══════════════ §0 HERO ══════════════ -->
+<header class="hero wrap" id="s0">
+  <div class="eyebrow"><b>Algo Trading · ICAI 2026</b> &nbsp;·&nbsp; L5 · OOP II &nbsp;·&nbsp; documento interactivo</div>
+  <h1>Objetos que <em>contienen</em> objetos</h1>
+  <p class="lede">Ya fabricas <code>Order</code>s y <code>Fill</code>s. Pero están sueltos
+  por la memoria, como billetes fuera de la cartera. Hoy construyes las dos piezas que
+  ponen orden: el <strong>libro</strong> que contiene los niveles, y el
+  <strong>contable</strong> que nunca pierde la cuenta.</p>
+
+  <div class="challenge">
+    <div class="tag">El reto de hoy</div>
+    <p>Dos preguntas que tu código aún no sabe responder: <strong>¿cómo está el mercado?</strong>
+    (necesitas un <code>OrderBook</code> que contenga los niveles y se deje preguntar) y
+    <strong>¿cómo voy yo?</strong> (necesitas un <code>PositionTracker</code> que digiera
+    cada <code>Fill</code> y te diga tu equity al instante).</p>
+    <p>De propina, la idea de diseño más importante de la semana: <strong>estado privado</strong>
+    — datos que solo el propio objeto debería tocar.</p>
+  </div>
+
+  <div class="meta">
+    <span><b>~40 min</b> lectura + práctica</span>
+    <span><b>7</b> secciones</span>
+    <span><b>2</b> simuladores</span>
+    <span>lo <b style="color:var(--accent)">cian</b> se toca</span>
+  </div>
+</header>
+
+<!-- ══════════════ §1 SCROLLY — COMPOSICIÓN ══════════════ -->
+<section id="s1">
+  <div class="wrap">
+    <div class="eyebrow">§1 · <b>La idea central</b></div>
+    <h2>Composición: cajas dentro de cajas</h2>
+    <p class="lede">Sigue bajando: el panel monta el libro pieza a pieza y después enciende
+    el contable que digiere fills.</p>
+  </div>
+
+  <div class="scrolly" data-scrolly>
+    <div class="steps">
+      <div class="step on" data-stage="0" data-name="sueltas"><div class="step-inner">
+        <h3><span class="n">0/5</span>Órdenes sin dueño</h3>
+        <p>Cinco <code>Order</code>s en cinco variables. ¿Cuál es el mejor bid? Tendrías
+        que mirarlas una a una, otra vez con el <code>book</code> a cuestas… pero ahora sin
+        ni siquiera tener el book.</p>
+      </div></div>
+      <div class="step" data-stage="1" data-name="OrderBook"><div class="step-inner">
+        <h3><span class="n">1/5</span><code>OrderBook</code>: el objeto contenedor</h3>
+        <p><strong>Composición</strong>: un objeto cuyos atributos son <em>otros objetos</em>.
+        El libro no hereda de nada ni copia nada — simplemente <strong>tiene</strong> bids
+        y asks dentro.</p>
+      </div></div>
+      <div class="step" data-stage="2" data-name="métodos"><div class="step-inner">
+        <h3><span class="n">2/5</span>Se deja preguntar</h3>
+        <p>Las funciones de L2 se mudan adentro, como hizo <code>notional()</code> en L4:
+        <code>ob.best_bid()</code>, <code>ob.spread()</code>, <code>ob.mid()</code>.</p>
+        <p>Sin argumentos: el objeto ya tiene sus datos. <strong>Se acabó pasar
+        <code>book</code> a todas partes.</strong></p>
+      </div></div>
+      <div class="step" data-stage="3" data-name="imbalance"><div class="step-inner">
+        <h3><span class="n">3/5</span>La señal, ahora de serie</h3>
+        <p><code>ob.imbalance()</code> viaja con el libro a donde el libro vaya. Cuando en
+        L7 carguemos 500 snapshots reales de BTC, cada uno responderá a las mismas
+        preguntas.</p>
+      </div></div>
+      <div class="step" data-stage="4" data-name="_privado"><div class="step-inner">
+        <h3><span class="n">4/5</span><code>PositionTracker</code> y el estado privado</h3>
+        <p>El contable guarda <code>_cash</code> y <code>_position</code> con guion bajo:
+        la señal de <strong>"no toques esto desde fuera"</strong>. ¿Por qué? Porque si
+        cualquiera puede escribir <code>tracker._cash = 999999</code>, la contabilidad no
+        vale nada.</p>
+      </div></div>
+      <div class="step" data-stage="5" data-name="equity"><div class="step-inner">
+        <h3><span class="n">5/5</span>Fills entran, equity sale</h3>
+        <p>La única puerta de entrada es <code>apply_fill(fill)</code>: actualiza caja y
+        posición <em>a la vez</em>, sin posibilidad de dejarlas desincronizadas.</p>
+        <p>Y <code>equity(mark)</code> responde la pregunta final: caja + posición valorada
+        al precio de mercado.</p>
+      </div></div>
+    </div>
+
+    <div class="figwrap"><div class="fig">
+      <div class="fig-head"><span>OrderBook + PositionTracker</span><span class="stage-name">sueltas</span></div>
+      <div class="fig-stage on" data-stage="0">
+        <pre style="font-family:var(--mono);font-size:.76rem;line-height:2;margin:6px 0 0;color:var(--muted)">
+o1 = Order('buy',  99950, 0.5)
+o2 = Order('buy',  99940, 0.2)
+o3 = Order('sell', 100000, 0.3)
+o4 = Order('sell', 100010, 0.15)
+o5 = Order('buy',  99960, 0.1)</pre>
+        <p style="color:var(--faint);font-size:.8rem;margin-top:18px">¿best bid? ¿spread?
+        — nadie lo sabe: no hay libro</p>
+      </div>
+      <div class="fig-stage" data-stage="1">
+        <pre style="font-family:var(--mono);font-size:.76rem;line-height:1.95;margin:6px 0 0">
+<span class="k">class</span> <span style="color:var(--num)">OrderBook</span>:
+    <span class="k">def</span> <span class="fn">__init__</span>(self, bids, asks):
+        self.bids = bids   <span class="c"># objetos dentro</span>
+        self.asks = asks   <span class="c"># de un objeto</span></pre>
+        <div class="mini-book" style="margin-top:14px;border:1px dashed #3a3a44;border-radius:10px;padding:8px">
+          <div class="row a"><span>sell 100010</span><small>0.15</small></div>
+          <div class="row a"><span>sell 100000</span><small>0.30</small></div>
+          <div class="sep"></div>
+          <div class="row b"><span>buy&nbsp; 99950</span><small>0.50</small></div>
+          <div class="row b"><span>buy&nbsp; 99940</span><small>0.20</small></div>
+        </div>
+      </div>
+      <div class="fig-stage" data-stage="2">
+        <pre style="font-family:var(--mono);font-size:.78rem;line-height:2;margin:6px 0 0">
+ob.best_bid()   <span class="c"># 99950</span>
+ob.best_ask()   <span class="c"># 100000</span>
+ob.spread()     <span class="c"># 50</span>
+ob.mid()        <span class="c"># 99975.0</span></pre>
+        <div class="result-chip">de best_bid(book) → a ob.best_bid()</div>
+      </div>
+      <div class="fig-stage" data-stage="3">
+        <div class="statgrid" style="border:none;padding-top:10px">
+          <div><span>ob.imbalance()</span><b class="pos">0.70</b></div>
+        </div>
+        <p style="color:var(--muted);font-size:.84rem;margin-top:6px">el libro empuja hacia
+        arriba — y esta señal ahora <strong>viaja dentro del objeto</strong>, lista para los
+        500 snapshots reales de L7.</p>
+      </div>
+      <div class="fig-stage" data-stage="4">
+        <pre style="font-family:var(--mono);font-size:.76rem;line-height:1.95;margin:6px 0 0">
+<span class="k">class</span> <span style="color:var(--num)">PositionTracker</span>:
+    <span class="k">def</span> <span class="fn">__init__</span>(self):
+        self.<span style="color:var(--warn)">_cash</span> = <span class="num">0.0</span>      <span class="c"># 🔒 privado</span>
+        self.<span style="color:var(--warn)">_position</span> = <span class="num">0.0</span>  <span class="c"># 🔒 por convención</span></pre>
+        <p style="color:var(--faint);font-size:.8rem;margin-top:16px">el guion bajo no
+        bloquea nada — <em>comunica</em>: "esto es mío, entra por la puerta"</p>
+      </div>
+      <div class="fig-stage" data-stage="5">
+        <pre style="font-family:var(--mono);font-size:.74rem;line-height:1.9;margin:4px 0 0">
+tracker.apply_fill(Fill(<span class="s">'buy'</span>, <span class="num">99950</span>, <span class="num">0.5</span>))
+tracker.apply_fill(Fill(<span class="s">'sell'</span>, <span class="num">100050</span>, <span class="num">0.2</span>))</pre>
+        <div class="statgrid" style="margin-top:14px">
+          <div><span>_cash</span><b class="neg">−29965.0</b></div>
+          <div><span>_position</span><b>0.3</b></div>
+          <div><span>equity(mark=100000)</span><b class="pos">+35.0</b></div>
+        </div>
+        <p style="color:var(--faint);font-size:.8rem;margin-top:12px">equity = _cash +
+        _position × mark</p>
+      </div>
+    </div></div>
+  </div>
+</section>
+
+<!-- ══════════════ §2 CONSTRUYE ══════════════ -->
+<section id="s2">
+  <div class="wrap">
+    <div class="eyebrow">§2 · <b>Construye</b></div>
+    <h2>El libro que se deja preguntar</h2>
+
+    <div class="code">
+      <div class="code-head"><span>book.py — composición en 12 líneas</span><span>python</span></div>
+      <pre><span class="ln"><span class="k">class</span> OrderBook:</span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, bids, asks):</span><span class="ln">        self.bids = bids  <span class="c"># lista de (price, size)</span></span><span class="ln">        self.asks = asks</span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">best_bid</span>(self):</span><span class="ln">        <span class="k">return</span> <span class="fn">max</span>(p <span class="k">for</span> p, s <span class="k">in</span> self.bids)</span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">best_ask</span>(self):</span><span class="ln">        <span class="k">return</span> <span class="fn">min</span>(p <span class="k">for</span> p, s <span class="k">in</span> self.asks)</span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">mid</span>(self):</span><span class="ln">        <span class="k">return</span> (self.best_bid() + self.best_ask()) / <span class="num">2</span></span><span class="ln"></span><span class="ln">ob = OrderBook(bids=[(<span class="num">99950</span>, <span class="num">0.5</span>), (<span class="num">99940</span>, <span class="num">0.2</span>)],</span><span class="ln">               asks=[(<span class="num">100000</span>, <span class="num">0.3</span>), (<span class="num">100010</span>, <span class="num">0.15</span>)])</span><span class="ln"><span class="fn">print</span>(ob.mid())</span></pre>
+      <div class="predict predictgate" style="margin:0;border-radius:0;border-left:none;border-right:none;border-bottom:none">
+        <div class="tag">Predice antes de ejecutar</div>
+        <p style="margin:.2em 0 .8em;font-size:.94rem">Un método llamando a otros dos
+        métodos del mismo objeto. ¿Qué imprime <code>ob.mid()</code>?</p>
+        <div class="btnrow" style="margin:0">
+          <input type="text" placeholder="mi predicción…" aria-label="Tu predicción">
+          <button class="btn runbtn" data-target="out-mid" disabled>▶ Ejecutar</button>
+        </div>
+      </div>
+      <div class="out hidden" id="out-mid"><span class="prompt">&gt;&gt;&gt; </span><span class="val">99975.0</span>
+        <span style="color:var(--faint)">   # mid() usa self.best_bid() y self.best_ask() — los métodos se componen</span></div>
+    </div>
+
+    <div class="note"><span class="tag">Fíjate en la composición doble</span>
+    El objeto contiene <em>datos</em> (bids, asks) y los métodos se contienen <em>entre sí</em>:
+    <code>mid()</code> llama a <code>best_bid()</code>. Cada pieza pequeña y comprobable —
+    el estilo que mantiene vivo un sistema cuando crece.</div>
+  </div>
+</section>
+
+<!-- ══════════════ §3 TRACKER VIVO ══════════════ -->
+<section id="s3">
+  <div class="wrap">
+    <div class="eyebrow">§3 · <b>Simulador</b></div>
+    <h2>El contable en acción</h2>
+    <p class="lede">Dale fills y muévele el mark. La caja y la posición solo cambian por la
+    puerta (<code>apply_fill</code>); el equity se recalcula al momento. Intenta acabar en
+    verde.</p>
+
+    <div class="simcard">
+      <h4>simulador · PositionTracker</h4>
+      <div class="btnrow" style="margin-top:0">
+        <button class="btn" id="tk-buy">apply_fill · buy 0.5 @ ask</button>
+        <button class="btn" id="tk-sell">apply_fill · sell 0.5 @ bid</button>
+        <button class="btn ghost" id="tk-reset">↻ reiniciar</button>
+      </div>
+      <div class="simrow">
+        <label>mark (precio de valoración)</label>
+        <input type="range" id="tk-mark" min="99500" max="100500" value="100000" step="10" style="flex:1;min-width:180px">
+        <span class="spread-val" style="min-width:90px"><b id="tk-markv">100000</b></span>
+      </div>
+      <div class="statgrid">
+        <div><span>_cash</span><b id="tk-cash">0.0</b></div>
+        <div><span>_position</span><b id="tk-pos">0.0</b></div>
+        <div><span>equity(mark)</span><b id="tk-eq">0.0</b></div>
+        <div><span>fills</span><b id="tk-n">0</b></div>
+      </div>
+      <div class="looplog" id="tk-log">sin fills — caja y posición a cero</div>
+    </div>
+
+    <div class="note"><span class="tag">Lo que acabas de sentir</span>
+    Compras al ask (100&#8202;010) y vendes al bid (99&#8202;950): si haces ida y vuelta sin que
+    el precio se mueva, <strong>pierdes el spread</strong>. Ese peaje invisible es la
+    razón de ser del market maker — lo explotaremos en L13.</div>
+  </div>
+</section>
+
+<!-- ══════════════ §4 ENCAPSULACIÓN ══════════════ -->
+<section id="s4">
+  <div class="wrap">
+    <div class="eyebrow">§4 · <b>La idea de diseño</b></div>
+    <h2>Encapsulación: la puerta y la convención</h2>
+    <p class="lede">Python no tiene candados de verdad — tiene <strong>convenciones que
+    todo el mundo respeta</strong>. El guion bajo es la más importante.</p>
+
+    <div class="code">
+      <div class="code-head"><span>portfolio.py — la puerta única</span><span>python</span></div>
+      <pre><span class="ln"><span class="k">class</span> PositionTracker:</span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self):</span><span class="ln">        self._cash = <span class="num">0.0</span></span><span class="ln">        self._position = <span class="num">0.0</span></span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">apply_fill</span>(self, fill):</span><span class="ln">        self._cash += fill.cash_flow()</span><span class="ln">        <span class="k">if</span> fill.side == <span class="s">'buy'</span>:</span><span class="ln">            self._position += fill.size</span><span class="ln">        <span class="k">else</span>:</span><span class="ln">            self._position -= fill.size</span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">equity</span>(self, mark):</span><span class="ln">        <span class="k">return</span> self._cash + self._position * mark</span></pre>
+    </div>
+
+    <div class="note"><span class="tag">Honestidad</span>
+    <code>tracker._cash = 10**9</code> <em>funciona</em> — Python no te lo impide. El guion
+    bajo comunica el contrato: "si escribes aquí, la contabilidad deja de ser responsabilidad
+    mía". Caja y posición deben moverse <strong>juntas</strong> (un fill toca ambas); la
+    puerta única <code>apply_fill</code> lo garantiza, tocar a mano lo rompe.</div>
+  </div>
+</section>
+
+<!-- ══════════════ §5 QUIZ ══════════════ -->
+<section id="s5">
+  <div class="wrap">
+    <div class="eyebrow">§5 · <b>Fija lo de hoy</b></div>
+    <h2>5 preguntas</h2>
+    <div class="quiz" data-quiz>
+      <div class="q" data-ok="1">
+        <div class="qt">Composición es…</div>
+        <div class="opts">
+          <button class="opt">A · Que una clase copie los métodos de otra</button>
+          <button class="opt">B · Un objeto cuyos atributos son otros objetos</button>
+          <button class="opt">C · Componer funciones con paréntesis</button>
+        </div>
+        <div class="why">El libro <strong>tiene</strong> niveles; el tracker <strong>consume</strong>
+        Fills. Cajas dentro de cajas — sin herencia (esa llega en L6).</div>
+      </div>
+      <div class="q" data-ok="0">
+        <div class="qt">El guion bajo de <code>self._cash</code> significa…</div>
+        <div class="opts">
+          <button class="opt">A · "No toques esto desde fuera" — convención, no candado</button>
+          <button class="opt">B · Python bloquea el acceso desde otros archivos</button>
+          <button class="opt">C · La variable es más rápida</button>
+        </div>
+        <div class="why">Es un contrato social: quien lo salta, asume romper la contabilidad.
+        Python confía en el adulto que lo lee.</div>
+      </div>
+      <div class="q" data-ok="2">
+        <div class="qt"><code>apply_fill(Fill('buy', 100000, 0.5))</code> — ¿qué le pasa al tracker?</div>
+        <div class="opts">
+          <button class="opt">A · Solo sube la posición</button>
+          <button class="opt">B · Cash sube y posición baja</button>
+          <button class="opt">C · Cash baja 50000 y posición sube 0.5 — a la vez</button>
+        </div>
+        <div class="why">Comprar drena caja y acumula activo. Que ambas se muevan juntas es
+        exactamente lo que protege la puerta única.</div>
+      </div>
+      <div class="q" data-ok="1">
+        <div class="qt"><code>equity(mark)</code> se calcula como…</div>
+        <div class="opts">
+          <button class="opt">A · _cash − _position × mark</button>
+          <button class="opt">B · _cash + _position × mark</button>
+          <button class="opt">C · _position × mark, la caja no cuenta</button>
+        </div>
+        <div class="why">Lo líquido más lo invertido valorado a mercado. Si estás corto
+        (_position &lt; 0), el término resta — como debe ser.</div>
+      </div>
+      <div class="q" data-ok="0">
+        <div class="qt">¿Por qué <code>ob.mid()</code> sin argumentos, si <code>mid(book)</code> los necesitaba?</div>
+        <div class="opts">
+          <button class="opt">A · El objeto ya contiene sus datos: self.bids y self.asks</button>
+          <button class="opt">B · Los métodos no aceptan argumentos en Python</button>
+          <button class="opt">C · mid() usa variables globales</button>
+        </div>
+        <div class="why">Era el dolor de L2-L3: pasar <code>book</code> a todas partes. El
+        método lo tiene en casa, vía <code>self</code>.</div>
+      </div>
+      <div class="score"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ §6 PUENTE ══════════════ -->
+<section id="s6">
+  <div class="wrap">
+    <div class="eyebrow">§6 · <b>El puente</b></div>
+    <h2>Dónde estás en el proyecto</h2>
+    <div class="pkgmap">
+      <div class="pk done">L1 · el dato<span>variables, dicts, decisiones</span></div>
+      <div class="pk done">L2 · book funcional<span>funciones sobre el libro</span></div>
+      <div class="pk done">L3 · order_book.py<span>módulo importable</span></div>
+      <div class="pk done">L4 · Order y Fill<span>exchange/orders.py · trades.py</span></div>
+      <div class="pk today">L5 · OrderBook + Tracker<span>exchange/book.py · portfolio.py</span></div>
+      <div class="pk future">L6 · familia Strategy<span>herencia</span></div>
+      <div class="pk future">L7-9 · el motor<span>matching, market</span></div>
+      <div class="pk future">L10-11 · el framework<span>Strategy + Backtest</span></div>
+      <div class="pk future">L12-14 · estrategias<span>VWAP, market making</span></div>
+    </div>
+
+    <div class="bridge">
+      <div class="tag">El puente a L6</div>
+      <p style="margin:.2em 0"><strong>Ya tienes el mercado y la contabilidad. Falta quien decide.</strong></p>
+      <p>Vas a escribir muchas estrategias — una que sigue el imbalance, otra que hace
+      market making, la tuya propia. Todas comparten esqueleto: miran un libro, deciden,
+      reaccionan a fills. ¿Vas a copiar ese esqueleto cada vez? <em>Ese pecado ya lo
+      cometiste en L2 y sabes cómo huele.</em></p>
+      <p style="margin-bottom:0">La cura se llama <strong>herencia</strong>: una clase base
+      con el esqueleto y subclases que solo cambian la decisión. Próxima clase.</p>
+    </div>
+
+    <div class="cta">
+      <div class="box"><span class="tag">Ahora te toca construir</span>
+      Abre <code>05_build_exercises.ipynb</code>: OrderBook, PositionTracker y los dos
+      juntos.</div>
+      <div class="box"><span class="tag">Y después, al gimnasio</span>
+      <code>05_auxiliary.ipynb</code> — drills de composición, @property y secuencias de
+      fills.</div>
+    </div>
+  </div>
+</section>
+
+<footer>L5 · OrderBook y PositionTracker — Algo Trading ICAI 2026 · documento interactivo</footer>

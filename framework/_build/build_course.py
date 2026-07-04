@@ -21,6 +21,7 @@ ROOT = os.path.dirname(FRAMEWORK)            # .../algo_trading_intro
 sys.path.insert(0, FRAMEWORK)               # para importar 'exchange'
 sys.path.insert(0, HERE)
 
+import docgen  # noqa: E402
 import nbgen  # noqa: E402
 from lessons_foundations import LESSONS as L_FOUND  # noqa: E402
 from lessons_engine import LESSONS as L_ENG  # noqa: E402
@@ -142,7 +143,9 @@ def tiers_md(kind: str) -> str:
             "más una profundización final. Mismo formato de siempre: escribe tu código, ejecuta la "
             "**✅ comprobación plegada** (`Shift+Enter`) y, si te atascas, abre **💡 Ver solución**. "
             "Ninguno debería llevarte más de un par de minutos. No hacen falta para seguir el "
-            "curso — pero te hacen rápido.")
+            "curso — pero te hacen rápido.\n\n"
+            "**Dosis mínima:** el calentamiento entero + los dos primeros drills de cada bloque. "
+            "El resto, para volver otro día.")
 
 
 def _strip_html(text: str) -> str:
@@ -162,7 +165,7 @@ def readme(lesson: dict, has_pkg: bool) -> str:
             f"{doc.get('technical', '')}\n\n"
             f"## Ejercicios de construcción\n\n{build}\n\n"
             f"## Estructura de la carpeta\n\n"
-            f"- `presentation/` — presentación interactiva + guion del profesor\n"
+            f"- `presentation/` — documento interactivo (o deck) + guion del profesor\n"
             f"- `exercises/{lesson['n']:02d}_build_exercises.ipynb` — construyes la pieza (núcleo 1-3, luego el resto)\n"
             f"- `exercises/{lesson['n']:02d}_auxiliary.ipynb` — el gimnasio: drills + profundización opcional\n"
             f"{pkg_line}\n"
@@ -240,7 +243,14 @@ def emit(lesson: dict) -> None:
         with open(os.path.join(pres, "guion.md"), "w") as f:
             f.write(guion_md(lesson))
 
-    if os.path.exists(custom_html):
+    if docgen.has_doc(lesson["n"]):
+        # documento interactivo ("html corrido"): sustituye al deck en esta lección
+        with open(os.path.join(pres, f"{slugname}-doc.html"), "w") as f:
+            f.write(docgen.build_doc(lesson))
+        old_deck = os.path.join(pres, f"{slugname}-interactive.html")
+        if os.path.exists(old_deck):
+            os.remove(old_deck)
+    elif os.path.exists(custom_html):
         shutil.copy(custom_html, os.path.join(pres, f"{slugname}-interactive.html"))
     else:
         with open(os.path.join(pres, f"{slugname}-interactive.html"), "w") as f:

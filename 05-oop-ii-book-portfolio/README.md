@@ -42,7 +42,7 @@ esqueleto entre muchos objetos: herencia (L6).
 
 ## Estructura de la carpeta
 
-- `presentation/` — presentación interactiva + guion del profesor
+- `presentation/` — documento interactivo (o deck) + guion del profesor
 - `exercises/05_build_exercises.ipynb` — construyes la pieza (núcleo 1-3, luego el resto)
 - `exercises/05_auxiliary.ipynb` — el gimnasio: drills + profundización opcional
 - `exercises/exchange/` — el paquete que vienes construyendo (starter de hoy)

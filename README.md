@@ -19,9 +19,9 @@ Instructor: **Álvaro López Chacarra** · ICAI.
 
 ## Cada clase
 
-1. **Presentación** (`presentation/*.html`) — la intuición y qué pieza añadimos hoy.
+1. **Documento interactivo** (`presentation/*-doc.html` en L1-L6; deck en L7+) — la teoría como página interactiva: scrollytelling, simuladores y quiz.
 2. **Construcción** (`exercises/NN_build_exercises.ipynb`) — montas la pieza con validadores automáticos.
-3. **Auxiliares** (`exercises/NN_auxiliary.ipynb`) — profundización opcional.
+3. **El gimnasio** (`exercises/NN_auxiliary.ipynb`) — drills de primitivas con datos de mercado + profundización.
 
 El paquete que vienes construyendo viaja contigo en `exercises/exchange/` (a partir de la clase 3).
 

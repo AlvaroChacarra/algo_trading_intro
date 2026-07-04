@@ -34,7 +34,7 @@ igual que cualquier otra — primera demostración del valor del framework de L8
 
 ## Estructura de la carpeta
 
-- `presentation/` — presentación interactiva + guion del profesor
+- `presentation/` — documento interactivo (o deck) + guion del profesor
 - `exercises/12_build_exercises.ipynb` — construyes la pieza (núcleo 1-3, luego el resto)
 - `exercises/12_auxiliary.ipynb` — el gimnasio: drills + profundización opcional
 - `exercises/exchange/` — el paquete que vienes construyendo (starter de hoy)

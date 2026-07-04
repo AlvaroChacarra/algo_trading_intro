@@ -21,8 +21,11 @@ python _build/build_course.py --clean        # además archiva/borra carpetas an
 ```
 
 - `lessons_foundations.py` / `lessons_engine.py` / `lessons_strategies.py` — specs de cada lección.
-- `nbgen.py` — builders de notebook y de presentación HTML.
-- `build_course.py` — autovalida, emite y (opcional) limpia.
+- `nbgen.py` — builders de notebook y del deck HTML (L7+).
+- `docgen.py` + `docs/NN_body.html` + `docs/NN_custom.js` — los documentos interactivos de L1-L6
+  (base compartida en `doc_assets/`: fuentes embebidas, CSS y motores JS genéricos).
+- `build_course.py` — autovalida, emite y (opcional) limpia. Si una lección tiene
+  `docs/NN_body.html`, su documento **sustituye** al deck.
 
 **Para cambiar una lección: edita su spec y regenera.** No edites a mano los notebooks generados; se sobrescriben.
 

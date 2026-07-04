@@ -34,7 +34,7 @@ se enchufa al mismo `MMSimulation`. Demuestra herencia + especialización.
 
 ## Estructura de la carpeta
 
-- `presentation/` — presentación interactiva + guion del profesor
+- `presentation/` — documento interactivo (o deck) + guion del profesor
 - `exercises/14_build_exercises.ipynb` — construyes la pieza (núcleo 1-3, luego el resto)
 - `exercises/14_auxiliary.ipynb` — el gimnasio: drills + profundización opcional
 - `exercises/exchange/` — el paquete que vienes construyendo (starter de hoy)
