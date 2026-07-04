@@ -1,51 +1,48 @@
 # Guion — Clase 2: El libro funcional
 
-**Idea central:** organizamos el código con **funciones** y construimos un libro de órdenes (lista) que se puede añadir, cancelar y leer. Hilo único: el **`book`** y las funciones que lo manosean. Clímax: *todas reciben `book`* → el camino que viene es sacarlas a un **módulo** (L3) y luego volverlas un **objeto** (L4).
+**Idea central:** del script duplicado a **una receta, N usos** (funciones) y a **un solo dato** (el `book`) con su equipo de funciones. El contador final —"7 funciones, todas reciben `book`"— es la semilla de toda la semana.
 
-Presentación interactiva (Pyodide + libro vivo en JS). ~18-20 min.
+**Formato:** documento interactivo (`python-ii-functional-book-doc.html`), autocontenido, sin internet. "Lo cian se toca."
 
 ---
 
-## Hero · El reto (2 min)
-- **Decir:** "La clase pasada una orden era un `dict`. Pero un mercado es un LIBRO que cambia. Y si copias y pegas, añadir ETH te obliga a duplicarlo todo. Hoy lo resolvemos con funciones."
-- **Callback a L1:** recuerda el dict de orden y el `mid`.
-- **Salida:** "Quiero un libro que se construya, recorte y lea — sin reescribir código."
+## §0 · Hero — el reto (3 min)
+- **Decir:** "Anoche intentasteis añadir ETH. Esto pasó." Lee el script con las líneas duplicadas atenuadas: "copiar… pegar… rezar…".
+- **Callback a L1:** es EXACTAMENTE la pregunta del puente de la clase pasada.
+- **Salida:** "El conocimiento copiado es deuda; hay que escribirlo una vez."
 
-## Bloque 1 · ¿Qué es una función? (4 min)
-- **Decir:** "Una función empaqueta una idea: entran parámetros, sale un resultado con `return`. Deja de repetir código."
-- **Pantalla:** ejecuta `make_order` con BTC y con ETH (mismo código, otros argumentos → ahí está el ahorro). Usa el **predice** (¿qué devuelve? → un dict).
-- **Salida:** "Una función-fábrica construye datos por mí."
+## §1 · Scrollytelling — de copiar a recetas (7 min)
+- **0/5 el dolor:** tres fórmulas iguales en rojo. "Tres de estas líneas son deuda."
+- **1/5 def:** "una receta con huecos: se escribe una vez, se llama N veces. Si la fórmula cambia, un solo sitio."
+- **2/5 make_order:** "la fábrica: nunca más un dict a mano con una clave mal escrita."
+- **3/5 el book:** "TODAS las órdenes en UNA lista. Se acabó bid_btc, bid_eth…"
+- **4/5 leerlo:** las métricas de L1 vuelven, ahora como funciones que reciben el book.
+- **5/5 imbalance + el contador:** para en el "7 funciones · todas reciben book 🤔". **Di:** "guardad ese dato: es la pista de toda la semana". No lo resuelvas hoy.
 
-## Bloque 2 · Un libro es una lista; añadir (3 min)
-- **Decir:** "El libro es una `list`. `add_order(book, order)` hace `append` y lo devuelve. Fíjate: recibe `book`."
-- **Pantalla:** ejecuta el editor; el libro crece.
-- **Riesgo:** no entrar aún en mutar vs no mutar; se toca en el bloque 3.
+## §2 · La fábrica (4 min)
+- Ejecuta `make_order` + `add_order` (▶). Señala el patrón: cada función hace UNA cosa y su nombre no necesita comentario.
+- **La comprensión de `cancel_order`:** léela en voz alta como está en la nota — "una lista con cada orden… si su id no es el condenado". Primera vez que la ven: no borra, **construye una nueva**. Di que el gimnasio la entrena.
 
-## Bloque 3 · Cancelar = filtrar (3 min)
-- **Decir:** "Cancelar es quedarte con lo que NO cancelas: un filtro con comprensión de lista."
-- **Honestidad:** `add_order` muta, `cancel_order` devuelve uno nuevo. Mezclar las dos formas lía; más adelante, cuando esto sea un objeto, lo gestiona por dentro.
-- **Salida:** "Sé construir y recortar el libro."
+## §3 · El libro vivo (4 min)
+- **Cede el teclado.** Cada botón registra abajo la llamada exacta (`add_order(book, make_order(…))`) — señálalo: "el botón sois vosotros llamando a vuestra función".
+- Vacía el libro y mira las métricas en "—": lanza la pregunta trampa: "¿qué *debería* hacer best_bid con un libro vacío?" No la respondas — es el gancho de L3.
 
-## Bloque 4 · Leer el libro — LIBRO VIVO (5 min)
-- **Pantalla:** el simulador del libro vivo. Añade compras/ventas, cancela (clic en una orden) y ve best_bid/best_ask/spread/mid e **imbalance** (barra verde/rojo) reaccionar.
-- **Decir:** "best_bid = compra más alta; best_ask = venta más baja; imbalance = hacia dónde empuja el libro."
-- **Aprovecha:** quita todas las ventas → imbalance +1; al revés → −1. Que lo vean mover.
-- **Salida:** "Leer el libro son funciones que calculan sobre la lista."
+## §4 · Leer el libro (4 min)
+- `best_bid` con max + generador: tradúcelo palabra a palabra.
+- **El gate del imbalance:** que predigan (buy 0.3 + 0.3, sell 0.2). El 0.75 y su lectura: presión compradora.
+- Honestidad (en el doc): los profesionales ponderan por cercanía al mid; se refina en L7.
 
-## Bloque 5 · El patrón / clímax (4 min)
-- **Decir:** "Mira tus 5 funciones: TODAS reciben `book`. El libro es un dato pasivo que arrastras a todas partes. El camino: primero sacarlas a un **módulo** reutilizable (clase 3); luego fundir el dato con sus funciones en un **objeto** (clase 4): `book.add(...)`, `book.imbalance()`."
-- **Pantalla:** las dos columnas de firmas (`func(book)` vs `book.metodo()`).
-- **Salida (el puente):** "Tus funciones piden salir a un módulo (L3) y luego volverse un objeto (L4)."
+## §5 · Quiz (3 min)
+- 5 A/B/C. La pregunta 5 ("¿qué comparten las 7 funciones?") es el puente disfrazado — dale drama.
 
-## Mini test (3 min)
-- 5 preguntas A/B/C: `return`, utilidad de make_order, el patrón `book`, imbalance, best_bid. Feedback inmediato.
-
-## Cierre (1 min)
-- Recoge los 3 puntos y manda al notebook: construir el libro funcional con sus manos y guardarlo en un `.py` (que en L3 sacarás a un módulo, y luego se volverá un objeto).
+## §6 · Puente + mapa (2 min)
+- Mapa: L1 ✓, L2 iluminada. "El sistema crece."
+- **Puente:** "vuestras funciones mueren al cerrar el notebook. ¿Copiarlas a otro archivo? Ese es el pecado de esta mañana. La cura: vuestra propia librería importable. Próxima clase."
+- Manda al notebook y al gimnasio (27 drills — con calentamiento de L1).
 
 ## Checklist
-- [ ] Función = entra/return; make_order escala a ETH cambiando argumentos.
-- [ ] Libro = lista; add (append) y cancel (filtro).
-- [ ] Leer: best_bid/ask, spread, imbalance (libro vivo).
-- [ ] Clímax: todo recibe `book` → módulo (L3) y luego objeto (L4).
-- [ ] Mini test pasado.
+- [ ] Función = receta con huecos; un cambio, un sitio.
+- [ ] El book único + make/add/cancel; la comprensión construye lista nueva.
+- [ ] best_bid/best_ask/spread/mid como funciones de lectura.
+- [ ] Imbalance: qué mide y cómo se lee.
+- [ ] El contador "todas reciben book" queda plantado (sin resolver).

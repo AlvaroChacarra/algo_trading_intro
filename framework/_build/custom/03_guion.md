@@ -1,51 +1,50 @@
 # Guion — Clase 3: Módulos y errores
 
-**Idea central:** sacar las funciones del libro del notebook y meterlas en un **módulo** `order_book.py` que se **importa** y no se cae con datos raros. Hilo: el `order_book.py` de L2 → librería. Clímax/puente: datos y funciones aún separados → objetos (L4).
+**Idea central:** las funciones de L2 se mudan a **tu propio módulo** `order_book.py`, importable desde cualquier archivo, y aprenden a fallar con clase: `try/except` para el usuario, `raise` para el autor.
 
-Presentación interactiva (Pyodide, con import en vivo desde el FS del navegador). ~18 min.
+**Formato:** documento interactivo (`python-iii-modules-doc.html`), autocontenido, sin internet. "Lo cian se toca."
 
 ---
 
-## Hero · El reto (2 min)
-- **Decir:** "La clase pasada escribiste make_order, best_bid, imbalance… pero viven sueltas en celdas. ¿Cómo las reutilizas en otro archivo sin copiar? ¿Y cómo evitas que un libro vacío te reviente?"
-- **Callback a L2:** las funciones que ya tienen.
-- **Salida:** "Hoy mi código se vuelve una librería que importo."
+## §0 · Hero — el reto (2 min)
+- **Decir:** "Vuestras siete funciones valen oro… y viven en un notebook: cerráis la pestaña y mueren. Hoy las convertimos en una librería — como cuando escribís `import pandas`, pero la librería sois vosotros."
+- **Salida:** "Mi código puede ser importable."
 
-## Bloque 1 · ¿Qué es un módulo? (3 min)
-- **Decir:** "Un módulo es un archivo .py con funciones. Aquí está order_book.py. Pulsa Guardar: lo creo de verdad en el navegador."
-- **Pantalla:** muestra el contenido del módulo; pulsa "Guardar order_book.py".
-- **Salida:** "Un módulo es un archivo de funciones."
+## §1 · Scrollytelling — la mudanza (7 min)
+El panel muestra **dos archivos**: el módulo a la izquierda, `main.py` a la derecha.
+- **0/5 atrapadas:** "💀 al cerrar el notebook, se acabó."
+- **1/5 nace el módulo:** "la mudanza es literal: pegar las funciones en un .py. Un módulo es solo eso."
+- **2/5 import:** "el módulo entero, con apellido: `order_book.best_bid(book)`. El prefijo te dice de dónde viene cada cosa."
+- **3/5 from…import:** "una función concreta, sin apellido. Más cómodo, menos contexto — los dos estilos son correctos."
+- **4/5 dos vidas:** el mismo archivo importado vs ejecutado; `__name__` es el chivato.
+- **5/5 robustez:** "una librería seria no revienta: avisa. Ese es el segundo tema de hoy."
 
-## Bloque 2 · Importar (4 min)
-- **Decir:** "`import order_book` trae el módulo entero (usas `order_book.spread`); `from order_book import spread` trae solo eso."
-- **Pantalla:** ejecuta el editor que importa y usa el módulo. **Si no guardaste el módulo → ModuleNotFoundError**: aprovéchalo: "un módulo tiene que existir para importarlo".
-- **Riesgo:** Pyodide tarda al cargar la primera vez. El módulo se guarda solo al estar listo.
-- **Salida:** "Importo y reutilizo sin copiar."
+## §2 · Simulador de namespaces (3 min)
+- Alterna los tres botones (`import` / `from…import` / `as`): **qué nombres existen** después de cada línea. Señala el `NameError` del panel central: "solo trajiste ese nombre".
+- La regla práctica está en la nota; añade la prohibición: `from x import *` jamás.
 
-## Bloque 3 · __main__ (3 min)
-- **Decir:** "Al importar, Python ejecuta el módulo. No quieres que imprima cosas solo por importarlo. El código de prueba va en `if __name__ == '__main__':`, que solo corre si ejecutas el archivo directamente."
-- **Idea:** el módulo **define**; el script con `__main__` **hace**.
-- **Salida:** "El módulo no se ejecuta al importarlo."
+## §3 · El error como ciudadano (6 min)
+Tres escenarios sobre el mismo libro vacío, en orden:
+- **Escenario 1 (sin red):** el traceback tiene **dos saltos** — novedad respecto a L1: tu archivo Y el módulo. Se sigue leyendo de abajo arriba. "…y el mensaje habla de max(), no de libros: críptico."
+- **Escenario 2 (try/except):** "la red del usuario: cazas y das plan B."
+- **Escenario 3 (raise):** "la elegancia del autor: fallar antes y en el idioma del dominio — 'libro vacío: no hay best_bid'". Esta es la diferencia entre código que funciona y una librería que da gusto usar.
+- **Callback:** es la respuesta a la pregunta trampa que quedó abierta en L2.
 
-## Bloque 4 · Errores (4 min)
-- **Decir:** "best_bid sobre un libro vacío revienta. `try/except` atrapa y da un plan B; `raise` lanza un error claro cuando el dato no tiene sentido."
-- **Pantalla:** ejecuta `safe_best_bid([])` → None; con compra → el precio.
-- **Salida:** "Una librería de verdad no se cae con un dato raro."
+## §4 · __main__ (3 min)
+- Ejecuta la demo (`$ python order_book.py`). "Cuando lo importas, ese bloque NO corre: la demo no contamina a quien solo quiere tus funciones."
+- Di que en el notebook lo van a comprobar en sus dos vidas — hay que verlo una vez.
 
-## Bloque 5 · El puente (3 min)
-- **Decir:** "Tu código ya es una librería. Pero el `book` (datos) y las funciones van por separado: `order_book.spread(book)`. ¿Y si el libro supiera hacerlo solo? `book.spread()`. Juntar datos + funciones = un OBJETO. Esas funciones se vuelven la orden (`Order`, clase 4) y el libro (`OrderBook`, clase 5)."
-- **Salida (puente):** "order_book.py se vuelve objetos: Order (L4) y OrderBook (L5)."
+## §5 · Quiz (3 min)
+- 5 A/B/C: import, from-import, except, raise, __main__.
 
-## Mini test (3 min)
-- 5 A/B/C: módulo, from-import, try/except, __main__, raise.
-
-## Cierre (1 min)
-- Recoge los 3 puntos y manda al notebook: importar el módulo, blindarlo y ejecutar main.py.
+## §6 · Puente + mapa (2 min)
+- Mapa: L1-L2 ✓, L3 iluminada.
+- **Puente:** "mirad vuestras firmas: `best_bid(book)`, `add_order(book, …)` — el dato por un lado, las funciones por otro, y vosotros de repartidores. ¿Y si el dato supiera operar consigo mismo? `book.best_bid()`. Eso es un objeto. Próxima clase nacen Order y Fill."
+- Notebook + gimnasio (15 drills: imports, tracebacks de dos saltos, errores diseñados).
 
 ## Checklist
-- [ ] Módulo = archivo .py con funciones; guardar e importar (en vivo).
-- [ ] import vs from..import.
-- [ ] __main__: el módulo no corre al importarlo.
-- [ ] try/except (plan B) y raise (error claro).
-- [ ] Puente: datos + funciones → objeto (L4).
-- [ ] Mini test.
+- [ ] Módulo = archivo .py; la mudanza es literal.
+- [ ] import (con apellido) vs from…import (sin) vs alias.
+- [ ] Traceback de dos saltos, leído de abajo arriba.
+- [ ] try/except = red del usuario; raise = diseño del autor.
+- [ ] __main__: el módulo define, el script hace.

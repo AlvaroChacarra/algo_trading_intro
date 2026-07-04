@@ -1,39 +1,45 @@
 # Guion — Clase 6: OOP III — Herencia y polimorfismo
 
-**Idea central:** muchas estrategias comparten un esqueleto; en vez de copiarlo, se **hereda**. Construyes una familia `Strategy` de juguete (base + subclases) que en la clase 10 se convierte en el framework real. Hilo: la familia Strategy. Cierra el bloque OOP.
+**Idea central:** una familia `Strategy` — base con el esqueleto, hijas con la personalidad, ABC como contrato — y el momento estrella: **una llamada, muchas respuestas**. Cierra el bloque de fundamentos; es la semilla del framework de L10.
 
-Presentación interactiva (Pyodide + simulador de polimorfismo en JS). ~18 min.
+**Formato:** documento interactivo (`oop-iii-inheritance-doc.html`), autocontenido. "Lo cian se toca."
 
 ---
 
-## Hero · El reto (2 min)
-- **Callback a L5:** "Sabes crear objetos (L4) y componerlos (L5). Pronto tendrás muchas estrategias que comparten estructura."
-- **Decir:** "¿Copias el esqueleto en cada una? No: lo heredas. Hoy construyes tu primera familia de estrategias — la semilla del framework de la clase 10."
+## §0 · Hero — el reto (2 min)
+- **Decir:** "El curso acaba con vosotros escribiendo VUESTRA estrategia y enchufándola a un motor. Ese enchufe se fabrica hoy. Mirad estas dos clases: solo cambia la decisión; el esqueleto se repite. Con clases o sin ellas, copiarlo es el mismo pecado de L2."
+- **Salida:** "Herencia = el esqueleto una vez."
 
-## Bloque 1 · Herencia (4 min)
-- **Pantalla:** el árbol Strategy → AlwaysBuy/AlwaysSell; ejecuta el editor (subclase hereda y sobrescribe; `isinstance`).
-- **Decir:** "`class AlwaysBuy(Strategy)`: el paréntesis dice 'hereda de Strategy'. Solo escribes lo que cambia (`decide`)."
+## §1 · Scrollytelling — el árbol genealógico (8 min)
+- **0/5 gemelas:** el __init__ duplicado en rojo. "Con 10 estrategias, 10 copias."
+- **1/5 la base:** Strategy con decide → 'hold'. "El default más prudente."
+- **2/5 heredar:** "ese paréntesis en class Momentum(Strategy) ES la herencia. Una subclase vacía ya funciona — aburrida, pero funciona."
+- **3/5 override:** "la hija redefine decide y SU versión gana. Esqueleto en un sitio, personalidad en cada hija."
+- **4/5 polimorfismo:** EL momento de la clase. "El bucle no sabe ni le importa qué clase es cada una. Ese desacople es lo que hará enchufable el motor." Léelo despacio: m1 → buy, r1 → sell, base → hold.
+- **5/5 ABC:** "de 'deberías implementar decide' a 'NO EXISTES sin decide'. El error se adelanta al mejor momento posible: ya."
 
-## Bloque 2 · El contrato (ABC) (4 min)
-- **Pantalla:** ejecuta el editor con `ABC` + `@abstractmethod`. La última línea (`Strategy()`) lanza `TypeError`.
-- **Decir:** "Una base abstracta obliga a las subclases a implementar `decide`. El contrato te protege de estrategias a medio hacer."
+## §2 · Base, hija y super() (4 min)
+- **El gate:** con imbalance 0.70, ¿qué imprime `u.decide(book), v.decide(book)`? ("buy hold" — u usa el suyo, v el heredado.)
+- super() en una frase (está en la nota): "Madre, haz tu parte." La hija no copia el __init__: lo invoca y añade lo suyo.
 
-## Bloque 3 · Polimorfismo (4 min)
-- **Pantalla:** el simulador — mueve el imbalance y mira a Momentum, Contrarian y Flat decidir cada uno lo suyo, con la **misma** llamada `s.decide(imbalance)`.
-- **Decir:** "El bucle que las recorre no sabe cuál es cuál: llama `decide` y cada una responde a su manera. Eso es polimorfismo — y es lo que hace el motor intercambiable."
+## §3 · Polimorfismo vivo (4 min)
+- **Cede el teclado:** slider de imbalance, tres tarjetas respondiendo distinto a la MISMA llamada. Barre de 0 a 1 y comenta los cruces (Momentum y Contraria se espejan; la base, imperturbable).
+- La nota final es el contrato con el futuro: "en L10, Backtest hará exactamente este bucle contra el mercado real. El polimorfismo es el enchufe."
 
-## Bloque 4 · El puente (3 min)
-- **Decir:** "Esta familia de juguete es, en pequeño, el framework de la clase 10: una base `Strategy` con un método que cada estrategia implementa, enchufada al `Backtest`. Con esto cierras OOP: crear (L4), componer (L5), heredar (L6). En la clase 7 arranca el motor."
+## §4 · El contrato ABC (3 min)
+- Ejecuta el traceback: TypeError AL CREAR el objeto, "no en mitad de un backtest a las 3 de la mañana". El mensaje dice exactamente qué falta.
 
-## Mini test (3 min)
-- 5 A/B/C: herencia, `@abstractmethod`, polimorfismo, `super()`, el puente a L10.
+## §5 · Quiz (3 min)
+- 5 A/B/C: herencia por defecto, override, ABC, polimorfismo, super().
 
-## Cierre (1 min)
-- Recoge los 3 puntos y manda al notebook: construir la familia `Strategy` (Momentum, Contrarian) y guardarla en `strategies_toy.py`.
+## §6 · Puente + mapa — cierre del bloque (3 min)
+- Mapa: L1-L5 ✓, L6 iluminada. **Momento solemne:** "el bloque de fundamentos está completo. Sabéis programar."
+- **Puente:** "ahora, el mercado de verdad: 500 snapshots reales de BTCUSDT en L7. Y en L10 esta familia vuelve, enchufada al motor."
+- Notebook + gimnasio (15 drills: herencia, super, isinstance, la impostora y la ABC).
 
 ## Checklist
-- [ ] Herencia: subclase hereda y sobrescribe.
-- [ ] ABC: `@abstractmethod` obliga a implementar (no se instancia incompleta).
-- [ ] Polimorfismo: mismo método, objetos distintos (simulador).
-- [ ] Puente: esta familia → framework real (L10).
-- [ ] Mini test.
+- [ ] Heredar gratis; override = su versión gana.
+- [ ] super().__init__ = "madre, haz tu parte".
+- [ ] Polimorfismo: misma llamada, respuestas distintas; el bucle no pregunta clases.
+- [ ] ABC: TypeError al instanciar incompleto.
+- [ ] Cierre del bloque de fundamentos + semilla del framework (L10).

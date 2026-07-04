@@ -1,62 +1,58 @@
-# Guion — Clase 1: De texto a máquina (y tu primer dato de mercado)
+# Guion — Clase 1: De texto a máquina
 
-**Idea central:** seguimos UNA línea —`mid = (bid + ask) / 2`— en su viaje desde tu texto hasta los 1s y 0s, y al final la usas en tu primer algoritmo. Hilo único, sin saltos.
+**Idea central:** seguimos UNA línea —`mid = (bid + ask) / 2`— desde tu texto hasta los 1s y 0s, y al final la usas en tu primer algoritmo.
 
-Presentación interactiva (Pyodide). No te preocupes del tiempo: usa las diapositivas que necesites; el alumno debe salir con los 6 puntos del cierre.
+**Formato:** documento interactivo (`python-i-data-model-doc.html`). Tú haces scroll y narras; los alumnos lo siguen en su pantalla si quieren. Todo es autocontenido: funciona sin internet. Regla de la casa que conviene decir en el minuto 1: **"lo cian se toca"**.
 
 ---
 
-## Hero · El reto (2 min)
-- **Decir:** "Quiero que el ordenador calcule el `mid` de este libro con una línea. El problema: la CPU no entiende `mid = (bid + ask) / 2`, solo entiende 1s y 0s. Hoy seguimos ESA línea hasta el fondo."
-- **Pantalla:** snapshot BTCUSDT; "Otro snapshot" para ver que cambia.
+## §0 · Hero — el reto (2 min)
+- **Decir:** "Este es el libro de BTCUSDT, latiendo. ¿Cuánto vale *ahora mismo*? El punto medio. Yo lo calculo de cabeza; la máquina solo entiende 1s y 0s. Hoy cruzamos esa distancia."
+- **Pantalla:** el libro pulsando solo; señala el hueco del mid.
 - **Salida:** "Hay un viaje de mi texto a la máquina."
 
-## Bloque 1 · ¿Qué es Python? (dos diapositivas, 5 min)
-- **1.1 — Python es un programa que lee tu texto.** "Un `.py` es texto plano. Python (CPython) es otro programa que lo lee, lo entiende y lo ejecuta. Sin Python, el archivo sigue ahí pero nadie lo lee."
-- **1.2 — La máquina solo ve 1s y 0s.** Simulador texto→bits: escribe `bid`, ve carácter→`ord`→8 bits. **Clave (puente):** "convertir las LETRAS a bits es fácil, pero eso NO es ejecutar el programa; falta traducir el SIGNIFICADO. De eso va el resto."
-- **Salida:** "La máquina solo ve binario; hay que traducir el significado de mi código."
+## §1 · Scrollytelling — el viaje (8 min)
+Scroll **lento**: cada parada del panel es una idea. No corras; el panel espera.
+- **0/5 texto:** "30 caracteres. Para Python, aún nada."
+- **1/5 tokens:** "trocea en piezas con etiqueta — como separar palabras antes de entender la frase."
+- **2/5 AST:** "el árbol pone orden: ¿qué se hace antes? Fíjate: tu paréntesis ya no existe — su trabajo era dar forma al árbol."
+- **3/5 bytecode:** **antes de llegar, pregunta:** "¿cuántas instrucciones creéis que salen de esta línea? ¿4, 6, 9?" (son 6).
+- **4/5 la VM:** deja correr la animación de la pila entera; si se la pierden, botón ↻ repetir.
+- **5/5 binario:** "viaje cerrado: tu texto, ejecutándose como electricidad."
+- **Nota de honestidad** (está en el doc): CPython hace más cosas; este es el esqueleto real.
+- **Simulador "tu propia línea":** cede el teclado. Que escriban su línea, que la rompan (quitar un paréntesis, sumar texto y número → el TypeError es *exactamente* el de Python).
 
-## Bloque 2 · El viaje de tu línea (cinco diapositivas, 8 min)
-Sigue el raíl Texto → Tokens → AST → Bytecode → VM → 1s/0s.
-- **2.1 Tokens:** "Primero Python trocea la línea en piezas con significado: nombres, operadores, números. Aún no calcula nada." (chips de la línea).
-- **2.2 AST:** árbol dibujado (suma bid+ask, luego divide entre 2, guarda en mid). Botón "Ver AST" → `ast.dump` real. "El árbol captura QUÉ se opera con qué."
-- **2.3 Bytecode:** **primero pídeles que predigan** cuántos pasos de cálculo creen que hay (4/6/9 → 6); luego revela la tabla en cristiano (LOAD bid, LOAD ask, súmalos, …) + "Ver bytecode" (`dis` real). Caption: fíjate solo en LOAD/BINARY_OP/STORE; RESUME y RETURN son arranque y final.
-- **2.4 VM → 1s/0s:** "La VM ejecuta el bytecode; el resultado, 99975, vive en memoria como bits (se muestran)." **Sé honesto:** la VM está escrita en C y es ella quien baja a binario; los decimales usan IEEE-754. Lo importante: todo acaba en 1s y 0s. Viaje cerrado.
-- **2.5 Playground:** que **predigan el nº de tokens**, escriban su línea y vean tokens/AST/bytecode en vivo. **Es real, lo calcula Python en el navegador.**
-- **Riesgo:** no explicar cada opcode; quédate con "instrucciones de la VM". Aviso de aula: Pyodide tarda unos segundos la primera vez y necesita internet; las diapositivas explicativas (chips/árbol/tabla) funcionan aunque falle.
+## §2 · Variables y el mid (4 min)
+- **El gate:** el botón ▶ está bloqueado hasta que escriban su predicción. Insiste: "escribidla; vale equivocarse, no vale saltárselo".
+- El `.0` del resultado es la lección: división → float, siempre.
+- **Step-through:** pulsa Paso y narra cómo se puebla la memoria (nombres → valores → chips de tipo).
 
-## Bloque 3 · Compilar vs interpretar (dos diapositivas, 4 min)
-- **3.1 Compilado (C):** "traduce TODO a binario una vez, antes de ejecutar. Rápido, pero hay que compilar y el binario es de esa máquina."
-- **3.2 Python híbrido:** "compila a bytecode (lo que viste) y una VM lo interpreta al vuelo. Más lento que C, pero portable e interactivo — por eso va genial en Jupyter y para prototipar." Botón "Animar el viaje".
-- **Salida:** "Compilar = texto→bytecode; interpretar = la VM ejecutándolo. Python hace las dos."
+## §3 · Listas y for (3 min)
+- El visualizador: cursor + acumulador. Usa Paso las dos primeras vueltas, Auto para el resto.
+- Recalca el patrón: "acumulador que engorda + cursor que avanza = el 80% del análisis de datos".
 
-## Bloque 4 · El lenguaje, punto por punto (cinco diapositivas, 8-10 min)
-Ve despacio, una idea por diapositiva, construyendo el bid/offer. Cada una tiene editor en vivo (ejecuta y modifica delante de ellos):
-- **4.1 Variables:** `bid`, `ask`. "Un nombre que apunta a un valor."
-- **4.2 Operaciones y tipos:** `spread`, `mid`. "Esta es LA línea del viaje. Fíjate: resta de enteros = entero; división = float."
-- **4.3 Listas y for:** media de varios mids. "La lista guarda muchos; el for repite; total acumula."
-- **4.4 Diccionarios:** una orden `{...}`. "Campos con nombre = una orden de verdad. En la clase 3 será una clase `Order`."
-- **4.5 if/elif/else:** clasificar el mercado. "El programa decide. Cambia el spread y vuelve a ejecutar."
+## §4 · Diccionarios (2 min)
+- Hover código↔ficha: "son la misma cosa vista dos veces".
+- Ejecuta el `order["venue"]` y señala la ficha ganando el campo: "el dict está vivo".
 
-## Bloque extra · Errores son pistas (4 min)
-- 4 retos en orden. **El output ya etiqueta la fase** ("⛔ Falló al COMPILAR" / "⛔ Falló al EJECUTAR"), así que la lección cala aunque acierten a la primera. Engancha con el bloque 2.
-- **Riesgo:** son 4 ejemplos, no una taxonomía.
+## §5 · if/elif (3 min)
+- Slider de spread: solo UNA rama iluminada cada vez; con spread=10 ambas condiciones son ciertas pero gana la primera — **el orden importa**.
+- Honestidad (está en el doc): los umbrales son inventados; la estructura es la lección.
 
-## Bloque 5 · Tu primer algoritmo (5 min)
-- Rule builder + editor. **Cierra el hilo:** el `spread` da el *estado* del mercado; el `mid` —la línea que perseguimos todo el viaje— es ahora la *señal* que decide (`if mid <= 100000: buy`).
-- Cambia el mercado y ve cómo cambia la decisión. Recalca: la regla es un toy pedagógico.
+## §6 · Rompe código (3 min)
+- Los tres desastres en orden: NameError, TypeError, IndexError. Regla de oro en voz alta: **"el traceback se lee de abajo arriba"**.
+- Conecta con §1: "ya sabéis QUÉ falló y en qué fase".
 
-## Mini test (3 min)
-- 5 preguntas A/B/C que cubren los 6 puntos. Feedback inmediato y resultado final. Úsalo para detectar qué no quedó claro antes de cerrar.
-
-## Cierre (1 min)
-Repasa los 6 puntos del panel y manda al notebook (guardar snapshot/orden como datos + medir presión).
+## §7 · El algoritmo + quiz + puente (5 min)
+- Ejecuta el algoritmo completo: dato → cálculo → decisión. "Quince líneas, y ya es un algoritmo de trading: primitivo, pero con la anatomía de uno profesional."
+- **Quiz:** 5 A/B/C con feedback. Úsalo de diagnóstico: si fallan en bloque una pregunta, vuelve a esa sección.
+- **Mapa del paquete:** "hoy pusisteis la primera piedra" — señala L1 iluminada y el arco entero.
+- **Puente:** "añadid ETH esta noche… ¿cuántas variables duplicáis? Ese dolor se cura el próximo día."
+- **Cierre:** manda al notebook (`01_build_exercises.ipynb`) y presenta el gimnasio (31 drills, dosis mínima declarada).
 
 ## Checklist (los innegociables)
-- [ ] (1) Qué es Python — programa que lee texto.
-- [ ] (2) Cómo funciona de verdad — el viaje completo.
-- [ ] (3) De texto a 1s/0s — tokens, AST, bytecode, VM.
-- [ ] (4) Compilar vs interpretar.
-- [ ] (5) Variables, listas, dicts, if, for — construyendo el bid/offer.
-- [ ] (6) Tu primer algoritmo.
-- [ ] (★) El error te dice si falló compilando o ejecutando.
+- [ ] Python = programa que lee tu texto; el viaje tokens → AST → bytecode → VM.
+- [ ] División → float (el gate del `.0`).
+- [ ] Acumulador + cursor; dict por nombre; el embudo if/elif y el orden.
+- [ ] Traceback de abajo arriba; los 3 errores del día.
+- [ ] El algoritmo completo ejecutado y el puente a funciones (L2).
