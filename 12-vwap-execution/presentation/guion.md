@@ -2,23 +2,24 @@
 
 **Idea central:** No mandes la orden de golpe: repártela. TWAP reparte en el tiempo; VWAP, donde hay volumen; y el flujo reciente afina el plan.
 
-Presentación de 3 bloques (~5-7 min cada uno) + hero + cierre.
+**Formato:** documento interactivo (`vwap-execution-doc.html`), autocontenido y sin internet. Tú haces scroll y narras. Regla de la casa: **"lo cian se toca"**.
+
+Estructura: hero/reto (2 min) → scrollytelling (~7 min, scroll lento: cada parada es una idea) → simulador estrella (cede el teclado) → secciones de construcción (con gates de predicción: exige la predicción antes del ▶) → quiz (diagnóstico) → mapa del paquete + puente.
+
+## Los bloques conceptuales
 
 
-## Bloque 1: Por qué trocear
+### 1. Por qué trocear
 
 - **Qué decir:** Una orden grande de golpe barre el libro y paga slippage. Repartirla en el tiempo reduce el impacto.
-- **Acción en pantalla:** mostrar el snippet del bloque 1 y ejecutarlo en el notebook.
 
-## Bloque 2: TWAP vs VWAP
+### 2. TWAP vs VWAP
 
 - **Qué decir:** TWAP parte en trozos iguales; VWAP pondera por el perfil de volumen para acercarse al precio medio ponderado por volumen.
-- **Acción en pantalla:** mostrar el snippet del bloque 2 y ejecutarlo en el notebook.
 
-## Bloque 3: Volumen dinámico
+### 3. Volumen dinámico
 
 - **Qué decir:** El perfil fijo asume que hoy es como la media. Predecir el volumen del próximo intervalo con los últimos k afina el schedule.
-- **Acción en pantalla:** mostrar el snippet del bloque 3 y ejecutarlo en el notebook.
 
 ## Cierre
-- Recoge la idea central y manda abrir `exercises/`.
+- Recoge la idea central sobre el mapa del paquete y manda al notebook de construcción; presenta el gimnasio (dosis mínima declarada).

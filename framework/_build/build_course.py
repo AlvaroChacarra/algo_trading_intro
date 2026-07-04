@@ -192,14 +192,20 @@ def claude_md(lesson: dict, has_pkg: bool) -> str:
 
 
 def guion_md(lesson: dict) -> str:
+    slugname = lesson["slug"].split("-", 1)[1]
     out = [f"# Guion — Clase {lesson['n']}: {lesson['title']}\n",
            f"**Idea central:** {lesson['frase']}\n",
-           "Presentación de 3 bloques (~5-7 min cada uno) + hero + cierre.\n"]
+           f"**Formato:** documento interactivo (`{slugname}-doc.html`), autocontenido y sin "
+           "internet. Tú haces scroll y narras. Regla de la casa: **\"lo cian se toca\"**.\n",
+           "Estructura: hero/reto (2 min) → scrollytelling (~7 min, scroll lento: cada parada "
+           "es una idea) → simulador estrella (cede el teclado) → secciones de construcción "
+           "(con gates de predicción: exige la predicción antes del ▶) → quiz (diagnóstico) → "
+           "mapa del paquete + puente.\n\n## Los bloques conceptuales\n"]
     for i, (h, body, _snip) in enumerate(lesson["concepts"], 1):
-        out.append(f"\n## Bloque {i}: {h}\n")
+        out.append(f"\n### {i}. {h}\n")
         out.append(f"- **Qué decir:** {body}")
-        out.append(f"- **Acción en pantalla:** mostrar el snippet del bloque {i} y ejecutarlo en el notebook.")
-    out.append("\n## Cierre\n- Recoge la idea central y manda abrir `exercises/`.")
+    out.append("\n## Cierre\n- Recoge la idea central sobre el mapa del paquete y manda al "
+               "notebook de construcción; presenta el gimnasio (dosis mínima declarada).")
     return "\n".join(out) + "\n"
 
 
