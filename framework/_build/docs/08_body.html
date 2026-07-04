@@ -1,0 +1,248 @@
+<nav id="rail" aria-label="Progreso">
+  <a href="#s0" class="on"><span class="dot"></span><span class="lab">El reto</span></a>
+  <a href="#s1"><span class="dot"></span><span class="lab">El barrido</span></a>
+  <a href="#s2"><span class="dot"></span><span class="lab">Simulador</span></a>
+  <a href="#s3"><span class="dot"></span><span class="lab">LIMIT · IOC · FOK</span></a>
+  <a href="#s4"><span class="dot"></span><span class="lab">Quiz</span></a>
+  <a href="#s5"><span class="dot"></span><span class="lab">El puente</span></a>
+</nav>
+
+<header class="hero wrap" id="s0">
+  <div class="eyebrow"><b>Algo Trading · ICAI 2026</b> &nbsp;·&nbsp; L8 · Matching &nbsp;·&nbsp; documento interactivo</div>
+  <h1>La orden que <em>mueve</em> el mercado</h1>
+  <p class="lede">Ayer aprendiste a mirar el libro. Hoy le disparas. Una market order de
+  compra entra en el libro real de BTCUSDT y… ¿a qué precio se llena? Spoiler: <strong>a
+  varios</strong> — y ninguno es el mid que veías en pantalla.</p>
+
+  <div class="challenge">
+    <div class="tag">El reto de hoy</div>
+    <p>El mid dice 100.000. Mandas comprar 2,4 BTC "a mercado". El libro solo tiene
+    0,8 BTC en el mejor ask — el resto lo pagas <strong>más caro</strong>, nivel a nivel.
+    La diferencia entre lo que viste y lo que pagaste se llama <strong>slippage</strong>,
+    y hoy la ves nacer.</p>
+    <p>Todos los números de este documento los calculó tu <code>MatchingEngine</code>
+    sobre el snapshot real — no hay teatro.</p>
+  </div>
+
+  <div class="meta">
+    <span><b>~40 min</b> lectura + práctica</span>
+    <span><b>4</b> barridos reales</span>
+    <span><b>2</b> simuladores</span>
+    <span>lo <b style="color:var(--accent)">cian</b> se toca</span>
+  </div>
+</header>
+
+<section id="s1">
+  <div class="wrap">
+    <div class="eyebrow">§1 · <b>La idea central</b></div>
+    <h2>Anatomía de un barrido</h2>
+    <p class="lede">Sigue bajando: una market buy entra en el libro real y el panel la
+    ejecuta nivel a nivel, como lo hace tu motor.</p>
+  </div>
+
+  <div class="scrolly" data-scrolly>
+    <div class="steps">
+      <div class="step on" data-stage="0" data-name="el libro espera"><div class="step-inner">
+        <h3><span class="n">0/5</span>El lado que vas a consumir</h3>
+        <p>Compras → consumes <strong>asks</strong>. Ahí está la liquidez visible, ordenada
+        de mejor a peor precio. El depth de ayer era exactamente esto: cuánto hay en cada
+        escalón.</p>
+      </div></div>
+      <div class="step" data-stage="1" data-name="nivel 1"><div class="step-inner">
+        <h3><span class="n">1/5</span>Primer bocado: el mejor ask</h3>
+        <p>La orden empieza por el precio más barato disponible y se come <strong>todo</strong>
+        el nivel 1. Si con eso basta, fin: pagaste el best ask. Pero tu orden es más grande…</p>
+      </div></div>
+      <div class="step" data-stage="2" data-name="nivel 2 y 3"><div class="step-inner">
+        <h3><span class="n">2/5</span>Sigue subiendo escalones</h3>
+        <p>Lo que falta se cruza contra el nivel 2. Y el 3. Cada escalón es <strong>más
+        caro</strong>. La orden no "tiene" un precio: tiene una <strong>lista de fills</strong>
+        a precios distintos.</p>
+      </div></div>
+      <div class="step" data-stage="3" data-name="slippage"><div class="step-inner">
+        <h3><span class="n">3/5</span>El precio efectivo</h3>
+        <p>El precio real que pagaste es la <strong>media ponderada de tus fills</strong>.
+        Compárala con el mid que veías antes de disparar: esa diferencia es el
+        <strong>slippage</strong> — el peaje de la inmediatez.</p>
+      </div></div>
+      <div class="step" data-stage="4" data-name="el libro después"><div class="step-inner">
+        <h3><span class="n">4/5</span>Y el libro queda tocado</h3>
+        <p>Tu orden <strong>consumió</strong> liquidez: los primeros niveles ya no están.
+        El siguiente que compre empieza más arriba. Eso es "mover el mercado" — y con
+        tamaño de verdad, es el problema central de la ejecución (L12).</p>
+      </div></div>
+      <div class="step" data-stage="5" data-name="tamaño ↔ dolor"><div class="step-inner">
+        <h3><span class="n">5/5</span>La ley del día</h3>
+        <p>Cuanto más grande la orden, más escalones barre y peor el precio efectivo.
+        Es una ley física del libro, no una opinión. En el simulador la vas a medir con
+        cuatro tamaños reales.</p>
+      </div></div>
+    </div>
+
+    <div class="figwrap"><div class="fig">
+      <div class="fig-head"><span>market buy vs libro real</span><span class="stage-name">el libro espera</span></div>
+      <div class="fig-stage on" data-stage="0"><div class="mini-book" id="m0" style="margin-top:6px"></div></div>
+      <div class="fig-stage" data-stage="1"><div class="mini-book" id="m1" style="margin-top:6px"></div>
+        <div class="looplog" id="m1log"></div></div>
+      <div class="fig-stage" data-stage="2"><div class="mini-book" id="m2" style="margin-top:6px"></div>
+        <div class="looplog" id="m2log"></div></div>
+      <div class="fig-stage" data-stage="3">
+        <div class="statgrid" style="border:none;padding-top:8px" id="m3stats"></div>
+        <pre style="font-family:var(--mono);font-size:.76rem;line-height:1.9;margin-top:10px" id="m3fills"></pre>
+      </div>
+      <div class="fig-stage" data-stage="4"><div class="mini-book" id="m4" style="margin-top:6px"></div>
+        <p style="color:var(--warn);font-size:.8rem;font-family:var(--mono);margin-top:12px" id="m4note"></p></div>
+      <div class="fig-stage" data-stage="5">
+        <pre style="font-family:var(--mono);font-size:.8rem;line-height:2.2;margin-top:10px" id="m5tab"></pre>
+        <p style="color:var(--faint);font-size:.78rem;margin-top:8px">slippage vs mid, medido por tu MatchingEngine</p>
+      </div>
+    </div></div>
+  </div>
+</section>
+
+<section id="s2">
+  <div class="wrap">
+    <div class="eyebrow">§2 · <b>Simulador</b></div>
+    <h2>Dispara tú</h2>
+    <p class="lede">Cuatro tamaños contra el mismo libro. Cada disparo reproduce los fills
+    exactos del motor y te enseña la factura.</p>
+
+    <div class="simcard">
+      <h4>simulador · engine.process(Order('BTCUSDT', 'buy', size, MARKET), book)</h4>
+      <div class="btnrow" style="margin-top:0" id="sw-btns"></div>
+      <div class="dictgrid" style="grid-template-columns:230px 1fr;margin:12px 0 0">
+        <div class="mini-book" id="sw-book"></div>
+        <div>
+          <pre style="font-family:var(--mono);font-size:.78rem;line-height:1.9;min-height:90px;margin:0" id="sw-fills"></pre>
+          <div class="statgrid" id="sw-stats"></div>
+        </div>
+      </div>
+      <div class="looplog" id="sw-log">elige un tamaño y dispara</div>
+    </div>
+
+    <div class="note"><span class="tag">Fíjate en el último tamaño</span>
+    Pide más de lo que hay en los 5 niveles: se llena <strong>parcialmente</strong> y el
+    resto se cancela — una market no descansa en el libro. "A mercado" no garantiza
+    cantidad; garantiza inmediatez de lo que haya.</div>
+  </div>
+</section>
+
+<section id="s3">
+  <div class="wrap">
+    <div class="eyebrow">§3 · <b>Las variantes</b></div>
+    <h2>LIMIT, IOC, FOK: el mismo cruce, tres contratos</h2>
+    <p class="lede">La misma orden grande (<span id="v-big"></span> BTC) con precio límite
+    en el 2º nivel, procesada tres veces por el motor. Solo cambia <strong>qué pasa con lo
+    que no se puede cruzar</strong>.</p>
+
+    <div class="fig3">
+      <div class="lane"><h4>LIMIT</h4><p id="v-limit"></p>
+        <p style="color:var(--faint)">el remanente <strong>descansa</strong> en el libro a tu precio</p></div>
+      <div class="lane"><h4>IOC</h4><p id="v-ioc"></p>
+        <p style="color:var(--faint)">cruza lo que pueda YA; el resto se <strong>cancela</strong></p></div>
+      <div class="lane"><h4>FOK</h4><p id="v-fok"></p>
+        <p style="color:var(--faint)">todo o <strong>nada</strong> — y no había todo</p></div>
+    </div>
+
+    <div class="note"><span class="tag">Cuándo usar cada una</span>
+    LIMIT cuando puedes esperar y quieres precio; IOC cuando quieres lo disponible sin
+    dejar huella; FOK cuando ejecutar a medias te rompe la posición (arbitraje, patas de
+    un spread). La forma de enviar la orden ES parte de la estrategia.</div>
+  </div>
+</section>
+
+<section id="s4">
+  <div class="wrap">
+    <div class="eyebrow">§4 · <b>Fija lo de hoy</b></div>
+    <h2>5 preguntas</h2>
+    <div class="quiz" data-quiz>
+      <div class="q" data-ok="1">
+        <div class="qt">Una market order más grande que el mejor nivel se llena…</div>
+        <div class="opts">
+          <button class="opt">A · Al precio del mejor nivel, entera</button>
+          <button class="opt">B · A varios precios, barriendo niveles cada vez peores</button>
+          <button class="opt">C · Espera a que llegue más liquidez</button>
+        </div>
+        <div class="why">Consume el nivel 1, sigue por el 2, el 3… Una lista de fills, no
+        un precio.</div>
+      </div>
+      <div class="q" data-ok="2">
+        <div class="qt">El precio efectivo de un barrido, respecto al mid previo…</div>
+        <div class="opts">
+          <button class="opt">A · Es igual: el mid es el precio justo</button>
+          <button class="opt">B · Es mejor: compras en oferta</button>
+          <button class="opt">C · Es peor, y empeora con el tamaño — eso es el slippage</button>
+        </div>
+        <div class="why">Lo mediste: de +21.8 a +28.6 según el tamaño. La inmediatez se
+        paga, y a más tamaño, más peaje.</div>
+      </div>
+      <div class="q" data-ok="0">
+        <div class="qt">Una LIMIT de compra que no se cruza entera…</div>
+        <div class="opts">
+          <button class="opt">A · Deja el remanente descansando en el libro a tu precio</button>
+          <button class="opt">B · Cancela el remanente</button>
+          <button class="opt">C · Se convierte en market</button>
+        </div>
+        <div class="why">Ese remanente ES liquidez nueva: ahora tú estás en el libro y
+        otros pueden cruzarte.</div>
+      </div>
+      <div class="q" data-ok="1">
+        <div class="qt">IOC significa…</div>
+        <div class="opts">
+          <button class="opt">A · Se ejecuta entera o nada</button>
+          <button class="opt">B · Cruza lo que pueda inmediatamente y cancela el resto</button>
+          <button class="opt">C · Descansa hasta el final del día</button>
+        </div>
+        <div class="why">Immediate-or-cancel: como una limit sin la parte de descansar.</div>
+      </div>
+      <div class="q" data-ok="2">
+        <div class="qt">Una FOK que solo puede llenarse al 80%…</div>
+        <div class="opts">
+          <button class="opt">A · Ejecuta el 80%</button>
+          <button class="opt">B · Ejecuta el 80% y deja el resto en el libro</button>
+          <button class="opt">C · No ejecuta nada: el libro queda intacto</button>
+        </div>
+        <div class="why">Fill-or-kill: tu motor lo comprobó — 0 fills y el libro sin
+        tocar.</div>
+      </div>
+      <div class="score"></div>
+    </div>
+  </div>
+</section>
+
+<section id="s5">
+  <div class="wrap">
+    <div class="eyebrow">§5 · <b>El puente</b></div>
+    <h2>Dónde estás en el proyecto</h2>
+    <div class="pkgmap">
+      <div class="pk done">L1 · el dato</div>
+      <div class="pk done">L2 · book funcional</div>
+      <div class="pk done">L3 · order_book.py</div>
+      <div class="pk done">L4 · Order y Fill</div>
+      <div class="pk done">L5 · OrderBook + Tracker</div>
+      <div class="pk done">L6 · familia Strategy</div>
+      <div class="pk today">L7-9 · el motor<span>hoy: matching y slippage (L8)</span></div>
+      <div class="pk future">L10-11 · el framework<span>Strategy + Backtest</span></div>
+      <div class="pk future">L12-14 · estrategias<span>VWAP, market making</span></div>
+    </div>
+
+    <div class="bridge">
+      <div class="tag">El puente a L9</div>
+      <p style="margin:.2em 0"><strong>Sabes cruzar en un instante. ¿Y a lo largo del tiempo?</strong></p>
+      <p>Un trade no vive en una foto: vive en un día entero de fotos. Falta el
+      <strong>loop</strong> que reproduce los 500 snapshots en orden, acepta tus órdenes en
+      cualquier momento y va dibujando tu equity tick a tick. Es la última pieza del motor
+      — y la próxima clase.</p>
+    </div>
+
+    <div class="cta">
+      <div class="box"><span class="tag">Ahora te toca construir</span>
+      Abre <code>08_build_exercises.ipynb</code>: market, limit, IOC, FOK y el precio
+      efectivo, contra el motor real.</div>
+      <div class="box"><span class="tag">Y después, al gimnasio</span>
+      <code>08_auxiliary.ipynb</code> — drills de fills, barridos y slippage.</div>
+    </div>
+  </div>
+</section>
+
+<footer>L8 · Órdenes y matching — Algo Trading ICAI 2026 · documento interactivo</footer>

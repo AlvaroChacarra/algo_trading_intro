@@ -1,0 +1,278 @@
+<nav id="rail" aria-label="Progreso">
+  <a href="#s0" class="on"><span class="dot"></span><span class="lab">El reto</span></a>
+  <a href="#s1"><span class="dot"></span><span class="lab">El modelo</span></a>
+  <a href="#s2"><span class="dot"></span><span class="lab">El laboratorio</span></a>
+  <a href="#s3"><span class="dot"></span><span class="lab">Tu estrategia</span></a>
+  <a href="#s4"><span class="dot"></span><span class="lab">Quiz</span></a>
+  <a href="#s5"><span class="dot"></span><span class="lab">El cierre</span></a>
+</nav>
+
+<header class="hero wrap" id="s0">
+  <div class="eyebrow"><b>Algo Trading · ICAI 2026</b> &nbsp;·&nbsp; L14 · Avellaneda-Stoikov &nbsp;·&nbsp; documento interactivo</div>
+  <h1>El skew <em>óptimo</em></h1>
+  <p class="lede">Ayer domaste el inventario con un número a ojo. Hoy, la versión con
+  apellidos: <strong>Avellaneda &amp; Stoikov (2008)</strong> plantearon "¿dónde cotizo
+  para maximizar mi utilidad, con miedo γ, volatilidad σ y tiempo restante τ?" — y lo
+  resolvieron. Dos fórmulas. Hoy entiendes qué dice cada letra… tocándolas.</p>
+
+  <div class="challenge">
+    <div class="tag">El reto de hoy — y la promesa</div>
+    <p>Las fórmulas aparecen para <strong>legitimar</strong>, no para dominar la clase:
+    nada de derivaciones. Cada símbolo tendrá un slider, y el barrido de γ lo calculó tu
+    <code>MMSimulation</code>, no una diapositiva.</p>
+    <p>Y al final, el momento que llevaba 14 clases preparándose: <strong>escribes TU
+    estrategia y la enchufas</strong>. El curso entero era para esto.</p>
+  </div>
+
+  <div class="meta">
+    <span><b>~40 min</b> lectura + práctica</span>
+    <span><b>5</b> gammas barridas</span>
+    <span><b>2</b> simuladores</span>
+    <span>lo <b style="color:var(--accent)">cian</b> se toca</span>
+  </div>
+</header>
+
+<section id="s1">
+  <div class="wrap">
+    <div class="eyebrow">§1 · <b>La idea central</b></div>
+    <h2>Dos fórmulas, cuatro letras</h2>
+    <p class="lede">Sigue bajando: el panel desmonta el modelo símbolo a símbolo y lo
+    termina midiendo contra el naive de ayer.</p>
+  </div>
+
+  <div class="scrolly" data-scrolly>
+    <div class="steps">
+      <div class="step on" data-stage="0" data-name="la pregunta"><div class="step-inner">
+        <h3><span class="n">0/4</span>Del "a ojo" al óptimo</h3>
+        <p>El naive tenía dos números mágicos: <code>half_spread</code> y <code>skew</code>.
+        A-S los <em>deriva</em> de cosas que significan algo: tu aversión al riesgo (γ),
+        la volatilidad (σ), la prisa del reloj (τ) y la densidad del flujo (κ).</p>
+        <p>La matemática de fondo (utilidad CARA, HJB) existe y es seria — nosotros nos
+        quedamos con su resultado y su intuición.</p>
+      </div></div>
+      <div class="step" data-stage="1" data-name="reservation"><div class="step-inner">
+        <h3><span class="n">1/4</span>El centro: reservation price</h3>
+        <p><code>r = mid − q·γ·σ²·τ</code></p>
+        <p>El skew de ayer, con física dentro: te alejas del mid proporcional a tu
+        inventario (q), tu miedo (γ), lo que se mueve el mundo (σ²) y el tiempo que queda
+        para sufrirlo (τ). Cuatro sensores en lugar de un número mágico.</p>
+      </div></div>
+      <div class="step" data-stage="2" data-name="optimal spread"><div class="step-inner">
+        <h3><span class="n">2/4</span>El ancho: optimal spread</h3>
+        <p><code>δ = γ·σ²·τ + (2/γ)·ln(1 + γ/κ)</code></p>
+        <p>Dos sumandos con alma propia: el primero es <strong>seguro contra la
+        volatilidad</strong> (más σ o más τ → cotiza más ancho); el segundo negocia con el
+        flujo — κ dice cuánta clientela pierdes por cada tick que te alejas.</p>
+      </div></div>
+      <div class="step" data-stage="3" data-name="tau"><div class="step-inner">
+        <h3><span class="n">3/4</span>El reloj: τ → 0</h3>
+        <p>Al acercarse el cierre, τ se apaga y con él el término de inventario: el
+        modelo cotiza cada vez más pegado al mid y más simétrico. Traducción:
+        <strong>"suelta el inventario, que se acaba el partido"</strong>. Ninguna
+        heurística a ojo te da ese comportamiento gratis.</p>
+      </div></div>
+      <div class="step" data-stage="4" data-name="A-S vs naive"><div class="step-inner">
+        <h3><span class="n">4/4</span>El duelo, medido</h3>
+        <p>Misma semilla, mismo mercado que ayer: el A-S (γ=0.5) acaba con
+        <strong>más PnL</strong> que el naive y un inventario que respeta el reloj. No es
+        magia: es que sus dos números ya no son mágicos.</p>
+      </div></div>
+    </div>
+
+    <div class="figwrap"><div class="fig">
+      <div class="fig-head"><span>Avellaneda-Stoikov, por piezas</span><span class="stage-name">la pregunta</span></div>
+      <div class="fig-stage on" data-stage="0">
+        <pre style="font-family:var(--mono);font-size:.8rem;line-height:2.2;margin:8px 0 0">
+naive:  half_spread = 0.6   <span class="c"># ¿por qué?</span>
+        skew        = 2.0   <span class="c"># ¿por qué?</span>
+
+A-S:    γ  tu miedo
+        σ  la volatilidad
+        τ  el tiempo restante
+        κ  la densidad del flujo</pre>
+      </div>
+      <div class="fig-stage" data-stage="1">
+        <pre style="font-family:var(--mono);font-size:.84rem;line-height:2.3;margin:10px 0 0">
+r = mid − q·γ·σ²·τ
+
+q = +1 (largo), γ=0.5, σ=0.5, τ=1
+r = 100 − 1×0.5×0.25×1 = <span style="color:var(--accent)">99.875</span>
+
+q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
+        <p style="color:var(--faint);font-size:.78rem;margin-top:10px">el centro huye de tu inventario — igual que ayer, pero con unidades</p>
+      </div>
+      <div class="fig-stage" data-stage="2">
+        <pre style="font-family:var(--mono);font-size:.8rem;line-height:2.2;margin:8px 0 0">
+δ = γ·σ²·τ + (2/γ)·ln(1 + γ/κ)
+    ───┬───   ─────┬──────────
+   seguro de    negociación
+   volatilidad  con el flujo</pre>
+        <p style="color:var(--faint);font-size:.78rem;margin-top:12px">σ o τ suben → más ancho. κ sube (flujo denso) → puedes cotizar más fino.</p>
+      </div>
+      <div class="fig-stage" data-stage="3">
+        <canvas id="as3" style="width:100%;height:160px;margin-top:8px"></canvas>
+        <p style="color:var(--faint);font-size:.74rem;font-family:var(--mono);margin-top:6px">|desplazamiento de r| con q=1, a lo largo del día: el término se apaga con τ</p>
+      </div>
+      <div class="fig-stage" data-stage="4">
+        <canvas id="as4" style="width:100%;height:150px;margin-top:6px"></canvas>
+        <div class="statgrid" id="as4s" style="margin-top:10px"></div>
+      </div>
+    </div></div>
+  </div>
+</section>
+
+<section id="s2">
+  <div class="wrap">
+    <div class="eyebrow">§2 · <b>Simuladores</b></div>
+    <h2>El laboratorio de γ</h2>
+    <p class="lede">Arriba, las fórmulas en vivo — mueve los diales y ve r y δ responder.
+    Abajo, el barrido real: cinco gammas por el simulador completo, misma semilla.</p>
+
+    <div class="simcard">
+      <h4>laboratorio · las fórmulas con las manos</h4>
+      <div class="simrow"><label style="min-width:130px">γ (miedo)</label>
+        <input type="range" id="lb-g" min="5" max="200" value="50" step="5" style="flex:1"><span class="spread-val"><b id="lb-gv">0.50</b></span></div>
+      <div class="simrow"><label style="min-width:130px">q (inventario)</label>
+        <input type="range" id="lb-q" min="-20" max="20" value="10" step="1" style="flex:1"><span class="spread-val"><b id="lb-qv">1.0</b></span></div>
+      <div class="simrow"><label style="min-width:130px">τ (tiempo restante)</label>
+        <input type="range" id="lb-t" min="0" max="100" value="100" step="5" style="flex:1"><span class="spread-val"><b id="lb-tv">1.00</b></span></div>
+      <div class="statgrid">
+        <div><span>reservation r</span><b id="lb-r"></b></div>
+        <div><span>optimal spread δ</span><b id="lb-d"></b></div>
+        <div><span>quotes</span><b id="lb-bq" style="font-size:.9rem"></b></div>
+      </div>
+      <div class="looplog" id="lb-log"></div>
+    </div>
+
+    <div class="simcard">
+      <h4>barrido real · MMSimulation × 5 gammas (misma semilla)</h4>
+      <pre style="font-family:var(--mono);font-size:.82rem;line-height:2.2;margin:0" id="sw-tab"></pre>
+      <div class="looplog">» la frontera: menos γ = más PnL con más susto; más γ = dormir tranquilo cobrando menos</div>
+    </div>
+  </div>
+</section>
+
+<section id="s3">
+  <div class="wrap">
+    <div class="eyebrow">§3 · <b>El momento</b></div>
+    <h2>Escribe TU estrategia</h2>
+    <p class="lede">Todo lo construido — el paquete, el contrato, el simulador — estaba
+    esperando estas líneas: una subclase tuya, con tu idea dentro.</p>
+
+    <div class="code">
+      <div class="code-head"><span>mi_market_maker.py — la plantilla del examen final</span><span>python</span></div>
+      <pre><span class="ln"><span class="k">from</span> exchange.strategies.market_maker <span class="k">import</span> MarketMaker</span><span class="ln"></span><span class="ln"><span class="k">class</span> MiMarketMaker(MarketMaker):</span><span class="ln">    <span class="s">"""Tu idea aquí: hereda el esqueleto, cambia las quotes."""</span></span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">quotes</span>(self, book):</span><span class="ln">        r = self.reservation_price(book.mid)</span><span class="ln">        half = self.half_spread</span><span class="ln">        <span class="k">if</span> <span class="fn">abs</span>(self._inventory) &gt; <span class="num">0.5</span>:   <span class="c"># tu regla, la que quieras</span></span><span class="ln">            half = half * <span class="num">1.5</span>              <span class="c"># p. ej.: cargado → más ancho</span></span><span class="ln">        <span class="k">return</span> r - half, r + half</span><span class="ln"></span><span class="ln">res = MMSimulation(MiMarketMaker(<span class="s">'SIM'</span>, quote_size=<span class="num">0.1</span>), seed=<span class="num">42</span>).run()</span></pre>
+      <div class="out"><div class="btnrow" style="margin:0"><button class="btn runbtn" data-target="out-own">▶ La pregunta de verdad</button></div>
+        <div id="out-own" class="hidden" style="margin-top:10px">
+          <div><span class="prompt">&gt;&gt;&gt; </span><span class="val">¿cuántas líneas del motor tocaste? 0. ¿Del simulador? 0.</span></div>
+          <div><span class="prompt">&gt;&gt;&gt; </span><span class="val">Solo tu idea. Eso era el curso.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="note"><span class="tag">Para el notebook</span>
+    En <code>14_build_exercises.ipynb</code> harás exactamente esto con validadores: tu
+    subclase, tu barrido, tus conclusiones. Es también la plantilla de la pregunta abierta
+    del examen.</div>
+  </div>
+</section>
+
+<section id="s4">
+  <div class="wrap">
+    <div class="eyebrow">§4 · <b>Fija lo de hoy</b></div>
+    <h2>5 preguntas</h2>
+    <div class="quiz" data-quiz>
+      <div class="q" data-ok="1">
+        <div class="qt">El reservation price de A-S es…</div>
+        <div class="opts">
+          <button class="opt">A · El mid del libro, siempre</button>
+          <button class="opt">B · El mid desplazado por q·γ·σ²·τ — el centro que huye de tu inventario</button>
+          <button class="opt">C · El precio al que resucitas órdenes canceladas</button>
+        </div>
+        <div class="why">Es el skew de L13 con unidades físicas: inventario, miedo,
+        volatilidad y reloj.</div>
+      </div>
+      <div class="q" data-ok="2">
+        <div class="qt">Subir γ (más aversión), según el barrido real…</div>
+        <div class="opts">
+          <button class="opt">A · Sube el PnL y el inventario</button>
+          <button class="opt">B · No cambia nada</button>
+          <button class="opt">C · Baja el inventario máximo (1.9→0.7) y también el PnL (46→29)</button>
+        </div>
+        <div class="why">La frontera riesgo/retorno, medida por tu simulador. γ es el dial
+        del miedo.</div>
+      </div>
+      <div class="q" data-ok="0">
+        <div class="qt">Cuando τ → 0 (se acaba el día)…</div>
+        <div class="opts">
+          <button class="opt">A · El término de inventario se apaga: r vuelve al mid</button>
+          <button class="opt">B · El spread se hace infinito</button>
+          <button class="opt">C · El modelo deja de cotizar</button>
+        </div>
+        <div class="why">Menos tiempo de sufrir el inventario → menos skew. El modelo
+        "sabe" que el partido termina.</div>
+      </div>
+      <div class="q" data-ok="1">
+        <div class="qt"><code>AvellanedaStoikov(MarketMaker)</code> — ¿qué patrón del curso es?</div>
+        <div class="opts">
+          <button class="opt">A · Composición: contiene un MarketMaker dentro</button>
+          <button class="opt">B · Herencia (L6): mismo esqueleto, override de reservation_price y quotes</button>
+          <button class="opt">C · Un módulo con funciones sueltas</button>
+        </div>
+        <div class="why">La familia de L6, en producción: la subclase cambia solo el
+        cálculo de cotización.</div>
+      </div>
+      <div class="q" data-ok="2">
+        <div class="qt">¿Cuál es la γ "correcta"?</div>
+        <div class="opts">
+          <button class="opt">A · 0.1: lo dice el paper</button>
+          <button class="opt">B · La que maximiza el PnL del backtest</button>
+          <button class="opt">C · No existe: eliges tu punto en la frontera riesgo/retorno</button>
+        </div>
+        <div class="why">γ codifica TU aversión. El modelo te da la frontera; el punto lo
+        pones tú (y ojo con optimizar contra una sola semilla — L11).</div>
+      </div>
+      <div class="score"></div>
+    </div>
+  </div>
+</section>
+
+<section id="s5">
+  <div class="wrap">
+    <div class="eyebrow">§5 · <b>El cierre</b></div>
+    <h2>El proyecto, completo</h2>
+    <p class="lede">Catorce clases, un solo sistema. Mira el mapa: <strong>no queda nada
+    gris</strong>.</p>
+    <div class="pkgmap">
+      <div class="pk done">L1 · el dato</div>
+      <div class="pk done">L2 · book funcional</div>
+      <div class="pk done">L3 · order_book.py</div>
+      <div class="pk done">L4 · Order y Fill</div>
+      <div class="pk done">L5 · OrderBook + Tracker</div>
+      <div class="pk done">L6 · familia Strategy</div>
+      <div class="pk done">L7-9 · el motor</div>
+      <div class="pk done">L10-11 · el framework</div>
+      <div class="pk today">L12-14 · estrategias<span>hoy: A-S y TU estrategia (L14)</span></div>
+    </div>
+
+    <div class="bridge">
+      <div class="tag">El puente a L15 — el examen</div>
+      <p style="margin:.2em 0"><strong>40 preguntas, 40 minutos, +1 / −0.5.</strong></p>
+      <p>Cubre el arco completo: Python y OOP, el paquete <code>exchange</code>, leer el
+      libro, matching, el framework, VWAP y market making. Todo lo que construiste — el
+      examen pregunta por TU código.</p>
+      <p style="margin-bottom:0">La mejor preparación: los gimnasios (los drills son primos
+      hermanos de las preguntas) y los mini-tests de cada documento.</p>
+    </div>
+
+    <div class="cta">
+      <div class="box"><span class="tag">Ahora te toca construir</span>
+      Abre <code>14_build_exercises.ipynb</code>: reservation, spread, el barrido y TU
+      estrategia validada.</div>
+      <div class="box"><span class="tag">Y el gimnasio final</span>
+      <code>14_auxiliary.ipynb</code> — los últimos drills antes del examen.</div>
+    </div>
+  </div>
+</section>
+
+<footer>L14 · Avellaneda-Stoikov — Algo Trading ICAI 2026 · documento interactivo</footer>

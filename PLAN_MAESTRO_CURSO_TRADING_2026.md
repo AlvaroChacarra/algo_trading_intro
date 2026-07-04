@@ -73,8 +73,8 @@ NN-slug/
 ├── README.md                       # generado: teoría + técnico + ejercicios
 ├── CLAUDE.md                       # generado: guía de implementación
 ├── presentation/
-│   ├── <slug>-interactive.html     # deck a medida (Pyodide) — full bespoke
-│   └── guion.md                    # guion del profesor (custom)
+│   ├── <slug>-doc.html             # documento interactivo ("html corrido"): scrolly + simuladores + quiz
+│   └── guion.md                    # guion del profesor (custom, alineado al doc)
 ├── exercises/
 │   ├── exchange/                   # paquete acumulado (starter)        [L4+]
 │   ├── NN_build_exercises.ipynb    # núcleo: refleja el deck, llega al clímax
@@ -84,10 +84,15 @@ NN-slug/
 ```
 
 **Producción:** el contenido vive en specs (`framework/_build/lessons_*.py` + `lessons_docs.py`);
-`build_course.py` **autovalida cada ejercicio** y emite. Los decks y guiones a medida viven en
-`framework/_build/custom/NN.html` y `NN_guion.md` (el generador los copia, no se sobreescriben).
-**Las 15 llevan deck interactivo a medida nivel L1** (full bespoke). Robustez: las diapositivas
-explicativas funcionan aunque Pyodide falle (aula sin wifi).
+`build_course.py` **autovalida cada ejercicio** y emite. Los documentos interactivos se ensamblan
+con `docgen.py`: base compartida (`doc_assets/`: fuentes embebidas + CSS + motores JS) + contenido
+por lección (`docs/NN_body.html` + `NN_custom.js`). En L7-L14, `docs/NN_data.py` **ejecuta el motor
+`exchange/` real en build-time** y embebe sus resultados: los simuladores nunca mienten. Todo es
+autocontenido (sin CDNs): funciona en aula sin wifi. Los guiones custom viven en
+`framework/_build/custom/NN_guion.md`. El deck scroll-snap está retirado.
+
+Los gimnasios (auxiliares) siguen el patrón: calentamiento (repaso de la lección anterior) +
+bloques de drills + profundización, con dosis mínima declarada.
 
 Diseño compartido: `#09090b` / `#22d3ee` / bids `#4ade80` / asks `#f87171`, Inter + JetBrains
 Mono, GSAP.
@@ -214,7 +219,9 @@ código del propio framework. Generador en `15-final-exam/generate_exam.py`.
 
 - **Calidad:** las 15 con deck a medida nivel L1. Notebook + auxiliares + `.py` + mini-test en todas.
 - **Autovalidación:** ningún ejercicio se publica sin pasar `build_course.py --check-only`.
-- **Estado:** L1 y L2 **producidas a nivel flagship**. L3–L15 pendientes.
+- **Estado:** **L1–L14 producidas** (documento interactivo + notebook + gimnasio + guion + `.py`).
+  L15: examen interactivo generado (`generate_exam.py`: 40 preguntas, +1/−0.5, 40:00, corrección
+  automática y hoja del profesor).
 - **Proceso:**
   1. Este plan (6 fundamentos, 15 clases) aprobado.
   2. **Migración de numeración**: el motor/framework/VWAP/MM se desplazan (ver §5). Las carpetas y

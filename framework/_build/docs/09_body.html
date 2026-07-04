@@ -1,0 +1,228 @@
+<nav id="rail" aria-label="Progreso">
+  <a href="#s0" class="on"><span class="dot"></span><span class="lab">El reto</span></a>
+  <a href="#s1"><span class="dot"></span><span class="lab">El loop</span></a>
+  <a href="#s2"><span class="dot"></span><span class="lab">El día en play</span></a>
+  <a href="#s3"><span class="dot"></span><span class="lab">Quiz</span></a>
+  <a href="#s4"><span class="dot"></span><span class="lab">El puente</span></a>
+</nav>
+
+<header class="hero wrap" id="s0">
+  <div class="eyebrow"><b>Algo Trading · ICAI 2026</b> &nbsp;·&nbsp; L9 · El loop &nbsp;·&nbsp; documento interactivo</div>
+  <h1>De la foto a la <em>película</em></h1>
+  <p class="lede">Sabes leer un snapshot (L7) y cruzar contra él (L8). Pero un trade no
+  vive en una foto: vive en un día. Hoy montas la pieza que pone en marcha el tiempo —
+  el <strong>loop de simulación</strong> — y ves tu primera <strong>curva de equity</strong>
+  dibujarse tick a tick.</p>
+
+  <div class="challenge">
+    <div class="tag">El reto de hoy</div>
+    <p>Reproducir el día entero: 500 snapshots en orden, tu orden entrando en el momento
+    que elijas, y una cuenta que nunca miente diciéndote en cada tick <strong>cuánto
+    vales</strong>. Es el `while` más importante del curso: book → decide → cruza →
+    apunta. Todo lo demás (VWAP, market making, TU estrategia) correrá dentro de él.</p>
+  </div>
+
+  <div class="meta">
+    <span><b>~40 min</b> lectura + práctica</span>
+    <span><b>500</b> pasos reales</span>
+    <span><b>1</b> simulador</span>
+    <span>lo <b style="color:var(--accent)">cian</b> se toca</span>
+  </div>
+</header>
+
+<section id="s1">
+  <div class="wrap">
+    <div class="eyebrow">§1 · <b>La idea central</b></div>
+    <h2>El latido: step → decide → submit → apunta</h2>
+    <p class="lede">Sigue bajando: el panel ejecuta un día real con una estrategia
+    simple — comprar 0.5 BTC en el paso 50 y aguantar — y te enseña cada pieza del loop.</p>
+  </div>
+
+  <div class="scrolly" data-scrolly>
+    <div class="steps">
+      <div class="step on" data-stage="0" data-name="step()"><div class="step-inner">
+        <h3><span class="n">0/4</span><code>market.step()</code></h3>
+        <p>Cada llamada avanza un snapshot y reconstruye el libro. Cuando el día se acaba,
+        devuelve <code>None</code> — la condición de salida del while. Sin libro activo,
+        <code>submit()</code> lanza error: <strong>primero step, luego órdenes</strong>.</p>
+      </div></div>
+      <div class="step" data-stage="1" data-name="submit()"><div class="step-inner">
+        <h3><span class="n">1/4</span>La orden entra en su momento</h3>
+        <p>En el paso 50, la estrategia dispara una market buy de 0.5. El matching de L8
+        hace su trabajo contra <em>ese</em> libro y devuelve los fills.</p>
+        <p>Mira el resultado real: <strong>no se llenó entera</strong> — la liquidez
+        visible de ese instante no daba para más, y una market no descansa.</p>
+      </div></div>
+      <div class="step" data-stage="2" data-name="equity"><div class="step-inner">
+        <h3><span class="n">2/4</span>La cuenta, tick a tick</h3>
+        <p>Tras cada paso, se apunta <code>portfolio.equity(mid)</code>. Antes del fill la
+        curva es plana (caja quieta); después, <strong>tu equity baila con el mercado</strong>
+        — tienes inventario y el mid te mueve.</p>
+      </div></div>
+      <div class="step" data-stage="3" data-name="el while"><div class="step-inner">
+        <h3><span class="n">3/4</span>El patrón completo</h3>
+        <p>Cuatro líneas de esqueleto. Es el mismo bucle acumulador de L1, pero ahora el
+        acumulador es tu patrimonio y el cursor es el tiempo. Todo backtest del mundo,
+        del más casero al institucional, es una variación de esto.</p>
+      </div></div>
+      <div class="step" data-stage="4" data-name="el día entero"><div class="step-inner">
+        <h3><span class="n">4/4</span>El día entero, de una vez</h3>
+        <p>500 pasos, 1 decisión, una curva que cuenta la historia completa: plano →
+        fill → montaña rusa. El equity final del día: <strong>el mercado decidió por
+        ti</strong> desde el momento en que te quedaste largo.</p>
+      </div></div>
+    </div>
+
+    <div class="figwrap"><div class="fig">
+      <div class="fig-head"><span>un día real por el loop</span><span class="stage-name">step()</span></div>
+      <div class="fig-stage on" data-stage="0">
+        <pre style="font-family:var(--mono);font-size:.8rem;line-height:2.1;margin:8px 0 0">
+<span class="k">while</span> True:
+    book = market.step()
+    <span class="k">if</span> book <span class="k">is</span> None:
+        <span class="k">break</span>      <span class="c"># se acabó el día</span>
+    ...</pre>
+      </div>
+      <div class="fig-stage" data-stage="1">
+        <pre style="font-family:var(--mono);font-size:.78rem;line-height:2;margin:6px 0 0" id="l9-fill"></pre>
+      </div>
+      <div class="fig-stage" data-stage="2"><canvas id="l9-c2" style="width:100%;height:200px;margin-top:10px"></canvas>
+        <p style="color:var(--faint);font-size:.74rem;font-family:var(--mono);margin-top:6px">equity — plano hasta el fill (punto ámbar), después baila</p></div>
+      <div class="fig-stage" data-stage="3">
+        <pre style="font-family:var(--mono);font-size:.78rem;line-height:2;margin:6px 0 0">
+<span class="k">while</span> (book := market.step()):
+    acciones = estrategia.decide(book)
+    <span class="k">for</span> orden <span class="k">in</span> acciones:
+        fills = market.submit(orden)
+        portfolio.aplica(fills)
+    equity.append(portfolio.equity(book.mid))</pre>
+      </div>
+      <div class="fig-stage" data-stage="4">
+        <canvas id="l9-c4" style="width:100%;height:180px;margin-top:8px"></canvas>
+        <div class="statgrid" id="l9-stats" style="margin-top:12px"></div>
+      </div>
+    </div></div>
+  </div>
+</section>
+
+<section id="s2">
+  <div class="wrap">
+    <div class="eyebrow">§2 · <b>Simulador</b></div>
+    <h2>El día, en play</h2>
+    <p class="lede">Dale al play y mira el día reproducirse: la curva se dibuja tal cual
+    la calculó tu <code>Backtest</code> sobre los snapshots reales.</p>
+
+    <div class="simcard">
+      <h4>simulador · Backtest(Market.sample(), BuyAt(step=50, size=0.5)).run()</h4>
+      <div class="btnrow" style="margin-top:0">
+        <button class="btn" id="pl-play">▶ Reproducir el día</button>
+        <button class="btn ghost" id="pl-reset">↻</button>
+      </div>
+      <canvas id="pl-chart" style="width:100%;height:200px;margin-top:10px"></canvas>
+      <div class="looplog" id="pl-log">pulsa play</div>
+    </div>
+
+    <div class="note"><span class="tag">Lo que estás viendo</span>
+    Antes del paso 50, la curva es una línea muerta: sin posición no hay historia. El fill
+    (punto ámbar) te compra volatilidad: desde ahí, cada tick del mid es tu PnL respirando.
+    <strong>Tener posición = estar expuesto al tiempo.</strong> Esa frase es el corazón del
+    riesgo de inventario (L13).</div>
+  </div>
+</section>
+
+<section id="s3">
+  <div class="wrap">
+    <div class="eyebrow">§3 · <b>Fija lo de hoy</b></div>
+    <h2>5 preguntas</h2>
+    <div class="quiz" data-quiz>
+      <div class="q" data-ok="0">
+        <div class="qt"><code>market.step()</code> hace…</div>
+        <div class="opts">
+          <button class="opt">A · Avanza un snapshot y reconstruye el libro; None al acabar</button>
+          <button class="opt">B · Ejecuta las órdenes pendientes</button>
+          <button class="opt">C · Devuelve el equity del paso</button>
+        </div>
+        <div class="why">Es el latido del reloj: nuevo snapshot → nuevo libro. El None es
+        la señal de salida del while.</div>
+      </div>
+      <div class="q" data-ok="2">
+        <div class="qt"><code>submit()</code> antes del primer <code>step()</code>…</div>
+        <div class="opts">
+          <button class="opt">A · Ejecuta contra el último libro del día anterior</button>
+          <button class="opt">B · Encola la orden hasta que haya libro</button>
+          <button class="opt">C · Lanza RuntimeError: no hay libro activo</button>
+        </div>
+        <div class="why">El motor falla claro y pronto (el raise de L3, en producción):
+        sin libro no hay contra qué cruzar.</div>
+      </div>
+      <div class="q" data-ok="1">
+        <div class="qt">La curva de equity se apunta…</div>
+        <div class="opts">
+          <button class="opt">A · Solo cuando hay fills</button>
+          <button class="opt">B · En cada paso, marcando la posición al último mid</button>
+          <button class="opt">C · Al final del día, de una vez</button>
+        </div>
+        <div class="why">Un punto por tick: por eso ves la historia completa, incluida la
+        parte plana.</div>
+      </div>
+      <div class="q" data-ok="0">
+        <div class="qt">La market buy de 0.5 solo llenó ~0.2. ¿Por qué?</div>
+        <div class="opts">
+          <button class="opt">A · La liquidez visible de ese instante no daba para más; el resto se cancela</button>
+          <button class="opt">B · El motor tiene un límite de 0.2</button>
+          <button class="opt">C · Quedó descansando en el libro</button>
+        </div>
+        <div class="why">L8 en acción: una market no descansa. Te llevas lo que hay — otra
+        razón para trocear (L12).</div>
+      </div>
+      <div class="q" data-ok="1">
+        <div class="qt">Después del fill, la curva de equity "baila". ¿Qué baila exactamente?</div>
+        <div class="opts">
+          <button class="opt">A · La caja: sube y baja con cada tick</button>
+          <button class="opt">B · La posición marcada a mercado: el mid mueve tu valoración</button>
+          <button class="opt">C · Nada: es ruido del gráfico</button>
+        </div>
+        <div class="why">equity = cash + position × mid. La caja quedó fija en el fill; lo
+        que respira es el inventario valorado.</div>
+      </div>
+      <div class="score"></div>
+    </div>
+  </div>
+</section>
+
+<section id="s4">
+  <div class="wrap">
+    <div class="eyebrow">§4 · <b>El puente</b></div>
+    <h2>Dónde estás en el proyecto</h2>
+    <div class="pkgmap">
+      <div class="pk done">L1 · el dato</div>
+      <div class="pk done">L2 · book funcional</div>
+      <div class="pk done">L3 · order_book.py</div>
+      <div class="pk done">L4 · Order y Fill</div>
+      <div class="pk done">L5 · OrderBook + Tracker</div>
+      <div class="pk done">L6 · familia Strategy</div>
+      <div class="pk today">L7-9 · el motor<span>hoy: el loop (L9) — motor COMPLETO</span></div>
+      <div class="pk future">L10-11 · el framework<span>Strategy + Backtest</span></div>
+      <div class="pk future">L12-14 · estrategias<span>VWAP, market making</span></div>
+    </div>
+
+    <div class="bridge">
+      <div class="tag">El puente a L10</div>
+      <p style="margin:.2em 0"><strong>El motor está completo. Pero mira tu estrategia:</strong></p>
+      <p>Es un <code>if self._t == 50</code> incrustado en el loop. Para probar otra idea
+      tendrías que reescribir el bucle. ¿Te suena el problema? Es el de L6 — y ya tienes
+      la cura entrenada: <strong>el contrato Strategy y el polimorfismo</strong>. La
+      próxima clase, la familia de juguete se enchufa al motor real.</p>
+    </div>
+
+    <div class="cta">
+      <div class="box"><span class="tag">Ahora te toca construir</span>
+      Abre <code>09_build_exercises.ipynb</code>: el loop, submit en el momento justo y tu
+      primera curva.</div>
+      <div class="box"><span class="tag">Y después, al gimnasio</span>
+      <code>09_auxiliary.ipynb</code> — drills del loop y la contabilidad tick a tick.</div>
+    </div>
+  </div>
+</section>
+
+<footer>L9 · El loop de simulación — Algo Trading ICAI 2026 · documento interactivo</footer>

@@ -1,0 +1,279 @@
+<nav id="rail" aria-label="Progreso">
+  <a href="#s0" class="on"><span class="dot"></span><span class="lab">El reto</span></a>
+  <a href="#s1"><span class="dot"></span><span class="lab">Cobrar el spread</span></a>
+  <a href="#s2"><span class="dot"></span><span class="lab">El simulador</span></a>
+  <a href="#s3"><span class="dot"></span><span class="lab">Las quotes</span></a>
+  <a href="#s4"><span class="dot"></span><span class="lab">Quiz</span></a>
+  <a href="#s5"><span class="dot"></span><span class="lab">El puente</span></a>
+</nav>
+
+<header class="hero wrap" id="s0">
+  <div class="eyebrow"><b>Algo Trading · ICAI 2026</b> &nbsp;·&nbsp; L13 · Market making &nbsp;·&nbsp; documento interactivo</div>
+  <h1>Hoy <em>cobras</em> tú el peaje</h1>
+  <p class="lede">Doce clases pagando el spread. En L5 lo sufriste ("la ida y vuelta pierde
+  el spread"); en L12, cada trozo de tu VWAP se lo pagó a alguien. Hoy eres ese alguien:
+  el <strong>market maker</strong> — el que espera en el libro con un bid y un ask, y cobra
+  a los impacientes.</p>
+
+  <div class="challenge">
+    <div class="tag">El reto de hoy</div>
+    <p>El negocio parece un chollo: compra al bid, vende al ask, embolsa la diferencia,
+    repite. El problema: cuando te compran mucho más de lo que te venden, acumulas
+    <strong>inventario</strong> — y de repente eres un direccional involuntario en un
+    mercado que se mueve. Hoy conoces al monstruo y su primera correa: el
+    <strong>skew</strong>.</p>
+  </div>
+
+  <div class="meta">
+    <span><b>~40 min</b> lectura + práctica</span>
+    <span><b>500</b> pasos simulados</span>
+    <span><b>1</b> simulador</span>
+    <span>lo <b style="color:var(--accent)">cian</b> se toca</span>
+  </div>
+</header>
+
+<section id="s1">
+  <div class="wrap">
+    <div class="eyebrow">§1 · <b>La idea central</b></div>
+    <h2>El negocio y el monstruo</h2>
+    <p class="lede">Sigue bajando: el panel monta el negocio, deja entrar al monstruo y le
+    pone la correa. Los números salen de <code>MMSimulation</code> — tu simulador de
+    referencia.</p>
+  </div>
+
+  <div class="scrolly" data-scrolly>
+    <div class="steps">
+      <div class="step on" data-stage="0" data-name="el negocio"><div class="step-inner">
+        <h3><span class="n">0/4</span>Comprar abajo, vender arriba, mil veces</h3>
+        <p>Cotizas <code>mid ± half_spread</code> con órdenes límite. Cada ida y vuelta
+        completa te deja el spread entero en el bolsillo. Volumen × spread = el negocio
+        más viejo de los mercados.</p>
+      </div></div>
+      <div class="step" data-stage="1" data-name="el monstruo"><div class="step-inner">
+        <h3><span class="n">1/4</span>Las idas sin vueltas</h3>
+        <p>Nadie te garantiza el emparejamiento: a veces te ejecutan el bid cinco veces
+        seguidas. Ya tienes inventario — y si el precio cae, <strong>tu PnL cae con
+        él</strong>, por mucho spread que cobres. Mira la curva de inventario sin control:
+        deambula donde quiere.</p>
+      </div></div>
+      <div class="step" data-stage="2" data-name="adverse selection"><div class="step-inner">
+        <h3><span class="n">2/4</span>La trampa fina: adverse selection</h3>
+        <p>¿Quién cruza contra ti <em>justo antes</em> de que el precio se mueva? El que
+        sabe algo que tú no. Te compran barato antes de subidas, te venden caro antes de
+        caídas. <strong>Te ejecutan precisamente cuando no te conviene</strong> — por eso
+        el spread que cobras no es gratis: es la prima de este riesgo.</p>
+      </div></div>
+      <div class="step" data-stage="3" data-name="el skew"><div class="step-inner">
+        <h3><span class="n">3/4</span>La correa: el skew</h3>
+        <p>Si estás largo, baja <em>las dos</em> cotizaciones: tu ask se vuelve atractivo
+        (te compran → sueltas) y tu bid tímido (te venden menos → no acumulas). El centro
+        de tus quotes deja de ser el mid: es el <strong>reservation price</strong> =
+        <code>mid − skew × inventario</code>.</p>
+      </div></div>
+      <div class="step" data-stage="4" data-name="el precio de la correa"><div class="step-inner">
+        <h3><span class="n">4/4</span>La correa no es gratis</h3>
+        <p>Con skew, el inventario máximo cae de 1.4 a 0.3 — el monstruo, domado. Pero el
+        PnL también baja: de 37.4 a 23.6. <strong>Control de riesgo cuesta rentabilidad
+        esperada.</strong> ¿Cuánta correa poner? Eso es un problema de optimización… y
+        tiene solución con nombre propio: mañana.</p>
+      </div></div>
+    </div>
+
+    <div class="figwrap"><div class="fig">
+      <div class="fig-head"><span>MMSimulation · 500 pasos, misma semilla</span><span class="stage-name">el negocio</span></div>
+      <div class="fig-stage on" data-stage="0">
+        <pre style="font-family:var(--mono);font-size:.8rem;line-height:2.1;margin:8px 0 0">
+mid    = 100.00
+bid    =  99.40   <span class="c">← compras aquí</span>
+ask    = 100.60   <span class="c">← vendes aquí</span>
+
+ida y vuelta = <span style="color:var(--bid)">+1.20 · tamaño</span></pre>
+      </div>
+      <div class="fig-stage" data-stage="1">
+        <canvas id="k1" style="width:100%;height:150px;margin-top:6px"></canvas>
+        <p style="color:var(--faint);font-size:.74rem;font-family:var(--mono);margin:4px 0 0" id="k1n"></p>
+      </div>
+      <div class="fig-stage" data-stage="2">
+        <pre style="font-family:var(--mono);font-size:.78rem;line-height:2;margin:8px 0 0">
+el flujo NO es aleatorio del todo:
+
+  precio va a subir → te compran el ask
+                      (y te quedas corto)
+  precio va a caer  → te venden al bid
+                      (y te quedas largo)
+
+siempre en el lado malo, un poco</pre>
+      </div>
+      <div class="fig-stage" data-stage="3">
+        <pre style="font-family:var(--mono);font-size:.78rem;line-height:2;margin:6px 0 0">
+r = mid − skew × inventario
+
+inventario = +0.3  (largo)
+r = 100 − 2.0 × 0.3 = <span style="color:var(--accent)">99.40</span>
+
+bid = 98.80   ask = 100.00
+<span class="c"># las DOS bajan: suelto sin regalar</span></pre>
+      </div>
+      <div class="fig-stage" data-stage="4">
+        <canvas id="k4" style="width:100%;height:150px;margin-top:6px"></canvas>
+        <div class="statgrid" id="k4s" style="margin-top:10px"></div>
+      </div>
+    </div></div>
+  </div>
+</section>
+
+<section id="s2">
+  <div class="wrap">
+    <div class="eyebrow">§2 · <b>Simulador</b></div>
+    <h2>El market maker, con y sin correa</h2>
+    <p class="lede">Misma semilla, mismo paseo del precio. Lo único que cambia:
+    <code>inventory_skew</code>. Alterna y mira las dos curvas — inventario y PnL cuentan
+    historias opuestas.</p>
+
+    <div class="simcard">
+      <h4>simulador · MMSimulation(MarketMaker(...), seed=42).run()</h4>
+      <div class="toggle" role="group" aria-label="Skew">
+        <button class="on" id="mm-off">inventory_skew = 0</button>
+        <button id="mm-on">inventory_skew = 2.0</button>
+      </div>
+      <canvas id="mm-inv" style="width:100%;height:130px;margin-top:12px"></canvas>
+      <p style="color:var(--faint);font-size:.72rem;font-family:var(--mono);margin:2px 0 8px">inventario</p>
+      <canvas id="mm-pnl" style="width:100%;height:130px"></canvas>
+      <p style="color:var(--faint);font-size:.72rem;font-family:var(--mono);margin:2px 0 0">PnL marcado a mercado</p>
+      <div class="statgrid" id="mm-stats"></div>
+      <div class="looplog" id="mm-log"></div>
+    </div>
+
+    <div class="note"><span class="tag">El trade-off del día</span>
+    Sin correa: más PnL final <em>esta vez</em>, pero inventarios de ±1.4 — habrías
+    sudado cada tick. Con correa: PnL menor pero un libro tranquilo. No hay respuesta
+    "correcta": hay un dial de <strong>aversión al riesgo</strong>. Ponerle número a ese
+    dial es exactamente la clase de mañana (γ).</div>
+  </div>
+</section>
+
+<section id="s3">
+  <div class="wrap">
+    <div class="eyebrow">§3 · <b>Construye</b></div>
+    <h2>Las quotes en diez líneas</h2>
+
+    <div class="code">
+      <div class="code-head"><span>exchange/strategies/market_maker.py — el corazón</span><span>python</span></div>
+      <pre><span class="ln"><span class="k">def</span> <span class="fn">reservation_price</span>(self, mid):</span><span class="ln">    <span class="k">return</span> mid - self.inventory_skew * self._inventory</span><span class="ln"></span><span class="ln"><span class="k">def</span> <span class="fn">quotes</span>(self, book):</span><span class="ln">    r = self.reservation_price(book.mid)</span><span class="ln">    <span class="k">return</span> r - self.half_spread, r + self.half_spread</span><span class="ln"></span><span class="ln"><span class="k">def</span> <span class="fn">on_fill</span>(self, fill):</span><span class="ln">    self._inventory += fill.size <span class="k">if</span> fill.side == <span class="s">'buy'</span> <span class="k">else</span> -fill.size</span></pre>
+      <div class="predict predictgate" style="margin:0;border-radius:0;border-left:none;border-right:none;border-bottom:none">
+        <div class="tag">Predice antes de ejecutar</div>
+        <p style="margin:.2em 0 .8em;font-size:.94rem">mid=100, skew=2.0, inventario=−0.5
+        (corto). ¿Dónde queda el reservation price?</p>
+        <div class="btnrow" style="margin:0">
+          <input type="text" placeholder="mi predicción…" aria-label="Tu predicción">
+          <button class="btn runbtn" data-target="out-r" disabled>▶ Calcular</button>
+        </div>
+      </div>
+      <div class="out hidden" id="out-r"><span class="prompt">&gt;&gt;&gt; </span><span class="val">101.0</span>
+        <span style="color:var(--faint)">   # corto → r SUBE: tus quotes suben para recomprar sin regalar</span></div>
+    </div>
+
+    <div class="note"><span class="tag">Fíjate en la arquitectura</span>
+    Otra <code>Strategy</code> más: <code>on_book_update</code> propone dos limits,
+    <code>on_fill</code> (el gancho de L10) lleva el inventario. Mismo enchufe, negocio
+    opuesto al VWAP.</div>
+  </div>
+</section>
+
+<section id="s4">
+  <div class="wrap">
+    <div class="eyebrow">§4 · <b>Fija lo de hoy</b></div>
+    <h2>5 preguntas</h2>
+    <div class="quiz" data-quiz>
+      <div class="q" data-ok="2">
+        <div class="qt">El PnL estructural de un market maker viene de…</div>
+        <div class="opts">
+          <button class="opt">A · Predecir la dirección del precio</button>
+          <button class="opt">B · Las comisiones del exchange</button>
+          <button class="opt">C · Cobrar el spread en cada ida y vuelta completa</button>
+        </div>
+        <div class="why">Compra al bid, vende al ask, muchas veces. Dirección = riesgo, no
+        negocio.</div>
+      </div>
+      <div class="q" data-ok="0">
+        <div class="qt">Adverse selection es…</div>
+        <div class="opts">
+          <button class="opt">A · Que te ejecutan justo cuando el precio va a moverse en tu contra</button>
+          <button class="opt">B · Elegir mal el exchange</button>
+          <button class="opt">C · Un error del matching</button>
+        </div>
+        <div class="why">El flujo informado cruza contra ti en el peor momento; el spread
+        es la prima de ese riesgo.</div>
+      </div>
+      <div class="q" data-ok="1">
+        <div class="qt">El inventario de un market maker es…</div>
+        <div class="opts">
+          <button class="opt">A · Su beneficio acumulado</button>
+          <button class="opt">B · Riesgo direccional involuntario que hay que gestionar</button>
+          <button class="opt">C · Siempre cero, por definición</button>
+        </div>
+        <div class="why">Las idas sin vueltas lo acumulan; el mercado lo mueve. Es el
+        monstruo del negocio.</div>
+      </div>
+      <div class="q" data-ok="2">
+        <div class="qt">El skew de inventario consiste en…</div>
+        <div class="opts">
+          <button class="opt">A · Ampliar el spread cuando hay volatilidad</button>
+          <button class="opt">B · Cancelar todas las órdenes al llegar al límite</button>
+          <button class="opt">C · Desplazar AMBAS cotizaciones contra tu inventario para soltarlo</button>
+        </div>
+        <div class="why">Largo → cotizas más abajo: ask apetecible (sueltas), bid tímido
+        (no acumulas).</div>
+      </div>
+      <div class="q" data-ok="0">
+        <div class="qt">En la simulación, el skew bajó el inventario máximo (1.4→0.3) y TAMBIÉN el PnL (37→24). Eso demuestra…</div>
+        <div class="opts">
+          <button class="opt">A · El trade-off riesgo/retorno: la correa cuesta PnL esperado</button>
+          <button class="opt">B · Que el skew es un error</button>
+          <button class="opt">C · Que la semilla estaba trucada</button>
+        </div>
+        <div class="why">Elegir cuánta correa = elegir tu aversión al riesgo. Mañana ese
+        dial se llama gamma.</div>
+      </div>
+      <div class="score"></div>
+    </div>
+  </div>
+</section>
+
+<section id="s5">
+  <div class="wrap">
+    <div class="eyebrow">§5 · <b>El puente</b></div>
+    <h2>Dónde estás en el proyecto</h2>
+    <div class="pkgmap">
+      <div class="pk done">L1 · el dato</div>
+      <div class="pk done">L2 · book funcional</div>
+      <div class="pk done">L3 · order_book.py</div>
+      <div class="pk done">L4 · Order y Fill</div>
+      <div class="pk done">L5 · OrderBook + Tracker</div>
+      <div class="pk done">L6 · familia Strategy</div>
+      <div class="pk done">L7-9 · el motor</div>
+      <div class="pk done">L10-11 · el framework</div>
+      <div class="pk today">L12-14 · estrategias<span>hoy: market making (L13)</span></div>
+    </div>
+
+    <div class="bridge">
+      <div class="tag">El puente a L14</div>
+      <p style="margin:.2em 0"><strong>Tu skew es un número a ojo. ¿Cuál es el óptimo?</strong></p>
+      <p>Elegiste <code>skew=2.0</code> porque sonaba razonable. Avellaneda y Stoikov
+      (2008) resolvieron el problema de verdad: dado tu miedo (γ), la volatilidad (σ) y el
+      tiempo que queda (τ), <em>calcularon</em> dónde cotizar. Mañana: la fórmula, qué
+      significa cada letra, y tu propia estrategia enchufada al simulador. Última clase de
+      construcción.</p>
+    </div>
+
+    <div class="cta">
+      <div class="box"><span class="tag">Ahora te toca construir</span>
+      Abre <code>13_build_exercises.ipynb</code>: quotes, skew, reservation price y la
+      simulación.</div>
+      <div class="box"><span class="tag">Y después, al gimnasio</span>
+      <code>13_auxiliary.ipynb</code> — drills de cotización e inventario.</div>
+    </div>
+  </div>
+</section>
+
+<footer>L13 · Market making — Algo Trading ICAI 2026 · documento interactivo</footer>
