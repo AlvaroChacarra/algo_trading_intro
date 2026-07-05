@@ -53,40 +53,40 @@
     el panel que te acompaña va transformando tu línea en cada parada.</p>
   </div>
 
-  <div class="scrolly">
+  <div class="scrolly" data-scrolly>
     <div class="steps">
-      <div class="step on" data-stage="0"><div class="step-inner">
+      <div class="step on" data-stage="0" data-name="texto"><div class="step-inner">
         <h3><span class="n">0/5</span>Esto es todo lo que Python recibe</h3>
         <p>Una línea de texto. Para Python, de momento, no significa <strong>nada</strong>:
         son 30 caracteres, igual que un mensaje de WhatsApp.</p>
       </div></div>
-      <div class="step" data-stage="1"><div class="step-inner">
+      <div class="step" data-stage="1" data-name="tokens"><div class="step-inner">
         <h3><span class="n">1/5</span>Tokenizar: trocear el texto</h3>
         <p>Primera parada: Python corta la línea en <strong>piezas con etiqueta</strong> — tokens.
         <code>mid</code> es un nombre, <code>=</code> un operador, <code>2</code> un número.</p>
         <p>Como separar palabras y puntuación en una frase, antes de intentar entenderla.</p>
       </div></div>
-      <div class="step" data-stage="2"><div class="step-inner">
+      <div class="step" data-stage="2" data-name="árbol (AST)"><div class="step-inner">
         <h3><span class="n">2/5</span>El árbol (AST): poner orden</h3>
         <p>Los tokens en fila no dicen <strong>qué se hace antes</strong>. Python los organiza en un
         árbol: la suma cuelga de la división, la división cuelga de la asignación.</p>
         <p>Fíjate: el paréntesis que escribiste ya no existe — su trabajo era dar forma al árbol,
         y el árbol ya la tiene.</p>
       </div></div>
-      <div class="step" data-stage="3"><div class="step-inner">
+      <div class="step" data-stage="3" data-name="bytecode"><div class="step-inner">
         <h3><span class="n">3/5</span>Bytecode: la receta plana</h3>
         <p>El árbol se aplana en <strong>instrucciones simples y ordenadas</strong>: carga
         <code>bid</code>, carga <code>ask</code>, suma, carga <code>2</code>, divide, guarda en
         <code>mid</code>.</p>
         <p>Esto ya no es para ti. Es para la máquina virtual de Python.</p>
       </div></div>
-      <div class="step" data-stage="4"><div class="step-inner">
+      <div class="step" data-stage="4" data-name="la VM ejecuta"><div class="step-inner">
         <h3><span class="n">4/5</span>La VM ejecuta, instrucción a instrucción</h3>
         <p>La máquina virtual recorre el bytecode con una <strong>pila</strong>: apila valores,
         los combina, guarda el resultado. Míralo correr en el panel.</p>
         <p>Cada programa Python que has visto en tu vida acaba siendo exactamente esto.</p>
       </div></div>
-      <div class="step" data-stage="5"><div class="step-inner">
+      <div class="step" data-stage="5" data-name="1s y 0s"><div class="step-inner">
         <h3><span class="n">5/5</span>Y abajo del todo: 1s y 0s</h3>
         <p>La VM es a su vez un programa (escrito en C) que la CPU ejecuta como binario.
         <strong>La distancia texto → máquina está cruzada.</strong></p>
@@ -441,7 +441,7 @@
     <div class="code">
       <div class="code-head"><span>primer_algoritmo.py</span><span>python</span></div>
       <pre><span class="ln"><span class="c"># 1 · DATO</span></span><span class="ln">book = {<span class="s">"bid"</span>: <span class="num">99950</span>, <span class="s">"ask"</span>: <span class="num">100000</span>}</span><span class="ln"></span><span class="ln"><span class="c"># 2 · CÁLCULO</span></span><span class="ln">spread = book[<span class="s">"ask"</span>] - book[<span class="s">"bid"</span>]</span><span class="ln">mid = (book[<span class="s">"ask"</span>] + book[<span class="s">"bid"</span>]) / <span class="num">2</span></span><span class="ln"></span><span class="ln"><span class="c"># 3 · DECISIÓN</span></span><span class="ln"><span class="k">if</span> spread &lt; <span class="num">20</span>:</span><span class="ln">    decision = <span class="s">"líquido: cruzar ya"</span></span><span class="ln"><span class="k">elif</span> spread &lt; <span class="num">80</span>:</span><span class="ln">    decision = <span class="s">"aceptable: limit al mid"</span></span><span class="ln"><span class="k">else</span>:</span><span class="ln">    decision = <span class="s">"ilíquido: esperar"</span></span><span class="ln"></span><span class="ln"><span class="fn">print</span>(<span class="s">"mid:"</span>, mid)</span><span class="ln"><span class="fn">print</span>(<span class="s">"spread:"</span>, spread)</span><span class="ln"><span class="fn">print</span>(<span class="s">"decisión:"</span>, decision)</span></pre>
-      <div class="out"><div class="btnrow" style="margin:0"><button class="btn" id="finalRun">▶ Ejecutar el algoritmo</button></div>
+      <div class="out"><div class="btnrow" style="margin:0"><button class="btn runbtn" id="finalRun" data-target="finalOut" data-seq data-done="✓ ejecutado">▶ Ejecutar el algoritmo</button></div>
         <div id="finalOut" class="hidden" style="margin-top:10px">
           <div><span class="prompt">&gt;&gt;&gt; </span><span class="val">mid: 99975.0</span></div>
           <div><span class="prompt">&gt;&gt;&gt; </span><span class="val">spread: 50</span></div>
@@ -454,7 +454,7 @@
     tuyo → tokens → árbol → bytecode → VM → <strong>una decisión sobre BTCUSDT</strong>.</p>
 
     <h3>5 preguntas para fijar lo de hoy</h3>
-    <div class="quiz" id="quiz">
+    <div class="quiz" data-quiz id="quiz">
       <div class="q" data-ok="2">
         <div class="qt">¿Qué hace Python <em>primero</em> con tu archivo?</div>
         <div class="opts">
@@ -505,7 +505,7 @@
         <div class="why">100 no es &lt; 20 ni &lt; 80, así que caes al <code>else</code>:
         "ilíquido: esperar".</div>
       </div>
-      <div id="score"></div>
+      <div class="score" id="score"></div>
     </div>
 
     <div class="bridge">

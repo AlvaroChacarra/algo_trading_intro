@@ -418,9 +418,76 @@
                   padding:4px 12px;background:var(--panel2);margin:2px 0}
 .treebox .nodebox.abs{border-style:dashed;border-color:rgba(192,132,252,.5);color:var(--kw)}
 .treebox .nodebox.hl{border-color:var(--accent);color:var(--accent)}
+
+/* ══ índice del curso ══ */
+.lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.lcard{display:block;text-decoration:none;color:var(--text);background:var(--panel);
+       border:1px solid var(--line);border-radius:14px;padding:16px 18px;
+       transition:border-color .2s,transform .12s}
+.lcard:hover{border-color:var(--accent);transform:translateY(-2px)}
+.lcard .lc-n{font-family:var(--mono);font-size:.7rem;color:var(--accent);letter-spacing:.12em}
+.lcard .lc-t{font-weight:700;margin:4px 0 2px}
+.lcard .lc-o{color:var(--muted);font-size:.82rem;min-height:2.4em}
+.lcard .lc-bar{height:4px;background:var(--panel2);border-radius:99px;margin:10px 0 6px;overflow:hidden}
+.lcard .lc-fill{height:100%;width:0;background:var(--accent);border-radius:99px}
+.lcard .lc-meta{display:flex;justify-content:space-between;font-family:var(--mono);
+                font-size:.66rem;color:var(--faint)}
+.lcard.done{border-color:rgba(74,222,128,.5)}
+.lcard.done .lc-n:after{content:" ✓";color:var(--bid)}
+.lcard.special{border-style:dashed;border-color:rgba(251,191,36,.45)}
+.lcard.special .lc-n{color:var(--warn)}
+
+/* ══ cajón del guion (?profe=1) ══ */
+#gd-toggle{position:fixed;right:18px;bottom:18px;z-index:60}
+#guion-drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,92vw);z-index:70;
+  background:var(--panel);border-left:1px solid var(--line);transform:translateX(102%);
+  transition:transform .25s;display:flex;flex-direction:column;
+  box-shadow:-18px 0 40px rgba(0,0,0,.5)}
+#guion-drawer.open{transform:none}
+#guion-drawer .gd-head{display:flex;justify-content:space-between;align-items:center;
+  padding:14px 18px;border-bottom:1px solid var(--line);font-family:var(--mono);
+  font-size:.8rem;color:var(--accent)}
+#guion-drawer .gd-head button{background:none;border:none;color:var(--muted);
+  font-size:1rem;cursor:pointer}
+#guion-drawer .gd-body{overflow:auto;padding:6px 20px 30px;font-size:.88rem;line-height:1.65}
+#guion-drawer .gd-body h2{font-size:1.1rem;margin:1em 0 .4em}
+#guion-drawer .gd-body h3{font-size:.95rem;margin:1.2em 0 .3em;color:var(--accent)}
+#guion-drawer .gd-body h4{font-size:.85rem;margin:1em 0 .2em}
+#guion-drawer .gd-body li{margin:.3em 0 .3em 1em;color:var(--muted)}
+#guion-drawer .gd-body code{font-size:.82em}
+#guion-drawer .gd-body hr{border:none;border-top:1px dashed var(--line);margin:1em 0}
+
+/* ══ modo apuntes (impresión) ══ */
+@media print{
+  :root{--bg:#fff;--panel:#fff;--panel2:#f4f4f5;--line:#c8c8cc;--text:#111;
+        --muted:#3f3f46;--faint:#71717a;--accent:#0e7490;--accent-dim:#e0f5fa;
+        --bid:#15803d;--ask:#b91c1c;--warn:#92600a;
+        --kw:#6d28d9;--num:#0369a1;--str:#92600a;--com:#71717a}
+  body{background:#fff;color:#111;font-size:10.5pt}
+  #rail,.btn,.runbtn,.tbBtn,input,.toggle,.looplog,.simrow,#gd-toggle,#guion-drawer,
+  .btnrow{display:none!important}
+  canvas{display:none!important}
+  section{padding:18pt 0 6pt;border-top:1px solid #ddd;break-inside:avoid-page}
+  .hero{padding:10pt 0}
+  .scrolly{display:block;max-width:740px;padding:0}
+  .figwrap{position:static}
+  .fig{position:static;height:auto;border:1px solid #ccc;break-inside:avoid}
+  .fig-stage{position:static;opacity:1!important;transform:none;pointer-events:auto;
+             padding:10pt 14pt;border-top:1px dashed #ddd;overflow:visible}
+  .steps .step{min-height:0;margin:6pt 0}
+  .steps .step-inner{opacity:1!important;border-color:#ddd}
+  .hidden{display:block!important}   /* outputs y tracebacks, revelados en papel */
+  .out .hidden,.tb,.tb-notes{display:block!important}
+  details{border-color:#ddd} details>*{display:block}
+  .code pre{white-space:pre-wrap}
+  .q .opt{border-color:#ccc;background:#fff}
+  .bridge{background:none;border-color:#bbb}
+  .pkgmap .pk{border-color:#ccc}
+  a{color:#0e7490;text-decoration:none}
+}
 </style>
 </head>
-<body>
+<body data-lesson="01">
 <!-- ══════════════ RAIL ══════════════ -->
 <nav id="rail" aria-label="Progreso">
   <a href="#s0" class="on"><span class="dot"></span><span class="lab">El reto</span></a>
@@ -476,40 +543,40 @@
     el panel que te acompaña va transformando tu línea en cada parada.</p>
   </div>
 
-  <div class="scrolly">
+  <div class="scrolly" data-scrolly>
     <div class="steps">
-      <div class="step on" data-stage="0"><div class="step-inner">
+      <div class="step on" data-stage="0" data-name="texto"><div class="step-inner">
         <h3><span class="n">0/5</span>Esto es todo lo que Python recibe</h3>
         <p>Una línea de texto. Para Python, de momento, no significa <strong>nada</strong>:
         son 30 caracteres, igual que un mensaje de WhatsApp.</p>
       </div></div>
-      <div class="step" data-stage="1"><div class="step-inner">
+      <div class="step" data-stage="1" data-name="tokens"><div class="step-inner">
         <h3><span class="n">1/5</span>Tokenizar: trocear el texto</h3>
         <p>Primera parada: Python corta la línea en <strong>piezas con etiqueta</strong> — tokens.
         <code>mid</code> es un nombre, <code>=</code> un operador, <code>2</code> un número.</p>
         <p>Como separar palabras y puntuación en una frase, antes de intentar entenderla.</p>
       </div></div>
-      <div class="step" data-stage="2"><div class="step-inner">
+      <div class="step" data-stage="2" data-name="árbol (AST)"><div class="step-inner">
         <h3><span class="n">2/5</span>El árbol (AST): poner orden</h3>
         <p>Los tokens en fila no dicen <strong>qué se hace antes</strong>. Python los organiza en un
         árbol: la suma cuelga de la división, la división cuelga de la asignación.</p>
         <p>Fíjate: el paréntesis que escribiste ya no existe — su trabajo era dar forma al árbol,
         y el árbol ya la tiene.</p>
       </div></div>
-      <div class="step" data-stage="3"><div class="step-inner">
+      <div class="step" data-stage="3" data-name="bytecode"><div class="step-inner">
         <h3><span class="n">3/5</span>Bytecode: la receta plana</h3>
         <p>El árbol se aplana en <strong>instrucciones simples y ordenadas</strong>: carga
         <code>bid</code>, carga <code>ask</code>, suma, carga <code>2</code>, divide, guarda en
         <code>mid</code>.</p>
         <p>Esto ya no es para ti. Es para la máquina virtual de Python.</p>
       </div></div>
-      <div class="step" data-stage="4"><div class="step-inner">
+      <div class="step" data-stage="4" data-name="la VM ejecuta"><div class="step-inner">
         <h3><span class="n">4/5</span>La VM ejecuta, instrucción a instrucción</h3>
         <p>La máquina virtual recorre el bytecode con una <strong>pila</strong>: apila valores,
         los combina, guarda el resultado. Míralo correr en el panel.</p>
         <p>Cada programa Python que has visto en tu vida acaba siendo exactamente esto.</p>
       </div></div>
-      <div class="step" data-stage="5"><div class="step-inner">
+      <div class="step" data-stage="5" data-name="1s y 0s"><div class="step-inner">
         <h3><span class="n">5/5</span>Y abajo del todo: 1s y 0s</h3>
         <p>La VM es a su vez un programa (escrito en C) que la CPU ejecuta como binario.
         <strong>La distancia texto → máquina está cruzada.</strong></p>
@@ -864,7 +931,7 @@
     <div class="code">
       <div class="code-head"><span>primer_algoritmo.py</span><span>python</span></div>
       <pre><span class="ln"><span class="c"># 1 · DATO</span></span><span class="ln">book = {<span class="s">"bid"</span>: <span class="num">99950</span>, <span class="s">"ask"</span>: <span class="num">100000</span>}</span><span class="ln"></span><span class="ln"><span class="c"># 2 · CÁLCULO</span></span><span class="ln">spread = book[<span class="s">"ask"</span>] - book[<span class="s">"bid"</span>]</span><span class="ln">mid = (book[<span class="s">"ask"</span>] + book[<span class="s">"bid"</span>]) / <span class="num">2</span></span><span class="ln"></span><span class="ln"><span class="c"># 3 · DECISIÓN</span></span><span class="ln"><span class="k">if</span> spread &lt; <span class="num">20</span>:</span><span class="ln">    decision = <span class="s">"líquido: cruzar ya"</span></span><span class="ln"><span class="k">elif</span> spread &lt; <span class="num">80</span>:</span><span class="ln">    decision = <span class="s">"aceptable: limit al mid"</span></span><span class="ln"><span class="k">else</span>:</span><span class="ln">    decision = <span class="s">"ilíquido: esperar"</span></span><span class="ln"></span><span class="ln"><span class="fn">print</span>(<span class="s">"mid:"</span>, mid)</span><span class="ln"><span class="fn">print</span>(<span class="s">"spread:"</span>, spread)</span><span class="ln"><span class="fn">print</span>(<span class="s">"decisión:"</span>, decision)</span></pre>
-      <div class="out"><div class="btnrow" style="margin:0"><button class="btn" id="finalRun">▶ Ejecutar el algoritmo</button></div>
+      <div class="out"><div class="btnrow" style="margin:0"><button class="btn runbtn" id="finalRun" data-target="finalOut" data-seq data-done="✓ ejecutado">▶ Ejecutar el algoritmo</button></div>
         <div id="finalOut" class="hidden" style="margin-top:10px">
           <div><span class="prompt">&gt;&gt;&gt; </span><span class="val">mid: 99975.0</span></div>
           <div><span class="prompt">&gt;&gt;&gt; </span><span class="val">spread: 50</span></div>
@@ -877,7 +944,7 @@
     tuyo → tokens → árbol → bytecode → VM → <strong>una decisión sobre BTCUSDT</strong>.</p>
 
     <h3>5 preguntas para fijar lo de hoy</h3>
-    <div class="quiz" id="quiz">
+    <div class="quiz" data-quiz id="quiz">
       <div class="q" data-ok="2">
         <div class="qt">¿Qué hace Python <em>primero</em> con tu archivo?</div>
         <div class="opts">
@@ -928,7 +995,7 @@
         <div class="why">100 no es &lt; 20 ni &lt; 80, así que caes al <code>else</code>:
         "ilíquido: esperar".</div>
       </div>
-      <div id="score"></div>
+      <div class="score" id="score"></div>
     </div>
 
     <div class="bridge">
@@ -969,6 +1036,65 @@
 
 <footer>L1 · De texto a máquina — Algo Trading ICAI 2026 · documento interactivo</footer>
 
+<script type="text/plain" id="guion-src"># Guion — Clase 1: De texto a máquina
+
+**Idea central:** seguimos UNA línea —`mid = (bid + ask) / 2`— desde tu texto hasta los 1s y 0s, y al final la usas en tu primer algoritmo.
+
+**Formato:** documento interactivo (`python-i-data-model-doc.html`). Tú haces scroll y narras; los alumnos lo siguen en su pantalla si quieren. Todo es autocontenido: funciona sin internet. Regla de la casa que conviene decir en el minuto 1: **"lo cian se toca"**.
+
+---
+
+## §0 · Hero — el reto (2 min)
+- **Decir:** "Este es el libro de BTCUSDT, latiendo. ¿Cuánto vale *ahora mismo*? El punto medio. Yo lo calculo de cabeza; la máquina solo entiende 1s y 0s. Hoy cruzamos esa distancia."
+- **Pantalla:** el libro pulsando solo; señala el hueco del mid.
+- **Salida:** "Hay un viaje de mi texto a la máquina."
+
+## §1 · Scrollytelling — el viaje (8 min)
+Scroll **lento**: cada parada del panel es una idea. No corras; el panel espera.
+- **0/5 texto:** "30 caracteres. Para Python, aún nada."
+- **1/5 tokens:** "trocea en piezas con etiqueta — como separar palabras antes de entender la frase."
+- **2/5 AST:** "el árbol pone orden: ¿qué se hace antes? Fíjate: tu paréntesis ya no existe — su trabajo era dar forma al árbol."
+- **3/5 bytecode:** **antes de llegar, pregunta:** "¿cuántas instrucciones creéis que salen de esta línea? ¿4, 6, 9?" (son 6).
+- **4/5 la VM:** deja correr la animación de la pila entera; si se la pierden, botón ↻ repetir.
+- **5/5 binario:** "viaje cerrado: tu texto, ejecutándose como electricidad."
+- **Nota de honestidad** (está en el doc): CPython hace más cosas; este es el esqueleto real.
+- **Simulador "tu propia línea":** cede el teclado. Que escriban su línea, que la rompan (quitar un paréntesis, sumar texto y número → el TypeError es *exactamente* el de Python).
+
+## §2 · Variables y el mid (4 min)
+- **El gate:** el botón ▶ está bloqueado hasta que escriban su predicción. Insiste: "escribidla; vale equivocarse, no vale saltárselo".
+- El `.0` del resultado es la lección: división → float, siempre.
+- **Step-through:** pulsa Paso y narra cómo se puebla la memoria (nombres → valores → chips de tipo).
+
+## §3 · Listas y for (3 min)
+- El visualizador: cursor + acumulador. Usa Paso las dos primeras vueltas, Auto para el resto.
+- Recalca el patrón: "acumulador que engorda + cursor que avanza = el 80% del análisis de datos".
+
+## §4 · Diccionarios (2 min)
+- Hover código↔ficha: "son la misma cosa vista dos veces".
+- Ejecuta el `order["venue"]` y señala la ficha ganando el campo: "el dict está vivo".
+
+## §5 · if/elif (3 min)
+- Slider de spread: solo UNA rama iluminada cada vez; con spread=10 ambas condiciones son ciertas pero gana la primera — **el orden importa**.
+- Honestidad (está en el doc): los umbrales son inventados; la estructura es la lección.
+
+## §6 · Rompe código (3 min)
+- Los tres desastres en orden: NameError, TypeError, IndexError. Regla de oro en voz alta: **"el traceback se lee de abajo arriba"**.
+- Conecta con §1: "ya sabéis QUÉ falló y en qué fase".
+
+## §7 · El algoritmo + quiz + puente (5 min)
+- Ejecuta el algoritmo completo: dato → cálculo → decisión. "Quince líneas, y ya es un algoritmo de trading: primitivo, pero con la anatomía de uno profesional."
+- **Quiz:** 5 A/B/C con feedback. Úsalo de diagnóstico: si fallan en bloque una pregunta, vuelve a esa sección.
+- **Mapa del paquete:** "hoy pusisteis la primera piedra" — señala L1 iluminada y el arco entero.
+- **Puente:** "añadid ETH esta noche… ¿cuántas variables duplicáis? Ese dolor se cura el próximo día."
+- **Cierre:** manda al notebook (`01_build_exercises.ipynb`) y presenta el gimnasio (31 drills, dosis mínima declarada).
+
+## Checklist (los innegociables)
+- [ ] Python = programa que lee tu texto; el viaje tokens → AST → bytecode → VM.
+- [ ] División → float (el gate del `.0`).
+- [ ] Acumulador + cursor; dict por nombre; el embudo if/elif y el orden.
+- [ ] Traceback de abajo arriba; los 3 errores del día.
+- [ ] El algoritmo completo ejecutado y el puente a funciones (L2).
+</script>
 <script>
 
 (function(){
@@ -1065,13 +1191,87 @@ $$('.quiz[data-quiz]').forEach(qz=>{
       if(idx!==ok)o.classList.add('bad');else right++;
       const w=q.querySelector('.why');if(w)w.classList.add('show');
       answered++;
-      if(answered===qs.length&&score)score.textContent=
-        `Resultado: ${right}/${qs.length}`+(right===qs.length?' — impecable.'
-          :right>=Math.ceil(qs.length*0.6)?' — sólido; revisa las que fallaste.'
-          :' — relee las secciones marcadas y reintenta.');
+      if(answered===qs.length){
+        if(score)score.textContent=
+          `Resultado: ${right}/${qs.length}`+(right===qs.length?' — impecable.'
+            :right>=Math.ceil(qs.length*0.6)?' — sólido; revisa las que fallaste.'
+            :' — relee las secciones marcadas y reintenta.');
+        DOC.save({quiz:{right,total:qs.length,ts:Date.now()}});
+      }
     }));
   });
 });
+
+/* ── progreso persistente (localStorage) ── */
+DOC.key=()=> 'algoTrading.'+(document.body.dataset.lesson||'x');
+DOC.save=function(patch){
+  try{
+    const k=DOC.key(),cur=JSON.parse(localStorage.getItem(k)||'{}');
+    Object.assign(cur,patch);
+    localStorage.setItem(k,JSON.stringify(cur));
+  }catch(_){/* modo incógnito, etc. */}
+};
+(function(){
+  if(!document.body.dataset.lesson)return;
+  let maxPct=0,dirty=false;
+  try{maxPct=(JSON.parse(localStorage.getItem(DOC.key())||'{}').scroll)||0;}catch(_){}
+  addEventListener('scroll',()=>{
+    const h=document.documentElement.scrollHeight-innerHeight;
+    if(h<=0)return;
+    const pct=Math.round(100*scrollY/h);
+    if(pct>maxPct){maxPct=pct;dirty=true;}
+  },{passive:true});
+  setInterval(()=>{if(dirty){DOC.save({scroll:maxPct});dirty=false;}},2000);
+  addEventListener('beforeunload',()=>{if(dirty)DOC.save({scroll:maxPct});});
+})();
+
+/* ── navegación por teclado en el scrolly (para proyectar) ── */
+(function(){
+  const steps=$$('.scrolly .step');
+  if(!steps.length)return;
+  document.addEventListener('keydown',e=>{
+    if(!['ArrowDown','ArrowUp','PageDown','PageUp'].includes(e.key))return;
+    if(/INPUT|TEXTAREA|SELECT|BUTTON/.test(document.activeElement.tagName))return;
+    const mid=innerHeight/2;
+    let idx=0,best=1e12;
+    steps.forEach((s,i)=>{const r=s.getBoundingClientRect();
+      const d=Math.abs(r.top+r.height/2-mid);if(d<best){best=d;idx=i;}});
+    const r=steps[idx].getBoundingClientRect();
+    if(r.bottom<-innerHeight*1.5||r.top>innerHeight*2.5)return; // lejos: scroll normal
+    e.preventDefault();
+    const fwd=(e.key==='ArrowDown'||e.key==='PageDown');
+    const next=fwd?Math.min(idx+1,steps.length-1):Math.max(idx-1,0);
+    steps[next].scrollIntoView({behavior:reduced?'auto':'smooth',block:'center'});
+  });
+})();
+
+/* ── modo profesor: ?profe=1 abre el guion como cajón lateral ── */
+(function(){
+  const srcEl=document.getElementById('guion-src');
+  if(!srcEl||!new URLSearchParams(location.search).has('profe'))return;
+  const mdlite=t=>t
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/^### (.*)$/gm,'<h4>$1</h4>')
+    .replace(/^## (.*)$/gm,'<h3>$1</h3>')
+    .replace(/^# (.*)$/gm,'<h2>$1</h2>')
+    .replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>')
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    .replace(/^- (.*)$/gm,'<li>$1</li>')
+    .replace(/^---$/gm,'<hr>')
+    .replace(/\n{2,}/g,'</p><p>');
+  const drawer=document.createElement('aside');
+  drawer.id='guion-drawer';
+  drawer.innerHTML='<div class="gd-head">📋 Guion del profesor'
+    +'<button id="gd-close" aria-label="Cerrar">✕</button></div>'
+    +'<div class="gd-body"><p>'+mdlite(srcEl.textContent)+'</p></div>';
+  document.body.appendChild(drawer);
+  const btn=document.createElement('button');
+  btn.id='gd-toggle';btn.className='btn';btn.textContent='📋 Guion';
+  document.body.appendChild(btn);
+  const toggle=()=>drawer.classList.toggle('open');
+  btn.addEventListener('click',toggle);
+  drawer.querySelector('#gd-close').addEventListener('click',toggle);
+})();
 
 /* ── scrollytelling genérico ──
    El paso activo enciende la .fig-stage del mismo número y avisa a la fig
@@ -1118,11 +1318,8 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
   },1600);
 })();
 
-/* ── scrollytelling pipeline ─────────────────── */
+/* ── VM del pipeline: se engancha al motor genérico de scrolly ── */
 (function(){
-  const stages=$$('#pipefig .fig-stage');
-  const names=['texto','tokens','árbol (AST)','bytecode','la VM ejecuta','1s y 0s'];
-  const nameEl=$('#stagename');
   let vmTimer=null;
   const vmStates=[[],['99950'],['99950','100000'],['199950'],['199950','2'],['99975.0'],[]];
   function runVM(){
@@ -1137,26 +1334,15 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
       if(k>=rows.length){clearInterval(vmTimer);}
     }
     stack.innerHTML='';rows.forEach(r=>r.classList.remove('hl'));
-    if(reduced){rows.forEach(r=>r.classList.remove('hl'));rows[rows.length-1].classList.add('hl');
+    if(reduced){rows[rows.length-1].classList.add('hl');
       stack.innerHTML='<div class="cell">99975.0</div>';return;}
     tick();vmTimer=setInterval(tick,950);
   }
   $('#vmReplay').addEventListener('click',runVM);
-  function setStage(n){
-    stages.forEach(s=>s.classList.toggle('on',+s.dataset.stage===n));
-    nameEl.textContent=names[n];
-    if(n===4)runVM();else clearInterval(vmTimer);
-  }
-  const io=new IntersectionObserver(es=>{
-    es.forEach(e=>{
-      if(e.isIntersecting){
-        const st=+e.target.dataset.stage;
-        $$('.steps .step').forEach(x=>x.classList.toggle('on',x===e.target));
-        setStage(st);
-      }
-    });
-  },{rootMargin:'-42% 0px -42% 0px'});
-  $$('.steps .step').forEach(s=>io.observe(s));
+  const fig=document.querySelector('.scrolly .fig');
+  fig.addEventListener('stagechange',e=>{
+    if(e.detail.stage===4)runVM();else clearInterval(vmTimer);
+  });
 })();
 
 /* ── mini tokenizer / parser / compiler ──────── */
@@ -1385,31 +1571,7 @@ function treeLines(node){
   sl.addEventListener('input',update);update();
 })();
 
-/* ── §7 final run + quiz ─────────────────────── */
-(function(){
-  $('#finalRun').addEventListener('click',()=>{
-    const out=$('#finalOut');out.classList.remove('hidden');
-    const rows=[...out.children];
-    rows.forEach((r,k)=>{r.style.opacity=0;
-      setTimeout(()=>{r.style.transition='opacity .4s';r.style.opacity=1;},reduced?0:300*(k+1));});
-    $('#finalRun').disabled=true;$('#finalRun').textContent='✓ ejecutado';
-  });
-  let answered=0,right=0;
-  const total=$$('.q').length;
-  $$('.q').forEach(q=>{
-    const ok=+q.dataset.ok;
-    const opts=[...q.querySelectorAll('.opt')];
-    opts.forEach((o,idx)=>o.addEventListener('click',()=>{
-      opts.forEach(x=>x.disabled=true);
-      opts[ok].classList.add('ok');
-      if(idx!==ok)o.classList.add('bad');else right++;
-      q.querySelector('.why').classList.add('show');
-      answered++;
-      if(answered===total)$('#score').textContent=
-        `Resultado: ${right}/${total}`+(right===total?' — impecable.':right>=3?' — sólido; revisa las que fallaste.':' — relee las secciones marcadas y reintenta mañana.');
-    }));
-  });
-})();
+/* §7: finalRun y quiz usan los motores genéricos (runbtn + data-quiz) */
 })();
 
 </script>

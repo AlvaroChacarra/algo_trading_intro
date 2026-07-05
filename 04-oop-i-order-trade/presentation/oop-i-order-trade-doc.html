@@ -418,9 +418,76 @@
                   padding:4px 12px;background:var(--panel2);margin:2px 0}
 .treebox .nodebox.abs{border-style:dashed;border-color:rgba(192,132,252,.5);color:var(--kw)}
 .treebox .nodebox.hl{border-color:var(--accent);color:var(--accent)}
+
+/* ══ índice del curso ══ */
+.lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.lcard{display:block;text-decoration:none;color:var(--text);background:var(--panel);
+       border:1px solid var(--line);border-radius:14px;padding:16px 18px;
+       transition:border-color .2s,transform .12s}
+.lcard:hover{border-color:var(--accent);transform:translateY(-2px)}
+.lcard .lc-n{font-family:var(--mono);font-size:.7rem;color:var(--accent);letter-spacing:.12em}
+.lcard .lc-t{font-weight:700;margin:4px 0 2px}
+.lcard .lc-o{color:var(--muted);font-size:.82rem;min-height:2.4em}
+.lcard .lc-bar{height:4px;background:var(--panel2);border-radius:99px;margin:10px 0 6px;overflow:hidden}
+.lcard .lc-fill{height:100%;width:0;background:var(--accent);border-radius:99px}
+.lcard .lc-meta{display:flex;justify-content:space-between;font-family:var(--mono);
+                font-size:.66rem;color:var(--faint)}
+.lcard.done{border-color:rgba(74,222,128,.5)}
+.lcard.done .lc-n:after{content:" ✓";color:var(--bid)}
+.lcard.special{border-style:dashed;border-color:rgba(251,191,36,.45)}
+.lcard.special .lc-n{color:var(--warn)}
+
+/* ══ cajón del guion (?profe=1) ══ */
+#gd-toggle{position:fixed;right:18px;bottom:18px;z-index:60}
+#guion-drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,92vw);z-index:70;
+  background:var(--panel);border-left:1px solid var(--line);transform:translateX(102%);
+  transition:transform .25s;display:flex;flex-direction:column;
+  box-shadow:-18px 0 40px rgba(0,0,0,.5)}
+#guion-drawer.open{transform:none}
+#guion-drawer .gd-head{display:flex;justify-content:space-between;align-items:center;
+  padding:14px 18px;border-bottom:1px solid var(--line);font-family:var(--mono);
+  font-size:.8rem;color:var(--accent)}
+#guion-drawer .gd-head button{background:none;border:none;color:var(--muted);
+  font-size:1rem;cursor:pointer}
+#guion-drawer .gd-body{overflow:auto;padding:6px 20px 30px;font-size:.88rem;line-height:1.65}
+#guion-drawer .gd-body h2{font-size:1.1rem;margin:1em 0 .4em}
+#guion-drawer .gd-body h3{font-size:.95rem;margin:1.2em 0 .3em;color:var(--accent)}
+#guion-drawer .gd-body h4{font-size:.85rem;margin:1em 0 .2em}
+#guion-drawer .gd-body li{margin:.3em 0 .3em 1em;color:var(--muted)}
+#guion-drawer .gd-body code{font-size:.82em}
+#guion-drawer .gd-body hr{border:none;border-top:1px dashed var(--line);margin:1em 0}
+
+/* ══ modo apuntes (impresión) ══ */
+@media print{
+  :root{--bg:#fff;--panel:#fff;--panel2:#f4f4f5;--line:#c8c8cc;--text:#111;
+        --muted:#3f3f46;--faint:#71717a;--accent:#0e7490;--accent-dim:#e0f5fa;
+        --bid:#15803d;--ask:#b91c1c;--warn:#92600a;
+        --kw:#6d28d9;--num:#0369a1;--str:#92600a;--com:#71717a}
+  body{background:#fff;color:#111;font-size:10.5pt}
+  #rail,.btn,.runbtn,.tbBtn,input,.toggle,.looplog,.simrow,#gd-toggle,#guion-drawer,
+  .btnrow{display:none!important}
+  canvas{display:none!important}
+  section{padding:18pt 0 6pt;border-top:1px solid #ddd;break-inside:avoid-page}
+  .hero{padding:10pt 0}
+  .scrolly{display:block;max-width:740px;padding:0}
+  .figwrap{position:static}
+  .fig{position:static;height:auto;border:1px solid #ccc;break-inside:avoid}
+  .fig-stage{position:static;opacity:1!important;transform:none;pointer-events:auto;
+             padding:10pt 14pt;border-top:1px dashed #ddd;overflow:visible}
+  .steps .step{min-height:0;margin:6pt 0}
+  .steps .step-inner{opacity:1!important;border-color:#ddd}
+  .hidden{display:block!important}   /* outputs y tracebacks, revelados en papel */
+  .out .hidden,.tb,.tb-notes{display:block!important}
+  details{border-color:#ddd} details>*{display:block}
+  .code pre{white-space:pre-wrap}
+  .q .opt{border-color:#ccc;background:#fff}
+  .bridge{background:none;border-color:#bbb}
+  .pkgmap .pk{border-color:#ccc}
+  a{color:#0e7490;text-decoration:none}
+}
 </style>
 </head>
-<body>
+<body data-lesson="04">
 <!-- ══════════════ RAIL ══════════════ -->
 <nav id="rail" aria-label="Progreso">
   <a href="#s0" class="on"><span class="dot"></span><span class="lab">El reto</span></a>
@@ -768,6 +835,52 @@ order.notional()   <span class="c"># 49975.0</span></pre>
 
 <footer>L4 · Order y Fill — Algo Trading ICAI 2026 · documento interactivo</footer>
 
+<script type="text/plain" id="guion-src"># Guion — Clase 4: OOP I — Order y Fill
+
+**Idea central:** el dict y sus funciones sueltas se funden en un **objeto**: nace `Order` (la intención) y `Fill` (el hecho consumado, con el **signo del dinero**). Primeras piezas del paquete `exchange/`.
+
+**Formato:** documento interactivo (`oop-i-order-trade-doc.html`), autocontenido. "Lo cian se toca."
+
+---
+
+## §0 · Hero — el reto (2 min)
+- **Decir:** "Tres clases llevamos con esta pareja: el dict con los datos y las funciones que lo reciben. Van siempre juntos pero viven separados — y vosotros hacéis de mensajeros. ¿Y si la orden supiera calcular su propio nocional?"
+- **Salida:** "Datos + comportamiento en la misma pieza = clase."
+
+## §1 · Scrollytelling — la metamorfosis (8 min)
+- **0/5 separados:** "nadie es responsable de nada: un dict sin size no protesta."
+- **1/5 class + __init__:** "el molde y la fabricación. ¿Os suena? Es make_order de L2, ascendida."
+- **2/5 self:** el momento delicado de la clase — dedícale tiempo. Dos tarjetas, datos independientes: "self es 'yo': el objeto concreto sobre el que trabaja el método".
+- **3/5 métodos:** "compute_notional(order) se convierte en order.notional(): la cuenta vive donde viven los datos."
+- **4/5 __repr__:** el antes/después (0x7f3a… vs Order(buy 0.5 @ 99950)): "cinco minutos que ahorran horas de debugging".
+- **5/5 Fill y cash_flow:** el signo. "Comprar drena la caja; vender la llena."
+
+## §2 · La clase completa (4 min)
+- **El gate:** ¿qué imprime `order.notional()`? Pide predicción con tipo incluido (49975.0, float).
+- La nota clave, en voz alta: "`order.notional()` es azúcar para `Order.notional(order)`. No hay magia, hay un convenio."
+
+## §3 · El taller de órdenes (4 min)
+- **Cede el teclado:** side/price/size en vivo → repr, notional, cash_flow.
+- Insiste en la distinción de la nota: **notional** (tamaño de la apuesta, sin signo) vs **cash_flow** (lo que le pasa a tu caja, con signo). "Distinguirlos os salvará el PnL en L5."
+
+## §4 · De la orden al dinero (3 min)
+- Ejecuta el par de fills: compra a 99950, venta a 100050 → `+50.0`. "Vuestro primer PnL realizado, calculado por objetos."
+
+## §5 · Quiz (3 min)
+- 5 A/B/C: self, __init__, atributo vs método, __repr__, signo del cash_flow.
+
+## §6 · Puente + mapa (2 min)
+- Mapa: L1-L3 ✓, L4 iluminada — "primeras piezas DENTRO del paquete exchange/".
+- **Puente:** "sabéis fabricar órdenes… y las tenéis sueltas por la memoria, como en L2 teníais variables sueltas. Falta el objeto que las contiene y el que lleva la cuenta cuando los fills empiezan a caer. Composición: próxima clase."
+- Notebook + gimnasio (16 drills: el molde, Order/Fill, validación en __init__).
+
+## Checklist
+- [ ] class = molde; __init__ = fabricación; self = "yo".
+- [ ] Objetos independientes del mismo molde.
+- [ ] Método = la función mudada adentro; azúcar sintáctico entendido.
+- [ ] __repr__ útil.
+- [ ] cash_flow con signo: buy −, sell +.
+</script>
 <script>
 
 (function(){
@@ -864,13 +977,87 @@ $$('.quiz[data-quiz]').forEach(qz=>{
       if(idx!==ok)o.classList.add('bad');else right++;
       const w=q.querySelector('.why');if(w)w.classList.add('show');
       answered++;
-      if(answered===qs.length&&score)score.textContent=
-        `Resultado: ${right}/${qs.length}`+(right===qs.length?' — impecable.'
-          :right>=Math.ceil(qs.length*0.6)?' — sólido; revisa las que fallaste.'
-          :' — relee las secciones marcadas y reintenta.');
+      if(answered===qs.length){
+        if(score)score.textContent=
+          `Resultado: ${right}/${qs.length}`+(right===qs.length?' — impecable.'
+            :right>=Math.ceil(qs.length*0.6)?' — sólido; revisa las que fallaste.'
+            :' — relee las secciones marcadas y reintenta.');
+        DOC.save({quiz:{right,total:qs.length,ts:Date.now()}});
+      }
     }));
   });
 });
+
+/* ── progreso persistente (localStorage) ── */
+DOC.key=()=> 'algoTrading.'+(document.body.dataset.lesson||'x');
+DOC.save=function(patch){
+  try{
+    const k=DOC.key(),cur=JSON.parse(localStorage.getItem(k)||'{}');
+    Object.assign(cur,patch);
+    localStorage.setItem(k,JSON.stringify(cur));
+  }catch(_){/* modo incógnito, etc. */}
+};
+(function(){
+  if(!document.body.dataset.lesson)return;
+  let maxPct=0,dirty=false;
+  try{maxPct=(JSON.parse(localStorage.getItem(DOC.key())||'{}').scroll)||0;}catch(_){}
+  addEventListener('scroll',()=>{
+    const h=document.documentElement.scrollHeight-innerHeight;
+    if(h<=0)return;
+    const pct=Math.round(100*scrollY/h);
+    if(pct>maxPct){maxPct=pct;dirty=true;}
+  },{passive:true});
+  setInterval(()=>{if(dirty){DOC.save({scroll:maxPct});dirty=false;}},2000);
+  addEventListener('beforeunload',()=>{if(dirty)DOC.save({scroll:maxPct});});
+})();
+
+/* ── navegación por teclado en el scrolly (para proyectar) ── */
+(function(){
+  const steps=$$('.scrolly .step');
+  if(!steps.length)return;
+  document.addEventListener('keydown',e=>{
+    if(!['ArrowDown','ArrowUp','PageDown','PageUp'].includes(e.key))return;
+    if(/INPUT|TEXTAREA|SELECT|BUTTON/.test(document.activeElement.tagName))return;
+    const mid=innerHeight/2;
+    let idx=0,best=1e12;
+    steps.forEach((s,i)=>{const r=s.getBoundingClientRect();
+      const d=Math.abs(r.top+r.height/2-mid);if(d<best){best=d;idx=i;}});
+    const r=steps[idx].getBoundingClientRect();
+    if(r.bottom<-innerHeight*1.5||r.top>innerHeight*2.5)return; // lejos: scroll normal
+    e.preventDefault();
+    const fwd=(e.key==='ArrowDown'||e.key==='PageDown');
+    const next=fwd?Math.min(idx+1,steps.length-1):Math.max(idx-1,0);
+    steps[next].scrollIntoView({behavior:reduced?'auto':'smooth',block:'center'});
+  });
+})();
+
+/* ── modo profesor: ?profe=1 abre el guion como cajón lateral ── */
+(function(){
+  const srcEl=document.getElementById('guion-src');
+  if(!srcEl||!new URLSearchParams(location.search).has('profe'))return;
+  const mdlite=t=>t
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/^### (.*)$/gm,'<h4>$1</h4>')
+    .replace(/^## (.*)$/gm,'<h3>$1</h3>')
+    .replace(/^# (.*)$/gm,'<h2>$1</h2>')
+    .replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>')
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    .replace(/^- (.*)$/gm,'<li>$1</li>')
+    .replace(/^---$/gm,'<hr>')
+    .replace(/\n{2,}/g,'</p><p>');
+  const drawer=document.createElement('aside');
+  drawer.id='guion-drawer';
+  drawer.innerHTML='<div class="gd-head">📋 Guion del profesor'
+    +'<button id="gd-close" aria-label="Cerrar">✕</button></div>'
+    +'<div class="gd-body"><p>'+mdlite(srcEl.textContent)+'</p></div>';
+  document.body.appendChild(drawer);
+  const btn=document.createElement('button');
+  btn.id='gd-toggle';btn.className='btn';btn.textContent='📋 Guion';
+  document.body.appendChild(btn);
+  const toggle=()=>drawer.classList.toggle('open');
+  btn.addEventListener('click',toggle);
+  drawer.querySelector('#gd-close').addEventListener('click',toggle);
+})();
 
 /* ── scrollytelling genérico ──
    El paso activo enciende la .fig-stage del mismo número y avisa a la fig

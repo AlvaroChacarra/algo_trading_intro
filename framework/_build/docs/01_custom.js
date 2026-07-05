@@ -24,11 +24,8 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
   },1600);
 })();
 
-/* ── scrollytelling pipeline ─────────────────── */
+/* ── VM del pipeline: se engancha al motor genérico de scrolly ── */
 (function(){
-  const stages=$$('#pipefig .fig-stage');
-  const names=['texto','tokens','árbol (AST)','bytecode','la VM ejecuta','1s y 0s'];
-  const nameEl=$('#stagename');
   let vmTimer=null;
   const vmStates=[[],['99950'],['99950','100000'],['199950'],['199950','2'],['99975.0'],[]];
   function runVM(){
@@ -43,26 +40,15 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
       if(k>=rows.length){clearInterval(vmTimer);}
     }
     stack.innerHTML='';rows.forEach(r=>r.classList.remove('hl'));
-    if(reduced){rows.forEach(r=>r.classList.remove('hl'));rows[rows.length-1].classList.add('hl');
+    if(reduced){rows[rows.length-1].classList.add('hl');
       stack.innerHTML='<div class="cell">99975.0</div>';return;}
     tick();vmTimer=setInterval(tick,950);
   }
   $('#vmReplay').addEventListener('click',runVM);
-  function setStage(n){
-    stages.forEach(s=>s.classList.toggle('on',+s.dataset.stage===n));
-    nameEl.textContent=names[n];
-    if(n===4)runVM();else clearInterval(vmTimer);
-  }
-  const io=new IntersectionObserver(es=>{
-    es.forEach(e=>{
-      if(e.isIntersecting){
-        const st=+e.target.dataset.stage;
-        $$('.steps .step').forEach(x=>x.classList.toggle('on',x===e.target));
-        setStage(st);
-      }
-    });
-  },{rootMargin:'-42% 0px -42% 0px'});
-  $$('.steps .step').forEach(s=>io.observe(s));
+  const fig=document.querySelector('.scrolly .fig');
+  fig.addEventListener('stagechange',e=>{
+    if(e.detail.stage===4)runVM();else clearInterval(vmTimer);
+  });
 })();
 
 /* ── mini tokenizer / parser / compiler ──────── */
@@ -291,29 +277,5 @@ function treeLines(node){
   sl.addEventListener('input',update);update();
 })();
 
-/* ── §7 final run + quiz ─────────────────────── */
-(function(){
-  $('#finalRun').addEventListener('click',()=>{
-    const out=$('#finalOut');out.classList.remove('hidden');
-    const rows=[...out.children];
-    rows.forEach((r,k)=>{r.style.opacity=0;
-      setTimeout(()=>{r.style.transition='opacity .4s';r.style.opacity=1;},reduced?0:300*(k+1));});
-    $('#finalRun').disabled=true;$('#finalRun').textContent='✓ ejecutado';
-  });
-  let answered=0,right=0;
-  const total=$$('.q').length;
-  $$('.q').forEach(q=>{
-    const ok=+q.dataset.ok;
-    const opts=[...q.querySelectorAll('.opt')];
-    opts.forEach((o,idx)=>o.addEventListener('click',()=>{
-      opts.forEach(x=>x.disabled=true);
-      opts[ok].classList.add('ok');
-      if(idx!==ok)o.classList.add('bad');else right++;
-      q.querySelector('.why').classList.add('show');
-      answered++;
-      if(answered===total)$('#score').textContent=
-        `Resultado: ${right}/${total}`+(right===total?' — impecable.':right>=3?' — sólido; revisa las que fallaste.':' — relee las secciones marcadas y reintenta mañana.');
-    }));
-  });
-})();
+/* §7: finalRun y quiz usan los motores genéricos (runbtn + data-quiz) */
 })();

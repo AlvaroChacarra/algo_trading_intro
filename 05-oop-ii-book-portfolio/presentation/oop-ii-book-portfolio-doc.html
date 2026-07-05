@@ -418,9 +418,76 @@
                   padding:4px 12px;background:var(--panel2);margin:2px 0}
 .treebox .nodebox.abs{border-style:dashed;border-color:rgba(192,132,252,.5);color:var(--kw)}
 .treebox .nodebox.hl{border-color:var(--accent);color:var(--accent)}
+
+/* ══ índice del curso ══ */
+.lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.lcard{display:block;text-decoration:none;color:var(--text);background:var(--panel);
+       border:1px solid var(--line);border-radius:14px;padding:16px 18px;
+       transition:border-color .2s,transform .12s}
+.lcard:hover{border-color:var(--accent);transform:translateY(-2px)}
+.lcard .lc-n{font-family:var(--mono);font-size:.7rem;color:var(--accent);letter-spacing:.12em}
+.lcard .lc-t{font-weight:700;margin:4px 0 2px}
+.lcard .lc-o{color:var(--muted);font-size:.82rem;min-height:2.4em}
+.lcard .lc-bar{height:4px;background:var(--panel2);border-radius:99px;margin:10px 0 6px;overflow:hidden}
+.lcard .lc-fill{height:100%;width:0;background:var(--accent);border-radius:99px}
+.lcard .lc-meta{display:flex;justify-content:space-between;font-family:var(--mono);
+                font-size:.66rem;color:var(--faint)}
+.lcard.done{border-color:rgba(74,222,128,.5)}
+.lcard.done .lc-n:after{content:" ✓";color:var(--bid)}
+.lcard.special{border-style:dashed;border-color:rgba(251,191,36,.45)}
+.lcard.special .lc-n{color:var(--warn)}
+
+/* ══ cajón del guion (?profe=1) ══ */
+#gd-toggle{position:fixed;right:18px;bottom:18px;z-index:60}
+#guion-drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,92vw);z-index:70;
+  background:var(--panel);border-left:1px solid var(--line);transform:translateX(102%);
+  transition:transform .25s;display:flex;flex-direction:column;
+  box-shadow:-18px 0 40px rgba(0,0,0,.5)}
+#guion-drawer.open{transform:none}
+#guion-drawer .gd-head{display:flex;justify-content:space-between;align-items:center;
+  padding:14px 18px;border-bottom:1px solid var(--line);font-family:var(--mono);
+  font-size:.8rem;color:var(--accent)}
+#guion-drawer .gd-head button{background:none;border:none;color:var(--muted);
+  font-size:1rem;cursor:pointer}
+#guion-drawer .gd-body{overflow:auto;padding:6px 20px 30px;font-size:.88rem;line-height:1.65}
+#guion-drawer .gd-body h2{font-size:1.1rem;margin:1em 0 .4em}
+#guion-drawer .gd-body h3{font-size:.95rem;margin:1.2em 0 .3em;color:var(--accent)}
+#guion-drawer .gd-body h4{font-size:.85rem;margin:1em 0 .2em}
+#guion-drawer .gd-body li{margin:.3em 0 .3em 1em;color:var(--muted)}
+#guion-drawer .gd-body code{font-size:.82em}
+#guion-drawer .gd-body hr{border:none;border-top:1px dashed var(--line);margin:1em 0}
+
+/* ══ modo apuntes (impresión) ══ */
+@media print{
+  :root{--bg:#fff;--panel:#fff;--panel2:#f4f4f5;--line:#c8c8cc;--text:#111;
+        --muted:#3f3f46;--faint:#71717a;--accent:#0e7490;--accent-dim:#e0f5fa;
+        --bid:#15803d;--ask:#b91c1c;--warn:#92600a;
+        --kw:#6d28d9;--num:#0369a1;--str:#92600a;--com:#71717a}
+  body{background:#fff;color:#111;font-size:10.5pt}
+  #rail,.btn,.runbtn,.tbBtn,input,.toggle,.looplog,.simrow,#gd-toggle,#guion-drawer,
+  .btnrow{display:none!important}
+  canvas{display:none!important}
+  section{padding:18pt 0 6pt;border-top:1px solid #ddd;break-inside:avoid-page}
+  .hero{padding:10pt 0}
+  .scrolly{display:block;max-width:740px;padding:0}
+  .figwrap{position:static}
+  .fig{position:static;height:auto;border:1px solid #ccc;break-inside:avoid}
+  .fig-stage{position:static;opacity:1!important;transform:none;pointer-events:auto;
+             padding:10pt 14pt;border-top:1px dashed #ddd;overflow:visible}
+  .steps .step{min-height:0;margin:6pt 0}
+  .steps .step-inner{opacity:1!important;border-color:#ddd}
+  .hidden{display:block!important}   /* outputs y tracebacks, revelados en papel */
+  .out .hidden,.tb,.tb-notes{display:block!important}
+  details{border-color:#ddd} details>*{display:block}
+  .code pre{white-space:pre-wrap}
+  .q .opt{border-color:#ccc;background:#fff}
+  .bridge{background:none;border-color:#bbb}
+  .pkgmap .pk{border-color:#ccc}
+  a{color:#0e7490;text-decoration:none}
+}
 </style>
 </head>
-<body>
+<body data-lesson="05">
 <!-- ══════════════ RAIL ══════════════ -->
 <nav id="rail" aria-label="Progreso">
   <a href="#s0" class="on"><span class="dot"></span><span class="lab">El reto</span></a>
@@ -767,6 +834,51 @@ tracker.apply_fill(Fill(<span class="s">'sell'</span>, <span class="num">100050<
 
 <footer>L5 · OrderBook y PositionTracker — Algo Trading ICAI 2026 · documento interactivo</footer>
 
+<script type="text/plain" id="guion-src"># Guion — Clase 5: OOP II — OrderBook y PositionTracker
+
+**Idea central:** composición (objetos que **contienen** objetos) y encapsulación (estado **privado** con puerta única). Nacen las dos piezas serias del motor: el libro que se deja preguntar y el contable que nunca pierde la cuenta.
+
+**Formato:** documento interactivo (`oop-ii-book-portfolio-doc.html`), autocontenido. "Lo cian se toca."
+
+---
+
+## §0 · Hero — el reto (2 min)
+- **Decir:** "Ya fabricáis Orders y Fills… y están sueltos, como billetes fuera de la cartera. Dos preguntas que vuestro código no sabe responder: ¿cómo está el mercado? ¿cómo voy yo?"
+- **Salida:** "Hoy: el libro y el contable."
+
+## §1 · Scrollytelling — cajas dentro de cajas (7 min)
+- **0/5 sueltas:** "cinco Orders en cinco variables. ¿Best bid? Nadie lo sabe: no hay libro."
+- **1/5 OrderBook:** "composición: un objeto cuyos atributos son OTROS objetos. No hereda, no copia — TIENE bids y asks dentro."
+- **2/5 métodos:** "las funciones de L2 se mudan adentro. Sin argumentos: el objeto ya tiene sus datos. Se acabó pasar book a todas partes" — cierra en voz alta el contador plantado en L2.
+- **3/5 imbalance:** "la señal viaja con el libro. En L7 le daremos 500 snapshots reales."
+- **4/5 _privado:** el guion bajo. "No bloquea nada: COMUNICA. Si cualquiera puede escribir tracker._cash = 999999, la contabilidad no vale nada."
+- **5/5 equity:** la puerta única apply_fill y la fórmula: caja + posición × mark.
+
+## §2 · El libro que se deja preguntar (4 min)
+- **El gate:** ¿qué imprime `ob.mid()`? La gracia está en la composición doble: mid() llama a best_bid() y best_ask() — métodos que se apoyan en métodos.
+
+## §3 · El contable en acción (5 min)
+- **Cede el teclado:** fills de compra y venta + slider del mark. Reto: "acabad en verde".
+- **El momento de oro** (está en la nota): compras al ask, vendes al bid → ida y vuelta sin que el precio se mueva = **pierdes el spread**. "Ese peaje invisible es la razón de ser del market maker — L13." Plántalo con solemnidad: es la semilla del bloque final del curso.
+
+## §4 · Encapsulación (3 min)
+- La honestidad del doc, en voz alta: `tracker._cash = 10**9` FUNCIONA. Python no es un banco suizo: es un contrato social. "Caja y posición deben moverse JUNTAS; la puerta única lo garantiza, tocar a mano lo rompe."
+
+## §5 · Quiz (3 min)
+- 5 A/B/C: composición, guion bajo, apply_fill, equity, por qué mid() sin argumentos.
+
+## §6 · Puente + mapa (2 min)
+- Mapa: L1-L4 ✓, L5 iluminada — "el motor ya tiene mercado y contabilidad".
+- **Puente:** "falta quien DECIDE. Vais a escribir muchas estrategias que comparten esqueleto… ¿copiarlo cada vez? Ese pecado ya lo cometisteis en L2 y sabéis cómo huele. La cura se llama herencia."
+- Notebook + gimnasio (15 drills: composición, privados, property y el gran reto libro+contable).
+
+## Checklist
+- [ ] Composición = objeto que contiene objetos.
+- [ ] Métodos sin argumentos: el dato vive en self (cierre del contador de L2).
+- [ ] _privado = convención, no candado; la puerta única apply_fill.
+- [ ] equity = cash + position × mark.
+- [ ] La ida y vuelta pierde el spread (semilla de L13) — plantada.
+</script>
 <script>
 
 (function(){
@@ -863,13 +975,87 @@ $$('.quiz[data-quiz]').forEach(qz=>{
       if(idx!==ok)o.classList.add('bad');else right++;
       const w=q.querySelector('.why');if(w)w.classList.add('show');
       answered++;
-      if(answered===qs.length&&score)score.textContent=
-        `Resultado: ${right}/${qs.length}`+(right===qs.length?' — impecable.'
-          :right>=Math.ceil(qs.length*0.6)?' — sólido; revisa las que fallaste.'
-          :' — relee las secciones marcadas y reintenta.');
+      if(answered===qs.length){
+        if(score)score.textContent=
+          `Resultado: ${right}/${qs.length}`+(right===qs.length?' — impecable.'
+            :right>=Math.ceil(qs.length*0.6)?' — sólido; revisa las que fallaste.'
+            :' — relee las secciones marcadas y reintenta.');
+        DOC.save({quiz:{right,total:qs.length,ts:Date.now()}});
+      }
     }));
   });
 });
+
+/* ── progreso persistente (localStorage) ── */
+DOC.key=()=> 'algoTrading.'+(document.body.dataset.lesson||'x');
+DOC.save=function(patch){
+  try{
+    const k=DOC.key(),cur=JSON.parse(localStorage.getItem(k)||'{}');
+    Object.assign(cur,patch);
+    localStorage.setItem(k,JSON.stringify(cur));
+  }catch(_){/* modo incógnito, etc. */}
+};
+(function(){
+  if(!document.body.dataset.lesson)return;
+  let maxPct=0,dirty=false;
+  try{maxPct=(JSON.parse(localStorage.getItem(DOC.key())||'{}').scroll)||0;}catch(_){}
+  addEventListener('scroll',()=>{
+    const h=document.documentElement.scrollHeight-innerHeight;
+    if(h<=0)return;
+    const pct=Math.round(100*scrollY/h);
+    if(pct>maxPct){maxPct=pct;dirty=true;}
+  },{passive:true});
+  setInterval(()=>{if(dirty){DOC.save({scroll:maxPct});dirty=false;}},2000);
+  addEventListener('beforeunload',()=>{if(dirty)DOC.save({scroll:maxPct});});
+})();
+
+/* ── navegación por teclado en el scrolly (para proyectar) ── */
+(function(){
+  const steps=$$('.scrolly .step');
+  if(!steps.length)return;
+  document.addEventListener('keydown',e=>{
+    if(!['ArrowDown','ArrowUp','PageDown','PageUp'].includes(e.key))return;
+    if(/INPUT|TEXTAREA|SELECT|BUTTON/.test(document.activeElement.tagName))return;
+    const mid=innerHeight/2;
+    let idx=0,best=1e12;
+    steps.forEach((s,i)=>{const r=s.getBoundingClientRect();
+      const d=Math.abs(r.top+r.height/2-mid);if(d<best){best=d;idx=i;}});
+    const r=steps[idx].getBoundingClientRect();
+    if(r.bottom<-innerHeight*1.5||r.top>innerHeight*2.5)return; // lejos: scroll normal
+    e.preventDefault();
+    const fwd=(e.key==='ArrowDown'||e.key==='PageDown');
+    const next=fwd?Math.min(idx+1,steps.length-1):Math.max(idx-1,0);
+    steps[next].scrollIntoView({behavior:reduced?'auto':'smooth',block:'center'});
+  });
+})();
+
+/* ── modo profesor: ?profe=1 abre el guion como cajón lateral ── */
+(function(){
+  const srcEl=document.getElementById('guion-src');
+  if(!srcEl||!new URLSearchParams(location.search).has('profe'))return;
+  const mdlite=t=>t
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/^### (.*)$/gm,'<h4>$1</h4>')
+    .replace(/^## (.*)$/gm,'<h3>$1</h3>')
+    .replace(/^# (.*)$/gm,'<h2>$1</h2>')
+    .replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>')
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    .replace(/^- (.*)$/gm,'<li>$1</li>')
+    .replace(/^---$/gm,'<hr>')
+    .replace(/\n{2,}/g,'</p><p>');
+  const drawer=document.createElement('aside');
+  drawer.id='guion-drawer';
+  drawer.innerHTML='<div class="gd-head">📋 Guion del profesor'
+    +'<button id="gd-close" aria-label="Cerrar">✕</button></div>'
+    +'<div class="gd-body"><p>'+mdlite(srcEl.textContent)+'</p></div>';
+  document.body.appendChild(drawer);
+  const btn=document.createElement('button');
+  btn.id='gd-toggle';btn.className='btn';btn.textContent='📋 Guion';
+  document.body.appendChild(btn);
+  const toggle=()=>drawer.classList.toggle('open');
+  btn.addEventListener('click',toggle);
+  drawer.querySelector('#gd-close').addEventListener('click',toggle);
+})();
 
 /* ── scrollytelling genérico ──
    El paso activo enciende la .fig-stage del mismo número y avisa a la fig

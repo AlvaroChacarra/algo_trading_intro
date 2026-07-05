@@ -341,6 +341,9 @@ def main() -> None:
     for lesson in LESSONS:
         emit(lesson)
         print(f"  L{lesson['n']:>2}  {lesson['slug']}")
+    with open(os.path.join(ROOT, "index.html"), "w") as f:
+        f.write(docgen.build_index(LESSONS, ROOT))
+    print("  --  index.html (índice del curso)")
     if "--clean" in sys.argv:
         print("\n== Limpieza de carpetas antiguas ==")
         clean_old_folders()
