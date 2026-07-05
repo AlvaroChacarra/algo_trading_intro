@@ -137,16 +137,74 @@ def tiers_md(kind: str) -> str:
                 "1. Escribe tu respuesta en la celda de código.\n"
                 "2. Debajo hay una **✅ comprobación plegada**: ejecútala con `Shift+Enter` para validarte "
                 "(despliégala si quieres ver el `assert`).\n"
-                "3. ¿Atascado? Abre **💡 Ver solución**.\n\n"
-                "**Núcleo:** los primeros (en clase) · **Si vamos bien:** el resto · **Más:** el cuaderno de auxiliares.")
+                "3. ¿Atascado? Algunos ejercicios traen una **💭 Pista** intermedia; si no basta, "
+                "abre **💡 Ver solución**.\n\n"
+                "Cada ejercicio lleva su etiqueta: **🟢 núcleo** (en clase) · **🔵 si vamos bien** · "
+                "**🟣 bonus** (el cuaderno de auxiliares profundiza más).")
     return ("### El gimnasio\n\n"
             "Drills cortos para automatizar las primitivas de Python con datos de mercado, "
             "más una profundización final. Mismo formato de siempre: escribe tu código, ejecuta la "
             "**✅ comprobación plegada** (`Shift+Enter`) y, si te atascas, abre **💡 Ver solución**. "
             "Ninguno debería llevarte más de un par de minutos. No hacen falta para seguir el "
             "curso — pero te hacen rápido.\n\n"
-            "**Dosis mínima:** el calentamiento entero + los dos primeros drills de cada bloque. "
-            "El resto, para volver otro día.")
+            "**Dosis mínima** = todo lo marcado **🟢 núcleo**: el calentamiento entero y los dos "
+            "primeros drills de cada bloque. Lo **🔵 si vamos bien** y lo **🟣 bonus**, para volver otro día.")
+
+
+def assign_tiers(exercises: list[dict], kind: str) -> None:
+    """Rellena tier/min donde el spec no los fija, siguiendo la política declarada.
+
+    build:  los 3 primeros = núcleo, el resto = si vamos bien.
+    aux:    calentamiento entero + 2 primeros drills de cada bloque = núcleo
+            (la "dosis mínima"), el resto del bloque = si vamos bien,
+            y las secciones de profundización/curiosos/transferencia = bonus.
+    Un `tier`/`min` explícito en el spec siempre gana.
+    """
+    if kind == "build":
+        i = 0
+        for ex in exercises:
+            if "section" in ex:
+                continue
+            i += 1
+            ex.setdefault("tier", "nucleo" if i <= 3 else "bien")
+            ex.setdefault("min", 5 if ex["tier"] == "nucleo" else 6)
+        return
+
+    mode, pos = "bloque", 0
+    for ex in exercises:
+        if "section" in ex:
+            t = ex["section"].lower()
+            if "calentamiento" in t:
+                mode = "calentamiento"
+            elif any(k in t for k in ("para curiosos", "para terminar", "transferencia")):
+                mode = "bonus"
+            else:
+                mode = "bloque"
+            pos = 0
+            continue
+        pos += 1
+        if mode == "calentamiento":
+            ex.setdefault("tier", "nucleo")
+            ex.setdefault("min", 1)
+        elif mode == "bonus":
+            ex.setdefault("tier", "bonus")
+            ex.setdefault("min", 5)
+        else:
+            ex.setdefault("tier", "nucleo" if pos <= 2 else "bien")
+            ex.setdefault("min", 2)
+
+
+def time_totals_md(exercises: list[dict]) -> str:
+    tot = {"nucleo": 0, "bien": 0, "bonus": 0}
+    for ex in exercises:
+        if "section" not in ex:
+            tot[ex.get("tier", "bien")] += ex.get("min", 0)
+    parts = [f"🟢 núcleo ~{tot['nucleo']} min"]
+    if tot["bien"]:
+        parts.append(f"🔵 si vamos bien +{tot['bien']} min")
+    if tot["bonus"]:
+        parts.append(f"🟣 bonus +{tot['bonus']} min")
+    return "⏱️ " + " · ".join(parts) + "."
 
 
 def _strip_html(text: str) -> str:
@@ -264,9 +322,12 @@ def emit(lesson: dict) -> None:
             f.write(nbgen.build_html(lesson))
 
     # notebooks
+    assign_tiers(lesson["build"], "build")
+    assign_tiers(lesson["aux"], "aux")
     intro = (f"# 🐍 Clase {lesson['n']} · {lesson['title']}\n\n"
              f"> {lesson['objective']}\n\n"
-             f"**Hoy construyes:** {lesson['piece']}.")
+             f"**Hoy construyes:** {lesson['piece']}.\n\n"
+             f"{time_totals_md(lesson['build'])}")
     build_nb = nbgen.build_notebook(intro, tiers_md("build"), lesson["build"],
                                     closing_build(lesson))
 
@@ -306,7 +367,8 @@ def emit(lesson: dict) -> None:
     n_aux = sum(1 for ex in lesson["aux"] if "section" not in ex)
     aux_intro = (f"# Clase {lesson['n']} — Auxiliares · el gimnasio\n\n"
                  f"{n_aux} ejercicios cortos sobre *{lesson['title']}*: drills para ganar "
-                 f"soltura con las primitivas y profundizaciones opcionales.")
+                 f"soltura con las primitivas y profundizaciones opcionales.\n\n"
+                 f"{time_totals_md(lesson['aux'])}")
     aux_nb = nbgen.build_notebook(aux_intro, tiers_md("aux"), lesson["aux"],
                                   "## Fin de los auxiliares\n\nVuelve al cuaderno principal cuando quieras.")
     nbgen.write_notebook(os.path.join(exer, f"{lesson['n']:02d}_auxiliary.ipynb"), aux_nb)

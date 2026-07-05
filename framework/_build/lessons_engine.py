@@ -55,6 +55,7 @@ LESSONS.append({
          "given": "from exchange import Market\nbook = Market.sample().step()\n",
          "starter": "from exchange import Side\nbid_depth = None\nask_depth = None\n",
          "validator": "assert bid_depth > 0 and ask_depth > 0\nprint('ok  bid=%.2f ask=%.2f' % (bid_depth, ask_depth))",
+         "pista": "La firma es `book.depth(side, niveles)`; los lados son `Side.BUY` y `Side.SELL` del enum que acabas de importar.",
          "solution": "from exchange import Side\nbid_depth = book.depth(Side.BUY, 5)\nask_depth = book.depth(Side.SELL, 5)"},
     ],
     "aux": [
@@ -159,18 +160,21 @@ LESSONS.append({
          "given": "from exchange import Market, MatchingEngine, Order, Side, OrderType\nbook = Market.sample().step()\neng = MatchingEngine()\nba = book.best_ask\n",
          "starter": "filled = None\n",
          "validator": "assert abs(filled - 0.3) < 1e-9\nprint('ok')",
+         "pista": "Calcula el precio límite desde la variable dada: `price=ba+100`, con `order_type=OrderType.LIMIT`. Después, `filled` suma `f.size` de los fills que devuelve `eng.process(order, book)`.",
          "solution": "order = Order('BTCUSDT', Side.BUY, 0.3, price=ba+100, order_type=OrderType.LIMIT)\nfills = eng.process(order, book)\nfilled = sum(f.size for f in fills)"},
         {"title": "4. FOK: todo o nada", "practice": "OrderType.FOK",
          "statement": "Envía una FOK buy de tamaño 9999 (más de lo que hay) a precio muy alto. Debe devolver 0 fills. Guarda `n_fills`.",
          "given": "from exchange import Market, MatchingEngine, Order, Side, OrderType\nbook = Market.sample().step()\neng = MatchingEngine()\nba = book.best_ask\n",
          "starter": "n_fills = None\n",
          "validator": "assert n_fills == 0, 'FOK no se llena entera -> 0 fills'\nprint('ok')",
+         "pista": "Construye la orden con `order_type=OrderType.FOK` y tamaño 9999. Como no hay liquidez para todo, `eng.process` devuelve una lista vacía — `n_fills = len(fills)`.",
          "solution": "order = Order('BTCUSDT', Side.BUY, 9999, price=ba+1000, order_type=OrderType.FOK)\nfills = eng.process(order, book)\nn_fills = len(fills)"},
         {"title": "5. Precio efectivo de una market", "practice": "vwap de los fills",
          "statement": "Cruza una market buy de 1.0 y calcula `eff_price` = nocional total / tamaño total. Debe ser >= best_ask (pagas el barrido).",
          "given": "from exchange import Market, MatchingEngine, Order, Side, OrderType\nbook = Market.sample().step()\nba = book.best_ask\neng = MatchingEngine()\n",
          "starter": "eff_price = None\n",
          "validator": "assert eff_price >= ba - 1e-6, 'una market barre niveles: precio efectivo >= best_ask'\nprint('ok  eff=%.2f best_ask=%.2f' % (eff_price, ba))",
+         "pista": "Una market no lleva `price`. El precio efectivo pondera cada fill: `sum(f.price*f.size for f in fills) / sum(f.size for f in fills)`.",
          "solution": "order = Order('BTCUSDT', Side.BUY, 1.0, order_type=OrderType.MARKET)\nfills = eng.process(order, book)\neff_price = sum(f.price*f.size for f in fills) / sum(f.size for f in fills)"},
     ],
     "aux": [
@@ -269,12 +273,14 @@ LESSONS.append({
          "given": "from exchange import Market, Order, Side, OrderType, PositionTracker\nm = Market.sample()\ntracker = PositionTracker()\n",
          "starter": "i = 0\nfinal_pos = None\n",
          "validator": "assert final_pos > 0, 'has comprado varias veces: posición larga'\nprint('ok  pos=%.2f' % final_pos)",
+         "pista": "El esqueleto del loop es el del ejercicio 1 (`while True` + `m.step()` + `break` si `None`). Añade: si `i % 50 == 0`, recorre los fills de `m.submit(...)` aplicándolos al tracker. No olvides `i += 1`.",
          "solution": "i = 0\nwhile True:\n    book = m.step()\n    if book is None: break\n    if i % 50 == 0:\n        for f in m.submit(Order('BTCUSDT', Side.BUY, 0.1, order_type=OrderType.MARKET)):\n            tracker.apply_fill(f)\n    i += 1\nfinal_pos = tracker.position"},
         {"title": "4. Equity final", "practice": "marcar a mercado",
          "statement": "Continuando, marca el equity al último mid visto. Guarda `equity`.",
          "given": "from exchange import Market, Order, Side, OrderType, PositionTracker\nm = Market.sample()\ntracker = PositionTracker()\nlast_mid = 0\ni = 0\nwhile True:\n    book = m.step()\n    if book is None: break\n    last_mid = book.mid\n    if i % 50 == 0:\n        for f in m.submit(Order('BTCUSDT', Side.BUY, 0.1, order_type=OrderType.MARKET)):\n            tracker.apply_fill(f)\n    i += 1\n",
          "starter": "equity = None\n",
          "validator": "assert isinstance(equity, float)\nprint('ok  equity=%.2f' % equity)",
+         "pista": "Ya lo tienes todo: `tracker.equity(last_mid)`. `last_mid` quedó guardado en el loop anterior; el tracker arrastra caja y posición.",
          "solution": "equity = tracker.equity(last_mid)"},
     ],
     "aux": [
@@ -333,6 +339,21 @@ LESSONS.append({
          "starter": "from exchange import Market, Order, Side, OrderType, PositionTracker\nexecuted = 0.0\n",
          "validator": "assert abs(executed - 1.0) < 1e-6\nprint('ok')",
          "solution": "from exchange import Market, Order, Side, OrderType, PositionTracker\nm = Market.sample(); i = 0; executed = 0.0\nwhile True:\n    book = m.step()\n    if book is None: break\n    if i % 50 == 0 and executed < 1.0 - 1e-9:\n        for f in m.submit(Order('BTCUSDT', Side.BUY, 0.1, order_type=OrderType.MARKET)):\n            executed += f.size\n    i += 1"},
+
+        {"section": "Transferencia — la misma idea, otro dominio",
+         "blurb": "El bucle de simulación (leer estado → decidir → acumular → avanzar) no es del mercado: "
+                  "es como se simula CUALQUIER sistema en el tiempo. Aquí, el consumo eléctrico de una casa."},
+        {"title": "T1. El contador de la luz (mismo loop, otro sistema)",
+         "practice": "bucle paso a paso fuera del trading",
+         "statement": "Una casa consume, cada hora, `lecturas[i]` kWh. Recórrelas con un bucle acumulando "
+                       "el total en `consumido` y, en paralelo, apuntando el acumulado en `curva` "
+                       "(como la equity curve, pero de kWh). Es el mismo patrón `step → acumula → avanza`.",
+         "given": "lecturas = [0.4, 0.6, 1.2, 0.9, 0.3, 0.5]\n",
+         "starter": "consumido = 0.0\ncurva = []\n",
+         "validator": "assert abs(consumido - 3.9) < 1e-9, 'la suma de todas las lecturas'\nassert curva == [0.4, 1.0, 2.2, 3.1, 3.4, 3.9], 'la curva es el acumulado paso a paso'\nprint('ok — un loop de simulación es un loop de simulación, venda kWh o BTC')",
+         "pista": "Un solo `for x in lecturas:` que haga `consumido += x` y luego "
+                  "`curva.append(consumido)`. Es la misma forma que la equity curve del ejercicio A5.",
+         "solution": "consumido = 0.0\ncurva = []\nfor x in lecturas:\n    consumido += x\n    curva.append(consumido)"},
     ],
 })
 
@@ -374,12 +395,14 @@ LESSONS.append({
          "given": "from exchange import Strategy, NewOrder, Order, Side, OrderType, Market, Backtest\n",
          "starter": "class CountingBuyer(Strategy):\n    def __init__(self):\n        self.n = 0\n    def on_book_update(self, book):\n        return [NewOrder(Order('BTCUSDT', Side.BUY, 0.1, order_type=OrderType.MARKET))]\n    def on_fill(self, fill):\n        pass\n",
          "validator": "s = CountingBuyer()\nBacktest(Market.sample(), s).run()\nassert s.n >= 1, 'on_fill debe haberse llamado'\nprint('ok  on_fill llamado %d veces' % s.n)",
+         "pista": "Solo falta `on_fill`: recibe un `fill` y hace `self.n += 1`. El `on_book_update` ya está en el starter.",
          "solution": "class CountingBuyer(Strategy):\n    def __init__(self):\n        self.n = 0\n    def on_book_update(self, book):\n        return [NewOrder(Order('BTCUSDT', Side.BUY, 0.1, order_type=OrderType.MARKET))]\n    def on_fill(self, fill):\n        self.n += 1"},
         {"title": "4. Polimorfismo: cambia la estrategia, no el runner", "practice": "intercambiar subclases",
          "statement": "Define `SellOnce` (igual que BuyOnce pero vende). Córrela en el MISMO Backtest. Guarda `pos` (debe ser < 0).",
          "given": "from exchange import Strategy, NewOrder, Order, Side, OrderType, Market, Backtest\n",
          "starter": "class SellOnce(Strategy):\n    def __init__(self): self.done=False\n    def on_book_update(self, book):\n        pass\n\npos = None\n",
          "validator": "assert pos < 0, 'SellOnce deja posición corta — mismo runner, otra estrategia'\nprint('ok  pos=%.2f' % pos)",
+         "pista": "Copia el patrón BuyOnce: si `self.done`, devuelve `[]`; si no, márcalo y devuelve `[NewOrder(Order(..., Side.SELL, 0.5, order_type=OrderType.MARKET))]`. Luego `Backtest(Market.sample(), SellOnce()).run().final_position`.",
          "solution": "class SellOnce(Strategy):\n    def __init__(self): self.done=False\n    def on_book_update(self, book):\n        if self.done: return []\n        self.done=True\n        return [NewOrder(Order('BTCUSDT', Side.SELL, 0.5, order_type=OrderType.MARKET))]\npos = Backtest(Market.sample(), SellOnce()).run().final_position"},
     ],
     "aux": [
@@ -478,12 +501,14 @@ LESSONS.append({
          "statement": "Guarda `arrival_mid`, el mid del primer snapshot del mercado.",
          "starter": "from exchange import Market\narrival_mid = None\n",
          "validator": "assert 90000 < arrival_mid < 110000\nprint('ok  arrival_mid=%.2f' % arrival_mid)",
+         "pista": "Encadena: `Market.sample()` te da el mercado, `.step()` el primer libro, `.mid` su punto medio.",
          "solution": "from exchange import Market\narrival_mid = Market.sample().step().mid"},
         {"title": "4. Riesgo escondido", "practice": "interpretar inventario",
          "statement": "Para `thr=0.1` y `thr=0.5`, guarda en `pos_small_thr` y `pos_big_thr` la posición final. Un umbral bajo opera más y arriesga más inventario.",
          "given": "from exchange import Strategy, NewOrder, Order, Side, OrderType, Market, Backtest\nclass ImbalanceStrategy(Strategy):\n    def __init__(self, thr=0.3): self.thr=thr\n    def on_book_update(self, book):\n        imb = book.imbalance(3)\n        if imb is None: return []\n        if imb > self.thr: return [NewOrder(Order('BTCUSDT', Side.BUY, 0.05, order_type=OrderType.MARKET))]\n        if imb < -self.thr: return [NewOrder(Order('BTCUSDT', Side.SELL, 0.05, order_type=OrderType.MARKET))]\n        return []\n",
          "starter": "pos_small_thr = None\npos_big_thr = None\n",
          "validator": "assert pos_small_thr is not None and pos_big_thr is not None\nprint('ok  thr0.1 pos=%.3f | thr0.5 pos=%.3f' % (pos_small_thr, pos_big_thr))",
+         "pista": "Dos backtests idénticos salvo el umbral: `Backtest(Market.sample(), ImbalanceStrategy(0.1)).run().final_position`, y lo mismo con 0.5. `Market.sample()` nuevo en cada uno, para que ambos vean el mismo día.",
          "solution": "pos_small_thr = Backtest(Market.sample(), ImbalanceStrategy(0.1)).run().final_position\npos_big_thr = Backtest(Market.sample(), ImbalanceStrategy(0.5)).run().final_position"},
     ],
     "aux": [
@@ -542,5 +567,21 @@ LESSONS.append({
          "starter": "curve = None\n",
          "validator": "assert len(curve) == 500\nprint('ok  puntos=%d' % len(curve))",
          "solution": "curve = Backtest(Market.sample(), S()).run().equity_curve"},
+
+        {"section": "Transferencia — la misma idea, otro dominio",
+         "blurb": "Medir PnL por unidad de riesgo (el A5 de arriba) es un caso de una idea universal: "
+                  "no mires el resultado bruto, mira el resultado POR unidad de lo que gastas. "
+                  "Aquí, comparar la compra del súper por valor nutricional por euro."},
+        {"title": "T1. La cesta que rinde más (ratio, fuera del trading)",
+         "practice": "resultado por unidad de coste, fuera del trading",
+         "statement": "Dos cestas de la compra: A aporta 1800 kcal por 6.0 €, B aporta 1500 kcal por 4.0 €. "
+                       "Igual que elegiste la estrategia por PnL-por-riesgo, elige `mejor` ('A' o 'B') por "
+                       "**kcal por euro**. La bruta no decide: decide el ratio.",
+         "given": "kcal_a, precio_a = 1800, 6.0\nkcal_b, precio_b = 1500, 4.0\n",
+         "starter": "mejor = None\n",
+         "validator": "assert mejor == 'B', '300 vs 375 kcal/€: la cesta más barata rinde más por euro'\nprint('ok — el Sharpe era esto: no el PnL bruto, sino el PnL por unidad de riesgo')",
+         "pista": "Calca el A5: un ratio por lado (`kcal_a / precio_a` y el de B) y un ternario que "
+                  "devuelve la letra del mayor.",
+         "solution": "ratio_a = kcal_a / precio_a\nratio_b = kcal_b / precio_b\nmejor = 'A' if ratio_a > ratio_b else 'B'"},
     ],
 })

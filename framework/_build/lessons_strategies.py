@@ -54,23 +54,27 @@ LESSONS.append({
          "statement": "Escribe `rolling_mean(xs, k)` que devuelva la media de los últimos k elementos.",
          "starter": "def rolling_mean(xs, k):\n    pass\n",
          "validator": "assert abs(rolling_mean([1,2,3,4], 2) - 3.5) < 1e-9\nprint('ok')",
+         "pista": "El slicing `xs[-k:]` te da exactamente los últimos k elementos; su `sum(...)` dividida entre `k` es la media.",
          "solution": "def rolling_mean(xs, k):\n    return sum(xs[-k:]) / k"},
         {"title": "6. Predice el próximo volumen", "practice": "usar la ventana",
          "statement": "Dada `volumes`, predice el siguiente como la media de los últimos 3. Guarda `pred`.",
          "given": "volumes = [100, 120, 90, 110, 130]\n",
          "starter": "pred = None\n",
          "validator": "assert abs(pred - 110) < 1e-9\nprint('ok  pred=%.1f' % pred)",
+         "pista": "Es `rolling_mean(volumes, 3)` escrito a mano: `sum(volumes[-3:]) / 3`.",
          "solution": "pred = sum(volumes[-3:]) / 3"},
         {"title": "7. Perfil dinámico", "practice": "normalizar predicciones",
          "statement": "Dadas predicciones `preds`, conviértelas en un perfil que sume 1. Guarda `profile`.",
          "given": "preds = [120, 80, 200]\n",
          "starter": "profile = None\n",
          "validator": "assert abs(sum(profile) - 1) < 1e-9\nassert profile[2] > profile[0] > profile[1], 'más peso donde más volumen'\nprint('ok')",
+         "pista": "Normalizar = dividir cada elemento entre el total: `total = sum(preds)` y luego `[p/total for p in preds]`. Comprueba mentalmente que la suma da 1.",
          "solution": "total = sum(preds)\nprofile = [p/total for p in preds]"},
         {"title": "8. Factor de corrección", "practice": "ir a tiempo",
          "statement": "Escribe `correction(target_so_far, executed, remaining_slices)`: cuánto mandar ahora para volver al plan.",
          "starter": "def correction(target_so_far, executed, remaining_slices):\n    pass\n",
          "validator": "assert abs(correction(0.5, 0.3, 2) - 0.1) < 1e-9, 'faltan 0.2 en 2 trozos -> 0.1'\nprint('ok')",
+         "pista": "Lo que *deberías* llevar menos lo que llevas es el déficit: `target_so_far - executed`. Repártelo a partes iguales entre los slices que quedan.",
          "solution": "def correction(target_so_far, executed, remaining_slices):\n    return (target_so_far - executed) / remaining_slices"},
     ],
     "aux": [
@@ -133,6 +137,22 @@ LESSONS.append({
          "starter": "def slope(xs, ys):\n    pass\n",
          "validator": "assert abs(slope([1,2,3],[2,4,6]) - 2) < 1e-9\nprint('ok — esto es lo que hace LinearRegression por dentro')",
          "solution": "def slope(xs, ys):\n    n = len(xs); mx = sum(xs)/n; my = sum(ys)/n\n    cov = sum((x-mx)*(y-my) for x,y in zip(xs,ys))\n    var = sum((x-mx)**2 for x in xs)\n    return cov / var"},
+
+        {"section": "Transferencia — la misma idea, otro dominio",
+         "blurb": "El VWAP no inventa nada: reparte un total en el tiempo siguiendo un perfil de actividad. "
+                  "La misma cuenta sirve para una panadería que hornea según la demanda por hora."},
+        {"title": "T1. La panadería que sigue la demanda (VWAP sin mercado)",
+         "practice": "perfil normalizado fuera del trading",
+         "statement": "Una panadería quiere hornear **100 barras** repartidas en una jornada de 8 horas, "
+                       "proporcionalmente a la demanda esperada `demanda` (clientes por hora). "
+                       "Calcula `plan[i]` = barras a hornear en la hora i: normaliza `demanda` para que "
+                       "sume 1 y multiplica por 100. Es exactamente el perfil VWAP.",
+         "given": "demanda = [5, 10, 20, 25, 20, 10, 6, 4]  # clientes por hora\n",
+         "starter": "plan = None\n",
+         "validator": "assert abs(sum(plan) - 100) < 1e-9, 'el plan reparte las 100 barras enteras'\nassert plan.index(max(plan)) == demanda.index(max(demanda)), 'horneas más donde hay más demanda'\nprint('ok — el VWAP era repartir un total según un perfil; el pan no lo sabe, pero lo hace igual')",
+         "pista": "Dos pasos, como el perfil dinámico (A/ejercicio 7 del build): `total = sum(demanda)` y "
+                  "`plan = [d/total*100 for d in demanda]`. La normalización hace que sume justo 100.",
+         "solution": "total = sum(demanda)\nplan = [d / total * 100 for d in demanda]"},
     ],
 })
 
@@ -174,12 +194,14 @@ LESSONS.append({
          "given": "from exchange.strategies import MarketMaker\nmm = MarketMaker('BTC', inventory_skew=1.0)\nmm._inventory = 2\n",
          "starter": "r = None\n",
          "validator": "assert r < 100, 'largo -> reservation price por debajo del mid'\nprint('ok  r=%.2f' % r)",
+         "pista": "Solo llamas al método: `mm.reservation_price(100)`. La gracia está en comprobar que, con inventario +2, sale por debajo de 100 — el MM quiere vender.",
          "solution": "r = mm.reservation_price(100)"},
         {"title": "4. Simula al market maker", "practice": "MMSimulation",
          "statement": "Corre `MMSimulation(MarketMaker('BTC', half_spread=0.3), steps=300)`. Guarda `pnl` y `max_inv` del resultado.",
          "given": "from exchange.strategies import MarketMaker\nfrom exchange.simulation import MMSimulation\n",
          "starter": "pnl = None\nmax_inv = None\n",
          "validator": "assert isinstance(pnl, float) and max_inv >= 0\nprint('ok  pnl=%.2f max|inv|=%.2f' % (pnl, max_inv))",
+         "pista": "Encadena construcción y ejecución: `MMSimulation(MarketMaker('BTC', half_spread=0.3), steps=300).run()` devuelve un resultado con `.final_pnl` y `.max_inventory`.",
          "solution": "res = MMSimulation(MarketMaker('BTC', half_spread=0.3), steps=300).run()\npnl = res.final_pnl\nmax_inv = res.max_inventory"},
     ],
     "aux": [
@@ -290,18 +312,21 @@ LESSONS.append({
          "given": "from exchange.strategies import AvellanedaStoikov\nfrom exchange.simulation import MMSimulation\n",
          "starter": "max_inv = None\npnl = None\n",
          "validator": "assert max_inv >= 0 and isinstance(pnl, float)\nprint('ok  max|inv|=%.2f pnl=%.2f' % (max_inv, pnl))",
+         "pista": "Mismo patrón que la simulación de L13, cambiando la estrategia: `MMSimulation(AvellanedaStoikov('BTC', gamma=0.1, sigma=0.5, horizon=400), steps=400).run()`.",
          "solution": "res = MMSimulation(AvellanedaStoikov('BTC', gamma=0.1, sigma=0.5, horizon=400), steps=400).run()\nmax_inv = res.max_inventory\npnl = res.final_pnl"},
         {"title": "6. El skew reduce el inventario", "practice": "comparar con / sin skew",
          "statement": "Con la misma semilla, simula un MarketMaker con skew (2.0) y otro sin skew (0.0), half_spread 0.3. Guarda `inv_skew` e `inv_noskew` (max inventario). El skew debe dejar menos inventario.",
          "given": "from exchange.strategies import MarketMaker\nfrom exchange.simulation import MMSimulation\n",
          "starter": "inv_skew = None\ninv_noskew = None\n",
          "validator": "assert inv_skew <= inv_noskew + 1e-9, 'el skew empuja el inventario hacia 0'\nprint('ok  skew=%.3f noskew=%.3f' % (inv_skew, inv_noskew))",
+         "pista": "Dos simulaciones que solo difieren en `inventory_skew` (2.0 frente a 0.0). De cada `run()` te quedas con `.max_inventory`.",
          "solution": "inv_skew = MMSimulation(MarketMaker('BTC', half_spread=0.3, inventory_skew=2.0), steps=400).run().max_inventory\ninv_noskew = MMSimulation(MarketMaker('BTC', half_spread=0.3, inventory_skew=0.0), steps=400).run().max_inventory"},
         {"title": "7. Más gamma, más inclina el reservation price", "practice": "trade-off riesgo/PnL",
          "statement": "Con inventario fijo (5), mide cuánto se aleja el reservation price del mid para gamma 0.05 y 0.8. Guarda `skew_low_gamma` y `skew_high_gamma` (= |r - mid|).",
          "given": "from exchange.strategies import AvellanedaStoikov\ndef skew_mag(g):\n    s = AvellanedaStoikov('BTC', gamma=g, sigma=10, kappa=1.5, horizon=500)\n    s._inventory = 5; s._t = 0\n    return abs(s.reservation_price(100) - 100)\n",
          "starter": "skew_low_gamma = None\nskew_high_gamma = None\n",
          "validator": "assert skew_high_gamma > skew_low_gamma, 'más gamma = más aversión = más inclinación'\nprint('ok  g=0.05 -> %.1f | g=0.8 -> %.1f' % (skew_low_gamma, skew_high_gamma))",
+         "pista": "`skew_mag` ya viene definida en el given: recibe una gamma y devuelve `|r − mid|` con inventario 5. Llámala dos veces.",
          "solution": "skew_low_gamma = skew_mag(0.05)\nskew_high_gamma = skew_mag(0.8)"},
     ],
     "aux": [
@@ -361,5 +386,23 @@ LESSONS.append({
          "starter": "from exchange.strategies import MarketMaker\nfrom exchange.simulation import MMSimulation\nclass FlatMaker(MarketMaker):\n    def reservation_price(self, mid):\n        pass\nmax_inv = None\n",
          "validator": "assert max_inv is not None\nprint('ok — has escrito tu propia estrategia y la has enchufado al simulador')",
          "solution": "from exchange.strategies import MarketMaker\nfrom exchange.simulation import MMSimulation\nclass FlatMaker(MarketMaker):\n    def reservation_price(self, mid):\n        return mid\nmax_inv = MMSimulation(FlatMaker('BTC', half_spread=0.3), steps=400).run().max_inventory"},
+
+        {"section": "Transferencia — la misma idea, otro dominio",
+         "blurb": "La γ de Avellaneda-Stoikov es aversión al riesgo: cuánto castigas la incertidumbre. "
+                  "Esa misma idea es la que decide cuánto pagarías por un seguro. Sin mercado, misma fórmula."},
+        {"title": "T1. Cuánto pagas por dormir tranquilo (la γ, fuera del mercado)",
+         "practice": "aversión al riesgo fuera del trading",
+         "statement": "El reservation price de A-S es `mid − γ·(riesgo)`: al valor justo le restas un castigo "
+                       "proporcional a tu aversión γ. En seguros es idéntico: el **equivalente de certeza** "
+                       "de una apuesta incierta es `media − γ·varianza`. Escribe "
+                       "`equiv_certeza(media, gamma, var)` y guarda `barato` (γ=0.1) y `caro` (γ=2.0) "
+                       "para media 100 y varianza 30. El más averso al riesgo la valora MÁS bajo "
+                       "(y por tanto pagaría más por asegurarse).",
+         "given": "",
+         "starter": "def equiv_certeza(media, gamma, var):\n    pass\nbarato = None\ncaro = None\n",
+         "validator": "assert abs(equiv_certeza(100, 0.1, 30) - 97) < 1e-9\nassert caro < barato, 'más aversión (γ alta) = valoras más bajo lo incierto = pagas más por el seguro'\nprint('ok — la γ de Avellaneda-Stoikov era aversión al riesgo; el seguro usa la misma resta')",
+         "pista": "La función es una sola resta: `return media - gamma * var`. Es la misma forma que "
+                  "`reservation_price = mid - gamma * sigma**2 * inventory`, con `var` haciendo de riesgo.",
+         "solution": "def equiv_certeza(media, gamma, var):\n    return media - gamma * var\nbarato = equiv_certeza(100, 0.1, 30)\ncaro = equiv_certeza(100, 2.0, 30)"},
     ],
 })

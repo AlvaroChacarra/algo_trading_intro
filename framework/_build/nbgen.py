@@ -82,9 +82,17 @@ def _none_guard(ex: dict) -> str:
     return ("\n".join(lines[:6]) + "\n") if lines else ""
 
 
+TIER_BADGE = {"nucleo": "🟢 núcleo", "bien": "🔵 si vamos bien", "bonus": "🟣 bonus"}
+
+
 def _exercise_cells(ex: dict) -> list[dict]:
     cells = []
-    head = f"### {ex['title']}\n\n{ex['statement']}"
+    head = f"### {ex['title']}"
+    if ex.get("tier"):
+        badge = TIER_BADGE.get(ex["tier"], ex["tier"])
+        mins = f" · ~{ex['min']} min" if ex.get("min") else ""
+        head += f"\n\n<sub>{badge}{mins}</sub>"
+    head += f"\n\n{ex['statement']}"
     if ex.get("hint"):
         head += f"\n\n> 💡 {ex['hint']}"
     head += f"\n\n<sub>practicas: {ex['practice']}</sub>"
@@ -98,6 +106,10 @@ def _exercise_cells(ex: dict) -> list[dict]:
     # validador plegado (escondido pero ejecutable)
     cells.append(code("# ✅ Comprobación — ejecútala (Shift+Enter). Está plegada a propósito.\n"
                       + _none_guard(ex) + ex["validator"], hidden=True))
+    # pista intermedia (opcional): un empujón antes de rendirse a la solución
+    if ex.get("pista"):
+        cells.append(md("<details>\n<summary>💭 Pista (antes de mirar la solución)</summary>\n\n"
+                        f"{ex['pista'].rstrip()}\n\n</details>"))
     # solución oculta tras una pestaña desplegable
     cells.append(md("<details>\n<summary>💡 Ver solución</summary>\n\n"
                     f"```python\n{ex['solution'].rstrip()}\n```\n\n</details>"))
