@@ -1,6 +1,6 @@
 """simulation.py — simulador de market making.
 
-Construido en L14. El backtest de replay (market.py) sirve para ejecución
+Construido en L14. El backtest de replay (market.py, L9) sirve para ejecución
 (VWAP cruza market orders y siempre llena). Pero un market maker pone órdenes
 límite y necesita un modelo de *cuándo le ejecutan*: cuanto más cerca del mid
 cotiza, más probable es que le golpeen.

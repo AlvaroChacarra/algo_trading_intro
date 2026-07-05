@@ -48,4 +48,4 @@ El contenido se genera desde `framework/_build/` — para editar esta clase, edi
 
 ## Continuidad
 
-Aún sin paquete: las clases se construyen en celdas del notebook (estilo L1-L2). El vocabulario de hoy se convierte en los atributos de las clases en L3.
+Aún sin paquete: el código se construye en celdas del notebook. El vocabulario de hoy se convierte en los atributos de las clases en L4.

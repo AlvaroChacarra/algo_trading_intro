@@ -1,6 +1,6 @@
 """strategy.py — la interfaz enchufable. El corazón del framework.
 
-Construido en L8. Una estrategia no sabe nada del motor: solo reacciona al libro
+Construido en L10. Una estrategia no sabe nada del motor: solo reacciona al libro
 y a sus fills devolviendo acciones. Cualquier subclase de `Strategy` se puede
 enchufar al mismo `Backtest` sin tocar nada más. Eso es lo que hace que VWAP, un
 market maker, o la estrategia que escriba el alumno, sean intercambiables.

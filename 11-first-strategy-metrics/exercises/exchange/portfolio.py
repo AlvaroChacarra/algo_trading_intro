@@ -1,6 +1,6 @@
 """portfolio.py — seguimiento de caja, inventario y PnL.
 
-Construido en L4 (OOP II). Continuación directa del `PositionTracker` de las
+Construido en L5 (OOP II). Continuación directa del `PositionTracker` de las
 clases de fundamentos: mismo estado privado (`_cash`, `_position`), ahora
 alimentado por objetos `Fill` en vez de dicts, y con métricas de PnL.
 """

@@ -30,6 +30,16 @@ def code(text: str, hidden: bool = False) -> dict:
             "outputs": [], "source": text.rstrip("\n").splitlines(keepends=True)}
 
 
+def _none_guard(ex: dict) -> str:
+    """Guarda anti-None: si el alumno valida sin haber tocado el starter, el
+    mensaje debe ser '⏸ completa el ejercicio', no un TypeError críptico."""
+    import re
+    names = re.findall(r"^([A-Za-z_]\w*)\s*=\s*None\b", ex.get("starter", ""), re.M)
+    lines = [f"assert {n} is not None, '⏸ {n} sigue en None: completa el ejercicio antes de validar'"
+             for n in list(dict.fromkeys(names))[:6] if f"{n} is not None" not in ex["validator"]]
+    return ("\n".join(lines) + "\n") if lines else ""
+
+
 def _exercise_cells(ex: dict) -> list[dict]:
     cells = []
     head = f"### {ex['title']}\n\n{ex['statement']}"
@@ -45,7 +55,7 @@ def _exercise_cells(ex: dict) -> list[dict]:
     cells.append(code(starter))
     # validador plegado (escondido pero ejecutable)
     cells.append(code("# ✅ Comprobación — ejecútala (Shift+Enter). Está plegada a propósito.\n"
-                      + ex["validator"], hidden=True))
+                      + _none_guard(ex) + ex["validator"], hidden=True))
     # solución oculta tras una pestaña desplegable
     cells.append(md("<details>\n<summary>💡 Ver solución</summary>\n\n"
                     f"```python\n{ex['solution'].rstrip()}\n```\n\n</details>"))

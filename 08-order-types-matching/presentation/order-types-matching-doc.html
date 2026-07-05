@@ -596,7 +596,7 @@
           <button class="opt">B · Es mejor: compras en oferta</button>
           <button class="opt">C · Es peor, y empeora con el tamaño — eso es el slippage</button>
         </div>
-        <div class="why">Lo mediste: de +21.8 a +28.6 según el tamaño. La inmediatez se
+        <div class="why">Lo mediste: de <span id="dd-slo">+21.8</span> a <span id="dd-shi">+28.6</span> según el tamaño. La inmediatez se
         paga, y a más tamaño, más peaje.</div>
       </div>
       <div class="q" data-ok="0">
@@ -874,6 +874,9 @@ $('#v-limit').innerHTML=`llenó <b>${D.variants.limit.filled}</b> · descansan <
 $('#v-ioc').innerHTML=`llenó <b>${D.variants.ioc.filled}</b> · descansa <b>0</b>`;
 $('#v-fok').innerHTML=`llenó <b style="color:var(--ask)">${D.variants.fok.filled}</b> · ${D.variants.fok.nfills} fills`;
 })();
+
+/* números data-driven */
+(function(){const s=DOC_DATA.sweeps;const put=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};put('dd-slo','+'+s[0].slip);put('dd-shi','+'+s[s.length-1].slip);})();
 
 </script>
 </body>

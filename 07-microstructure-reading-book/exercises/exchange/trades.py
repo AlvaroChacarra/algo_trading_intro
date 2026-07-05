@@ -1,6 +1,6 @@
 """trades.py — el resultado de cruzar una orden: un fill.
 
-Construido en L3 (OOP I). Hereda la idea de `Trade.cash_flow()` de las clases de
+Construido en L4 (OOP I). Hereda la idea de `Trade.cash_flow()` de las clases de
 fundamentos: una compra resta caja, una venta la suma.
 """
 

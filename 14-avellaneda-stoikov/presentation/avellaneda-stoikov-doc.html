@@ -620,7 +620,7 @@ q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
         <div class="opts">
           <button class="opt">A · Sube el PnL y el inventario</button>
           <button class="opt">B · No cambia nada</button>
-          <button class="opt">C · Baja el inventario máximo (1.9→0.7) y también el PnL (46→29)</button>
+          <button class="opt">C · Baja el inventario máximo (<span id="dd-swi">1.9→0.7</span>) y también el PnL (<span id="dd-swp">46→29</span>)</button>
         </div>
         <div class="why">La frontera riesgo/retorno, medida por tu simulador. γ es el dial
         del miedo.</div>
@@ -867,6 +867,14 @@ lab();
 /* barrido real */
 $('#sw-tab').textContent='γ        PnL final    máx |inv|\n'
   +D.sweep.map(s=>`${String(s.gamma).padEnd(7)}  ${String(s.pnl).padEnd(11)}  ${s.maxInv}`).join('\n');
+})();
+
+/* números data-driven */
+(function(){
+const s=DOC_DATA.sweep,a=s[0],b=s[s.length-1];
+const put=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+put('dd-swi',a.maxInv+'→'+b.maxInv);
+put('dd-swp',Math.round(a.pnl)+'→'+Math.round(b.pnl));
 })();
 
 </script>

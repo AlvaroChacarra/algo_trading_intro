@@ -78,3 +78,6 @@ $('#v-limit').innerHTML=`llenó <b>${D.variants.limit.filled}</b> · descansan <
 $('#v-ioc').innerHTML=`llenó <b>${D.variants.ioc.filled}</b> · descansa <b>0</b>`;
 $('#v-fok').innerHTML=`llenó <b style="color:var(--ask)">${D.variants.fok.filled}</b> · ${D.variants.fok.nfills} fills`;
 })();
+
+/* números data-driven */
+(function(){const s=DOC_DATA.sweeps;const put=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};put('dd-slo','+'+s[0].slip);put('dd-shi','+'+s[s.length-1].slip);})();

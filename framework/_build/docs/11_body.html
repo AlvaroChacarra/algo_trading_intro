@@ -10,7 +10,7 @@
 <header class="hero wrap" id="s0">
   <div class="eyebrow"><b>Algo Trading · ICAI 2026</b> &nbsp;·&nbsp; L11 · Medir &nbsp;·&nbsp; documento interactivo</div>
   <h1>¿Señal o <em>suerte</em>?</h1>
-  <p class="lede">Tu ImbalanceStrategy corrió ayer: 129 operaciones, equity final negativo.
+  <p class="lede">Tu ImbalanceStrategy corrió ayer: <span id="dd-n0">129</span> operaciones, equity final negativo.
   ¿Estrategia mala? ¿Mala suerte? ¿Mala <em>ejecución</em>? Hoy aprendes a responder como
   un profesional: <strong>contra benchmarks, no contra cero</strong>.</p>
 
@@ -42,7 +42,7 @@
     <div class="steps">
       <div class="step on" data-stage="0" data-name="la curva sola"><div class="step-inner">
         <h3><span class="n">0/4</span>Una curva sola no dice nada</h3>
-        <p>Equity final: −27.3. ¿Malo? Depende. ¿Comparado con qué? ¿Con qué riesgo?
+        <p>Equity final: <span id="dd-eq1">−27.3</span>. ¿Malo? Depende. ¿Comparado con qué? ¿Con qué riesgo?
         ¿Con qué coste? Sin contexto, una curva es una anécdota — el error nº 1 de todo
         el que empieza.</p>
       </div></div>
@@ -50,15 +50,15 @@
         <h3><span class="n">1/4</span>Juez 1: el mono con dardos</h3>
         <p>Misma munición (clips de 0.05, mismo límite de posición), <strong>cero
         señal</strong>: opera al azar. Tres monos con tres semillas: sus equities finales
-        van de −46 a +8.6.</p>
+        van de <span id="dd-mlo">−46</span> a <span id="dd-mhi">+8.6</span>.</p>
         <p>Lección brutal: <strong>la dispersión del azar es enorme</strong>. Un solo
         backtest bueno no prueba nada.</p>
       </div></div>
       <div class="step" data-stage="2" data-name="arrival mid"><div class="step-inner">
         <h3><span class="n">2/4</span>Juez 2: el arrival mid</h3>
         <p>El benchmark de ejecución: el mid en el momento de decidir. Cada market order
-        pagó de media <strong>+5.59</strong> sobre él. Por 129 fills de 0.05: el peaje de
-        ejecución se comió ~36 unidades — <strong>más que toda la pérdida</strong>.</p>
+        pagó de media <strong id="dd-slip1">+5.59</strong> sobre él. Por <span id="dd-n1">129</span> fills de 0.05: el peaje de
+        ejecución se comió <span id="dd-cost1">~36</span> unidades — <strong>más que toda la pérdida</strong>.</p>
       </div></div>
       <div class="step" data-stage="3" data-name="inventario"><div class="step-inner">
         <h3><span class="n">3/4</span>Juez 3: el inventario</h3>
@@ -134,7 +134,7 @@ coste ≈ slip_medio × n_fills × clip</pre>
       <pre><span class="ln"><span class="c"># slippage de cada fill contra el mid del momento de decidir</span></span><span class="ln">slips = [sign(f) * (f.price - mid_al_decidir) <span class="k">for</span> f <span class="k">in</span> fills]</span><span class="ln">coste_total = <span class="fn">sum</span>(slips) * clip_size</span></pre>
       <div class="predict predictgate" style="margin:0;border-radius:0;border-left:none;border-right:none;border-bottom:none">
         <div class="tag">Predice antes de ejecutar</div>
-        <p style="margin:.2em 0 .8em;font-size:.94rem">129 fills con slippage medio +5.59 y
+        <p style="margin:.2em 0 .8em;font-size:.94rem"><span id="dd-n2">129</span> fills con slippage medio <span id="dd-slip2">+5.59</span> y
         clip 0.05. ¿Cuánto costó ejecutar, aproximadamente?</p>
         <div class="btnrow" style="margin:0">
           <input type="text" placeholder="mi predicción…" aria-label="Tu predicción">
@@ -145,7 +145,7 @@ coste ≈ slip_medio × n_fills × clip</pre>
     </div>
 
     <div class="note"><span class="tag">La conclusión que cambia el curso</span>
-    La estrategia perdió −27.3 y solo la ejecución costó ~36. <strong>Sin el peaje, la señal
+    La estrategia perdió <span id="dd-eq2">−27.3</span> y solo la ejecución costó <span id="dd-cost2">~36</span>. <strong>Sin el peaje, la señal
     era ligeramente positiva.</strong> El problema nº 1 no era la idea: era ejecutar a lo
     bruto. Ejecutar bien ES una estrategia — y tiene clase propia: la siguiente.</div>
   </div>
@@ -175,13 +175,13 @@ coste ≈ slip_medio × n_fills × clip</pre>
         <div class="why">Positivo = pagaste de más. Para ventas, el signo se invierte.</div>
       </div>
       <div class="q" data-ok="2">
-        <div class="qt">La señal perdió −27.3, y solo la ejecución costó ~36. Conclusión:</div>
+        <div class="qt">La señal perdió <span id="dd-eq3">−27.3</span>, y solo la ejecución costó <span id="dd-cost3">~36</span>. Conclusión:</div>
         <div class="opts">
           <button class="opt">A · La señal es mala y hay que tirarla</button>
           <button class="opt">B · El backtest está roto</button>
           <button class="opt">C · El peaje de ejecución se comió el edge: primero arregla cómo ejecutas</button>
         </div>
-        <div class="why">Bruto ≈ +9 antes de costes. Una señal débil no sobrevive a una
+        <div class="why">Bruto ≈ <span id="dd-gross">+9</span> antes de costes. Una señal débil no sobrevive a una
         ejecución cara.</div>
       </div>
       <div class="q" data-ok="1">

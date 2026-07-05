@@ -1,6 +1,6 @@
 """backtest.py — el runner que lo cablea todo.
 
-Construido en L8-L9. Recorre el mercado, pasa cada libro a la estrategia,
+Construido en L10. Recorre el mercado, pasa cada libro a la estrategia,
 ejecuta sus acciones contra el matching, actualiza el portfolio y registra
 métricas. Es la pieza que demuestra el polimorfismo: el mismo `run()` funciona
 con cualquier `Strategy`.

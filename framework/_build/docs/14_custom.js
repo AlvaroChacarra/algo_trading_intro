@@ -42,3 +42,11 @@ lab();
 $('#sw-tab').textContent='γ        PnL final    máx |inv|\n'
   +D.sweep.map(s=>`${String(s.gamma).padEnd(7)}  ${String(s.pnl).padEnd(11)}  ${s.maxInv}`).join('\n');
 })();
+
+/* números data-driven */
+(function(){
+const s=DOC_DATA.sweep,a=s[0],b=s[s.length-1];
+const put=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+put('dd-swi',a.maxInv+'→'+b.maxInv);
+put('dd-swp',Math.round(a.pnl)+'→'+Math.round(b.pnl));
+})();

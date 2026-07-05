@@ -1,11 +1,11 @@
 """book.py — el libro de órdenes: el estado del mercado.
 
-Estructura construida en L4 (OOP II): un objeto que *contiene* niveles de
+Estructura construida en L5 (OOP II): un objeto que *contiene* niveles de
 precio. Es el primer sitio donde el alumno ve composición — el libro está hecho
 de otras piezas.
 
 Las métricas de lectura de mercado (spread, mid, imbalance, depth, microprice)
-se añaden en L5.
+se añaden en L5 y se afianzan en L7 con datos reales.
 """
 
 from __future__ import annotations
@@ -55,7 +55,7 @@ class OrderBook:
             [Level(lv.price, lv.size) for lv in self.asks],
         )
 
-    # ---- lectura de mercado (L5) ------------------------------------------
+    # ---- lectura de mercado (L5 y L7) --------------------------------------
 
     @property
     def best_bid(self) -> float | None:
@@ -107,7 +107,7 @@ class OrderBook:
         book_side = self.bids if side is Side.BUY else self.asks
         return sum(lv.size for lv in book_side[:levels])
 
-    # ---- mutación (L4 add/cancel; usado por el matching en L6) -------------
+    # ---- mutación (L5; usada por el matching en L8) ------------------------
 
     def add_limit(self, side: Side, price: float, size: float) -> None:
         """Inserta liquidez en un lado manteniendo el orden."""

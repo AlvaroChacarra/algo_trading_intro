@@ -1,6 +1,6 @@
 """orders.py — el objeto más básico del motor: una orden.
 
-Construido en L3 (OOP I). Continuación directa del `Order` de las clases de
+Construido en L4 (OOP I). Continuación directa del `Order` de las clases de
 fundamentos: mismos campos (symbol, side, price, size), ahora con tipo de orden
 y un id para poder cancelarla.
 

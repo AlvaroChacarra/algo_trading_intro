@@ -50,8 +50,8 @@
         <h3><span class="n">1/4</span>La orden entra en su momento</h3>
         <p>En el paso 50, la estrategia dispara una market buy de 0.5. El matching de L8
         hace su trabajo contra <em>ese</em> libro y devuelve los fills.</p>
-        <p>Mira el resultado real: <strong>no se llenó entera</strong> — la liquidez
-        visible de ese instante no daba para más, y una market no descansa.</p>
+        <p>Mira el resultado real: salió en <strong>dos fills a precios distintos</strong> —
+        el barrido de L8 en miniatura, ocurriendo dentro del loop. El nivel 1 no bastaba.</p>
       </div></div>
       <div class="step" data-stage="2" data-name="equity"><div class="step-inner">
         <h3><span class="n">2/4</span>La cuenta, tick a tick</h3>
@@ -166,14 +166,14 @@
         parte plana.</div>
       </div>
       <div class="q" data-ok="0">
-        <div class="qt">La market buy de 0.5 solo llenó ~0.2. ¿Por qué?</div>
+        <div class="qt">La market buy de 0.5 del paso 50 salió en DOS fills a precios distintos. ¿Por qué?</div>
         <div class="opts">
-          <button class="opt">A · La liquidez visible de ese instante no daba para más; el resto se cancela</button>
-          <button class="opt">B · El motor tiene un límite de 0.2</button>
-          <button class="opt">C · Quedó descansando en el libro</button>
+          <button class="opt">A · El mejor ask no tenía 0.5: barrió dos niveles — L8 dentro del loop</button>
+          <button class="opt">B · El motor parte las órdenes siempre en dos</button>
+          <button class="opt">C · Fue un error del snapshot</button>
         </div>
-        <div class="why">L8 en acción: una market no descansa. Te llevas lo que hay — otra
-        razón para trocear (L12).</div>
+        <div class="why">El matching de L8 no se apaga por estar dentro del loop: si el
+        nivel 1 no basta, se sube de escalón — y el precio efectivo empeora.</div>
       </div>
       <div class="q" data-ok="1">
         <div class="qt">Después del fill, la curva de equity "baila". ¿Qué baila exactamente?</div>

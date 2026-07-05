@@ -495,8 +495,8 @@
       </div></div>
       <div class="step" data-stage="4" data-name="el precio de la correa"><div class="step-inner">
         <h3><span class="n">4/4</span>La correa no es gratis</h3>
-        <p>Con skew, el inventario máximo cae de 1.4 a 0.3 — el monstruo, domado. Pero el
-        PnL también baja: de 37.4 a 23.6. <strong>Control de riesgo cuesta rentabilidad
+        <p>Con skew, el inventario máximo cae de <span id="dd-i0">1.4</span> a <span id="dd-i1">0.3</span> — el monstruo, domado. Pero el
+        PnL también baja: de <span id="dd-p0">37.4</span> a <span id="dd-p1">23.6</span>. <strong>Control de riesgo cuesta rentabilidad
         esperada.</strong> ¿Cuánta correa poner? Eso es un problema de optimización… y
         tiene solución con nombre propio: mañana.</p>
       </div></div>
@@ -568,7 +568,7 @@ bid = 98.80   ask = 100.00
     </div>
 
     <div class="note"><span class="tag">El trade-off del día</span>
-    Sin correa: más PnL final <em>esta vez</em>, pero inventarios de ±1.4 — habrías
+    Sin correa: más PnL final <em>esta vez</em>, pero inventarios de ±<span id="dd-i3">1.4</span> — habrías
     sudado cada tick. Con correa: PnL menor pero un libro tranquilo. No hay respuesta
     "correcta": hay un dial de <strong>aversión al riesgo</strong>. Ponerle número a ese
     dial es exactamente la clase de mañana (γ).</div>
@@ -649,7 +649,7 @@ bid = 98.80   ask = 100.00
         (no acumulas).</div>
       </div>
       <div class="q" data-ok="0">
-        <div class="qt">En la simulación, el skew bajó el inventario máximo (1.4→0.3) y TAMBIÉN el PnL (37→24). Eso demuestra…</div>
+        <div class="qt">En la simulación, el skew bajó el inventario máximo (<span id="dd-i2">1.4→0.3</span>) y TAMBIÉN el PnL (<span id="dd-p2">37→24</span>). Eso demuestra…</div>
         <div class="opts">
           <button class="opt">A · El trade-off riesgo/retorno: la correa cuesta PnL esperado</button>
           <button class="opt">B · Que el skew es un error</button>
@@ -862,6 +862,17 @@ function show(on){
 $('#mm-on').addEventListener('click',()=>show(true));
 $('#mm-off').addEventListener('click',()=>show(false));
 show(false);
+})();
+
+/* números data-driven */
+(function(){
+const D=DOC_DATA;
+const vals={'dd-i0':D.noskew.maxInv,'dd-i1':D.skew.maxInv,
+ 'dd-p0':D.noskew.finalPnl,'dd-p1':D.skew.finalPnl,
+ 'dd-i2':D.noskew.maxInv+'→'+D.skew.maxInv,
+ 'dd-p2':Math.round(D.noskew.finalPnl)+'→'+Math.round(D.skew.finalPnl),
+ 'dd-i3':D.noskew.maxInv};
+Object.entries(vals).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.textContent=v;});
 })();
 
 </script>

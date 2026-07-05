@@ -2,16 +2,16 @@
 (function(){
 "use strict";
 const $=s=>document.querySelector(s);
-const D=DOC_DATA, E=D.equity, F=D.fill;
+const D=DOC_DATA, E=D.equity, FS=D.fills, F=FS[0];
 const mark={i:F.i,v:E[F.i]};
 
 $('#l9-fill').innerHTML=
 `<span class="c"># paso ${F.i+1}: la estrategia dispara</span>
 fills = market.submit(Order(<span class="s">'BTCUSDT'</span>, <span class="s">'buy'</span>, <span class="num">0.5</span>, MARKET))
 
-<span class="c"># resultado real:</span>
-Fill(buy <span class="num">${F.size.toFixed(4)}</span> @ <span class="num">${F.price}</span>)
-<span style="color:var(--warn)">llenado parcial: la market no descansa</span>`;
+<span class="c"># resultado real (${FS.length} fills):</span>
+${FS.map(f=>`Fill(buy <span class="num">${f.size.toFixed(4)}</span> @ <span class="num">${f.price}</span>)`).join('\n')}
+<span style="color:var(--warn)">el nivel 1 no bastaba: mini-barrido de L8</span>`;
 
 const fig=document.querySelector('.scrolly .fig');
 fig.addEventListener('stagechange',e=>{
@@ -37,7 +37,7 @@ $('#pl-play').addEventListener('click',()=>{
     DOC.chart('#pl-chart',[{data:E,color:'#22d3ee',upTo:i,endDot:true}],
       {zero:true,marks:i>F.i?[mark]:[]});
     $('#pl-log').textContent=`» paso ${i}/${E.length} · equity = ${E[i-1]}`
-      +(i>F.i?`   (fill en el paso ${F.i+1}: ${F.size.toFixed(4)} @ ${F.price})`:'');
+      +(i>F.i?`   (${FS.length} fills en el paso ${F.i+1}, total ${D.filled})`:'');
     if(i>=E.length){stop();$('#pl-play').disabled=false;
       $('#pl-log').textContent=`» día completo · equity final = ${D.finalEquity} con posición ${D.finalPos}`;}
   },28);

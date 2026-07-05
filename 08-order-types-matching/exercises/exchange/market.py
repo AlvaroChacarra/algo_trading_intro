@@ -1,6 +1,6 @@
 """market.py — el loop de simulación.
 
-Construido en L7. Reproduce snapshots en orden, reconstruye el libro en cada
+Construido en L9. Reproduce snapshots en orden, reconstruye el libro en cada
 paso y acepta órdenes de la estrategia. Es la pieza que pone en marcha el
 tiempo: book + matching + el flujo de órdenes ocurren aquí.
 """

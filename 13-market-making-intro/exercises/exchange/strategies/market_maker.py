@@ -1,11 +1,11 @@
 """market_maker.py — market making sobre el framework.
 
-Construido en L12-L14.
+Construido en L13-L14.
 
-L12 (MarketMaker): cotiza bid y ask alrededor del mid con un skew lineal por
+L13 (MarketMaker): cotiza bid y ask alrededor del mid con un skew lineal por
 inventario — cuanto más largo estás, más bajas las cotizaciones para soltar.
 
-L13-L14 (AvellanedaStoikov): sustituye el skew heurístico por el reservation
+L14 (AvellanedaStoikov): sustituye el skew heurístico por el reservation
 price y el optimal spread del modelo de Avellaneda-Stoikov, que salen de
 maximizar utilidad CARA bajo riesgo de inventario.
 """

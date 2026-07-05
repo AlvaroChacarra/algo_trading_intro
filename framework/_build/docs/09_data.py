@@ -10,7 +10,7 @@ class BuyAt(Strategy):
         self.step = step
         self.size = size
         self._t = 0
-        self.fill_info = None
+        self.fills = []
 
     def on_book_update(self, book):
         self._t += 1
@@ -20,8 +20,8 @@ class BuyAt(Strategy):
         return []
 
     def on_fill(self, fill):
-        self.fill_info = {"i": self._t - 1, "price": round(fill.price, 2),
-                          "size": fill.size}
+        self.fills.append({"i": self._t - 1, "price": round(fill.price, 2),
+                           "size": round(fill.size, 4)})
 
 
 def build() -> dict:
@@ -29,7 +29,8 @@ def build() -> dict:
     res = Backtest(Market.sample(), strat).run()
     return {
         "equity": [round(x, 2) for x in res.equity_curve],
-        "fill": strat.fill_info,
+        "fills": strat.fills,
+        "filled": round(sum(f["size"] for f in strat.fills), 4),
         "steps": res.n_steps, "nFills": res.n_fills,
         "finalEquity": round(res.final_equity, 2),
         "finalPos": round(res.final_position, 4),

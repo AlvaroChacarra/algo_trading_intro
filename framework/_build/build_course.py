@@ -27,6 +27,7 @@ from lessons_foundations import LESSONS as L_FOUND  # noqa: E402
 from lessons_engine import LESSONS as L_ENG  # noqa: E402
 from lessons_strategies import LESSONS as L_STRAT  # noqa: E402
 from lessons_docs import DOCS as _RAW_DOCS, EXTRA_DOCS  # noqa: E402
+from lessons_scripts import EXTRA_SCRIPTS  # noqa: E402
 
 # Los DOCS se escribieron con la numeración previa (4 fundamentos). Tras pasar a
 # 6 fundamentos, se remapean a la `n` actual; old 11 (VWAP II) y old 14 (A-S II)
@@ -188,7 +189,7 @@ def claude_md(lesson: dict, has_pkg: bool) -> str:
             f"El contenido se genera desde `framework/_build/` — para editar esta clase, edita su "
             f"spec y regenera con `build_course.py`. No edites a mano los notebooks.\n\n"
             f"## Continuidad\n\n"
-            f"{'El paquete `exchange/` llega con lo construido hasta la clase anterior; hoy se añade la pieza nueva, que se convierte en el starter de la siguiente.' if has_pkg else 'Aún sin paquete: las clases se construyen en celdas del notebook (estilo L1-L2). El vocabulario de hoy se convierte en los atributos de las clases en L3.'}\n")
+            f"{'El paquete `exchange/` llega con lo construido hasta la clase anterior; hoy se añade la pieza nueva, que se convierte en el starter de la siguiente.' if has_pkg else 'Aún sin paquete: el código se construye en celdas del notebook. El vocabulario de hoy se convierte en los atributos de las clases en L4.'}\n")
 
 
 def guion_md(lesson: dict) -> str:
@@ -275,22 +276,30 @@ def emit(lesson: dict) -> None:
             f.write(content)
 
     # .py consolidado: que el alumno vea código en un archivo, no solo en celdas
-    if lesson.get("script"):
-        sname = lesson["script_name"]
+    sname = lesson.get("script_name")
+    script = lesson.get("script")
+    if not script and lesson["n"] in EXTRA_SCRIPTS:
+        sname, script = EXTRA_SCRIPTS[lesson["n"]]
+    if script:
         with open(os.path.join(exer, sname), "w") as f:
-            f.write(lesson["script"])
+            f.write(script)
+        if lesson["n"] <= 3:
+            bridge = ("> En la **clase 4** este código dará el salto a **clases** (POO): "
+                      "el mismo código, mejor organizado.")
+        else:
+            bridge = ("> Es la misma pieza que vive en el paquete `exchange/` — aquí, "
+                      "condensada en un archivo que puedes leer de una sentada.")
         build_nb["cells"] += [
             nbgen.md(
                 "## 🚀 Llévatelo a un `.py`\n\n"
                 "Un notebook va genial para explorar, pero el código de verdad vive en archivos "
                 f"`.py` que se ejecutan enteros de una vez. Abre **`{sname}`**: es lo que acabas de "
-                "construir, ordenado en funciones reutilizables.\n\n"
+                "construir, ordenado y de una pieza.\n\n"
                 "Ejecútalo desde una terminal:\n\n"
                 f"```bash\npython {sname}\n```\n\n"
                 "…o aquí mismo, en la siguiente celda:"),
             nbgen.code(f"!python {sname}"),
-            nbgen.md("> En la **clase 3** esas funciones darán el salto a **clases** (POO): "
-                     "el mismo código, mejor organizado."),
+            nbgen.md(bridge),
         ]
     nbgen.write_notebook(os.path.join(exer, f"{lesson['n']:02d}_build_exercises.ipynb"), build_nb)
 

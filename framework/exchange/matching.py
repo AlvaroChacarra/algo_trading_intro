@@ -1,6 +1,6 @@
 """matching.py — cómo se cruzan las órdenes contra el libro.
 
-Construido en L6. Aquí el mercado deja de ser una foto y pasa a tener dinámica:
+Construido en L8. Aquí el mercado deja de ser una foto y pasa a tener dinámica:
 una orden entra, consume liquidez del lado contrario y genera fills.
 
 Tipos soportados:

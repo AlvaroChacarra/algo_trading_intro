@@ -55,3 +55,6 @@ const pct=Math.round(100*D.signalUps/D.signalTotal);
 $('#out-sig-val').textContent=
   `imbalance > 0.3 ocurrió ${D.signalTotal} veces · el mid subió después ${D.signalUps} (${pct}%)`;
 })();
+
+/* números data-driven */
+(function(){const el=document.getElementById('dd-sigpct');if(el)el.textContent='≈'+Math.round(100*DOC_DATA.signalUps/DOC_DATA.signalTotal)+'%';})();

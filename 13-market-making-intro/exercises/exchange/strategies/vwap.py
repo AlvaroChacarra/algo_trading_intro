@@ -1,11 +1,11 @@
 """vwap.py — ejecución VWAP sobre el framework.
 
-Construido en L10-L11. Reparte una cantidad objetivo a lo largo de la sesión
+Construido en L12. Reparte una cantidad objetivo a lo largo de la sesión
 siguiendo un perfil de volumen: en cada tick envía un trozo (market order)
 proporcional al volumen esperado de ese intervalo.
 
-L10: perfil estático (baseline TWAP / perfil medio).
-L11: el perfil se puede predecir de forma dinámica (extensión ML).
+Perfil estático (baseline TWAP / perfil medio) y, como extensión, el perfil
+dinámico predicho sobre la marcha (puente a ML).
 """
 
 from __future__ import annotations

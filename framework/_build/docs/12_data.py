@@ -1,7 +1,5 @@
 """Datos reales para el doc de L12: vender grande de golpe vs troceado
 (TWAP / VWAP), todo ejecutado por el motor de referencia."""
-import math
-
 from exchange.backtest import Backtest
 from exchange.market import Market
 from exchange.matching import MatchingEngine
@@ -22,8 +20,6 @@ def avg_price(fills) -> float:
 def run_vwap(profile, total, horizon):
     strat = VWAPStrategy("BTCUSDT", "sell", total, horizon, profile)
     res = Backtest(Market.sample(), strat).run()
-    executed, acc = [], 0.0
-    fills = iter(sorted(res.fills, key=lambda f: f.timestamp or 0))
     return res, round(avg_price(res.fills), 2)
 
 

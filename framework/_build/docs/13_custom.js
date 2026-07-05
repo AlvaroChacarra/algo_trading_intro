@@ -36,3 +36,14 @@ $('#mm-on').addEventListener('click',()=>show(true));
 $('#mm-off').addEventListener('click',()=>show(false));
 show(false);
 })();
+
+/* números data-driven */
+(function(){
+const D=DOC_DATA;
+const vals={'dd-i0':D.noskew.maxInv,'dd-i1':D.skew.maxInv,
+ 'dd-p0':D.noskew.finalPnl,'dd-p1':D.skew.finalPnl,
+ 'dd-i2':D.noskew.maxInv+'→'+D.skew.maxInv,
+ 'dd-p2':Math.round(D.noskew.finalPnl)+'→'+Math.round(D.skew.finalPnl),
+ 'dd-i3':D.noskew.maxInv};
+Object.entries(vals).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.textContent=v;});
+})();

@@ -59,3 +59,17 @@ paint();
 $('#out-cost-val').textContent=
   `${D.avgSlip} × ${D.nSlips} × 0.05 ≈ ${cost.toFixed(1)}   # vs pérdida total de ${Math.abs(SIG.finalEquity)}`;
 })();
+
+/* números data-driven: una sola fuente de verdad (DOC_DATA) */
+(function(){
+const D=DOC_DATA,SIG=D.signal;
+const cost=D.avgSlip*D.nSlips*0.05,gross=SIG.finalEquity+cost;
+const vals={'dd-n0':D.nSlips,'dd-eq1':SIG.finalEquity,
+ 'dd-mlo':Math.min(...D.monoFinals).toFixed(0),'dd-mhi':'+'+Math.max(...D.monoFinals).toFixed(1),
+ 'dd-slip1':'+'+D.avgSlip,'dd-n1':D.nSlips,'dd-cost1':'~'+cost.toFixed(0),
+ 'dd-n2':D.nSlips,'dd-slip2':'+'+D.avgSlip,
+ 'dd-eq2':SIG.finalEquity,'dd-cost2':'~'+cost.toFixed(0),
+ 'dd-eq3':SIG.finalEquity,'dd-cost3':'~'+cost.toFixed(0),
+ 'dd-gross':(gross>=0?'+':'')+gross.toFixed(0)};
+Object.entries(vals).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.textContent=v;});
+})();
