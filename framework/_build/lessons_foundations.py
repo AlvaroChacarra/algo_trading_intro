@@ -511,7 +511,7 @@ LESSONS.append({
          "statement": "Vas a operar SOLUSDT. Si no está en `portfolio`, créalo con `{'position': 0.0, 'cash': 0.0}` — sin tocar los que ya existen.",
          "given": "portfolio = {\n    'BTCUSDT': {'position': 0.5, 'cash': -49975.0},\n    'ETHUSDT': {'position': 2.0, 'cash': -7000.0},\n}\n",
          "starter": "# comprueba y crea\n",
-         "validator": "assert portfolio['SOLUSDT'] == {'position': 0.0, 'cash': 0.0}\nassert portfolio['BTCUSDT']['position'] == 0.5, 'no toques lo existente'\nprint('ok')",
+         "validator": "assert 'SOLUSDT' in portfolio, '⏸ crea la entrada SOLUSDT antes de validar'\nassert portfolio['SOLUSDT'] == {'position': 0.0, 'cash': 0.0}\nassert portfolio['BTCUSDT']['position'] == 0.5, 'no toques lo existente'\nprint('ok')",
          "solution": "if 'SOLUSDT' not in portfolio:\n    portfolio['SOLUSDT'] = {'position': 0.0, 'cash': 0.0}"},
         {"title": "A12. Recorre el portfolio", "practice": "items()",
          "statement": "Cuenta en `n_active` cuántos símbolos tienen posición distinta de 0, recorriendo con `.items()`.",

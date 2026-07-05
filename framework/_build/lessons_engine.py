@@ -227,7 +227,7 @@ LESSONS.append({
         {"title": "A6. Slippage por tamaño", "practice": "coste vs tamaño",
          "statement": "Para tamaños 0.1, 1.0 y 5.0, calcula el precio efectivo de una market buy. Guarda la lista `eff_prices`. Debe ser creciente (más tamaño, peor precio).",
          "starter": "from exchange import Market, MatchingEngine, Order, Side, OrderType\neff_prices = []\n",
-         "validator": "assert eff_prices[0] <= eff_prices[1] <= eff_prices[2], 'más tamaño = peor precio'\nprint('ok', [round(p,1) for p in eff_prices])",
+         "validator": "assert len(eff_prices) == 3, '⏸ llena eff_prices con los 3 precios efectivos antes de validar'\nassert eff_prices[0] <= eff_prices[1] <= eff_prices[2], 'más tamaño = peor precio'\nprint('ok', [round(p,1) for p in eff_prices])",
          "solution": "from exchange import Market, MatchingEngine, Order, Side, OrderType\neng = MatchingEngine()\neff_prices = []\nfor size in (0.1, 1.0, 5.0):\n    book = Market.sample().step()\n    fills = eng.process(Order('BTCUSDT', Side.BUY, size, order_type=OrderType.MARKET), book)\n    eff_prices.append(sum(f.price*f.size for f in fills)/sum(f.size for f in fills))"},
     ],
 })

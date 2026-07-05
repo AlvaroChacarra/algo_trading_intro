@@ -31,13 +31,55 @@ def code(text: str, hidden: bool = False) -> dict:
 
 
 def _none_guard(ex: dict) -> str:
-    """Guarda anti-None: si el alumno valida sin haber tocado el starter, el
-    mensaje debe ser '⏸ completa el ejercicio', no un TypeError críptico."""
+    """Guarda '⏸ completa el ejercicio': si el alumno valida sin tocar el
+    starter, el mensaje debe ser pedagógico, no un TypeError críptico.
+
+    Cubre tres formas de starter sin hacer:
+      x = None                     -> assert x is not None
+      def f(...): pass             -> assert f.__code__.co_consts != (None,)
+      class C: pass / método pass  -> assert __init__/método implementado
+    """
+    import ast
     import re
-    names = re.findall(r"^([A-Za-z_]\w*)\s*=\s*None\b", ex.get("starter", ""), re.M)
-    lines = [f"assert {n} is not None, '⏸ {n} sigue en None: completa el ejercicio antes de validar'"
-             for n in list(dict.fromkeys(names))[:6] if f"{n} is not None" not in ex["validator"]]
-    return ("\n".join(lines) + "\n") if lines else ""
+
+    starter = ex.get("starter", "")
+    validator = ex["validator"]
+    lines: list[str] = []
+
+    for n in dict.fromkeys(re.findall(r"^([A-Za-z_]\w*)\s*=\s*None\b", starter, re.M)):
+        if f"{n} is not None" not in validator:
+            lines.append(f"assert {n} is not None, "
+                         f"'⏸ {n} sigue en None: completa el ejercicio antes de validar'")
+
+    def only_pass(fn) -> bool:
+        body = [s for s in fn.body if not isinstance(s, ast.Expr)]  # ignora docstrings
+        return len(body) == 1 and isinstance(body[0], ast.Pass)
+
+    try:
+        tree = ast.parse(starter)
+    except SyntaxError:
+        tree = None
+    if tree is not None:
+        for node in tree.body:
+            if isinstance(node, ast.FunctionDef) and only_pass(node):
+                lines.append(f"assert {node.name}.__code__.co_consts != (None,), "
+                             f"'⏸ implementa {node.name}: su cuerpo sigue siendo pass'")
+            elif isinstance(node, ast.ClassDef):
+                stmts = [s for s in node.body if not isinstance(s, ast.Expr)]
+                if len(stmts) == 1 and isinstance(stmts[0], ast.Pass):
+                    lines.append(f"assert '__init__' in vars({node.name}), "
+                                 f"'⏸ {node.name} está vacía: escribe su __init__ y sus métodos'")
+                    continue
+                for m in stmts:
+                    if isinstance(m, ast.FunctionDef) and only_pass(m):
+                        is_prop = any(isinstance(d, ast.Name) and d.id == "property"
+                                      for d in m.decorator_list)
+                        ref = (f"{node.name}.{m.name}.fget" if is_prop
+                               else f"{node.name}.{m.name}")
+                        lines.append(f"assert {ref}.__code__.co_consts != (None,), "
+                                     f"'⏸ implementa {node.name}.{m.name}: su cuerpo sigue siendo pass'")
+
+    return ("\n".join(lines[:6]) + "\n") if lines else ""
 
 
 def _exercise_cells(ex: dict) -> list[dict]:
