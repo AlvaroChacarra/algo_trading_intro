@@ -221,8 +221,7 @@ código del propio framework. Generador en `15-final-exam/generate_exam.py`.
 - **Autovalidación:** ningún ejercicio se publica sin pasar `build_course.py --check-only`.
 - **Estado:** **curso completo (2026.v1)**. L1–L14 producidas (documento interactivo + notebook +
   gimnasio + guion + `.py`) y L15 (examen). Ver el **estado final detallado en §8**.
-- **Anexo:** bonos y RFQ en `annex-bonds-rfq/` (opcional, fuera del arco). Ediciones anteriores
-  archivadas en `Comillas legacy/`.
+- **Anexo:** bonos y RFQ en `annex-bonds-rfq/` (opcional, fuera del arco).
 
 ---
 

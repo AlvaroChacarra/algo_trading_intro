@@ -62,7 +62,6 @@ data/                      dataset de snapshots del libro (ver data/README.md)
 framework/                 implementación de referencia y generador del curso
 15-final-exam/             examen, checkpoint y banco de preguntas
 annex-bonds-rfq/           material opcional (bonos y RFQ), fuera del arco principal
-Comillas legacy/           versiones anteriores del curso, archivadas
 ```
 
 ## Para el profesor

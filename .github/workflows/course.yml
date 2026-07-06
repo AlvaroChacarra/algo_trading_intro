@@ -52,11 +52,10 @@ jobs:
             echo '::error::El material generado no coincide con los specs. ¿Editaste un notebook/doc a mano? Edita el spec y regenera.';
             exit 1; }
 
-  # ── Job e2e: los 15 HTML abren sin errores (solo PRs; en rodaje) ─────────
+  # ── Job e2e: los 15 HTML abren sin errores (solo PRs) ────────────────────
   e2e:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    continue-on-error: true   # en calibración; quitar tras una semana estable
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
