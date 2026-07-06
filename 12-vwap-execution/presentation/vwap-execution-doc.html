@@ -493,6 +493,7 @@
   <a href="#s1"><span class="dot"></span><span class="lab">Trocear</span></a>
   <a href="#s2"><span class="dot"></span><span class="lab">El duelo</span></a>
   <a href="#s3"><span class="dot"></span><span class="lab">La estrategia</span></a>
+  <a href="#s3b"><span class="dot"></span><span class="lab">¿Predecir?</span></a>
   <a href="#s4"><span class="dot"></span><span class="lab">Quiz</span></a>
   <a href="#s5"><span class="dot"></span><span class="lab">El puente</span></a>
 </nav>
@@ -643,6 +644,37 @@
   </div>
 </section>
 
+<section id="s3b">
+  <div class="wrap">
+    <div class="eyebrow">§3½ · <b>¿Predecir el volumen?</b></div>
+    <h2>El perfil fijo asume el futuro. ¿Y si lo aprendiéramos?</h2>
+    <p class="lede">Un VWAP dinámico no usa una U de libro fija: <strong>predice</strong> el
+    volumen de la próxima barra con lo que acaba de ver —una <strong>media rolada</strong>— y
+    ajusta el trozo con un <strong>factor de corrección</strong>. Es el primer puente hacia el
+    machine learning. Probémoslo con el volumen <strong>real</strong> del replay.</p>
+
+    <div class="simcard">
+      <h4>volumen real (gris) vs predicción (cian)</h4>
+      <div class="toggle" style="margin-bottom:14px">
+        <button id="pv-static" class="on">estático · media global</button>
+        <button id="pv-roll">dinámico · media rolada (k=<span id="pv-k">3</span>)</button>
+      </div>
+      <canvas id="pv-chart" style="width:100%;height:150px;display:block"></canvas>
+      <div class="statgrid" id="pv-stats"></div>
+      <div class="looplog" id="pv-log" style="margin-top:10px"></div>
+    </div>
+
+    <div class="note"><span class="tag">La lectura honesta</span>
+    En este mercado la actividad es <strong>ruido casi plano</strong>: la media rolada predice
+    <em>peor</em> que la media global (más error medio), y ni con <strong>previsión perfecta</strong>
+    del volumen (el oráculo) se mejora la ejecución más que un pelo (<span id="pv-oracle"></span> bps).
+    No hay señal que explotar. El modelo dinámico solo gana cuando el volumen <em>sí</em> tiene
+    estructura —la U intradía real, ráfagas correlacionadas—. <strong>Saber cuándo NO añadir un
+    modelo es media carrera de quant.</strong> Lo construyes en el gimnasio (media rolada,
+    predicción y factor de corrección); aquí ves por qué, sobre estos datos, el perfil fijo ya gana.</div>
+  </div>
+</section>
+
 <section id="s4">
   <div class="wrap">
     <div class="eyebrow">§4 · <b>Fija lo de hoy</b></div>
@@ -739,7 +771,7 @@
 
 <footer>L12 · Ejecución VWAP — Algo Trading ICAI 2026 · documento interactivo</footer>
 
-<script>const DOC_DATA={"total":4.87,"mid0":100000.0,"sweepAvg":99974.51,"sweepFilled":4.87,"twapAvg":100025.74,"vwapAvg":100013.51,"bars":[0.0733,0.065,0.0574,0.0505,0.0443,0.0389,0.0342,0.0302,0.027,0.0244,0.0226,0.0215,0.0212,0.0215,0.0226,0.0244,0.027,0.0302,0.0342,0.0389,0.0443,0.0505,0.0574,0.065,0.0733],"sweepCostBps":2.55,"twapCostBps":-2.57,"vwapCostBps":-1.35};</script>
+<script>const DOC_DATA={"total":4.87,"mid0":100000.0,"sweepAvg":99974.51,"sweepFilled":4.87,"twapAvg":100025.74,"vwapAvg":100013.51,"bars":[0.0733,0.065,0.0574,0.0505,0.0443,0.0389,0.0342,0.0302,0.027,0.0244,0.0226,0.0215,0.0212,0.0215,0.0226,0.0244,0.027,0.0302,0.0342,0.0389,0.0443,0.0505,0.0574,0.065,0.0733],"sweepCostBps":2.55,"twapCostBps":-2.57,"vwapCostBps":-1.35,"vol":[14.28,14.68,14.21,14.7,14.84,13.87,14.47,13.74,14.55,13.33,14.59,14.16,14.65,14.9,13.91,13.38,14.21,14.1,14.55,13.69,15.26,13.3,13.93,13.14,14.53],"volMean":14.2,"staticPred":[14.2,14.2,14.2,14.2,14.2,14.2,14.2,14.2,14.2,14.2,14.2,14.2,14.2,14.2,14.2,14.2,14.2,14.2,14.2,14.2,14.2,14.2,14.2,14.2],"rollPred":[14.28,14.48,14.39,14.53,14.59,14.47,14.39,14.03,14.25,13.87,14.16,14.03,14.46,14.57,14.49,14.06,13.83,13.89,14.28,14.11,14.5,14.09,14.17,13.46],"rollK":3,"maeStatic":0.466,"maeRoll":0.58,"oracleAvg":100026.64,"oracleVsTwapBps":0.09};</script>
 <script>
 
 (function(){
@@ -992,6 +1024,38 @@ function show(key){
 $('#pw-twap').addEventListener('click',()=>show('twap'));
 $('#pw-vwap').addEventListener('click',()=>show('vwap'));
 show('twap');
+
+/* §3½ — predecir el volumen: honesto sobre datos estacionarios */
+(function(){
+  const vol=D.vol,k=D.rollK;
+  $('#pv-k').textContent=k;
+  $('#pv-oracle').textContent=D.oracleVsTwapBps;
+  // predicciones alineadas al eje X (longitud = nº de barras)
+  const staticLine=[vol[0]].concat(D.staticPred);
+  const rollLine=[vol[0]].concat(D.rollPred);
+  function draw(mode){
+    $('#pv-static').classList.toggle('on',mode==='static');
+    $('#pv-roll').classList.toggle('on',mode==='roll');
+    const pred=mode==='static'?staticLine:rollLine;
+    DOC.chart('#pv-chart',[
+      {data:vol,color:'#5b5b66',width:1.4},
+      {data:pred,color:'#22d3ee',width:2,endDot:true}
+    ]);
+    const mae=mode==='static'?D.maeStatic:D.maeRoll;
+    const other=mode==='static'?D.maeRoll:D.maeStatic;
+    const better=mae<=other;
+    $('#pv-stats').innerHTML=
+      `<div><span>error medio (MAE)</span><b class="${better?'pos':'neg'}">${mae}</b></div>
+       <div><span>el otro predictor</span><b>${other}</b></div>
+       <div><span>oráculo vs TWAP</span><b>${D.oracleVsTwapBps} bps</b></div>`;
+    $('#pv-log').textContent=mode==='static'
+      ? 'pred[i] = media(todo el histórico) = '+D.volMean+'    # el perfil fijo, imbatible aquí'
+      : 'pred[i] = media(vol[i-'+k+' : i])                    # se adapta… a ruido';
+  }
+  $('#pv-static').addEventListener('click',()=>draw('static'));
+  $('#pv-roll').addEventListener('click',()=>draw('roll'));
+  draw('static');
+})();
 })();
 
 </script>

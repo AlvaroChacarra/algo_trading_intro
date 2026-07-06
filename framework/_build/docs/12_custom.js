@@ -53,4 +53,36 @@ function show(key){
 $('#pw-twap').addEventListener('click',()=>show('twap'));
 $('#pw-vwap').addEventListener('click',()=>show('vwap'));
 show('twap');
+
+/* §3½ — predecir el volumen: honesto sobre datos estacionarios */
+(function(){
+  const vol=D.vol,k=D.rollK;
+  $('#pv-k').textContent=k;
+  $('#pv-oracle').textContent=D.oracleVsTwapBps;
+  // predicciones alineadas al eje X (longitud = nº de barras)
+  const staticLine=[vol[0]].concat(D.staticPred);
+  const rollLine=[vol[0]].concat(D.rollPred);
+  function draw(mode){
+    $('#pv-static').classList.toggle('on',mode==='static');
+    $('#pv-roll').classList.toggle('on',mode==='roll');
+    const pred=mode==='static'?staticLine:rollLine;
+    DOC.chart('#pv-chart',[
+      {data:vol,color:'#5b5b66',width:1.4},
+      {data:pred,color:'#22d3ee',width:2,endDot:true}
+    ]);
+    const mae=mode==='static'?D.maeStatic:D.maeRoll;
+    const other=mode==='static'?D.maeRoll:D.maeStatic;
+    const better=mae<=other;
+    $('#pv-stats').innerHTML=
+      `<div><span>error medio (MAE)</span><b class="${better?'pos':'neg'}">${mae}</b></div>
+       <div><span>el otro predictor</span><b>${other}</b></div>
+       <div><span>oráculo vs TWAP</span><b>${D.oracleVsTwapBps} bps</b></div>`;
+    $('#pv-log').textContent=mode==='static'
+      ? 'pred[i] = media(todo el histórico) = '+D.volMean+'    # el perfil fijo, imbatible aquí'
+      : 'pred[i] = media(vol[i-'+k+' : i])                    # se adapta… a ruido';
+  }
+  $('#pv-static').addEventListener('click',()=>draw('static'));
+  $('#pv-roll').addEventListener('click',()=>draw('roll'));
+  draw('static');
+})();
 })();

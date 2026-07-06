@@ -65,6 +65,18 @@ def test_l12_sweep_worse_than_sliced(data):
     assert sum(d["bars"]) == pytest.approx(1.0, abs=1e-3)
 
 
+def test_l12_dynamic_prediction_is_honest(data):
+    """La actividad del replay es estacionaria: el modelo rolado NO bate a la
+    media plana, y ni el volumen-oráculo mueve la ejecución. El doc lo cuenta
+    así; si el motor cambiara y esto dejara de ser cierto, hay que reescribirlo."""
+    d = data[12]
+    assert d["maeRoll"] >= d["maeStatic"], \
+        "sin autocorrelación, la media rolada no debe ganar a la media global"
+    assert abs(d["oracleVsTwapBps"]) < 2.0, \
+        "ni con previsión perfecta del volumen se gana apenas en un paseo aleatorio"
+    assert len(d["vol"]) == len(d["staticPred"]) + 1 == len(d["rollPred"]) + 1
+
+
 def test_l13_skew_tames_inventory(data):
     d = data[13]
     assert d["skew"]["maxInv"] < d["noskew"]["maxInv"]
