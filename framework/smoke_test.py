@@ -20,8 +20,7 @@ from exchange import (
 from exchange.strategies import AvellanedaStoikov, MarketMaker, VWAPStrategy
 
 CSV = os.path.join(
-    os.path.dirname(__file__), "..",
-    "04-market-microstructure-btc", "data", "btc_lob_snapshots.csv",
+    os.path.dirname(__file__), "..", "data", "btc_lob_snapshots.csv",
 )
 
 

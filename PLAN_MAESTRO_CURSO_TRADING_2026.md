@@ -219,17 +219,10 @@ código del propio framework. Generador en `15-final-exam/generate_exam.py`.
 
 - **Calidad:** las 15 con deck a medida nivel L1. Notebook + auxiliares + `.py` + mini-test en todas.
 - **Autovalidación:** ningún ejercicio se publica sin pasar `build_course.py --check-only`.
-- **Estado:** **L1–L14 producidas** (documento interactivo + notebook + gimnasio + guion + `.py`).
-  L15: examen interactivo generado (`generate_exam.py`: 40 preguntas, +1/−0.5, 40:00, corrección
-  automática y hoja del profesor).
-- **Proceso:**
-  1. Este plan (6 fundamentos, 15 clases) aprobado.
-  2. **Migración de numeración**: el motor/framework/VWAP/MM se desplazan (ver §5). Las carpetas y
-     los specs del generador se renumeran al producir cada clase (L1/L2 no cambian).
-  3. **Siguiente a producir: L3 (Python III — Módulos)**, la primera clase nueva, que convierte el
-     `order_book.py` de L2 en un módulo importable.
-  4. Después, L4–L6 (OOP) y el resto en orden, comprimiendo VWAP (L12) y A-S (L14) según §5.
-- **Anexo:** bonos y RFQ en `annex-bonds-rfq/` (opcional, fuera del arco).
+- **Estado:** **curso completo (2026.v1)**. L1–L14 producidas (documento interactivo + notebook +
+  gimnasio + guion + `.py`) y L15 (examen). Ver el **estado final detallado en §8**.
+- **Anexo:** bonos y RFQ en `annex-bonds-rfq/` (opcional, fuera del arco). Ediciones anteriores
+  archivadas en `Comillas legacy/`.
 
 ---
 
@@ -243,4 +236,39 @@ código del propio framework. Generador en `15-final-exam/generate_exam.py`.
 - *Romper la continuidad* → la cadena de puentes (§3) y el paquete acumulado son el control.
 - *Sobre-ingeniería* → código simple para iniciados; el generador autovalida; firmas cerradas en
   `framework/exchange/`.
-- *Pyodide en aula sin wifi* → las diapositivas explicativas funcionan sin Python.
+- *Aula sin wifi* → los documentos son **autocontenidos y offline**: fuentes embebidas y los
+  números salen de correr el motor en tiempo de compilación (no hay Pyodide ni CDNs).
+
+---
+
+## 8. Estado final de producción (curso 2026.v1)
+
+Las 15 clases están producidas y el curso se cerró con una capa de infraestructura por encima
+del blueprint original:
+
+**Formato de los documentos.** Se sustituyó el deck por un **documento interactivo corrido**
+(`presentation/*-doc.html`) en las 14 clases, autocontenido y sin internet: scrollytelling,
+simuladores alimentados por el **motor real en tiempo de compilación** (`docs/NN_data.py::build()`,
+nada inventado), quiz de diagnóstico y guion embebido. `?profe=1` abre el cajón del guion; hay
+modo impresión ("apuntes") y navegación por teclado en los scrollys.
+
+**Seguimiento del alumno.**
+- `index.html` raíz: mapa del curso con **progreso local** (scroll + nota del quiz por clase, en `localStorage`).
+- **Checkpoint** tras L6 (`06-.../checkpoint.html`): 20 preguntas de L1-L6, autoevaluación de la base.
+- **Capstone** en L14 (`CAPSTONE.md` + `mi_estrategia.py` + `capstone_check.py` + `leaderboard.py`):
+  proyecto abierto con baremo público 30/40/30 y código de resultado verificable.
+- `check_my_work.py`: corrección de cualquier cuaderno desde la terminal.
+
+**Ejercicios (~270, todos autovalidados).** Cada uno declara **nivel** (🟢 núcleo · 🔵 si vamos
+bien · 🟣 bonus) y minutos; los más densos traen **pista intermedia**; cada gimnasio cierra con un
+**ejercicio de transferencia** que lleva la primitiva a un dominio ajeno al trading.
+
+**Examen (L15).** Banco único (`question_bank.py`, 80 preguntas) con muestreo equilibrado por
+tema; `generate_exam.py --seed N` produce variantes para convocatorias alternativas. Códigos de
+resultado con checksum, validados por `verify_result.py`.
+
+**Red de seguridad.** `framework/tests/` (motor, doc-data, examen, capstone), `smoke_test.py`
+end-to-end sobre el CSV real, `e2e_check.js` (los 15 docs + índice abren sin errores), y CI que
+regenera y comprueba que nada se editó a mano (`git diff --exit-code`).
+
+**Datos.** Dataset sintético y reproducible de snapshots del libro (ver `data/README.md`).
