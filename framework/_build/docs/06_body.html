@@ -1,0 +1,381 @@
+<!-- ══════════════ RAIL ══════════════ -->
+<nav id="rail" aria-label="Progreso">
+  <a href="#s0" class="on"><span class="dot"></span><span class="lab">El reto</span></a>
+  <a href="#s1"><span class="dot"></span><span class="lab">La familia</span></a>
+  <a href="#s2"><span class="dot"></span><span class="lab">Construye la base</span></a>
+  <a href="#s3"><span class="dot"></span><span class="lab">Polimorfismo vivo</span></a>
+  <a href="#s4"><span class="dot"></span><span class="lab">El contrato ABC</span></a>
+  <a href="#s5"><span class="dot"></span><span class="lab">Quiz</span></a>
+  <a href="#s6"><span class="dot"></span><span class="lab">El puente</span></a>
+</nav>
+
+<!-- ══════════════ §0 HERO ══════════════ -->
+<header class="hero wrap" id="s0">
+  <div class="eyebrow"><b>Algo Trading · ICAI 2026</b> &nbsp;·&nbsp; L6 · OOP III &nbsp;·&nbsp; documento interactivo</div>
+  <h1>Una familia de <em>estrategias</em></h1>
+  <p class="lede">Este curso acaba contigo escribiendo tu propia estrategia y enchufándola
+  a un motor. Ese enchufe se fabrica hoy. El problema: vas a escribir <em>muchas</em>
+  estrategias… y todas comparten esqueleto.</p>
+
+  <div class="code">
+    <div class="code-head"><span>el pecado de siempre, ahora con clases</span><span>python</span></div>
+    <pre><span class="ln"><span class="k">class</span> MomentumStrategy:</span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, name): self.name = name   <span class="c"># igual…</span></span><span class="ln">    <span class="k">def</span> <span class="fn">decide</span>(self, book): <span class="k">return</span> <span class="s">'buy'</span></span><span class="ln"></span><span class="ln"><span class="k">class</span> MeanRevStrategy:</span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, name): self.name = name   <span class="c"># …que aquí</span></span><span class="ln">    <span class="k">def</span> <span class="fn">decide</span>(self, book): <span class="k">return</span> <span class="s">'sell'</span></span></pre>
+  </div>
+
+  <div class="challenge">
+    <div class="tag">El reto de hoy</div>
+    <p>Solo cambia <strong>la decisión</strong>; el esqueleto se repite. Copiarlo N veces es
+    el mismo pecado de L2 — y ya sabes cómo huele.</p>
+    <p>Hoy aprendes las tres piezas que lo curan: <strong>herencia</strong> (una base con el
+    esqueleto), <strong>polimorfismo</strong> (una llamada, muchas respuestas) y la
+    <strong>ABC</strong> (el contrato que impide subclases a medio hacer). Es la semilla del
+    framework de estrategias de L10.</p>
+  </div>
+
+  <div class="meta">
+    <span><b>~40 min</b> lectura + práctica</span>
+    <span><b>7</b> secciones</span>
+    <span><b>2</b> simuladores</span>
+    <span>lo <b style="color:var(--accent)">cian</b> se toca</span>
+  </div>
+</header>
+
+<!-- ══════════════ §1 SCROLLY — LA FAMILIA ══════════════ -->
+<section id="s1">
+  <div class="wrap">
+    <div class="eyebrow">§1 · <b>La idea central</b></div>
+    <h2>El árbol genealógico</h2>
+    <p class="lede">Sigue bajando: el panel planta la clase base y hace crecer la familia
+    hasta el momento estrella — el bucle que las trata a todas por igual.</p>
+  </div>
+
+  <div class="scrolly" data-scrolly>
+    <div class="steps">
+      <div class="step on" data-stage="0" data-name="el dolor"><div class="step-inner">
+        <h3><span class="n">0/5</span>Dos clases gemelas</h3>
+        <p>Mira el panel: el <code>__init__</code> es idéntico, la estructura es idéntica.
+        Con 10 estrategias tendrás 10 copias — y el día que el esqueleto cambie, 10 sitios
+        que tocar.</p>
+      </div></div>
+      <div class="step" data-stage="1" data-name="la base"><div class="step-inner">
+        <h3><span class="n">1/5</span>La base: <code>Strategy</code></h3>
+        <p>El esqueleto se escribe <strong>una vez</strong>, en una clase madre: el
+        <code>__init__</code> común y un <code>decide(book)</code> por defecto (el más
+        prudente: <code>'hold'</code>).</p>
+      </div></div>
+      <div class="step" data-stage="2" data-name="heredar"><div class="step-inner">
+        <h3><span class="n">2/5</span>Heredar: todo gratis</h3>
+        <p><code>class Momentum(Strategy)</code> — ese paréntesis es la herencia. La hija
+        nace con <strong>todo lo de la madre</strong>: su <code>__init__</code>, su
+        <code>decide</code>, sus futuros métodos.</p>
+        <p>Una subclase vacía ya funciona. Aburrida, pero funciona.</p>
+      </div></div>
+      <div class="step" data-stage="3" data-name="override"><div class="step-inner">
+        <h3><span class="n">3/5</span>Override: cambia solo lo tuyo</h3>
+        <p>La hija redefine <code>decide()</code> y <strong>su versión gana</strong>. El
+        resto sigue heredado. Este es el reparto perfecto: el esqueleto en un sitio, la
+        personalidad en cada hija.</p>
+      </div></div>
+      <div class="step" data-stage="4" data-name="polimorfismo"><div class="step-inner">
+        <h3><span class="n">4/5</span>El momento estrella: polimorfismo</h3>
+        <p>Un bucle recorre una lista de estrategias <em>distintas</em> y a todas les dice
+        lo mismo: <code>s.decide(book)</code>. <strong>Cada una responde a su manera.</strong></p>
+        <p>El bucle no sabe ni le importa qué clase es cada una. Ese desacople es lo que
+        hará enchufable el motor.</p>
+      </div></div>
+      <div class="step" data-stage="5" data-name="ABC"><div class="step-inner">
+        <h3><span class="n">5/5</span>El contrato: ABC</h3>
+        <p>¿Y si alguien escribe una estrategia <em>sin</em> <code>decide()</code>? Con
+        una clase base normal, el error explota tarde, en mitad del backtest. Con
+        <code>@abstractmethod</code>, Python <strong>ni siquiera deja crear</strong> el
+        objeto incompleto. El error se adelanta al mejor momento posible: ya.</p>
+      </div></div>
+    </div>
+
+    <div class="figwrap"><div class="fig">
+      <div class="fig-head"><span>la familia Strategy</span><span class="stage-name">el dolor</span></div>
+      <div class="fig-stage on" data-stage="0">
+        <pre style="font-family:var(--mono);font-size:.74rem;line-height:1.9;margin:6px 0 0">
+<span class="k">class</span> <span style="color:var(--num)">MomentumStrategy</span>:
+    <span style="color:var(--ask)">def __init__(self, name): …</span>
+    <span class="k">def</span> <span class="fn">decide</span>(self, book): …
+
+<span class="k">class</span> <span style="color:var(--num)">MeanRevStrategy</span>:
+    <span style="color:var(--ask)">def __init__(self, name): …</span>  <span class="c">← copia</span>
+    <span class="k">def</span> <span class="fn">decide</span>(self, book): …</pre>
+        <p style="color:var(--faint);font-size:.8rem;margin-top:16px">solo la decisión es
+        distinta; el resto es deuda duplicada</p>
+      </div>
+      <div class="fig-stage" data-stage="1">
+        <div class="treebox" style="text-align:center;margin-top:10px">
+          <span class="nodebox hl">Strategy</span>
+        </div>
+        <pre style="font-family:var(--mono);font-size:.76rem;line-height:1.95;margin:16px 0 0">
+<span class="k">class</span> <span style="color:var(--num)">Strategy</span>:
+    <span class="k">def</span> <span class="fn">__init__</span>(self, name):
+        self.name = name
+    <span class="k">def</span> <span class="fn">decide</span>(self, book):
+        <span class="k">return</span> <span class="s">'hold'</span>   <span class="c"># lo prudente</span></pre>
+      </div>
+      <div class="fig-stage" data-stage="2">
+        <div class="treebox" style="text-align:center;margin-top:8px">
+          <span class="nodebox">Strategy</span><br>
+          <span style="color:var(--faint)">│</span><br>
+          <span class="nodebox hl">Momentum</span>
+        </div>
+        <pre style="font-family:var(--mono);font-size:.76rem;line-height:1.95;margin:14px 0 0">
+<span class="k">class</span> <span style="color:var(--num)">Momentum</span>(Strategy):
+    <span class="k">pass</span>            <span class="c"># vacía…</span>
+
+m = Momentum(<span class="s">'mi primera'</span>)
+m.decide(book)  <span class="c"># 'hold' — heredado</span></pre>
+      </div>
+      <div class="fig-stage" data-stage="3">
+        <div class="treebox" style="text-align:center;margin-top:8px">
+          <span class="nodebox">Strategy · decide→'hold'</span><br>
+          <span style="color:var(--faint)">┌────┴────┐</span><br>
+          <span class="nodebox hl">Momentum · decide→suyo</span> <span class="nodebox">MeanRev</span>
+        </div>
+        <pre style="font-family:var(--mono);font-size:.76rem;line-height:1.95;margin:14px 0 0">
+<span class="k">class</span> <span style="color:var(--num)">Momentum</span>(Strategy):
+    <span class="k">def</span> <span class="fn">decide</span>(self, book):   <span class="c"># override</span>
+        <span class="k">if</span> book.imbalance() &gt; <span class="num">0.6</span>:
+            <span class="k">return</span> <span class="s">'buy'</span>
+        <span class="k">return</span> <span class="s">'hold'</span></pre>
+      </div>
+      <div class="fig-stage" data-stage="4">
+        <pre style="font-family:var(--mono);font-size:.76rem;line-height:1.95;margin:4px 0 0">
+familia = [Momentum(<span class="s">'m1'</span>),
+           MeanRev(<span class="s">'r1'</span>),
+           Strategy(<span class="s">'base'</span>)]
+
+<span class="k">for</span> s <span class="k">in</span> familia:
+    <span class="fn">print</span>(s.name, <span class="s">'→'</span>, s.decide(book))</pre>
+        <pre style="font-family:var(--mono);font-size:.78rem;line-height:1.9;margin:12px 0 0">
+m1   → <span style="color:var(--bid)">buy</span>
+r1   → <span style="color:var(--ask)">sell</span>
+base → <span style="color:var(--muted)">hold</span></pre>
+        <p style="color:var(--faint);font-size:.8rem;margin-top:10px">misma llamada, tres
+        respuestas — el bucle no pregunta clases</p>
+      </div>
+      <div class="fig-stage" data-stage="5">
+        <pre style="font-family:var(--mono);font-size:.74rem;line-height:1.9;margin:4px 0 0">
+<span class="k">from</span> abc <span class="k">import</span> ABC, abstractmethod
+
+<span class="k">class</span> <span style="color:var(--kw)">Strategy</span>(ABC):
+    <span style="color:var(--warn)">@abstractmethod</span>
+    <span class="k">def</span> <span class="fn">decide</span>(self, book): ...
+
+<span class="k">class</span> <span style="color:var(--num)">Incompleta</span>(Strategy):
+    <span class="k">pass</span>   <span class="c"># sin decide()</span>
+
+Incompleta(<span class="s">'x'</span>)</pre>
+        <pre style="font-family:var(--mono);font-size:.72rem;line-height:1.8;margin:10px 0 0"><span style="color:var(--ask)">TypeError</span>: Can't instantiate abstract class
+Incompleta with abstract method decide</pre>
+      </div>
+    </div></div>
+  </div>
+</section>
+
+<!-- ══════════════ §2 CONSTRUYE ══════════════ -->
+<section id="s2">
+  <div class="wrap">
+    <div class="eyebrow">§2 · <b>Construye</b></div>
+    <h2>La base, una hija y <code>super()</code></h2>
+
+    <div class="code">
+      <div class="code-head"><span>strategies_toy.py</span><span>python</span></div>
+      <pre><span class="ln"><span class="k">class</span> Strategy:</span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, name):</span><span class="ln">        self.name = name</span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">decide</span>(self, book):</span><span class="ln">        <span class="k">return</span> <span class="s">'hold'</span></span><span class="ln"></span><span class="ln"><span class="k">class</span> Umbral(Strategy):</span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, name, threshold):</span><span class="ln">        <span class="fn">super</span>().<span class="fn">__init__</span>(name)   <span class="c"># la madre guarda name</span></span><span class="ln">        self.threshold = threshold  <span class="c"># la hija añade lo suyo</span></span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">decide</span>(self, book):</span><span class="ln">        <span class="k">if</span> book.imbalance() &gt; self.threshold:</span><span class="ln">            <span class="k">return</span> <span class="s">'buy'</span></span><span class="ln">        <span class="k">return</span> <span class="s">'hold'</span></span><span class="ln"></span><span class="ln">u = Umbral(<span class="s">'u1'</span>, <span class="num">0.6</span>)</span><span class="ln">v = Strategy(<span class="s">'base'</span>)</span><span class="ln"><span class="c"># book.imbalance() vale 0.70 ahora mismo</span></span><span class="ln"><span class="fn">print</span>(u.decide(book), v.decide(book))</span></pre>
+      <div class="predict predictgate" style="margin:0;border-radius:0;border-left:none;border-right:none;border-bottom:none">
+        <div class="tag">Predice antes de ejecutar</div>
+        <p style="margin:.2em 0 .8em;font-size:.94rem">Con imbalance 0.70: ¿qué imprime la
+        última línea? (dos palabras)</p>
+        <div class="btnrow" style="margin:0">
+          <input type="text" placeholder="mi predicción…" aria-label="Tu predicción">
+          <button class="btn runbtn" data-target="out-sup" disabled>▶ Ejecutar</button>
+        </div>
+      </div>
+      <div class="out hidden" id="out-sup"><span class="prompt">&gt;&gt;&gt; </span><span class="val">buy hold</span>
+        <span style="color:var(--faint)">   # u usa SU decide (0.70 > 0.6); v usa el de la base</span></div>
+    </div>
+
+    <div class="note"><span class="tag">super() en una frase</span>
+    "Madre, haz tu parte." La hija no copia el <code>__init__</code> de la base — lo
+    <strong>invoca</strong> y luego añade lo suyo. Si mañana la base guarda algo más, todas
+    las hijas lo heredan sin tocarlas.</div>
+  </div>
+</section>
+
+<!-- ══════════════ §3 POLIMORFISMO VIVO ══════════════ -->
+<section id="s3">
+  <div class="wrap">
+    <div class="eyebrow">§3 · <b>Simulador</b></div>
+    <h2>Polimorfismo vivo</h2>
+    <p class="lede">Tres objetos de tres clases distintas, una sola llamada:
+    <code>s.decide(book)</code>. Mueve el imbalance del libro y mira cómo cada miembro de
+    la familia responde a su manera — sin un solo <code>if isinstance</code> en el bucle.</p>
+
+    <div class="simcard">
+      <h4>simulador · for s in familia: s.decide(book)</h4>
+      <div class="simrow">
+        <label>book.imbalance()</label>
+        <input type="range" id="pf-imb" min="0" max="100" value="70" step="5" style="flex:1;min-width:180px">
+        <span class="spread-val"><b id="pf-imbv">0.70</b></span>
+      </div>
+      <div class="stratgrid">
+        <div class="strat base"><h5>Strategy <small>(la base)</small></h5>
+          <div style="color:var(--faint);font-size:.72rem;font-family:var(--mono)">decide heredado: siempre prudente</div>
+          <div class="dec hold" id="pf-d0">hold</div></div>
+        <div class="strat"><h5>Momentum <small>(&gt; 0.6 compra)</small></h5>
+          <div style="color:var(--faint);font-size:.72rem;font-family:var(--mono)">sigue la presión del libro</div>
+          <div class="dec" id="pf-d1"></div></div>
+        <div class="strat"><h5>Contraria <small>(&gt; 0.6 vende)</small></h5>
+          <div style="color:var(--faint);font-size:.72rem;font-family:var(--mono)">apuesta contra la multitud</div>
+          <div class="dec" id="pf-d2"></div></div>
+      </div>
+      <div class="looplog" id="pf-log"></div>
+    </div>
+
+    <div class="note"><span class="tag">Por qué esto importa</span>
+    En L10, el <code>Backtest</code> hará exactamente este bucle contra el mercado real.
+    Podrás enchufarle <em>cualquier</em> estrategia — incluida la tuya de L14 — sin tocar
+    una línea del motor. El polimorfismo es el enchufe.</div>
+  </div>
+</section>
+
+<!-- ══════════════ §4 ABC ══════════════ -->
+<section id="s4">
+  <div class="wrap">
+    <div class="eyebrow">§4 · <b>Rompe cosas — con red</b></div>
+    <h2>El contrato que no se puede incumplir</h2>
+    <p class="lede">La ABC convierte "deberías implementar <code>decide</code>" en
+    "<strong>no existes</strong> hasta que implementes <code>decide</code>". Compruébalo:</p>
+
+    <div class="code">
+      <div class="code-head"><span>contrato.py</span><span>python</span></div>
+      <pre><span class="ln"><span class="k">from</span> abc <span class="k">import</span> ABC, abstractmethod</span><span class="ln"></span><span class="ln"><span class="k">class</span> Strategy(ABC):</span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, name):</span><span class="ln">        self.name = name</span><span class="ln"></span><span class="ln">    <span style="color:var(--warn)">@abstractmethod</span></span><span class="ln">    <span class="k">def</span> <span class="fn">decide</span>(self, book): ...</span><span class="ln"></span><span class="ln"><span class="k">class</span> Incompleta(Strategy):</span><span class="ln">    <span class="k">pass</span>  <span class="c"># "ya lo haré luego"</span></span><span class="ln"></span><span class="ln">s = Incompleta(<span class="s">'x'</span>)</span></pre>
+      <div class="out"><div class="btnrow" style="margin:0"><button class="btn tbBtn" data-tb="tb-abc">▶ Ejecutar</button></div></div>
+      <div class="tb hidden" id="tb-abc">Traceback (most recent call last):
+  <span class="dim">File "contrato.py", line 12, in &lt;module&gt;</span>
+    s = Incompleta('x')
+<span class="et">TypeError</span>: Can't instantiate abstract class Incompleta with abstract method decide</div>
+      <ul class="tb-notes hidden" data-for="tb-abc">
+        <li><span class="mk">①</span> El error salta al <strong>crear el objeto</strong>, no dentro de un backtest a las 3 de la mañana.</li>
+        <li><span class="mk">②</span> Y el mensaje te dice exactamente qué falta: <code>abstract method decide</code>. Contrato claro, error claro.</li>
+        <li><span class="mk">③</span> En cuanto <code>Incompleta</code> defina <code>decide()</code>, se instancia sin drama.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ §5 QUIZ ══════════════ -->
+<section id="s5">
+  <div class="wrap">
+    <div class="eyebrow">§5 · <b>Fija lo de hoy</b></div>
+    <h2>5 preguntas</h2>
+    <div class="quiz" data-quiz>
+      <div class="q" data-ok="1">
+        <div class="qt">Una subclase que NO define <code>decide()</code>…</div>
+        <div class="opts">
+          <button class="opt">A · Da error al llamarlo</button>
+          <button class="opt">B · Usa el decide() de la clase madre</button>
+          <button class="opt">C · Devuelve None siempre</button>
+        </div>
+        <div class="why">Herencia: lo que la hija no redefine, lo busca en la madre. (Con
+        una ABC la historia cambia: ni siquiera se puede instanciar.)</div>
+      </div>
+      <div class="q" data-ok="2">
+        <div class="qt">Hacer <em>override</em> es…</div>
+        <div class="opts">
+          <button class="opt">A · Borrar un método de la madre</button>
+          <button class="opt">B · Llamar a un método con otros argumentos</button>
+          <button class="opt">C · Redefinir en la hija un método heredado — y su versión gana</button>
+        </div>
+        <div class="why">El esqueleto queda en la base; cada hija sobrescribe justo lo que
+        la hace distinta.</div>
+      </div>
+      <div class="q" data-ok="0">
+        <div class="qt">Instanciar una subclase de ABC sin implementar el método abstracto produce…</div>
+        <div class="opts">
+          <button class="opt">A · TypeError en el momento de crear el objeto</button>
+          <button class="opt">B · Un warning, pero el objeto se crea</button>
+          <button class="opt">C · Nada: falla después, al llamar al método</button>
+        </div>
+        <div class="why">Esa es la gracia: el contrato se comprueba lo antes posible, no en
+        mitad de la simulación.</div>
+      </div>
+      <div class="q" data-ok="1">
+        <div class="qt">Polimorfismo es…</div>
+        <div class="opts">
+          <button class="opt">A · Que una clase tenga muchos métodos</button>
+          <button class="opt">B · Misma llamada, comportamiento distinto según el objeto</button>
+          <button class="opt">C · Heredar de varias clases a la vez</button>
+        </div>
+        <div class="why"><code>for s in familia: s.decide(book)</code> — el bucle es uno;
+        las respuestas, tantas como clases.</div>
+      </div>
+      <div class="q" data-ok="2">
+        <div class="qt"><code>super().__init__(name)</code> en la hija sirve para…</div>
+        <div class="opts">
+          <button class="opt">A · Crear un segundo objeto de la madre</button>
+          <button class="opt">B · Saltarse el __init__ de la hija</button>
+          <button class="opt">C · Ejecutar el __init__ de la madre y luego añadir lo propio</button>
+        </div>
+        <div class="why">"Madre, haz tu parte" — la base guarda lo común y la hija solo
+        añade su extra. Cero duplicación.</div>
+      </div>
+      <div class="score"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ §6 PUENTE ══════════════ -->
+<section id="s6">
+  <div class="wrap">
+    <div class="eyebrow">§6 · <b>El puente</b></div>
+    <h2>Dónde estás en el proyecto</h2>
+    <p class="lede">Con la clase de hoy, <strong>el bloque de fundamentos queda completo</strong>.
+    Mira lo que ya es tuyo:</p>
+    <div class="pkgmap">
+      <div class="pk done">L1 · el dato<span>variables, dicts, decisiones</span></div>
+      <div class="pk done">L2 · book funcional<span>funciones sobre el libro</span></div>
+      <div class="pk done">L3 · order_book.py<span>módulo importable</span></div>
+      <div class="pk done">L4 · Order y Fill<span>exchange/orders.py · trades.py</span></div>
+      <div class="pk done">L5 · OrderBook + Tracker<span>exchange/book.py · portfolio.py</span></div>
+      <div class="pk today">L6 · familia Strategy<span>herencia y polimorfismo</span></div>
+      <div class="pk future">L7-9 · el motor<span>matching, market</span></div>
+      <div class="pk future">L10-11 · el framework<span>Strategy + Backtest</span></div>
+      <div class="pk future">L12-14 · estrategias<span>VWAP, market making</span></div>
+    </div>
+
+    <div class="cta" style="margin:22px 0;grid-template-columns:1fr">
+      <a class="box" href="../checkpoint.html" style="border-color:rgba(251,191,36,.5)">
+      <span class="tag" style="color:var(--warn)">Checkpoint · fundamentos</span>
+      Antes de tocar el motor, <strong>ponte a prueba</strong>: 20 preguntas de L1-L6
+      (Python, módulos y POO), 20 minutos, mismo baremo que el examen final. Un 6 o más y
+      tienes la base. Te da un código de resultado para el profe.</a>
+    </div>
+
+    <div class="bridge">
+      <div class="tag">El puente a L7</div>
+      <p style="margin:.2em 0"><strong>Sabes programar. Ahora toca el mercado de verdad.</strong></p>
+      <p>Tus estrategias de juguete deciden sobre un libro de juguete. En la próxima clase
+      cargamos <strong>500 snapshots reales de BTCUSDT</strong> y les hacemos la pregunta
+      seria: ¿hacia dónde empuja el libro? Imbalance, microprice, profundidad — leer el
+      mercado por dentro.</p>
+      <p style="margin-bottom:0">Y en L10, esta familia <code>Strategy</code> vuelve — ya no
+      de juguete, sino enchufada al motor con un <code>Backtest</code> de verdad.</p>
+    </div>
+
+    <div class="cta">
+      <div class="box"><span class="tag">Ahora te toca construir</span>
+      Abre <code>06_build_exercises.ipynb</code>: base, herencia, override, ABC y tu
+      primera familia.</div>
+      <div class="box"><span class="tag">Y después, al gimnasio</span>
+      <code>06_auxiliary.ipynb</code> — drills de herencia, super(), isinstance y el bucle
+      polimórfico.</div>
+    </div>
+  </div>
+</section>
+
+<footer>L6 · Herencia y polimorfismo — Algo Trading ICAI 2026 · documento interactivo</footer>

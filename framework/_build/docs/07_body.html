@@ -1,0 +1,276 @@
+<nav id="rail" aria-label="Progreso">
+  <a href="#s0" class="on"><span class="dot"></span><span class="lab">El reto</span></a>
+  <a href="#s1"><span class="dot"></span><span class="lab">Leer la foto</span></a>
+  <a href="#s2"><span class="dot"></span><span class="lab">El scrubber</span></a>
+  <a href="#s3"><span class="dot"></span><span class="lab">¿Predice algo?</span></a>
+  <a href="#s4"><span class="dot"></span><span class="lab">Quiz</span></a>
+  <a href="#s5"><span class="dot"></span><span class="lab">El puente</span></a>
+</nav>
+
+<header class="hero wrap" id="s0">
+  <div class="eyebrow"><b>Algo Trading · ICAI 2026</b> &nbsp;·&nbsp; L7 · Microestructura &nbsp;·&nbsp; documento interactivo</div>
+  <h1>Leer el libro <em>de verdad</em></h1>
+  <p class="lede">Se acabaron los libros de juguete. Este documento carga <strong>500
+  snapshots reales de BTCUSDT</strong> — capturados del mercado y procesados por el motor
+  <code>exchange</code> que llevas seis clases construyendo. La pregunta de hoy:
+  <strong>¿hacia dónde empuja el libro?</strong></p>
+
+  <div class="challenge">
+    <div class="tag">El reto de hoy</div>
+    <p>Un snapshot son 20 números (10 niveles por lado). Ahí dentro hay señal: presión
+    compradora, liquidez que se esconde, un precio "justo" mejor que el mid. Hoy aprendes
+    las cuatro lentes para verla: <strong>imbalance, microprice, depth</strong> y su
+    evolución en el tiempo.</p>
+    <p>Y cerramos con la pregunta incómoda que separa este curso de un tutorial:
+    <em>¿de verdad predice algo?</em> La respuesta, medida sobre los datos, te va a
+    sorprender.</p>
+  </div>
+
+  <div class="meta">
+    <span><b>~40 min</b> lectura + práctica</span>
+    <span><b>500</b> snapshots reales</span>
+    <span><b>2</b> simuladores</span>
+    <span>lo <b style="color:var(--accent)">cian</b> se toca</span>
+  </div>
+</header>
+
+<section id="s1">
+  <div class="wrap">
+    <div class="eyebrow">§1 · <b>La idea central</b></div>
+    <h2>Anatomía de una foto del mercado</h2>
+    <p class="lede">Sigue bajando: el panel disecciona el primer snapshot real con cada
+    una de las lentes. Todos los números los calcula tu <code>OrderBook</code>.</p>
+  </div>
+
+  <div class="scrolly" data-scrolly>
+    <div class="steps">
+      <div class="step on" data-stage="0" data-name="el snapshot"><div class="step-inner">
+        <h3><span class="n">0/5</span>La materia prima</h3>
+        <p>Esto es un snapshot real: niveles de precio con tamaño a cada lado. Tu
+        <code>OrderBook.from_snapshot()</code> lo convierte en el objeto que construiste
+        en L5 — mismo código, datos de verdad.</p>
+      </div></div>
+      <div class="step" data-stage="1" data-name="spread y mid"><div class="step-inner">
+        <h3><span class="n">1/5</span>Las lentes de siempre</h3>
+        <p><code>spread</code> y <code>mid</code>: el coste de cruzar ya y el precio de
+        consenso. En BTC el spread real es <strong>estrechísimo</strong> — este mercado es
+        de los más líquidos del planeta.</p>
+      </div></div>
+      <div class="step" data-stage="2" data-name="imbalance"><div class="step-inner">
+        <h3><span class="n">2/5</span>Imbalance: ¿quién empuja?</h3>
+        <p><code>book.imbalance(1)</code> compara el tamaño del mejor bid contra el mejor
+        ask, en [−1, +1]. Positivo = más ganas de comprar visibles.</p>
+        <p>Fíjate: con <code>levels=1</code> y con <code>levels=5</code> puede contar
+        historias distintas — el nivel 1 es ruidoso.</p>
+      </div></div>
+      <div class="step" data-stage="3" data-name="microprice"><div class="step-inner">
+        <h3><span class="n">3/5</span>Microprice: el mid con opinión</h3>
+        <p>El mid trata a ambos lados por igual. El <strong>microprice</strong> pondera:
+        si el bid tiene mucho más tamaño que el ask, el precio "verdadero" probablemente
+        está más cerca del ask — es el lado fino el que va a ceder.</p>
+      </div></div>
+      <div class="step" data-stage="4" data-name="depth"><div class="step-inner">
+        <h3><span class="n">4/5</span>Depth: cuánto aguanta</h3>
+        <p><code>book.depth(side, levels)</code>: liquidez acumulada. Es la diferencia
+        entre "el precio es 100.000" y "puedo vender 5 BTC cerca de 100.000". La segunda
+        frase es la que paga las facturas — y el centro de L8.</p>
+      </div></div>
+      <div class="step" data-stage="5" data-name="en el tiempo"><div class="step-inner">
+        <h3><span class="n">5/5</span>Y ahora, la película</h3>
+        <p>Una foto no es nada; 500 seguidas son un mercado. Mid y imbalance evolucionando
+        juntos — la pregunta de si uno <em>anticipa</em> al otro es exactamente lo que
+        vas a medir en §3.</p>
+      </div></div>
+    </div>
+
+    <div class="figwrap"><div class="fig">
+      <div class="fig-head"><span>snapshot #0 · BTCUSDT real</span><span class="stage-name">el snapshot</span></div>
+      <div class="fig-stage on" data-stage="0"><div id="fg-book0" class="mini-book" style="margin-top:6px"></div>
+        <p style="color:var(--faint);font-size:.78rem;margin-top:14px">OrderBook.from_snapshot('BTCUSDT', row) — 3 de los 10 niveles por lado</p>
+      </div>
+      <div class="fig-stage" data-stage="1"><div id="fg-book1" class="mini-book" style="margin-top:6px"></div>
+        <div class="statgrid" style="margin-top:14px" id="fg-sm"></div>
+      </div>
+      <div class="fig-stage" data-stage="2">
+        <div class="statgrid" style="border:none;padding-top:8px" id="fg-imb"></div>
+        <p style="color:var(--muted);font-size:.84rem;margin-top:8px" id="fg-imb-note"></p>
+      </div>
+      <div class="fig-stage" data-stage="3">
+        <div class="statgrid" style="border:none;padding-top:8px" id="fg-micro"></div>
+        <p style="color:var(--muted);font-size:.84rem;margin-top:8px">cuando el microprice
+        se separa del mid, el libro está "inclinado" — esa inclinación es información.</p>
+      </div>
+      <div class="fig-stage" data-stage="4">
+        <pre style="font-family:var(--mono);font-size:.8rem;line-height:2.1;margin:8px 0 0" id="fg-depth"></pre>
+        <p style="color:var(--faint);font-size:.78rem;margin-top:10px">la respuesta a
+        "¿cuánto puedo cruzar sin moverlo?" — mañana la ponemos a prueba</p>
+      </div>
+      <div class="fig-stage" data-stage="5">
+        <canvas id="fg-midchart" style="width:100%;height:150px"></canvas>
+        <p style="color:var(--faint);font-size:.72rem;font-family:var(--mono);margin:4px 0 10px">mid · 500 snapshots</p>
+        <canvas id="fg-imbchart" style="width:100%;height:110px"></canvas>
+        <p style="color:var(--faint);font-size:.72rem;font-family:var(--mono);margin-top:4px">imbalance(1) · misma ventana</p>
+      </div>
+    </div></div>
+  </div>
+</section>
+
+<section id="s2">
+  <div class="wrap">
+    <div class="eyebrow">§2 · <b>Simulador</b></div>
+    <h2>El scrubber: recorre el día</h2>
+    <p class="lede">Arrastra el tiempo. El libro, las métricas y las series se mueven
+    contigo — 500 fotos reales bajo tu pulgar. Busca un momento de imbalance extremo y
+    mira qué hizo el mid justo después.</p>
+
+    <div class="simcard">
+      <h4>simulador · Market.sample() paso a paso</h4>
+      <div class="simrow">
+        <label>t</label>
+        <input type="range" id="sc-t" min="0" max="499" value="0" step="1" style="flex:1;min-width:200px">
+        <span class="spread-val" style="min-width:120px">snapshot <b id="sc-tv">0</b></span>
+      </div>
+      <div class="dictgrid" style="grid-template-columns:230px 1fr;margin:14px 0 0">
+        <div class="mini-book" id="sc-book"></div>
+        <div>
+          <div class="statgrid" style="border:none;padding-top:0" id="sc-stats"></div>
+          <canvas id="sc-chart" style="width:100%;height:120px;margin-top:10px"></canvas>
+          <p style="color:var(--faint);font-size:.7rem;font-family:var(--mono);margin-top:4px">mid — el punto ámbar eres tú</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="note"><span class="tag">Fíjate</span>
+    El spread real de BTC baila entre pocos ticks; el imbalance de nivel 1 cambia de signo
+    constantemente. La microestructura es <strong>ruidosa</strong> — por eso las señales
+    serias promedian varios niveles y varias fotos.</div>
+  </div>
+</section>
+
+<section id="s3">
+  <div class="wrap">
+    <div class="eyebrow">§3 · <b>El momento de la verdad</b></div>
+    <h2>¿La presión predice el precio?</h2>
+    <p class="lede">La hipótesis suena obvia: si el libro empuja hacia arriba
+    (imbalance &gt; 0.3), el mid debería subir en el siguiente snapshot. Vamos a
+    <strong>contarlo</strong> sobre los 500 reales, sin trampas.</p>
+
+    <div class="code">
+      <div class="code-head"><span>hipotesis.py — contar, no opinar</span><span>python</span></div>
+      <pre><span class="ln">ups = total = <span class="num">0</span></span><span class="ln"><span class="k">for</span> i <span class="k">in</span> <span class="fn">range</span>(<span class="fn">len</span>(mids) - <span class="num">1</span>):</span><span class="ln">    <span class="k">if</span> imbs[i] &gt; <span class="num">0.3</span>:</span><span class="ln">        total += <span class="num">1</span></span><span class="ln">        <span class="k">if</span> mids[i+<span class="num">1</span>] &gt; mids[i]:</span><span class="ln">            ups += <span class="num">1</span></span></pre>
+      <div class="predict predictgate" style="margin:0;border-radius:0;border-left:none;border-right:none;border-bottom:none">
+        <div class="tag">Predice antes de ejecutar</div>
+        <p style="margin:.2em 0 .8em;font-size:.94rem">De cada 100 veces que el imbalance
+        superó 0.3, ¿cuántas subió el mid al tick siguiente? Escribe tu número.</p>
+        <div class="btnrow" style="margin:0">
+          <input type="text" placeholder="mi predicción…" aria-label="Tu predicción">
+          <button class="btn runbtn" data-target="out-sig" disabled>▶ Contar sobre los 500 reales</button>
+        </div>
+      </div>
+      <div class="out hidden" id="out-sig"><div><span class="prompt">&gt;&gt;&gt; </span><span class="val" id="out-sig-val"></span></div></div>
+    </div>
+
+    <div class="note"><span class="tag">Honestidad — la lección grande de hoy</span>
+    ≈50% no es "la señal no sirve": es que <strong>una foto de un solo nivel y un solo
+    tick apenas contiene información</strong>. Las señales reales combinan niveles,
+    ventanas de tiempo y contexto — y aún así son débiles. Quien te venda una señal
+    infalible de un tick, te está vendiendo humo. En L11 mediremos esto como se debe.</div>
+  </div>
+</section>
+
+<section id="s4">
+  <div class="wrap">
+    <div class="eyebrow">§4 · <b>Fija lo de hoy</b></div>
+    <h2>5 preguntas</h2>
+    <div class="quiz" data-quiz>
+      <div class="q" data-ok="2">
+        <div class="qt"><code>book.imbalance(1)</code> devuelve +0.8. ¿Qué está pasando en el nivel 1?</div>
+        <div class="opts">
+          <button class="opt">A · El spread es muy ancho</button>
+          <button class="opt">B · Casi todo el tamaño está en el ask</button>
+          <button class="opt">C · Casi todo el tamaño está en el bid: presión compradora</button>
+        </div>
+        <div class="why">(bid − ask) / (bid + ask) con los tamaños: +0.8 significa que el
+        lado comprador domina el nivel 1.</div>
+      </div>
+      <div class="q" data-ok="0">
+        <div class="qt">El microprice, frente al mid…</div>
+        <div class="opts">
+          <button class="opt">A · Pondera por tamaños: se inclina hacia donde apunta la presión</button>
+          <button class="opt">B · Es siempre mayor que el mid</button>
+          <button class="opt">C · Ignora los tamaños y usa solo precios</button>
+        </div>
+        <div class="why">Da más peso al lado contrario del tamaño grande: si el bid está
+        cargado, el precio "justo" está más cerca del ask.</div>
+      </div>
+      <div class="q" data-ok="1">
+        <div class="qt"><code>book.depth(Side.BUY, 5)</code> mide…</div>
+        <div class="opts">
+          <button class="opt">A · El precio del 5º mejor bid</button>
+          <button class="opt">B · El tamaño acumulado de los 5 primeros niveles bid</button>
+          <button class="opt">C · El número de órdenes de compra</button>
+        </div>
+        <div class="why">Liquidez acumulada: cuánto se puede vender contra ese lado sin
+        pasar del nivel 5.</div>
+      </div>
+      <div class="q" data-ok="2">
+        <div class="qt">Sobre los 500 reales, tras imbalance &gt; 0.3 el mid subió <span id="dd-sigpct">≈49%</span> de las veces. Conclusión seria:</div>
+        <div class="opts">
+          <button class="opt">A · El imbalance no sirve para nada</button>
+          <button class="opt">B · Los datos están mal</button>
+          <button class="opt">C · Un nivel y un tick apenas informan; la señal necesita más contexto</button>
+        </div>
+        <div class="why">La microestructura es ruidosa a un tick. Señales útiles = varios
+        niveles + ventanas + validación honesta (L11).</div>
+      </div>
+      <div class="q" data-ok="0">
+        <div class="qt">Spread ancho significa…</div>
+        <div class="opts">
+          <button class="opt">A · Cruzar ya es caro; una limit o esperar puede compensar</button>
+          <button class="opt">B · El mercado está a punto de subir</button>
+          <button class="opt">C · Hay mucha liquidez</button>
+        </div>
+        <div class="why">El spread es el precio de la inmediatez. Ancho = ilíquido o
+        nervioso: pagar el cruce duele más.</div>
+      </div>
+      <div class="score"></div>
+    </div>
+  </div>
+</section>
+
+<section id="s5">
+  <div class="wrap">
+    <div class="eyebrow">§5 · <b>El puente</b></div>
+    <h2>Dónde estás en el proyecto</h2>
+    <div class="pkgmap">
+      <div class="pk done">L1 · el dato</div>
+      <div class="pk done">L2 · book funcional</div>
+      <div class="pk done">L3 · order_book.py</div>
+      <div class="pk done">L4 · Order y Fill</div>
+      <div class="pk done">L5 · OrderBook + Tracker</div>
+      <div class="pk done">L6 · familia Strategy</div>
+      <div class="pk today">L7-9 · el motor<span>hoy: leer el libro real (L7)</span></div>
+      <div class="pk future">L10-11 · el framework<span>Strategy + Backtest</span></div>
+      <div class="pk future">L12-14 · estrategias<span>VWAP, market making</span></div>
+    </div>
+
+    <div class="bridge">
+      <div class="tag">El puente a L8</div>
+      <p style="margin:.2em 0"><strong>Hoy has MIRADO el libro. ¿Y si le mandas una orden?</strong></p>
+      <p>El depth de §1 te decía "cuánto aguanta". Mañana lo compruebas: una market order
+      grande entra, barre niveles, y el precio al que <em>de verdad</em> ejecutas se
+      separa del mid que veías. Ese peaje tiene nombre — slippage — y lo vas a ver nacer
+      nivel a nivel.</p>
+    </div>
+
+    <div class="cta">
+      <div class="box"><span class="tag">Ahora te toca construir</span>
+      Abre <code>07_build_exercises.ipynb</code>: Market.sample(), métricas y señales
+      sobre los 500 reales.</div>
+      <div class="box"><span class="tag">Y después, al gimnasio</span>
+      <code>07_auxiliary.ipynb</code> — drills de lectura de libro con datos reales.</div>
+    </div>
+  </div>
+</section>
+
+<footer>L7 · Microestructura — Algo Trading ICAI 2026 · documento interactivo</footer>

@@ -1,0 +1,371 @@
+<!-- ══════════════ RAIL ══════════════ -->
+<nav id="rail" aria-label="Progreso">
+  <a href="#s0" class="on"><span class="dot"></span><span class="lab">El reto</span></a>
+  <a href="#s1"><span class="dot"></span><span class="lab">La receta</span></a>
+  <a href="#s2"><span class="dot"></span><span class="lab">La fábrica</span></a>
+  <a href="#s3"><span class="dot"></span><span class="lab">El libro vivo</span></a>
+  <a href="#s4"><span class="dot"></span><span class="lab">Leer el libro</span></a>
+  <a href="#s5"><span class="dot"></span><span class="lab">Quiz</span></a>
+  <a href="#s6"><span class="dot"></span><span class="lab">El puente</span></a>
+</nav>
+
+<!-- ══════════════ §0 HERO ══════════════ -->
+<header class="hero wrap" id="s0">
+  <div class="eyebrow"><b>Algo Trading · ICAI 2026</b> &nbsp;·&nbsp; L2 · Python II &nbsp;·&nbsp; documento interactivo</div>
+  <h1>El libro <em>funcional</em></h1>
+  <p class="lede">Tu algoritmo de L1 funciona. Ayer por la noche intentaste añadir ETH…
+  y esto es lo que pasó:</p>
+
+  <div class="code">
+    <div class="code-head"><span>mi_script.py — la mañana siguiente</span><span>python</span></div>
+    <pre><span class="ln">bid_btc = <span class="num">99950</span></span><span class="ln">ask_btc = <span class="num">100000</span></span><span class="ln">mid_btc = (bid_btc + ask_btc) / <span class="num">2</span></span><span class="ln dim">bid_eth = <span class="num">3400</span>          <span class="c"># copiar…</span></span><span class="ln dim">ask_eth = <span class="num">3402</span>          <span class="c"># pegar…</span></span><span class="ln dim">mid_eth = (bid_eth + ask_eth) / <span class="num">2</span>   <span class="c"># rezar…</span></span><span class="ln dim">bid_sol = <span class="c"># ...¿y con 20 activos?</span></span></pre>
+  </div>
+
+  <div class="challenge">
+    <div class="tag">El reto de hoy</div>
+    <p>Cada activo nuevo duplica tus variables. Y si mañana cambias la fórmula del mid,
+    la cambias <strong>en veinte sitios</strong>. El problema no es el tamaño: es que tu
+    conocimiento vive <em>copiado</em>, no <em>escrito una vez</em>.</p>
+    <p>Hoy sales con dos armas: la <strong>función</strong> (una receta, N usos) y el
+    <strong>book</strong> — una sola estructura donde viven todas las órdenes, con un
+    equipo de funciones que la leen y la modifican.</p>
+  </div>
+
+  <div class="meta">
+    <span><b>~40 min</b> lectura + práctica</span>
+    <span><b>7</b> secciones</span>
+    <span><b>3</b> simuladores</span>
+    <span>lo <b style="color:var(--accent)">cian</b> se toca</span>
+  </div>
+</header>
+
+<!-- ══════════════ §1 SCROLLY ══════════════ -->
+<section id="s1">
+  <div class="wrap">
+    <div class="eyebrow">§1 · <b>La idea central</b></div>
+    <h2>De copiar código a escribir recetas</h2>
+    <p class="lede">Sigue bajando: el panel convierte el script duplicado de esta mañana
+    en un libro de órdenes con su equipo de funciones. Es el mismo viaje que harás en el
+    notebook.</p>
+  </div>
+
+  <div class="scrolly" data-scrolly>
+    <div class="steps">
+      <div class="step on" data-stage="0" data-name="el dolor"><div class="step-inner">
+        <h3><span class="n">0/5</span>El diagnóstico</h3>
+        <p>Mira el panel: <strong>la misma fórmula tres veces</strong>. Cada copia es un
+        sitio donde equivocarse y un sitio que actualizar. Esto no escala a 20 activos —
+        ni a 2 con prisa.</p>
+      </div></div>
+      <div class="step" data-stage="1" data-name="la función"><div class="step-inner">
+        <h3><span class="n">1/5</span>La receta: <code>def</code></h3>
+        <p>Una función es una receta con huecos. La escribes <strong>una vez</strong> y la
+        llamas N veces: <code>compute_mid(99950, 100000)</code>, <code>compute_mid(3400, 3402)</code>…</p>
+        <p>Si mañana cambia la fórmula, la cambias en <strong>un</strong> sitio.</p>
+      </div></div>
+      <div class="step" data-stage="2" data-name="make_order"><div class="step-inner">
+        <h3><span class="n">2/5</span>Una fábrica de órdenes</h3>
+        <p><code>make_order</code> junta las dos ideas de L1 y L2: recibe los campos y
+        devuelve el <strong>diccionario</strong> ya montado. Nunca más un dict a mano con
+        una clave mal escrita.</p>
+      </div></div>
+      <div class="step" data-stage="3" data-name="el book"><div class="step-inner">
+        <h3><span class="n">3/5</span>El <code>book</code>: un solo dato</h3>
+        <p>Todas las órdenes viven en <strong>una lista</strong>. <code>add_order(book, order)</code>
+        mete una nueva; el libro crece. Ya no hay <code>bid_btc</code>, <code>bid_eth</code>…
+        hay <strong>un</strong> book.</p>
+      </div></div>
+      <div class="step" data-stage="4" data-name="leerlo"><div class="step-inner">
+        <h3><span class="n">4/5</span>Leerlo: best bid, best ask, spread, mid</h3>
+        <p>Las métricas de L1 vuelven, pero ahora son <strong>funciones que reciben el
+        book</strong> y lo leen entero: el mejor comprador, el mejor vendedor, y el hueco
+        entre ambos.</p>
+      </div></div>
+      <div class="step" data-stage="5" data-name="la señal"><div class="step-inner">
+        <h3><span class="n">5/5</span>Y una señal: el imbalance</h3>
+        <p>¿Cuánta presión compradora hay? <code>imbalance(book)</code> lo resume en un
+        número entre 0 y 1.</p>
+        <p>Fíjate en el contador de abajo del panel: <strong>las 7 funciones reciben
+        <code>book</code></strong>. Guarda ese dato — es la pista de toda la semana.</p>
+      </div></div>
+    </div>
+
+    <div class="figwrap"><div class="fig">
+      <div class="fig-head"><span>de script duplicado a libro funcional</span><span class="stage-name">el dolor</span></div>
+      <div class="fig-stage on" data-stage="0">
+        <pre style="font-family:var(--mono);font-size:.78rem;line-height:1.9;margin:8px 0 0">
+<span style="color:var(--muted)">mid_btc = (bid_btc + ask_btc) / 2</span>
+<span style="color:var(--ask)">mid_eth = (bid_eth + ask_eth) / 2</span>
+<span style="color:var(--ask)">mid_sol = (bid_sol + ask_sol) / 2</span>
+<span style="color:var(--ask)">mid_ada = (bid_ada + ask_ada) / 2</span></pre>
+        <p style="color:var(--faint);font-size:.8rem;margin-top:20px">la misma idea, copiada.
+        Tres de estas líneas son deuda.</p>
+      </div>
+      <div class="fig-stage" data-stage="1">
+        <pre style="font-family:var(--mono);font-size:.82rem;line-height:2;margin:8px 0 0">
+<span class="k">def</span> <span class="fn">compute_mid</span>(bid, ask):
+    <span class="k">return</span> (bid + ask) / <span class="num">2</span>
+
+compute_mid(<span class="num">99950</span>, <span class="num">100000</span>)  <span class="c"># 99975.0</span>
+compute_mid(<span class="num">3400</span>, <span class="num">3402</span>)      <span class="c"># 3401.0</span>
+compute_mid(<span class="num">142</span>, <span class="num">143</span>)        <span class="c"># 142.5</span></pre>
+        <p style="color:var(--faint);font-size:.8rem;margin-top:16px">una receta · N usos</p>
+      </div>
+      <div class="fig-stage" data-stage="2">
+        <pre style="font-family:var(--mono);font-size:.78rem;line-height:1.9;margin:6px 0 0">
+<span class="k">def</span> <span class="fn">make_order</span>(symbol, side, price, size):
+    <span class="k">return</span> {<span class="s">'symbol'</span>: symbol, <span class="s">'side'</span>: side,
+            <span class="s">'price'</span>: price, <span class="s">'size'</span>: size}</pre>
+        <div class="ordercard" style="max-width:250px;margin:18px auto 0">
+          <div class="oc-head">make_order('BTCUSDT','buy',…)</div>
+          <div class="oc-row"><span class="kk">side</span><span class="vv" style="color:var(--bid)">buy</span></div>
+          <div class="oc-row"><span class="kk">price</span><span class="vv">99950</span></div>
+          <div class="oc-row"><span class="kk">size</span><span class="vv">0.5</span></div>
+        </div>
+      </div>
+      <div class="fig-stage" data-stage="3">
+        <pre style="font-family:var(--mono);font-size:.78rem;margin:4px 0 12px">book = []   <span class="c"># un solo dato</span></pre>
+        <div class="mini-book">
+          <div class="row b"><span>buy&nbsp; 99950</span><small>0.50</small></div>
+          <div class="row b"><span>buy&nbsp; 99940</span><small>0.20</small></div>
+          <div class="row a"><span>sell 100000</span><small>0.30</small></div>
+        </div>
+        <p style="color:var(--faint);font-size:.8rem;margin-top:18px">
+        <code>add_order(book, make_order(…))</code> — y el libro crece</p>
+      </div>
+      <div class="fig-stage" data-stage="4">
+        <div class="mini-book" style="margin-top:4px">
+          <div class="row a"><span>sell 100010</span><small>0.15</small></div>
+          <div class="row a"><span>sell 100000</span><small>0.30</small></div>
+          <div class="sep"></div>
+          <div class="row b"><span>buy&nbsp; 99950</span><small>0.50</small></div>
+          <div class="row b"><span>buy&nbsp; 99940</span><small>0.20</small></div>
+        </div>
+        <div class="statgrid" style="margin-top:18px">
+          <div><span>best_bid</span><b>99950</b></div>
+          <div><span>best_ask</span><b>100000</b></div>
+          <div><span>spread</span><b>50</b></div>
+          <div><span>mid</span><b>99975.0</b></div>
+        </div>
+      </div>
+      <div class="fig-stage" data-stage="5">
+        <div class="statgrid" style="border:none;padding-top:6px">
+          <div><span>imbalance(book)</span><b class="pos">0.70</b></div>
+        </div>
+        <p style="color:var(--muted);font-size:.82rem;margin:8px 0 18px">70% del tamaño
+        visible quiere <span style="color:var(--bid)">comprar</span> — el libro empuja
+        hacia arriba.</p>
+        <pre style="font-family:var(--mono);font-size:.75rem;line-height:2;color:var(--muted)">
+make_order(…)          <span class="c">← crea</span>
+add_order(<b style="color:var(--accent)">book</b>, …)     <span class="c">← escribe</span>
+cancel_order(<b style="color:var(--accent)">book</b>, …)  <span class="c">← borra</span>
+best_bid(<b style="color:var(--accent)">book</b>) · best_ask(<b style="color:var(--accent)">book</b>)
+spread(<b style="color:var(--accent)">book</b>) · mid(<b style="color:var(--accent)">book</b>) · imbalance(<b style="color:var(--accent)">book</b>)</pre>
+        <p style="text-align:center;color:var(--warn);font-family:var(--mono);font-size:.8rem;margin-top:10px">
+        7 funciones · todas reciben book 🤔</p>
+      </div>
+    </div></div>
+  </div>
+</section>
+
+<!-- ══════════════ §2 LA FÁBRICA ══════════════ -->
+<section id="s2">
+  <div class="wrap">
+    <div class="eyebrow">§2 · <b>Construye</b></div>
+    <h2>La fábrica y el libro</h2>
+    <p class="lede">Tres funciones cortas y el libro ya vive. Fíjate en el patrón: cada
+    función hace <strong>una</strong> cosa y tiene un nombre que no necesita comentario.</p>
+
+    <div class="code">
+      <div class="code-head"><span>order_book.py (borrador)</span><span>python</span></div>
+      <pre><span class="ln"><span class="k">def</span> <span class="fn">make_order</span>(symbol, side, price, size):</span><span class="ln">    <span class="k">return</span> {<span class="s">'symbol'</span>: symbol, <span class="s">'side'</span>: side, <span class="s">'price'</span>: price, <span class="s">'size'</span>: size}</span><span class="ln"></span><span class="ln"><span class="k">def</span> <span class="fn">add_order</span>(book, order):</span><span class="ln">    book.append(order)</span><span class="ln">    <span class="k">return</span> book</span><span class="ln"></span><span class="ln">book = []</span><span class="ln">book = add_order(book, make_order(<span class="s">'BTCUSDT'</span>, <span class="s">'buy'</span>, <span class="num">99950</span>, <span class="num">0.5</span>))</span><span class="ln"><span class="fn">print</span>(book)</span></pre>
+      <div class="out"><div class="btnrow" style="margin:0"><button class="btn runbtn" data-target="out-make">▶ Ejecutar</button></div>
+        <div id="out-make" class="hidden" style="margin-top:10px"><div><span class="prompt">&gt;&gt;&gt; </span><span class="val">[{'symbol': 'BTCUSDT', 'side': 'buy', 'price': 99950, 'size': 0.5}]</span></div></div>
+      </div>
+    </div>
+
+    <p>¿Y cancelar? La forma más limpia es <strong>construir un libro nuevo sin la orden
+    condenada</strong> — una comprensión de lista:</p>
+
+    <div class="code">
+      <div class="code-head"><span>order_book.py (sigue)</span><span>python</span></div>
+      <pre><span class="ln"><span class="k">def</span> <span class="fn">cancel_order</span>(book, order_id):</span><span class="ln">    <span class="k">return</span> [o <span class="k">for</span> o <span class="k">in</span> book <span class="k">if</span> o.get(<span class="s">'id'</span>) != order_id]</span></pre>
+    </div>
+
+    <div class="note"><span class="tag">Lee la comprensión en voz alta</span>
+    "Una lista con cada orden <code>o</code> del <code>book</code>… si su id no es el
+    condenado." No borra dentro de la lista vieja: <strong>devuelve una nueva</strong>.
+    Es la primera vez que ves esta sintaxis — en el gimnasio la entrenas.</div>
+  </div>
+</section>
+
+<!-- ══════════════ §3 LIBRO VIVO ══════════════ -->
+<section id="s3">
+  <div class="wrap">
+    <div class="eyebrow">§3 · <b>Simulador</b></div>
+    <h2>El libro vivo</h2>
+    <p class="lede">Cada botón llama a una de <em>tus</em> funciones. Mira cómo cambia el
+    libro — y cómo las métricas se recalculan solas. Abajo queda registrada la llamada
+    exacta que acabas de hacer.</p>
+
+    <div class="simcard">
+      <h4>simulador · book + funciones</h4>
+      <div class="btnrow" style="margin-top:0">
+        <button class="btn" id="lb-addbid">+ orden buy</button>
+        <button class="btn" id="lb-addask">+ orden sell</button>
+        <button class="btn ghost" id="lb-cancel">cancel última</button>
+        <button class="btn ghost" id="lb-reset">↻ vaciar</button>
+      </div>
+      <div class="mini-book" id="lb-book" style="min-height:150px;margin:14px 0"></div>
+      <div class="statgrid">
+        <div><span>best_bid</span><b id="lb-bb">—</b></div>
+        <div><span>best_ask</span><b id="lb-ba">—</b></div>
+        <div><span>spread</span><b id="lb-sp">—</b></div>
+        <div><span>mid</span><b id="lb-mid">—</b></div>
+        <div><span>imbalance</span><b id="lb-imb">—</b></div>
+      </div>
+      <div class="looplog" id="lb-log">el libro está vacío — añade una orden</div>
+    </div>
+
+    <div class="note"><span class="tag">Fíjate</span>
+    Con el libro vacío, <code>best_bid</code> no tiene respuesta posible. Hoy devolvemos
+    "—", pero es una pregunta trampa de verdad: ¿qué <em>debería</em> hacer tu función?
+    La respuesta seria (lanzar un error claro) llega en la clase 3.</div>
+  </div>
+</section>
+
+<!-- ══════════════ §4 LEER EL LIBRO ══════════════ -->
+<section id="s4">
+  <div class="wrap">
+    <div class="eyebrow">§4 · <b>Construye</b></div>
+    <h2>Leer el libro: métricas y señal</h2>
+    <p class="lede">Las funciones de lectura no tocan el libro — lo <em>resumen</em>.
+    Componlas y tienes el cuadro de mandos de L1, ahora para N activos sin duplicar nada.</p>
+
+    <div class="code">
+      <div class="code-head"><span>order_book.py (lectura)</span><span>python</span></div>
+      <pre><span class="ln"><span class="k">def</span> <span class="fn">best_bid</span>(book):</span><span class="ln">    <span class="k">return</span> <span class="fn">max</span>(o[<span class="s">'price'</span>] <span class="k">for</span> o <span class="k">in</span> book <span class="k">if</span> o[<span class="s">'side'</span>] == <span class="s">'buy'</span>)</span><span class="ln"></span><span class="ln"><span class="k">def</span> <span class="fn">imbalance</span>(book):</span><span class="ln">    buy_size  = <span class="fn">sum</span>(o[<span class="s">'size'</span>] <span class="k">for</span> o <span class="k">in</span> book <span class="k">if</span> o[<span class="s">'side'</span>] == <span class="s">'buy'</span>)</span><span class="ln">    sell_size = <span class="fn">sum</span>(o[<span class="s">'size'</span>] <span class="k">for</span> o <span class="k">in</span> book <span class="k">if</span> o[<span class="s">'side'</span>] == <span class="s">'sell'</span>)</span><span class="ln">    <span class="k">return</span> buy_size / (buy_size + sell_size)</span></pre>
+      <div class="predict predictgate" style="margin:0;border-radius:0;border-left:none;border-right:none;border-bottom:none">
+        <div class="tag">Predice antes de ejecutar</div>
+        <p style="margin:.2em 0 .8em;font-size:.94rem">El libro tiene tres órdenes:
+        <code>buy 0.3</code>, <code>buy 0.3</code> y <code>sell 0.2</code>.
+        ¿Qué devuelve <code>imbalance(book)</code>?</p>
+        <div class="btnrow" style="margin:0">
+          <input type="text" placeholder="mi predicción…" aria-label="Tu predicción">
+          <button class="btn runbtn" data-target="out-imb" disabled>▶ Ejecutar</button>
+        </div>
+      </div>
+      <div class="out hidden" id="out-imb"><span class="prompt">&gt;&gt;&gt; </span><span class="val">0.75</span>
+        <span style="color:var(--faint)">   # 0.6 de compra / 0.8 total — presión compradora</span></div>
+    </div>
+
+    <div class="note"><span class="tag">Honestidad</span>
+    Este imbalance suma <em>todo</em> el libro. Los profesionales suelen mirar solo los
+    primeros niveles (los precios cerca del mid pesan más). Lo refinaremos cuando
+    leamos el libro real en la clase 7.</div>
+  </div>
+</section>
+
+<!-- ══════════════ §5 QUIZ ══════════════ -->
+<section id="s5">
+  <div class="wrap">
+    <div class="eyebrow">§5 · <b>Fija lo de hoy</b></div>
+    <h2>5 preguntas</h2>
+    <div class="quiz" data-quiz>
+      <div class="q" data-ok="1">
+        <div class="qt">¿Qué devuelve <code>make_order('BTCUSDT', 'buy', 99950, 0.5)</code>?</div>
+        <div class="opts">
+          <button class="opt">A · Una lista con los 4 valores</button>
+          <button class="opt">B · Un diccionario con los 4 campos montados</button>
+          <button class="opt">C · Nada: imprime la orden</button>
+        </div>
+        <div class="why">Es una fábrica: recibe los campos y <code>return</code> el dict ya
+        montado, siempre con las mismas claves.</div>
+      </div>
+      <div class="q" data-ok="2">
+        <div class="qt"><code>book.append(order)</code> — ¿qué le pasa a <code>book</code>?</div>
+        <div class="opts">
+          <button class="opt">A · Nada: append devuelve una copia</button>
+          <button class="opt">B · Error: las listas no tienen append</button>
+          <button class="opt">C · Se modifica la propia lista: gana un elemento</button>
+        </div>
+        <div class="why"><code>append</code> muta la lista original. Compáralo con la
+        comprensión de <code>cancel_order</code>, que construye una nueva.</div>
+      </div>
+      <div class="q" data-ok="0">
+        <div class="qt">La comprensión <code>[o for o in book if o.get('id') != order_id]</code>…</div>
+        <div class="opts">
+          <button class="opt">A · Crea una lista nueva sin la orden cancelada</button>
+          <button class="opt">B · Borra la orden dentro del book original</button>
+          <button class="opt">C · Ordena el libro por precio</button>
+        </div>
+        <div class="why">Filtra construyendo una lista nueva. El book viejo queda intacto —
+        por eso la función hace <code>return</code>.</div>
+      </div>
+      <div class="q" data-ok="2">
+        <div class="qt"><code>imbalance(book)</code> devuelve 0.75. ¿Qué está diciendo el libro?</div>
+        <div class="opts">
+          <button class="opt">A · Hay más papel vendedor que comprador</button>
+          <button class="opt">B · El mercado está equilibrado</button>
+          <button class="opt">C · El 75% del tamaño visible quiere comprar</button>
+        </div>
+        <div class="why">imbalance = tamaño comprador / tamaño total. 0.75 = presión
+        compradora clara; 0.5 sería equilibrio.</div>
+      </div>
+      <div class="q" data-ok="1">
+        <div class="qt">Las 7 funciones de hoy comparten algo sospechoso. ¿Qué?</div>
+        <div class="opts">
+          <button class="opt">A · Todas usan comprensiones de lista</button>
+          <button class="opt">B · Todas reciben <code>book</code> como primer argumento</button>
+          <button class="opt">C · Todas devuelven números</button>
+        </div>
+        <div class="why">Un dato y el equipo de funciones que lo manosean, viajando siempre
+        juntos… eso tiene nombre: <strong>objeto</strong>. Llega en la clase 4.</div>
+      </div>
+      <div class="score" id="score"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ §6 PUENTE ══════════════ -->
+<section id="s6">
+  <div class="wrap">
+    <div class="eyebrow">§6 · <b>El puente</b></div>
+    <h2>Dónde estás en el proyecto</h2>
+    <p class="lede">Todo el curso construye <strong>un solo sistema</strong>. Esto es lo
+    que ya es tuyo y lo que viene:</p>
+
+    <div class="pkgmap">
+      <div class="pk done">L1 · el dato<span>variables, dicts, decisiones</span></div>
+      <div class="pk today">L2 · book funcional<span>funciones sobre el libro</span></div>
+      <div class="pk future">L3 · order_book.py<span>módulo importable</span></div>
+      <div class="pk future">L4 · Order y Fill<span>exchange/orders.py</span></div>
+      <div class="pk future">L5 · OrderBook + Tracker<span>exchange/book.py</span></div>
+      <div class="pk future">L6 · familia Strategy<span>herencia</span></div>
+      <div class="pk future">L7-9 · el motor<span>matching, market</span></div>
+      <div class="pk future">L10-11 · el framework<span>Strategy + Backtest</span></div>
+      <div class="pk future">L12-14 · estrategias<span>VWAP, market making</span></div>
+    </div>
+
+    <div class="bridge">
+      <div class="tag">El puente a L3</div>
+      <p style="margin:.2em 0"><strong>Tus funciones funcionan… dentro de este notebook.</strong></p>
+      <p>Cierra el notebook y mueren. Mañana quieres usarlas en otro archivo, y pasado en
+      otro proyecto. ¿Copiar y pegar otra vez? Eso es exactamente el pecado de esta mañana.</p>
+      <p style="margin-bottom:0">La cura: convertir tu código en una <strong>librería
+      importable</strong> — tu propio <code>order_book.py</code>, como cuando escribes
+      <code>import pandas</code>. Es la próxima clase.</p>
+    </div>
+
+    <div class="cta">
+      <div class="box"><span class="tag">Ahora te toca construir</span>
+      Abre <code>02_build_exercises.ipynb</code> y monta el libro pieza a pieza, con
+      validadores.</div>
+      <div class="box"><span class="tag">Y después, al gimnasio</span>
+      <code>02_auxiliary.ipynb</code> — 27 drills: calentamiento de L1, funciones,
+      tuplas, tu primer portfolio y el VWAP.</div>
+    </div>
+  </div>
+</section>
+
+<footer>L2 · El libro funcional — Algo Trading ICAI 2026 · documento interactivo</footer>

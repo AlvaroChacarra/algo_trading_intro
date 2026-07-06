@@ -1,53 +1,44 @@
-# L14 — Avellaneda-Stoikov: El Market Maker Óptimo
+# Clase 14 — Avellaneda-Stoikov — modelo y simulación
 
-## Misión
-Derivar y aplicar la solución analítica al problema de market making óptimo de
-Avellaneda & Stoikov (2008). La clase responde la pregunta que L13 dejó abierta:
-¿existe un γ correcto, un spread óptimo, una política que maximice utilidad esperada?
+> Sustituir el skew heurístico por el resultado del modelo de Avellaneda-Stoikov (reservation price + optimal spread), y ponerlo a correr: simular, ver cómo controla el inventario y barrer gamma.
 
-## Dos resultados clave
+## Contexto teórico
 
-| Resultado | Fórmula |
-|-----------|---------|
-| Precio de reserva | `r(s,t) = s − q·γ·σ²·(T−t)` |
-| Half-spread óptimo | `δ* = γ·σ²·(T−t)/2 + (1/γ)·ln(1 + γ/κ)` |
+**Avellaneda-Stoikov (2008)** sustituye el skew heurístico por el óptimo. Sale de maximizar
+utilidad CARA sobre la riqueza final con inventario incierto; la solución (vía la ecuación
+HJB de control óptimo estocástico — no hace falta derivarla) da dos fórmulas cerradas:
 
-## Flujo de clase
+- **Reservation price**: `r = s − q·γ·σ²·(T−t)` — el mid ajustado por inventario `q` y tiempo.
+- **Optimal spread**: `d = γ·σ²·(T−t) + (2/γ)·ln(1 + γ/κ)` — cuánto separas tus cotizaciones.
 
-```
-presentation/ (35 min)
-  Hero:  Dos fórmulas animadas — variables coloreadas con leyenda
-  B1:    Tres ingredientes — BM (p5.js), Poisson (Chart.js), CARA (Chart.js)
-  B2:    Ecuación HJB + pasos de derivación + interpretación de resultados
-  B3:    Sliders interactivos (q, γ, σ, T−t, κ) → LOB en tiempo real
-  B4:    Simulación Naive vs A-S, slider γ en tiempo real, shock σ×3
+Detalle clave: el ajuste por inventario **se apaga al acercarse el cierre** (`t → T`).
 
-exercises/ (en clase y casa)
-  E1–E2 (Núcleo):     as_reservation_price → as_optimal_halfspread
-  E3–E5 (Núcleo):     ASMarketMaker → validación → comparación triple
-  E6–E7 (Si vamos):   sensibilidad γ → shock de volatilidad
-  E8–E10 (Bonus):     evolución δ*(τ) → calibración κ → informe completo
-```
+## Qué construyes hoy
 
-## Parámetros de simulación
+**AvellanedaStoikov: reservation price, optimal spread y barridos de gamma**
 
-```python
-SIGMA  = 0.05    # volatilidad del precio por step
-KAPPA  = 5.0     # decaimiento de fill prob: p = exp(-κ·δ)
-ARR    = 1.0     # tasa de llegada base (órdenes/step)
-T      = 3600    # duración de la sesión (steps)
-```
+`AvellanedaStoikov(MarketMaker)`: parámetros `gamma`, `sigma`, `kappa`, `horizon`; sobrescribe
+`reservation_price` y añade `optimal_spread`, y `quotes` cotiza simétrico en torno a `r`. El
+contador `_t` avanza el tiempo. Al ser subclase de `MarketMaker`, hereda `on_fill`/inventario y
+se enchufa al mismo `MMSimulation`. Demuestra herencia + especialización.
 
-## Resultado clave del notebook
+## Ejercicios de construcción
 
-`ASMarketMaker(γ=0.1)` sobre T=3600 (seed=42):
-- **fills = 1414** (vs 774 naive en T=500, proporcional ~5643 para T=3600)
-- **inv_std = 0.59** — inventario casi perfectamente controlado
-- **max_abs_inv = 4** vs 26 del naive → **94% de reducción**
+- **1. Reservation price con inventario** — fórmula r
+- **2. Optimal spread positivo** — fórmula d
+- **3. Cotizaciones A-S** — quotes simétricas en torno a r
+- **4. Inventario inclina el centro** — A-S vs naive
+- **5. Simula el A-S** — MMSimulation con A-S
+- **6. El skew reduce el inventario** — comparar con / sin skew
+- **7. Más gamma, más inclina el reservation price** — trade-off riesgo/PnL
 
-Tradeoff γ: γ=0.01 → 2475 fills / std=1.53 | γ=0.50 → 341 fills / std=0.27
+## Estructura de la carpeta
 
-## Continuidad con L13 y L15
-- `reservation_price(mid, q, γ, σ²)` de L13 = `as_reservation_price` con τ=1 implícito.
-- `MarketMakingBacktest` de L13 E10 acepta directamente `ASMarketMaker`.
-- L15 (Exam-Quiz II) puede pedir diagnosticar o extender una implementación de MM.
+- `presentation/` — documento interactivo (o deck) + guion del profesor
+- `exercises/14_build_exercises.ipynb` — construyes la pieza (núcleo 1-3, luego el resto)
+- `exercises/14_auxiliary.ipynb` — el gimnasio: drills + profundización opcional
+- `exercises/exchange/` — el paquete que vienes construyendo (starter de hoy)
+
+## Idea central
+
+> El reservation price inclina según inventario y tiempo; el optimal spread cobra por el riesgo. Más gamma = más defensivo, menos inventario, menos PnL.

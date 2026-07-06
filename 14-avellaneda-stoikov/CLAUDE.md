@@ -1,104 +1,38 @@
-# Lesson 14 — Avellaneda-Stoikov
+# Clase 14 — Avellaneda-Stoikov — modelo y simulación (guía de implementación)
 
-## Purpose
-40-minute class delivering the analytical solution to L13's open question: the
-mathematically optimal market making policy. 100% HTML presentation + exercises notebook.
-No main lesson notebook — the HTML is the lesson. L13 and L14 are quasi-continuous.
+Pieza del framework: **AvellanedaStoikov: reservation price, optimal spread y barridos de gamma**.
 
-## File structure
-```
-14-avellaneda-stoikov/
-├── README.md
-├── CLAUDE.md                                       (this file)
-├── presentation/
-│   └── avellaneda-stoikov-interactive.html         (~1800 lines)
-└── exercises/
-    └── avellaneda_stoikov_exercises.ipynb          (10 exercises, 46 cells)
-```
+## Teoría que cubre
 
-## HTML presentation structure
-- **Hero (3 min):** Two A-S formulas animate in with colored variable annotations and legends.
-  Each variable labeled with its meaning (r, s, q, γ, σ², T−t, δ*, κ).
-- **B1 (7 min):** Three ingredient cards:
-  - BM: p5.js live random walk
-  - Poisson: Chart.js λ = A·e^{−κδ} decay curve
-  - CARA: Chart.js utility curves for γ=0.1 vs γ=0.3
-- **B2 (8 min):** HJB equation display + 4-step derivation walkthrough (btn-triggered GSAP).
-  Two result boxes: reservation price and half-spread with component breakdown.
-- **B3 (8 min):** Five sliders (q, γ, σ, T−t, κ) → live reservation price + half-spread breakdown.
-  Mini-LOB showing A-S quotes vs naive quotes.
-- **B4 (10 min):** Real-time simulation Naive vs A-S.
-  γ slider adjusts A-S behavior IMMEDIATELY without restart.
-  Shock button: σ×3 for 300 steps.
-  Three Chart.js charts: inventory, P&L, price + A-S quotes.
-  Live δ* decomposition display.
-- **Cierre (3 min):** 3 takeaways + bridge to L15 (Exam-Quiz II).
+**Avellaneda-Stoikov (2008)** sustituye el skew heurístico por el óptimo. Sale de maximizar
+utilidad CARA sobre la riqueza final con inventario incierto; la solución (vía la ecuación
+HJB de control óptimo estocástico — no hace falta derivarla) da dos fórmulas cerradas:
 
-## A-S formulas (exact)
-```
-r(s, t) = s − q·γ·σ²·(T−t)
+- **Reservation price**: `r = s − q·γ·σ²·(T−t)` — el mid ajustado por inventario `q` y tiempo.
+- **Optimal spread**: `d = γ·σ²·(T−t) + (2/γ)·ln(1 + γ/κ)` — cuánto separas tus cotizaciones.
 
-δ*(τ) = γ·σ²·(T−t)/2  +  (1/γ)·ln(1 + γ/κ)
-         ─────────────     ───────────────────
-         cobertura inv.     liquidez permanente
-```
+Detalle clave: el ajuste por inventario **se apaga al acercarse el cierre** (`t → T`).
 
-## Simulation constants (HTML and notebook must match)
-```python
-SIGMA    = 0.05     # price vol per step
-SIGMA_SQ = 0.0025   # SIGMA**2
-SPREAD   = 0.10     # naive spread (reference only)
-KAPPA    = 5.0      # fill prob decay
-ARR      = 1.0      # base arrival rate
-DT       = 1.0
-T_TOTAL  = 3600     # session steps
-MID0     = 100.0
-```
+## Implementación técnica
 
-## Validator constants for exercises
-```
-E1:  as_reservation_price(100, 5, 0.1, 0.0025, 3600)  = 95.5
-     as_reservation_price(100, -3, 0.1, 0.0025, 3600) = 102.7
-     as_reservation_price(100, 0, 0.1, 0.0025, 0)     = 100.0
-     as_reservation_price(100, 10, 0.2, 0.0025, 3600) = 82.0
-     Property: at τ=0, r = mid regardless of q
+`AvellanedaStoikov(MarketMaker)`: parámetros `gamma`, `sigma`, `kappa`, `horizon`; sobrescribe
+`reservation_price` y añade `optimal_spread`, y `quotes` cotiza simétrico en torno a `r`. El
+contador `_t` avanza el tiempo. Al ser subclase de `MarketMaker`, hereda `on_fill`/inventario y
+se enchufa al mismo `MMSimulation`. Demuestra herencia + especialización.
 
-E2:  as_optimal_halfspread(0.1, 0.0025, 5.0, 3600)
-       inv=0.45000, liq=0.19803, total=0.64803
-     as_optimal_halfspread(0.1, 0.0025, 5.0, 0)
-       inv=0.00000, liq=0.19803, total=0.19803
-     Property: liq component is constant across τ
+## Presentación (3 bloques)
 
-E4:  ASMarketMaker(T=3600, gamma=0.1, seed=42).run(price_path(T=3600, seed=42))
-       fills=1414, inventory=0, pnl≈301.31 (tolerance 1.0)
-       inv_std≈0.5918 (tolerance 0.05), max_abs_inv=4
+1. **De dónde sale el modelo** — Maximizas utilidad CARA sobre tu riqueza final con inventario incierto. La solución (vía HJB) da dos fórmulas cerradas.
+2. **Reservation price y optimal spread** — r es el mid ajustado por inventario y tiempo; d es cuánto separas las cotizaciones. Al cierre, el ajuste por inventario se apaga.
+3. **Simular y barrer gamma** — MMSimulation mueve el mid y te ejecuta según la distancia. Más gamma controla mejor el inventario, pero captura menos spread. No hay free lunch.
 
-E5:  Comparison (N=20): inv_std_AS < inv_std_Skewed < inv_std_Naive
-     A-S reduces inventory std by >90% vs Naive
+## Cuaderno de construcción
 
-E6:  Gamma sensitivity (path_3600, seed=42):
-       γ=0.01: fills=2475, inv_std=1.5353, max_abs=7
-       γ=0.10: fills=1414, inv_std=0.5918, max_abs=4
-       γ=0.50: fills=341,  inv_std=0.2723, max_abs=2
-     Properties: fills and inv_std both strictly decreasing with γ
-```
+Patrón por ejercicio: enunciado → starter (`pass`/`None`) → validador (`assert` con mensaje claro, tolerancia `1e-9`) → solución guiada embebida.
+Tiers: **Núcleo** = los primeros (en clase), **Si vamos bien** = el resto, **Auxiliares** = cuaderno `14_auxiliary.ipynb`.
 
-## Key implementation detail: ASMarketMaker
-- RNG: `np.random.default_rng(seed)` — same as L13 classes
-- At step t (0-indexed): τ = T − t (so first step τ = T = 3600)
-- Fill distances: `d_ask = max(ask − mid, 0)`, `d_bid = max(mid − bid, 0)`
-- Fill probabilities: `p_ask = exp(−κ·d_ask)·ARR·DT`, `p_bid = exp(−κ·d_bid)·ARR·DT`
-- **Ask fill ALWAYS before bid fill** (inventory -= 1 before inventory += 1)
-- This order matches the seeded RNG and produces the validated constants above
+El contenido se genera desde `framework/_build/` — para editar esta clase, edita su spec y regenera con `build_course.py`. No edites a mano los notebooks.
 
-## Real-time γ slider (B4)
-The HTML γ slider does NOT restart the simulation. `getGamma()` reads the slider value
-on every step. Changing γ mid-simulation is intentional — students see immediate effect
-on inventory accumulation vs fill rate.
+## Continuidad
 
-## Continuity
-- `as_reservation_price(mid, q, gamma, sigma_sq, tau)` generalizes L13's
-  `reservation_price(mid, q, gamma, sigma_sq)` which had an implicit τ=1.
-- `MarketMakingBacktest` from L13 E10 accepts `ASMarketMaker` directly — stable run() signature.
-- `price_path` and `price_path_with_shock` (E7) reused from L13.
-- Notebook imports all L13 classes directly (no separate file dependency).
+El paquete `exchange/` llega con lo construido hasta la clase anterior; hoy se añade la pieza nueva, que se convierte en el starter de la siguiente.

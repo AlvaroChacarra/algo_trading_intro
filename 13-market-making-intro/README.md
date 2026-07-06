@@ -1,52 +1,42 @@
-# L13 — Market Making: El oficio de proveer liquidez
+# Clase 13 — Market making — Intro
 
-## Misión
-Entender qué hace un market maker, cómo gana dinero, y por qué el inventario es su principal
-riesgo. La clase termina con la pregunta que L14 responde: ¿existe una manera matemáticamente
-óptima de fijar bid y ask?
+> El otro lado del mercado: en vez de cruzar, cotizas bid y ask y ganas el spread. Pero acumulas inventario, y el inventario es riesgo. Skew por inventario como primera defensa.
 
-## Tres ideas clave
+## Contexto teórico
 
-| Idea | Concepto |
-|------|----------|
-| El spread no es gratis | P&L = fills×s/2 − \|q\|×\|ΔS\|. El segundo término (inventario) puede superar al primero. |
-| Inventario es el enemigo | Adverse selection, quote stale y volatilidad son la misma cosa: acumulas posición en el momento equivocado. |
-| Las heurísticas son aproximaciones | Imbalance, L2, skew — funcionan pero no son óptimas. No garantizan el γ correcto ni el spread que maximiza E[utilidad]. |
+El otro lado del mercado: el **market maker** cotiza bid y ask y gana el **spread**. Su
+enemigo es el **inventario**: si el flujo es desequilibrado acumula posición justo cuando el
+mercado va en su contra (**adverse selection**).
 
-## Flujo de clase
+Aparece la **utilidad CARA** `-e^{-γW}` y el parámetro de **aversión al riesgo** γ. La primera
+defensa es el **skew por inventario**: el *reservation price* = `mid - skew·inventario` baja
+ambas cotizaciones cuando estás largo, para que te compren menos y te vendan más y vuelvas a
+plano.
 
-```
-presentation/ (33 min)
-  Hero:  LOB animado, MM cotiza, fills llegan en tiempo real
-  B1:    Mecánica — 5 pasos animados + fórmula de P&L
-  B2:    Tres riesgos — inventario / adverse selection / volatilidad
-  B3:    Tres palancas — imbalance / nivel 2 / skew de inventario
-         → preview de reservation_price = mid - q·γ·σ²
+## Qué construyes hoy
 
-exercises/ (en clase y casa)
-  E1–E3 (Núcleo):    price_path → NaiveMarketMaker → reservation_price
-  E4–E5 (Núcleo):    SkewedMarketMaker → comparación naive vs skewed
-  E6–E7 (Si vamos):  shock de volatilidad → grid search de gamma
-  E8–E10 (Bonus):    descomposición P&L → imbalance MM → MarketMakingBacktest
-```
+**MarketMaker: cotizar a ambos lados y gestionar inventario**
 
-## Parámetros de simulación
+`exchange/strategies/market_maker.py` (`MarketMaker`): `quotes(book) -> (bid, ask)` en torno
+al `reservation_price`, `on_fill` actualiza el inventario interno. Y `exchange/simulation.py`
+(`MMSimulation`): como una limit no se cruza en el replay de snapshots, el market making se
+simula contra un mid en paseo aleatorio con **modelo de intensidad de fills**
+`λ(δ) = A·e^{-κδ}` (más cerca del mid, más probable que te ejecuten).
 
-```python
-SIGMA  = 0.05    # volatilidad del precio por step
-SPREAD = 0.10    # spread total en precio
-KAPPA  = 5.0     # decaimiento de fill prob: p = exp(-κ·δ)
-ARR    = 1.0     # tasa de llegada base (órdenes/step)
-```
+## Ejercicios de construcción
 
-## Resultado clave del notebook
+- **1. Cotiza alrededor del mid** — MarketMaker.quotes
+- **2. El skew baja las cotizaciones si estás largo** — inventario -> reservation price
+- **3. Reservation price** — centro de las cotizaciones
+- **4. Simula al market maker** — MMSimulation
 
-`SkewedMarketMaker` reduce la varianza del inventario a **~55%** respecto al naive
-(`std: 9.9 → 5.4`) y el inventario máximo de 26 a 15 lotes. El P&L mejora en términos
-de riesgo ajustado aunque el valor absoluto varíe por simulación.
+## Estructura de la carpeta
 
-## Continuidad con L14
-- `MarketMakingBacktest` (E10) acepta cualquier clase de MM, incluido el
-  `ASMarketMaker` que se construye en L14.
-- `reservation_price()` introducida aquí es el núcleo del resultado de Avellaneda-Stoikov.
-  En L14 aparece con el factor `(T−t)` y con el spread óptimo derivado del modelo completo.
+- `presentation/` — documento interactivo (o deck) + guion del profesor
+- `exercises/13_build_exercises.ipynb` — construyes la pieza (núcleo 1-3, luego el resto)
+- `exercises/13_auxiliary.ipynb` — el gimnasio: drills + profundización opcional
+- `exercises/exchange/` — el paquete que vienes construyendo (starter de hoy)
+
+## Idea central
+
+> El market maker gana el spread, pero su enemigo es el inventario: cotiza para volver a plano.

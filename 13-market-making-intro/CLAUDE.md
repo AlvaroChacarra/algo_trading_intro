@@ -1,93 +1,39 @@
-# Lesson 13 — Market Making
+# Clase 13 — Market making — Intro (guía de implementación)
 
-## Purpose
-40-minute class introducing market making: mechanics, three risks, and practical heuristics.
-Ends with the open question that L14 (Avellaneda-Stoikov) answers. 100% HTML presentation
-+ exercises notebook. No main lesson notebook — the HTML is the lesson.
+Pieza del framework: **MarketMaker: cotizar a ambos lados y gestionar inventario**.
 
-## File structure
-```
-13-market-making-intro/
-├── README.md
-├── CLAUDE.md                                   (this file)
-├── presentation/
-│   └── market-making-interactive.html          (~1900 lines)
-└── exercises/
-    └── market_making_exercises.ipynb           (10 exercises, 45 cells)
-```
+## Teoría que cubre
 
-## HTML presentation structure
-- **Hero (5 min):** p5.js LOB animation — MM quotes bid/ask, market orders arrive and execute.
-  Live P&L / inventory / fills counters update in real time.
-- **B1 (7 min):** GSAP-animated 5-step trade sequence. Formula card: `P&L = fills×s/2 − |q|×|ΔS|`.
-  Key insight: the inventory cost term can exceed the spread income.
-- **B2 (8 min):** Three risk cards — inventory risk (Chart.js), adverse selection (GSAP timeline),
-  volatility/stale quote (Chart.js). Each has its own mini-visualization.
-- **B3 (10 min):** Three tabs — Imbalance, Nivel 2, Skew de inventario.
-  Tabs share a live p5-less simulation driven by `setInterval` + Chart.js.
-  Skew tab introduces `reservation_price = mid - q·γ·σ²` explicitly as preview of A&S.
-- **Cierre (3 min):** 3 takeaways + bridge to L14 (HJB + A&S).
+El otro lado del mercado: el **market maker** cotiza bid y ask y gana el **spread**. Su
+enemigo es el **inventario**: si el flujo es desequilibrado acumula posición justo cuando el
+mercado va en su contra (**adverse selection**).
 
-## Simulation constants (HTML and notebook must match)
-```javascript
-SIGMA    = 0.05     // price vol per step
-SPREAD   = 0.10     // total spread in price units
-KAPPA    = 5.0      // fill prob decay: p = exp(-kappa * delta_from_mid)
-ARR      = 1.0      // base arrival rate per step
-SIGMA_SQ = 0.0025   // SIGMA^2
-DT       = 1.0
-```
+Aparece la **utilidad CARA** `-e^{-γW}` y el parámetro de **aversión al riesgo** γ. La primera
+defensa es el **skew por inventario**: el *reservation price* = `mid - skew·inventario` baja
+ambas cotizaciones cuando estás largo, para que te compren menos y te vendan más y vuelvas a
+plano.
 
-Fill probability model: `p_fill = exp(-KAPPA * distance_from_mid) * ARR * DT`
-This is the same exponential model as A&S — intentional continuity.
+## Implementación técnica
 
-## Validator constants for exercises
-```
-E1:  price_path(T=100, dt=1, sigma=0.05, seed=42)
-       [0]=100.0, [50]=100.22802758, [100]=99.74865194, len=101
+`exchange/strategies/market_maker.py` (`MarketMaker`): `quotes(book) -> (bid, ask)` en torno
+al `reservation_price`, `on_fill` actualiza el inventario interno. Y `exchange/simulation.py`
+(`MMSimulation`): como una limit no se cruza en el replay de snapshots, el market making se
+simula contra un mid en paseo aleatorio con **modelo de intensidad de fills**
+`λ(δ) = A·e^{-κδ}` (más cerca del mid, más probable que te ejecuten).
 
-E2:  NaiveMarketMaker(seed=42).run(price_path(T=500,seed=42))
-       fills=774, inventory=-10, pnl≈43.9333  (tolerance 0.1)
+## Presentación (3 bloques)
 
-E3:  reservation_price(100.0, q=5,  gamma=0.1, sigma_sq=0.0025) = 99.998750
-     reservation_price(100.0, q=-3, gamma=0.1, sigma_sq=0.0025) = 100.000750
-     reservation_price(100.0, q=10, gamma=0.2, sigma_sq=0.0025) = 99.995000
+1. **De dónde sale el PnL** — Compras en el bid, vendes en el ask, te quedas el spread. Si el flujo es equilibrado, ganas en cada vuelta.
+2. **Riesgo de inventario y adverse selection** — Si solo te compran o solo te venden, acumulas posición justo cuando el mercado va en tu contra. Eso es adverse selection.
+3. **Skew por inventario** — Cuando estás largo, baja tus dos cotizaciones para que te compren menos y te vendan más, y vuelvas a plano.
 
-E4:  SkewedMarketMaker(seed=42).run(price_path(T=3600,seed=42))
-       fills=5643, inventory=-3, pnl≈291.6679  (tolerance 1.0)
+## Cuaderno de construcción
 
-E5:  std(naive_inv) ≈ 9.91 vs std(skewed_inv) ≈ 5.43
-     max_abs(naive) = 26, max_abs(skewed) = 15
-     Assert: std_skewed < std_naive AND max_skewed <= max_naive
-```
+Patrón por ejercicio: enunciado → starter (`pass`/`None`) → validador (`assert` con mensaje claro, tolerancia `1e-9`) → solución guiada embebida.
+Tiers: **Núcleo** = los primeros (en clase), **Si vamos bien** = el resto, **Auxiliares** = cuaderno `13_auxiliary.ipynb`.
 
-## Key pedagogical design decisions
+El contenido se genera desde `framework/_build/` — para editar esta clase, edita su spec y regenera con `build_course.py`. No edites a mano los notebooks.
 
-### Fill probability model in the simulation
-Uses `exp(-kappa * distance_from_mid)` — intentionally the same exponential model
-as in Avellaneda-Stoikov. Students see it first as a "black box probability", then
-in L14 it appears as the Poisson order arrival rate `λ = A·e^(-κ·δ)`.
+## Continuidad
 
-### Reservation price in B3 tab 3
-The formula `r = mid - q·γ·σ²` is introduced heuristically in the HTML, without
-justification. The A&S preview code block explicitly says "L14 justifies this
-mathematically." This seeds curiosity before L14.
-
-### Skewed vs Naive inventory comparison
-With SIGMA=0.05, KAPPA=5, GAMMA=0.1, the skew effect is clearly visible:
-- Naive inventory std ≈ 9.9, max_abs ≈ 26
-- Skewed inventory std ≈ 5.4, max_abs ≈ 15
-If parameters change, revalidate E4/E5 and update this file.
-
-### The three risks are instances of one problem
-B2 intentionally presents adverse selection, volatility/stale, and inventory risk
-as three separate risks, then the B1 formula shows they're all the `|q|×|ΔS|` term.
-The cierre makes this explicit.
-
-## Continuity with L14
-- `MarketMakingBacktest` (E10) is designed to accept any MMClass including the A&S
-  implementation built in L14. The `run()` signature is stable.
-- `reservation_price()` function (E3) is used directly in L14's A-S model.
-- `SkewedMarketMaker` (E4) uses the static reservation price (no T-t factor).
-  L14's `ASMarketMaker` adds the `(T-t)` time decay and the optimal spread formula.
-- `price_path()` and `price_path_with_shock()` are reused in L14 simulations.
+El paquete `exchange/` llega con lo construido hasta la clase anterior; hoy se añade la pieza nueva, que se convierte en el starter de la siguiente.

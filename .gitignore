@@ -20,15 +20,17 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
+# Node (nunca versionar dependencias JS)
+node_modules/
+
+# Archivo local de la versión anterior del curso (no subir)
+_archive_v1/
+
 # Project specific
 output/
 .playwright-cli/
 favicon.ico
 
 # Exámenes con respuestas (no subir al repo)
-10-exam-quiz-i/examen_*.pdf
-10-exam-quiz-i/examen_*.html
-10-exam-quiz-i/generate_exams*.py
-15-exam-quiz-ii/examen_*.pdf
-15-exam-quiz-ii/examen_*.html
-15-exam-quiz-ii/generate_exams*.py
+15-final-exam/examen_*.pdf
+15-final-exam/examen_*.html

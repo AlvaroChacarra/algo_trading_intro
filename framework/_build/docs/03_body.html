@@ -1,0 +1,374 @@
+<!-- ══════════════ RAIL ══════════════ -->
+<nav id="rail" aria-label="Progreso">
+  <a href="#s0" class="on"><span class="dot"></span><span class="lab">El reto</span></a>
+  <a href="#s1"><span class="dot"></span><span class="lab">La mudanza</span></a>
+  <a href="#s2"><span class="dot"></span><span class="lab">import fino</span></a>
+  <a href="#s3"><span class="dot"></span><span class="lab">Errores</span></a>
+  <a href="#s4"><span class="dot"></span><span class="lab">__main__</span></a>
+  <a href="#s5"><span class="dot"></span><span class="lab">Quiz</span></a>
+  <a href="#s6"><span class="dot"></span><span class="lab">El puente</span></a>
+</nav>
+
+<!-- ══════════════ §0 HERO ══════════════ -->
+<header class="hero wrap" id="s0">
+  <div class="eyebrow"><b>Algo Trading · ICAI 2026</b> &nbsp;·&nbsp; L3 · Python III &nbsp;·&nbsp; documento interactivo</div>
+  <h1>Tu código se vuelve <em>librería</em></h1>
+  <p class="lede">En L2 escribiste siete funciones que valen oro. Pero viven en un notebook:
+  cierras la pestaña y <strong>mueren</strong>. Hoy las mudas a un archivo <code>.py</code>
+  y las usas desde cualquier sitio con una sola línea — igual que haces con
+  <code>import pandas</code>.</p>
+
+  <div class="challenge">
+    <div class="tag">El reto de hoy</div>
+    <p>Quieres usar <code>best_bid</code> e <code>imbalance</code> en <em>otro</em> archivo,
+    en otro proyecto, mañana. Sin copiar y pegar — eso ya sabemos cómo acaba.</p>
+    <p>Al final de este documento tendrás <strong>tu propio módulo <code>order_book.py</code></strong>,
+    importable y robusto: que en vez de reventar con un traceback críptico, avisa con
+    errores claros que tú diseñaste.</p>
+  </div>
+
+  <div class="meta">
+    <span><b>~40 min</b> lectura + práctica</span>
+    <span><b>7</b> secciones</span>
+    <span><b>3</b> simuladores</span>
+    <span>lo <b style="color:var(--accent)">cian</b> se toca</span>
+  </div>
+</header>
+
+<!-- ══════════════ §1 SCROLLY — LA MUDANZA ══════════════ -->
+<section id="s1">
+  <div class="wrap">
+    <div class="eyebrow">§1 · <b>La idea central</b></div>
+    <h2>La mudanza: de celdas a módulo</h2>
+    <p class="lede">Sigue bajando: el panel muestra dos archivos. Tus funciones se mudan
+    al de la izquierda; el de la derecha las usa sin saber cómo están hechas.</p>
+  </div>
+
+  <div class="scrolly" data-scrolly>
+    <div class="steps">
+      <div class="step on" data-stage="0" data-name="atrapadas"><div class="step-inner">
+        <h3><span class="n">0/5</span>Funciones atrapadas</h3>
+        <p>Tus siete funciones viven en celdas de notebook. Solo existen mientras el kernel
+        vive, y solo <strong>aquí</strong>. Nadie más puede usarlas — ni siquiera tú desde
+        otro archivo.</p>
+      </div></div>
+      <div class="step" data-stage="1" data-name="el módulo"><div class="step-inner">
+        <h3><span class="n">1/5</span>Nace <code>order_book.py</code></h3>
+        <p>La mudanza es literal: pegas las funciones en un archivo <code>.py</code>.
+        Ya está. <strong>Un módulo es solo eso</strong>: un archivo de Python con cosas
+        dentro.</p>
+      </div></div>
+      <div class="step" data-stage="2" data-name="import"><div class="step-inner">
+        <h3><span class="n">2/5</span><code>import order_book</code></h3>
+        <p>Desde <code>main.py</code>, una línea trae el módulo entero. Sus funciones
+        llegan <strong>con apellido</strong>: <code>order_book.best_bid(book)</code>.</p>
+        <p>El prefijo te dice de dónde viene cada cosa — con 5 librerías importadas lo
+        agradecerás.</p>
+      </div></div>
+      <div class="step" data-stage="3" data-name="from … import"><div class="step-inner">
+        <h3><span class="n">3/5</span><code>from order_book import imbalance</code></h3>
+        <p>Si solo necesitas una función, la traes <strong>sin apellido</strong> y la llamas
+        a pelo: <code>imbalance(book)</code>.</p>
+        <p>Más cómodo, menos contexto. Los dos estilos son correctos; elige según cuánto
+        importa saber el origen.</p>
+      </div></div>
+      <div class="step" data-stage="4" data-name="dos vidas"><div class="step-inner">
+        <h3><span class="n">4/5</span>Un archivo, dos vidas</h3>
+        <p>El mismo <code>order_book.py</code> puede ser <strong>importado</strong> (librería)
+        o <strong>ejecutado</strong> (<code>python order_book.py</code>). Python te chiva en
+        qué modo está con la variable <code>__name__</code>.</p>
+      </div></div>
+      <div class="step" data-stage="5" data-name="robustez"><div class="step-inner">
+        <h3><span class="n">5/5</span>Una librería no revienta: avisa</h3>
+        <p>¿<code>best_bid</code> de un libro vacío? Un módulo serio no devuelve basura ni
+        muere con un error críptico: <strong>lanza un error tuyo, con tu mensaje</strong>.
+        Eso es <code>raise</code> — y la otra mitad de la clase.</p>
+      </div></div>
+    </div>
+
+    <div class="figwrap"><div class="fig">
+      <div class="fig-head"><span>la mudanza a order_book.py</span><span class="stage-name">atrapadas</span></div>
+      <div class="fig-stage on" data-stage="0">
+        <pre style="font-family:var(--mono);font-size:.74rem;line-height:1.9;margin:4px 0 0;color:var(--muted)">
+┌ celda 4 ─────────────────────┐
+│ def make_order(…): …         │
+├ celda 5 ─────────────────────┤
+│ def best_bid(book): …        │
+├ celda 6 ─────────────────────┤
+│ def imbalance(book): …       │
+└──────────────────────────────┘</pre>
+        <p style="color:var(--faint);font-size:.8rem;margin-top:18px">💀 al cerrar el
+        notebook, se acabó</p>
+      </div>
+      <div class="fig-stage" data-stage="1">
+        <div class="twofile">
+          <div class="file"><div class="fname"><b>order_book.py</b> · el módulo</div>
+            <pre><span class="k">def</span> <span class="fn">make_order</span>(…): …
+<span class="k">def</span> <span class="fn">add_order</span>(book, o): …
+<span class="k">def</span> <span class="fn">best_bid</span>(book): …
+<span class="k">def</span> <span class="fn">imbalance</span>(book): …</pre></div>
+          <div class="file"><div class="fname">main.py · tu script</div>
+            <pre style="color:var(--faint)"># vacío, de momento</pre></div>
+        </div>
+      </div>
+      <div class="fig-stage" data-stage="2">
+        <div class="twofile">
+          <div class="file"><div class="fname"><b>order_book.py</b></div>
+            <pre style="color:var(--muted)">def make_order(…): …
+def best_bid(book): …
+def imbalance(book): …</pre></div>
+          <div class="file"><div class="fname">main.py</div>
+            <pre><span class="k">import</span> order_book
+
+ob = order_book
+ob.best_bid(book)
+<span class="c"># con apellido:</span>
+<span class="c"># order_book.✱</span></pre></div>
+        </div>
+      </div>
+      <div class="fig-stage" data-stage="3">
+        <div class="twofile">
+          <div class="file"><div class="fname"><b>order_book.py</b></div>
+            <pre style="color:var(--muted)">def make_order(…): …
+def best_bid(book): …
+def imbalance(book): …</pre></div>
+          <div class="file"><div class="fname">main.py</div>
+            <pre><span class="k">from</span> order_book <span class="k">import</span> imbalance
+
+imbalance(book)
+<span class="c"># sin apellido:</span>
+<span class="c"># solo ese nombre</span></pre></div>
+        </div>
+      </div>
+      <div class="fig-stage" data-stage="4">
+        <pre style="font-family:var(--mono);font-size:.76rem;line-height:2;margin:6px 0 0">
+<span class="c"># dentro de order_book.py:</span>
+<span class="fn">print</span>(__name__)
+
+<span class="c">$ python order_book.py</span>
+<span style="color:var(--bid)">__main__</span>          <span class="c"># ejecutado</span>
+
+<span class="c"># desde main.py: import order_book</span>
+<span style="color:var(--num)">order_book</span>        <span class="c"># importado</span></pre>
+        <p style="color:var(--faint);font-size:.8rem;margin-top:14px">
+        <code>if __name__ == "__main__":</code> = "esto solo corre si me ejecutan a mí"</p>
+      </div>
+      <div class="fig-stage" data-stage="5">
+        <pre style="font-family:var(--mono);font-size:.76rem;line-height:1.9;margin:6px 0 0">
+<span class="k">def</span> <span class="fn">best_bid</span>(book):
+    <span class="k">if</span> <span class="k">not</span> book:
+        <span class="k">raise</span> ValueError(
+            <span class="s">"libro vacío: no hay best_bid"</span>)
+    <span class="k">return</span> <span class="fn">max</span>(…)</pre>
+        <div class="result-chip" style="border-color:rgba(251,191,36,.5);color:var(--warn);background:rgba(251,191,36,.07)">
+        el error deja de ser un accidente: es parte del diseño</div>
+      </div>
+    </div></div>
+  </div>
+</section>
+
+<!-- ══════════════ §2 IMPORT FINO ══════════════ -->
+<section id="s2">
+  <div class="wrap">
+    <div class="eyebrow">§2 · <b>Simulador</b></div>
+    <h2>¿Qué nombres te deja cada import?</h2>
+    <p class="lede">La diferencia entre los dos estilos es <strong>qué nombres existen</strong>
+    en tu archivo después de la línea. Alterna y compara:</p>
+
+    <div class="simcard">
+      <h4>simulador · el espacio de nombres de main.py</h4>
+      <div class="toggle" role="group" aria-label="Estilo de import">
+        <button class="on" id="imp-a">import order_book</button>
+        <button id="imp-b">from order_book import imbalance</button>
+        <button id="imp-c">import order_book as ob</button>
+      </div>
+      <pre id="imp-out" style="font-family:var(--mono);font-size:.82rem;line-height:2;margin:16px 0 0"></pre>
+    </div>
+
+    <div class="note"><span class="tag">Regla práctica</span>
+    Módulo entero (<code>import x</code> o <code>import x as alias</code>) cuando usas
+    varias cosas o quieres dejar claro el origen; <code>from x import y</code> cuando una
+    función concreta se usa mil veces. Lo que <strong>no</strong> hacemos:
+    <code>from x import *</code> — llena tu archivo de nombres que no sabes de dónde vienen.</div>
+  </div>
+</section>
+
+<!-- ══════════════ §3 ERRORES ══════════════ -->
+<section id="s3">
+  <div class="wrap">
+    <div class="eyebrow">§3 · <b>Rompe cosas — con red</b></div>
+    <h2>El error como ciudadano de primera</h2>
+    <p class="lede">Tres escenarios sobre el mismo libro vacío. El primero revienta; el
+    segundo lo cazas tú; en el tercero, el error lo diseñas tú. Ejecútalos en orden.</p>
+
+    <div class="code">
+      <div class="code-head"><span>escenario_1.py — sin red</span><span>python</span></div>
+      <pre><span class="ln">book = []</span><span class="ln"><span class="fn">print</span>(best_bid(book))</span></pre>
+      <div class="out"><div class="btnrow" style="margin:0"><button class="btn tbBtn" data-tb="tb1">▶ Ejecutar</button></div></div>
+      <div class="tb hidden" id="tb1">Traceback (most recent call last):
+  <span class="dim">File "escenario_1.py", line 2, in &lt;module&gt;</span>
+    print(best_bid(book))
+  <span class="dim">File "order_book.py", line 20, in best_bid</span>
+    return max(o['price'] for o in book if o['side'] == 'buy')
+<span class="et">ValueError</span>: max() arg is an empty sequence</div>
+      <ul class="tb-notes hidden" data-for="tb1">
+        <li><span class="mk">①</span> Novedad: el traceback tiene <strong>dos saltos</strong> — tu archivo <em>y</em> el módulo. Se sigue leyendo de abajo arriba.</li>
+        <li><span class="mk">②</span> "empty sequence" es el error de <code>max()</code>, no habla de libros ni de trading. Críptico para quien use tu librería.</li>
+      </ul>
+    </div>
+
+    <div class="code">
+      <div class="code-head"><span>escenario_2.py — tú lo cazas</span><span>python</span></div>
+      <pre><span class="ln">book = []</span><span class="ln"><span class="k">try</span>:</span><span class="ln">    <span class="fn">print</span>(best_bid(book))</span><span class="ln"><span class="k">except</span> ValueError:</span><span class="ln">    <span class="fn">print</span>(<span class="s">"libro vacío: aún no hay órdenes"</span>)</span></pre>
+      <div class="out"><div class="btnrow" style="margin:0"><button class="btn runbtn" data-target="out-try">▶ Ejecutar</button></div>
+        <div id="out-try" class="hidden" style="margin-top:10px"><div><span class="prompt">&gt;&gt;&gt; </span><span class="val">libro vacío: aún no hay órdenes</span></div></div>
+      </div>
+    </div>
+
+    <p>El <code>try/except</code> es la red del <strong>usuario</strong>. Pero el
+    <strong>autor</strong> de la librería puede hacer algo mejor: fallar <em>antes</em> y
+    <em>más claro</em>:</p>
+
+    <div class="code">
+      <div class="code-head"><span>order_book.py — el error diseñado</span><span>python</span></div>
+      <pre><span class="ln"><span class="k">def</span> <span class="fn">best_bid</span>(book):</span><span class="ln">    <span class="k">if</span> <span class="k">not</span> book:</span><span class="ln">        <span class="k">raise</span> ValueError(<span class="s">"libro vacío: no hay best_bid"</span>)</span><span class="ln">    <span class="k">return</span> <span class="fn">max</span>(o[<span class="s">'price'</span>] <span class="k">for</span> o <span class="k">in</span> book <span class="k">if</span> o[<span class="s">'side'</span>] == <span class="s">'buy'</span>)</span></pre>
+      <div class="out"><div class="btnrow" style="margin:0"><button class="btn tbBtn" data-tb="tb3">▶ Ejecutar best_bid([])</button></div></div>
+      <div class="tb hidden" id="tb3">Traceback (most recent call last):
+  <span class="dim">File "escenario_3.py", line 2, in &lt;module&gt;</span>
+    print(best_bid(book))
+<span class="et">ValueError</span>: libro vacío: no hay best_bid</div>
+      <ul class="tb-notes hidden" data-for="tb3">
+        <li><span class="mk">①</span> Mismo tipo de error, pero ahora el mensaje <strong>habla tu idioma</strong>: dice qué pasó y en términos del dominio.</li>
+        <li><span class="mk">②</span> Esta es la diferencia entre código que funciona y una librería que da gusto usar.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ §4 __MAIN__ ══════════════ -->
+<section id="s4">
+  <div class="wrap">
+    <div class="eyebrow">§4 · <b>Construye</b></div>
+    <h2>El módulo que también sabe correr solo</h2>
+    <p class="lede">El patrón profesional: la librería arriba, y al final una demo que
+    <strong>solo</strong> corre cuando ejecutas el archivo directamente.</p>
+
+    <div class="code">
+      <div class="code-head"><span>order_book.py (final del archivo)</span><span>python</span></div>
+      <pre><span class="ln"><span class="k">if</span> __name__ == <span class="s">"__main__"</span>:</span><span class="ln">    <span class="c"># demo: solo corre con `python order_book.py`</span></span><span class="ln">    book = []</span><span class="ln">    book = add_order(book, make_order(<span class="s">'BTCUSDT'</span>, <span class="s">'buy'</span>, <span class="num">99950</span>, <span class="num">0.5</span>))</span><span class="ln">    book = add_order(book, make_order(<span class="s">'BTCUSDT'</span>, <span class="s">'sell'</span>, <span class="num">100000</span>, <span class="num">0.3</span>))</span><span class="ln">    <span class="fn">print</span>(<span class="s">"mid:"</span>, mid(book))</span></pre>
+      <div class="out"><div class="btnrow" style="margin:0"><button class="btn runbtn" data-target="out-main" data-seq>▶ python order_book.py</button></div>
+        <div id="out-main" class="hidden" style="margin-top:10px">
+          <div><span class="prompt">$ </span><span style="color:var(--muted)">python order_book.py</span></div>
+          <div><span class="prompt">&gt;&gt;&gt; </span><span class="val">mid: 99975.0</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="note"><span class="tag">Y cuando lo importas…</span>
+    …ese bloque <strong>no se ejecuta</strong>: <code>__name__</code> vale
+    <code>"order_book"</code>, no <code>"__main__"</code>. La demo no contamina a quien
+    solo quiere tus funciones. Pruébalo en el notebook — es una de esas cosas que hay que
+    ver una vez.</div>
+  </div>
+</section>
+
+<!-- ══════════════ §5 QUIZ ══════════════ -->
+<section id="s5">
+  <div class="wrap">
+    <div class="eyebrow">§5 · <b>Fija lo de hoy</b></div>
+    <h2>5 preguntas</h2>
+    <div class="quiz" data-quiz>
+      <div class="q" data-ok="0">
+        <div class="qt">Tras <code>import order_book</code>, ¿cómo llamas a <code>best_bid</code>?</div>
+        <div class="opts">
+          <button class="opt">A · order_book.best_bid(book) — con apellido</button>
+          <button class="opt">B · best_bid(book) — a pelo</button>
+          <button class="opt">C · import.best_bid(book)</button>
+        </div>
+        <div class="why">El módulo entero llega bajo su nombre; todo lo suyo se usa con el
+        prefijo <code>order_book.</code></div>
+      </div>
+      <div class="q" data-ok="1">
+        <div class="qt">Tras <code>from order_book import imbalance</code>, ¿qué nombre existe en tu archivo?</div>
+        <div class="opts">
+          <button class="opt">A · order_book (el módulo entero)</button>
+          <button class="opt">B · imbalance, a secas</button>
+          <button class="opt">C · order_book.imbalance</button>
+        </div>
+        <div class="why">Solo trajiste ese nombre. El resto del módulo no existe en tu
+        espacio de nombres.</div>
+      </div>
+      <div class="q" data-ok="2">
+        <div class="qt">Si el código dentro del <code>try</code> NO falla, el bloque <code>except</code>…</div>
+        <div class="opts">
+          <button class="opt">A · Se ejecuta igualmente, por si acaso</button>
+          <button class="opt">B · Lanza un aviso</button>
+          <button class="opt">C · No se ejecuta: no había nada que cazar</button>
+        </div>
+        <div class="why">El <code>except</code> es la red: solo actúa si algo cae.</div>
+      </div>
+      <div class="q" data-ok="0">
+        <div class="qt">¿Para qué usa una librería <code>raise ValueError("libro vacío…")</code>?</div>
+        <div class="opts">
+          <button class="opt">A · Para fallar pronto y con un mensaje que habla del dominio</button>
+          <button class="opt">B · Para imprimir un warning y continuar</button>
+          <button class="opt">C · Para cazar errores de otros módulos</button>
+        </div>
+        <div class="why">Fallar claro es un regalo al usuario de tu librería (que serás tú
+        en dos semanas). <code>raise</code> lanza; <code>try/except</code> caza.</div>
+      </div>
+      <div class="q" data-ok="1">
+        <div class="qt"><code>__name__ == "__main__"</code> es <code>True</code> cuando…</div>
+        <div class="opts">
+          <button class="opt">A · El módulo se importa desde otro archivo</button>
+          <button class="opt">B · Ejecutas ese archivo directamente con python</button>
+          <button class="opt">C · Siempre: es una constante</button>
+        </div>
+        <div class="why">Ejecutado directamente → <code>"__main__"</code>. Importado → el
+        nombre del módulo. Por eso el bloque protege la demo.</div>
+      </div>
+      <div class="score"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ §6 PUENTE ══════════════ -->
+<section id="s6">
+  <div class="wrap">
+    <div class="eyebrow">§6 · <b>El puente</b></div>
+    <h2>Dónde estás en el proyecto</h2>
+    <div class="pkgmap">
+      <div class="pk done">L1 · el dato<span>variables, dicts, decisiones</span></div>
+      <div class="pk done">L2 · book funcional<span>funciones sobre el libro</span></div>
+      <div class="pk today">L3 · order_book.py<span>módulo importable y robusto</span></div>
+      <div class="pk future">L4 · Order y Fill<span>exchange/orders.py</span></div>
+      <div class="pk future">L5 · OrderBook + Tracker<span>exchange/book.py</span></div>
+      <div class="pk future">L6 · familia Strategy<span>herencia</span></div>
+      <div class="pk future">L7-9 · el motor<span>matching, market</span></div>
+      <div class="pk future">L10-11 · el framework<span>Strategy + Backtest</span></div>
+      <div class="pk future">L12-14 · estrategias<span>VWAP, market making</span></div>
+    </div>
+
+    <div class="bridge">
+      <div class="tag">El puente a L4</div>
+      <p style="margin:.2em 0"><strong>Tu código ya es una librería. Pero mira tus firmas:</strong></p>
+      <p><code>best_bid(book)</code> · <code>imbalance(book)</code> · <code>add_order(book, …)</code>
+      — el dato va por un lado y sus funciones por otro, y tú haciendo de repartidor,
+      pasando <code>book</code> a todas partes.</p>
+      <p style="margin-bottom:0">¿Y si el dato <strong>supiera operar consigo mismo</strong>?
+      <code>book.best_bid()</code>. Eso es un <strong>objeto</strong> — y en la próxima
+      clase nacen los dos primeros del proyecto: <code>Order</code> y <code>Fill</code>.</p>
+    </div>
+
+    <div class="cta">
+      <div class="box"><span class="tag">Ahora te toca construir</span>
+      Abre <code>03_build_exercises.ipynb</code>: importa tu módulo, blíndalo y móntale
+      su <code>main</code>.</div>
+      <div class="box"><span class="tag">Y después, al gimnasio</span>
+      <code>03_auxiliary.ipynb</code> — drills de import, tracebacks de dos saltos y
+      errores diseñados.</div>
+    </div>
+  </div>
+</section>
+
+<footer>L3 · Módulos y errores — Algo Trading ICAI 2026 · documento interactivo</footer>
