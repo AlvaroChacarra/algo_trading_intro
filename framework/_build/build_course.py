@@ -336,6 +336,15 @@ def emit(lesson: dict) -> None:
         with open(os.path.join(exer, fname), "w") as f:
             f.write(content)
 
+    # capstone (L14): el proyecto abierto de cierre — plantilla + corrector + baremo
+    capstone_src = os.path.join(HERE, "capstone")
+    if lesson["n"] == 14 and os.path.isdir(capstone_src):
+        shutil.copy(os.path.join(capstone_src, "CAPSTONE.md"),
+                    os.path.join(folder, "CAPSTONE.md"))
+        for fname in ("mi_estrategia.py", "capstone_check.py",
+                      "capstone_scoring.py", "leaderboard.py"):
+            shutil.copy(os.path.join(capstone_src, fname), os.path.join(exer, fname))
+
     # .py consolidado: que el alumno vea código en un archivo, no solo en celdas
     sname = lesson.get("script_name")
     script = lesson.get("script")

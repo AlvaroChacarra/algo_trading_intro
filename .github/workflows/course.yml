@@ -42,6 +42,7 @@ jobs:
           (cd 12-vwap-execution/exercises && python run_vwap.py > /dev/null)
           (cd 13-market-making-intro/exercises && python run_mm.py > /dev/null)
           (cd 14-avellaneda-stoikov/exercises && python mm_sweep.py > /dev/null)
+          (cd 14-avellaneda-stoikov/exercises && python capstone_check.py > /dev/null)
 
       - name: Regenerar y comprobar que nada se editó a mano
         run: |

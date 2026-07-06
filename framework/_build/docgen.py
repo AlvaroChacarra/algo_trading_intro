@@ -284,6 +284,11 @@ def build_index(lessons: list[dict], root: str) -> str:
         checkpoint = ('<a class="lcard special" href="06-oop-iii-inheritance/checkpoint.html">'
                       '<div class="lc-n">✓</div><div class="lc-t">Checkpoint · fundamentos</div>'
                       '<div class="lc-o">20 preguntas sobre L1-L6 · +1/−0.5</div></a>')
+    capstone = ""
+    if os.path.exists(os.path.join(root, "14-avellaneda-stoikov", "CAPSTONE.md")):
+        capstone = ('<a class="lcard special" href="14-avellaneda-stoikov/CAPSTONE.md">'
+                    '<div class="lc-n">🏁</div><div class="lc-t">Capstone · tu market maker</div>'
+                    '<div class="lc-o">Proyecto abierto · baremo 30/40/30 · leaderboard</div></a>')
     exam = ('<a class="lcard special" href="15-final-exam/examen.html">'
             '<div class="lc-n">L15</div><div class="lc-t">Examen final</div>'
             '<div class="lc-o">40 preguntas · 40 minutos · +1/−0.5</div></a>')
@@ -294,7 +299,7 @@ def build_index(lessons: list[dict], root: str) -> str:
   microestructura y un framework de estrategias. Tu progreso se guarda en este navegador.</p>
 </header>
 <main class="wrap" style="padding-bottom:60px">
-  <div class="lgrid">{''.join(cards)}{checkpoint}{exam}</div>
+  <div class="lgrid">{''.join(cards)}{checkpoint}{capstone}{exam}</div>
   <p style="color:var(--faint);font-size:.85rem;margin-top:26px">Cada clase: documento
   interactivo → <code>NN_build_exercises.ipynb</code> (construcción) →
   <code>NN_auxiliary.ipynb</code> (el gimnasio). Progreso local:
