@@ -503,6 +503,13 @@
     margin:30px 0;background:var(--accent-dim)}
   #grade-panel h3{margin:0 0 8px}
   .gr{font-family:var(--mono);font-size:.9rem;line-height:2}
+  .codebox{display:flex;gap:8px;align-items:center;margin-top:14px;flex-wrap:wrap}
+  .codebox code{font-family:var(--mono);font-size:.9rem;background:var(--bg);
+    border:1px solid var(--line);border-radius:8px;padding:8px 12px;color:var(--accent);
+    user-select:all;word-break:break-all}
+  .codebox button{font-family:var(--mono);font-size:.78rem;padding:7px 12px;cursor:pointer;
+    border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--text)}
+  .codehint{font-size:.76rem;color:var(--muted);margin-top:6px}
 
 </style>
 </head>
@@ -516,10 +523,7 @@
 <header class="hero wrap" style="padding:44px 0 10px">
   <div class="eyebrow"><b>Algo Trading · ICAI 2026</b> · L15 · examen final</div>
   <h1 style="font-size:clamp(1.8rem,4vw,2.6rem)">40 preguntas · 40 minutos</h1>
-  <p class="lede">Baremo: acierto <b style="color:var(--bid)">+1</b> · fallo
-  <b style="color:var(--ask)">−0.5</b> · en blanco 0. Pulsa una opción para marcarla;
-  vuelve a pulsarla para dejarla en blanco. Al final (o cuando el reloj llegue a cero),
-  <strong>Corregir</strong>.</p>
+  <p class="lede">Baremo: acierto <b style="color:var(--bid)">+1</b> · fallo <b style="color:var(--ask)">−0.5</b> · en blanco 0. Pulsa una opción para marcarla; vuelve a pulsarla para dejarla en blanco. Al final (o cuando el reloj llegue a cero), <strong>Corregir</strong>.</p>
 </header>
 
 <main class="wrap">
@@ -652,6 +656,7 @@
   </div>
 </main>
 <footer>L15 · Examen final — el curso entero, preguntado</footer>
+<script>window.EXAM_ID='L15';window.EXAM_SEED=0;window.EXAM_MIN=40;</script>
 <script>
 (function(){
 'use strict';
@@ -673,8 +678,15 @@ qs.forEach(q=>{
 });
 refresh();
 
-/* temporizador 40:00 */
-let left=40*60;
+const EXID=window.EXAM_ID||'L15',SEED=window.EXAM_SEED||0,MIN=window.EXAM_MIN||40;
+
+/* checksum: debe coincidir con el de verify_result.py (misma fórmula) */
+function checksum(seed,right,wrong,blank,total){
+  return String((right*7+wrong*13+blank*17+seed*3+total*5)%97).padStart(2,'0');
+}
+
+/* temporizador */
+let left=MIN*60;
 const ti=setInterval(()=>{
   left--;
   const m=String(Math.floor(left/60)).padStart(2,'0'),s=String(left%60).padStart(2,'0');
@@ -698,16 +710,36 @@ function grade(){
     else if(selIdx===ok){right++;byTopic[topic].r++;}
     else{wrong++;opts[selIdx].classList.add('bad');}
   });
+  const total=qs.length;
   const score=right-0.5*wrong;
-  const nota=Math.max(0,score/qs.length*10);
+  const nota=Math.max(0,score/total*10);
+  const chk=checksum(SEED,right,wrong,blank,total);
+  const code=['AT26',EXID,'S'+SEED,'R'+right,'W'+wrong,'B'+blank,
+              'N'+nota.toFixed(2),chk].join('-');
   $('#grade-panel').classList.remove('hidden');
   $('#grade-res').innerHTML=
     '<div class="gr">aciertos: <b style="color:var(--bid)">'+right+'</b> · fallos: '+
     '<b style="color:var(--ask)">'+wrong+'</b> · en blanco: '+blank+'</div>'+
-    '<div class="gr">puntuación: <b>'+score.toFixed(1)+'</b> / '+qs.length+
+    '<div class="gr">puntuación: <b>'+score.toFixed(1)+'</b> / '+total+
     ' &nbsp;→&nbsp; nota: <b style="font-size:1.3em">'+nota.toFixed(2)+'</b> / 10</div>'+
     '<div class="gr" style="color:var(--muted);font-size:.8rem">'+
-    Object.entries(byTopic).map(([t,x])=>t+' '+x.r+'/'+x.n).join(' · ')+'</div>';
+    Object.entries(byTopic).map(([t,x])=>t+' '+x.r+'/'+x.n).join(' · ')+'</div>'+
+    '<div class="codebox"><code id="rescode">'+code+'</code>'+
+    '<button id="copybtn">📋 copiar código</button></div>'+
+    '<div class="codehint">Envíaselo al profe: certifica tu resultado sin capturas.</div>';
+  const cb=$('#copybtn');
+  cb.addEventListener('click',()=>{
+    const t=$('#rescode').textContent;
+    const done=()=>{cb.textContent='✓ copiado';setTimeout(()=>cb.textContent='📋 copiar código',1500);};
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t).then(done,()=>{});
+    }else{
+      const r=document.createRange();r.selectNode($('#rescode'));
+      const sel=window.getSelection();sel.removeAllRanges();sel.addRange(r);
+      try{document.execCommand('copy');done();}catch(e){}
+      sel.removeAllRanges();
+    }
+  });
   $('#grade-btn').disabled=true;$('#grade-btn').textContent='✓ corregido';
   $('#grade-panel').scrollIntoView({behavior:'smooth'});
 }
