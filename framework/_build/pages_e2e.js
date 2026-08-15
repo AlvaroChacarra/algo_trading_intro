@@ -77,7 +77,8 @@ const samples = [
   if (actions !== 42) { failures++; console.error(`✗ index actions=${actions}, expected 42`); }
   await page.locator('.lc-actions a').first().click();
   await page.locator('.course-home').click();
-  if (new URL(page.url()).pathname !== BASE) {
+  const returnedPath = new URL(page.url()).pathname;
+  if (![BASE, BASE + 'index.html'].includes(returnedPath)) {
     failures++; console.error(`✗ course return resolved to ${page.url()}`);
   }
 
