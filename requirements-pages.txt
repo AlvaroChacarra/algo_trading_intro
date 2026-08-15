@@ -1,0 +1,2 @@
+# Static publication dependencies (not needed by students at runtime).
+nbconvert>=7.16,<8

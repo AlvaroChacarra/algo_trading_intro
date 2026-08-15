@@ -432,6 +432,13 @@
 .lcard .lc-fill{height:100%;width:0;background:var(--accent);border-radius:99px}
 .lcard .lc-meta{display:flex;justify-content:space-between;font-family:var(--mono);
                 font-size:.66rem;color:var(--faint)}
+.lcard .lc-actions{display:grid;gap:7px;margin-top:12px}
+.lcard .lc-actions a{display:flex;align-items:center;min-height:44px;padding:8px 11px;
+  border:1px solid var(--line);border-radius:9px;color:var(--text);text-decoration:none;
+  font-family:var(--mono);font-size:.72rem;transition:border-color .2s,background .2s}
+.lcard .lc-actions a:first-child{border-color:rgba(34,211,238,.45);color:var(--accent)}
+.lcard .lc-actions a:hover,.lcard .lc-actions a:focus-visible{border-color:var(--accent);
+  background:var(--accent-dim);outline:none}
 .lcard.done{border-color:rgba(74,222,128,.5)}
 .lcard.done .lc-n:after{content:" ✓";color:var(--bid)}
 .lcard.special{border-style:dashed;border-color:rgba(251,191,36,.45)}
@@ -495,91 +502,161 @@
   microestructura y un framework de estrategias. Tu progreso se guarda en este navegador.</p>
 </header>
 <main class="wrap" style="padding-bottom:60px">
-  <div class="lgrid"><a class="lcard" href="01-python-i-data-model/presentation/python-i-data-model-doc.html" data-lesson="01">
+  <div class="lgrid"><article class="lcard" data-lesson="01">
   <div class="lc-n">L1</div>
   <div class="lc-t">Python I — El modelo de datos</div>
   <div class="lc-o">order y snapshot como dicts</div>
   <div class="lc-bar"><div class="lc-fill"></div></div>
   <div class="lc-meta"><span class="lc-scroll">—</span><span class="lc-quiz">quiz —</span></div>
-</a><a class="lcard" href="02-python-ii-functional-book/presentation/python-ii-functional-book-doc.html" data-lesson="02">
+  <nav class="lc-actions" aria-label="Materiales de la clase 1">
+    <a href="01-python-i-data-model/presentation/python-i-data-model-doc.html">📖 Documento</a>
+    <a href="01-python-i-data-model/exercises/01_build_exercises.html">🧪 Build exercises</a>
+    <a href="01-python-i-data-model/exercises/01_auxiliary.html">🏋️ Auxiliary exercises</a>
+  </nav>
+</article><article class="lcard" data-lesson="02">
   <div class="lc-n">L2</div>
   <div class="lc-t">Python II — El libro funcional</div>
   <div class="lc-o">funciones add_order / cancel / imbalance</div>
   <div class="lc-bar"><div class="lc-fill"></div></div>
   <div class="lc-meta"><span class="lc-scroll">—</span><span class="lc-quiz">quiz —</span></div>
-</a><a class="lcard" href="03-python-iii-modules/presentation/python-iii-modules-doc.html" data-lesson="03">
+  <nav class="lc-actions" aria-label="Materiales de la clase 2">
+    <a href="02-python-ii-functional-book/presentation/python-ii-functional-book-doc.html">📖 Documento</a>
+    <a href="02-python-ii-functional-book/exercises/02_build_exercises.html">🧪 Build exercises</a>
+    <a href="02-python-ii-functional-book/exercises/02_auxiliary.html">🏋️ Auxiliary exercises</a>
+  </nav>
+</article><article class="lcard" data-lesson="03">
   <div class="lc-n">L3</div>
   <div class="lc-t">Python III — Módulos y errores</div>
   <div class="lc-o">tu order_book.py se vuelve un módulo importable y robusto</div>
   <div class="lc-bar"><div class="lc-fill"></div></div>
   <div class="lc-meta"><span class="lc-scroll">—</span><span class="lc-quiz">quiz —</span></div>
-</a><a class="lcard" href="04-oop-i-order-trade/presentation/oop-i-order-trade-doc.html" data-lesson="04">
+  <nav class="lc-actions" aria-label="Materiales de la clase 3">
+    <a href="03-python-iii-modules/presentation/python-iii-modules-doc.html">📖 Documento</a>
+    <a href="03-python-iii-modules/exercises/03_build_exercises.html">🧪 Build exercises</a>
+    <a href="03-python-iii-modules/exercises/03_auxiliary.html">🏋️ Auxiliary exercises</a>
+  </nav>
+</article><article class="lcard" data-lesson="04">
   <div class="lc-n">L4</div>
   <div class="lc-t">OOP I — Order y Fill</div>
   <div class="lc-o">clases Order y Fill (exchange/orders.py, trades.py)</div>
   <div class="lc-bar"><div class="lc-fill"></div></div>
   <div class="lc-meta"><span class="lc-scroll">—</span><span class="lc-quiz">quiz —</span></div>
-</a><a class="lcard" href="05-oop-ii-book-portfolio/presentation/oop-ii-book-portfolio-doc.html" data-lesson="05">
+  <nav class="lc-actions" aria-label="Materiales de la clase 4">
+    <a href="04-oop-i-order-trade/presentation/oop-i-order-trade-doc.html">📖 Documento</a>
+    <a href="04-oop-i-order-trade/exercises/04_build_exercises.html">🧪 Build exercises</a>
+    <a href="04-oop-i-order-trade/exercises/04_auxiliary.html">🏋️ Auxiliary exercises</a>
+  </nav>
+</article><article class="lcard" data-lesson="05">
   <div class="lc-n">L5</div>
   <div class="lc-t">OOP II — OrderBook y PositionTracker</div>
   <div class="lc-o">clases OrderBook y PositionTracker (composición)</div>
   <div class="lc-bar"><div class="lc-fill"></div></div>
   <div class="lc-meta"><span class="lc-scroll">—</span><span class="lc-quiz">quiz —</span></div>
-</a><a class="lcard" href="06-oop-iii-inheritance/presentation/oop-iii-inheritance-doc.html" data-lesson="06">
+  <nav class="lc-actions" aria-label="Materiales de la clase 5">
+    <a href="05-oop-ii-book-portfolio/presentation/oop-ii-book-portfolio-doc.html">📖 Documento</a>
+    <a href="05-oop-ii-book-portfolio/exercises/05_build_exercises.html">🧪 Build exercises</a>
+    <a href="05-oop-ii-book-portfolio/exercises/05_auxiliary.html">🏋️ Auxiliary exercises</a>
+  </nav>
+</article><article class="lcard" data-lesson="06">
   <div class="lc-n">L6</div>
   <div class="lc-t">OOP III — Herencia y polimorfismo</div>
   <div class="lc-o">una familia Strategy de juguete: base + subclases (semilla del framework de L10)</div>
   <div class="lc-bar"><div class="lc-fill"></div></div>
   <div class="lc-meta"><span class="lc-scroll">—</span><span class="lc-quiz">quiz —</span></div>
-</a><a class="lcard" href="07-microstructure-reading-book/presentation/microstructure-reading-book-doc.html" data-lesson="07">
+  <nav class="lc-actions" aria-label="Materiales de la clase 6">
+    <a href="06-oop-iii-inheritance/presentation/oop-iii-inheritance-doc.html">📖 Documento</a>
+    <a href="06-oop-iii-inheritance/exercises/06_build_exercises.html">🧪 Build exercises</a>
+    <a href="06-oop-iii-inheritance/exercises/06_auxiliary.html">🏋️ Auxiliary exercises</a>
+  </nav>
+</article><article class="lcard" data-lesson="07">
   <div class="lc-n">L7</div>
   <div class="lc-t">Microestructura — Leer el libro</div>
   <div class="lc-o">métricas de mercado sobre snapshots reales de BTC</div>
   <div class="lc-bar"><div class="lc-fill"></div></div>
   <div class="lc-meta"><span class="lc-scroll">—</span><span class="lc-quiz">quiz —</span></div>
-</a><a class="lcard" href="08-order-types-matching/presentation/order-types-matching-doc.html" data-lesson="08">
+  <nav class="lc-actions" aria-label="Materiales de la clase 7">
+    <a href="07-microstructure-reading-book/presentation/microstructure-reading-book-doc.html">📖 Documento</a>
+    <a href="07-microstructure-reading-book/exercises/07_build_exercises.html">🧪 Build exercises</a>
+    <a href="07-microstructure-reading-book/exercises/07_auxiliary.html">🏋️ Auxiliary exercises</a>
+  </nav>
+</article><article class="lcard" data-lesson="08">
   <div class="lc-n">L8</div>
   <div class="lc-t">Órdenes y matching</div>
   <div class="lc-o">MatchingEngine: cómo se cruzan las órdenes</div>
   <div class="lc-bar"><div class="lc-fill"></div></div>
   <div class="lc-meta"><span class="lc-scroll">—</span><span class="lc-quiz">quiz —</span></div>
-</a><a class="lcard" href="09-market-simulation-loop/presentation/market-simulation-loop-doc.html" data-lesson="09">
+  <nav class="lc-actions" aria-label="Materiales de la clase 8">
+    <a href="08-order-types-matching/presentation/order-types-matching-doc.html">📖 Documento</a>
+    <a href="08-order-types-matching/exercises/08_build_exercises.html">🧪 Build exercises</a>
+    <a href="08-order-types-matching/exercises/08_auxiliary.html">🏋️ Auxiliary exercises</a>
+  </nav>
+</article><article class="lcard" data-lesson="09">
   <div class="lc-n">L9</div>
   <div class="lc-t">El loop de simulación</div>
   <div class="lc-o">Market: reproducir snapshots y ejecutar en el tiempo</div>
   <div class="lc-bar"><div class="lc-fill"></div></div>
   <div class="lc-meta"><span class="lc-scroll">—</span><span class="lc-quiz">quiz —</span></div>
-</a><a class="lcard" href="10-strategy-framework/presentation/strategy-framework-doc.html" data-lesson="10">
+  <nav class="lc-actions" aria-label="Materiales de la clase 9">
+    <a href="09-market-simulation-loop/presentation/market-simulation-loop-doc.html">📖 Documento</a>
+    <a href="09-market-simulation-loop/exercises/09_build_exercises.html">🧪 Build exercises</a>
+    <a href="09-market-simulation-loop/exercises/09_auxiliary.html">🏋️ Auxiliary exercises</a>
+  </nav>
+</article><article class="lcard" data-lesson="10">
   <div class="lc-n">L10</div>
   <div class="lc-t">El framework: Strategy + Backtest</div>
   <div class="lc-o">interfaz Strategy (ABC) y el runner Backtest</div>
   <div class="lc-bar"><div class="lc-fill"></div></div>
   <div class="lc-meta"><span class="lc-scroll">—</span><span class="lc-quiz">quiz —</span></div>
-</a><a class="lcard" href="11-first-strategy-metrics/presentation/first-strategy-metrics-doc.html" data-lesson="11">
+  <nav class="lc-actions" aria-label="Materiales de la clase 10">
+    <a href="10-strategy-framework/presentation/strategy-framework-doc.html">📖 Documento</a>
+    <a href="10-strategy-framework/exercises/10_build_exercises.html">🧪 Build exercises</a>
+    <a href="10-strategy-framework/exercises/10_auxiliary.html">🏋️ Auxiliary exercises</a>
+  </nav>
+</article><article class="lcard" data-lesson="11">
   <div class="lc-n">L11</div>
   <div class="lc-t">Primera estrategia + métricas</div>
   <div class="lc-o">medir una estrategia contra un benchmark</div>
   <div class="lc-bar"><div class="lc-fill"></div></div>
   <div class="lc-meta"><span class="lc-scroll">—</span><span class="lc-quiz">quiz —</span></div>
-</a><a class="lcard" href="12-vwap-execution/presentation/vwap-execution-doc.html" data-lesson="12">
+  <nav class="lc-actions" aria-label="Materiales de la clase 11">
+    <a href="11-first-strategy-metrics/presentation/first-strategy-metrics-doc.html">📖 Documento</a>
+    <a href="11-first-strategy-metrics/exercises/11_build_exercises.html">🧪 Build exercises</a>
+    <a href="11-first-strategy-metrics/exercises/11_auxiliary.html">🏋️ Auxiliary exercises</a>
+  </nav>
+</article><article class="lcard" data-lesson="12">
   <div class="lc-n">L12</div>
   <div class="lc-t">VWAP — Ejecución</div>
   <div class="lc-o">VWAPStrategy: repartir una orden por el perfil de volumen (estático y dinámico)</div>
   <div class="lc-bar"><div class="lc-fill"></div></div>
   <div class="lc-meta"><span class="lc-scroll">—</span><span class="lc-quiz">quiz —</span></div>
-</a><a class="lcard" href="13-market-making-intro/presentation/market-making-intro-doc.html" data-lesson="13">
+  <nav class="lc-actions" aria-label="Materiales de la clase 12">
+    <a href="12-vwap-execution/presentation/vwap-execution-doc.html">📖 Documento</a>
+    <a href="12-vwap-execution/exercises/12_build_exercises.html">🧪 Build exercises</a>
+    <a href="12-vwap-execution/exercises/12_auxiliary.html">🏋️ Auxiliary exercises</a>
+  </nav>
+</article><article class="lcard" data-lesson="13">
   <div class="lc-n">L13</div>
   <div class="lc-t">Market making — Intro</div>
   <div class="lc-o">MarketMaker: cotizar a ambos lados y gestionar inventario</div>
   <div class="lc-bar"><div class="lc-fill"></div></div>
   <div class="lc-meta"><span class="lc-scroll">—</span><span class="lc-quiz">quiz —</span></div>
-</a><a class="lcard" href="14-avellaneda-stoikov/presentation/avellaneda-stoikov-doc.html" data-lesson="14">
+  <nav class="lc-actions" aria-label="Materiales de la clase 13">
+    <a href="13-market-making-intro/presentation/market-making-intro-doc.html">📖 Documento</a>
+    <a href="13-market-making-intro/exercises/13_build_exercises.html">🧪 Build exercises</a>
+    <a href="13-market-making-intro/exercises/13_auxiliary.html">🏋️ Auxiliary exercises</a>
+  </nav>
+</article><article class="lcard" data-lesson="14">
   <div class="lc-n">L14</div>
   <div class="lc-t">Avellaneda-Stoikov — modelo y simulación</div>
   <div class="lc-o">AvellanedaStoikov: reservation price, optimal spread y barridos de gamma</div>
   <div class="lc-bar"><div class="lc-fill"></div></div>
   <div class="lc-meta"><span class="lc-scroll">—</span><span class="lc-quiz">quiz —</span></div>
-</a><a class="lcard special" href="06-oop-iii-inheritance/checkpoint.html"><div class="lc-n">✓</div><div class="lc-t">Checkpoint · fundamentos</div><div class="lc-o">20 preguntas sobre L1-L6 · +1/−0.5</div></a><a class="lcard special" href="14-avellaneda-stoikov/CAPSTONE.md"><div class="lc-n">🏁</div><div class="lc-t">Capstone · tu market maker</div><div class="lc-o">Proyecto abierto · baremo 30/40/30 · leaderboard</div></a><a class="lcard special" href="15-final-exam/examen.html"><div class="lc-n">L15</div><div class="lc-t">Examen final</div><div class="lc-o">40 preguntas · 40 minutos · +1/−0.5</div></a></div>
+  <nav class="lc-actions" aria-label="Materiales de la clase 14">
+    <a href="14-avellaneda-stoikov/presentation/avellaneda-stoikov-doc.html">📖 Documento</a>
+    <a href="14-avellaneda-stoikov/exercises/14_build_exercises.html">🧪 Build exercises</a>
+    <a href="14-avellaneda-stoikov/exercises/14_auxiliary.html">🏋️ Auxiliary exercises</a>
+  </nav>
+</article><a class="lcard special" href="06-oop-iii-inheritance/checkpoint.html"><div class="lc-n">✓</div><div class="lc-t">Checkpoint · fundamentos</div><div class="lc-o">20 preguntas sobre L1-L6 · +1/−0.5</div></a><a class="lcard special" href="14-avellaneda-stoikov/CAPSTONE.md"><div class="lc-n">🏁</div><div class="lc-t">Capstone · tu market maker</div><div class="lc-o">Proyecto abierto · baremo 30/40/30 · leaderboard</div></a><a class="lcard special" href="15-final-exam/examen.html"><div class="lc-n">L15</div><div class="lc-t">Examen final</div><div class="lc-o">40 preguntas · 40 minutos · +1/−0.5</div></a></div>
   <p style="color:var(--faint);font-size:.85rem;margin-top:26px">Cada clase: documento
   interactivo → <code>NN_build_exercises.ipynb</code> (construcción) →
   <code>NN_auxiliary.ipynb</code> (el gimnasio). Progreso local:

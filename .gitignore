@@ -28,6 +28,7 @@ _archive_v1/
 
 # Project specific
 output/
+_site/
 .playwright-cli/
 favicon.ico
 
