@@ -6,7 +6,7 @@ Instructor: **Álvaro López Chacarra** · ICAI.
 
 ## Empieza aquí
 
-Abre **[`index.html`](index.html)** en el navegador: es el mapa del curso. Cada tarjeta lleva a su documento interactivo y **tu progreso se guarda en el propio navegador** (barra de avance y nota del quiz por clase).
+Abre **[la web del curso](https://alvarochacarra.github.io/algo_trading_intro/)** desde cualquier dispositivo. Los documentos interactivos se consultan directamente y cada notebook tiene una versión web renderizada; el progreso se guarda en el propio navegador.
 
 ## Mapa del curso
 
