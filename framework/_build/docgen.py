@@ -272,13 +272,20 @@ def build_index(lessons: list[dict], root: str) -> str:
         n = L["n"]
         slugname = L["slug"].split("-", 1)[1]
         doc = f'{L["slug"]}/presentation/{slugname}-doc.html'
-        cards.append(f'''<a class="lcard" href="{doc}" data-lesson="{n:02d}">
+        build = f'{L["slug"]}/exercises/{n:02d}_build_exercises.html'
+        auxiliary = f'{L["slug"]}/exercises/{n:02d}_auxiliary.html'
+        cards.append(f'''<article class="lcard" data-lesson="{n:02d}">
   <div class="lc-n">L{n}</div>
   <div class="lc-t">{L["title"]}</div>
   <div class="lc-o">{L["piece"]}</div>
   <div class="lc-bar"><div class="lc-fill"></div></div>
   <div class="lc-meta"><span class="lc-scroll">—</span><span class="lc-quiz">quiz —</span></div>
-</a>''')
+  <nav class="lc-actions" aria-label="Materiales de la clase {n}">
+    <a href="{doc}">📖 Documento</a>
+    <a href="{build}">🧪 Build exercises</a>
+    <a href="{auxiliary}">🏋️ Auxiliary exercises</a>
+  </nav>
+</article>''')
     checkpoint = ""
     if os.path.exists(os.path.join(root, "06-oop-iii-inheritance", "checkpoint.html")):
         checkpoint = ('<a class="lcard special" href="06-oop-iii-inheritance/checkpoint.html">'

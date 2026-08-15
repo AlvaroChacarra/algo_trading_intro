@@ -434,6 +434,13 @@
 .lcard .lc-fill{height:100%;width:0;background:var(--accent);border-radius:99px}
 .lcard .lc-meta{display:flex;justify-content:space-between;font-family:var(--mono);
                 font-size:.66rem;color:var(--faint)}
+.lcard .lc-actions{display:grid;gap:7px;margin-top:12px}
+.lcard .lc-actions a{display:flex;align-items:center;min-height:44px;padding:8px 11px;
+  border:1px solid var(--line);border-radius:9px;color:var(--text);text-decoration:none;
+  font-family:var(--mono);font-size:.72rem;transition:border-color .2s,background .2s}
+.lcard .lc-actions a:first-child{border-color:rgba(34,211,238,.45);color:var(--accent)}
+.lcard .lc-actions a:hover,.lcard .lc-actions a:focus-visible{border-color:var(--accent);
+  background:var(--accent-dim);outline:none}
 .lcard.done{border-color:rgba(74,222,128,.5)}
 .lcard.done .lc-n:after{content:" ✓";color:var(--bid)}
 .lcard.special{border-style:dashed;border-color:rgba(251,191,36,.45)}
