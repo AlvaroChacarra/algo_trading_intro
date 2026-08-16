@@ -6,7 +6,7 @@ Instructor: **Álvaro López Chacarra** · ICAI.
 
 ## Empieza aquí
 
-Abre **[la web del curso](https://alvarochacarra.github.io/algo_trading_intro/)** desde cualquier dispositivo. Los documentos interactivos se consultan directamente y cada notebook tiene una versión web renderizada; el progreso se guarda en el propio navegador.
+Abre **[la web del curso](https://alvarochacarra.github.io/algo_trading_intro/)** desde cualquier dispositivo. Los documentos interactivos se consultan directamente; cada notebook tiene una versión web renderizada y un botón **Ejecutar** para probarlo en JupyterLite sin instalar Python.
 
 ## Mapa del curso
 
