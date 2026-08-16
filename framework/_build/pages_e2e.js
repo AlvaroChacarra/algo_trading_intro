@@ -7,7 +7,8 @@ const path = require('path');
 const SITE = path.resolve(process.argv[2] || '_site');
 const BASE = '/algo_trading_intro/';
 const TYPES = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript',
-  '.json': 'application/json', '.png': 'image/png', '.svg': 'image/svg+xml' };
+  '.json': 'application/json', '.png': 'image/png', '.svg': 'image/svg+xml',
+  '.wasm': 'application/wasm', '.woff2': 'font/woff2' };
 
 function server() {
   return http.createServer((req, res) => {
@@ -80,6 +81,53 @@ const samples = [
   const returnedPath = new URL(page.url()).pathname;
   if (![BASE, BASE + 'index.html'].includes(returnedPath)) {
     failures++; console.error(`✗ course return resolved to ${page.url()}`);
+  }
+
+  // The static notebook remains the fast reading view and exposes the editable lab.
+  await page.goto(origin + '01-python-i-data-model/exercises/01_build_exercises.html');
+  const labLink = page.locator('.course-lab');
+  if (await labLink.count() !== 1 ||
+      await labLink.evaluate(element => element.getBoundingClientRect().height) < 44) {
+    failures++; console.error('✗ rendered notebook has no touch-friendly lab link');
+  } else {
+    const labUrl = new URL(await labLink.getAttribute('href'), page.url()).href;
+    const labErrors = [];
+    const onLabError = error => labErrors.push(error.message);
+    page.on('pageerror', onLabError);
+    const response = await page.goto(labUrl, { waitUntil: 'domcontentloaded' });
+    try {
+      await page.locator('.jp-Notebook').waitFor({ state: 'visible', timeout: 45000 });
+    } catch (_error) {
+      failures++; console.error('✗ JupyterLite did not open the requested notebook');
+    }
+    const codeCells = await page.locator('.jp-Notebook .jp-CodeCell').count();
+    const labHome = await page.locator('.course-home').count();
+    const labPath = new URL(page.url()).pathname;
+    let executed = false;
+    if (codeCells) {
+      try {
+        const firstCodeCell = page.locator('.jp-Notebook .jp-CodeCell').first();
+        await firstCodeCell.locator('.cm-content').click();
+        await page.keyboard.press('Shift+Enter');
+        await page.waitForFunction(() => {
+          const prompt = document.querySelector('.jp-Notebook .jp-CodeCell .jp-InputArea-prompt');
+          return /\[\d+\]/.test(prompt?.textContent || '');
+        }, undefined, { timeout: 90000 });
+        executed = true;
+      } catch (_error) {
+        console.error('✗ JupyterLite Python kernel did not execute a code cell');
+      }
+    }
+    if (!response || !response.ok() || !labPath.startsWith(BASE + 'jupyter/lab/') ||
+        !codeCells || !executed || labHome !== 1 || labErrors.length) {
+      failures++;
+      console.error(`✗ JupyterLite status=${response && response.status()} cells=${codeCells} ` +
+        `executed=${executed} home=${labHome} errors=${labErrors.length}`);
+      labErrors.slice(0, 3).forEach(error => console.error('  ', error));
+    } else {
+      console.log(`✓ JupyterLite editable notebook (${codeCells} code cells; Python executed)`);
+    }
+    page.off('pageerror', onLabError);
   }
 
   await browser.close();
