@@ -7,26 +7,27 @@ piezas anteriores. Markdown libre.
 
 DOCS = {
 1: {
-"theory": """**Tu código es texto; una máquina solo entiende 1s y 0s. Python es el puente.** Un
-procesador no lee "buy" ni "99950": solo maneja bits. Cada carácter es, por debajo, un número
-(su código ASCII/Unicode) y ese número es una secuencia de bits.
+"theory": """**Un lenguaje de programación formaliza nuestra intención para que una máquina pueda
+ejecutarla.** La línea `mid = (bid + ask) / 2` no llega directamente a la CPU. Python es el
+lenguaje; **CPython** es su implementación estándar, escrita principalmente en C. CPython analiza
+el source, lo compila a **Python bytecode** y ejecuta ese bytecode mediante su máquina virtual.
 
-Hay dos formas de salvar esa distancia: **compilar** (traducir todo el programa a binario de
-una vez, como C) o **interpretar** (un programa lee y ejecuta sobre la marcha). Python es
-**híbrido**: compila tu texto a un intermedio, el **bytecode**, y una **máquina virtual** (la
-de CPython) interpreta ese bytecode. El viaje de una línea: texto → tokens → árbol (AST) →
-bytecode → ejecución en la VM → instrucciones binarias en la CPU.
+El viaje es: source → tokens → árbol (AST) → Python bytecode → CPython VM → CPU. El bytecode
+contiene instrucciones para la VM y no es machine code nativo de x86-64 o ARM64. Por tanto:
+**Python source ≠ bytecode ≠ machine code** y **CPython ≠ bytecode**.
 
-Esto explica hasta los errores: un **SyntaxError** es que Python no pudo ni *compilar* tu
-texto; un **NameError/TypeError/ZeroDivisionError** es que compiló pero la VM *tropezó al
-ejecutar*. Y sobre eso construimos la idea de algoritmo: **dato → cálculo → decisión**
-(snapshot → `spread`/`mid` → un `if` que decide).""",
+C++ suele seguir otro pipeline: source → GCC/Clang/MSVC → machine code nativo → CPU. C++ ofrece
+rendimiento, control y detección de muchos errores antes de ejecutar. Python destaca por su ciclo
+`write → run → inspect → fix`, su interactividad y su ecosistema. Un **SyntaxError** impide compilar
+el source; otros errores pueden aparecer cuando la VM alcanza la operación problemática. Sobre
+este modelo construimos un algoritmo: **dato → cálculo → decisión** (snapshot → `spread`/`mid` →
+un `if` que decide).""",
 "technical": """Sin paquete todavía: tipos básicos (`int`, `float`, `str`), listas, diccionarios, `for`,
 `if` y funciones. Una orden es un `dict` con `symbol`, `side`, `price`, `size`; un libro es una
 lista de esos dicts.
 
 La presentación HTML (a medida, con **Pyodide** ejecutando Python real en el navegador) lleva 5
-simuladores: texto→bits (`ord`/`bin`), compilado vs interpretado, el viaje de una línea con
+simuladores: texto→bits (`ord`/`bin`), CPython vs compilación nativa, el viaje de una línea con
 **tokens/AST/bytecode reales** (`tokenize`/`ast`/`dis`), el editor en vivo, los retos de
 romper-código y el rule builder. El notebook refuerza con `ord`/`bin` y `dis` (auxiliares A4-A5).
 
