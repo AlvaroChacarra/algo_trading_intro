@@ -14,9 +14,9 @@
 <header class="hero wrap" id="s0">
   <div class="eyebrow"><b>Algo Trading · ICAI 2026</b> &nbsp;·&nbsp; L1 · Python I &nbsp;·&nbsp; documento interactivo</div>
   <h1>De texto a máquina</h1>
-  <p class="lede">Delante tienes el libro de órdenes de BTCUSDT. Compradores abajo, vendedores arriba,
-  y un hueco en medio. La pregunta más básica de todo el trading electrónico:
-  <strong>¿cuánto vale esto <em>ahora mismo</em>?</strong></p>
+  <p class="lede">Esto es un libro de órdenes. Al final de hoy habrás escrito un pequeño algoritmo
+  capaz de <strong>leerlo, calcular información y tomar una decisión</strong>. Primero veremos, en
+  cinco minutos, cómo una línea de Python termina convertida en operaciones que ejecuta una CPU.</p>
 
   <div class="book" id="herobook">
     <div class="book-title"><span>BTCUSDT · libro de órdenes</span><span class="live">● simulado</span></div>
@@ -32,6 +32,7 @@
     <p>Tú lo calculas de cabeza. Pero una máquina <strong>solo entiende 1s y 0s</strong>, y tú solo
     sabes escribir texto. Al final de este documento habrás cruzado esa distancia:
     <strong>un programa en Python que lee un libro, calcula el mid y decide qué hacer</strong>.</p>
+    <p><strong>No necesitas memorizar tokens, AST o bytecode.</strong> Quédate con el modelo mental.</p>
   </div>
 
   <div class="meta">
@@ -46,10 +47,10 @@
 <section id="s1">
   <div class="wrap">
     <div class="eyebrow">§1 · <b>La idea central</b></div>
-    <h2>Python es un programa que lee tu texto</h2>
+    <h2>De una intención humana a operaciones ejecutables</h2>
     <p class="lede">Vas a escribir <code>mid = (bid + ask) / 2</code>. Eso es texto. La CPU no
-    entiende texto. Entre tu línea y la máquina hay un viaje de cuatro paradas — y verlo una vez
-    hace que los errores de Python dejen de parecer magia negra. <strong>Sigue bajando</strong>:
+    entiende texto. <strong>Python es el lenguaje; CPython es su implementación estándar</strong> y
+    la que utiliza la mayoría. Entre tu línea y la CPU hay varias capas. <strong>Sigue bajando</strong>:
     el panel que te acompaña va transformando tu línea en cada parada.</p>
   </div>
 
@@ -62,33 +63,35 @@
       </div></div>
       <div class="step" data-stage="1" data-name="tokens"><div class="step-inner">
         <h3><span class="n">1/5</span>Tokenizar: trocear el texto</h3>
-        <p>Primera parada: Python corta la línea en <strong>piezas con etiqueta</strong> — tokens.
+        <p>Primera parada: CPython corta la línea en <strong>piezas con etiqueta</strong> — tokens.
         <code>mid</code> es un nombre, <code>=</code> un operador, <code>2</code> un número.</p>
         <p>Como separar palabras y puntuación en una frase, antes de intentar entenderla.</p>
       </div></div>
       <div class="step" data-stage="2" data-name="árbol (AST)"><div class="step-inner">
         <h3><span class="n">2/5</span>El árbol (AST): poner orden</h3>
-        <p>Los tokens en fila no dicen <strong>qué se hace antes</strong>. Python los organiza en un
+        <p>Los tokens en fila no dicen <strong>qué se hace antes</strong>. CPython los organiza en un
         árbol: la suma cuelga de la división, la división cuelga de la asignación.</p>
         <p>Fíjate: el paréntesis que escribiste ya no existe — su trabajo era dar forma al árbol,
         y el árbol ya la tiene.</p>
       </div></div>
       <div class="step" data-stage="3" data-name="bytecode"><div class="step-inner">
-        <h3><span class="n">3/5</span>Bytecode: la receta plana</h3>
+        <h3><span class="n">3/5</span>Python bytecode: instrucciones para la VM</h3>
         <p>El árbol se aplana en <strong>instrucciones simples y ordenadas</strong>: carga
         <code>bid</code>, carga <code>ask</code>, suma, carga <code>2</code>, divide, guarda en
         <code>mid</code>.</p>
-        <p>Esto ya no es para ti. Es para la máquina virtual de Python.</p>
+        <p>Está diseñado para la VM de Python, <strong>no para ejecutarse directamente</strong> en
+        una CPU x86-64 o ARM64.</p>
       </div></div>
       <div class="step" data-stage="4" data-name="la VM ejecuta"><div class="step-inner">
-        <h3><span class="n">4/5</span>La VM ejecuta, instrucción a instrucción</h3>
-        <p>La máquina virtual recorre el bytecode con una <strong>pila</strong>: apila valores,
+        <h3><span class="n">4/5</span>La VM de CPython ejecuta el bytecode</h3>
+        <p>CPython recorre el bytecode con una <strong>pila</strong>: apila valores,
         los combina, guarda el resultado. Míralo correr en el panel.</p>
-        <p>Cada programa Python que has visto en tu vida acaba siendo exactamente esto.</p>
+        <p><strong>CPython no es el bytecode:</strong> es el runtime que lo genera y lo ejecuta.</p>
       </div></div>
-      <div class="step" data-stage="5" data-name="1s y 0s"><div class="step-inner">
-        <h3><span class="n">5/5</span>Y abajo del todo: 1s y 0s</h3>
-        <p>La VM es a su vez un programa (escrito en C) que la CPU ejecuta como binario.
+      <div class="step" data-stage="5" data-name="machine code y CPU"><div class="step-inner">
+        <h3><span class="n">5/5</span>Machine code: instrucciones nativas para la CPU</h3>
+        <p>La VM es a su vez un programa, escrito principalmente en C, que la CPU ejecuta como
+        machine code propio de su arquitectura.
         <strong>La distancia texto → máquina está cruzada.</strong></p>
         <p>Y <code>mid</code> ya existe: vale <code>99975.0</code>.</p>
       </div></div>
@@ -164,29 +167,49 @@
         01011001 00101111 01010011 01010100 01001111 01010010 01000101</div>
         <div class="result-chip">mid → 99975.0 ✓</div>
         <p style="text-align:center;color:var(--faint);font-size:.8rem;margin-top:22px">
-        tu texto, ejecutándose como electricidad</p>
+        representación binaria ilustrativa del machine code que ejecuta la CPU</p>
       </div>
     </div></div>
   </div>
 
   <div class="wrap">
-    <div class="note"><span class="tag">Honestidad</span>
-    Esto es una simplificación <em>fiel</em>: CPython real hace más cosas (cachea el bytecode en
-    <code>.pyc</code>, optimiza, gestiona memoria). Pero tokenizar → árbol → bytecode → VM es el
-    esqueleto real, y es todo lo que necesitas para razonar sobre tus errores.</div>
+    <div class="note"><span class="tag">El mapa que importa</span>
+    CPython, escrito principalmente en C, analiza el source, lo compila a Python bytecode y
+    ejecuta ese bytecode mediante su VM. La CPU acaba ejecutando machine code nativo.
+    <strong>Python source ≠ bytecode ≠ machine code</strong> y <strong>CPython ≠ bytecode</strong>.</div>
 
-    <h3>¿Y por qué así? Dos formas de salvar la distancia</h3>
+    <h3>Python/CPython frente a C++: dos pipelines</h3>
     <div class="fig3">
-      <div class="lane"><h4>Compilador</h4><p>Traduce <strong>todo</strong> el texto a binario
-      antes de ejecutar. Rápido corriendo, lento iterando. (C, Rust)</p></div>
-      <div class="lane"><h4>Intérprete puro</h4><p>Lee y ejecuta <strong>línea a línea</strong>.
-      Cómodo, pero repite trabajo todo el rato.</p></div>
-      <div class="lane hi"><h4>Python: híbrido</h4><p>Compila a bytecode <strong>una vez</strong> y
-      la VM lo interpreta. Por eso itera rápido — ideal para investigar mercados.</p></div>
+      <div class="lane hi"><h4>Python con CPython</h4><p>source → compilador de CPython →
+      <strong>Python bytecode</strong> → CPython VM → CPU</p></div>
+      <div class="lane"><h4>C++ nativo</h4><p>source → GCC / Clang / MSVC →
+      <strong>machine code nativo</strong> → CPU</p></div>
     </div>
+
+    <div class="note"><span class="tag">El intercambio</span>
+    C++ ofrece gran rendimiento, control y detección de muchos errores antes de ejecutar. Python
+    prioriza sintaxis simple, interactividad y el ciclo <strong>write → run → inspect → fix</strong>:
+    REPL, notebooks, ejecución por celdas, tracebacks e introspección. No es «sin compilación»:
+    CPython compila, normalmente a bytecode en lugar de machine code nativo.</div>
+
+    <h3>La ventaja no es solo el lenguaje</h3>
+    <p>Sintaxis sencilla + desarrollo rápido + experimentación favorecieron una gran adopción;
+    adopción y comunidad produjeron más librerías, que a su vez hicieron Python todavía más útil.
+    Es un <strong>círculo virtuoso</strong>, no una explicación histórica única.</p>
+    <div class="challenge"><p><strong>Una de las grandes ventajas de Python no es solamente Python.
+    Es todo el código que otra gente ya ha escrito para nosotros:</strong> NumPy, pandas, SciPy y
+    miles de librerías que podremos reutilizar.</p></div>
+
+    <details><summary>AI cambia la interfaz, no el problema de fondo</summary><div class="body">
+      <p>Durante décadas expresamos intención con lenguajes formales como Python o C++. Con AI
+      podemos expresar más intención en lenguaje natural: humano → lenguaje natural → AI →
+      representación ejecutable → máquina. Puede cambiar cómo programamos; debajo sigue siendo
+      necesario convertir intención en operaciones ejecutables.</p>
+    </div></details>
 
     <div class="ownline">
       <div class="eyebrow" style="margin-bottom:2px">simulador · <b>tu propia línea, las tres fases en vivo</b></div>
+      <div class="tag">Exploración autónoma · fuera del core de 20 min</div>
       <p style="font-size:.94rem;color:var(--muted);margin:.4em 0 0">Escribe una asignación o una
       cuenta (tienes <code>bid</code>, <code>ask</code>, <code>spread</code> y <code>mid</code>
       ya definidos; también acepta cadenas: <code>side = "buy"</code>) y mira sus tokens, su árbol
@@ -425,7 +448,9 @@
 
     <p><strong>Los tres errores del día:</strong> <code>NameError</code> (nombre que no existe),
     <code>TypeError</code> (tipos que no casan), <code>IndexError</code> (posición que no existe).
-    Cuando te salga uno esta semana — te saldrá — ya sabes leerlo.</p>
+    Cuando te salga uno esta semana — te saldrá — ya sabes leerlo. Las instrucciones anteriores
+    pueden haberse ejecutado bien: el programa falla al alcanzar la operación problemática. Ese
+    feedback inmediato alimenta el ciclo <strong>escribir → ejecutar → observar → corregir</strong>.</p>
   </div>
 </section>
 
@@ -462,8 +487,9 @@
           <button class="opt">B · Lo traduce a binario de tu CPU</button>
           <button class="opt">C · Lo trocea en tokens y construye un árbol</button>
         </div>
-        <div class="why">Primero tokeniza y construye el AST; luego bytecode; luego la VM lo ejecuta.
-        A es un intérprete puro (Python no lo es) y B es un compilador clásico.</div>
+        <div class="why">CPython primero analiza el source: tokens y AST; después lo compila a
+        Python bytecode y su VM lo ejecuta. No ejecuta directamente el texto ni genera normalmente
+        machine code nativo para esa línea.</div>
       </div>
       <div class="q" data-ok="0">
         <div class="qt"><code>mid = (99950 + 100000) / 2</code> — ¿de qué tipo es <code>mid</code>?</div>
