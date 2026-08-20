@@ -89,12 +89,25 @@ function findDocs() {
     await mobilePage.waitForTimeout(100);
     const hscroll = await mobilePage.evaluate(
       () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 2);
+    const overflow = hscroll ? await mobilePage.evaluate(() => {
+      const width = document.documentElement.clientWidth;
+      return [...document.querySelectorAll('body *')]
+        .map(el => ({ el, rect: el.getBoundingClientRect() }))
+        .filter(({ rect }) => rect.right > width + 2 || rect.left < -2)
+        .slice(0, 8)
+        .map(({ el, rect }) => {
+          const id = el.id ? `#${el.id}` : '';
+          const cls = [...el.classList].slice(0, 2).map(c => `.${c}`).join('');
+          return `${el.tagName.toLowerCase()}${id}${cls} left=${rect.left.toFixed(0)} right=${rect.right.toFixed(0)}`;
+        });
+    }) : [];
     mobilePage.off('pageerror', handler);
     const name = path.relative(ROOT, doc);
     if (errs.length || hscroll) {
       failures++;
       console.error(`✗ móvil ${name}  errores=${errs.length} hscroll=${hscroll}`);
       errs.slice(0, 3).forEach(e => console.error('   ', e.slice(0, 120)));
+      overflow.forEach(e => console.error('   overflow:', e));
     } else {
       console.log(`✓ móvil/touch/reduced-motion ${name}`);
     }
