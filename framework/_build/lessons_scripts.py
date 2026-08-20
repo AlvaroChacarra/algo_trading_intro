@@ -7,11 +7,13 @@ la propia carpeta exercises/ (el paquete `exchange/` viaja al lado):
 """
 
 EXTRA_SCRIPTS = {
-    7: ("read_book.py", '''# Clase 7 - Leer el libro real, en un archivo .py
+    7: ("read_book.py", '''# Clase 7 - Snapshot real a OrderBook, en un archivo .py
 # Ejecuta desde exercises/:  python read_book.py
 
-from exchange.market import Market
-from exchange.orders import Side
+import csv
+import os
+
+from exchange.book import OrderBook
 
 
 def describe(book):
@@ -21,16 +23,15 @@ def describe(book):
 
 
 def main():
-    market = Market.sample()
-    book = market.step()
-    print("primer snapshot:")
+    path = os.path.join(os.path.dirname(__file__), "exchange", "_data",
+                        "btc_lob_snapshots.csv")
+    with open(path, newline="") as f:
+        row = {k: float(v) for k, v in next(csv.DictReader(f)).items()}
+    book = OrderBook.from_snapshot("BTCUSDT", row, depth=10)
+    print("raw snapshot -> OrderBook:")
     describe(book)
-
-    high = low = book.mid
-    while market.step() is not None:
-        high = max(high, market.book.mid)
-        low = min(low, market.book.mid)
-    print(f"el dia entero: low={low:.2f}  high={high:.2f}  rango={high - low:.2f}")
+    print(f"  depth bid(5)={book.depth('buy', 5):.3f}  "
+          f"depth ask(5)={book.depth('sell', 5):.3f}")
 
 
 if __name__ == "__main__":
@@ -40,14 +41,25 @@ if __name__ == "__main__":
     8: ("matching_demo.py", '''# Clase 8 - Barridos y tipos de orden, en un archivo .py
 # Ejecuta desde exercises/:  python matching_demo.py
 
-from exchange.market import Market
+import csv
+import os
+
+from exchange.book import OrderBook
 from exchange.matching import MatchingEngine
 from exchange.orders import Order, OrderType
 
 
+def fresh_book():
+    path = os.path.join(os.path.dirname(__file__), "exchange", "_data",
+                        "btc_lob_snapshots.csv")
+    with open(path, newline="") as f:
+        row = {k: float(v) for k, v in next(csv.DictReader(f)).items()}
+    return OrderBook.from_snapshot("BTCUSDT", row, depth=10)
+
+
 def sweep(size):
     """Una market buy contra el primer snapshot: fills, efectivo y slippage."""
-    book = Market.sample().step()
+    book = fresh_book()
     mid = book.mid
     fills = MatchingEngine().process(
         Order("BTCUSDT", "buy", size, order_type=OrderType.MARKET), book)
@@ -58,7 +70,7 @@ def sweep(size):
 
 
 def main():
-    book = Market.sample().step()
+    book = fresh_book()
     c1 = book.asks[0].size
     print(f"mid={book.mid:.2f}  mejor ask={book.asks[0].price} x {c1:.3f}")
     print("la ley del dia: mas tamano, peor precio ->")

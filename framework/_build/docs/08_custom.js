@@ -1,83 +1,51 @@
-/* L8 — barridos reales del MatchingEngine sobre el snapshot */
+/* L8 — execution trace y simulador derivados del MatchingEngine canónico. */
 (function(){
 "use strict";
-const $=s=>document.querySelector(s);
-const D=DOC_DATA;
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],D=DOC_DATA;
+const rows=xs=>xs.map(([k,v])=>`<div><span>${k}</span><b>${v}</b></div>`).join('');
+function bookHTML(book,focus){return book.asks.slice().reverse().map(x=>`<div class="row a" style="${focus==='asks'?'background:rgba(248,113,113,.08)':''}"><span>ask ${x[0]}</span><small>${(+x[1]).toFixed(3)}</small></div>`).join('')+'<div class="sep"></div>'+book.bids.map(x=>`<div class="row b" style="${focus==='bids'?'background:rgba(74,222,128,.08)':''}"><span>bid ${x[0]}</span><small>${(+x[1]).toFixed(3)}</small></div>`).join('');}
+const base={bids:D.bids,asks:D.asks};
 
-function bookHTML(asks,bids,eaten={}){
-  const row=(side,p,s,orig)=>{const left=Math.max(0,orig-(eaten[p]||0));
-    const gone=left<=1e-9;
-    return `<div class="row ${side}" style="${gone?'opacity:.25;text-decoration:line-through':''}">
-      <span>${side==='a'?'ask':'bid'} ${p}</span><small>${left.toFixed(3)}${(eaten[p]&&!gone)?' ←':''}</small></div>`;};
-  return asks.slice().reverse().map(l=>row('a',l[0],l[1],l[1])).join('')
-    +'<div class="sep"></div>'
-    +bids.map(l=>row('b',l[0],l[1],l[1])).join('');
+function paintTraceSide(side){$('#trace-side-book').innerHTML=bookHTML(base,side==='buy'?'asks':'bids');}
+$$('#trace-side button').forEach(b=>b.addEventListener('click',()=>{$$('#trace-side button').forEach(x=>x.classList.toggle('on',x===b));paintTraceSide(b.dataset.side);}));paintTraceSide('buy');
+const hero=D.scenarios.find(x=>x.key==='buy:market:1:-1');
+$('#trace-size').textContent=hero.size;$('#trace-rem0').textContent=hero.size;
+const first=hero.planned[0],rem1=hero.size-first[1];
+$('#trace-take').innerHTML=rows([['remaining',hero.size],['level.size',first[1]],['take = min(...)',first[1]]]);
+$('#trace-after-take').innerHTML=rows([['remaining antes',hero.size],['take',`− ${first[1]}`],['remaining después',rem1.toFixed(3)]]);
+$('#trace-plan').innerHTML=hero.planned.map((x,i)=>`<div class="trace-step ${i===0?'active':''}"><span>(${x[0]}, ${x[1].toFixed(3)})</span><span class="trace-meta">nivel ${i+1}</span></div>`).join('');
+$('#trace-commit-book').innerHTML=bookHTML(hero.after);$('#trace-fill').textContent=`Fill(price=${first[0]}, size=${first[1].toFixed(3)})`;
+$('#trace-rest').textContent=hero.remaining.toFixed(3);
+
+const policy={
+ market:[['selección','opposite'],['plan','sin límite'],['commit','fills'],['remanente','cancelar']],
+ limit:[['selección','opposite'],['_crosses','precio límite'],['commit','fills'],['remanente','add_limit']],
+ ioc:[['selección','opposite'],['_crosses','igual que LIMIT'],['commit','fills'],['remanente','cancelar']],
+ fok:[['selección','opposite'],['PLAN','sin mutar'],['VALIDATE','¿llena todo?'],['COMMIT','solo si sí']]
+};
+const notes={market:'Cruza mientras exista liquidez. Nada descansa.',limit:'La única política que añade el remanente al book.',ioc:'Mismo plan y commit que LIMIT; sin add_limit.',fok:'Si no completa, return [] antes del primer reduce.'};
+function paintPolicy(mode){$('#policy-trace').innerHTML=policy[mode].map((x,i)=>`<div class="trace-step ${i===policy[mode].length-1?'active':'ok'}"><span>${x[0]}</span><span class="trace-meta">${x[1]}</span></div>`).join('');$('#policy-note').innerHTML=`<span class="tag">${mode.toUpperCase()}</span>${notes[mode]}`;}
+$$('#policy-modes button').forEach(b=>b.addEventListener('click',()=>{$$('#policy-modes button').forEach(x=>x.classList.toggle('on',x===b));paintPolicy(b.dataset.mode);}));paintPolicy('market');
+
+let sim={type:'market',side:'buy',sizeI:1,priceI:1,phase:0};
+function scenario(){const pi=sim.type==='market'?-1:sim.priceI;return D.scenarios.find(x=>x.key===`${sim.side}:${sim.type}:${sim.sizeI}:${pi}`);}
+function resetPhase(){sim.phase=0;paintSim();}
+function paintSim(){const s=scenario();$('#sim-size-v').textContent=s.size;$('#sim-price-row').style.display=sim.type==='market'?'none':'flex';$('#sim-price-v').textContent=s.price??'MKT';
+  const phases=[['1 · SELECT','lado contrario'],['2 · PLAN',`${s.planned.length} niveles`],['3 · VALIDATE',sim.type==='fok'?(s.fills.length?'FOK completa':'FOK aborta'):'ok'],['4 · COMMIT',`${s.fills.length} fills`]];
+  $('#sim-phases').innerHTML=phases.map((x,i)=>`<div class="trace-step ${i<sim.phase?'ok':i===sim.phase?'active':''}"><span>${x[0]}</span><span class="trace-meta">${x[1]}</span></div>`).join('');
+  const committed=sim.phase>=3;$('#sim-book-label').textContent=committed?'after':'before';$('#sim-book').innerHTML=bookHTML(committed?s.after:s.before,sim.phase===0?(sim.side==='buy'?'asks':'bids'):null);
+  let detail=[];if(sim.phase===0)detail=[['opposite',sim.side==='buy'?'asks':'bids'],['remaining',s.size]];
+  if(sim.phase===1)detail=s.planned.map((x,i)=>[`planned[${i}]`,`${x[1].toFixed(3)} @ ${x[0]}`]).concat([['remaining',s.remaining.toFixed(3)]]);
+  if(sim.phase===2)detail=[['policy',sim.type.toUpperCase()],['valid',sim.type==='fok'?(s.fills.length?'sí':'NO → return []'):'sí']];
+  if(sim.phase>=3){
+    detail=s.fills.map((x,i)=>[`Fill ${i+1}`,`${x[1].toFixed(3)} @ ${x[0]}`]);
+    if(s.remaining>1e-9&&sim.type==='limit')detail.push(['remanente',`${s.remaining.toFixed(3)} descansa @ ${s.price}`]);
+    if(s.remaining>1e-9&&['market','ioc'].includes(sim.type))detail.push(['remanente',`${s.remaining.toFixed(3)} cancelado`]);
+  }
+  if(sim.phase>=3&&!s.fills.length)detail=[['fills','[]'],['book','idéntico']];$('#sim-detail').innerHTML=rows(detail);
 }
-function bookAfter(sweep){
-  const eaten={};sweep.fills.forEach(f=>eaten[f[0]]=(eaten[f[0]]||0)+f[1]);
-  return bookHTML(D.asks,D.bids,eaten);
-}
-
-/* figura del scrolly: usa el 3er barrido (3 niveles) como protagonista */
-const hero=D.sweeps[2];
-$('#m0').innerHTML=bookHTML(D.asks,D.bids);
-const eat1={};eat1[D.asks[0][0]]=D.asks[0][1];
-$('#m1').innerHTML=bookHTML(D.asks,D.bids,eat1);
-$('#m1log').textContent=`» fill 1: ${hero.fills[0][1].toFixed(3)} @ ${hero.fills[0][0]} — el nivel 1, entero`;
-$('#m2').innerHTML=bookAfter(hero);
-$('#m2log').textContent=`» ${hero.fills.length} fills — la orden barrió ${hero.fills.length} niveles`;
-$('#m3stats').innerHTML=
-  `<div><span>mid antes</span><b>${D.mid}</b></div>
-   <div><span>precio efectivo</span><b>${hero.eff}</b></div>
-   <div><span>slippage</span><b class="neg">+${hero.slip}</b></div>`;
-$('#m3fills').textContent=hero.fills.map((f,i)=>`fill ${i+1}:  ${f[1].toFixed(3)} @ ${f[0]}`).join('\n');
-$('#m4').innerHTML=bookAfter(hero);
-$('#m4note').textContent='los niveles consumidos ya no están: el siguiente comprador empieza más arriba';
-$('#m5tab').textContent='size      efectivo     slippage\n'
-  +D.sweeps.map(s=>`${String(s.size).padEnd(8)}  ${s.eff}   +${s.slip}`).join('\n');
-
-/* simulador de disparos */
-const btns=$('#sw-btns');
-D.sweeps.forEach((s,i)=>{
-  const b=document.createElement('button');
-  b.className='btn';b.textContent=`▶ buy ${s.size} BTC`;
-  b.addEventListener('click',()=>fire(i));
-  btns.appendChild(b);
-});
-const reset=document.createElement('button');
-reset.className='btn ghost';reset.textContent='↻ libro intacto';
-reset.addEventListener('click',()=>{paintIdle();});
-btns.appendChild(reset);
-
-function paintIdle(){
-  $('#sw-book').innerHTML=bookHTML(D.asks,D.bids);
-  $('#sw-fills').textContent='';
-  $('#sw-stats').innerHTML='';
-  $('#sw-log').textContent='elige un tamaño y dispara';
-}
-function fire(i){
-  const s=D.sweeps[i];
-  $('#sw-book').innerHTML=bookAfter(s);
-  const lines=s.fills.map((f,k)=>`fill ${k+1}:  ${f[1].toFixed(3)} @ ${f[0]}`);
-  if(s.filled<s.size-1e-9)lines.push(`(sin llenar: ${(s.size-s.filled).toFixed(3)} — cancelado)`);
-  const pre=$('#sw-fills');pre.textContent='';
-  s.fills.forEach((_,k)=>setTimeout(()=>{pre.textContent=lines.slice(0,k+1).join('\n');},220*(k+1)));
-  setTimeout(()=>{pre.textContent=lines.join('\n');
-    $('#sw-stats').innerHTML=
-      `<div><span>llenado</span><b>${s.filled} / ${s.size}</b></div>
-       <div><span>efectivo</span><b>${s.eff}</b></div>
-       <div><span>slippage vs mid</span><b class="neg">+${s.slip}</b></div>`;
-  },220*(s.fills.length+1));
-  $('#sw-log').textContent=`» fills = engine.process(Order('BTCUSDT', 'buy', ${s.size}, order_type=MARKET), book)`;
-}
-paintIdle();
-
-/* variantes */
-$('#v-big').textContent=D.big;
-$('#v-limit').innerHTML=`llenó <b>${D.variants.limit.filled}</b> · descansan <b style="color:var(--bid)">${D.variants.limit.rest}</b> @ ${D.limPx}`;
-$('#v-ioc').innerHTML=`llenó <b>${D.variants.ioc.filled}</b> · descansa <b>0</b>`;
-$('#v-fok').innerHTML=`llenó <b style="color:var(--ask)">${D.variants.fok.filled}</b> · ${D.variants.fok.nfills} fills`;
+$$('#sim-type button').forEach(b=>b.addEventListener('click',()=>{$$('#sim-type button').forEach(x=>x.classList.toggle('on',x===b));sim.type=b.dataset.type;resetPhase();}));
+$$('#sim-side button').forEach(b=>b.addEventListener('click',()=>{$$('#sim-side button').forEach(x=>x.classList.toggle('on',x===b));sim.side=b.dataset.side;resetPhase();}));
+$('#sim-size').addEventListener('input',e=>{sim.sizeI=+e.target.value;resetPhase();});$('#sim-price').addEventListener('input',e=>{sim.priceI=+e.target.value;resetPhase();});
+$('#sim-next').addEventListener('click',()=>{sim.phase=Math.min(3,sim.phase+1);paintSim();});$('#sim-reset').addEventListener('click',resetPhase);paintSim();
 })();
-
-/* números data-driven */
-(function(){const s=DOC_DATA.sweeps;const put=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};put('dd-slo','+'+s[0].slip);put('dd-shi','+'+s[s.length-1].slip);})();

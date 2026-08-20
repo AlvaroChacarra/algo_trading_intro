@@ -1,6 +1,6 @@
-# Clase 8 — Órdenes y matching
+# Clase 8 — Construir MatchingEngine
 
-> Enviar órdenes contra el libro y ver cómo se cruzan. Market, limit, IOC y FOK: cada tipo cambia el coste, la probabilidad de ejecución y el riesgo.
+> Programar el algoritmo que convierte Order + OrderBook en fills y estado nuevo, reutilizando un único proceso para MARKET, LIMIT, IOC y FOK.
 
 ## Contexto teórico
 
@@ -17,22 +17,27 @@ El **precio efectivo** de una market es el VWAP de sus fills, peor que el best a
 
 ## Qué construyes hoy
 
-**MatchingEngine: cómo se cruzan las órdenes**
+**MatchingEngine: planificar cruces, validar y mutar el libro**
 
 `exchange/matching.py` (`MatchingEngine.process(order, book) -> list[Fill]`): recorre el lado
 contrario, planifica el cruce, aplica FOK (todo-o-nada), consume liquidez (muta el libro) y
 descansa el remanente de una LIMIT. Devuelve los `Fill` generados.
 
-Conecta todo lo anterior: recibe `Order` (L3), opera sobre `OrderBook` (L4), produce `Fill`
-(L3). Es la primera pieza con lógica de ramas no trivial.
+Conecta todo lo anterior: recibe `Order` (L4), opera sobre `OrderBook` (L5), produce `Fill`
+(L4). La separación PLAN → VALIDATE → COMMIT hace atómica una FOK fallida.
 
 ## Ejercicios de construcción
 
-- **1. Una market order se llena** — MatchingEngine + MARKET
-- **2. Una limit cruza solo a su precio** — LIMIT + remanente
-- **3. Una market crossing limit sí cruza** — limit marketable
-- **4. FOK: todo o nada** — OrderType.FOK
-- **5. Precio efectivo de una market** — vwap de los fills
+- **B1 · ¿Qué lado consumo?** — selección BUY/SELL
+- **B2 · remaining + take** — planificar sin mutar
+- **B3 · Primera MARKET completa** — loop → reduce → Fill
+- **B4 · Diseña _crosses()** — LIMIT simétrica BUY/SELL
+- **B5 · LIMIT marketable** — detener el plan en el límite
+- **B6 · El remanente LIMIT descansa** — book.add_limit
+- **B7 · Diseña IOC sin duplicar el engine** — misma ejecución, otra política de remanente
+- **B8 · Depura FOK: plan → validate → commit** — atomicidad del estado
+- **B9 · Refactor: un único process()** — MARKET/LIMIT/IOC/FOK reutilizando fases
+- **B10 · Prueba contra la referencia** — differential testing
 
 ## Estructura de la carpeta
 
@@ -43,4 +48,4 @@ Conecta todo lo anterior: recibe `Order` (L3), opera sobre `OrderBook` (L4), pro
 
 ## Idea central
 
-> La forma en que envías la orden decide tu coste: cruzar ya, o esperar barato y arriesgarte a no ejecutar.
+> Cuando una operación puede abortarse, primero planifica y valida; después muta el estado.

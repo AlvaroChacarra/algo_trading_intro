@@ -380,7 +380,7 @@
      color:var(--text);padding:7px 10px}
 .simrow input[type=number]:focus{outline:none;border-color:var(--accent)}
 .toggle{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
-.toggle button{font-family:var(--mono);font-size:.78rem;padding:7px 16px;border:none;
+.toggle button{font-family:var(--mono);font-size:.78rem;min-height:44px;padding:7px 16px;border:none;
      background:transparent;color:var(--muted);cursor:pointer}
 .toggle button.on{background:var(--accent-dim);color:var(--accent)}
 .statgrid{display:flex;gap:24px;flex-wrap:wrap;border-top:1px dashed var(--line);
@@ -453,11 +453,25 @@
 .concept-chip{display:inline-block;margin:2px 4px 2px 0;padding:2px 8px;border-radius:99px;
   border:1px solid rgba(34,211,238,.4);color:var(--accent);font-family:var(--mono);font-size:.65rem}
 .concept-chip.behavior{border-color:rgba(192,132,252,.45);color:var(--kw)}
+
+/* mapa persistente L7-L9: misma arquitectura, cambia únicamente la pieza activa */
+.engine-map{display:flex;align-items:center;gap:8px;max-width:100%;overflow-x:auto;
+  margin:20px 0;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+.engine-map .unit{flex:0 0 auto;padding:7px 10px;border:1px solid var(--line);border-radius:8px;
+  color:var(--muted);font-family:var(--mono);font-size:.68rem;white-space:nowrap}
+.engine-map .unit.today{border-color:var(--accent);background:var(--accent-dim);color:var(--accent)}
+.engine-map .arrow{flex:0 0 auto;color:var(--faint);font-family:var(--mono);font-size:.75rem}
+.code-state{display:grid;grid-template-columns:1fr 1fr;gap:10px;height:100%}
+.code-state pre{margin:0;font-family:var(--mono);font-size:.7rem;line-height:1.75;overflow:auto}
+.code-state .state-panel{height:100%;overflow:auto}
 @media(max-width:620px){
   .state-inspector{grid-template-columns:1fr}
   .trace-step{align-items:flex-start}
   .mode-switch button{font-size:.7rem;padding:7px 10px}
   .simcard{padding:14px}
+  .engine-map{padding:8px;gap:6px}
+  .engine-map .unit{font-size:.62rem;padding:6px 8px}
+  .code-state{grid-template-columns:1fr}
 }
 
 /* ══ índice del curso ══ */
@@ -611,8 +625,8 @@
   </nav>
 </article><article class="lcard" data-lesson="07">
   <div class="lc-n">L7</div>
-  <div class="lc-t">Microestructura — Leer el libro</div>
-  <div class="lc-o">métricas de mercado sobre snapshots reales de BTC</div>
+  <div class="lc-t">Del snapshot real al OrderBook</div>
+  <div class="lc-o">OrderBook: transformar datos externos en estado ordenado y consultable</div>
   <div class="lc-bar"><div class="lc-fill"></div></div>
   <div class="lc-meta"><span class="lc-scroll">—</span><span class="lc-quiz">quiz —</span></div>
   <nav class="lc-actions" aria-label="Materiales de la clase 7">
@@ -622,8 +636,8 @@
   </nav>
 </article><article class="lcard" data-lesson="08">
   <div class="lc-n">L8</div>
-  <div class="lc-t">Órdenes y matching</div>
-  <div class="lc-o">MatchingEngine: cómo se cruzan las órdenes</div>
+  <div class="lc-t">Construir MatchingEngine</div>
+  <div class="lc-o">MatchingEngine: planificar cruces, validar y mutar el libro</div>
   <div class="lc-bar"><div class="lc-fill"></div></div>
   <div class="lc-meta"><span class="lc-scroll">—</span><span class="lc-quiz">quiz —</span></div>
   <nav class="lc-actions" aria-label="Materiales de la clase 8">
@@ -633,8 +647,8 @@
   </nav>
 </article><article class="lcard" data-lesson="09">
   <div class="lc-n">L9</div>
-  <div class="lc-t">El loop de simulación</div>
-  <div class="lc-o">Market: reproducir snapshots y ejecutar en el tiempo</div>
+  <div class="lc-t">Construir Market y su API</div>
+  <div class="lc-o">Market: componer snapshots, OrderBook, MatchingEngine y tiempo</div>
   <div class="lc-bar"><div class="lc-fill"></div></div>
   <div class="lc-meta"><span class="lc-scroll">—</span><span class="lc-quiz">quiz —</span></div>
   <nav class="lc-actions" aria-label="Materiales de la clase 9">

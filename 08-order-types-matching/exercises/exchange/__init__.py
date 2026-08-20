@@ -5,4 +5,3 @@ from exchange.trades import Fill
 from exchange.book import OrderBook, Level
 from exchange.portfolio import PositionTracker
 from exchange.matching import MatchingEngine
-from exchange.market import Market

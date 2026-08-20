@@ -1,6 +1,6 @@
-# Clase 9 — El loop de simulación (guía de implementación)
+# Clase 9 — Construir Market y su API (guía de implementación)
 
-Pieza del framework: **Market: reproducir snapshots y ejecutar en el tiempo**.
+Pieza del framework: **Market: componer snapshots, OrderBook, MatchingEngine y tiempo**.
 
 ## Teoría que cubre
 
@@ -18,13 +18,13 @@ límite no persisten entre pasos (las estrategias que quieren persistencia re-co
 `exchange/market.py` (`Market`): `step()` reconstruye el libro desde el siguiente snapshot
 y lo devuelve (o `None` al acabar); `submit(order)` cruza contra el libro actual vía el
 `MatchingEngine`; `reset()` rebobina. Se compone con `PositionTracker` para seguir inventario
-y equity. Es el andamiaje sobre el que se monta el `Backtest` en L8.
+y equity. Es el andamiaje sobre el que se monta el `Backtest` en L10.
 
 ## Presentación (3 bloques)
 
-1. **step() avanza el tiempo** — Market.step() reconstruye el libro desde el siguiente snapshot y lo devuelve. Cuando se acaban, devuelve None. Ese es tu reloj.
-2. **submit() ejecuta contra el libro actual** — En cada paso puedes enviar una orden: m.submit(order) la cruza contra el libro de ese instante y te devuelve los fills.
-3. **PositionTracker lleva la cuenta** — Aplicas cada fill al tracker y en cualquier momento consultas equity(mid). Esa es tu curva de PnL.
+1. **El estado de Market** — Market contiene snapshots, profundidad, índice, book actual y un MatchingEngine. Antes del primer tick: _i=-1 y book=None.
+2. **step() cambia el tiempo y el estado** — Avanza el cursor y reconstruye book con OrderBook.from_snapshot. Al agotarse los datos deja book=None.
+3. **submit() delega; reset() restaura** — Market no reprograma matching: verifica que hay book y delega. reset restaura exactamente el estado previo al primer tick.
 
 ## Cuaderno de construcción
 

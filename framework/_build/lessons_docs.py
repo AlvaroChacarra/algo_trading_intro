@@ -100,21 +100,19 @@ Puente: ya creas (L4) y compones (L5) objetos; falta la última pieza de OOP —
 esqueleto entre muchos objetos: herencia (L6).""",
 },
 5: {
-"theory": """Microestructura: cómo se forma el precio en el detalle del libro.
-- **Spread**: coste implícito de cruzar de un lado a otro.
-- **Mid** vs **microprice**: el microprice pondera el mid por el tamaño del lado *contrario*,
-  porque el lado con menos tamaño es el que probablemente se mueva — mejor predictor a corto.
-- **Imbalance**: presión compradora/vendedora; un imbalance positivo suele preceder subidas.
-- **Depth**: cuánto aguanta el libro un golpe (resiliencia).
+"theory": """El problema de diseño es convertir una representación externa y plana en estado interno
+con invariantes. Cada pareja precio/tamaño se agrupa en `Level`; los niveles se separan por lado;
+el constructor ordena bids descendentes y asks ascendentes.
 
-Distinción importante: la **liquidez visible** del libro es intención, no negociación; puede
-cancelarse antes de ejecutarse.""",
-"technical": """`book.py` gana las métricas de lectura (`microprice`, `imbalance(levels)`,
-`depth(side, levels)`). `market.py` aporta `Market.sample()` — carga 500 snapshots reales de
-BTCUSDT empaquetados (`exchange/_data/`) sin configurar rutas — y `OrderBook.from_snapshot`.
+Una vez construida esa frontera, las métricas de microestructura son métodos del objeto:
+`depth` agrega tamaños, `imbalance` compone dos llamadas a `depth` y `microprice` usa el primer
+nivel. El conocimiento funcional de las métricas es previo; aquí importa programar la API.""",
+"technical": """`exchange/book.py`: `Level`, `OrderBook.__init__`, la factory
+`OrderBook.from_snapshot`, `depth(side, levels)`, `imbalance(levels)` y `microprice`.
 
-A partir de aquí los ejercicios trabajan sobre datos reales con `Market.sample().step()`. El
-paquete acumulado ya incluye el motor de datos completo.""",
+El notebook construye una versión del alumno desde un snapshot pequeño y termina aplicándola a
+la primera fila real del CSV. Solo al final compara comportamiento con el `OrderBook` canónico;
+no usa `Market` como caja negra.""",
 },
 6: {
 "theory": """El **matching** convierte el libro de foto estática en mercado con dinámica. Prioridad
@@ -131,8 +129,8 @@ El **precio efectivo** de una market es el VWAP de sus fills, peor que el best a
 contrario, planifica el cruce, aplica FOK (todo-o-nada), consume liquidez (muta el libro) y
 descansa el remanente de una LIMIT. Devuelve los `Fill` generados.
 
-Conecta todo lo anterior: recibe `Order` (L3), opera sobre `OrderBook` (L4), produce `Fill`
-(L3). Es la primera pieza con lógica de ramas no trivial.""",
+Conecta todo lo anterior: recibe `Order` (L4), opera sobre `OrderBook` (L5), produce `Fill`
+(L4). La separación PLAN → VALIDATE → COMMIT hace atómica una FOK fallida.""",
 },
 7: {
 "theory": """Una simulación de mercado = **estado** (el libro) + **dinámica** (el matching) +
@@ -146,7 +144,7 @@ límite no persisten entre pasos (las estrategias que quieren persistencia re-co
 "technical": """`exchange/market.py` (`Market`): `step()` reconstruye el libro desde el siguiente snapshot
 y lo devuelve (o `None` al acabar); `submit(order)` cruza contra el libro actual vía el
 `MatchingEngine`; `reset()` rebobina. Se compone con `PositionTracker` para seguir inventario
-y equity. Es el andamiaje sobre el que se monta el `Backtest` en L8.""",
+y equity. Es el andamiaje sobre el que se monta el `Backtest` en L10.""",
 },
 8: {
 "theory": """El principio de diseño más importante del curso: **separar la decisión de la ejecución**.

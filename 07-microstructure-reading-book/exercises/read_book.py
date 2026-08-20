@@ -1,8 +1,10 @@
-# Clase 7 - Leer el libro real, en un archivo .py
+# Clase 7 - Snapshot real a OrderBook, en un archivo .py
 # Ejecuta desde exercises/:  python read_book.py
 
-from exchange.market import Market
-from exchange.orders import Side
+import csv
+import os
+
+from exchange.book import OrderBook
 
 
 def describe(book):
@@ -12,16 +14,15 @@ def describe(book):
 
 
 def main():
-    market = Market.sample()
-    book = market.step()
-    print("primer snapshot:")
+    path = os.path.join(os.path.dirname(__file__), "exchange", "_data",
+                        "btc_lob_snapshots.csv")
+    with open(path, newline="") as f:
+        row = {k: float(v) for k, v in next(csv.DictReader(f)).items()}
+    book = OrderBook.from_snapshot("BTCUSDT", row, depth=10)
+    print("raw snapshot -> OrderBook:")
     describe(book)
-
-    high = low = book.mid
-    while market.step() is not None:
-        high = max(high, market.book.mid)
-        low = min(low, market.book.mid)
-    print(f"el dia entero: low={low:.2f}  high={high:.2f}  rango={high - low:.2f}")
+    print(f"  depth bid(5)={book.depth('buy', 5):.3f}  "
+          f"depth ask(5)={book.depth('sell', 5):.3f}")
 
 
 if __name__ == "__main__":

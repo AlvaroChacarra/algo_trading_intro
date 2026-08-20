@@ -60,7 +60,7 @@ function findDocs() {
     }
   }
 
-  // L1-L6: las nuevas explicaciones dependen de toque, cambio de modo y estado.
+  // L1-L9: las explicaciones dependen de toque, cambio de modo y estado.
   // Repetimos ese recorrido en un viewport tipo iPhone y con reduced-motion.
   const mobile = await browser.newContext({
     viewport: { width: 390, height: 844 },
@@ -76,8 +76,12 @@ function findDocs() {
     '04-': [],
     '05-': ['#inv-fill', '#inv-break', '#inv-reset'],
     '06-': ['#sup-b', '#sup-c', '#abc-abstract', '#abc-return'],
+    '07-': ['#sc-t'],
+    '08-': ['#policy-modes [data-mode="fok"]', '#sim-type [data-type="fok"]',
+            '#sim-next', '#sim-next', '#sim-next'],
+    '09-': ['#mk-i', '#pl-play', '#pl-reset'],
   };
-  for (const doc of docs.filter(d => /^0[1-6]-/.test(path.basename(path.dirname(path.dirname(d)))))) {
+  for (const doc of docs.filter(d => /^0[1-9]-/.test(path.basename(path.dirname(path.dirname(d)))))) {
     const errs = [];
     const handler = e => errs.push(e.message);
     mobilePage.on('pageerror', handler);
