@@ -248,27 +248,28 @@ imbalance(book)
 <!-- ══════════════ §4 __MAIN__ ══════════════ -->
 <section id="s4">
   <div class="wrap">
-    <div class="eyebrow">§4 · <b>Construye</b></div>
-    <h2>El módulo que también sabe correr solo</h2>
-    <p class="lede">El patrón profesional: la librería arriba, y al final una demo que
-    <strong>solo</strong> corre cuando ejecutas el archivo directamente.</p>
+    <div class="eyebrow">§4 · <b>Simulador</b></div>
+    <h2>Importar no debería arrancar mi programa</h2>
+    <p class="lede">Primero provoca el problema. Después activa el guard y repite exactamente
+    las dos formas de usar el archivo.</p>
 
-    <div class="code">
-      <div class="code-head"><span>order_book.py (final del archivo)</span><span>python</span></div>
-      <pre><span class="ln"><span class="k">if</span> __name__ == <span class="s">"__main__"</span>:</span><span class="ln">    <span class="c"># demo: solo corre con `python order_book.py`</span></span><span class="ln">    book = []</span><span class="ln">    book = add_order(book, make_order(<span class="s">'BTCUSDT'</span>, <span class="s">'buy'</span>, <span class="num">99950</span>, <span class="num">0.5</span>))</span><span class="ln">    book = add_order(book, make_order(<span class="s">'BTCUSDT'</span>, <span class="s">'sell'</span>, <span class="num">100000</span>, <span class="num">0.3</span>))</span><span class="ln">    <span class="fn">print</span>(<span class="s">"mid:"</span>, mid(book))</span></pre>
-      <div class="out"><div class="btnrow" style="margin:0"><button class="btn runbtn" data-target="out-main" data-seq>▶ python order_book.py</button></div>
-        <div id="out-main" class="hidden" style="margin-top:10px">
-          <div><span class="prompt">$ </span><span style="color:var(--muted)">python order_book.py</span></div>
-          <div><span class="prompt">&gt;&gt;&gt; </span><span class="val">mid: 99975.0</span></div>
-        </div>
+    <div class="simcard" id="main-sim">
+      <h4>mode switch · backtest.py</h4>
+      <div class="mode-switch" role="group" aria-label="Versión del archivo">
+        <button class="on" id="main-broken">sin guard</button><button id="main-fixed">con guard</button>
       </div>
+      <div class="mode-switch" role="group" aria-label="Forma de abrir el archivo">
+        <button class="on" id="main-import">import backtest</button><button id="main-direct">python backtest.py</button>
+      </div>
+      <pre id="main-code" style="font-family:var(--mono);font-size:.75rem;line-height:1.9;margin:12px 0"></pre>
+      <div class="execution-trace" id="main-trace"></div>
+      <button class="btn" id="main-run">▶ Probar</button>
+      <div class="looplog" id="main-log">La versión rota ejecutará todo el archivo al importarlo.</div>
     </div>
 
-    <div class="note"><span class="tag">Y cuando lo importas…</span>
-    …ese bloque <strong>no se ejecuta</strong>: <code>__name__</code> vale
-    <code>"order_book"</code>, no <code>"__main__"</code>. La demo no contamina a quien
-    solo quiere tus funciones. Pruébalo en el notebook — es una de esas cosas que hay que
-    ver una vez.</div>
+    <div class="note"><span class="tag">Una regla</span>
+    Al importar, <code>__name__ = "backtest"</code>; al ejecutar el archivo,
+    <code>__name__ = "__main__"</code>. El guard convierte esa diferencia en control.</div>
   </div>
 </section>
 

@@ -369,7 +369,8 @@
 
 /* tarjetas de simulador (constructor de Order, tracker, estrategias...) */
 .simcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;
-         padding:20px;margin:22px 0}
+         padding:20px;margin:22px 0;min-width:0}
+.simcard pre{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .simcard h4{font-family:var(--mono);font-size:.7rem;letter-spacing:.15em;
             text-transform:uppercase;color:var(--faint);margin:0 0 12px}
 .simrow{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:10px 0}
@@ -418,6 +419,46 @@
                   padding:4px 12px;background:var(--panel2);margin:2px 0}
 .treebox .nodebox.abs{border-style:dashed;border-color:rgba(192,132,252,.5);color:var(--kw)}
 .treebox .nodebox.hl{border-color:var(--accent);color:var(--accent)}
+
+/* tres primitivas pedagógicas reutilizables: traza, cambio de modo e inspector */
+.execution-trace{display:grid;gap:7px;margin:14px 0;font-family:var(--mono);font-size:.78rem}
+.trace-step{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  min-height:42px;padding:8px 12px;border:1px solid var(--line);border-radius:9px;
+  min-width:0;background:var(--panel2);color:var(--muted);
+  transition:border-color .22s,background .22s,color .22s}
+.trace-step>span{min-width:0;overflow-wrap:anywhere}
+.trace-step:before{content:"↓";color:var(--faint);margin-right:2px}
+.trace-step:first-child:before{content:"▶"}
+.trace-step.active{border-color:var(--accent);background:var(--accent-dim);color:var(--accent)}
+.trace-step.ok{border-color:rgba(74,222,128,.45);color:var(--bid)}
+.trace-step.fail{border-color:rgba(248,113,113,.55);background:rgba(248,113,113,.08);color:var(--ask)}
+.trace-step .trace-meta{font-size:.68rem;color:var(--faint);text-align:right}
+.mode-switch{display:flex;gap:0;max-width:100%;overflow-x:auto;border:1px solid var(--line);
+  border-radius:9px;margin:10px 0}
+.mode-switch button{flex:1;min-height:44px;min-width:max-content;padding:7px 14px;border:0;
+  border-right:1px solid var(--line);background:transparent;color:var(--muted);
+  font:inherit;font-family:var(--mono);font-size:.75rem;cursor:pointer}
+.mode-switch button:last-child{border-right:0}
+.mode-switch button.on{background:var(--accent-dim);color:var(--accent)}
+.mode-switch button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.state-inspector{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+.state-panel{border:1px solid var(--line);border-radius:11px;background:var(--panel2);padding:12px;min-width:0}
+.state-panel .state-title{display:flex;justify-content:space-between;gap:10px;margin-bottom:8px;
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+.state-panel.changed{border-color:var(--accent)}
+.state-panel.bad{border-color:rgba(248,113,113,.55)}
+.state-list{display:grid;gap:5px;font-family:var(--mono);font-size:.75rem}
+.state-list div{display:flex;justify-content:space-between;gap:12px}
+.state-list b{font-weight:500;color:var(--text)}
+.concept-chip{display:inline-block;margin:2px 4px 2px 0;padding:2px 8px;border-radius:99px;
+  border:1px solid rgba(34,211,238,.4);color:var(--accent);font-family:var(--mono);font-size:.65rem}
+.concept-chip.behavior{border-color:rgba(192,132,252,.45);color:var(--kw)}
+@media(max-width:620px){
+  .state-inspector{grid-template-columns:1fr}
+  .trace-step{align-items:flex-start}
+  .mode-switch button{font-size:.7rem;padding:7px 10px}
+  .simcard{padding:14px}
+}
 
 /* ══ índice del curso ══ */
 .lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
@@ -471,7 +512,7 @@
         --bid:#15803d;--ask:#b91c1c;--warn:#92600a;
         --kw:#6d28d9;--num:#0369a1;--str:#92600a;--com:#71717a}
   body{background:#fff;color:#111;font-size:10.5pt}
-  #rail,.btn,.runbtn,.tbBtn,input,.toggle,.looplog,.simrow,#gd-toggle,#guion-drawer,
+  #rail,.btn,.runbtn,.tbBtn,input,.toggle,.mode-switch,.looplog,.simrow,#gd-toggle,#guion-drawer,
   .btnrow{display:none!important}
   canvas{display:none!important}
   section{padding:18pt 0 6pt;border-top:1px solid #ddd;break-inside:avoid-page}
@@ -588,11 +629,12 @@
       <div class="fig-head"><span>dict → objeto Order</span><span class="stage-name">separados</span></div>
       <div class="fig-stage on" data-stage="0">
         <pre style="font-family:var(--mono);font-size:.76rem;line-height:1.9;margin:6px 0 0">
-<span style="color:var(--muted)">order = {'side': 'buy', …}</span>      <span class="c">← el dato</span>
+<span style="color:var(--muted)">order = {'side': 'buy', …}</span>      <span class="c">← estado</span>
 
-<span style="color:var(--muted)">def compute_notional(order): …</span>  <span class="c">← su función</span>
-<span style="color:var(--muted)">def describe(order): …</span>          <span class="c">← otra</span>
-<span style="color:var(--muted)">def validate(order): …</span>          <span class="c">← otra más</span></pre>
+<span style="color:var(--muted)">def compute_notional(order): …</span>  <span class="c">← comportamiento</span>
+<span style="color:var(--muted)">def describe(order): …</span>
+<span style="color:var(--muted)">def validate(order): …</span></pre>
+        <div><span class="concept-chip">estado</span><span class="concept-chip behavior">comportamiento</span></div>
         <p style="color:var(--faint);font-size:.8rem;margin-top:20px">separados, y tú de
         mensajero entre ambos</p>
       </div>
@@ -605,6 +647,7 @@
         self.size  = size
 
 order = Order(<span class="s">'buy'</span>, <span class="num">99950</span>, <span class="num">0.5</span>)</pre>
+        <div><span class="concept-chip">estado del objeto</span></div>
         <p style="color:var(--faint);font-size:.8rem;margin-top:14px">el molde + la
         fabricación de una pieza</p>
       </div>
@@ -630,7 +673,8 @@ order = Order(<span class="s">'buy'</span>, <span class="num">99950</span>, <spa
         <span class="k">return</span> self.price * self.size
 
 order.notional()   <span class="c"># 49975.0</span></pre>
-        <div class="result-chip">compute_notional(order) → order.notional()</div>
+        <div><span class="concept-chip behavior">comportamiento del objeto</span></div>
+        <div class="result-chip">estado + comportamiento → objeto</div>
       </div>
       <div class="fig-stage" data-stage="4">
         <pre style="font-family:var(--mono);font-size:.76rem;line-height:1.95;margin:6px 0 0">
@@ -856,6 +900,7 @@ order.notional()   <span class="c"># 49975.0</span></pre>
 
 ## §1 · Scrollytelling — la metamorfosis (8 min)
 - **0/5 separados:** "nadie es responsable de nada: un dict sin size no protesta."
+- Etiqueta explícitamente las dos piezas antes de unirlas: dict = **estado**; funciones = **comportamiento**.
 - **1/5 class + __init__:** "el molde y la fabricación. ¿Os suena? Es make_order de L2, ascendida."
 - **2/5 self:** el momento delicado de la clase — dedícale tiempo. Dos tarjetas, datos independientes: "self es 'yo': el objeto concreto sobre el que trabaja el método".
 - **3/5 métodos:** "compute_notional(order) se convierte en order.notional(): la cuenta vive donde viven los datos."
@@ -885,6 +930,7 @@ order.notional()   <span class="c"># 49975.0</span></pre>
 - [ ] class = molde; __init__ = fabricación; self = "yo".
 - [ ] Objetos independientes del mismo molde.
 - [ ] Método = la función mudada adentro; azúcar sintáctico entendido.
+- [ ] La transformación visual termina en `estado + comportamiento → objeto`.
 - [ ] __repr__ útil.
 - [ ] cash_flow con signo: buy −, sell +.
 </script>

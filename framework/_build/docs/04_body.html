@@ -91,11 +91,12 @@
       <div class="fig-head"><span>dict → objeto Order</span><span class="stage-name">separados</span></div>
       <div class="fig-stage on" data-stage="0">
         <pre style="font-family:var(--mono);font-size:.76rem;line-height:1.9;margin:6px 0 0">
-<span style="color:var(--muted)">order = {'side': 'buy', …}</span>      <span class="c">← el dato</span>
+<span style="color:var(--muted)">order = {'side': 'buy', …}</span>      <span class="c">← estado</span>
 
-<span style="color:var(--muted)">def compute_notional(order): …</span>  <span class="c">← su función</span>
-<span style="color:var(--muted)">def describe(order): …</span>          <span class="c">← otra</span>
-<span style="color:var(--muted)">def validate(order): …</span>          <span class="c">← otra más</span></pre>
+<span style="color:var(--muted)">def compute_notional(order): …</span>  <span class="c">← comportamiento</span>
+<span style="color:var(--muted)">def describe(order): …</span>
+<span style="color:var(--muted)">def validate(order): …</span></pre>
+        <div><span class="concept-chip">estado</span><span class="concept-chip behavior">comportamiento</span></div>
         <p style="color:var(--faint);font-size:.8rem;margin-top:20px">separados, y tú de
         mensajero entre ambos</p>
       </div>
@@ -108,6 +109,7 @@
         self.size  = size
 
 order = Order(<span class="s">'buy'</span>, <span class="num">99950</span>, <span class="num">0.5</span>)</pre>
+        <div><span class="concept-chip">estado del objeto</span></div>
         <p style="color:var(--faint);font-size:.8rem;margin-top:14px">el molde + la
         fabricación de una pieza</p>
       </div>
@@ -133,7 +135,8 @@ order = Order(<span class="s">'buy'</span>, <span class="num">99950</span>, <spa
         <span class="k">return</span> self.price * self.size
 
 order.notional()   <span class="c"># 49975.0</span></pre>
-        <div class="result-chip">compute_notional(order) → order.notional()</div>
+        <div><span class="concept-chip behavior">comportamiento del objeto</span></div>
+        <div class="result-chip">estado + comportamiento → objeto</div>
       </div>
       <div class="fig-stage" data-stage="4">
         <pre style="font-family:var(--mono);font-size:.76rem;line-height:1.95;margin:6px 0 0">

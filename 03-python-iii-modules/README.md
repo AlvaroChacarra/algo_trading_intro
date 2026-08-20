@@ -34,6 +34,8 @@ datos y funciones siguen separados → juntarlos = objetos (L4).
 - **4. Lanza un error claro** — raise
 - **5. Combina funciones del módulo** — usar varias del módulo
 - **6. Construye y lee un libro con el módulo** — juntar el módulo
+- **7. Observa el side effect al importar** — ejecución top-level
+- **8. El guard separa importar de ejecutar** — __name__ y runpy
 
 ## Estructura de la carpeta
 

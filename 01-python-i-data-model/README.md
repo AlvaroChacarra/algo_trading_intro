@@ -45,6 +45,8 @@ de la clase `Order` en L3. Los dicts de hoy son los objetos de pasado mañana.
 - **5. Una orden, y cómo leerla** — diccionarios: crear y acceder
 - **6. Clasifica el mercado** — if / elif / else
 - **7. Tu primer algoritmo** — dato → cálculo → decisión
+- **8. Pregunta qué Python estás usando** — sys.implementation
+- **9. Mira el bytecode real** — dis
 
 ## Estructura de la carpeta
 

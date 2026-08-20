@@ -87,7 +87,7 @@ marcando el inventario al precio actual de mercado. Es la fotografía de PnL que
 todos los backtests.""",
 "technical": """`exchange/book.py` (`OrderBook`, `Level`) con bids ordenados desc y asks asc, y métodos
 `best_bid/best_ask/spread/mid/imbalance`. `exchange/portfolio.py` (`PositionTracker`) con
-`_cash`/`_position` privados, `apply_fill(fill)` y `equity(mark)`.
+`_cash`/`_position` como implementación interna, `apply_fill(fill)` y `equity(mark)`.
 
 Composición explícita: `OrderBook` contiene `Level`; `PositionTracker.apply_fill` consume
 objetos `Fill` de L3. Aquí el alumno *ve* a los objetos hablándose entre sí — el objetivo

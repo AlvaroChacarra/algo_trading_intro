@@ -21,7 +21,8 @@
 
 ## §2 · La fábrica (4 min)
 - Ejecuta `make_order` + `add_order` (▶). Señala el patrón: cada función hace UNA cosa y su nombre no necesita comentario.
-- **La comprensión de `cancel_order`:** léela en voz alta como está en la nota — "una lista con cada orden… si su id no es el condenado". Primera vez que la ven: no borra, **construye una nueva**. Di que el gimnasio la entrena.
+- **Tracer de `cancel_order`:** no leas primero la comprehension. Avanza orden por orden: condición falsa → no pasa; condición verdadera → entra en `new_book`. Al final, señala `book is new_book → False`.
+- Cambia de «versión explícita» a «comprehension» solo después de entender el recorrido. La sintaxis nueva comprime un mecanismo ya visible: no borra, **construye una lista nueva**.
 
 ## §3 · El libro vivo (4 min)
 - **Cede el teclado.** Cada botón registra abajo la llamada exacta (`add_order(book, make_order(…))`) — señálalo: "el botón sois vosotros llamando a vuestra función".
@@ -29,7 +30,8 @@
 
 ## §4 · Leer el libro (4 min)
 - `best_bid` con max + generador: tradúcelo palabra a palabra.
-- **El gate del imbalance:** que predigan (buy 0.3 + 0.3, sell 0.2). El 0.75 y su lectura: presión compradora.
+- **El gate del imbalance:** que predigan (buy 0.3 + 0.3, sell 0.2). El resultado es `+0.50`: presión compradora. Repite el rango canónico: `−1` vendedor, `0` equilibrado, `+1` comprador.
+- En el microtracer de `sorted(key=...)`, haz una ronda con `get_price`: función sin paréntesis = se entrega la función; `get_price(order)` = se obtiene un número. Después activa `lambda`: misma salida, función breve sin nombre.
 - Honestidad (en el doc): los profesionales ponderan por cercanía al mid; se refina en L7.
 
 ## §5 · Quiz (3 min)
@@ -43,6 +45,8 @@
 ## Checklist
 - [ ] Función = receta con huecos; un cambio, un sitio.
 - [ ] El book único + make/add/cancel; la comprensión construye lista nueva.
+- [ ] Estado = datos que describen cómo está ahora el sistema; todas las operaciones miran el mismo `book`.
+- [ ] `sorted(key=get_price)` se entiende antes de sustituirlo por `lambda`.
 - [ ] best_bid/best_ask/spread/mid como funciones de lectura.
-- [ ] Imbalance: qué mide y cómo se lee.
+- [ ] Imbalance canónico en `[-1,+1]`: signo y magnitud bien leídos.
 - [ ] El contador "todas reciben book" queda plantado (sin resolver).

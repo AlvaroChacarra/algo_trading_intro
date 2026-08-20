@@ -12,33 +12,33 @@ def add_order(book, order):                  # ej. 2
     return book
 
 
-def cancel_order(book, order_id):            # ej. 3
+def cancel_order(book, order_id):            # ej. 4
     return [o for o in book if o.get("id") != order_id]
 
 
-def best_bid(book):                          # ej. 4
+def best_bid(book):                          # ej. 5
     return max(o["price"] for o in book if o["side"] == "buy")
 
 
-def best_ask(book):                          # ej. 4
+def best_ask(book):                          # ej. 5
     return min(o["price"] for o in book if o["side"] == "sell")
 
 
-def spread(book):                            # ej. 6
+def spread(book):                            # ej. 7
     return best_ask(book) - best_bid(book)
 
 
-def mid(book):                               # ej. 6
+def mid(book):                               # ej. 7
     return (best_bid(book) + best_ask(book)) / 2
 
 
-def imbalance(book):                         # ej. 5
+def imbalance(book):                         # ej. 6
     buy = sum(o["size"] for o in book if o["side"] == "buy")
     sell = sum(o["size"] for o in book if o["side"] == "sell")
     return (buy - sell) / (buy + sell)
 
 
-def main():                                  # ej. 7: construir y leer el libro
+def main():                                  # ej. 8: construir y leer el libro
     book = []
     book = add_order(book, make_order("BTCUSDT", "buy", 99980, 0.10))
     book = add_order(book, make_order("BTCUSDT", "buy", 99990, 0.20))

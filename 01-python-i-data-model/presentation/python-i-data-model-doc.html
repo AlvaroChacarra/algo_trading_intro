@@ -369,7 +369,8 @@
 
 /* tarjetas de simulador (constructor de Order, tracker, estrategias...) */
 .simcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;
-         padding:20px;margin:22px 0}
+         padding:20px;margin:22px 0;min-width:0}
+.simcard pre{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .simcard h4{font-family:var(--mono);font-size:.7rem;letter-spacing:.15em;
             text-transform:uppercase;color:var(--faint);margin:0 0 12px}
 .simrow{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:10px 0}
@@ -418,6 +419,46 @@
                   padding:4px 12px;background:var(--panel2);margin:2px 0}
 .treebox .nodebox.abs{border-style:dashed;border-color:rgba(192,132,252,.5);color:var(--kw)}
 .treebox .nodebox.hl{border-color:var(--accent);color:var(--accent)}
+
+/* tres primitivas pedagógicas reutilizables: traza, cambio de modo e inspector */
+.execution-trace{display:grid;gap:7px;margin:14px 0;font-family:var(--mono);font-size:.78rem}
+.trace-step{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  min-height:42px;padding:8px 12px;border:1px solid var(--line);border-radius:9px;
+  min-width:0;background:var(--panel2);color:var(--muted);
+  transition:border-color .22s,background .22s,color .22s}
+.trace-step>span{min-width:0;overflow-wrap:anywhere}
+.trace-step:before{content:"↓";color:var(--faint);margin-right:2px}
+.trace-step:first-child:before{content:"▶"}
+.trace-step.active{border-color:var(--accent);background:var(--accent-dim);color:var(--accent)}
+.trace-step.ok{border-color:rgba(74,222,128,.45);color:var(--bid)}
+.trace-step.fail{border-color:rgba(248,113,113,.55);background:rgba(248,113,113,.08);color:var(--ask)}
+.trace-step .trace-meta{font-size:.68rem;color:var(--faint);text-align:right}
+.mode-switch{display:flex;gap:0;max-width:100%;overflow-x:auto;border:1px solid var(--line);
+  border-radius:9px;margin:10px 0}
+.mode-switch button{flex:1;min-height:44px;min-width:max-content;padding:7px 14px;border:0;
+  border-right:1px solid var(--line);background:transparent;color:var(--muted);
+  font:inherit;font-family:var(--mono);font-size:.75rem;cursor:pointer}
+.mode-switch button:last-child{border-right:0}
+.mode-switch button.on{background:var(--accent-dim);color:var(--accent)}
+.mode-switch button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.state-inspector{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+.state-panel{border:1px solid var(--line);border-radius:11px;background:var(--panel2);padding:12px;min-width:0}
+.state-panel .state-title{display:flex;justify-content:space-between;gap:10px;margin-bottom:8px;
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+.state-panel.changed{border-color:var(--accent)}
+.state-panel.bad{border-color:rgba(248,113,113,.55)}
+.state-list{display:grid;gap:5px;font-family:var(--mono);font-size:.75rem}
+.state-list div{display:flex;justify-content:space-between;gap:12px}
+.state-list b{font-weight:500;color:var(--text)}
+.concept-chip{display:inline-block;margin:2px 4px 2px 0;padding:2px 8px;border-radius:99px;
+  border:1px solid rgba(34,211,238,.4);color:var(--accent);font-family:var(--mono);font-size:.65rem}
+.concept-chip.behavior{border-color:rgba(192,132,252,.45);color:var(--kw)}
+@media(max-width:620px){
+  .state-inspector{grid-template-columns:1fr}
+  .trace-step{align-items:flex-start}
+  .mode-switch button{font-size:.7rem;padding:7px 10px}
+  .simcard{padding:14px}
+}
 
 /* ══ índice del curso ══ */
 .lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
@@ -471,7 +512,7 @@
         --bid:#15803d;--ask:#b91c1c;--warn:#92600a;
         --kw:#6d28d9;--num:#0369a1;--str:#92600a;--com:#71717a}
   body{background:#fff;color:#111;font-size:10.5pt}
-  #rail,.btn,.runbtn,.tbBtn,input,.toggle,.looplog,.simrow,#gd-toggle,#guion-drawer,
+  #rail,.btn,.runbtn,.tbBtn,input,.toggle,.mode-switch,.looplog,.simrow,#gd-toggle,#guion-drawer,
   .btnrow{display:none!important}
   canvas{display:none!important}
   section{padding:18pt 0 6pt;border-top:1px solid #ddd;break-inside:avoid-page}
@@ -675,27 +716,39 @@
     ejecuta ese bytecode mediante su VM. La CPU acaba ejecutando machine code nativo.
     <strong>Python source ≠ bytecode ≠ machine code</strong> y <strong>CPython ≠ bytecode</strong>.</div>
 
-    <h3>Python/CPython frente a C++: dos pipelines</h3>
-    <div class="fig3">
-      <div class="lane hi"><h4>Python con CPython</h4><p>source → compilador de CPython →
-      <strong>Python bytecode</strong> → CPython VM → CPU</p></div>
-      <div class="lane"><h4>C++ nativo</h4><p>source → GCC / Clang / MSVC →
-      <strong>machine code nativo</strong> → CPU</p></div>
+    <h3>La misma intención, dos caminos</h3>
+    <div class="simcard" id="lang-sim">
+      <h4>simulador · mid = (bid + ask) / 2</h4>
+      <div class="mode-switch" role="group" aria-label="Pipeline de ejecución">
+        <button class="on" id="lang-python">Python · CPython</button>
+        <button id="lang-cpp">C++ · nativo</button>
+      </div>
+      <div class="execution-trace" id="lang-trace" aria-live="polite"></div>
+      <div class="btnrow">
+        <button class="btn" id="lang-run">▶ Ejecutar</button>
+        <button class="btn ghost" id="lang-break">⚡ Introducir error</button>
+      </div>
+      <div class="looplog" id="lang-log">elige un camino y ejecútalo</div>
     </div>
 
-    <div class="note"><span class="tag">El intercambio</span>
-    C++ ofrece gran rendimiento, control y detección de muchos errores antes de ejecutar. Python
-    prioriza sintaxis simple, interactividad y el ciclo <strong>write → run → inspect → fix</strong>:
-    REPL, notebooks, ejecución por celdas, tracebacks e introspección. No es «sin compilación»:
-    CPython compila, normalmente a bytecode en lugar de machine code nativo.</div>
+    <div class="note"><span class="tag">Una regla</span>
+    Python favorece el ciclo corto <strong>write → run → inspect → fix</strong>. C++ desplaza
+    más comprobaciones a la compilación y produce un ejecutable nativo. Ambos ofrecen diagnósticos;
+    cambia el momento del feedback y el artefacto que llega a la CPU.</div>
 
     <h3>La ventaja no es solo el lenguaje</h3>
-    <p>Sintaxis sencilla + desarrollo rápido + experimentación favorecieron una gran adopción;
-    adopción y comunidad produjeron más librerías, que a su vez hicieron Python todavía más útil.
-    Es un <strong>círculo virtuoso</strong>, no una explicación histórica única.</p>
-    <div class="challenge"><p><strong>Una de las grandes ventajas de Python no es solamente Python.
-    Es todo el código que otra gente ya ha escrito para nosotros:</strong> NumPy, pandas, SciPy y
-    miles de librerías que podremos reutilizar.</p></div>
+    <div class="simcard" id="ecosystem-sim">
+      <h4>animación · el efecto red</h4>
+      <div class="execution-trace">
+        <div class="trace-step" data-eco="0"><span>sintaxis + iteración rápida</span></div>
+        <div class="trace-step" data-eco="1"><span>adopción</span></div>
+        <div class="trace-step" data-eco="2"><span>NumPy · pandas · SciPy · …</span></div>
+        <div class="trace-step" data-eco="3"><span>más cosas que puedes construir</span></div>
+      </div>
+      <button class="btn" id="eco-run">▶ Ver el efecto red</button>
+    </div>
+    <p><strong>La ventaja práctica incluye el ecosistema</strong>: código probado que podremos
+    reutilizar durante todo el curso. Es un círculo virtuoso, no una explicación histórica única.</p>
 
     <details><summary>AI cambia la interfaz, no el problema de fondo</summary><div class="body">
       <p>Durante décadas expresamos intención con lenguajes formales como Python o C++. Con AI
@@ -1100,14 +1153,14 @@ Recorrer el scrolly con ritmo; tokens y AST son paradas visuales, no contenido p
 
 Escribir o señalar: **CPython ≠ bytecode** y **Python source ≠ bytecode ≠ machine code**.
 
-Comparar solo los dos pipelines:
+En «La misma intención, dos caminos», hacer que el grupo pulse **Ejecutar** en ambos modos. No describir primero: dejar que vea cambiar únicamente el pipeline.
 
-- Python → compilador de CPython → Python bytecode → CPython VM → CPU.
-- C++ → GCC/Clang/MSVC → machine code nativo → CPU.
+- Python: source → bytecode → CPython VM → CPU → 99975.
+- C++: source → compiler → native executable → CPU → 99975.
 
-No decir «Python es simplemente interpretado» ni «C++ no indica dónde está el error». C++ detecta muchos errores antes de ejecutar. La ventaja práctica de Python es el ciclo corto **write → run → inspect → fix**, reforzado por REPL, notebooks, celdas, tracebacks e introspección.
+Después pulsar **Introducir error**. En Python, la ejecución llega a la tercera línea y aparece `TypeError` + traceback; en C++, el build se detiene y no produce executable. Cerrar con una sola regla: Python favorece **write → run → inspect → fix**; C++ desplaza más comprobaciones a compilación y produce código nativo. No decir «Python es simplemente interpretado» ni «C++ no indica dónde está el error».
 
-Cerrar con el círculo virtuoso: sintaxis + interactividad + experimentación → adopción → comunidad → librerías → más adopción. Presentarlo como una causa importante, no como explicación histórica única. Frase: **«Una de las grandes ventajas de Python no es solamente Python. Es todo el código que otra gente ya ha escrito para nosotros.»**
+Para el ecosistema, pulsar una vez y dejar avanzar la cadena: sintaxis + iteración rápida → adopción → NumPy/pandas/SciPy → más cosas que construir. Presentarlo como círculo virtuoso importante, no como explicación histórica única. Frase: **«Una de las grandes ventajas de Python no es solamente Python. Es todo el código que otra gente ya ha escrito para nosotros.»**
 
 AI, máximo 20 segundos: el lenguaje natural puede elevar la interfaz con la que expresamos intención, pero debajo sigue siendo necesario transformarla en operaciones ejecutables. No afirmar que desaparecerán los lenguajes.
 
@@ -1166,6 +1219,7 @@ El simulador «tu propia línea» queda para exploración autónoma; no consumir
 - [ ] Bytecode ≠ machine code.
 - [ ] Python/CPython y C++ aparecen como pipelines correctos.
 - [ ] C++ conserva su ventaja de detección preejecución; no se caricaturizan sus errores.
+- [ ] El grupo ejecuta ambos caminos y rompe ambos antes de leer la regla.
 - [ ] Python se explica por `write → run → inspect → fix` y su entorno interactivo.
 - [ ] Ecosistema como círculo virtuoso prudente; AI en menos de un minuto.
 - [ ] Order book y `mid = (bid + ask) / 2` siguen siendo el hilo héroe.
@@ -1419,6 +1473,64 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
   fig.addEventListener('stagechange',e=>{
     if(e.detail.stage===4)runVM();else clearInterval(vmTimer);
   });
+})();
+
+/* ── misma intención, dos pipelines + error en momentos distintos ── */
+(function(){
+  let mode='python', timers=[];
+  const paths={
+    python:['source','Python bytecode','CPython VM','CPU','99975.0'],
+    cpp:['source','compiler','native executable','CPU','99975.0'],
+  };
+  function clearTimers(){timers.forEach(clearTimeout);timers=[];}
+  function paint(labels){
+    $('#lang-trace').innerHTML=labels.map((label,i)=>
+      `<div class="trace-step" data-lang-step="${i}"><span>${label}</span><span class="trace-meta"></span></div>`).join('');
+  }
+  function choose(next){
+    clearTimers();mode=next;
+    $('#lang-python').classList.toggle('on',mode==='python');
+    $('#lang-cpp').classList.toggle('on',mode==='cpp');
+    paint(paths[mode]);
+    $('#lang-log').textContent=mode==='python'
+      ?'source → bytecode → VM → CPU':'source → compiler → executable nativo → CPU';
+  }
+  function animate(labels, failureAt=-1){
+    clearTimers();paint(labels);
+    const rows=$$('#lang-trace .trace-step');
+    rows.forEach((row,i)=>timers.push(setTimeout(()=>{
+      rows.forEach((r,k)=>r.classList.toggle('active',k===i));
+      if(i<failureAt||failureAt<0&&i<labels.length-1)row.classList.add('ok');
+      if(i===failureAt){row.classList.remove('active');row.classList.add('fail');}
+      if(i===labels.length-1&&failureAt<0){row.classList.remove('active');row.classList.add('ok');}
+    },reduced?0:260*i)));
+  }
+  $('#lang-python').addEventListener('click',()=>choose('python'));
+  $('#lang-cpp').addEventListener('click',()=>choose('cpp'));
+  $('#lang-run').addEventListener('click',()=>{
+    animate(paths[mode]);
+    $('#lang-log').textContent=mode==='python'
+      ?'✓ CPython ejecutó el bytecode · resultado 99975.0'
+      :'✓ el ejecutable nativo corrió · resultado 99975.0';
+  });
+  $('#lang-break').addEventListener('click',()=>{
+    if(mode==='python'){
+      animate(['Run','línea 1 ✓','línea 2 ✓','línea 3 · TypeError','traceback'],3);
+      $('#lang-log').textContent='las líneas anteriores corrieron; el traceback señala dónde falló la ejecución';
+    }else{
+      animate(['Build','compiler','error de compilación','no hay executable'],2);
+      $('#lang-log').textContent='el build se detiene: no se produce un executable';
+    }
+  });
+  $('#eco-run').addEventListener('click',()=>{
+    const rows=$$('#ecosystem-sim [data-eco]');
+    rows.forEach(r=>r.classList.remove('active','ok'));
+    rows.forEach((row,i)=>timers.push(setTimeout(()=>{
+      if(i)rows[i-1].classList.replace('active','ok');
+      row.classList.add(i===rows.length-1?'ok':'active');
+    },reduced?0:360*i)));
+  });
+  choose('python');
 })();
 
 /* ── mini tokenizer / parser / compiler ──────── */

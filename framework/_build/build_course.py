@@ -13,6 +13,7 @@ from __future__ import annotations
 import os
 import shutil
 import sys
+import tempfile
 import traceback
 
 HERE = os.path.dirname(__file__)
@@ -47,19 +48,36 @@ EXCHANGE_SRC = os.path.join(FRAMEWORK, "exchange")
 def self_test() -> list[str]:
     failures = []
     for lesson in LESSONS:
-        for kind in ("build", "aux"):
-            for ex in lesson.get(kind, []):
-                if "section" in ex:  # separador de bloque, no es un ejercicio
-                    continue
-                ns: dict = {}
-                code = (ex.get("given", "") + "\n" + ex["solution"]
-                        + "\n" + ex["validator"])
-                try:
-                    exec(compile(code, f"L{lesson['n']}:{ex['title']}", "exec"), ns)
-                except Exception:
-                    failures.append(
-                        f"L{lesson['n']} [{kind}] {ex['title']}\n"
-                        + traceback.format_exc())
+        # Algunos ejercicios prueban imports y ejecución directa de los archivos
+        # auxiliares reales de la lección. Los validamos en un workspace aislado
+        # para que el check no dependa de una generación anterior ni ensucie el repo.
+        with tempfile.TemporaryDirectory(prefix=f"lesson-{lesson['n']:02d}-") as workdir:
+            for relpath, content in lesson.get("extra_files", {}).items():
+                target = os.path.join(workdir, relpath)
+                os.makedirs(os.path.dirname(target) or workdir, exist_ok=True)
+                with open(target, "w", encoding="utf-8") as f:
+                    f.write(content)
+
+            old_cwd = os.getcwd()
+            sys.path.insert(0, workdir)
+            os.chdir(workdir)
+            try:
+                for kind in ("build", "aux"):
+                    for ex in lesson.get(kind, []):
+                        if "section" in ex:  # separador de bloque, no es un ejercicio
+                            continue
+                        ns: dict = {}
+                        code = (ex.get("given", "") + "\n" + ex["solution"]
+                                + "\n" + ex["validator"])
+                        try:
+                            exec(compile(code, f"L{lesson['n']}:{ex['title']}", "exec"), ns)
+                        except Exception:
+                            failures.append(
+                                f"L{lesson['n']} [{kind}] {ex['title']}\n"
+                                + traceback.format_exc())
+            finally:
+                os.chdir(old_cwd)
+                sys.path.remove(workdir)
     return failures
 
 
