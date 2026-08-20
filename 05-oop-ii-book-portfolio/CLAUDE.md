@@ -17,7 +17,7 @@ todos los backtests.
 
 `exchange/book.py` (`OrderBook`, `Level`) con bids ordenados desc y asks asc, y métodos
 `best_bid/best_ask/spread/mid/imbalance`. `exchange/portfolio.py` (`PositionTracker`) con
-`_cash`/`_position` privados, `apply_fill(fill)` y `equity(mark)`.
+`_cash`/`_position` como implementación interna, `apply_fill(fill)` y `equity(mark)`.
 
 Composición explícita: `OrderBook` contiene `Level`; `PositionTracker.apply_fill` consume
 objetos `Fill` de L3. Aquí el alumno *ve* a los objetos hablándose entre sí — el objetivo
@@ -32,7 +32,7 @@ esqueleto entre muchos objetos: herencia (L6).
 ## Presentación (3 bloques)
 
 1. **Un objeto que contiene objetos** — El OrderBook guarda dos listas (bids y asks). Esas cinco funciones de la clase 2 que recibían book ahora son métodos: book.spread(), book.mid().
-2. **Estado privado y encapsulación** — El PositionTracker guarda _cash y _position con guión bajo: 'no me toques desde fuera, usa mis métodos'. apply_fill recibe un objeto Fill y actualiza el estado.
+2. **Estado interno y encapsulación** — El PositionTracker guarda _cash y _position con guión bajo: 'no me toques desde fuera, usa mis métodos'. apply_fill recibe un objeto Fill y actualiza el estado.
 3. **Los objetos colaboran** — tracker.apply_fill(fill): el tracker no sabe de precios sueltos, sabe de Fills. equity(mark) marca el inventario a mercado. Cada pieza tiene una responsabilidad.
 
 ## Cuaderno de construcción

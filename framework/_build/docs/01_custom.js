@@ -51,6 +51,64 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
   });
 })();
 
+/* ── misma intención, dos pipelines + error en momentos distintos ── */
+(function(){
+  let mode='python', timers=[];
+  const paths={
+    python:['source','Python bytecode','CPython VM','CPU','99975.0'],
+    cpp:['source','compiler','native executable','CPU','99975.0'],
+  };
+  function clearTimers(){timers.forEach(clearTimeout);timers=[];}
+  function paint(labels){
+    $('#lang-trace').innerHTML=labels.map((label,i)=>
+      `<div class="trace-step" data-lang-step="${i}"><span>${label}</span><span class="trace-meta"></span></div>`).join('');
+  }
+  function choose(next){
+    clearTimers();mode=next;
+    $('#lang-python').classList.toggle('on',mode==='python');
+    $('#lang-cpp').classList.toggle('on',mode==='cpp');
+    paint(paths[mode]);
+    $('#lang-log').textContent=mode==='python'
+      ?'source → bytecode → VM → CPU':'source → compiler → executable nativo → CPU';
+  }
+  function animate(labels, failureAt=-1){
+    clearTimers();paint(labels);
+    const rows=$$('#lang-trace .trace-step');
+    rows.forEach((row,i)=>timers.push(setTimeout(()=>{
+      rows.forEach((r,k)=>r.classList.toggle('active',k===i));
+      if(i<failureAt||failureAt<0&&i<labels.length-1)row.classList.add('ok');
+      if(i===failureAt){row.classList.remove('active');row.classList.add('fail');}
+      if(i===labels.length-1&&failureAt<0){row.classList.remove('active');row.classList.add('ok');}
+    },reduced?0:260*i)));
+  }
+  $('#lang-python').addEventListener('click',()=>choose('python'));
+  $('#lang-cpp').addEventListener('click',()=>choose('cpp'));
+  $('#lang-run').addEventListener('click',()=>{
+    animate(paths[mode]);
+    $('#lang-log').textContent=mode==='python'
+      ?'✓ CPython ejecutó el bytecode · resultado 99975.0'
+      :'✓ el ejecutable nativo corrió · resultado 99975.0';
+  });
+  $('#lang-break').addEventListener('click',()=>{
+    if(mode==='python'){
+      animate(['Run','línea 1 ✓','línea 2 ✓','línea 3 · TypeError','traceback'],3);
+      $('#lang-log').textContent='las líneas anteriores corrieron; el traceback señala dónde falló la ejecución';
+    }else{
+      animate(['Build','compiler','error de compilación','no hay executable'],2);
+      $('#lang-log').textContent='el build se detiene: no se produce un executable';
+    }
+  });
+  $('#eco-run').addEventListener('click',()=>{
+    const rows=$$('#ecosystem-sim [data-eco]');
+    rows.forEach(r=>r.classList.remove('active','ok'));
+    rows.forEach((row,i)=>timers.push(setTimeout(()=>{
+      if(i)rows[i-1].classList.replace('active','ok');
+      row.classList.add(i===rows.length-1?'ok':'active');
+    },reduced?0:360*i)));
+  });
+  choose('python');
+})();
+
 /* ── mini tokenizer / parser / compiler ──────── */
 const ENV={bid:{v:99950,f:false},ask:{v:100000,f:false},spread:{v:50,f:false},mid:{v:99975,f:true}};
 function tokenize(src){

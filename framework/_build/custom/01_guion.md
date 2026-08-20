@@ -29,14 +29,14 @@ Recorrer el scrolly con ritmo; tokens y AST son paradas visuales, no contenido p
 
 Escribir o señalar: **CPython ≠ bytecode** y **Python source ≠ bytecode ≠ machine code**.
 
-Comparar solo los dos pipelines:
+En «La misma intención, dos caminos», hacer que el grupo pulse **Ejecutar** en ambos modos. No describir primero: dejar que vea cambiar únicamente el pipeline.
 
-- Python → compilador de CPython → Python bytecode → CPython VM → CPU.
-- C++ → GCC/Clang/MSVC → machine code nativo → CPU.
+- Python: source → bytecode → CPython VM → CPU → 99975.
+- C++: source → compiler → native executable → CPU → 99975.
 
-No decir «Python es simplemente interpretado» ni «C++ no indica dónde está el error». C++ detecta muchos errores antes de ejecutar. La ventaja práctica de Python es el ciclo corto **write → run → inspect → fix**, reforzado por REPL, notebooks, celdas, tracebacks e introspección.
+Después pulsar **Introducir error**. En Python, la ejecución llega a la tercera línea y aparece `TypeError` + traceback; en C++, el build se detiene y no produce executable. Cerrar con una sola regla: Python favorece **write → run → inspect → fix**; C++ desplaza más comprobaciones a compilación y produce código nativo. No decir «Python es simplemente interpretado» ni «C++ no indica dónde está el error».
 
-Cerrar con el círculo virtuoso: sintaxis + interactividad + experimentación → adopción → comunidad → librerías → más adopción. Presentarlo como una causa importante, no como explicación histórica única. Frase: **«Una de las grandes ventajas de Python no es solamente Python. Es todo el código que otra gente ya ha escrito para nosotros.»**
+Para el ecosistema, pulsar una vez y dejar avanzar la cadena: sintaxis + iteración rápida → adopción → NumPy/pandas/SciPy → más cosas que construir. Presentarlo como círculo virtuoso importante, no como explicación histórica única. Frase: **«Una de las grandes ventajas de Python no es solamente Python. Es todo el código que otra gente ya ha escrito para nosotros.»**
 
 AI, máximo 20 segundos: el lenguaje natural puede elevar la interfaz con la que expresamos intención, pero debajo sigue siendo necesario transformarla en operaciones ejecutables. No afirmar que desaparecerán los lenguajes.
 
@@ -95,6 +95,7 @@ El simulador «tu propia línea» queda para exploración autónoma; no consumir
 - [ ] Bytecode ≠ machine code.
 - [ ] Python/CPython y C++ aparecen como pipelines correctos.
 - [ ] C++ conserva su ventaja de detección preejecución; no se caricaturizan sus errores.
+- [ ] El grupo ejecuta ambos caminos y rompe ambos antes de leer la regla.
 - [ ] Python se explica por `write → run → inspect → fix` y su entorno interactivo.
 - [ ] Ecosistema como círculo virtuoso prudente; AI en menos de un minuto.
 - [ ] Order book y `mid = (bid + ask) / 2` siguen siendo el hilo héroe.

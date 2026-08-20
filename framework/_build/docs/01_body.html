@@ -178,27 +178,39 @@
     ejecuta ese bytecode mediante su VM. La CPU acaba ejecutando machine code nativo.
     <strong>Python source ≠ bytecode ≠ machine code</strong> y <strong>CPython ≠ bytecode</strong>.</div>
 
-    <h3>Python/CPython frente a C++: dos pipelines</h3>
-    <div class="fig3">
-      <div class="lane hi"><h4>Python con CPython</h4><p>source → compilador de CPython →
-      <strong>Python bytecode</strong> → CPython VM → CPU</p></div>
-      <div class="lane"><h4>C++ nativo</h4><p>source → GCC / Clang / MSVC →
-      <strong>machine code nativo</strong> → CPU</p></div>
+    <h3>La misma intención, dos caminos</h3>
+    <div class="simcard" id="lang-sim">
+      <h4>simulador · mid = (bid + ask) / 2</h4>
+      <div class="mode-switch" role="group" aria-label="Pipeline de ejecución">
+        <button class="on" id="lang-python">Python · CPython</button>
+        <button id="lang-cpp">C++ · nativo</button>
+      </div>
+      <div class="execution-trace" id="lang-trace" aria-live="polite"></div>
+      <div class="btnrow">
+        <button class="btn" id="lang-run">▶ Ejecutar</button>
+        <button class="btn ghost" id="lang-break">⚡ Introducir error</button>
+      </div>
+      <div class="looplog" id="lang-log">elige un camino y ejecútalo</div>
     </div>
 
-    <div class="note"><span class="tag">El intercambio</span>
-    C++ ofrece gran rendimiento, control y detección de muchos errores antes de ejecutar. Python
-    prioriza sintaxis simple, interactividad y el ciclo <strong>write → run → inspect → fix</strong>:
-    REPL, notebooks, ejecución por celdas, tracebacks e introspección. No es «sin compilación»:
-    CPython compila, normalmente a bytecode en lugar de machine code nativo.</div>
+    <div class="note"><span class="tag">Una regla</span>
+    Python favorece el ciclo corto <strong>write → run → inspect → fix</strong>. C++ desplaza
+    más comprobaciones a la compilación y produce un ejecutable nativo. Ambos ofrecen diagnósticos;
+    cambia el momento del feedback y el artefacto que llega a la CPU.</div>
 
     <h3>La ventaja no es solo el lenguaje</h3>
-    <p>Sintaxis sencilla + desarrollo rápido + experimentación favorecieron una gran adopción;
-    adopción y comunidad produjeron más librerías, que a su vez hicieron Python todavía más útil.
-    Es un <strong>círculo virtuoso</strong>, no una explicación histórica única.</p>
-    <div class="challenge"><p><strong>Una de las grandes ventajas de Python no es solamente Python.
-    Es todo el código que otra gente ya ha escrito para nosotros:</strong> NumPy, pandas, SciPy y
-    miles de librerías que podremos reutilizar.</p></div>
+    <div class="simcard" id="ecosystem-sim">
+      <h4>animación · el efecto red</h4>
+      <div class="execution-trace">
+        <div class="trace-step" data-eco="0"><span>sintaxis + iteración rápida</span></div>
+        <div class="trace-step" data-eco="1"><span>adopción</span></div>
+        <div class="trace-step" data-eco="2"><span>NumPy · pandas · SciPy · …</span></div>
+        <div class="trace-step" data-eco="3"><span>más cosas que puedes construir</span></div>
+      </div>
+      <button class="btn" id="eco-run">▶ Ver el efecto red</button>
+    </div>
+    <p><strong>La ventaja práctica incluye el ecosistema</strong>: código probado que podremos
+    reutilizar durante todo el curso. Es un círculo virtuoso, no una explicación histórica única.</p>
 
     <details><summary>AI cambia la interfaz, no el problema de fondo</summary><div class="body">
       <p>Durante décadas expresamos intención con lenguajes formales como Python o C++. Con AI

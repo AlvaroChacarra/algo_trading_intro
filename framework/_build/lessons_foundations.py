@@ -77,6 +77,19 @@ LESSONS.append({
          "validator": "assert spread == 50 and mid == 99975.0\nassert market_state == 'normal'\nassert action == 'buy'\nprint('ok  decision ->', action)",
          "pista": "Ve por capas: (1) `spread = ask - bid` y `mid = (bid + ask) / 2`; (2) copia el if/elif/else del ejercicio 6; (3) un segundo `if` para `action`, comparando `mid` con 100000.",
          "solution": "spread = ask - bid\nmid = (bid + ask) / 2\n\nif spread <= 20:\n    market_state = 'tight'\nelif spread <= 60:\n    market_state = 'normal'\nelse:\n    market_state = 'wide'\n\nif mid <= 100000:\n    action = 'buy'\nelse:\n    action = 'hold'"},
+        {"title": "8. Pregunta qué Python estás usando", "practice": "sys.implementation",
+         "statement": "Importa `sys` y guarda `implementation = sys.implementation.name`. En este curso esperamos la implementación CPython.",
+         "starter": "import sys\nimplementation = None\n",
+         "validator": "assert implementation == 'cpython', f'esta actividad espera CPython, no {implementation}'\nprint('ok ->', implementation)",
+         "solution": "import sys\nimplementation = sys.implementation.name",
+         "tier": "bien", "min": 2},
+        {"title": "9. Mira el bytecode real", "practice": "dis",
+         "statement": "Ejecuta `dis.dis(mid)` y guarda en `opnames` los nombres de sus instrucciones con `dis.get_instructions(mid)`. No memorices los opcodes: comprueba que el bytecode existe.",
+         "given": "import dis\n\ndef mid(bid, ask):\n    return (bid + ask) / 2\n",
+         "starter": "opnames = None\n",
+         "validator": "assert 'RETURN_VALUE' in opnames\nassert any(name in opnames for name in ('BINARY_OP','BINARY_ADD','BINARY_TRUE_DIVIDE'))\nprint('ok ->', opnames)",
+         "solution": "dis.dis(mid)\nopnames = [instruction.opname for instruction in dis.get_instructions(mid)]",
+         "tier": "bien", "min": 3},
     ],
     "aux": [
         {"section": "Gimnasio · Bloque 1 — Números y operadores del mercado",
@@ -157,11 +170,11 @@ LESSONS.append({
          "validator": "assert can_trade is False, 'con risk_ok False no se opera: and exige que TODO sea True'\nprint('ok')",
          "solution": "can_trade = has_cash and market_open and risk_ok"},
         {"title": "A12. Señal y cautela", "practice": "and / or",
-         "statement": "`signal` = spread estrecho (`< 20`) **y** imbalance alto (`> 0.6`). `caution` = spread ancho (`>= 60`) **o** imbalance flojo (`< 0.3`).",
-         "given": "spread = 15\nimbalance = 0.7\n",
+         "statement": "`signal` = spread estrecho (`< 20`) **y** imbalance comprador (`> 0.3`). `caution` = spread ancho (`>= 60`) **o** imbalance vendedor (`< 0`).",
+         "given": "spread = 15\nimbalance = 0.4\n",
          "starter": "signal = None\ncaution = None\n",
          "validator": "assert signal is True\nassert caution is False\nprint('ok')",
-         "solution": "signal = spread < 20 and imbalance > 0.6\ncaution = spread >= 60 or imbalance < 0.3"},
+         "solution": "signal = spread < 20 and imbalance > 0.3\ncaution = spread >= 60 or imbalance < 0"},
 
         {"section": "Gimnasio · Bloque 4 — Listas a fondo",
          "blurb": "La serie de precios es una lista. Trocéala, ordénala y pregúntale cosas."},
@@ -249,11 +262,11 @@ LESSONS.append({
         {"section": "Gimnasio · Bloque 7 — Decisiones con más ramas",
          "blurb": "if/elif/else con la complejidad de verdad: umbrales escalonados y decisiones que alimentan un cálculo."},
         {"title": "A25. Semáforo de presión", "practice": "if / elif / else",
-         "statement": "Clasifica `pressure`: `'buy_pressure'` si imbalance > 0.65, `'sell_pressure'` si < 0.35, `'balanced'` en medio.",
-         "given": "imbalance = 0.72\n",
+         "statement": "Clasifica `pressure`: `'buy_pressure'` si imbalance > 0.3, `'sell_pressure'` si < -0.3, `'balanced'` en medio.",
+         "given": "imbalance = 0.42\n",
          "starter": "# escribe el if / elif / else\n",
          "validator": "assert pressure == 'buy_pressure'\nprint('ok ->', pressure)",
-         "solution": "if imbalance > 0.65:\n    pressure = 'buy_pressure'\nelif imbalance < 0.35:\n    pressure = 'sell_pressure'\nelse:\n    pressure = 'balanced'"},
+         "solution": "if imbalance > 0.3:\n    pressure = 'buy_pressure'\nelif imbalance < -0.3:\n    pressure = 'sell_pressure'\nelse:\n    pressure = 'balanced'"},
         {"title": "A26. Tarifa por tramos", "practice": "umbrales escalonados + cálculo",
          "statement": "Comisión por tramos: <10k → 10 bps; <100k → 8; <1M → 5; si no → 3. Guarda `fee_bps` y calcula `fee = notional * fee_bps / 10000`.",
          "given": "notional = 250000\n",
@@ -392,35 +405,43 @@ LESSONS.append({
          "starter": "def add_order(book, order):\n    pass\n",
          "validator": "b = add_order([], {'side':'buy'})\nassert b == [{'side':'buy'}]\nprint('ok')",
          "solution": "def add_order(book, order):\n    book.append(order)\n    return book"},
-        {"title": "3. Cancela una orden", "practice": "filtrar (comprensión de lista)",
-         "statement": "Escribe `cancel_order(book, order_id)` que devuelva un libro **nuevo** sin la orden cuyo `id` coincide.",
-         "hint": "Quédate solo con las órdenes cuyo `id` es distinto.",
+        {"title": "3. Cancela una orden, paso a paso", "practice": "for + if + append",
+         "statement": "Escribe `cancel_order(book, order_id)` con `result = []`, un `for` y `append`. Debe devolver una lista **nueva** sin la orden cuyo `id` coincide.",
+         "hint": "Recorre las órdenes y añade a `result` solo las que tengan otro id.",
+         "given": "book = [{'id':1,'side':'buy'},{'id':2,'side':'sell'}]\n",
+         "starter": "def cancel_order(book, order_id):\n    result = []\n    # recorre, filtra y devuelve result\n",
+         "validator": "out = cancel_order(book, 1)\nassert out == [{'id':2,'side':'sell'}]\nassert book == [{'id':1,'side':'buy'},{'id':2,'side':'sell'}], 'book original no cambia'\nassert book is not out, 'debe ser otra lista'\nprint('ok -> book is out:', book is out)",
+         "solution": "def cancel_order(book, order_id):\n    result = []\n    for o in book:\n        if o['id'] != order_id:\n            result.append(o)\n    return result",
+         "tier": "nucleo", "min": 4},
+        {"title": "4. Comprime el filtro", "practice": "list comprehension",
+         "statement": "Reescribe la misma `cancel_order` con una comprensión. La conducta debe ser idéntica: lista nueva, orden original intacta.",
          "given": "book = [{'id':1,'side':'buy'},{'id':2,'side':'sell'}]\n",
          "starter": "def cancel_order(book, order_id):\n    pass\n",
-         "validator": "out = cancel_order(book, 1)\nassert out == [{'id':2,'side':'sell'}]\nprint('ok')",
-         "solution": "def cancel_order(book, order_id):\n    return [o for o in book if o['id'] != order_id]"},
-        {"title": "4. Mejor bid y mejor ask", "practice": "max / min con filtro",
+         "validator": "out = cancel_order(book, 1)\nassert out == [{'id':2,'side':'sell'}]\nassert book is not out and len(book) == 2\nprint('ok -> misma conducta, menos sintaxis')",
+         "solution": "def cancel_order(book, order_id):\n    return [o for o in book if o['id'] != order_id]",
+         "tier": "nucleo", "min": 3},
+        {"title": "5. Mejor bid y mejor ask", "practice": "max / min con filtro",
          "statement": "Escribe `best_bid(book)` (precio de compra más **alto**) y `best_ask(book)` (precio de venta más **bajo**).",
          "given": "book = [{'side':'buy','price':99980},{'side':'sell','price':100010},{'side':'buy','price':99990}]\n",
          "starter": "def best_bid(book):\n    pass\n\ndef best_ask(book):\n    pass\n",
          "validator": "assert best_bid(book) == 99990\nassert best_ask(book) == 100010\nprint('ok')",
          "pista": "Filtra dentro de la expresión generadora: `max(o['price'] for o in book if o['side']=='buy')`. Para el ask, cambia `max` por `min` y el lado.",
          "solution": "def best_bid(book):\n    return max(o['price'] for o in book if o['side']=='buy')\n\ndef best_ask(book):\n    return min(o['price'] for o in book if o['side']=='sell')"},
-        {"title": "5. Imbalance del libro", "practice": "presión compra/venta",
+        {"title": "6. Imbalance del libro", "practice": "presión compra/venta",
          "statement": "Escribe `imbalance(book)` = (vol_compra − vol_venta) / (vol_compra + vol_venta), en [−1, 1]. Cerca de +1 = empuja a comprar.",
          "given": "book = [{'side':'buy','size':3},{'side':'sell','size':1}]\n",
          "starter": "def imbalance(book):\n    pass\n",
          "validator": "assert abs(imbalance(book) - 0.5) < 1e-9, 'imbalance debe ser 0.5'\nprint('ok')",
          "pista": "Suma primero cada lado en dos variables (`b` y `s`) con `sum(o['size'] for o in book if ...)`; la fórmula final es `(b - s) / (b + s)`.",
          "solution": "def imbalance(book):\n    b = sum(o['size'] for o in book if o['side']=='buy')\n    s = sum(o['size'] for o in book if o['side']=='sell')\n    return (b - s) / (b + s)"},
-        {"title": "6. Spread y mid, componiendo funciones", "practice": "componer funciones",
+        {"title": "7. Spread y mid, componiendo funciones", "practice": "componer funciones",
          "statement": "Usando `best_bid` y `best_ask` ya escritas, define `spread(book)` y `mid(book)`. Una función puede llamar a otras.",
          "given": "def best_bid(book):\n    return max(o['price'] for o in book if o['side']=='buy')\ndef best_ask(book):\n    return min(o['price'] for o in book if o['side']=='sell')\nbook = [{'side':'buy','price':100},{'side':'sell','price':102}]\n",
          "starter": "def spread(book):\n    pass\n\ndef mid(book):\n    pass\n",
          "validator": "assert spread(book) == 2\nassert mid(book) == 101\nprint('ok')",
          "pista": "No repitas lógica: dentro de `spread` llama a `best_ask(book) - best_bid(book)`. `mid` es la media de esas dos mismas llamadas.",
          "solution": "def spread(book):\n    return best_ask(book) - best_bid(book)\n\ndef mid(book):\n    return (best_bid(book) + best_ask(book)) / 2"},
-        {"title": "7. Construye y lee tu libro", "practice": "juntar todas las funciones",
+        {"title": "8. Construye y lee tu libro", "practice": "juntar todas las funciones",
          "statement": "Júntalo todo. Con `make_order` y `add_order`, monta un libro con: compra 99980 (0.10), compra 99990 (0.20), venta 100010 (0.15). Luego léelo: guarda `bb = best_bid`, `sp = spread (best_ask − best_bid)` e `imb = imbalance`.",
          "hint": "Empieza `book = []` y añade tres órdenes.",
          "given": "def make_order(symbol, side, price, size):\n    return {'symbol': symbol, 'side': side, 'price': price, 'size': size}\ndef add_order(book, order):\n    book.append(order); return book\ndef best_bid(book):\n    return max(o['price'] for o in book if o['side']=='buy')\ndef best_ask(book):\n    return min(o['price'] for o in book if o['side']=='sell')\ndef imbalance(book):\n    b=sum(o['size'] for o in book if o['side']=='buy'); s=sum(o['size'] for o in book if o['side']=='sell'); return (b-s)/(b+s)\n",
@@ -428,6 +449,27 @@ LESSONS.append({
          "validator": "assert bb == 99990, 'best_bid debe ser 99990'\nassert abs(sp - 20) < 1e-9, 'spread debe ser 20'\nassert abs(imb - 1/3) < 1e-9, 'imbalance debe ser 0.333...'\nprint('ok  libro leido ->', bb, sp, round(imb,3))",
          "pista": "Cada alta es `book = add_order(book, make_order('BTCUSDT', lado, precio, tamaño))`. Después, tres llamadas de lectura sobre el mismo `book`.",
          "solution": "book = []\nbook = add_order(book, make_order('BTCUSDT','buy',99980,0.10))\nbook = add_order(book, make_order('BTCUSDT','buy',99990,0.20))\nbook = add_order(book, make_order('BTCUSDT','sell',100010,0.15))\nbb = best_bid(book)\nsp = best_ask(book) - best_bid(book)\nimb = imbalance(book)"},
+        {"title": "9. Lista nueva no significa deep copy", "practice": "identidad y referencias",
+         "statement": "Cancela la orden 1 y guarda `new_list` y `same_order`: comprueba si la orden id=2 dentro de ambas listas sigue siendo el **mismo dict**.",
+         "given": "book = [{'id':1,'size':0.5},{'id':2,'size':0.2}]\ndef cancel_order(book, order_id):\n    return [o for o in book if o['id'] != order_id]\n",
+         "starter": "new_list = None\nsame_order = None\n",
+         "validator": "assert new_list is not book, 'la lista exterior es nueva'\nassert same_order is True, 'los dicts interiores no se copiaron'\nprint('ok -> nueva lista, mismos objetos supervivientes')",
+         "solution": "new_list = cancel_order(book, 1)\nsame_order = new_list[0] is book[1]",
+         "tier": "bien", "min": 3},
+        {"title": "10. Una función como criterio", "practice": "sorted(key=get_price)",
+         "statement": "Define `get_price(order)` y úsala como `key` para ordenar `orders` de menor a mayor precio. Pasa la función, no su resultado.",
+         "given": "orders = [{'id':'A','price':105},{'id':'B','price':100},{'id':'C','price':110}]\n",
+         "starter": "def get_price(order):\n    pass\n\nordered = None\n",
+         "validator": "assert [o['id'] for o in ordered] == ['B','A','C']\nassert get_price(orders[0]) == 105\nprint('ok')",
+         "solution": "def get_price(order):\n    return order['price']\n\nordered = sorted(orders, key=get_price)",
+         "tier": "bien", "min": 3},
+        {"title": "11. Sustituye el nombre por lambda", "practice": "lambda como callback",
+         "statement": "Ordena las mismas órdenes con `key=lambda order: order['price']`. Guarda el resultado en `ordered`.",
+         "given": "orders = [{'id':'A','price':105},{'id':'B','price':100},{'id':'C','price':110}]\n",
+         "starter": "ordered = None\n",
+         "validator": "assert [o['id'] for o in ordered] == ['B','A','C']\nprint('ok -> misma salida')",
+         "solution": "ordered = sorted(orders, key=lambda order: order['price'])",
+         "tier": "bonus", "min": 2},
     ],
     "aux": [
         {"section": "Gimnasio · Calentamiento — repaso exprés de L1",
@@ -622,33 +664,33 @@ def add_order(book, order):                  # ej. 2
     return book
 
 
-def cancel_order(book, order_id):            # ej. 3
+def cancel_order(book, order_id):            # ej. 4
     return [o for o in book if o.get("id") != order_id]
 
 
-def best_bid(book):                          # ej. 4
+def best_bid(book):                          # ej. 5
     return max(o["price"] for o in book if o["side"] == "buy")
 
 
-def best_ask(book):                          # ej. 4
+def best_ask(book):                          # ej. 5
     return min(o["price"] for o in book if o["side"] == "sell")
 
 
-def spread(book):                            # ej. 6
+def spread(book):                            # ej. 7
     return best_ask(book) - best_bid(book)
 
 
-def mid(book):                               # ej. 6
+def mid(book):                               # ej. 7
     return (best_bid(book) + best_ask(book)) / 2
 
 
-def imbalance(book):                         # ej. 5
+def imbalance(book):                         # ej. 6
     buy = sum(o["size"] for o in book if o["side"] == "buy")
     sell = sum(o["size"] for o in book if o["side"] == "sell")
     return (buy - sell) / (buy + sell)
 
 
-def main():                                  # ej. 7: construir y leer el libro
+def main():                                  # ej. 8: construir y leer el libro
     book = []
     book = add_order(book, make_order("BTCUSDT", "buy", 99980, 0.10))
     book = add_order(book, make_order("BTCUSDT", "buy", 99990, 0.20))
@@ -731,6 +773,20 @@ LESSONS.append({
          "validator": "assert bb == 99990 and sp == 20\nassert abs(imb - 1/3) < 1e-9\nprint('ok  ->', bb, sp, round(imb,3))",
          "pista": "Igual que en L2, pero cada llamada lleva el prefijo del módulo: `order_book.add_order(book, order_book.make_order(...))`. Para leer, `order_book.spread(book)` ya existe.",
          "solution": "import order_book\nbook = []\norder_book.add_order(book, order_book.make_order('BTCUSDT','buy',99980,0.10))\norder_book.add_order(book, order_book.make_order('BTCUSDT','buy',99990,0.20))\norder_book.add_order(book, order_book.make_order('BTCUSDT','sell',100010,0.15))\nbb = order_book.best_bid(book)\nsp = order_book.spread(book)\nimb = order_book.imbalance(book)"},
+        {"title": "7. Observa el side effect al importar", "practice": "ejecución top-level",
+         "statement": "Ejecuta `demo_broken.py` como si se importara (`run_name='demo_broken'`) y captura lo que imprime en `import_output`. El archivo no tiene guard.",
+         "given": "import io\nimport runpy\nfrom contextlib import redirect_stdout\n",
+         "starter": "buffer = io.StringIO()\n# ejecuta demo_broken.py dentro de redirect_stdout\nimport_output = None\n",
+         "validator": "assert import_output == 'ARRANCANDO BACKTEST'\nprint('ok -> importar produjo:', import_output)",
+         "solution": "buffer = io.StringIO()\nwith redirect_stdout(buffer):\n    runpy.run_path('demo_broken.py', run_name='demo_broken')\nimport_output = buffer.getvalue().strip()",
+         "tier": "bien", "min": 3},
+        {"title": "8. El guard separa importar de ejecutar", "practice": "__name__ y runpy",
+         "statement": "Ejecuta `demo_guarded.py` dos veces: como módulo y como `__main__`. Guarda las salidas en `import_output` y `direct_output`.",
+         "given": "import io\nimport runpy\nfrom contextlib import redirect_stdout\n",
+         "starter": "# captura ambas ejecuciones\nimport_output = None\ndirect_output = None\n",
+         "validator": "assert import_output == '', 'importar no debe arrancar'\nassert direct_output == 'ARRANCANDO BACKTEST'\nprint('ok -> import limpio; ejecución directa arranca')",
+         "solution": "buffer = io.StringIO()\nwith redirect_stdout(buffer):\n    runpy.run_path('demo_guarded.py', run_name='demo_guarded')\nimport_output = buffer.getvalue().strip()\n\nbuffer = io.StringIO()\nwith redirect_stdout(buffer):\n    runpy.run_path('demo_guarded.py', run_name='__main__')\ndirect_output = buffer.getvalue().strip()",
+         "tier": "bien", "min": 4},
     ],
     "aux": [
         {"section": "Gimnasio · Calentamiento — repaso exprés de L2",
@@ -866,6 +922,25 @@ def imbalance(book):
     buy = sum(o["size"] for o in book if o["side"] == "buy")
     sell = sum(o["size"] for o in book if o["side"] == "sell")
     return (buy - sell) / (buy + sell)
+''',
+    "demo_broken.py": '''def run_backtest():
+    pass
+
+
+print("ARRANCANDO BACKTEST")
+run_backtest()
+''',
+    "demo_guarded.py": '''def run_backtest():
+    pass
+
+
+def main():
+    print("ARRANCANDO BACKTEST")
+    run_backtest()
+
+
+if __name__ == "__main__":
+    main()
 '''},
     "script": '''# main.py - importa el modulo order_book y arma + lee un libro.
 # Ejecuta desde la terminal:  python main.py
@@ -1110,7 +1185,7 @@ LESSONS.append({
         ("Un objeto que contiene objetos",
          "El OrderBook guarda dos listas (bids y asks). Esas cinco funciones de la clase 2 que recibían book ahora son métodos: book.spread(), book.mid().",
          "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = bids   # [(price, size), ...]\n        self.asks = asks"),
-        ("Estado privado y encapsulación",
+        ("Estado interno y encapsulación",
          "El PositionTracker guarda _cash y _position con guión bajo: 'no me toques desde fuera, usa mis métodos'. apply_fill recibe un objeto Fill y actualiza el estado.",
          "class PositionTracker:\n    def __init__(self):\n        self._cash = 0.0\n        self._position = 0.0"),
         ("Los objetos colaboran",
@@ -1135,8 +1210,8 @@ LESSONS.append({
          "validator": "b = OrderBook([(100,3)], [(101,1)])\nassert abs(b.imbalance() - 0.5) < 1e-9\nprint('ok')",
          "pista": "El mejor nivel es el primero tras ordenar: `self.bids[0]` y `self.asks[0]` son tuplas `(precio, tamaño)`, así que el tamaño es el índice `[1]`.",
          "solution": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = sorted(bids, key=lambda x: -x[0])\n        self.asks = sorted(asks, key=lambda x: x[0])\n    def imbalance(self):\n        bs = self.bids[0][1]; as_ = self.asks[0][1]\n        return (bs - as_) / (bs + as_)"},
-        {"title": "4. PositionTracker: estado privado", "practice": "encapsulación + apply_fill",
-         "statement": "Define `PositionTracker` con `_cash=0` y `_position=0` (privados) y `apply_fill(fill)` que sume `fill.cash_flow()` a la caja y `fill.size` (con signo) a la posición.",
+        {"title": "4. PositionTracker: estado interno", "practice": "encapsulación + apply_fill",
+         "statement": "Define `PositionTracker` con `_cash=0` y `_position=0` (implementación interna) y `apply_fill(fill)` que sume `fill.cash_flow()` a la caja y `fill.size` (con signo) a la posición.",
          "hint": "El guión bajo dice 'tócalo con métodos, no a mano'.",
          "given": "class Fill:\n    def __init__(self, side, price, size):\n        self.side=side; self.price=price; self.size=size\n    def cash_flow(self):\n        return (-1 if self.side=='buy' else 1)*self.price*self.size\n",
          "starter": "class PositionTracker:\n    def __init__(self):\n        pass\n    def apply_fill(self, fill):\n        pass\n",
@@ -1204,14 +1279,14 @@ LESSONS.append({
          "solution": "class OrderBook(OrderBook):\n    def biggest_bid(self):\n        best_price, best_size = self.bids[0]\n        for price, size in self.bids:\n            if size > best_size:\n                best_price, best_size = price, size\n        return best_price\n\nob = OrderBook([(99950, 0.5), (99940, 1.2), (99930, 0.8)], [])"},
 
         {"section": "Gimnasio · Bloque 2 — Encapsulación",
-         "blurb": "Estado privado y la puerta única: la contabilidad que no se puede desincronizar."},
-        {"title": "A5. La cartera cerrada", "practice": "estado privado + puerta",
-         "statement": "Escribe `Wallet`: `_cash` empieza en 0 (privado), `deposit(x)` lo aumenta y `balance()` lo devuelve.",
+         "blurb": "Estado interno y la puerta única: la contabilidad que no se puede desincronizar."},
+        {"title": "A5. La cartera cerrada", "practice": "estado interno + puerta",
+         "statement": "Escribe `Wallet`: `_cash` empieza en 0 (interno), `deposit(x)` lo aumenta y `balance()` lo devuelve.",
          "starter": "class Wallet:\n    pass\n",
          "validator": "w = Wallet()\nw.deposit(100); w.deposit(50)\nassert w.balance() == 150\nprint('ok')",
          "solution": "class Wallet:\n    def __init__(self):\n        self._cash = 0\n    def deposit(self, x):\n        self._cash = self._cash + x\n    def balance(self):\n        return self._cash"},
-        {"title": "A6. La puerta única", "practice": "apply_fill sobre privados",
-         "statement": "Escribe `TrackerMini` con `_cash` y `_position` privados, `apply_fill(side, price, size)` (compra: caja baja y posición sube), y `cash()` / `position()` para leer.",
+        {"title": "A6. La puerta única", "practice": "apply_fill sobre estado interno",
+         "statement": "Escribe `TrackerMini` con `_cash` y `_position` internos, `apply_fill(side, price, size)` (compra: caja baja y posición sube), y `cash()` / `position()` para leer.",
          "starter": "class TrackerMini:\n    pass\n",
          "validator": "t = TrackerMini()\nt.apply_fill('buy', 99950, 0.5)\nt.apply_fill('sell', 100050, 0.2)\nassert abs(t.cash() - (-29965.0)) < 1e-9\nassert abs(t.position() - 0.3) < 1e-9\nprint('ok')",
          "solution": "class TrackerMini:\n    def __init__(self):\n        self._cash = 0.0\n        self._position = 0.0\n    def apply_fill(self, side, price, size):\n        if side == 'buy':\n            self._cash -= price * size\n            self._position += size\n        else:\n            self._cash += price * size\n            self._position -= size\n    def cash(self):\n        return self._cash\n    def position(self):\n        return self._position"},
@@ -1282,7 +1357,7 @@ class Fill:
 
 
 class PositionTracker:
-    def __init__(self):                              # ej. 4: estado privado
+    def __init__(self):                              # ej. 4: estado interno
         self._cash = 0.0
         self._position = 0.0
 
@@ -1370,11 +1445,25 @@ LESSONS.append({
          "validator": "assert decisions == ['buy', 'sell']\nfor s in strategies:\n    assert isinstance(s, Strategy)\nprint('ok — tienes una jerarquía de estrategias polimórfica')",
          "pista": "Esqueleto: `Strategy(ABC)` con `decide` abstracto; cada subclase implementa `decide(self, imbalance)` con un ternario (`'buy' if imbalance > 0 else 'sell'`, y el contrario). Cierra con la lista y la comprehension del ejercicio 4.",
          "solution": "from abc import ABC, abstractmethod\n\nclass Strategy(ABC):\n    @abstractmethod\n    def decide(self, imbalance):\n        ...\n\nclass Momentum(Strategy):\n    def decide(self, imbalance):\n        return 'buy' if imbalance > 0 else 'sell'\n\nclass Contrarian(Strategy):\n    def decide(self, imbalance):\n        return 'sell' if imbalance > 0 else 'buy'\n\nstrategies = [Momentum(), Contrarian()]\ndecisions = [s.decide(0.5) for s in strategies]"},
+        {"title": "7. Qué se pierde sin super()", "practice": "ver el estado que falta",
+         "statement": "La hija define su propio `__init__`, así que el de la base ya no se ejecuta automáticamente. Crea `u = Umbral(0.6)` y guarda en `falta_name` si el objeto no tiene atributo `name`.",
+         "given": "class Strategy:\n    def __init__(self, name):\n        self.name = name\n\nclass Umbral(Strategy):\n    def __init__(self, threshold):\n        self.threshold = threshold\n",
+         "starter": "u = None\nfalta_name = None\n",
+         "validator": "assert u.threshold == 0.6\nassert falta_name is True, 'el __init__ de la hija sustituyó al de la base'\nprint('ok — ahora hay una razón visible para usar super()')",
+         "solution": "u = Umbral(0.6)\nfalta_name = not hasattr(u, 'name')",
+         "tier": "bien"},
+        {"title": "8. Un cuerpo no elimina el contrato", "practice": "separar comportamiento y abstractmethod",
+         "statement": "Aunque el método abstracto devuelva `'hold'`, una hija que no implemente `decide` sigue sin poder crearse. Compruébalo guardando `bloqueada = True` cuando `Incompleta()` lance `TypeError`.",
+         "given": "from abc import ABC, abstractmethod\n\nclass Strategy(ABC):\n    @abstractmethod\n    def decide(self, imbalance):\n        return 'hold'\n\nclass Incompleta(Strategy):\n    pass\n",
+         "starter": "bloqueada = None\n",
+         "validator": "assert bloqueada is True\nprint('ok — return es comportamiento; @abstractmethod es contrato')",
+         "solution": "try:\n    Incompleta()\n    bloqueada = False\nexcept TypeError:\n    bloqueada = True",
+         "tier": "bien"},
     ],
     "aux": [
         {"section": "Gimnasio · Calentamiento — repaso exprés de L5",
-         "blurb": "Privados, métodos compuestos y equity: tres reps antes de heredar."},
-        {"title": "C1. Wallet exprés", "practice": "repaso: estado privado",
+         "blurb": "Estado interno, métodos compuestos y equity: tres reps antes de heredar."},
+        {"title": "C1. Wallet exprés", "practice": "repaso: estado interno",
          "statement": "Escribe `Wallet` con `_cash = 0`, `deposit(x)` y `balance()`.",
          "starter": "class Wallet:\n    pass\n",
          "validator": "w = Wallet()\nw.deposit(75)\nassert w.balance() == 75\nprint('ok')",

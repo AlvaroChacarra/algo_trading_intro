@@ -30,4 +30,37 @@ ob.imbalance(book)        <span class="c"># mismo módulo, menos letras</span>`,
   });
 });
 $('#imp-out').innerHTML=modo['imp-a'];
+
+/* importar vs ejecutar: el guard resuelve un side effect observable */
+(function(){
+  let guarded=false,direct=false;
+  const code=()=>guarded
+    ?`def run_backtest():\n    ...\n\ndef main():\n    print("ARRANCANDO BACKTEST")\n    run_backtest()\n\nif __name__ == "__main__":\n    main()`
+    :`def run_backtest():\n    ...\n\nprint("ARRANCANDO BACKTEST")\nrun_backtest()`;
+  function choose(id,on){$(id).classList.toggle('on',on);}
+  function renderMain(){
+    choose('#main-broken',!guarded);choose('#main-fixed',guarded);
+    choose('#main-import',!direct);choose('#main-direct',direct);
+    $('#main-code').textContent=code();$('#main-trace').innerHTML='';
+  }
+  $('#main-broken').addEventListener('click',()=>{guarded=false;renderMain();});
+  $('#main-fixed').addEventListener('click',()=>{guarded=true;renderMain();});
+  $('#main-import').addEventListener('click',()=>{direct=false;renderMain();});
+  $('#main-direct').addEventListener('click',()=>{direct=true;renderMain();});
+  $('#main-run').addEventListener('click',()=>{
+    const name=direct?'__main__':'backtest';
+    const steps=[['Python entra en backtest.py','ok'],['define run_backtest ✓','ok']];
+    if(guarded){
+      steps.push([`__name__ = "${name}"`,'ok'],[`condición → ${direct?'TRUE':'FALSE'}`,'ok']);
+      if(direct)steps.push(['main() → ARRANCANDO BACKTEST','ok']);
+    }else{
+      steps.push(['print("ARRANCANDO BACKTEST")','fail'],['run_backtest()','fail']);
+    }
+    $('#main-trace').innerHTML=steps.map(([label,cls])=>`<div class="trace-step ${cls}"><span>${label}</span></div>`).join('');
+    $('#main-log').textContent=!guarded&&!direct?'⚠ el import ha lanzado el backtest'
+      :guarded&&!direct?'✓ import limpio: define funciones y no arranca'
+      :'✓ ejecución directa: el programa arranca de forma intencional';
+  });
+  renderMain();
+})();
 })();

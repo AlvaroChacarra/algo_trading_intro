@@ -24,8 +24,8 @@
     (necesitas un <code>OrderBook</code> que contenga los niveles y se deje preguntar) y
     <strong>¿cómo voy yo?</strong> (necesitas un <code>PositionTracker</code> que digiera
     cada <code>Fill</code> y te diga tu equity al instante).</p>
-    <p>De propina, la idea de diseño más importante de la semana: <strong>estado privado</strong>
-    — datos que solo el propio objeto debería tocar.</p>
+    <p>De propina, la idea de diseño más importante de la semana: <strong>estado interno</strong>
+    — datos que la API pública del objeto mantiene coherentes.</p>
   </div>
 
   <div class="meta">
@@ -72,8 +72,8 @@
         L7 carguemos 500 snapshots reales de BTC, cada uno responderá a las mismas
         preguntas.</p>
       </div></div>
-      <div class="step" data-stage="4" data-name="_privado"><div class="step-inner">
-        <h3><span class="n">4/5</span><code>PositionTracker</code> y el estado privado</h3>
+      <div class="step" data-stage="4" data-name="estado interno"><div class="step-inner">
+        <h3><span class="n">4/5</span><code>PositionTracker</code> y el estado interno</h3>
         <p>El contable guarda <code>_cash</code> y <code>_position</code> con guion bajo:
         la señal de <strong>"no toques esto desde fuera"</strong>. ¿Por qué? Porque si
         cualquiera puede escribir <code>tracker._cash = 999999</code>, la contabilidad no
@@ -124,7 +124,7 @@ ob.mid()        <span class="c"># 99975.0</span></pre>
       </div>
       <div class="fig-stage" data-stage="3">
         <div class="statgrid" style="border:none;padding-top:10px">
-          <div><span>ob.imbalance()</span><b class="pos">0.70</b></div>
+          <div><span>ob.imbalance()</span><b class="pos">+0.22</b></div>
         </div>
         <p style="color:var(--muted);font-size:.84rem;margin-top:6px">el libro empuja hacia
         arriba — y esta señal ahora <strong>viaja dentro del objeto</strong>, lista para los
@@ -134,8 +134,8 @@ ob.mid()        <span class="c"># 99975.0</span></pre>
         <pre style="font-family:var(--mono);font-size:.76rem;line-height:1.95;margin:6px 0 0">
 <span class="k">class</span> <span style="color:var(--num)">PositionTracker</span>:
     <span class="k">def</span> <span class="fn">__init__</span>(self):
-        self.<span style="color:var(--warn)">_cash</span> = <span class="num">0.0</span>      <span class="c"># 🔒 privado</span>
-        self.<span style="color:var(--warn)">_position</span> = <span class="num">0.0</span>  <span class="c"># 🔒 por convención</span></pre>
+        self.<span style="color:var(--warn)">_cash</span> = <span class="num">0.0</span>      <span class="c"># implementación interna</span>
+        self.<span style="color:var(--warn)">_position</span> = <span class="num">0.0</span>  <span class="c"># implementación interna</span></pre>
         <p style="color:var(--faint);font-size:.8rem;margin-top:16px">el guion bajo no
         bloquea nada — <em>comunica</em>: "esto es mío, entra por la puerta"</p>
       </div>
@@ -234,11 +234,31 @@ tracker.apply_fill(Fill(<span class="s">'sell'</span>, <span class="num">100050<
       <pre><span class="ln"><span class="k">class</span> PositionTracker:</span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self):</span><span class="ln">        self._cash = <span class="num">0.0</span></span><span class="ln">        self._position = <span class="num">0.0</span></span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">apply_fill</span>(self, fill):</span><span class="ln">        self._cash += fill.cash_flow()</span><span class="ln">        <span class="k">if</span> fill.side == <span class="s">'buy'</span>:</span><span class="ln">            self._position += fill.size</span><span class="ln">        <span class="k">else</span>:</span><span class="ln">            self._position -= fill.size</span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">equity</span>(self, mark):</span><span class="ln">        <span class="k">return</span> self._cash + self._position * mark</span></pre>
     </div>
 
+    <div class="simcard" id="invariant-sim">
+      <h4>state inspector · el invariante del tracker</h4>
+      <div class="btnrow">
+        <button class="btn" id="inv-fill">aplicar Fill correctamente</button>
+        <button class="btn ghost" id="inv-break">tocar _cash a mano</button>
+        <button class="btn ghost" id="inv-reset">↻ reiniciar</button>
+      </div>
+      <div class="state-inspector">
+        <div class="state-panel changed" id="inv-state"><div class="state-title"><span>PositionTracker</span><span id="inv-status">consistente ✓</span></div>
+          <div class="state-list"><div><span>cash</span><b id="inv-cash">0.0</b></div><div><span>position</span><b id="inv-pos">0.0</b></div></div></div>
+        <div class="state-panel"><div class="state-title"><span>API pública</span><span>frontera de diseño</span></div>
+          <div class="state-list"><div><span>apply_fill(fill)</span><b>actualiza ambas</b></div><div><span>equity(mark)</span><b>solo lee</b></div></div></div>
+      </div>
+      <div class="looplog" id="inv-log">El objeto controla su estado mientras entras por su API.</div>
+    </div>
+
     <div class="note"><span class="tag">Honestidad</span>
     <code>tracker._cash = 10**9</code> <em>funciona</em> — Python no te lo impide. El guion
     bajo comunica el contrato: "si escribes aquí, la contabilidad deja de ser responsabilidad
     mía". Caja y posición deben moverse <strong>juntas</strong> (un fill toca ambas); la
     puerta única <code>apply_fill</code> lo garantiza, tocar a mano lo rompe.</div>
+    <details><summary>Encapsulación no es seguridad del sistema</summary><div class="body">
+      <p><code>_cash</code> organiza responsabilidades dentro del código. Autenticación,
+      permisos, aislamiento de procesos y base de datos pertenecen a otra frontera.</p>
+    </div></details>
   </div>
 </section>
 

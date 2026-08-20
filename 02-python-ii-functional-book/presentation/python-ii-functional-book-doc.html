@@ -419,6 +419,43 @@
 .treebox .nodebox.abs{border-style:dashed;border-color:rgba(192,132,252,.5);color:var(--kw)}
 .treebox .nodebox.hl{border-color:var(--accent);color:var(--accent)}
 
+/* tres primitivas pedagógicas reutilizables: traza, cambio de modo e inspector */
+.execution-trace{display:grid;gap:7px;margin:14px 0;font-family:var(--mono);font-size:.78rem}
+.trace-step{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  min-height:42px;padding:8px 12px;border:1px solid var(--line);border-radius:9px;
+  background:var(--panel2);color:var(--muted);transition:border-color .22s,background .22s,color .22s}
+.trace-step:before{content:"↓";color:var(--faint);margin-right:2px}
+.trace-step:first-child:before{content:"▶"}
+.trace-step.active{border-color:var(--accent);background:var(--accent-dim);color:var(--accent)}
+.trace-step.ok{border-color:rgba(74,222,128,.45);color:var(--bid)}
+.trace-step.fail{border-color:rgba(248,113,113,.55);background:rgba(248,113,113,.08);color:var(--ask)}
+.trace-step .trace-meta{font-size:.68rem;color:var(--faint);text-align:right}
+.mode-switch{display:flex;gap:0;max-width:100%;overflow-x:auto;border:1px solid var(--line);
+  border-radius:9px;margin:10px 0}
+.mode-switch button{flex:1;min-height:44px;min-width:max-content;padding:7px 14px;border:0;
+  border-right:1px solid var(--line);background:transparent;color:var(--muted);
+  font:inherit;font-family:var(--mono);font-size:.75rem;cursor:pointer}
+.mode-switch button:last-child{border-right:0}
+.mode-switch button.on{background:var(--accent-dim);color:var(--accent)}
+.mode-switch button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.state-inspector{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+.state-panel{border:1px solid var(--line);border-radius:11px;background:var(--panel2);padding:12px}
+.state-panel .state-title{display:flex;justify-content:space-between;gap:10px;margin-bottom:8px;
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+.state-panel.changed{border-color:var(--accent)}
+.state-panel.bad{border-color:rgba(248,113,113,.55)}
+.state-list{display:grid;gap:5px;font-family:var(--mono);font-size:.75rem}
+.state-list div{display:flex;justify-content:space-between;gap:12px}
+.state-list b{font-weight:500;color:var(--text)}
+.concept-chip{display:inline-block;margin:2px 4px 2px 0;padding:2px 8px;border-radius:99px;
+  border:1px solid rgba(34,211,238,.4);color:var(--accent);font-family:var(--mono);font-size:.65rem}
+.concept-chip.behavior{border-color:rgba(192,132,252,.45);color:var(--kw)}
+@media(max-width:620px){
+  .state-inspector{grid-template-columns:1fr}
+  .trace-step{align-items:flex-start}
+  .mode-switch button{font-size:.7rem;padding:7px 10px}
+}
+
 /* ══ índice del curso ══ */
 .lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
 .lcard{display:block;text-decoration:none;color:var(--text);background:var(--panel);
@@ -471,7 +508,7 @@
         --bid:#15803d;--ask:#b91c1c;--warn:#92600a;
         --kw:#6d28d9;--num:#0369a1;--str:#92600a;--com:#71717a}
   body{background:#fff;color:#111;font-size:10.5pt}
-  #rail,.btn,.runbtn,.tbBtn,input,.toggle,.looplog,.simrow,#gd-toggle,#guion-drawer,
+  #rail,.btn,.runbtn,.tbBtn,input,.toggle,.mode-switch,.looplog,.simrow,#gd-toggle,#guion-drawer,
   .btnrow{display:none!important}
   canvas{display:none!important}
   section{padding:18pt 0 6pt;border-top:1px solid #ddd;break-inside:avoid-page}
@@ -580,8 +617,8 @@
       </div></div>
       <div class="step" data-stage="5" data-name="la señal"><div class="step-inner">
         <h3><span class="n">5/5</span>Y una señal: el imbalance</h3>
-        <p>¿Cuánta presión compradora hay? <code>imbalance(book)</code> lo resume en un
-        número entre 0 y 1.</p>
+        <p>¿Qué lado domina? <code>imbalance(book)</code> lo resume entre −1 y +1:
+        negativo vende, cero equilibra y positivo compra.</p>
         <p>Fíjate en el contador de abajo del panel: <strong>las 7 funciones reciben
         <code>book</code></strong>. Guarda ese dato — es la pista de toda la semana.</p>
       </div></div>
@@ -647,15 +684,14 @@ compute_mid(<span class="num">142</span>, <span class="num">143</span>)        <
       </div>
       <div class="fig-stage" data-stage="5">
         <div class="statgrid" style="border:none;padding-top:6px">
-          <div><span>imbalance(book)</span><b class="pos">0.70</b></div>
+          <div><span>imbalance(book)</span><b class="pos">+0.22</b></div>
         </div>
-        <p style="color:var(--muted);font-size:.82rem;margin:8px 0 18px">70% del tamaño
-        visible quiere <span style="color:var(--bid)">comprar</span> — el libro empuja
-        hacia arriba.</p>
+        <p style="color:var(--muted);font-size:.82rem;margin:8px 0 18px">Hay más tamaño
+        comprador que vendedor — el signo positivo indica presión compradora.</p>
         <pre style="font-family:var(--mono);font-size:.75rem;line-height:2;color:var(--muted)">
 make_order(…)          <span class="c">← crea</span>
 add_order(<b style="color:var(--accent)">book</b>, …)     <span class="c">← escribe</span>
-cancel_order(<b style="color:var(--accent)">book</b>, …)  <span class="c">← borra</span>
+cancel_order(<b style="color:var(--accent)">book</b>, …)  <span class="c">← devuelve lista nueva</span>
 best_bid(<b style="color:var(--accent)">book</b>) · best_ask(<b style="color:var(--accent)">book</b>)
 spread(<b style="color:var(--accent)">book</b>) · mid(<b style="color:var(--accent)">book</b>) · imbalance(<b style="color:var(--accent)">book</b>)</pre>
         <p style="text-align:center;color:var(--warn);font-family:var(--mono);font-size:.8rem;margin-top:10px">
@@ -681,18 +717,40 @@ spread(<b style="color:var(--accent)">book</b>) · mid(<b style="color:var(--acc
       </div>
     </div>
 
-    <p>¿Y cancelar? La forma más limpia es <strong>construir un libro nuevo sin la orden
-    condenada</strong> — una comprensión de lista:</p>
-
-    <div class="code">
-      <div class="code-head"><span>order_book.py (sigue)</span><span>python</span></div>
-      <pre><span class="ln"><span class="k">def</span> <span class="fn">cancel_order</span>(book, order_id):</span><span class="ln">    <span class="k">return</span> [o <span class="k">for</span> o <span class="k">in</span> book <span class="k">if</span> o.get(<span class="s">'id'</span>) != order_id]</span></pre>
+    <h3>Cancelar sin borrar: sigue cada orden</h3>
+    <div class="simcard" id="cancel-tracer">
+      <h4>execution trace · cancel_order(book, 1)</h4>
+      <div class="state-inspector">
+        <div class="state-panel"><div class="state-title"><span>book original</span><span>2 órdenes</span></div>
+          <div class="mini-book" id="cancel-source"></div></div>
+        <div class="state-panel changed"><div class="state-title"><span>new_book</span><span id="cancel-count">0 órdenes</span></div>
+          <div class="mini-book" id="cancel-result"></div></div>
+      </div>
+      <div class="execution-trace" id="cancel-trace"></div>
+      <div class="btnrow"><button class="btn" id="cancel-next">▶ siguiente orden</button>
+        <button class="btn ghost" id="cancel-reset">↻ reiniciar</button></div>
+      <div class="mode-switch" role="group" aria-label="Forma de escribir el filtro">
+        <button class="on" id="cancel-explicit">versión explícita</button>
+        <button id="cancel-comp">comprehension</button>
+      </div>
+      <pre id="cancel-code" style="font-family:var(--mono);font-size:.76rem;line-height:1.9;margin:10px 0"></pre>
+      <div class="looplog" id="cancel-log">book is new_book → aún no calculado</div>
     </div>
+    <div class="note"><span class="tag">Una regla</span>
+    La comprensión no borra dentro de <code>book</code>: construye otra lista filtrando.
+    Primero entiende el bucle; después comprímelo.</div>
 
-    <div class="note"><span class="tag">Lee la comprensión en voz alta</span>
-    "Una lista con cada orden <code>o</code> del <code>book</code>… si su id no es el
-    condenado." No borra dentro de la lista vieja: <strong>devuelve una nueva</strong>.
-    Es la primera vez que ves esta sintaxis — en el gimnasio la entrenas.</div>
+    <h3>Qué significa «estado»</h3>
+    <div class="simcard">
+      <h4>state inspector · todas miran el mismo book</h4>
+      <div class="state-inspector">
+        <div class="state-panel changed"><div class="state-title"><span>book</span><span>estado actual</span></div>
+          <div class="state-list"><div><span>buy 99950</span><b>0.50</b></div><div><span>sell 100000</span><b>0.30</b></div></div></div>
+        <div class="state-panel"><div class="state-title"><span>operaciones</span><span>mismo dato</span></div>
+          <div class="state-list"><div><span>add(book, …)</span><b>→ book</b></div><div><span>best(book)</span><b>→ precio</b></div><div><span>mid(book)</span><b>→ precio</b></div><div><span>imbalance(book)</span><b>→ señal</b></div></div></div>
+      </div>
+      <p style="margin:.4em 0 0"><strong>Estado = los datos que describen cómo está el sistema ahora mismo.</strong></p>
+    </div>
   </div>
 </section>
 
@@ -741,7 +799,7 @@ spread(<b style="color:var(--accent)">book</b>) · mid(<b style="color:var(--acc
 
     <div class="code">
       <div class="code-head"><span>order_book.py (lectura)</span><span>python</span></div>
-      <pre><span class="ln"><span class="k">def</span> <span class="fn">best_bid</span>(book):</span><span class="ln">    <span class="k">return</span> <span class="fn">max</span>(o[<span class="s">'price'</span>] <span class="k">for</span> o <span class="k">in</span> book <span class="k">if</span> o[<span class="s">'side'</span>] == <span class="s">'buy'</span>)</span><span class="ln"></span><span class="ln"><span class="k">def</span> <span class="fn">imbalance</span>(book):</span><span class="ln">    buy_size  = <span class="fn">sum</span>(o[<span class="s">'size'</span>] <span class="k">for</span> o <span class="k">in</span> book <span class="k">if</span> o[<span class="s">'side'</span>] == <span class="s">'buy'</span>)</span><span class="ln">    sell_size = <span class="fn">sum</span>(o[<span class="s">'size'</span>] <span class="k">for</span> o <span class="k">in</span> book <span class="k">if</span> o[<span class="s">'side'</span>] == <span class="s">'sell'</span>)</span><span class="ln">    <span class="k">return</span> buy_size / (buy_size + sell_size)</span></pre>
+      <pre><span class="ln"><span class="k">def</span> <span class="fn">best_bid</span>(book):</span><span class="ln">    <span class="k">return</span> <span class="fn">max</span>(o[<span class="s">'price'</span>] <span class="k">for</span> o <span class="k">in</span> book <span class="k">if</span> o[<span class="s">'side'</span>] == <span class="s">'buy'</span>)</span><span class="ln"></span><span class="ln"><span class="k">def</span> <span class="fn">imbalance</span>(book):</span><span class="ln">    buy_size  = <span class="fn">sum</span>(o[<span class="s">'size'</span>] <span class="k">for</span> o <span class="k">in</span> book <span class="k">if</span> o[<span class="s">'side'</span>] == <span class="s">'buy'</span>)</span><span class="ln">    sell_size = <span class="fn">sum</span>(o[<span class="s">'size'</span>] <span class="k">for</span> o <span class="k">in</span> book <span class="k">if</span> o[<span class="s">'side'</span>] == <span class="s">'sell'</span>)</span><span class="ln">    <span class="k">return</span> (buy_size - sell_size) / (buy_size + sell_size)</span></pre>
       <div class="predict predictgate" style="margin:0;border-radius:0;border-left:none;border-right:none;border-bottom:none">
         <div class="tag">Predice antes de ejecutar</div>
         <p style="margin:.2em 0 .8em;font-size:.94rem">El libro tiene tres órdenes:
@@ -752,8 +810,19 @@ spread(<b style="color:var(--accent)">book</b>) · mid(<b style="color:var(--acc
           <button class="btn runbtn" data-target="out-imb" disabled>▶ Ejecutar</button>
         </div>
       </div>
-      <div class="out hidden" id="out-imb"><span class="prompt">&gt;&gt;&gt; </span><span class="val">0.75</span>
-        <span style="color:var(--faint)">   # 0.6 de compra / 0.8 total — presión compradora</span></div>
+      <div class="out hidden" id="out-imb"><span class="prompt">&gt;&gt;&gt; </span><span class="val">0.50</span>
+        <span style="color:var(--faint)">   # (0.6 − 0.2) / 0.8 — presión compradora</span></div>
+    </div>
+
+    <div class="simcard" id="sort-tracer">
+      <h4>execution trace · sorted(orders, key=get_price)</h4>
+      <div class="mode-switch" role="group" aria-label="Función con nombre o lambda">
+        <button class="on" id="sort-fn">get_price</button><button id="sort-lambda">lambda</button>
+      </div>
+      <pre id="sort-code" style="font-family:var(--mono);font-size:.76rem;line-height:1.9;margin:8px 0"></pre>
+      <div class="execution-trace" id="sort-trace"></div>
+      <button class="btn" id="sort-next">▶ siguiente orden</button>
+      <div class="looplog" id="sort-log">La función se pasa sin paréntesis: sorted la llamará.</div>
     </div>
 
     <div class="note"><span class="tag">Honestidad</span>
@@ -800,14 +869,14 @@ spread(<b style="color:var(--accent)">book</b>) · mid(<b style="color:var(--acc
         por eso la función hace <code>return</code>.</div>
       </div>
       <div class="q" data-ok="2">
-        <div class="qt"><code>imbalance(book)</code> devuelve 0.75. ¿Qué está diciendo el libro?</div>
+        <div class="qt"><code>imbalance(book)</code> devuelve +0.50. ¿Qué está diciendo el libro?</div>
         <div class="opts">
           <button class="opt">A · Hay más papel vendedor que comprador</button>
           <button class="opt">B · El mercado está equilibrado</button>
-          <button class="opt">C · El 75% del tamaño visible quiere comprar</button>
+          <button class="opt">C · Domina el tamaño comprador: la señal está a mitad de camino de +1</button>
         </div>
-        <div class="why">imbalance = tamaño comprador / tamaño total. 0.75 = presión
-        compradora clara; 0.5 sería equilibrio.</div>
+        <div class="why">imbalance = (compra − venta) / total. Cero es equilibrio;
+        +0.50 es presión compradora y +1 sería dominio comprador total.</div>
       </div>
       <div class="q" data-ok="1">
         <div class="qt">Las 7 funciones de hoy comparten algo sospechoso. ¿Qué?</div>
@@ -890,7 +959,8 @@ spread(<b style="color:var(--accent)">book</b>) · mid(<b style="color:var(--acc
 
 ## §2 · La fábrica (4 min)
 - Ejecuta `make_order` + `add_order` (▶). Señala el patrón: cada función hace UNA cosa y su nombre no necesita comentario.
-- **La comprensión de `cancel_order`:** léela en voz alta como está en la nota — "una lista con cada orden… si su id no es el condenado". Primera vez que la ven: no borra, **construye una nueva**. Di que el gimnasio la entrena.
+- **Tracer de `cancel_order`:** no leas primero la comprehension. Avanza orden por orden: condición falsa → no pasa; condición verdadera → entra en `new_book`. Al final, señala `book is new_book → False`.
+- Cambia de «versión explícita» a «comprehension» solo después de entender el recorrido. La sintaxis nueva comprime un mecanismo ya visible: no borra, **construye una lista nueva**.
 
 ## §3 · El libro vivo (4 min)
 - **Cede el teclado.** Cada botón registra abajo la llamada exacta (`add_order(book, make_order(…))`) — señálalo: "el botón sois vosotros llamando a vuestra función".
@@ -898,7 +968,8 @@ spread(<b style="color:var(--accent)">book</b>) · mid(<b style="color:var(--acc
 
 ## §4 · Leer el libro (4 min)
 - `best_bid` con max + generador: tradúcelo palabra a palabra.
-- **El gate del imbalance:** que predigan (buy 0.3 + 0.3, sell 0.2). El 0.75 y su lectura: presión compradora.
+- **El gate del imbalance:** que predigan (buy 0.3 + 0.3, sell 0.2). El resultado es `+0.50`: presión compradora. Repite el rango canónico: `−1` vendedor, `0` equilibrado, `+1` comprador.
+- En el microtracer de `sorted(key=...)`, haz una ronda con `get_price`: función sin paréntesis = se entrega la función; `get_price(order)` = se obtiene un número. Después activa `lambda`: misma salida, función breve sin nombre.
 - Honestidad (en el doc): los profesionales ponderan por cercanía al mid; se refina en L7.
 
 ## §5 · Quiz (3 min)
@@ -912,8 +983,10 @@ spread(<b style="color:var(--accent)">book</b>) · mid(<b style="color:var(--acc
 ## Checklist
 - [ ] Función = receta con huecos; un cambio, un sitio.
 - [ ] El book único + make/add/cancel; la comprensión construye lista nueva.
+- [ ] Estado = datos que describen cómo está ahora el sistema; todas las operaciones miran el mismo `book`.
+- [ ] `sorted(key=get_price)` se entiende antes de sustituirlo por `lambda`.
 - [ ] best_bid/best_ask/spread/mid como funciones de lectura.
-- [ ] Imbalance: qué mide y cómo se lee.
+- [ ] Imbalance canónico en `[-1,+1]`: signo y magnitud bien leídos.
 - [ ] El contador "todas reciben book" queda plantado (sin resolver).
 </script>
 <script>
@@ -1127,7 +1200,7 @@ function bestAsk(){const p=book.filter(o=>o.side==='sell').map(o=>o.price);retur
 function imbalance(){
   const b=book.filter(o=>o.side==='buy').reduce((s,o)=>s+o.size,0);
   const a=book.filter(o=>o.side==='sell').reduce((s,o)=>s+o.size,0);
-  return (b+a)>0?b/(b+a):null;
+  return (b+a)>0?(b-a)/(b+a):null;
 }
 function fmtF(x){return Number.isInteger(x)?x+'.0':String(Math.round(x*10000)/10000);}
 
@@ -1147,8 +1220,8 @@ function render(){
   $('#lb-sp').textContent=(bb!==null&&ba!==null)?ba-bb:'—';
   $('#lb-mid').textContent=(bb!==null&&ba!==null)?fmtF((bb+ba)/2):'—';
   const imbEl=$('#lb-imb');
-  imbEl.textContent=imb!==null?imb.toFixed(2):'—';
-  imbEl.className=imb===null?'':(imb>0.6?'pos':imb<0.4?'neg':'');
+  imbEl.textContent=imb!==null?(imb>0?'+':'')+imb.toFixed(2):'—';
+  imbEl.className=imb===null?'':(imb>0.2?'pos':imb<-.2?'neg':'');
 }
 function log(t){$('#lb-log').textContent='» '+t;}
 
@@ -1173,6 +1246,64 @@ $('#lb-cancel').addEventListener('click',()=>{
 });
 $('#lb-reset').addEventListener('click',()=>{book=[];nextId=1;bi=0;ai=0;log('book = []');render();});
 render();
+
+/* cancel_order: primero la traza explícita, después la comprehension */
+(function(){
+  const source=[{id:1,side:'buy',price:99950},{id:2,side:'sell',price:100000}];
+  let i=0,result=[],compact=false;
+  const row=o=>`<div class="row ${o.side==='buy'?'b':'a'}"><span>id=${o.id} · ${o.side}</span><small>${o.price}</small></div>`;
+  function code(){
+    $('#cancel-code').textContent=compact
+      ?"new_book = [o for o in book if o['id'] != order_id]"
+      :"new_book = []\nfor o in book:\n    if o['id'] != order_id:\n        new_book.append(o)";
+  }
+  function renderCancel(){
+    $('#cancel-source').innerHTML=source.map(row).join('');
+    $('#cancel-result').innerHTML=result.length?result.map(row).join(''):'<span style="color:var(--faint)">— vacía —</span>';
+    $('#cancel-count').textContent=`${result.length} orden${result.length===1?'':'es'}`;
+    code();
+  }
+  function reset(){i=0;result=[];$('#cancel-next').textContent='▶ siguiente orden';$('#cancel-trace').innerHTML='';
+    $('#cancel-log').textContent='book is new_book → aún no calculado';renderCancel();}
+  $('#cancel-next').addEventListener('click',()=>{
+    if(i>=source.length){reset();return;}
+    const o=source[i],keep=o.id!==1;
+    if(keep)result.push(o);
+    $('#cancel-trace').insertAdjacentHTML('beforeend',
+      `<div class="trace-step ${keep?'ok':'fail'}"><span>id=${o.id}: ${o.id} != 1 → ${keep?'TRUE':'FALSE'}</span><span class="trace-meta">${keep?'pasa':'se descarta'}</span></div>`);
+    i++;renderCancel();
+    if(i===source.length){
+      $('#cancel-log').textContent='book → 2 · new_book → 1 · book is new_book → False';
+      $('#cancel-next').textContent='↻ otra vez';
+    }else $('#cancel-log').textContent='la lista original sigue teniendo 2 órdenes';
+  });
+  $('#cancel-reset').addEventListener('click',()=>{$('#cancel-next').textContent='▶ siguiente orden';reset();});
+  $('#cancel-explicit').addEventListener('click',()=>{compact=false;$('#cancel-explicit').classList.add('on');$('#cancel-comp').classList.remove('on');code();});
+  $('#cancel-comp').addEventListener('click',()=>{compact=true;$('#cancel-comp').classList.add('on');$('#cancel-explicit').classList.remove('on');code();});
+  reset();
+})();
+
+/* sorted(key=...): la función es un valor que sorted llama por cada orden */
+(function(){
+  const orders=[{name:'A',price:105},{name:'B',price:100},{name:'C',price:110}];
+  let i=0,useLambda=false;
+  function paintCode(){
+    $('#sort-code').textContent=useLambda
+      ?"sorted(orders, key=lambda order: order['price'])"
+      :"def get_price(order):\n    return order['price']\n\nsorted(orders, key=get_price)";
+  }
+  function resetSort(){i=0;$('#sort-trace').innerHTML='';$('#sort-next').textContent='▶ siguiente orden';
+    $('#sort-log').textContent='La función se pasa sin paréntesis: sorted la llamará.';paintCode();}
+  $('#sort-next').addEventListener('click',()=>{
+    if(i>=orders.length){resetSort();return;}
+    const o=orders[i++],fn=useLambda?'lambda(order)':`get_price(${o.name})`;
+    $('#sort-trace').insertAdjacentHTML('beforeend',`<div class="trace-step ok"><span>order ${o.name} → ${fn}</span><span class="trace-meta">${o.price}</span></div>`);
+    if(i===orders.length){$('#sort-log').textContent='claves 105 · 100 · 110 → orden final B · A · C';$('#sort-next').textContent='↻ otra vez';}
+  });
+  $('#sort-fn').addEventListener('click',()=>{useLambda=false;$('#sort-fn').classList.add('on');$('#sort-lambda').classList.remove('on');resetSort();});
+  $('#sort-lambda').addEventListener('click',()=>{useLambda=true;$('#sort-lambda').classList.add('on');$('#sort-fn').classList.remove('on');resetSort();});
+  resetSort();
+})();
 })();
 
 </script>

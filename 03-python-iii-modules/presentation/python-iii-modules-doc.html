@@ -419,6 +419,43 @@
 .treebox .nodebox.abs{border-style:dashed;border-color:rgba(192,132,252,.5);color:var(--kw)}
 .treebox .nodebox.hl{border-color:var(--accent);color:var(--accent)}
 
+/* tres primitivas pedagógicas reutilizables: traza, cambio de modo e inspector */
+.execution-trace{display:grid;gap:7px;margin:14px 0;font-family:var(--mono);font-size:.78rem}
+.trace-step{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  min-height:42px;padding:8px 12px;border:1px solid var(--line);border-radius:9px;
+  background:var(--panel2);color:var(--muted);transition:border-color .22s,background .22s,color .22s}
+.trace-step:before{content:"↓";color:var(--faint);margin-right:2px}
+.trace-step:first-child:before{content:"▶"}
+.trace-step.active{border-color:var(--accent);background:var(--accent-dim);color:var(--accent)}
+.trace-step.ok{border-color:rgba(74,222,128,.45);color:var(--bid)}
+.trace-step.fail{border-color:rgba(248,113,113,.55);background:rgba(248,113,113,.08);color:var(--ask)}
+.trace-step .trace-meta{font-size:.68rem;color:var(--faint);text-align:right}
+.mode-switch{display:flex;gap:0;max-width:100%;overflow-x:auto;border:1px solid var(--line);
+  border-radius:9px;margin:10px 0}
+.mode-switch button{flex:1;min-height:44px;min-width:max-content;padding:7px 14px;border:0;
+  border-right:1px solid var(--line);background:transparent;color:var(--muted);
+  font:inherit;font-family:var(--mono);font-size:.75rem;cursor:pointer}
+.mode-switch button:last-child{border-right:0}
+.mode-switch button.on{background:var(--accent-dim);color:var(--accent)}
+.mode-switch button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.state-inspector{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+.state-panel{border:1px solid var(--line);border-radius:11px;background:var(--panel2);padding:12px}
+.state-panel .state-title{display:flex;justify-content:space-between;gap:10px;margin-bottom:8px;
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+.state-panel.changed{border-color:var(--accent)}
+.state-panel.bad{border-color:rgba(248,113,113,.55)}
+.state-list{display:grid;gap:5px;font-family:var(--mono);font-size:.75rem}
+.state-list div{display:flex;justify-content:space-between;gap:12px}
+.state-list b{font-weight:500;color:var(--text)}
+.concept-chip{display:inline-block;margin:2px 4px 2px 0;padding:2px 8px;border-radius:99px;
+  border:1px solid rgba(34,211,238,.4);color:var(--accent);font-family:var(--mono);font-size:.65rem}
+.concept-chip.behavior{border-color:rgba(192,132,252,.45);color:var(--kw)}
+@media(max-width:620px){
+  .state-inspector{grid-template-columns:1fr}
+  .trace-step{align-items:flex-start}
+  .mode-switch button{font-size:.7rem;padding:7px 10px}
+}
+
 /* ══ índice del curso ══ */
 .lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
 .lcard{display:block;text-decoration:none;color:var(--text);background:var(--panel);
@@ -471,7 +508,7 @@
         --bid:#15803d;--ask:#b91c1c;--warn:#92600a;
         --kw:#6d28d9;--num:#0369a1;--str:#92600a;--com:#71717a}
   body{background:#fff;color:#111;font-size:10.5pt}
-  #rail,.btn,.runbtn,.tbBtn,input,.toggle,.looplog,.simrow,#gd-toggle,#guion-drawer,
+  #rail,.btn,.runbtn,.tbBtn,input,.toggle,.mode-switch,.looplog,.simrow,#gd-toggle,#guion-drawer,
   .btnrow{display:none!important}
   canvas{display:none!important}
   section{padding:18pt 0 6pt;border-top:1px solid #ddd;break-inside:avoid-page}
@@ -745,27 +782,28 @@ imbalance(book)
 <!-- ══════════════ §4 __MAIN__ ══════════════ -->
 <section id="s4">
   <div class="wrap">
-    <div class="eyebrow">§4 · <b>Construye</b></div>
-    <h2>El módulo que también sabe correr solo</h2>
-    <p class="lede">El patrón profesional: la librería arriba, y al final una demo que
-    <strong>solo</strong> corre cuando ejecutas el archivo directamente.</p>
+    <div class="eyebrow">§4 · <b>Simulador</b></div>
+    <h2>Importar no debería arrancar mi programa</h2>
+    <p class="lede">Primero provoca el problema. Después activa el guard y repite exactamente
+    las dos formas de usar el archivo.</p>
 
-    <div class="code">
-      <div class="code-head"><span>order_book.py (final del archivo)</span><span>python</span></div>
-      <pre><span class="ln"><span class="k">if</span> __name__ == <span class="s">"__main__"</span>:</span><span class="ln">    <span class="c"># demo: solo corre con `python order_book.py`</span></span><span class="ln">    book = []</span><span class="ln">    book = add_order(book, make_order(<span class="s">'BTCUSDT'</span>, <span class="s">'buy'</span>, <span class="num">99950</span>, <span class="num">0.5</span>))</span><span class="ln">    book = add_order(book, make_order(<span class="s">'BTCUSDT'</span>, <span class="s">'sell'</span>, <span class="num">100000</span>, <span class="num">0.3</span>))</span><span class="ln">    <span class="fn">print</span>(<span class="s">"mid:"</span>, mid(book))</span></pre>
-      <div class="out"><div class="btnrow" style="margin:0"><button class="btn runbtn" data-target="out-main" data-seq>▶ python order_book.py</button></div>
-        <div id="out-main" class="hidden" style="margin-top:10px">
-          <div><span class="prompt">$ </span><span style="color:var(--muted)">python order_book.py</span></div>
-          <div><span class="prompt">&gt;&gt;&gt; </span><span class="val">mid: 99975.0</span></div>
-        </div>
+    <div class="simcard" id="main-sim">
+      <h4>mode switch · backtest.py</h4>
+      <div class="mode-switch" role="group" aria-label="Versión del archivo">
+        <button class="on" id="main-broken">sin guard</button><button id="main-fixed">con guard</button>
       </div>
+      <div class="mode-switch" role="group" aria-label="Forma de abrir el archivo">
+        <button class="on" id="main-import">import backtest</button><button id="main-direct">python backtest.py</button>
+      </div>
+      <pre id="main-code" style="font-family:var(--mono);font-size:.75rem;line-height:1.9;margin:12px 0"></pre>
+      <div class="execution-trace" id="main-trace"></div>
+      <button class="btn" id="main-run">▶ Probar</button>
+      <div class="looplog" id="main-log">La versión rota ejecutará todo el archivo al importarlo.</div>
     </div>
 
-    <div class="note"><span class="tag">Y cuando lo importas…</span>
-    …ese bloque <strong>no se ejecuta</strong>: <code>__name__</code> vale
-    <code>"order_book"</code>, no <code>"__main__"</code>. La demo no contamina a quien
-    solo quiere tus funciones. Pruébalo en el notebook — es una de esas cosas que hay que
-    ver una vez.</div>
+    <div class="note"><span class="tag">Una regla</span>
+    Al importar, <code>__name__ = "backtest"</code>; al ejecutar el archivo,
+    <code>__name__ = "__main__"</code>. El guard convierte esa diferencia en control.</div>
   </div>
 </section>
 
@@ -888,7 +926,7 @@ El panel muestra **dos archivos**: el módulo a la izquierda, `main.py` a la der
 - **1/5 nace el módulo:** "la mudanza es literal: pegar las funciones en un .py. Un módulo es solo eso."
 - **2/5 import:** "el módulo entero, con apellido: `order_book.best_bid(book)`. El prefijo te dice de dónde viene cada cosa."
 - **3/5 from…import:** "una función concreta, sin apellido. Más cómodo, menos contexto — los dos estilos son correctos."
-- **4/5 dos vidas:** el mismo archivo importado vs ejecutado; `__name__` es el chivato.
+- **4/5 dos vidas:** plantea el problema, sin resolverlo aún: importar no debería arrancar un backtest.
 - **5/5 robustez:** "una librería seria no revienta: avisa. Ese es el segundo tema de hoy."
 
 ## §2 · Simulador de namespaces (3 min)
@@ -903,8 +941,10 @@ Tres escenarios sobre el mismo libro vacío, en orden:
 - **Callback:** es la respuesta a la pregunta trampa que quedó abierta en L2.
 
 ## §4 · __main__ (3 min)
-- Ejecuta la demo (`$ python order_book.py`). "Cuando lo importas, ese bloque NO corre: la demo no contamina a quien solo quiere tus funciones."
-- Di que en el notebook lo van a comprobar en sus dos vidas — hay que verlo una vez.
+- En «Importar no debería arrancar mi programa», usa primero la versión rota. Pulsa **import backtest** y deja que Python recorra el archivo: define la función y después ejecuta el `print` y el backtest. El problema debe sentirse antes de enseñar `__name__`.
+- Activa la versión con guard y repite las dos vidas: al importar, `__name__ = 'backtest'` y la condición es falsa; al ejecutar, `__name__ = '__main__'` y entra en `main()`.
+- Cierre de una frase: **el módulo define; el script, además, arranca**.
+- En el notebook lo comprobarán con dos archivos reales y `runpy`: no se copia el patrón sin haber observado el side effect.
 
 ## §5 · Quiz (3 min)
 - 5 A/B/C: import, from-import, except, raise, __main__.
@@ -920,6 +960,7 @@ Tres escenarios sobre el mismo libro vacío, en orden:
 - [ ] Traceback de dos saltos, leído de abajo arriba.
 - [ ] try/except = red del usuario; raise = diseño del autor.
 - [ ] __main__: el módulo define, el script hace.
+- [ ] El guard aparece como solución a un import con side effects, no como fórmula aislada.
 </script>
 <script>
 
@@ -1150,6 +1191,39 @@ ob.imbalance(book)        <span class="c"># mismo módulo, menos letras</span>`,
   });
 });
 $('#imp-out').innerHTML=modo['imp-a'];
+
+/* importar vs ejecutar: el guard resuelve un side effect observable */
+(function(){
+  let guarded=false,direct=false;
+  const code=()=>guarded
+    ?`def run_backtest():\n    ...\n\ndef main():\n    print("ARRANCANDO BACKTEST")\n    run_backtest()\n\nif __name__ == "__main__":\n    main()`
+    :`def run_backtest():\n    ...\n\nprint("ARRANCANDO BACKTEST")\nrun_backtest()`;
+  function choose(id,on){$(id).classList.toggle('on',on);}
+  function renderMain(){
+    choose('#main-broken',!guarded);choose('#main-fixed',guarded);
+    choose('#main-import',!direct);choose('#main-direct',direct);
+    $('#main-code').textContent=code();$('#main-trace').innerHTML='';
+  }
+  $('#main-broken').addEventListener('click',()=>{guarded=false;renderMain();});
+  $('#main-fixed').addEventListener('click',()=>{guarded=true;renderMain();});
+  $('#main-import').addEventListener('click',()=>{direct=false;renderMain();});
+  $('#main-direct').addEventListener('click',()=>{direct=true;renderMain();});
+  $('#main-run').addEventListener('click',()=>{
+    const name=direct?'__main__':'backtest';
+    const steps=[['Python entra en backtest.py','ok'],['define run_backtest ✓','ok']];
+    if(guarded){
+      steps.push([`__name__ = "${name}"`,'ok'],[`condición → ${direct?'TRUE':'FALSE'}`,'ok']);
+      if(direct)steps.push(['main() → ARRANCANDO BACKTEST','ok']);
+    }else{
+      steps.push(['print("ARRANCANDO BACKTEST")','fail'],['run_backtest()','fail']);
+    }
+    $('#main-trace').innerHTML=steps.map(([label,cls])=>`<div class="trace-step ${cls}"><span>${label}</span></div>`).join('');
+    $('#main-log').textContent=!guarded&&!direct?'⚠ el import ha lanzado el backtest'
+      :guarded&&!direct?'✓ import limpio: define funciones y no arranca'
+      :'✓ ejecución directa: el programa arranca de forma intencional';
+  });
+  renderMain();
+})();
 })();
 
 </script>

@@ -16,7 +16,7 @@ El panel muestra **dos archivos**: el módulo a la izquierda, `main.py` a la der
 - **1/5 nace el módulo:** "la mudanza es literal: pegar las funciones en un .py. Un módulo es solo eso."
 - **2/5 import:** "el módulo entero, con apellido: `order_book.best_bid(book)`. El prefijo te dice de dónde viene cada cosa."
 - **3/5 from…import:** "una función concreta, sin apellido. Más cómodo, menos contexto — los dos estilos son correctos."
-- **4/5 dos vidas:** el mismo archivo importado vs ejecutado; `__name__` es el chivato.
+- **4/5 dos vidas:** plantea el problema, sin resolverlo aún: importar no debería arrancar un backtest.
 - **5/5 robustez:** "una librería seria no revienta: avisa. Ese es el segundo tema de hoy."
 
 ## §2 · Simulador de namespaces (3 min)
@@ -31,8 +31,10 @@ Tres escenarios sobre el mismo libro vacío, en orden:
 - **Callback:** es la respuesta a la pregunta trampa que quedó abierta en L2.
 
 ## §4 · __main__ (3 min)
-- Ejecuta la demo (`$ python order_book.py`). "Cuando lo importas, ese bloque NO corre: la demo no contamina a quien solo quiere tus funciones."
-- Di que en el notebook lo van a comprobar en sus dos vidas — hay que verlo una vez.
+- En «Importar no debería arrancar mi programa», usa primero la versión rota. Pulsa **import backtest** y deja que Python recorra el archivo: define la función y después ejecuta el `print` y el backtest. El problema debe sentirse antes de enseñar `__name__`.
+- Activa la versión con guard y repite las dos vidas: al importar, `__name__ = 'backtest'` y la condición es falsa; al ejecutar, `__name__ = '__main__'` y entra en `main()`.
+- Cierre de una frase: **el módulo define; el script, además, arranca**.
+- En el notebook lo comprobarán con dos archivos reales y `runpy`: no se copia el patrón sin haber observado el side effect.
 
 ## §5 · Quiz (3 min)
 - 5 A/B/C: import, from-import, except, raise, __main__.
@@ -48,3 +50,4 @@ Tres escenarios sobre el mismo libro vacío, en orden:
 - [ ] Traceback de dos saltos, leído de abajo arriba.
 - [ ] try/except = red del usuario; raise = diseño del autor.
 - [ ] __main__: el módulo define, el script hace.
+- [ ] El guard aparece como solución a un import con side effects, no como fórmula aislada.

@@ -36,6 +36,8 @@ al `Backtest`.
 - **4. Polimorfismo** — mismo método, objetos distintos
 - **5. super() en el __init__** — reutilizar la base
 - **6. Tu familia de estrategias** — juntar herencia + polimorfismo
+- **7. Qué se pierde sin super()** — ver el estado que falta
+- **8. Un cuerpo no elimina el contrato** — separar comportamiento y abstractmethod
 
 ## Estructura de la carpeta
 

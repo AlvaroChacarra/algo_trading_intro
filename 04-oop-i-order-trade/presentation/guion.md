@@ -12,6 +12,7 @@
 
 ## §1 · Scrollytelling — la metamorfosis (8 min)
 - **0/5 separados:** "nadie es responsable de nada: un dict sin size no protesta."
+- Etiqueta explícitamente las dos piezas antes de unirlas: dict = **estado**; funciones = **comportamiento**.
 - **1/5 class + __init__:** "el molde y la fabricación. ¿Os suena? Es make_order de L2, ascendida."
 - **2/5 self:** el momento delicado de la clase — dedícale tiempo. Dos tarjetas, datos independientes: "self es 'yo': el objeto concreto sobre el que trabaja el método".
 - **3/5 métodos:** "compute_notional(order) se convierte en order.notional(): la cuenta vive donde viven los datos."
@@ -41,5 +42,6 @@
 - [ ] class = molde; __init__ = fabricación; self = "yo".
 - [ ] Objetos independientes del mismo molde.
 - [ ] Método = la función mudada adentro; azúcar sintáctico entendido.
+- [ ] La transformación visual termina en `estado + comportamiento → objeto`.
 - [ ] __repr__ útil.
 - [ ] cash_flow con signo: buy −, sell +.

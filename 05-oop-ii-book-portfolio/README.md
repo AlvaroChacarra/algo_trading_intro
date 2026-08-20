@@ -19,7 +19,7 @@ todos los backtests.
 
 `exchange/book.py` (`OrderBook`, `Level`) con bids ordenados desc y asks asc, y métodos
 `best_bid/best_ask/spread/mid/imbalance`. `exchange/portfolio.py` (`PositionTracker`) con
-`_cash`/`_position` privados, `apply_fill(fill)` y `equity(mark)`.
+`_cash`/`_position` como implementación interna, `apply_fill(fill)` y `equity(mark)`.
 
 Composición explícita: `OrderBook` contiene `Level`; `PositionTracker.apply_fill` consume
 objetos `Fill` de L3. Aquí el alumno *ve* a los objetos hablándose entre sí — el objetivo
@@ -36,7 +36,7 @@ esqueleto entre muchos objetos: herencia (L6).
 - **1. OrderBook: un objeto que contiene niveles** — composición
 - **2. best_bid / best_ask / spread / mid** — métodos sobre el estado
 - **3. imbalance() del nivel 1** — otro método
-- **4. PositionTracker: estado privado** — encapsulación + apply_fill
+- **4. PositionTracker: estado interno** — encapsulación + apply_fill
 - **5. equity a mercado** — componer el estado
 - **6. Los dos objetos, juntos** — composición end-to-end
 

@@ -31,11 +31,15 @@ POO). `order_book.py` consolida las funciones + un `main` 1:1 con el núcleo.
 
 - **1. Tu fábrica de órdenes** — funciones que devuelven datos
 - **2. Añade al libro** — listas: append
-- **3. Cancela una orden** — filtrar (comprensión de lista)
-- **4. Mejor bid y mejor ask** — max / min con filtro
-- **5. Imbalance del libro** — presión compra/venta
-- **6. Spread y mid, componiendo funciones** — componer funciones
-- **7. Construye y lee tu libro** — juntar todas las funciones
+- **3. Cancela una orden, paso a paso** — for + if + append
+- **4. Comprime el filtro** — list comprehension
+- **5. Mejor bid y mejor ask** — max / min con filtro
+- **6. Imbalance del libro** — presión compra/venta
+- **7. Spread y mid, componiendo funciones** — componer funciones
+- **8. Construye y lee tu libro** — juntar todas las funciones
+- **9. Lista nueva no significa deep copy** — identidad y referencias
+- **10. Una función como criterio** — sorted(key=get_price)
+- **11. Sustituye el nombre por lambda** — lambda como callback
 
 ## Estructura de la carpeta
 

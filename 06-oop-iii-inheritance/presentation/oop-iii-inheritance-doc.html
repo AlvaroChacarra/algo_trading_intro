@@ -419,6 +419,43 @@
 .treebox .nodebox.abs{border-style:dashed;border-color:rgba(192,132,252,.5);color:var(--kw)}
 .treebox .nodebox.hl{border-color:var(--accent);color:var(--accent)}
 
+/* tres primitivas pedagógicas reutilizables: traza, cambio de modo e inspector */
+.execution-trace{display:grid;gap:7px;margin:14px 0;font-family:var(--mono);font-size:.78rem}
+.trace-step{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  min-height:42px;padding:8px 12px;border:1px solid var(--line);border-radius:9px;
+  background:var(--panel2);color:var(--muted);transition:border-color .22s,background .22s,color .22s}
+.trace-step:before{content:"↓";color:var(--faint);margin-right:2px}
+.trace-step:first-child:before{content:"▶"}
+.trace-step.active{border-color:var(--accent);background:var(--accent-dim);color:var(--accent)}
+.trace-step.ok{border-color:rgba(74,222,128,.45);color:var(--bid)}
+.trace-step.fail{border-color:rgba(248,113,113,.55);background:rgba(248,113,113,.08);color:var(--ask)}
+.trace-step .trace-meta{font-size:.68rem;color:var(--faint);text-align:right}
+.mode-switch{display:flex;gap:0;max-width:100%;overflow-x:auto;border:1px solid var(--line);
+  border-radius:9px;margin:10px 0}
+.mode-switch button{flex:1;min-height:44px;min-width:max-content;padding:7px 14px;border:0;
+  border-right:1px solid var(--line);background:transparent;color:var(--muted);
+  font:inherit;font-family:var(--mono);font-size:.75rem;cursor:pointer}
+.mode-switch button:last-child{border-right:0}
+.mode-switch button.on{background:var(--accent-dim);color:var(--accent)}
+.mode-switch button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.state-inspector{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+.state-panel{border:1px solid var(--line);border-radius:11px;background:var(--panel2);padding:12px}
+.state-panel .state-title{display:flex;justify-content:space-between;gap:10px;margin-bottom:8px;
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+.state-panel.changed{border-color:var(--accent)}
+.state-panel.bad{border-color:rgba(248,113,113,.55)}
+.state-list{display:grid;gap:5px;font-family:var(--mono);font-size:.75rem}
+.state-list div{display:flex;justify-content:space-between;gap:12px}
+.state-list b{font-weight:500;color:var(--text)}
+.concept-chip{display:inline-block;margin:2px 4px 2px 0;padding:2px 8px;border-radius:99px;
+  border:1px solid rgba(34,211,238,.4);color:var(--accent);font-family:var(--mono);font-size:.65rem}
+.concept-chip.behavior{border-color:rgba(192,132,252,.45);color:var(--kw)}
+@media(max-width:620px){
+  .state-inspector{grid-template-columns:1fr}
+  .trace-step{align-items:flex-start}
+  .mode-switch button{font-size:.7rem;padding:7px 10px}
+}
+
 /* ══ índice del curso ══ */
 .lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
 .lcard{display:block;text-decoration:none;color:var(--text);background:var(--panel);
@@ -471,7 +508,7 @@
         --bid:#15803d;--ask:#b91c1c;--warn:#92600a;
         --kw:#6d28d9;--num:#0369a1;--str:#92600a;--com:#71717a}
   body{background:#fff;color:#111;font-size:10.5pt}
-  #rail,.btn,.runbtn,.tbBtn,input,.toggle,.looplog,.simrow,#gd-toggle,#guion-drawer,
+  #rail,.btn,.runbtn,.tbBtn,input,.toggle,.mode-switch,.looplog,.simrow,#gd-toggle,#guion-drawer,
   .btnrow{display:none!important}
   canvas{display:none!important}
   section{padding:18pt 0 6pt;border-top:1px solid #ddd;break-inside:avoid-page}
@@ -677,23 +714,22 @@ Incompleta with abstract method decide</pre>
 <!-- ══════════════ §2 CONSTRUYE ══════════════ -->
 <section id="s2">
   <div class="wrap">
-    <div class="eyebrow">§2 · <b>Construye</b></div>
+    <div class="eyebrow">§2 · <b>Simulador</b></div>
     <h2>La base, una hija y <code>super()</code></h2>
 
-    <div class="code">
-      <div class="code-head"><span>strategies_toy.py</span><span>python</span></div>
-      <pre><span class="ln"><span class="k">class</span> Strategy:</span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, name):</span><span class="ln">        self.name = name</span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">decide</span>(self, book):</span><span class="ln">        <span class="k">return</span> <span class="s">'hold'</span></span><span class="ln"></span><span class="ln"><span class="k">class</span> Umbral(Strategy):</span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, name, threshold):</span><span class="ln">        <span class="fn">super</span>().<span class="fn">__init__</span>(name)   <span class="c"># la madre guarda name</span></span><span class="ln">        self.threshold = threshold  <span class="c"># la hija añade lo suyo</span></span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">decide</span>(self, book):</span><span class="ln">        <span class="k">if</span> book.imbalance() &gt; self.threshold:</span><span class="ln">            <span class="k">return</span> <span class="s">'buy'</span></span><span class="ln">        <span class="k">return</span> <span class="s">'hold'</span></span><span class="ln"></span><span class="ln">u = Umbral(<span class="s">'u1'</span>, <span class="num">0.6</span>)</span><span class="ln">v = Strategy(<span class="s">'base'</span>)</span><span class="ln"><span class="c"># book.imbalance() vale 0.70 ahora mismo</span></span><span class="ln"><span class="fn">print</span>(u.decide(book), v.decide(book))</span></pre>
-      <div class="predict predictgate" style="margin:0;border-radius:0;border-left:none;border-right:none;border-bottom:none">
-        <div class="tag">Predice antes de ejecutar</div>
-        <p style="margin:.2em 0 .8em;font-size:.94rem">Con imbalance 0.70: ¿qué imprime la
-        última línea? (dos palabras)</p>
-        <div class="btnrow" style="margin:0">
-          <input type="text" placeholder="mi predicción…" aria-label="Tu predicción">
-          <button class="btn runbtn" data-target="out-sup" disabled>▶ Ejecutar</button>
-        </div>
+    <div class="simcard" id="super-sim">
+      <h4>mode switch · qué atributos acaba teniendo u</h4>
+      <div class="mode-switch" role="group" aria-label="Tres formas de inicializar la subclase">
+        <button class="on" id="sup-a">sin __init__ propio</button>
+        <button id="sup-b">__init__ sin super</button>
+        <button id="sup-c">__init__ con super</button>
       </div>
-      <div class="out hidden" id="out-sup"><span class="prompt">&gt;&gt;&gt; </span><span class="val">buy hold</span>
-        <span style="color:var(--faint)">   # u usa SU decide (0.70 > 0.6); v usa el de la base</span></div>
+      <pre id="sup-code" style="font-family:var(--mono);font-size:.75rem;line-height:1.9;margin:10px 0"></pre>
+      <div class="execution-trace" id="sup-trace"></div>
+      <div class="state-inspector" style="grid-template-columns:1fr">
+        <div class="state-panel changed"><div class="state-title"><span>mismo objeto u</span><span id="sup-status"></span></div>
+          <div class="state-list" id="sup-state"></div></div>
+      </div>
     </div>
 
     <div class="note"><span class="tag">super() en una frase</span>
@@ -716,17 +752,17 @@ Incompleta with abstract method decide</pre>
       <h4>simulador · for s in familia: s.decide(book)</h4>
       <div class="simrow">
         <label>book.imbalance()</label>
-        <input type="range" id="pf-imb" min="0" max="100" value="70" step="5" style="flex:1;min-width:180px">
-        <span class="spread-val"><b id="pf-imbv">0.70</b></span>
+        <input type="range" id="pf-imb" min="-100" max="100" value="50" step="5" style="flex:1;min-width:180px">
+        <span class="spread-val"><b id="pf-imbv">+0.50</b></span>
       </div>
       <div class="stratgrid">
         <div class="strat base"><h5>Strategy <small>(la base)</small></h5>
           <div style="color:var(--faint);font-size:.72rem;font-family:var(--mono)">decide heredado: siempre prudente</div>
           <div class="dec hold" id="pf-d0">hold</div></div>
-        <div class="strat"><h5>Momentum <small>(&gt; 0.6 compra)</small></h5>
+        <div class="strat"><h5>Momentum <small>(&gt; +0.3 compra)</small></h5>
           <div style="color:var(--faint);font-size:.72rem;font-family:var(--mono)">sigue la presión del libro</div>
           <div class="dec" id="pf-d1"></div></div>
-        <div class="strat"><h5>Contraria <small>(&gt; 0.6 vende)</small></h5>
+        <div class="strat"><h5>Contraria <small>(&gt; +0.3 vende)</small></h5>
           <div style="color:var(--faint);font-size:.72rem;font-family:var(--mono)">apuesta contra la multitud</div>
           <div class="dec" id="pf-d2"></div></div>
       </div>
@@ -744,24 +780,25 @@ Incompleta with abstract method decide</pre>
 <section id="s4">
   <div class="wrap">
     <div class="eyebrow">§4 · <b>Rompe cosas — con red</b></div>
-    <h2>El contrato que no se puede incumplir</h2>
-    <p class="lede">La ABC convierte "deberías implementar <code>decide</code>" en
-    "<strong>no existes</strong> hasta que implementes <code>decide</code>". Compruébalo:</p>
+    <h2>Comportamiento por defecto ≠ contrato obligatorio</h2>
+    <p class="lede">Alterna el tipo de base sin cambiar la hija. El decorador decide si
+    heredar basta o si la hija debe implementar su propia versión.</p>
 
-    <div class="code">
-      <div class="code-head"><span>contrato.py</span><span>python</span></div>
-      <pre><span class="ln"><span class="k">from</span> abc <span class="k">import</span> ABC, abstractmethod</span><span class="ln"></span><span class="ln"><span class="k">class</span> Strategy(ABC):</span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, name):</span><span class="ln">        self.name = name</span><span class="ln"></span><span class="ln">    <span style="color:var(--warn)">@abstractmethod</span></span><span class="ln">    <span class="k">def</span> <span class="fn">decide</span>(self, book): ...</span><span class="ln"></span><span class="ln"><span class="k">class</span> Incompleta(Strategy):</span><span class="ln">    <span class="k">pass</span>  <span class="c"># "ya lo haré luego"</span></span><span class="ln"></span><span class="ln">s = Incompleta(<span class="s">'x'</span>)</span></pre>
-      <div class="out"><div class="btnrow" style="margin:0"><button class="btn tbBtn" data-tb="tb-abc">▶ Ejecutar</button></div></div>
-      <div class="tb hidden" id="tb-abc">Traceback (most recent call last):
-  <span class="dim">File "contrato.py", line 12, in &lt;module&gt;</span>
-    s = Incompleta('x')
-<span class="et">TypeError</span>: Can't instantiate abstract class Incompleta with abstract method decide</div>
-      <ul class="tb-notes hidden" data-for="tb-abc">
-        <li><span class="mk">①</span> El error salta al <strong>crear el objeto</strong>, no dentro de un backtest a las 3 de la mañana.</li>
-        <li><span class="mk">②</span> Y el mensaje te dice exactamente qué falta: <code>abstract method decide</code>. Contrato claro, error claro.</li>
-        <li><span class="mk">③</span> En cuanto <code>Incompleta</code> defina <code>decide()</code>, se instancia sin drama.</li>
-      </ul>
+    <div class="simcard" id="abc-sim">
+      <h4>mode switch · misma hija Incompleta(Strategy)</h4>
+      <div class="mode-switch" role="group" aria-label="Clase normal o abstracta">
+        <button class="on" id="abc-default">default normal</button>
+        <button id="abc-abstract">@abstractmethod</button>
+        <button id="abc-return">abstract + return</button>
+      </div>
+      <pre id="abc-code" style="font-family:var(--mono);font-size:.75rem;line-height:1.9;margin:10px 0"></pre>
+      <div class="execution-trace" id="abc-trace"></div>
+      <div class="looplog" id="abc-log"></div>
     </div>
+    <div class="note"><span class="tag">Una regla</span>
+    <code>return "hold"</code> aporta comportamiento. <code>@abstractmethod</code> impone un
+    contrato: incluso con cuerpo, la hija debe sobrescribirlo para poder existir.</div>
+
   </div>
 </section>
 
@@ -898,15 +935,16 @@ Incompleta with abstract method decide</pre>
 - **5/5 ABC:** "de 'deberías implementar decide' a 'NO EXISTES sin decide'. El error se adelanta al mejor momento posible: ya."
 
 ## §2 · Base, hija y super() (4 min)
-- **El gate:** con imbalance 0.70, ¿qué imprime `u.decide(book), v.decide(book)`? ("buy hold" — u usa el suyo, v el heredado.)
-- super() en una frase (está en la nota): "Madre, haz tu parte." La hija no copia el __init__: lo invoca y añade lo suyo.
+- Recorre los tres estados del simulador: hija sin `__init__` (hereda `name`); hija con `__init__` propio (`threshold` existe pero `name` falta); hija con `super()` (el mismo objeto recibe `name` en la base y `threshold` en la hija).
+- Solo después cierra con: **«Madre, haz tu parte»**. La frase resume el mecanismo que ya vieron; no lo sustituye.
 
 ## §3 · Polimorfismo vivo (4 min)
-- **Cede el teclado:** slider de imbalance, tres tarjetas respondiendo distinto a la MISMA llamada. Barre de 0 a 1 y comenta los cruces (Momentum y Contraria se espejan; la base, imperturbable).
+- **Cede el teclado:** slider de imbalance en `[-1,+1]`, tres tarjetas respondiendo distinto a la MISMA llamada. Barre de negativo a positivo y comenta los cruces (Momentum y Contraria se espejan; la base, imperturbable).
 - La nota final es el contrato con el futuro: "en L10, Backtest hará exactamente este bucle contra el mercado real. El polimorfismo es el enchufe."
 
 ## §4 · El contrato ABC (3 min)
-- Ejecuta el traceback: TypeError AL CREAR el objeto, "no en mitad de un backtest a las 3 de la mañana". El mensaje dice exactamente qué falta.
+- Alterna «comportamiento por defecto» y «contrato obligatorio» con la misma hija incompleta: en el primer modo se crea y devuelve `hold`; en el segundo ni siquiera se crea.
+- Activa la tercera prueba: un método decorado con `@abstractmethod` puede contener `return 'hold'` y sigue siendo abstracto. Cierre: **`return` es comportamiento; `@abstractmethod` es contrato**.
 
 ## §5 · Quiz (3 min)
 - 5 A/B/C: herencia por defecto, override, ABC, polimorfismo, super().
@@ -919,8 +957,10 @@ Incompleta with abstract method decide</pre>
 ## Checklist
 - [ ] Heredar gratis; override = su versión gana.
 - [ ] super().__init__ = "madre, haz tu parte".
+- [ ] Antes de esa frase se ve qué atributo falta cuando la hija reemplaza `__init__`.
 - [ ] Polimorfismo: misma llamada, respuestas distintas; el bucle no pregunta clases.
 - [ ] ABC: TypeError al instanciar incompleto.
+- [ ] Comportamiento por defecto y contrato obligatorio quedan separados.
 - [ ] Cierre del bloque de fundamentos + semilla del framework (L10).
 </script>
 <script>
@@ -1126,9 +1166,9 @@ $$('.scrolly[data-scrolly]').forEach(sc=>{
 const $=s=>document.querySelector(s);
 function decide(strat, imb){
   if(strat==='base')return 'hold';
-  if(strat==='momentum')return imb>0.6?'buy':imb<0.4?'sell':'hold';
+  if(strat==='momentum')return imb>0.3?'buy':imb<-.3?'sell':'hold';
   /* contraria */
-  return imb>0.6?'sell':imb<0.4?'buy':'hold';
+  return imb>0.3?'sell':imb<-.3?'buy':'hold';
 }
 function paint(id, d){
   const el=$(id);
@@ -1137,13 +1177,66 @@ function paint(id, d){
 }
 function update(){
   const imb=(+$('#pf-imb').value)/100;
-  $('#pf-imbv').textContent=imb.toFixed(2);
+  $('#pf-imbv').textContent=(imb>0?'+':'')+imb.toFixed(2);
   const ds=['base','momentum','contraria'].map(s=>decide(s,imb));
   paint('#pf-d0',ds[0]);paint('#pf-d1',ds[1]);paint('#pf-d2',ds[2]);
   $('#pf-log').textContent=`» for s in familia: s.decide(book)   # imbalance=${imb.toFixed(2)} → ${ds.join(' · ')}`;
 }
 $('#pf-imb').addEventListener('input',update);
 update();
+
+/* super(): herencia automática, constructor reemplazado y cooperación explícita */
+(function(){
+  const modes={
+    'sup-a':{
+      code:"class Umbral(Strategy):\n    pass\n\nu = Umbral('u1')",
+      trace:['Umbral no define __init__','Python usa Strategy.__init__','name = "u1"'],
+      state:[['name','"u1"']],status:'completo ✓'},
+    'sup-b':{
+      code:"class Umbral(Strategy):\n    def __init__(self, threshold):\n        self.threshold = threshold\n\nu = Umbral(0.6)",
+      trace:['Umbral define su __init__','Strategy.__init__ no se ejecuta','threshold = 0.6'],
+      state:[['name','??? ✗'],['threshold','0.6']],status:'falta name ✗'},
+    'sup-c':{
+      code:"class Umbral(Strategy):\n    def __init__(self, name, threshold):\n        super().__init__(name)\n        self.threshold = threshold\n\nu = Umbral('u1', 0.6)",
+      trace:['Strategy.__init__ → name = "u1"','vuelve al mismo objeto u','Umbral.__init__ → threshold = 0.6'],
+      state:[['name','"u1"'],['threshold','0.6']],status:'completo ✓'},
+  };
+  function show(id){
+    Object.keys(modes).forEach(x=>$('#'+x).classList.toggle('on',x===id));
+    const m=modes[id];$('#sup-code').textContent=m.code;
+    $('#sup-trace').innerHTML=m.trace.map((x,i)=>`<div class="trace-step ${id==='sup-b'&&i===1?'fail':'ok'}"><span>${x}</span></div>`).join('');
+    $('#sup-state').innerHTML=m.state.map(([k,v])=>`<div><span>${k}</span><b>${v}</b></div>`).join('');
+    $('#sup-status').textContent=m.status;$('#sup-status').style.color=id==='sup-b'?'var(--ask)':'var(--bid)';
+  }
+  Object.keys(modes).forEach(id=>$('#'+id).addEventListener('click',()=>show(id)));
+  show('sup-a');
+})();
+
+/* ABC: el cuerpo y el contrato son dimensiones distintas */
+(function(){
+  const modes={
+    'abc-default':{
+      code:"class Strategy:\n    def decide(self, book):\n        return 'hold'\n\nclass Incompleta(Strategy):\n    pass",
+      trace:[['Incompleta()','ok'],['decide() → "hold"','ok']],
+      log:'objeto creado ✓ · hereda comportamiento por defecto'},
+    'abc-abstract':{
+      code:"class Strategy(ABC):\n    @abstractmethod\n    def decide(self, book):\n        ...\n\nclass Incompleta(Strategy):\n    pass",
+      trace:[['Incompleta()','fail'],['TypeError · falta decide','fail']],
+      log:'objeto no creado: el contrato obliga a implementar'},
+    'abc-return':{
+      code:"class Strategy(ABC):\n    @abstractmethod\n    def decide(self, book):\n        return 'hold'\n\nclass Incompleta(Strategy):\n    pass",
+      trace:[['el método tiene cuerpo','ok'],['Incompleta()','fail'],['TypeError · sigue abstracto','fail']],
+      log:'return aporta comportamiento; el decorador mantiene el contrato'},
+  };
+  function show(id){
+    Object.keys(modes).forEach(x=>$('#'+x).classList.toggle('on',x===id));
+    const m=modes[id];$('#abc-code').textContent=m.code;
+    $('#abc-trace').innerHTML=m.trace.map(([x,cls])=>`<div class="trace-step ${cls}"><span>${x}</span></div>`).join('');
+    $('#abc-log').textContent=m.log;
+  }
+  Object.keys(modes).forEach(id=>$('#'+id).addEventListener('click',()=>show(id)));
+  show('abc-default');
+})();
 })();
 
 </script>

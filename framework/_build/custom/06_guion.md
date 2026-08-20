@@ -19,15 +19,16 @@
 - **5/5 ABC:** "de 'deberías implementar decide' a 'NO EXISTES sin decide'. El error se adelanta al mejor momento posible: ya."
 
 ## §2 · Base, hija y super() (4 min)
-- **El gate:** con imbalance 0.70, ¿qué imprime `u.decide(book), v.decide(book)`? ("buy hold" — u usa el suyo, v el heredado.)
-- super() en una frase (está en la nota): "Madre, haz tu parte." La hija no copia el __init__: lo invoca y añade lo suyo.
+- Recorre los tres estados del simulador: hija sin `__init__` (hereda `name`); hija con `__init__` propio (`threshold` existe pero `name` falta); hija con `super()` (el mismo objeto recibe `name` en la base y `threshold` en la hija).
+- Solo después cierra con: **«Madre, haz tu parte»**. La frase resume el mecanismo que ya vieron; no lo sustituye.
 
 ## §3 · Polimorfismo vivo (4 min)
-- **Cede el teclado:** slider de imbalance, tres tarjetas respondiendo distinto a la MISMA llamada. Barre de 0 a 1 y comenta los cruces (Momentum y Contraria se espejan; la base, imperturbable).
+- **Cede el teclado:** slider de imbalance en `[-1,+1]`, tres tarjetas respondiendo distinto a la MISMA llamada. Barre de negativo a positivo y comenta los cruces (Momentum y Contraria se espejan; la base, imperturbable).
 - La nota final es el contrato con el futuro: "en L10, Backtest hará exactamente este bucle contra el mercado real. El polimorfismo es el enchufe."
 
 ## §4 · El contrato ABC (3 min)
-- Ejecuta el traceback: TypeError AL CREAR el objeto, "no en mitad de un backtest a las 3 de la mañana". El mensaje dice exactamente qué falta.
+- Alterna «comportamiento por defecto» y «contrato obligatorio» con la misma hija incompleta: en el primer modo se crea y devuelve `hold`; en el segundo ni siquiera se crea.
+- Activa la tercera prueba: un método decorado con `@abstractmethod` puede contener `return 'hold'` y sigue siendo abstracto. Cierre: **`return` es comportamiento; `@abstractmethod` es contrato**.
 
 ## §5 · Quiz (3 min)
 - 5 A/B/C: herencia por defecto, override, ABC, polimorfismo, super().
@@ -40,6 +41,8 @@
 ## Checklist
 - [ ] Heredar gratis; override = su versión gana.
 - [ ] super().__init__ = "madre, haz tu parte".
+- [ ] Antes de esa frase se ve qué atributo falta cuando la hija reemplaza `__init__`.
 - [ ] Polimorfismo: misma llamada, respuestas distintas; el bucle no pregunta clases.
 - [ ] ABC: TypeError al instanciar incompleto.
+- [ ] Comportamiento por defecto y contrato obligatorio quedan separados.
 - [ ] Cierre del bloque de fundamentos + semilla del framework (L10).

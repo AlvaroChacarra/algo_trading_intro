@@ -180,23 +180,22 @@ Incompleta with abstract method decide</pre>
 <!-- ══════════════ §2 CONSTRUYE ══════════════ -->
 <section id="s2">
   <div class="wrap">
-    <div class="eyebrow">§2 · <b>Construye</b></div>
+    <div class="eyebrow">§2 · <b>Simulador</b></div>
     <h2>La base, una hija y <code>super()</code></h2>
 
-    <div class="code">
-      <div class="code-head"><span>strategies_toy.py</span><span>python</span></div>
-      <pre><span class="ln"><span class="k">class</span> Strategy:</span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, name):</span><span class="ln">        self.name = name</span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">decide</span>(self, book):</span><span class="ln">        <span class="k">return</span> <span class="s">'hold'</span></span><span class="ln"></span><span class="ln"><span class="k">class</span> Umbral(Strategy):</span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, name, threshold):</span><span class="ln">        <span class="fn">super</span>().<span class="fn">__init__</span>(name)   <span class="c"># la madre guarda name</span></span><span class="ln">        self.threshold = threshold  <span class="c"># la hija añade lo suyo</span></span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">decide</span>(self, book):</span><span class="ln">        <span class="k">if</span> book.imbalance() &gt; self.threshold:</span><span class="ln">            <span class="k">return</span> <span class="s">'buy'</span></span><span class="ln">        <span class="k">return</span> <span class="s">'hold'</span></span><span class="ln"></span><span class="ln">u = Umbral(<span class="s">'u1'</span>, <span class="num">0.6</span>)</span><span class="ln">v = Strategy(<span class="s">'base'</span>)</span><span class="ln"><span class="c"># book.imbalance() vale 0.70 ahora mismo</span></span><span class="ln"><span class="fn">print</span>(u.decide(book), v.decide(book))</span></pre>
-      <div class="predict predictgate" style="margin:0;border-radius:0;border-left:none;border-right:none;border-bottom:none">
-        <div class="tag">Predice antes de ejecutar</div>
-        <p style="margin:.2em 0 .8em;font-size:.94rem">Con imbalance 0.70: ¿qué imprime la
-        última línea? (dos palabras)</p>
-        <div class="btnrow" style="margin:0">
-          <input type="text" placeholder="mi predicción…" aria-label="Tu predicción">
-          <button class="btn runbtn" data-target="out-sup" disabled>▶ Ejecutar</button>
-        </div>
+    <div class="simcard" id="super-sim">
+      <h4>mode switch · qué atributos acaba teniendo u</h4>
+      <div class="mode-switch" role="group" aria-label="Tres formas de inicializar la subclase">
+        <button class="on" id="sup-a">sin __init__ propio</button>
+        <button id="sup-b">__init__ sin super</button>
+        <button id="sup-c">__init__ con super</button>
       </div>
-      <div class="out hidden" id="out-sup"><span class="prompt">&gt;&gt;&gt; </span><span class="val">buy hold</span>
-        <span style="color:var(--faint)">   # u usa SU decide (0.70 > 0.6); v usa el de la base</span></div>
+      <pre id="sup-code" style="font-family:var(--mono);font-size:.75rem;line-height:1.9;margin:10px 0"></pre>
+      <div class="execution-trace" id="sup-trace"></div>
+      <div class="state-inspector" style="grid-template-columns:1fr">
+        <div class="state-panel changed"><div class="state-title"><span>mismo objeto u</span><span id="sup-status"></span></div>
+          <div class="state-list" id="sup-state"></div></div>
+      </div>
     </div>
 
     <div class="note"><span class="tag">super() en una frase</span>
@@ -219,17 +218,17 @@ Incompleta with abstract method decide</pre>
       <h4>simulador · for s in familia: s.decide(book)</h4>
       <div class="simrow">
         <label>book.imbalance()</label>
-        <input type="range" id="pf-imb" min="0" max="100" value="70" step="5" style="flex:1;min-width:180px">
-        <span class="spread-val"><b id="pf-imbv">0.70</b></span>
+        <input type="range" id="pf-imb" min="-100" max="100" value="50" step="5" style="flex:1;min-width:180px">
+        <span class="spread-val"><b id="pf-imbv">+0.50</b></span>
       </div>
       <div class="stratgrid">
         <div class="strat base"><h5>Strategy <small>(la base)</small></h5>
           <div style="color:var(--faint);font-size:.72rem;font-family:var(--mono)">decide heredado: siempre prudente</div>
           <div class="dec hold" id="pf-d0">hold</div></div>
-        <div class="strat"><h5>Momentum <small>(&gt; 0.6 compra)</small></h5>
+        <div class="strat"><h5>Momentum <small>(&gt; +0.3 compra)</small></h5>
           <div style="color:var(--faint);font-size:.72rem;font-family:var(--mono)">sigue la presión del libro</div>
           <div class="dec" id="pf-d1"></div></div>
-        <div class="strat"><h5>Contraria <small>(&gt; 0.6 vende)</small></h5>
+        <div class="strat"><h5>Contraria <small>(&gt; +0.3 vende)</small></h5>
           <div style="color:var(--faint);font-size:.72rem;font-family:var(--mono)">apuesta contra la multitud</div>
           <div class="dec" id="pf-d2"></div></div>
       </div>
@@ -247,24 +246,25 @@ Incompleta with abstract method decide</pre>
 <section id="s4">
   <div class="wrap">
     <div class="eyebrow">§4 · <b>Rompe cosas — con red</b></div>
-    <h2>El contrato que no se puede incumplir</h2>
-    <p class="lede">La ABC convierte "deberías implementar <code>decide</code>" en
-    "<strong>no existes</strong> hasta que implementes <code>decide</code>". Compruébalo:</p>
+    <h2>Comportamiento por defecto ≠ contrato obligatorio</h2>
+    <p class="lede">Alterna el tipo de base sin cambiar la hija. El decorador decide si
+    heredar basta o si la hija debe implementar su propia versión.</p>
 
-    <div class="code">
-      <div class="code-head"><span>contrato.py</span><span>python</span></div>
-      <pre><span class="ln"><span class="k">from</span> abc <span class="k">import</span> ABC, abstractmethod</span><span class="ln"></span><span class="ln"><span class="k">class</span> Strategy(ABC):</span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, name):</span><span class="ln">        self.name = name</span><span class="ln"></span><span class="ln">    <span style="color:var(--warn)">@abstractmethod</span></span><span class="ln">    <span class="k">def</span> <span class="fn">decide</span>(self, book): ...</span><span class="ln"></span><span class="ln"><span class="k">class</span> Incompleta(Strategy):</span><span class="ln">    <span class="k">pass</span>  <span class="c"># "ya lo haré luego"</span></span><span class="ln"></span><span class="ln">s = Incompleta(<span class="s">'x'</span>)</span></pre>
-      <div class="out"><div class="btnrow" style="margin:0"><button class="btn tbBtn" data-tb="tb-abc">▶ Ejecutar</button></div></div>
-      <div class="tb hidden" id="tb-abc">Traceback (most recent call last):
-  <span class="dim">File "contrato.py", line 12, in &lt;module&gt;</span>
-    s = Incompleta('x')
-<span class="et">TypeError</span>: Can't instantiate abstract class Incompleta with abstract method decide</div>
-      <ul class="tb-notes hidden" data-for="tb-abc">
-        <li><span class="mk">①</span> El error salta al <strong>crear el objeto</strong>, no dentro de un backtest a las 3 de la mañana.</li>
-        <li><span class="mk">②</span> Y el mensaje te dice exactamente qué falta: <code>abstract method decide</code>. Contrato claro, error claro.</li>
-        <li><span class="mk">③</span> En cuanto <code>Incompleta</code> defina <code>decide()</code>, se instancia sin drama.</li>
-      </ul>
+    <div class="simcard" id="abc-sim">
+      <h4>mode switch · misma hija Incompleta(Strategy)</h4>
+      <div class="mode-switch" role="group" aria-label="Clase normal o abstracta">
+        <button class="on" id="abc-default">default normal</button>
+        <button id="abc-abstract">@abstractmethod</button>
+        <button id="abc-return">abstract + return</button>
+      </div>
+      <pre id="abc-code" style="font-family:var(--mono);font-size:.75rem;line-height:1.9;margin:10px 0"></pre>
+      <div class="execution-trace" id="abc-trace"></div>
+      <div class="looplog" id="abc-log"></div>
     </div>
+    <div class="note"><span class="tag">Una regla</span>
+    <code>return "hold"</code> aporta comportamiento. <code>@abstractmethod</code> impone un
+    contrato: incluso con cuerpo, la hija debe sobrescribirlo para poder existir.</div>
+
   </div>
 </section>
 

@@ -31,4 +31,29 @@ $('#tk-reset').addEventListener('click',()=>{cash=0;pos=0;n=0;
   $('#tk-log').textContent='sin fills — caja y posición a cero';render();});
 $('#tk-mark').addEventListener('input',render);
 render();
+
+/* la convención mantiene el invariante; tocar un atributo interno lo invalida */
+(function(){
+  let invCash=0,invPos=0,broken=false;
+  function invRender(){
+    $('#inv-cash').textContent=invCash.toLocaleString('en-US');
+    $('#inv-pos').textContent=String(invPos);
+    $('#inv-status').textContent=broken?'consistente ✗':'consistente ✓';
+    $('#inv-status').style.color=broken?'var(--ask)':'var(--bid)';
+    $('#inv-state').classList.toggle('bad',broken);
+    $('#inv-state').classList.toggle('changed',!broken);
+  }
+  $('#inv-fill').addEventListener('click',()=>{
+    invCash=-50000;invPos=.5;broken=false;
+    $('#inv-log').textContent="apply_fill(buy) → cash −50000 y position +0.5 · juntas";invRender();
+  });
+  $('#inv-break').addEventListener('click',()=>{
+    invCash=1000000;broken=true;
+    $('#inv-log').textContent='tracker._cash = 1_000_000 funciona; la clase ya no puede garantizar su estado';invRender();
+  });
+  $('#inv-reset').addEventListener('click',()=>{
+    invCash=0;invPos=0;broken=false;$('#inv-log').textContent='El objeto controla su estado mientras entras por su API.';invRender();
+  });
+  invRender();
+})();
 })();

@@ -26,7 +26,7 @@ class Fill:
 
 
 class PositionTracker:
-    def __init__(self):                              # ej. 4: estado privado
+    def __init__(self):                              # ej. 4: estado interno
         self._cash = 0.0
         self._position = 0.0
 
