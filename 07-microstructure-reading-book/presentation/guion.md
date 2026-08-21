@@ -11,9 +11,12 @@
 - Pregunta qué objetos y contenedores deberían existir al otro lado de la transformación.
 
 ### 2. Scrolly fila → objeto · 10 min
-- Haz una pausa por transición: raw → `Level` → bids/asks → orden → `from_snapshot` → API.
+- Haz una pausa por transición: raw → `Level` → bids/asks → ordenación.
+- Usa el panel acumulado: cada parada debe terminar señalando qué líneas nuevas existen y qué estado producen.
+- Contrasta `Order` (intención individual) con `Level` (liquidez agregada a un precio).
 - En `sorted(key=...)`, conecta con las lessons anteriores. No reexpliques `sorted`.
-- Microexplicación de `@classmethod`: “`cls(...)` fabrica esta clase desde otra representación”.
+- El núcleo presencial puede terminar aquí. La factory y la API permanecen como recorrido autónomo requerido.
+- Antes de `@classmethod`, compara constructor normal y constructor alternativo. Solo después nombra `cls`.
 - Regla: el resto del sistema no debe conocer los nombres de las columnas.
 
 ### 3. Scrubber · 5 min
@@ -32,3 +35,4 @@
 
 ## Puente
 - “Ya tenemos estado ordenado y consultable. Mañana programamos qué ocurre cuando una orden intenta cambiarlo.”
+- En el recorrido autónomo, el alumno debe abrir “Ver la clase” y reconocer cada fragmento visto.

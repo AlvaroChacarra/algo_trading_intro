@@ -28,7 +28,9 @@ function server() {
 const samples = [
   '',
   '01-python-i-data-model/presentation/python-i-data-model-doc.html',
+  '07-microstructure-reading-book/presentation/microstructure-reading-book-doc.html',
   '08-order-types-matching/presentation/order-types-matching-doc.html',
+  '09-market-simulation-loop/presentation/market-simulation-loop-doc.html',
   '14-avellaneda-stoikov/presentation/avellaneda-stoikov-doc.html',
   '06-oop-iii-inheritance/checkpoint.html',
   '15-final-exam/examen.html',

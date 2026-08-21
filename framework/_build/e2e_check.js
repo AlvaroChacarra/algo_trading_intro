@@ -46,14 +46,26 @@ function findDocs() {
         0, el.getBoundingClientRect().top - window.innerHeight / 2), steps[i]);
       await page.waitForTimeout(250);
     }
+    const cumulativeCode = await page.evaluate(() => {
+      const checks = [
+        ['#l7-build-code', ['from_snapshot', 'microprice']],
+        ['#l8-build-code', ['add_limit', 'return fills']],
+        ['#l9-build-code', ['def reset', 'self.book = None']],
+      ];
+      for (const [selector, needles] of checks) {
+        const element = document.querySelector(selector);
+        if (element) return needles.every(needle => element.textContent.includes(needle));
+      }
+      return true;
+    });
     const hscroll = await page.evaluate(
       () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 2);
     page.off('pageerror', handler);
 
     const name = path.relative(ROOT, doc);
-    if (errs.length || hscroll) {
+    if (errs.length || hscroll || !cumulativeCode) {
       failures++;
-      console.error(`✗ ${name}  errores=${errs.length} hscroll=${hscroll}`);
+      console.error(`✗ ${name}  errores=${errs.length} hscroll=${hscroll} cumulative=${cumulativeCode}`);
       errs.slice(0, 3).forEach(e => console.error('   ', e.slice(0, 120)));
     } else {
       console.log(`✓ ${name}`);
@@ -76,10 +88,11 @@ function findDocs() {
     '04-': [],
     '05-': ['#inv-fill', '#inv-break', '#inv-reset'],
     '06-': ['#sup-b', '#sup-c', '#abc-abstract', '#abc-return'],
-    '07-': ['#sc-t'],
-    '08-': ['#policy-modes [data-mode="fok"]', '#sim-type [data-type="fok"]',
-            '#sim-next', '#sim-next', '#sim-next'],
-    '09-': ['#mk-i', '#pl-play', '#pl-reset'],
+    '07-': ['#sc-t', 'details.full-code summary'],
+    '08-': ['#cross-side [data-side="sell"]', '#policy-modes [data-mode="fok"]',
+            '#sim-type [data-type="fok"]', '#sim-next', '#sim-next', '#sim-next',
+            'details.full-code summary'],
+    '09-': ['#mk-i', '#pl-play', '#pl-reset', 'details.full-code summary'],
   };
   for (const doc of docs.filter(d => /^0[1-9]-/.test(path.basename(path.dirname(path.dirname(d)))))) {
     const errs = [];

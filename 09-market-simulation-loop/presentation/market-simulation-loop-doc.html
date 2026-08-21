@@ -464,6 +464,45 @@
 .code-state{display:grid;grid-template-columns:1fr 1fr;gap:10px;height:100%}
 .code-state pre{margin:0;font-family:var(--mono);font-size:.7rem;line-height:1.75;overflow:auto}
 .code-state .state-panel{height:100%;overflow:auto}
+
+/* Código acumulado: el scrolly mantiene visible la función/clase que crece
+   mientras el segundo panel enseña una sola transición de estado. */
+.accumulated-fig{height:520px}
+.accumulated-fig .build-grid{position:absolute;inset:46px 0 0;display:grid;
+  grid-template-columns:minmax(0,1.18fr) minmax(0,.82fr);min-height:0}
+.build-code{min-width:0;min-height:0;padding:14px 12px 14px 16px;border-right:1px solid var(--line);
+  background:rgba(9,9,11,.28);display:flex;flex-direction:column}
+.build-code .build-label,.build-state-label{font-family:var(--mono);font-size:.61rem;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:0 0 8px}
+.build-code pre{margin:0;min-height:0;overflow:auto;white-space:pre;font-family:var(--mono);
+  font-size:.64rem;line-height:1.58;color:var(--muted);-webkit-overflow-scrolling:touch}
+.build-code pre .active-line{display:inline-block;width:100%;background:var(--accent-dim);
+  box-shadow:inset 2px 0 0 var(--accent);color:var(--text)}
+.build-state{position:relative;min-width:0;min-height:0}
+.accumulated-fig .fig-stage{inset:0;padding:14px}
+.accumulated-fig .fig-stage>pre{font-family:var(--mono);font-size:.7rem;line-height:1.6;
+  overflow:auto;white-space:pre-wrap}
+.route-chip{display:inline-block;margin:0 0 8px;padding:3px 8px;border:1px solid rgba(34,211,238,.42);
+  border-radius:99px;color:var(--accent);font:600 .58rem var(--mono);letter-spacing:.1em;
+  text-transform:uppercase}
+.route-chip.required{border-color:rgba(192,132,252,.45);color:var(--kw)}
+.object-contrast{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.object-contrast .state-panel{padding:10px}
+.constructor-map{display:grid;gap:8px;margin:10px 0;font-family:var(--mono);font-size:.7rem}
+.constructor-map div{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:8px;
+  align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:8px}
+.constructor-map b{color:var(--accent);font-weight:500}.constructor-map span{color:var(--faint)}
+.branch-map{display:grid;gap:6px;margin:12px 0;font-family:var(--mono);font-size:.7rem}
+.branch-map .branch-row{display:grid;grid-template-columns:90px 1fr;gap:10px;padding:8px 10px;
+  border:1px solid var(--line);border-radius:8px;background:var(--panel2)}
+.branch-map .branch-row b{color:var(--accent);font-weight:500}
+.branch-map .branch-row.on{border-color:var(--accent);background:var(--accent-dim)}
+.responsibility-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.responsibility-grid .state-panel{padding:10px}.responsibility-grid b{display:block;color:var(--accent);
+  font:500 .7rem var(--mono);margin-bottom:4px}.responsibility-grid span{font-size:.76rem;color:var(--muted)}
+.full-code{margin-top:20px;border-color:rgba(192,132,252,.4)}
+.full-code summary{min-height:44px;display:flex;align-items:center;color:var(--kw)}
+.full-code .code{margin:12px 0}.full-code .code pre{max-height:620px}
 @media(max-width:620px){
   .state-inspector{grid-template-columns:1fr}
   .trace-step{align-items:flex-start}
@@ -472,6 +511,14 @@
   .engine-map{padding:8px;gap:6px}
   .engine-map .unit{font-size:.62rem;padding:6px 8px}
   .code-state{grid-template-columns:1fr}
+  .accumulated-fig{height:430px}
+  .accumulated-fig .build-grid{grid-template-columns:1fr;grid-template-rows:minmax(155px,.9fr) minmax(0,1.1fr)}
+  .build-code{padding:9px 11px;border-right:0;border-bottom:1px solid var(--line)}
+  .build-code pre{font-size:.58rem;line-height:1.42}
+  .accumulated-fig .fig-stage{padding:10px}
+  .object-contrast,.responsibility-grid{grid-template-columns:1fr}
+  .constructor-map div{grid-template-columns:1fr;gap:3px}
+  .branch-map .branch-row{grid-template-columns:72px 1fr}
 }
 
 /* ══ índice del curso ══ */
@@ -550,46 +597,57 @@
 </style>
 </head>
 <body data-lesson="09">
-<nav id="rail" aria-label="Progreso"><a href="#s0" class="on"><span class="dot"></span><span class="lab">El reto</span></a><a href="#s1"><span class="dot"></span><span class="lab">Anatomía</span></a><a href="#s2"><span class="dot"></span><span class="lab">API</span></a><a href="#s3"><span class="dot"></span><span class="lab">Loop</span></a><a href="#s4"><span class="dot"></span><span class="lab">Quiz</span></a><a href="#s5"><span class="dot"></span><span class="lab">Puente</span></a></nav>
+<nav id="rail" aria-label="Progreso"><a href="#s0" class="on"><span class="dot"></span><span class="lab">El reto</span></a><a href="#s1"><span class="dot"></span><span class="lab">__init__</span></a><a href="#s2"><span class="dot"></span><span class="lab">API</span></a><a href="#s3"><span class="dot"></span><span class="lab">Loop</span></a><a href="#s4"><span class="dot"></span><span class="lab">Quiz</span></a><a href="#s5"><span class="dot"></span><span class="lab">Sistema</span></a></nav>
 
-<header class="hero wrap" id="s0"><div class="eyebrow"><b>Algo Trading · ICAI 2026</b> · L9 · documento interactivo</div><h1>Estado + dinámica + <em>tiempo</em></h1><p class="lede">Ya construiste OrderBook y MatchingEngine. Hoy los compones dentro de Market, el objeto que decide qué snapshot es el actual y contra qué libro se ejecuta.</p><div class="engine-map"><span class="unit">RAW SNAPSHOT</span><span class="arrow">→</span><span class="unit">OrderBook</span><span class="arrow">→</span><span class="unit">MatchingEngine</span><span class="arrow">→</span><span class="unit today">Market · HOY</span></div><div class="challenge"><div class="tag">El reto de hoy</div><p>Construir completamente <code>__init__</code>, <code>step()</code>, <code>submit()</code> y <code>reset()</code>. Solo después ejecutaremos el día completo.</p></div><div class="meta"><span><b>≈20 min</b> presentación</span><span><b>500</b> snapshots</span><span><b>composición</b>, no duplicación</span></div></header>
+<header class="hero wrap" id="s0"><div class="eyebrow"><b>Algo Trading · ICAI 2026</b> · L9 · documento interactivo</div><h1>Estado + dinámica + <em>tiempo</em></h1><p class="lede">Ya construiste OrderBook y MatchingEngine. Hoy los compones dentro de Market, el objeto que decide qué snapshot es el actual y contra qué libro se ejecuta.</p><div class="engine-map"><span class="unit">RAW SNAPSHOT</span><span class="arrow">→</span><span class="unit">OrderBook</span><span class="arrow">→</span><span class="unit">MatchingEngine</span><span class="arrow">→</span><span class="unit today">Market · HOY</span></div><div class="challenge"><div class="tag">El reto de hoy</div><p>Construir <code>__init__</code>, <code>step()</code>, <code>timestamp</code>, <code>submit()</code> y <code>reset()</code>. Solo después ejecutaremos el día.</p></div><div class="meta"><span><b>≈20 min</b> núcleo presencial</span><span><b>30–35 min</b> recorrido autónomo</span><span><b>composición</b>, no herencia</span></div></header>
 
-<section id="s1"><div class="wrap"><div class="eyebrow">§1 · <b>Anatomía del objeto</b></div><h2>¿Qué estado necesita Market?</h2><p class="lede">Mueve el cursor. Cambia el snapshot señalado; el resto de atributos mantiene su responsabilidad.</p>
-  <div class="simcard"><h4>Market.__dict__ · inspector de estado</h4><div class="simrow"><label for="mk-i">_i</label><input id="mk-i" type="range" min="-1" max="3" value="-1" step="1"><span class="spread-val"><b id="mk-i-v">−1</b></span></div><div class="state-inspector"><div class="state-panel"><div class="state-title">_snapshots <span>datos</span></div><div id="mk-snaps" class="execution-trace"></div></div><div class="state-panel"><div class="state-title">Market <span>estado actual</span></div><div id="mk-state" class="state-list"></div></div></div></div>
+<section id="s1"><div class="wrap"><div class="eyebrow">§1 · <b>Construir el objeto</b></div><h2>El estado inicial aparece literalmente en __init__</h2><p class="lede">Cada asignación crea un atributo con una responsabilidad concreta. Mueve <code>_i</code> después de leer el constructor.</p>
+  <div class="simcard"><h4>Market.__init__ ↔ Market.__dict__</h4><div class="code-state"><pre><span class="ln">class Market:</span>
+<span class="ln">    def __init__(self, symbol, snapshots, depth=10):</span>
+<span class="ln">        self.symbol = symbol</span>
+<span class="ln">        self._snapshots = snapshots</span>
+<span class="ln">        self._depth = depth</span>
+<span class="ln hl">        self._engine = MatchingEngine()</span>
+<span class="ln hl">        self._i = -1</span>
+<span class="ln hl">        self.book = None</span></pre><div class="state-panel changed"><div class="state-title">inspector <span>estado vivo</span></div><div class="simrow"><label for="mk-i">_i</label><input id="mk-i" type="range" min="-1" max="3" value="-1" step="1"><span class="spread-val"><b id="mk-i-v">−1</b></span></div><div id="mk-state" class="state-list"></div></div></div><div class="state-panel" style="margin-top:12px"><div class="state-title">_snapshots <span>secuencia completa; vista de 4</span></div><div id="mk-snaps" class="execution-trace"></div></div></div>
+  <div class="note"><span class="tag">Estado inicial</span><code>_i = -1</code> significa “antes del primer snapshot”; por eso <code>book = None</code>.</div>
 </div></section>
 
-<section id="s2"><div class="wrap"><div class="eyebrow">§2 · <b>Construye la API</b></div><h2>step, submit y reset dejan de ser magia</h2></div>
+<section id="s2"><div class="wrap"><div class="eyebrow">§2 · <b>Construcción acumulativa de la API</b></div><h2>step, timestamp, submit y reset dejan de ser magia</h2><p class="lede">La clase completa permanece a la izquierda. A la derecha sigues la línea que cambia el estado o delega trabajo.</p></div>
   <div class="scrolly" data-scrolly><div class="steps">
-    <div class="step on" data-stage="0" data-name="step · cursor"><div class="step-inner"><h3><span class="n">0/5</span>step: avanzar</h3><p><code>self._i += 1</code>. El cursor cambia antes de leer la fila.</p></div></div>
-    <div class="step" data-stage="1" data-name="step · book"><div class="step-inner"><h3><span class="n">1/5</span>step: reconstruir</h3><p>La factory de L7 convierte el snapshot actual en OrderBook.</p></div></div>
-    <div class="step" data-stage="2" data-name="step · final"><div class="step-inner"><h3><span class="n">2/5</span>step: agotamiento</h3><p>Sin más filas: <code>book=None</code> y <code>return None</code>. Esa será la salida del while.</p></div></div>
-    <div class="step" data-stage="3" data-name="submit"><div class="step-inner"><h3><span class="n">3/5</span>submit: guard + delegación</h3><p>Sin book, RuntimeError. Con book, Market llama al engine de L8 y devuelve sus fills.</p></div></div>
-    <div class="step" data-stage="4" data-name="composición"><div class="step-inner"><h3><span class="n">4/5</span>Market no hace matching</h3><p>Contiene un MatchingEngine. Delegar preserva una sola implementación del algoritmo.</p></div></div>
-    <div class="step" data-stage="5" data-name="reset"><div class="step-inner"><h3><span class="n">5/5</span>reset: volver al origen</h3><p><code>_i=-1</code> y <code>book=None</code>. El siguiente step reproduce el primer tick.</p></div></div>
-  </div><div class="figwrap"><div class="fig"><div class="fig-head"><span>Market · execution trace</span><span class="stage-name">step · cursor</span></div>
-    <div class="fig-stage on" data-stage="0"><pre><span class="ln hl">self._i += 1</span></pre><div class="state-inspector"><div class="state-panel"><div class="state-title">antes</div><div class="state-list"><div><span>_i</span><b>−1</b></div><div><span>book</span><b>None</b></div></div></div><div class="state-panel changed"><div class="state-title">después</div><div class="state-list"><div><span>_i</span><b>0</b></div><div><span>book</span><b>None</b></div></div></div></div></div>
-    <div class="fig-stage" data-stage="1"><div class="execution-trace"><div class="trace-step ok"><span>self._snapshots[self._i]</span><span class="trace-meta">raw row</span></div><div class="trace-step active"><span>OrderBook.from_snapshot(...)</span><span class="trace-meta">L7</span></div><div class="trace-step ok"><span>self.book</span><span class="trace-meta">objeto actual</span></div></div><div id="mk-step-book" class="mini-book"></div></div>
-    <div class="fig-stage" data-stage="2"><pre><span class="ln hl">if self._i &gt;= len(self._snapshots):</span><span class="ln">    self.book = None</span><span class="ln">    return None</span></pre><div class="result-chip">while termina</div></div>
-    <div class="fig-stage" data-stage="3"><div class="code"><pre><span class="ln">if self.book is None:</span><span class="ln hl">    raise RuntimeError(...)</span><span class="ln">return self._engine.process(</span><span class="ln">    order, self.book, self.timestamp</span><span class="ln">)</span></pre></div></div>
-    <div class="fig-stage" data-stage="4"><div class="execution-trace"><div class="trace-step active"><span>Market.submit(order)</span><span class="trace-meta">coordina</span></div><div class="trace-step active"><span>MatchingEngine.process(...)</span><span class="trace-meta">L8</span></div><div class="trace-step ok"><span>Fill[] + book mutado</span><span class="trace-meta">devuelve</span></div></div><p style="color:var(--bid);font: .72rem var(--mono)">0 líneas de matching duplicadas</p></div>
-    <div class="fig-stage" data-stage="5"><div class="state-inspector"><div class="state-panel"><div class="state-title">antes</div><div class="state-list"><div><span>_i</span><b>217</b></div><div><span>book</span><b>OrderBook(...)</b></div></div></div><div class="state-panel changed"><div class="state-title">reset</div><div class="state-list"><div><span>_i</span><b>−1</b></div><div><span>book</span><b>None</b></div></div></div></div></div>
-  </div></div></div>
+    <div class="step on" data-stage="0" data-name="step · cursor"><div class="step-inner"><span class="route-chip">núcleo presencial</span><h3><span class="n">0/6</span>step: avanzar el cursor</h3><p><code>_i</code> parte en −1. Incrementarlo antes de leer hace que el primer <code>step()</code> apunte al índice 0.</p></div></div>
+    <div class="step" data-stage="1" data-name="step · book"><div class="step-inner"><span class="route-chip">núcleo presencial</span><h3><span class="n">1/6</span>step: reconstruir el estado</h3><p>La fila actual sigue siendo un dict. <code>OrderBook.from_snapshot</code>, construido en L7, lo convierte en el book actual.</p></div></div>
+    <div class="step" data-stage="2" data-name="step · completo"><div class="step-inner"><span class="route-chip">núcleo presencial</span><h3><span class="n">2/6</span>step: definir el final</h3><p>Si el cursor sale de la secuencia, <code>book=None</code> y <code>return None</code>. Si no, devuelve el nuevo book. Ya puedes leer <code>step()</code> entero.</p></div></div>
+    <div class="step" data-stage="3" data-name="timestamp"><div class="step-inner"><span class="route-chip required">consolidación requerida</span><h3><span class="n">3/6</span>¿De dónde sale timestamp?</h3><p>Es una <code>property</code> derivada de la fila señalada por <code>_i</code>. No es estado duplicado: consulta el snapshot actual.</p></div></div>
+    <div class="step" data-stage="4" data-name="submit"><div class="step-inner"><span class="route-chip">núcleo presencial</span><h3><span class="n">4/6</span>submit: fallar pronto y delegar</h3><p>Sin book, <code>RuntimeError</code>. Con book, Market pasa orden, book y timestamp al engine de L8 y devuelve sus fills.</p></div></div>
+    <div class="step" data-stage="5" data-name="composición"><div class="step-inner"><span class="route-chip">núcleo presencial</span><h3><span class="n">5/6</span>Market HAS-A MatchingEngine</h3><p><code>Market</code> coordina; <code>MatchingEngine</code> cruza; <code>OrderBook</code> guarda estado. No existe una relación “Market es un engine”.</p></div></div>
+    <div class="step" data-stage="6" data-name="reset"><div class="step-inner"><span class="route-chip required">consolidación requerida</span><h3><span class="n">6/6</span>reset: volver al origen</h3><p>Solo restaura <code>_i=-1</code> y <code>book=None</code>. Los snapshots y el engine siguen existiendo.</p></div></div>
+  </div><div class="figwrap"><div class="fig accumulated-fig" id="l9-build-fig"><div class="fig-head"><span>Market · código ↔ estado</span><span class="stage-name">step · cursor</span></div><div class="build-grid"><div class="build-code"><div class="build-label">Clase que estás construyendo</div><pre id="l9-build-code"></pre></div><div class="build-state">
+    <div class="fig-stage on" data-stage="0"><div class="build-state-label">Una línea, un cambio</div><div class="state-inspector"><div class="state-panel"><div class="state-title">antes</div><div class="state-list"><div><span>_i</span><b>−1</b></div><div><span>book</span><b>None</b></div></div></div><div class="state-panel changed"><div class="state-title">después</div><div class="state-list"><div><span>_i</span><b>0</b></div><div><span>book</span><b>None</b></div></div></div></div></div>
+    <div class="fig-stage" data-stage="1"><div class="build-state-label">Reutiliza la factory de L7</div><div class="execution-trace"><div class="trace-step ok"><span>_snapshots[0]</span><span class="trace-meta">raw row</span></div><div class="trace-step active"><span>OrderBook.from_snapshot(...)</span><span class="trace-meta">L7</span></div><div class="trace-step ok"><span>self.book</span><span class="trace-meta">objeto actual</span></div></div><div id="mk-step-book" class="mini-book"></div></div>
+    <div class="fig-stage" data-stage="2"><div class="build-state-label">Traza completa de step()</div><div class="execution-trace"><div class="trace-step ok"><span>_i: −1 → 0</span></div><div class="trace-step ok"><span>0 &gt;= 500?</span><span class="trace-meta">False</span></div><div class="trace-step ok"><span>from_snapshot(row[0])</span></div><div class="trace-step active"><span>return self.book</span></div></div></div>
+    <div class="fig-stage" data-stage="3"><div class="build-state-label">Property derivada, no atributo nuevo</div><div class="execution-trace"><div class="trace-step ok"><span>_i = 0</span><span class="trace-meta">cursor</span></div><div class="trace-step active"><span>_snapshots[0]["timestamp"]</span><span class="trace-meta" id="mk-ts-value"></span></div><div class="trace-step ok"><span>self.timestamp</span><span class="trace-meta">int</span></div></div></div>
+    <div class="fig-stage" data-stage="4"><div class="build-state-label">Guard + delegación</div><div class="execution-trace"><div class="trace-step fail"><span>book is None?</span><span class="trace-meta">raise</span></div><div class="trace-step active"><span>_engine.process(order, book, timestamp)</span><span class="trace-meta">L8</span></div><div class="trace-step ok"><span>return Fill[]</span></div></div></div>
+    <div class="fig-stage" data-stage="5"><div class="build-state-label">Composición frente a herencia</div><div class="state-list"><div><span>Market IS-A MatchingEngine</span><b style="color:var(--ask)">✗</b></div><div><span>Market HAS-A MatchingEngine</span><b style="color:var(--bid)">✓</b></div></div><div class="responsibility-grid"><div class="state-panel"><b>Market</b><span>coordina tiempo</span></div><div class="state-panel"><b>Engine</b><span>cruza órdenes</span></div><div class="state-panel"><b>Book</b><span>guarda niveles</span></div></div></div>
+    <div class="fig-stage" data-stage="6"><div class="build-state-label">Vuelve al estado previo al tick 0</div><div class="state-inspector"><div class="state-panel"><div class="state-title">antes</div><div class="state-list"><div><span>_i</span><b>217</b></div><div><span>book</span><b>OrderBook(...)</b></div></div></div><div class="state-panel changed"><div class="state-title">reset</div><div class="state-list"><div><span>_i</span><b>−1</b></div><div><span>book</span><b>None</b></div></div></div></div></div>
+  </div></div></div></div></div>
+  <div class="wrap"><details class="full-code"><summary>Consolidación requerida · Ver Market completo</summary><div class="body"><p>Esta es la clase core que acabas de recorrer. <code>from_csv()</code> y <code>sample()</code> son factories secundarias de I/O.</p><div class="code"><div class="code-head"><span>exchange/market.py · core L9</span><span>python</span></div><pre><span class="ln">class Market:</span><span class="ln">    def __init__(self, symbol, snapshots, depth=10):</span><span class="ln">        self.symbol = symbol</span><span class="ln">        self._snapshots = snapshots</span><span class="ln">        self._depth = depth</span><span class="ln">        self._engine = MatchingEngine()</span><span class="ln">        self._i = -1</span><span class="ln">        self.book = None</span><span class="ln"></span><span class="ln">    @property</span><span class="ln">    def timestamp(self):</span><span class="ln">        if 0 &lt;= self._i &lt; len(self._snapshots):</span><span class="ln">            row = self._snapshots[self._i]</span><span class="ln">            return int(row.get("timestamp", self._i))</span><span class="ln">        return None</span><span class="ln"></span><span class="ln">    def step(self):</span><span class="ln">        self._i += 1</span><span class="ln">        if self._i &gt;= len(self._snapshots):</span><span class="ln">            self.book = None</span><span class="ln">            return None</span><span class="ln">        self.book = OrderBook.from_snapshot(</span><span class="ln">            self.symbol, self._snapshots[self._i], self._depth)</span><span class="ln">        return self.book</span><span class="ln"></span><span class="ln">    def submit(self, order):</span><span class="ln">        if self.book is None:</span><span class="ln">            raise RuntimeError("llama a step() primero")</span><span class="ln">        return self._engine.process(</span><span class="ln">            order, self.book, self.timestamp)</span><span class="ln"></span><span class="ln">    def reset(self):</span><span class="ln">        self._i = -1</span><span class="ln">        self.book = None</span></pre></div></div></details></div>
 </section>
 
-<section id="s3"><div class="wrap"><div class="eyebrow">§3 · <b>Ahora sí, el loop</b></div><h2>El día deja de ser una caja negra</h2><p class="lede">Reproduce 500 pasos. Ahora puedes imaginar qué atributo y qué objeto cambia en cada llamada.</p><div class="code"><div class="code-head"><span>simulation_loop.py</span><span>python</span></div><pre><span class="ln">while True:</span><span class="ln hl">    book = market.step()</span><span class="ln">    if book is None: break</span><span class="ln">    ... decide ...</span><span class="ln hl">    fills = market.submit(order)</span><span class="ln">    ... apply fills ...</span></pre></div>
+<section id="s3"><div class="wrap"><div class="eyebrow">§3 · <b>Ahora sí, el loop</b></div><h2>El día deja de ser una caja negra</h2><p class="lede">Reproduce 500 pasos. Ahora puedes imaginar qué atributo consulta cada llamada, qué objeto trabaja y qué estado cambia.</p><div class="code"><div class="code-head"><span>simulation_loop.py</span><span>python</span></div><pre><span class="ln">while True:</span><span class="ln hl">    book = market.step()</span><span class="ln">    if book is None: break</span><span class="ln">    ... decide ...</span><span class="ln hl">    fills = market.submit(order)</span><span class="ln">    ... tracker.apply(fills) ...</span></pre></div>
   <div class="simcard"><h4>500 snapshots reales · equity canónica</h4><div class="btnrow"><button class="btn" id="pl-play">▶ Reproducir</button><button class="btn ghost" id="pl-reset">↻</button></div><canvas id="pl-chart" style="width:100%;height:200px"></canvas><div class="looplog" id="pl-log">pulsa play</div><div id="pl-owner" class="execution-trace"></div></div>
-  <div class="note"><span class="tag">I/O queda fuera del núcleo</span><code>from_csv()</code> es una factory desde almacenamiento; <code>sample()</code>, una comodidad del curso. El contrato obligatorio es <code>__init__ / step / submit / reset</code>.</div>
+  <div class="note"><span class="tag">I/O queda fuera del núcleo</span><code>from_csv()</code> fabrica Market desde almacenamiento; <code>sample()</code> solo localiza el CSV del curso. El contrato obligatorio es <code>__init__ / step / timestamp / submit / reset</code>.</div>
 </div></section>
 
 <section id="s4"><div class="wrap"><div class="eyebrow">§4 · <b>Fija la composición</b></div><h2>5 preguntas</h2><div class="quiz" data-quiz>
   <div class="q" data-ok="0"><div class="qt">Estado correcto antes del primer tick:</div><div class="opts"><button class="opt">A · _i=-1 y book=None</button><button class="opt">B · _i=0 y primer book</button><button class="opt">C · _i=None</button></div><div class="why">El primer step incrementa de −1 a 0.</div></div>
   <div class="q" data-ok="2"><div class="qt"><code>step()</code> construye el libro mediante…</div><div class="opts"><button class="opt">A · MatchingEngine</button><button class="opt">B · sample()</button><button class="opt">C · OrderBook.from_snapshot</button></div><div class="why">Reutiliza la transformación de L7.</div></div>
-  <div class="q" data-ok="1"><div class="qt"><code>submit()</code> antes de step:</div><div class="opts"><button class="opt">A · encola</button><button class="opt">B · RuntimeError</button><button class="opt">C · crea un book vacío</button></div><div class="why">Fail fast: no existe estado contra el que cruzar.</div></div>
-  <div class="q" data-ok="0"><div class="qt">¿Quién modifica los niveles al enviar una orden?</div><div class="opts"><button class="opt">A · MatchingEngine, llamado por Market</button><button class="opt">B · Market reimplementando matching</button><button class="opt">C · PositionTracker</button></div><div class="why">Composición y delegación.</div></div>
+  <div class="q" data-ok="1"><div class="qt"><code>self.timestamp</code> procede de…</div><div class="opts"><button class="opt">A · MatchingEngine</button><button class="opt">B · el snapshot señalado por _i</button><button class="opt">C · book.mid</button></div><div class="why">Es una property derivada de la fila actual.</div></div>
+  <div class="q" data-ok="0"><div class="qt">¿Qué relación OOP describe <code>self._engine = MatchingEngine()</code>?</div><div class="opts"><button class="opt">A · composición: Market contiene un engine</button><button class="opt">B · herencia: Market es un engine</button><button class="opt">C · duplicación</button></div><div class="why">Market coordina y delega; no hereda el algoritmo.</div></div>
   <div class="q" data-ok="2"><div class="qt"><code>reset()</code> debe…</div><div class="opts"><button class="opt">A · borrar snapshots</button><button class="opt">B · crear otro engine</button><button class="opt">C · restaurar _i=-1 y book=None</button></div><div class="why">Vuelve al estado previo al primer tick.</div></div><div class="score"></div>
 </div></div></section>
 
-<section id="s5"><div class="wrap"><div class="eyebrow">§5 · <b>El motor acumulativo</b></div><h2>Ya puedes leer las tres clases principales</h2><div class="engine-map"><span class="unit">RAW SNAPSHOT</span><span class="arrow">→</span><span class="unit">OrderBook</span><span class="arrow">→</span><span class="unit">MatchingEngine</span><span class="arrow">→</span><span class="unit today">Market · HECHO</span></div><div class="bridge"><div class="tag">Resultado</div><p><strong>step cambia el estado; submit delega la dinámica; reset restaura.</strong></p><p>La siguiente capa podrá enchufar estrategias al loop sin tocar ninguna de estas responsabilidades.</p></div><div class="cta"><div class="box"><span class="tag">Núcleo presencial</span><code>B1–B5</code>: estado, step y submit.</div><div class="box"><span class="tag">Consolidación requerida</span><code>B6–B8</code>: reset, loop e integración.</div></div></div></section>
+<section id="s5"><div class="wrap"><div class="eyebrow">§5 · <b>El motor acumulativo</b></div><h2>Ya puedes leer las tres clases principales</h2><div class="engine-map"><span class="unit">RAW SNAPSHOT</span><span class="arrow">→</span><span class="unit">OrderBook</span><span class="arrow">→</span><span class="unit">MatchingEngine</span><span class="arrow">→</span><span class="unit today">Market · HECHO</span></div><div class="bridge"><div class="tag">Resultado</div><p><strong>step cambia el estado; timestamp lo describe; submit delega la dinámica; reset restaura.</strong></p><p>La siguiente capa podrá enchufar estrategias al loop sin tocar estas responsabilidades.</p></div><div class="cta"><div class="box"><span class="tag">Núcleo presencial</span><code>__init__ → step → submit → composición</code>.</div><div class="box"><span class="tag">Consolidación requerida</span><code>timestamp → reset → clase completa → B6–B8</code>.</div></div></div></section>
 <footer>L9 · Construir Market y su API — Algo Trading ICAI 2026</footer>
 
 <script type="text/plain" id="guion-src"># Guion — Clase 9: Construir Market y su API
@@ -601,7 +659,8 @@
 ## Núcleo presencial · ≈20 min
 
 ### 1. Anatomía del objeto · 5 min
-- Mueve `_i` con el slider.
+- Lee primero el `__init__` literal y mapea cada asignación al inspector.
+- Después mueve `_i` con el slider.
 - Haz nombrar los cinco atributos: snapshots, depth, engine, índice y book actual.
 - Estado inicial obligatorio: `_i == -1`, `book is None`.
 
@@ -609,11 +668,14 @@
 - Ejecuta `self._i += 1` y muestra solo el cambio de cursor.
 - Después llama visualmente a `OrderBook.from_snapshot` de L7.
 - Explica el final como estado explícito: `book=None`, `return None`.
+- El panel acumulado debe terminar mostrando `step()` entero.
 
 ### 3. Construir submit() · 5 min
 - Antes del primer step, pulsa conceptualmente submit: `RuntimeError`.
 - Después, sigue la delegación a `self._engine.process(...)` de L8.
 - Frase clave: “Market no vuelve a programar matching; contiene un engine y delega”.
+- Contrasta explícitamente `Market IS-A MatchingEngine` (falso) con `Market HAS-A MatchingEngine` (composición).
+- Deja `timestamp` para consolidación requerida, pero señala que procede del snapshot actual; no aparece por magia.
 
 ### 4. reset y loop · 4 min
 - Reset solo restaura `_i=-1` y `book=None`.
@@ -631,6 +693,7 @@
 
 ## Cierre
 - “step cambia el estado; submit delega la dinámica; reset vuelve al origen.”
+- En el recorrido autónomo, el alumno abre la clase completa y atribuye cada línea a Market, MatchingEngine u OrderBook.
 </script>
 <script>const DOC_DATA={"anatomy":[{"i":0,"timestamp":1717200000,"bestBid":99978.2,"bestAsk":100021.8,"mid":100000.0},{"i":1,"timestamp":1717200060,"bestBid":99993.96,"bestAsk":100003.74,"mid":99998.85},{"i":2,"timestamp":1717200120,"bestBid":99992.04,"bestAsk":100002.9,"mid":99997.47},{"i":3,"timestamp":1717200180,"bestBid":99975.26,"bestAsk":100017.64,"mid":99996.45}],"equity":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,-3.67,-3.29,-3.77,-6.84,-7.57,-11.61,-9.85,-10.24,-5.54,-3.24,-5.7,-1.82,3.73,3.57,49.86,46.2,45.6,46.78,50.63,52.88,52.96,50.75,49.87,57.83,51.42,49.72,55.4,55.09,57.03,58.87,59.08,61.75,62.75,71.22,71.51,77.28,81.89,79.66,80.4,77.79,73.63,75.54,77.19,76.83,78.61,76.13,73.11,74.47,66.85,69.48,76.93,76.73,77.96,75.82,74.52,75.17,74.33,81.14,93.62,89.93,91.63,94.2,87.59,85.65,77.64,77.32,79.4,80.46,80.47,82.3,77.51,74.23,64.81,63.33,63.47,67.33,64.48,70.45,83.61,83.3,82.23,91.31,89.51,91.03,81.81,82.63,79.37,81.19,80.2,77.01,75.79,77.25,82.51,88.74,84.21,83.97,84.11,83.43,89.81,91.19,91.08,83.6,81.27,83.48,85.76,91.06,84.29,89.66,93.66,91.77,89.97,96.99,93.8,90.01,92.39,84.63,84.89,82.84,83.92,90.99,74.36,75.44,78.61,77.4,82.86,73.45,71.15,75.44,84.51,78.4,80.81,76.69,76.24,76.01,75.61,74.19,67.56,72.75,75.1,78.62,73.24,69.67,71.72,63.23,67.64,64.95,56.47,60.46,57.8,53.97,45.36,46.7,50.73,53.06,55.71,49.52,49.68,50.41,51.21,49.83,51.82,57.5,57.14,56.66,59.83,62.3,60.88,60.6,53.53,55.35,47.14,41.5,40.49,35.74,40.92,36.85,36.86,42.47,40.13,37.74,37.17,40.55,41.18,47.19,42.9,45.54,37.82,41.9,46.04,15.63,20.95,24.88,23.61,21.3,19.53,23.04,23.63,25.85,29.65,33.52,25.68,23.93,27.57,28.71,28.91,24.94,35.19,18.38,14.1,15.19,9.44,9.66,10.4,7.86,3.32,3.56,1.12,6.67,11.51,14.89,15.4,10.3,14.1,12.76,11.38,9.7,8.47,6.01,9.44,5.18,11.7,17.17,15.73,9.7,12.23,13.96,9.27,8.86,5.69,12.73,16.97,-1.68,-0.19,-2.25,-6.7,0.25,9.94,10.52,3.76,4.22,-2.89,-2.49,-3.73,-6.93,-11.07,-11.88,-12.8,-15.83,-15.11,-13.21,-12.09,-9.52,-4.7,-5.42,-4.44,-21.31,-21.96,-27.78,-29.77,-37.84,-37.31,-39.63,-38.64,-45.94,-44.83,-45.67,-46.56,-50.72,-38.58,-44.08,-48.39,-52.43,-51.02,-52.83,-47.51,-44.85,-45.66,-44.22,-74.04,-72.26,-71.41,-65.06,-68.43,-76.69,-81.49,-89.25,-94.34,-101.16,-99.25,-96.1,-96.42,-94.25,-89.67,-91.17,-86.88,-85.67,-76.93,-71.24,-56.11,-60.81,-54.2,-52.43,-50.15,-51.34,-53.0,-52.82,-56.53,-63.36,-65.55,-56.07,-59.31,-58.24,-62.1,-59.27,-63.15,-64.14,-63.8,-69.29,-77.9,-80.55,-72.63,-65.06,-62.19,-57.84,-48.92,-49.27,-46.87,-50.88,-51.91,-44.31,-47.97,-49.14,-43.25,-48.68,-56.63,-51.78,-52.38,-49.0,-51.18,-50.95,-55.61,-57.12,-54.69,-48.87,-48.6,-49.7,-48.13,-51.71,-46.98,-47.46,-54.2,-58.44,-62.7,-63.31,-64.51,-66.31,-69.44,-64.1,-59.24,-65.48,-66.68,-73.19,-67.92,-65.45,-65.42,-69.58,-66.44,-69.43,-62.47,-60.33,-57.23,-53.23,-52.36,-50.85,-50.25,-41.35,-22.17,-19.24,-27.33,-30.73,-29.36,-32.02,-30.58,-33.98,-30.89,-42.03,-47.64,-49.31,-51.92,-51.87,-53.05,-50.26,-52.03,-55.36,-50.71,-51.69,-57.37,-52.54,-55.74,-61.34,-64.35,-64.28,-66.66,-61.7,-62.47,-62.69,-55.12,-55.11,-58.65,-51.95,-43.8,-33.35,-34.61,-34.39,-34.99,-37.72,-42.95,-41.1,-17.77,-21.16,-20.88,-19.43,-20.73,-16.83,-18.37,-13.96,-11.06,-7.74,-3.81,-5.21,-6.79,-5.87,-4.89,-5.2,2.28,-0.14,-10.77,-13.81,-13.05,-11.14,-14.12],"fills":[{"i":49,"price":100016.63,"size":0.2961},{"i":49,"price":100018.48,"size":0.2039}],"filled":0.5,"steps":500,"nFills":2,"finalEquity":-14.12,"finalPos":0.5};</script>
 <script>
@@ -835,10 +898,100 @@ $$('.scrolly[data-scrolly]').forEach(sc=>{
 "use strict";
 const $=s=>document.querySelector(s),D=DOC_DATA,A=D.anatomy,E=D.equity,F=D.fills[0];
 const rows=xs=>xs.map(([k,v])=>`<div><span>${k}</span><b>${v}</b></div>`).join('');
+const codeStages=[
+`class Market:
+    def __init__(self, symbol, snapshots, depth=10):
+        self.symbol = symbol
+        self._snapshots = snapshots
+        self._depth = depth
+        self._engine = MatchingEngine()
+        self._i = -1
+        self.book = None
+
+    def step(self):
+<span class="active-line">        self._i += 1</span>`,
+`class Market:
+    def __init__(self, symbol, snapshots, depth=10):
+        ...
+        self._i = -1
+        self.book = None
+
+    def step(self):
+        self._i += 1
+<span class="active-line">        self.book = OrderBook.from_snapshot(</span>
+<span class="active-line">            self.symbol, self._snapshots[self._i], self._depth)</span>
+<span class="active-line">        return self.book</span>`,
+`class Market:
+    def __init__(self, symbol, snapshots, depth=10):
+        ...
+        self._i = -1
+        self.book = None
+
+<span class="active-line">    def step(self):</span>
+        self._i += 1
+<span class="active-line">        if self._i &gt;= len(self._snapshots):</span>
+<span class="active-line">            self.book = None</span>
+<span class="active-line">            return None</span>
+        self.book = OrderBook.from_snapshot(
+            self.symbol, self._snapshots[self._i], self._depth)
+        return self.book`,
+`class Market:
+    ...
+
+    @property
+<span class="active-line">    def timestamp(self):</span>
+<span class="active-line">        if 0 &lt;= self._i &lt; len(self._snapshots):</span>
+            row = self._snapshots[self._i]
+<span class="active-line">            return int(row.get("timestamp", self._i))</span>
+        return None
+
+    def step(self):
+        ...`,
+`class Market:
+    ...
+
+    @property
+    def timestamp(self): ...
+
+    def step(self): ...
+
+<span class="active-line">    def submit(self, order):</span>
+<span class="active-line">        if self.book is None:</span>
+<span class="active-line">            raise RuntimeError("llama a step() primero")</span>
+<span class="active-line">        return self._engine.process(</span>
+<span class="active-line">            order, self.book, self.timestamp)</span>`,
+`class Market:
+    def __init__(self, symbol, snapshots, depth=10):
+        self._snapshots = snapshots
+<span class="active-line">        self._engine = MatchingEngine()</span>
+        self._i = -1
+        self.book = None
+    ...
+    def submit(self, order):
+        if self.book is None:
+            raise RuntimeError(...)
+<span class="active-line">        return self._engine.process(</span>
+<span class="active-line">            order, self.book, self.timestamp)</span>`,
+`class Market:
+    def __init__(self, symbol, snapshots, depth=10):
+        self._snapshots = snapshots
+        self._engine = MatchingEngine()
+        self._i = -1
+        self.book = None
+    ...
+    def submit(self, order): ...
+
+<span class="active-line">    def reset(self):</span>
+<span class="active-line">        self._i = -1</span>
+<span class="active-line">        self.book = None</span>`
+];
+function paintBuildCode(stage){$('#l9-build-code').innerHTML=codeStages[stage];}
+$('#l9-build-fig').addEventListener('stagechange',e=>paintBuildCode(e.detail.stage));paintBuildCode(0);
 function snapTrace(i){return A.map((x,k)=>`<div class="trace-step ${k===i?'active':k<i?'ok':''}"><span>[${k}] ${x.timestamp}</span><span class="trace-meta">mid ${x.mid}</span></div>`).join('');}
 function paintInspector(i){$('#mk-i-v').textContent=i;$('#mk-snaps').innerHTML=snapTrace(i);const active=i>=0?A[i]:null;$('#mk-state').innerHTML=rows([['_i',i],['book',active?`OrderBook(${active.bestBid} / ${active.bestAsk})`:'None'],['_engine','MatchingEngine()'],['_depth',10]]);}
 $('#mk-i').addEventListener('input',e=>paintInspector(+e.target.value));paintInspector(-1);
 $('#mk-step-book').innerHTML=`<div class="row a"><span>ask ${A[0].bestAsk}</span><small>best ask</small></div><div class="sep"></div><div class="row b"><span>bid ${A[0].bestBid}</span><small>best bid</small></div>`;
+$('#mk-ts-value').textContent=A[0].timestamp;
 
 let timer=null;const mark={i:F.i,v:E[F.i]};
 const owner=i=>`<div class="trace-step ${i>0?'ok':'active'}"><span>Market.step()</span><span class="trace-meta">_i + book</span></div>`+(i>F.i?`<div class="trace-step ok"><span>Market.submit()</span><span class="trace-meta">delega L8</span></div><div class="trace-step ok"><span>PositionTracker</span><span class="trace-meta">equity</span></div>`:'<div class="trace-step"><span>sin orden</span><span class="trace-meta">solo tiempo</span></div>');
