@@ -1,33 +1,31 @@
-# Clase 7 — Microestructura — Leer el libro (guía de implementación)
+# Clase 7 — Del snapshot real al OrderBook (guía de implementación)
 
-Pieza del framework: **métricas de mercado sobre snapshots reales de BTC**.
+Pieza del framework: **OrderBook: transformar datos externos en estado ordenado y consultable**.
 
 ## Teoría que cubre
 
-Microestructura: cómo se forma el precio en el detalle del libro.
-- **Spread**: coste implícito de cruzar de un lado a otro.
-- **Mid** vs **microprice**: el microprice pondera el mid por el tamaño del lado *contrario*,
-  porque el lado con menos tamaño es el que probablemente se mueva — mejor predictor a corto.
-- **Imbalance**: presión compradora/vendedora; un imbalance positivo suele preceder subidas.
-- **Depth**: cuánto aguanta el libro un golpe (resiliencia).
+El problema de diseño es convertir una representación externa y plana en estado interno
+con invariantes. Cada pareja precio/tamaño se agrupa en `Level`; los niveles se separan por lado;
+el constructor ordena bids descendentes y asks ascendentes.
 
-Distinción importante: la **liquidez visible** del libro es intención, no negociación; puede
-cancelarse antes de ejecutarse.
+Una vez construida esa frontera, las métricas de microestructura son métodos del objeto:
+`depth` agrega tamaños, `imbalance` compone dos llamadas a `depth` y `microprice` usa el primer
+nivel. El conocimiento funcional de las métricas es previo; aquí importa programar la API.
 
 ## Implementación técnica
 
-`book.py` gana las métricas de lectura (`microprice`, `imbalance(levels)`,
-`depth(side, levels)`). `market.py` aporta `Market.sample()` — carga 500 snapshots reales de
-BTCUSDT empaquetados (`exchange/_data/`) sin configurar rutas — y `OrderBook.from_snapshot`.
+`exchange/book.py`: `Level`, `OrderBook.__init__`, la factory
+`OrderBook.from_snapshot`, `depth(side, levels)`, `imbalance(levels)` y `microprice`.
 
-A partir de aquí los ejercicios trabajan sobre datos reales con `Market.sample().step()`. El
-paquete acumulado ya incluye el motor de datos completo.
+El notebook construye una versión del alumno desde un snapshot pequeño y termina aplicándola a
+la primera fila real del CSV. Solo al final compara comportamiento con el `OrderBook` canónico;
+no usa `Market` como caja negra.
 
 ## Presentación (3 bloques)
 
-1. **El libro como lente** — Cargas un snapshot y el OrderBook te da spread y mid en una línea. Pero lo interesante está más adentro: cuánta liquidez hay, y de qué lado.
-2. **Imbalance: presión del libro** — Más tamaño en bids que en asks (imbalance > 0) suele preceder subidas de mid. Es una de las señales más usadas en microestructura.
-3. **Microprice y profundidad** — El microprice pondera el mid por el tamaño contrario: mejor predictor a corto que el mid simple. La profundidad mide cuánto aguanta el libro un golpe.
+1. **De fila a objetos** — Cada pareja price/size se convierte en un Level. Los bids y asks se separan y OrderBook impone el orden una sola vez.
+2. **Una factory desde otra representación** — from_snapshot recorre la fila y fabrica la instancia. El resto del sistema deja de conocer nombres como bid_price_1.
+3. **API por composición** — depth agrega tamaños; imbalance reutiliza depth; microprice reutiliza el mejor nivel. Cada método tiene una responsabilidad pequeña.
 
 ## Cuaderno de construcción
 

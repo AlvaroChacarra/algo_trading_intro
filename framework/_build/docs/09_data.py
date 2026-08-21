@@ -26,8 +26,20 @@ class BuyAt(Strategy):
 
 def build() -> dict:
     strat = BuyAt(step=50, size=0.5)
+    sample = Market.sample()
+    anatomy = []
+    for i, row in enumerate(sample._snapshots[:4]):
+        book = sample.step()
+        anatomy.append({
+            "i": i,
+            "timestamp": int(row.get("timestamp", i)),
+            "bestBid": book.best_bid,
+            "bestAsk": book.best_ask,
+            "mid": book.mid,
+        })
     res = Backtest(Market.sample(), strat).run()
     return {
+        "anatomy": anatomy,
         "equity": [round(x, 2) for x in res.equity_curve],
         "fills": strat.fills,
         "filled": round(sum(f["size"] for f in strat.fills), 4),

@@ -21,7 +21,7 @@ jobs:
       - name: Smoke test end-to-end
         run: cd framework && python smoke_test.py
 
-      - name: Autovalidar los 265 ejercicios (solución + validador)
+      - name: Autovalidar los ejercicios (solución + validador)
         run: python framework/_build/build_course.py --check-only
 
       - name: Los .py consolidados corren

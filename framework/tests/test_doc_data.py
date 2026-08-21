@@ -11,9 +11,11 @@ HERE = os.path.dirname(__file__)
 DOCS = os.path.join(HERE, "..", "_build", "docs")
 
 EXPECTED_KEYS = {
-    7: {"snaps", "mids", "imbs", "signalUps", "signalTotal", "mid0"},
-    8: {"bids", "asks", "mid", "sweeps", "variants", "big", "limPx"},
-    9: {"equity", "fills", "filled", "steps", "finalEquity"},
+    7: {"raw", "snaps", "mids", "imbs", "signalUps", "signalTotal", "mid0",
+        "depthBid3", "depthAsk3"},
+    8: {"bids", "asks", "mid", "sweeps", "variants", "big", "limPx", "sizes",
+        "limitPrices", "scenarios"},
+    9: {"anatomy", "equity", "fills", "filled", "steps", "finalEquity"},
     10: {"buyonce", "imbalance"},
     11: {"signal", "monos", "monoFinals", "arrivalMid", "avgSlip", "nSlips"},
     12: {"total", "mid0", "sweepAvg", "twapAvg", "vwapAvg", "bars"},
@@ -43,6 +45,8 @@ def test_builders_expose_expected_keys(data):
 def test_l7_series_aligned(data):
     d = data[7]
     assert len(d["mids"]) == len(d["imbs"]) == len(d["snaps"]) == 500
+    assert len(d["raw"]) == 3
+    assert d["depthBid3"] > 0 and d["depthAsk3"] > 0
     assert 0 < d["signalUps"] <= d["signalTotal"]
 
 
@@ -52,8 +56,23 @@ def test_l8_slippage_monotone_with_size(data):
     assert data[8]["variants"]["fok"]["nfills"] == 0
 
 
+def test_l8_scenarios_preserve_order_type_invariants(data):
+    scenarios = data[8]["scenarios"]
+    assert len(scenarios) == 60
+    for scenario in scenarios:
+        if scenario["type"] == "fok" and not scenario["fills"]:
+            assert scenario["after"] == scenario["before"], "FOK fallida debe ser atómica"
+        if scenario["type"] in {"market", "ioc", "fok"}:
+            # Ninguno de estos modos crea liquidez nueva en el lado de la orden.
+            before_levels = sum(len(v) for v in scenario["before"].values())
+            after_levels = sum(len(v) for v in scenario["after"].values())
+            assert after_levels <= before_levels
+
+
 def test_l9_fills_complete_and_marked(data):
     d = data[9]
+    assert len(d["anatomy"]) == 4
+    assert [x["i"] for x in d["anatomy"]] == [0, 1, 2, 3]
     assert d["filled"] == pytest.approx(0.5, abs=1e-6)
     assert all(0 <= f["i"] < len(d["equity"]) for f in d["fills"])
 

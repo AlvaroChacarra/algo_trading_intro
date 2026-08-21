@@ -4,6 +4,7 @@ from exchange.market import Market
 
 def build() -> dict:
     m = Market.sample()
+    raw0 = m._snapshots[0]
     snaps, mids, imbs = [], [], []
     while m.step() is not None:
         b = m.book
@@ -24,6 +25,18 @@ def build() -> dict:
             total += 1
             if mids[i + 1] > mids[i]:
                 ups += 1
-    return {"snaps": snaps, "mids": mids, "imbs": imbs,
+    raw = []
+    for i in range(1, 4):
+        raw.append({
+            "i": i,
+            "bidPrice": float(raw0[f"bid_price_{i}"]),
+            "bidSize": float(raw0[f"bid_size_{i}"]),
+            "askPrice": float(raw0[f"ask_price_{i}"]),
+            "askSize": float(raw0[f"ask_size_{i}"]),
+        })
+    first = snaps[0]
+    return {"raw": raw, "snaps": snaps, "mids": mids, "imbs": imbs,
             "signalUps": ups, "signalTotal": total,
-            "imb0": snaps[0]["imb1"], "micro0": snaps[0]["micro"], "mid0": snaps[0]["mid"]}
+            "imb0": first["imb1"], "micro0": first["micro"], "mid0": first["mid"],
+            "depthBid3": round(sum(x[1] for x in first["bids"]), 3),
+            "depthAsk3": round(sum(x[1] for x in first["asks"]), 3)}

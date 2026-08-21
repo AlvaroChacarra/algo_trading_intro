@@ -1,6 +1,6 @@
-# Clase 8 — Órdenes y matching (guía de implementación)
+# Clase 8 — Construir MatchingEngine (guía de implementación)
 
-Pieza del framework: **MatchingEngine: cómo se cruzan las órdenes**.
+Pieza del framework: **MatchingEngine: planificar cruces, validar y mutar el libro**.
 
 ## Teoría que cubre
 
@@ -21,14 +21,14 @@ El **precio efectivo** de una market es el VWAP de sus fills, peor que el best a
 contrario, planifica el cruce, aplica FOK (todo-o-nada), consume liquidez (muta el libro) y
 descansa el remanente de una LIMIT. Devuelve los `Fill` generados.
 
-Conecta todo lo anterior: recibe `Order` (L3), opera sobre `OrderBook` (L4), produce `Fill`
-(L3). Es la primera pieza con lógica de ramas no trivial.
+Conecta todo lo anterior: recibe `Order` (L4), opera sobre `OrderBook` (L5), produce `Fill`
+(L4). La separación PLAN → VALIDATE → COMMIT hace atómica una FOK fallida.
 
 ## Presentación (3 bloques)
 
-1. **El motor de cruce** — MatchingEngine.process(order, book) recorre el lado contrario, consume liquidez y devuelve los fills. El libro queda modificado.
-2. **Market vs limit** — Una market cruza al precio que haga falta hasta llenarse (caro pero seguro). Una limit solo cruza a tu precio o mejor; el resto descansa (barato pero incierto).
-3. **IOC y FOK** — IOC cruza lo que pueda y cancela el resto (nada descansa). FOK es todo-o-nada: si no se llena entera, no se ejecuta nada.
+1. **Seleccionar y planificar** — BUY consume asks y SELL consume bids. remaining y take permiten recorrer niveles sin mutar todavía.
+2. **Validar y hacer commit** — FOK obliga a separar PLAN de COMMIT: si no cabe entera, el libro debe quedar idéntico.
+3. **Un algoritmo, cuatro políticas** — MARKET, LIMIT, IOC y FOK comparten selección, planificación y commit. Solo cambian el cruce permitido y el tratamiento del remanente.
 
 ## Cuaderno de construcción
 

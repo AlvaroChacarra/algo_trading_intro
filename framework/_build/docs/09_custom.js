@@ -1,48 +1,17 @@
-/* L9 — el día real reproducido: curva de equity del Backtest de referencia */
+/* L9 — anatomía de Market y reproducción del loop canónico. */
 (function(){
 "use strict";
-const $=s=>document.querySelector(s);
-const D=DOC_DATA, E=D.equity, FS=D.fills, F=FS[0];
-const mark={i:F.i,v:E[F.i]};
+const $=s=>document.querySelector(s),D=DOC_DATA,A=D.anatomy,E=D.equity,F=D.fills[0];
+const rows=xs=>xs.map(([k,v])=>`<div><span>${k}</span><b>${v}</b></div>`).join('');
+function snapTrace(i){return A.map((x,k)=>`<div class="trace-step ${k===i?'active':k<i?'ok':''}"><span>[${k}] ${x.timestamp}</span><span class="trace-meta">mid ${x.mid}</span></div>`).join('');}
+function paintInspector(i){$('#mk-i-v').textContent=i;$('#mk-snaps').innerHTML=snapTrace(i);const active=i>=0?A[i]:null;$('#mk-state').innerHTML=rows([['_i',i],['book',active?`OrderBook(${active.bestBid} / ${active.bestAsk})`:'None'],['_engine','MatchingEngine()'],['_depth',10]]);}
+$('#mk-i').addEventListener('input',e=>paintInspector(+e.target.value));paintInspector(-1);
+$('#mk-step-book').innerHTML=`<div class="row a"><span>ask ${A[0].bestAsk}</span><small>best ask</small></div><div class="sep"></div><div class="row b"><span>bid ${A[0].bestBid}</span><small>best bid</small></div>`;
 
-$('#l9-fill').innerHTML=
-`<span class="c"># paso ${F.i+1}: la estrategia dispara</span>
-fills = market.submit(Order(<span class="s">'BTCUSDT'</span>, <span class="s">'buy'</span>, <span class="num">0.5</span>, MARKET))
-
-<span class="c"># resultado real (${FS.length} fills):</span>
-${FS.map(f=>`Fill(buy <span class="num">${f.size.toFixed(4)}</span> @ <span class="num">${f.price}</span>)`).join('\n')}
-<span style="color:var(--warn)">el nivel 1 no bastaba: mini-barrido de L8</span>`;
-
-const fig=document.querySelector('.scrolly .fig');
-fig.addEventListener('stagechange',e=>{
-  if(e.detail.stage===2)DOC.chart('#l9-c2',[{data:E,color:'#22d3ee'}],{zero:true,marks:[mark]});
-  if(e.detail.stage===4){
-    DOC.chart('#l9-c4',[{data:E,color:'#22d3ee'}],{zero:true,marks:[mark]});
-    $('#l9-stats').innerHTML=
-      `<div><span>pasos</span><b>${D.steps}</b></div>
-       <div><span>fills</span><b>${D.nFills}</b></div>
-       <div><span>posición final</span><b>${D.finalPos}</b></div>
-       <div><span>equity final</span><b class="${D.finalEquity>=0?'pos':'neg'}">${D.finalEquity}</b></div>`;
-  }
-});
-
-/* play del día */
-let timer=null;
-function stop(){clearInterval(timer);timer=null;}
-$('#pl-play').addEventListener('click',()=>{
-  stop();let i=2;
-  $('#pl-play').disabled=true;
-  timer=setInterval(()=>{
-    i=Math.min(E.length,i+4);
-    DOC.chart('#pl-chart',[{data:E,color:'#22d3ee',upTo:i,endDot:true}],
-      {zero:true,marks:i>F.i?[mark]:[]});
-    $('#pl-log').textContent=`» paso ${i}/${E.length} · equity = ${E[i-1]}`
-      +(i>F.i?`   (${FS.length} fills en el paso ${F.i+1}, total ${D.filled})`:'');
-    if(i>=E.length){stop();$('#pl-play').disabled=false;
-      $('#pl-log').textContent=`» día completo · equity final = ${D.finalEquity} con posición ${D.finalPos}`;}
-  },28);
-});
-$('#pl-reset').addEventListener('click',()=>{stop();$('#pl-play').disabled=false;
-  DOC.chart('#pl-chart',[{data:E,color:'#22d3ee',upTo:2}]);$('#pl-log').textContent='pulsa play';});
-DOC.chart('#pl-chart',[{data:E,color:'#22d3ee',upTo:2}]);
+let timer=null;const mark={i:F.i,v:E[F.i]};
+const owner=i=>`<div class="trace-step ${i>0?'ok':'active'}"><span>Market.step()</span><span class="trace-meta">_i + book</span></div>`+(i>F.i?`<div class="trace-step ok"><span>Market.submit()</span><span class="trace-meta">delega L8</span></div><div class="trace-step ok"><span>PositionTracker</span><span class="trace-meta">equity</span></div>`:'<div class="trace-step"><span>sin orden</span><span class="trace-meta">solo tiempo</span></div>');
+function stop(){if(timer)clearInterval(timer);timer=null;}
+$('#pl-play').addEventListener('click',()=>{stop();let i=2;$('#pl-play').disabled=true;timer=setInterval(()=>{i=Math.min(E.length,i+5);DOC.chart('#pl-chart',[{data:E,color:'#22d3ee',upTo:i,endDot:true}],{zero:true,marks:i>F.i?[mark]:[]});$('#pl-log').textContent=`paso ${i}/${E.length} · equity ${E[i-1]}`;$('#pl-owner').innerHTML=owner(i);if(i>=E.length){stop();$('#pl-play').disabled=false;$('#pl-log').textContent=`día completo · equity final ${D.finalEquity}`;}},30);});
+$('#pl-reset').addEventListener('click',()=>{stop();$('#pl-play').disabled=false;DOC.chart('#pl-chart',[{data:E,color:'#22d3ee',upTo:2}]);$('#pl-log').textContent='pulsa play';$('#pl-owner').innerHTML=owner(0);});
+DOC.chart('#pl-chart',[{data:E,color:'#22d3ee',upTo:2}]);$('#pl-owner').innerHTML=owner(0);
 })();

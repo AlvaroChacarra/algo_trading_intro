@@ -1,228 +1,41 @@
-<nav id="rail" aria-label="Progreso">
-  <a href="#s0" class="on"><span class="dot"></span><span class="lab">El reto</span></a>
-  <a href="#s1"><span class="dot"></span><span class="lab">El loop</span></a>
-  <a href="#s2"><span class="dot"></span><span class="lab">El día en play</span></a>
-  <a href="#s3"><span class="dot"></span><span class="lab">Quiz</span></a>
-  <a href="#s4"><span class="dot"></span><span class="lab">El puente</span></a>
-</nav>
+<nav id="rail" aria-label="Progreso"><a href="#s0" class="on"><span class="dot"></span><span class="lab">El reto</span></a><a href="#s1"><span class="dot"></span><span class="lab">Anatomía</span></a><a href="#s2"><span class="dot"></span><span class="lab">API</span></a><a href="#s3"><span class="dot"></span><span class="lab">Loop</span></a><a href="#s4"><span class="dot"></span><span class="lab">Quiz</span></a><a href="#s5"><span class="dot"></span><span class="lab">Puente</span></a></nav>
 
-<header class="hero wrap" id="s0">
-  <div class="eyebrow"><b>Algo Trading · ICAI 2026</b> &nbsp;·&nbsp; L9 · El loop &nbsp;·&nbsp; documento interactivo</div>
-  <h1>De la foto a la <em>película</em></h1>
-  <p class="lede">Sabes leer un snapshot (L7) y cruzar contra él (L8). Pero un trade no
-  vive en una foto: vive en un día. Hoy montas la pieza que pone en marcha el tiempo —
-  el <strong>loop de simulación</strong> — y ves tu primera <strong>curva de equity</strong>
-  dibujarse tick a tick.</p>
+<header class="hero wrap" id="s0"><div class="eyebrow"><b>Algo Trading · ICAI 2026</b> · L9 · documento interactivo</div><h1>Estado + dinámica + <em>tiempo</em></h1><p class="lede">Ya construiste OrderBook y MatchingEngine. Hoy los compones dentro de Market, el objeto que decide qué snapshot es el actual y contra qué libro se ejecuta.</p><div class="engine-map"><span class="unit">RAW SNAPSHOT</span><span class="arrow">→</span><span class="unit">OrderBook</span><span class="arrow">→</span><span class="unit">MatchingEngine</span><span class="arrow">→</span><span class="unit today">Market · HOY</span></div><div class="challenge"><div class="tag">El reto de hoy</div><p>Construir completamente <code>__init__</code>, <code>step()</code>, <code>submit()</code> y <code>reset()</code>. Solo después ejecutaremos el día completo.</p></div><div class="meta"><span><b>≈20 min</b> presentación</span><span><b>500</b> snapshots</span><span><b>composición</b>, no duplicación</span></div></header>
 
-  <div class="challenge">
-    <div class="tag">El reto de hoy</div>
-    <p>Reproducir el día entero: 500 snapshots en orden, tu orden entrando en el momento
-    que elijas, y una cuenta que nunca miente diciéndote en cada tick <strong>cuánto
-    vales</strong>. Es el `while` más importante del curso: book → decide → cruza →
-    apunta. Todo lo demás (VWAP, market making, TU estrategia) correrá dentro de él.</p>
-  </div>
+<section id="s1"><div class="wrap"><div class="eyebrow">§1 · <b>Anatomía del objeto</b></div><h2>¿Qué estado necesita Market?</h2><p class="lede">Mueve el cursor. Cambia el snapshot señalado; el resto de atributos mantiene su responsabilidad.</p>
+  <div class="simcard"><h4>Market.__dict__ · inspector de estado</h4><div class="simrow"><label for="mk-i">_i</label><input id="mk-i" type="range" min="-1" max="3" value="-1" step="1"><span class="spread-val"><b id="mk-i-v">−1</b></span></div><div class="state-inspector"><div class="state-panel"><div class="state-title">_snapshots <span>datos</span></div><div id="mk-snaps" class="execution-trace"></div></div><div class="state-panel"><div class="state-title">Market <span>estado actual</span></div><div id="mk-state" class="state-list"></div></div></div></div>
+</div></section>
 
-  <div class="meta">
-    <span><b>~40 min</b> lectura + práctica</span>
-    <span><b>500</b> pasos reales</span>
-    <span><b>1</b> simulador</span>
-    <span>lo <b style="color:var(--accent)">cian</b> se toca</span>
-  </div>
-</header>
-
-<section id="s1">
-  <div class="wrap">
-    <div class="eyebrow">§1 · <b>La idea central</b></div>
-    <h2>El latido: step → decide → submit → apunta</h2>
-    <p class="lede">Sigue bajando: el panel ejecuta un día real con una estrategia
-    simple — comprar 0.5 BTC en el paso 50 y aguantar — y te enseña cada pieza del loop.</p>
-  </div>
-
-  <div class="scrolly" data-scrolly>
-    <div class="steps">
-      <div class="step on" data-stage="0" data-name="step()"><div class="step-inner">
-        <h3><span class="n">0/4</span><code>market.step()</code></h3>
-        <p>Cada llamada avanza un snapshot y reconstruye el libro. Cuando el día se acaba,
-        devuelve <code>None</code> — la condición de salida del while. Sin libro activo,
-        <code>submit()</code> lanza error: <strong>primero step, luego órdenes</strong>.</p>
-      </div></div>
-      <div class="step" data-stage="1" data-name="submit()"><div class="step-inner">
-        <h3><span class="n">1/4</span>La orden entra en su momento</h3>
-        <p>En el paso 50, la estrategia dispara una market buy de 0.5. El matching de L8
-        hace su trabajo contra <em>ese</em> libro y devuelve los fills.</p>
-        <p>Mira el resultado real: salió en <strong>dos fills a precios distintos</strong> —
-        el barrido de L8 en miniatura, ocurriendo dentro del loop. El nivel 1 no bastaba.</p>
-      </div></div>
-      <div class="step" data-stage="2" data-name="equity"><div class="step-inner">
-        <h3><span class="n">2/4</span>La cuenta, tick a tick</h3>
-        <p>Tras cada paso, se apunta <code>portfolio.equity(mid)</code>. Antes del fill la
-        curva es plana (caja quieta); después, <strong>tu equity baila con el mercado</strong>
-        — tienes inventario y el mid te mueve.</p>
-      </div></div>
-      <div class="step" data-stage="3" data-name="el while"><div class="step-inner">
-        <h3><span class="n">3/4</span>El patrón completo</h3>
-        <p>Cuatro líneas de esqueleto. Es el mismo bucle acumulador de L1, pero ahora el
-        acumulador es tu patrimonio y el cursor es el tiempo. Todo backtest del mundo,
-        del más casero al institucional, es una variación de esto.</p>
-      </div></div>
-      <div class="step" data-stage="4" data-name="el día entero"><div class="step-inner">
-        <h3><span class="n">4/4</span>El día entero, de una vez</h3>
-        <p>500 pasos, 1 decisión, una curva que cuenta la historia completa: plano →
-        fill → montaña rusa. El equity final del día: <strong>el mercado decidió por
-        ti</strong> desde el momento en que te quedaste largo.</p>
-      </div></div>
-    </div>
-
-    <div class="figwrap"><div class="fig">
-      <div class="fig-head"><span>un día real por el loop</span><span class="stage-name">step()</span></div>
-      <div class="fig-stage on" data-stage="0">
-        <pre style="font-family:var(--mono);font-size:.8rem;line-height:2.1;margin:8px 0 0">
-<span class="k">while</span> True:
-    book = market.step()
-    <span class="k">if</span> book <span class="k">is</span> None:
-        <span class="k">break</span>      <span class="c"># se acabó el día</span>
-    ...</pre>
-      </div>
-      <div class="fig-stage" data-stage="1">
-        <pre style="font-family:var(--mono);font-size:.78rem;line-height:2;margin:6px 0 0" id="l9-fill"></pre>
-      </div>
-      <div class="fig-stage" data-stage="2"><canvas id="l9-c2" style="width:100%;height:200px;margin-top:10px"></canvas>
-        <p style="color:var(--faint);font-size:.74rem;font-family:var(--mono);margin-top:6px">equity — plano hasta el fill (punto ámbar), después baila</p></div>
-      <div class="fig-stage" data-stage="3">
-        <pre style="font-family:var(--mono);font-size:.78rem;line-height:2;margin:6px 0 0">
-<span class="k">while</span> (book := market.step()):
-    acciones = estrategia.decide(book)
-    <span class="k">for</span> orden <span class="k">in</span> acciones:
-        fills = market.submit(orden)
-        portfolio.aplica(fills)
-    equity.append(portfolio.equity(book.mid))</pre>
-      </div>
-      <div class="fig-stage" data-stage="4">
-        <canvas id="l9-c4" style="width:100%;height:180px;margin-top:8px"></canvas>
-        <div class="statgrid" id="l9-stats" style="margin-top:12px"></div>
-      </div>
-    </div></div>
-  </div>
+<section id="s2"><div class="wrap"><div class="eyebrow">§2 · <b>Construye la API</b></div><h2>step, submit y reset dejan de ser magia</h2></div>
+  <div class="scrolly" data-scrolly><div class="steps">
+    <div class="step on" data-stage="0" data-name="step · cursor"><div class="step-inner"><h3><span class="n">0/5</span>step: avanzar</h3><p><code>self._i += 1</code>. El cursor cambia antes de leer la fila.</p></div></div>
+    <div class="step" data-stage="1" data-name="step · book"><div class="step-inner"><h3><span class="n">1/5</span>step: reconstruir</h3><p>La factory de L7 convierte el snapshot actual en OrderBook.</p></div></div>
+    <div class="step" data-stage="2" data-name="step · final"><div class="step-inner"><h3><span class="n">2/5</span>step: agotamiento</h3><p>Sin más filas: <code>book=None</code> y <code>return None</code>. Esa será la salida del while.</p></div></div>
+    <div class="step" data-stage="3" data-name="submit"><div class="step-inner"><h3><span class="n">3/5</span>submit: guard + delegación</h3><p>Sin book, RuntimeError. Con book, Market llama al engine de L8 y devuelve sus fills.</p></div></div>
+    <div class="step" data-stage="4" data-name="composición"><div class="step-inner"><h3><span class="n">4/5</span>Market no hace matching</h3><p>Contiene un MatchingEngine. Delegar preserva una sola implementación del algoritmo.</p></div></div>
+    <div class="step" data-stage="5" data-name="reset"><div class="step-inner"><h3><span class="n">5/5</span>reset: volver al origen</h3><p><code>_i=-1</code> y <code>book=None</code>. El siguiente step reproduce el primer tick.</p></div></div>
+  </div><div class="figwrap"><div class="fig"><div class="fig-head"><span>Market · execution trace</span><span class="stage-name">step · cursor</span></div>
+    <div class="fig-stage on" data-stage="0"><pre><span class="ln hl">self._i += 1</span></pre><div class="state-inspector"><div class="state-panel"><div class="state-title">antes</div><div class="state-list"><div><span>_i</span><b>−1</b></div><div><span>book</span><b>None</b></div></div></div><div class="state-panel changed"><div class="state-title">después</div><div class="state-list"><div><span>_i</span><b>0</b></div><div><span>book</span><b>None</b></div></div></div></div></div>
+    <div class="fig-stage" data-stage="1"><div class="execution-trace"><div class="trace-step ok"><span>self._snapshots[self._i]</span><span class="trace-meta">raw row</span></div><div class="trace-step active"><span>OrderBook.from_snapshot(...)</span><span class="trace-meta">L7</span></div><div class="trace-step ok"><span>self.book</span><span class="trace-meta">objeto actual</span></div></div><div id="mk-step-book" class="mini-book"></div></div>
+    <div class="fig-stage" data-stage="2"><pre><span class="ln hl">if self._i &gt;= len(self._snapshots):</span><span class="ln">    self.book = None</span><span class="ln">    return None</span></pre><div class="result-chip">while termina</div></div>
+    <div class="fig-stage" data-stage="3"><div class="code"><pre><span class="ln">if self.book is None:</span><span class="ln hl">    raise RuntimeError(...)</span><span class="ln">return self._engine.process(</span><span class="ln">    order, self.book, self.timestamp</span><span class="ln">)</span></pre></div></div>
+    <div class="fig-stage" data-stage="4"><div class="execution-trace"><div class="trace-step active"><span>Market.submit(order)</span><span class="trace-meta">coordina</span></div><div class="trace-step active"><span>MatchingEngine.process(...)</span><span class="trace-meta">L8</span></div><div class="trace-step ok"><span>Fill[] + book mutado</span><span class="trace-meta">devuelve</span></div></div><p style="color:var(--bid);font: .72rem var(--mono)">0 líneas de matching duplicadas</p></div>
+    <div class="fig-stage" data-stage="5"><div class="state-inspector"><div class="state-panel"><div class="state-title">antes</div><div class="state-list"><div><span>_i</span><b>217</b></div><div><span>book</span><b>OrderBook(...)</b></div></div></div><div class="state-panel changed"><div class="state-title">reset</div><div class="state-list"><div><span>_i</span><b>−1</b></div><div><span>book</span><b>None</b></div></div></div></div></div>
+  </div></div></div>
 </section>
 
-<section id="s2">
-  <div class="wrap">
-    <div class="eyebrow">§2 · <b>Simulador</b></div>
-    <h2>El día, en play</h2>
-    <p class="lede">Dale al play y mira el día reproducirse: la curva se dibuja tal cual
-    la calculó tu <code>Backtest</code> sobre los snapshots reales.</p>
+<section id="s3"><div class="wrap"><div class="eyebrow">§3 · <b>Ahora sí, el loop</b></div><h2>El día deja de ser una caja negra</h2><p class="lede">Reproduce 500 pasos. Ahora puedes imaginar qué atributo y qué objeto cambia en cada llamada.</p><div class="code"><div class="code-head"><span>simulation_loop.py</span><span>python</span></div><pre><span class="ln">while True:</span><span class="ln hl">    book = market.step()</span><span class="ln">    if book is None: break</span><span class="ln">    ... decide ...</span><span class="ln hl">    fills = market.submit(order)</span><span class="ln">    ... apply fills ...</span></pre></div>
+  <div class="simcard"><h4>500 snapshots reales · equity canónica</h4><div class="btnrow"><button class="btn" id="pl-play">▶ Reproducir</button><button class="btn ghost" id="pl-reset">↻</button></div><canvas id="pl-chart" style="width:100%;height:200px"></canvas><div class="looplog" id="pl-log">pulsa play</div><div id="pl-owner" class="execution-trace"></div></div>
+  <div class="note"><span class="tag">I/O queda fuera del núcleo</span><code>from_csv()</code> es una factory desde almacenamiento; <code>sample()</code>, una comodidad del curso. El contrato obligatorio es <code>__init__ / step / submit / reset</code>.</div>
+</div></section>
 
-    <div class="simcard">
-      <h4>simulador · Backtest(Market.sample(), BuyAt(step=50, size=0.5)).run()</h4>
-      <div class="btnrow" style="margin-top:0">
-        <button class="btn" id="pl-play">▶ Reproducir el día</button>
-        <button class="btn ghost" id="pl-reset">↻</button>
-      </div>
-      <canvas id="pl-chart" style="width:100%;height:200px;margin-top:10px"></canvas>
-      <div class="looplog" id="pl-log">pulsa play</div>
-    </div>
+<section id="s4"><div class="wrap"><div class="eyebrow">§4 · <b>Fija la composición</b></div><h2>5 preguntas</h2><div class="quiz" data-quiz>
+  <div class="q" data-ok="0"><div class="qt">Estado correcto antes del primer tick:</div><div class="opts"><button class="opt">A · _i=-1 y book=None</button><button class="opt">B · _i=0 y primer book</button><button class="opt">C · _i=None</button></div><div class="why">El primer step incrementa de −1 a 0.</div></div>
+  <div class="q" data-ok="2"><div class="qt"><code>step()</code> construye el libro mediante…</div><div class="opts"><button class="opt">A · MatchingEngine</button><button class="opt">B · sample()</button><button class="opt">C · OrderBook.from_snapshot</button></div><div class="why">Reutiliza la transformación de L7.</div></div>
+  <div class="q" data-ok="1"><div class="qt"><code>submit()</code> antes de step:</div><div class="opts"><button class="opt">A · encola</button><button class="opt">B · RuntimeError</button><button class="opt">C · crea un book vacío</button></div><div class="why">Fail fast: no existe estado contra el que cruzar.</div></div>
+  <div class="q" data-ok="0"><div class="qt">¿Quién modifica los niveles al enviar una orden?</div><div class="opts"><button class="opt">A · MatchingEngine, llamado por Market</button><button class="opt">B · Market reimplementando matching</button><button class="opt">C · PositionTracker</button></div><div class="why">Composición y delegación.</div></div>
+  <div class="q" data-ok="2"><div class="qt"><code>reset()</code> debe…</div><div class="opts"><button class="opt">A · borrar snapshots</button><button class="opt">B · crear otro engine</button><button class="opt">C · restaurar _i=-1 y book=None</button></div><div class="why">Vuelve al estado previo al primer tick.</div></div><div class="score"></div>
+</div></div></section>
 
-    <div class="note"><span class="tag">Lo que estás viendo</span>
-    Antes del paso 50, la curva es una línea muerta: sin posición no hay historia. El fill
-    (punto ámbar) te compra volatilidad: desde ahí, cada tick del mid es tu PnL respirando.
-    <strong>Tener posición = estar expuesto al tiempo.</strong> Esa frase es el corazón del
-    riesgo de inventario (L13).</div>
-  </div>
-</section>
-
-<section id="s3">
-  <div class="wrap">
-    <div class="eyebrow">§3 · <b>Fija lo de hoy</b></div>
-    <h2>5 preguntas</h2>
-    <div class="quiz" data-quiz>
-      <div class="q" data-ok="0">
-        <div class="qt"><code>market.step()</code> hace…</div>
-        <div class="opts">
-          <button class="opt">A · Avanza un snapshot y reconstruye el libro; None al acabar</button>
-          <button class="opt">B · Ejecuta las órdenes pendientes</button>
-          <button class="opt">C · Devuelve el equity del paso</button>
-        </div>
-        <div class="why">Es el latido del reloj: nuevo snapshot → nuevo libro. El None es
-        la señal de salida del while.</div>
-      </div>
-      <div class="q" data-ok="2">
-        <div class="qt"><code>submit()</code> antes del primer <code>step()</code>…</div>
-        <div class="opts">
-          <button class="opt">A · Ejecuta contra el último libro del día anterior</button>
-          <button class="opt">B · Encola la orden hasta que haya libro</button>
-          <button class="opt">C · Lanza RuntimeError: no hay libro activo</button>
-        </div>
-        <div class="why">El motor falla claro y pronto (el raise de L3, en producción):
-        sin libro no hay contra qué cruzar.</div>
-      </div>
-      <div class="q" data-ok="1">
-        <div class="qt">La curva de equity se apunta…</div>
-        <div class="opts">
-          <button class="opt">A · Solo cuando hay fills</button>
-          <button class="opt">B · En cada paso, marcando la posición al último mid</button>
-          <button class="opt">C · Al final del día, de una vez</button>
-        </div>
-        <div class="why">Un punto por tick: por eso ves la historia completa, incluida la
-        parte plana.</div>
-      </div>
-      <div class="q" data-ok="0">
-        <div class="qt">La market buy de 0.5 del paso 50 salió en DOS fills a precios distintos. ¿Por qué?</div>
-        <div class="opts">
-          <button class="opt">A · El mejor ask no tenía 0.5: barrió dos niveles — L8 dentro del loop</button>
-          <button class="opt">B · El motor parte las órdenes siempre en dos</button>
-          <button class="opt">C · Fue un error del snapshot</button>
-        </div>
-        <div class="why">El matching de L8 no se apaga por estar dentro del loop: si el
-        nivel 1 no basta, se sube de escalón — y el precio efectivo empeora.</div>
-      </div>
-      <div class="q" data-ok="1">
-        <div class="qt">Después del fill, la curva de equity "baila". ¿Qué baila exactamente?</div>
-        <div class="opts">
-          <button class="opt">A · La caja: sube y baja con cada tick</button>
-          <button class="opt">B · La posición marcada a mercado: el mid mueve tu valoración</button>
-          <button class="opt">C · Nada: es ruido del gráfico</button>
-        </div>
-        <div class="why">equity = cash + position × mid. La caja quedó fija en el fill; lo
-        que respira es el inventario valorado.</div>
-      </div>
-      <div class="score"></div>
-    </div>
-  </div>
-</section>
-
-<section id="s4">
-  <div class="wrap">
-    <div class="eyebrow">§4 · <b>El puente</b></div>
-    <h2>Dónde estás en el proyecto</h2>
-    <div class="pkgmap">
-      <div class="pk done">L1 · el dato</div>
-      <div class="pk done">L2 · book funcional</div>
-      <div class="pk done">L3 · order_book.py</div>
-      <div class="pk done">L4 · Order y Fill</div>
-      <div class="pk done">L5 · OrderBook + Tracker</div>
-      <div class="pk done">L6 · familia Strategy</div>
-      <div class="pk today">L7-9 · el motor<span>hoy: el loop (L9) — motor COMPLETO</span></div>
-      <div class="pk future">L10-11 · el framework<span>Strategy + Backtest</span></div>
-      <div class="pk future">L12-14 · estrategias<span>VWAP, market making</span></div>
-    </div>
-
-    <div class="bridge">
-      <div class="tag">El puente a L10</div>
-      <p style="margin:.2em 0"><strong>El motor está completo. Pero mira tu estrategia:</strong></p>
-      <p>Es un <code>if self._t == 50</code> incrustado en el loop. Para probar otra idea
-      tendrías que reescribir el bucle. ¿Te suena el problema? Es el de L6 — y ya tienes
-      la cura entrenada: <strong>el contrato Strategy y el polimorfismo</strong>. La
-      próxima clase, la familia de juguete se enchufa al motor real.</p>
-    </div>
-
-    <div class="cta">
-      <div class="box"><span class="tag">Ahora te toca construir</span>
-      Abre <code>09_build_exercises.ipynb</code>: el loop, submit en el momento justo y tu
-      primera curva.</div>
-      <div class="box"><span class="tag">Y después, al gimnasio</span>
-      <code>09_auxiliary.ipynb</code> — drills del loop y la contabilidad tick a tick.</div>
-    </div>
-  </div>
-</section>
-
-<footer>L9 · El loop de simulación — Algo Trading ICAI 2026 · documento interactivo</footer>
+<section id="s5"><div class="wrap"><div class="eyebrow">§5 · <b>El motor acumulativo</b></div><h2>Ya puedes leer las tres clases principales</h2><div class="engine-map"><span class="unit">RAW SNAPSHOT</span><span class="arrow">→</span><span class="unit">OrderBook</span><span class="arrow">→</span><span class="unit">MatchingEngine</span><span class="arrow">→</span><span class="unit today">Market · HECHO</span></div><div class="bridge"><div class="tag">Resultado</div><p><strong>step cambia el estado; submit delega la dinámica; reset restaura.</strong></p><p>La siguiente capa podrá enchufar estrategias al loop sin tocar ninguna de estas responsabilidades.</p></div><div class="cta"><div class="box"><span class="tag">Núcleo presencial</span><code>B1–B5</code>: estado, step y submit.</div><div class="box"><span class="tag">Consolidación requerida</span><code>B6–B8</code>: reset, loop e integración.</div></div></div></section>
+<footer>L9 · Construir Market y su API — Algo Trading ICAI 2026</footer>

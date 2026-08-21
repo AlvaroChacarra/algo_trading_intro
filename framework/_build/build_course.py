@@ -93,9 +93,12 @@ def modules_for(n: int):
     if n >= 5:
         core += ["book.py", "portfolio.py"]
         top += [("book", "OrderBook, Level"), ("portfolio", "PositionTracker")]
-    if n >= 7:
-        core += ["matching.py", "market.py"]
-        top += [("matching", "MatchingEngine"), ("market", "Market")]
+    if n >= 8:
+        core += ["matching.py"]
+        top += [("matching", "MatchingEngine")]
+    if n >= 9:
+        core += ["market.py"]
+        top += [("market", "Market")]
     if n >= 10:
         core += ["strategy.py", "backtest.py"]
         top += [("strategy", "Strategy, NewOrder, Cancel, Action"),
@@ -113,6 +116,10 @@ def stage_package(n: int, dest_exercises: str) -> bool:
     if not (core or strat):
         return False
     pkg = os.path.join(dest_exercises, "exchange")
+    # El paquete es un output generado acumulativo: reconstruirlo evita que una
+    # pieza de una lesson posterior sobreviva como archivo obsoleto al regenerar.
+    if os.path.isdir(pkg):
+        shutil.rmtree(pkg)
     os.makedirs(pkg, exist_ok=True)
 
     for f in core:

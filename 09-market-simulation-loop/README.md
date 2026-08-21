@@ -1,6 +1,6 @@
-# Clase 9 — El loop de simulación
+# Clase 9 — Construir Market y su API
 
-> Poner el tiempo en marcha: recorrer los snapshots, enviar órdenes en cada paso y llevar la cuenta de caja, inventario y equity con PositionTracker.
+> Construir el objeto que mantiene el índice temporal, reconstruye el OrderBook actual y delega cada orden al MatchingEngine.
 
 ## Contexto teórico
 
@@ -15,19 +15,23 @@ límite no persisten entre pasos (las estrategias que quieren persistencia re-co
 
 ## Qué construyes hoy
 
-**Market: reproducir snapshots y ejecutar en el tiempo**
+**Market: componer snapshots, OrderBook, MatchingEngine y tiempo**
 
 `exchange/market.py` (`Market`): `step()` reconstruye el libro desde el siguiente snapshot
 y lo devuelve (o `None` al acabar); `submit(order)` cruza contra el libro actual vía el
 `MatchingEngine`; `reset()` rebobina. Se compone con `PositionTracker` para seguir inventario
-y equity. Es el andamiaje sobre el que se monta el `Backtest` en L8.
+y equity. Es el andamiaje sobre el que se monta el `Backtest` en L10.
 
 ## Ejercicios de construcción
 
-- **1. Cuenta los pasos** — el loop step()
-- **2. Ejecuta una orden en un paso** — submit
-- **3. Acumula posición en el tiempo** — loop + tracker
-- **4. Equity final** — marcar a mercado
+- **B1 · Estado inicial** — __init__ y composición
+- **B2 · Implementa step()** — cursor + factory de L7
+- **B3 · Final de datos** — estado terminal explícito
+- **B4 · submit() sin book: fail fast** — raise RuntimeError
+- **B5 · Delega al MatchingEngine** — composición, no duplicación
+- **B6 · reset()** — restaurar invariantes
+- **B7 · Ahora sí: loop completo** — step hasta None
+- **B8 · Challenge de integración** — step → submit → fills → tracker → equity
 
 ## Estructura de la carpeta
 
@@ -38,4 +42,4 @@ y equity. Es el andamiaje sobre el que se monta el `Backtest` en L8.
 
 ## Idea central
 
-> Mercado = estado (libro) + dinámica (matching) + tiempo (el loop). Todo junto, ya simulas.
+> Market añade tiempo y composición: step cambia el estado; submit delega la dinámica; reset vuelve al origen.
