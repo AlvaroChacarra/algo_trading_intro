@@ -7,7 +7,8 @@
 ## Núcleo presencial · ≈20 min
 
 ### 1. Anatomía del objeto · 5 min
-- Mueve `_i` con el slider.
+- Lee primero el `__init__` literal y mapea cada asignación al inspector.
+- Después mueve `_i` con el slider.
 - Haz nombrar los cinco atributos: snapshots, depth, engine, índice y book actual.
 - Estado inicial obligatorio: `_i == -1`, `book is None`.
 
@@ -15,11 +16,14 @@
 - Ejecuta `self._i += 1` y muestra solo el cambio de cursor.
 - Después llama visualmente a `OrderBook.from_snapshot` de L7.
 - Explica el final como estado explícito: `book=None`, `return None`.
+- El panel acumulado debe terminar mostrando `step()` entero.
 
 ### 3. Construir submit() · 5 min
 - Antes del primer step, pulsa conceptualmente submit: `RuntimeError`.
 - Después, sigue la delegación a `self._engine.process(...)` de L8.
 - Frase clave: “Market no vuelve a programar matching; contiene un engine y delega”.
+- Contrasta explícitamente `Market IS-A MatchingEngine` (falso) con `Market HAS-A MatchingEngine` (composición).
+- Deja `timestamp` para consolidación requerida, pero señala que procede del snapshot actual; no aparece por magia.
 
 ### 4. reset y loop · 4 min
 - Reset solo restaura `_i=-1` y `book=None`.
@@ -37,3 +41,4 @@
 
 ## Cierre
 - “step cambia el estado; submit delega la dinámica; reset vuelve al origen.”
+- En el recorrido autónomo, el alumno abre la clase completa y atribuye cada línea a Market, MatchingEngine u OrderBook.

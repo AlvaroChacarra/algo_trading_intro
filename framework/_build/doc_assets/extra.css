@@ -128,6 +128,45 @@
 .code-state{display:grid;grid-template-columns:1fr 1fr;gap:10px;height:100%}
 .code-state pre{margin:0;font-family:var(--mono);font-size:.7rem;line-height:1.75;overflow:auto}
 .code-state .state-panel{height:100%;overflow:auto}
+
+/* Código acumulado: el scrolly mantiene visible la función/clase que crece
+   mientras el segundo panel enseña una sola transición de estado. */
+.accumulated-fig{height:520px}
+.accumulated-fig .build-grid{position:absolute;inset:46px 0 0;display:grid;
+  grid-template-columns:minmax(0,1.18fr) minmax(0,.82fr);min-height:0}
+.build-code{min-width:0;min-height:0;padding:14px 12px 14px 16px;border-right:1px solid var(--line);
+  background:rgba(9,9,11,.28);display:flex;flex-direction:column}
+.build-code .build-label,.build-state-label{font-family:var(--mono);font-size:.61rem;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:0 0 8px}
+.build-code pre{margin:0;min-height:0;overflow:auto;white-space:pre;font-family:var(--mono);
+  font-size:.64rem;line-height:1.58;color:var(--muted);-webkit-overflow-scrolling:touch}
+.build-code pre .active-line{display:inline-block;width:100%;background:var(--accent-dim);
+  box-shadow:inset 2px 0 0 var(--accent);color:var(--text)}
+.build-state{position:relative;min-width:0;min-height:0}
+.accumulated-fig .fig-stage{inset:0;padding:14px}
+.accumulated-fig .fig-stage>pre{font-family:var(--mono);font-size:.7rem;line-height:1.6;
+  overflow:auto;white-space:pre-wrap}
+.route-chip{display:inline-block;margin:0 0 8px;padding:3px 8px;border:1px solid rgba(34,211,238,.42);
+  border-radius:99px;color:var(--accent);font:600 .58rem var(--mono);letter-spacing:.1em;
+  text-transform:uppercase}
+.route-chip.required{border-color:rgba(192,132,252,.45);color:var(--kw)}
+.object-contrast{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.object-contrast .state-panel{padding:10px}
+.constructor-map{display:grid;gap:8px;margin:10px 0;font-family:var(--mono);font-size:.7rem}
+.constructor-map div{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:8px;
+  align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:8px}
+.constructor-map b{color:var(--accent);font-weight:500}.constructor-map span{color:var(--faint)}
+.branch-map{display:grid;gap:6px;margin:12px 0;font-family:var(--mono);font-size:.7rem}
+.branch-map .branch-row{display:grid;grid-template-columns:90px 1fr;gap:10px;padding:8px 10px;
+  border:1px solid var(--line);border-radius:8px;background:var(--panel2)}
+.branch-map .branch-row b{color:var(--accent);font-weight:500}
+.branch-map .branch-row.on{border-color:var(--accent);background:var(--accent-dim)}
+.responsibility-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.responsibility-grid .state-panel{padding:10px}.responsibility-grid b{display:block;color:var(--accent);
+  font:500 .7rem var(--mono);margin-bottom:4px}.responsibility-grid span{font-size:.76rem;color:var(--muted)}
+.full-code{margin-top:20px;border-color:rgba(192,132,252,.4)}
+.full-code summary{min-height:44px;display:flex;align-items:center;color:var(--kw)}
+.full-code .code{margin:12px 0}.full-code .code pre{max-height:620px}
 @media(max-width:620px){
   .state-inspector{grid-template-columns:1fr}
   .trace-step{align-items:flex-start}
@@ -136,6 +175,14 @@
   .engine-map{padding:8px;gap:6px}
   .engine-map .unit{font-size:.62rem;padding:6px 8px}
   .code-state{grid-template-columns:1fr}
+  .accumulated-fig{height:430px}
+  .accumulated-fig .build-grid{grid-template-columns:1fr;grid-template-rows:minmax(155px,.9fr) minmax(0,1.1fr)}
+  .build-code{padding:9px 11px;border-right:0;border-bottom:1px solid var(--line)}
+  .build-code pre{font-size:.58rem;line-height:1.42}
+  .accumulated-fig .fig-stage{padding:10px}
+  .object-contrast,.responsibility-grid{grid-template-columns:1fr}
+  .constructor-map div{grid-template-columns:1fr;gap:3px}
+  .branch-map .branch-row{grid-template-columns:72px 1fr}
 }
 
 /* ══ índice del curso ══ */

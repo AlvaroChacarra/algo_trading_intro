@@ -104,10 +104,32 @@ def build() -> dict:
                         },
                     })
 
+    # Contraejemplo pedagógico calculado, no hardcodeado: una FOK BUY que no
+    # cabe al precio del tercer ask. La implementación canónica deja el libro
+    # intacto; la versión ingenua aplica el plan antes de validar y lo corrompe.
+    fok_key = "buy:fok:2:2"
+    fok_scenario = next(s for s in scenarios if s["key"] == fok_key)
+    naive_book = book0.copy()
+    for price, take in fok_scenario["planned"]:
+        naive_book.reduce("sell", price, take)
+    fok_bug = {
+        "key": fok_key,
+        "size": fok_scenario["size"],
+        "price": fok_scenario["price"],
+        "planned": fok_scenario["planned"],
+        "remaining": fok_scenario["remaining"],
+        "before": fok_scenario["before"],
+        "canonicalAfter": fok_scenario["after"],
+        "naiveAfter": {
+            "bids": [[x.price, round(x.size, 6)] for x in naive_book.bids[:6]],
+            "asks": [[x.price, round(x.size, 6)] for x in naive_book.asks[:6]],
+        },
+    }
+
     return {"bids": bids, "asks": asks, "mid": round(mid, 2),
             "spread": round(book0.spread, 2), "sweeps": sweeps,
             "limPx": lim_px, "big": big, "variants": variants,
             "sizes": size_options,
             "limitPrices": {"buy": [x.price for x in book0.asks[:3]],
                             "sell": [x.price for x in book0.bids[:3]]},
-            "scenarios": scenarios}
+            "scenarios": scenarios, "fokBug": fok_bug}

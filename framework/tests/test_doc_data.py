@@ -14,7 +14,7 @@ EXPECTED_KEYS = {
     7: {"raw", "snaps", "mids", "imbs", "signalUps", "signalTotal", "mid0",
         "depthBid3", "depthAsk3"},
     8: {"bids", "asks", "mid", "sweeps", "variants", "big", "limPx", "sizes",
-        "limitPrices", "scenarios"},
+        "limitPrices", "scenarios", "fokBug"},
     9: {"anatomy", "equity", "fills", "filled", "steps", "finalEquity"},
     10: {"buyonce", "imbalance"},
     11: {"signal", "monos", "monoFinals", "arrivalMid", "avgSlip", "nSlips"},
@@ -67,6 +67,13 @@ def test_l8_scenarios_preserve_order_type_invariants(data):
             before_levels = sum(len(v) for v in scenario["before"].values())
             after_levels = sum(len(v) for v in scenario["after"].values())
             assert after_levels <= before_levels
+
+
+def test_l8_fok_counterexample_motivates_plan_before_commit(data):
+    bug = data[8]["fokBug"]
+    assert bug["remaining"] > 0
+    assert bug["canonicalAfter"] == bug["before"], "la FOK real debe abortar sin mutar"
+    assert bug["naiveAfter"] != bug["before"], "el contraejemplo debe exhibir la mutación parcial"
 
 
 def test_l9_fills_complete_and_marked(data):

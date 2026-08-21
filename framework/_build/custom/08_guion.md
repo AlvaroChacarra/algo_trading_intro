@@ -11,16 +11,18 @@
 - Pregunta: “¿Qué lado consume una BUY?” antes de iluminar asks.
 
 ### 2. Execution trace de process() · 10 min
-- Una transición causal por parada: opposite → remaining → take → planned → commit → remanente.
+- Una transición causal por parada: opposite → remaining → take → bug FOK → planned.
+- El panel izquierdo acumula literalmente `process()`; no expliques una variable sin situarla dentro de esa función.
 - En `take`, pide el cálculo mental antes de revelar `min(remaining, level.size)`.
-- En PLAN, comprueba explícitamente que el book sigue intacto.
-- En COMMIT, sincroniza `reduce` con la aparición de un único Fill.
+- Antes de PLAN, ejecuta la versión ingenua: devuelve `[]`, pero el book ya cambió.
+- Solo entonces introduce `planned` como solución al problema observado.
 
 ### 3. Tipos como políticas · 5 min
 - Cambia MARKET/LIMIT/IOC/FOK sobre el mismo core.
 - LIMIT: muestra `_crosses` simétrica BUY/SELL y `add_limit` del remanente.
 - IOC: “misma planificación, misma ejecución; única diferencia: no descansa”.
 - Evita cuatro definiciones funcionales largas: el objetivo es reutilización.
+- El recorrido autónomo abre `_crosses`, el mapa de ramas y el código completo.
 
 ### 4. FOK · 3 min
 - Ejecuta mentalmente la versión defectuosa que muta antes de saber si completa.
@@ -36,3 +38,4 @@
 
 ## Puente
 - “Sabéis cruzar una orden en una foto. Falta un objeto que elija qué foto es la actual y delegue en este engine.”
+- Antes de cerrar, muestra que la función completa es la suma de las líneas construidas, no una nueva solución.
