@@ -17,17 +17,22 @@ El contenido de las clases L1–L14 (notebooks, HTML, README, CLAUDE, guion) se 
 ```bash
 python _build/build_course.py --check-only   # autovalida todos los ejercicios (solución + validador)
 python _build/build_course.py                # regenera las 15 carpetas de lección
+python _build/pedagogy_reports.py            # regenera los informes de continuidad
 python _build/build_course.py --clean        # además archiva/borra carpetas antiguas (cuidado)
 ```
 
 - `lessons_foundations.py` / `lessons_engine.py` / `lessons_strategies.py` — specs de cada lección.
 - `nbgen.py` — builders de notebook y del deck HTML (L7+).
-- `docgen.py` + `docs/NN_body.html` + `docs/NN_custom.js` — los documentos interactivos de L1-L6
-  (base compartida en `doc_assets/`: fuentes embebidas, CSS y motores JS genéricos).
+- `docgen.py` + `docs/NN_body.html` + `docs/NN_custom.js` — documentos interactivos
+  (base compartida en `doc_assets/`: fuentes embebidas, CSS y learning runtime).
 - `build_course.py` — autovalida, emite y (opcional) limpia. Si una lección tiene
   `docs/NN_body.html`, su documento **sustituye** al deck.
+- `pedagogy_reports.py` — deriva el student journey y el informe de dependencias
+  desde los manifests; CI impide que se editen a mano.
 
 **Para cambiar una lección: edita su spec y regenera.** No edites a mano los notebooks generados; se sobrescriben.
+El contrato de autoría y el checklist completo están en
+[`docs/learning-runtime-authoring.md`](../docs/learning-runtime-authoring.md).
 
 ## Examen final
 

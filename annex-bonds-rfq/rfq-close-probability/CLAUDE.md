@@ -1,11 +1,13 @@
-# Lesson 12 — RFQ & Close Probability
+# Independent annex — RFQ & Close Probability
 
 ## Purpose
-40-minute class on RFQ market structure in fixed income. Core question: given that you quote a spread, what's the probability the client accepts? Use logistic regression to model P(close|spread) and find the revenue-maximizing spread.
+Optional 40-minute annex on RFQ market structure in fixed income. It is not
+Lesson 12 and does not contribute to the L1–L15 prerequisite graph. Core
+question: given that you quote a spread, what's the probability the client accepts?
 
 ## File structure
 ```
-12-rfq-close-probability/
+rfq-close-probability/
 ├── README.md
 ├── CLAUDE.md                                (this file)
 ├── presentation/
@@ -83,9 +85,9 @@ s* = -1/(b1 × (1-p*)) is independent of Q. The Q slider in B3 scales the revenu
 - **B1 (7 min):** 800→557 path diagram, filter explanation, win rate bars (raw vs corrected by tier).
 - **B2 (8 min):** Scatter + logistic curve (Chart.js). Tier toggle. Spread slider with live P(close) readout.
 - **B3 (8 min):** Dual synchronized charts — P(s) and E[Rev]. Tier selector. Q slider scales revenue curve but s* doesn't move.
-- **Cierre (3 min):** 3 takeaways + bridge to L13 (Avellaneda-Stoikov).
+- **Cierre (3 min):** 3 takeaways + optional bridge to L14 (Avellaneda–Stoikov).
 
 ## Continuity
-- `spread_bp` normalization (this lesson) → reused as a feature in L13 market-making model
-- `RFQModel.optimal_spread()` → motivates A-S model: s* is static, but inventory should shift it dynamically
+- This annex is independent: none of its content is required or assessed in L1–L15.
+- `RFQModel.optimal_spread()` can motivate the L14 A-S model: s* is static, but inventory should shift it dynamically.
 - T3 model failure → motivates richer features (volume, volatility, time of day) in future work
