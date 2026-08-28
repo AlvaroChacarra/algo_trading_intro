@@ -192,10 +192,14 @@ const samples = [
         const executeCell = async (outputTimeout) => {
           const editor = firstCodeCell.locator('.cm-content[data-language="python"]');
           await editor.waitFor({ state: 'visible', timeout: 90000 });
+          // The status bar is the only stable readiness signal exposed by
+          // JupyterLite. Waiting for its accessible Idle state prevents a cold
+          // Pyodide kernel from receiving two overlapping Shift+Enter events.
+          await labPage.getByRole('button', {
+            name: /Python \(Pyodide\) \| Idle/,
+          }).waitFor({ state: 'visible', timeout: 120000 });
           // CodeMirror only promotes the cell from command mode to edit mode on
           // pointer activation. `force` bypasses transient windowing overlays.
-          // A cold Pyodide kernel can consume the first Shift+Enter while it is
-          // starting, so the bounded retry below is the readiness probe.
           await editor.click({ force: true });
           await labPage.keyboard.press(selectAll);
           await labPage.keyboard.insertText(labSmokes[lesson.number]);

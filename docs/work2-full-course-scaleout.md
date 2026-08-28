@@ -178,8 +178,9 @@ predicción dinámica de volumen.
 | JupyterLite offline | L1–L14 abren y ejecutan un smoke Python específico de la lesson en WebKit. |
 | Higiene | `git diff --check`: green. |
 
-El test de Pages usa contextos limpios por notebook. Si un kernel frío consume el
-primer `Shift+Enter`, repite la celda de forma acotada; si Pyodide emite un error
+El test de Pages usa contextos limpios por notebook y espera la señal accesible
+`Python (Pyodide) | Idle` antes de ejecutar. Si aun así una celda no produce el
+resultado esperado, la repite de forma acotada; si Pyodide emite un error
 asíncrono, repite el notebook completo en otro contexto y solo acepta una segunda
 ejecución sin errores. No se filtra ni se ignora el error persistente.
 
