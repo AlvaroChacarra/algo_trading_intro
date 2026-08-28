@@ -7,7 +7,7 @@ Pieza del framework: **tu order_book.py se vuelve un módulo importable y robust
 Cuando tus funciones crecen, no pueden vivir sueltas en un notebook: las guardas en un
 archivo `.py` — un **módulo** — y lo **importas** desde donde lo necesites. `import order_book`
 trae el módulo entero; `from order_book import spread` trae solo una función. Así reutilizas
-código sin copiarlo, que es justo lo que harás con el paquete `exchange/` desde la clase 7
+código sin copiarlo, que es justo lo que harás con el paquete `exchange/` desde L4
 (`import exchange`).
 
 La segunda mitad de la clase son los **errores**: una función como `best_bid` revienta con un
@@ -33,10 +33,10 @@ datos y funciones siguen separados → juntarlos = objetos (L4).
 ## Cuaderno de construcción
 
 Patrón por ejercicio: enunciado → starter (`pass`/`None`) → validador (`assert` con mensaje claro, tolerancia `1e-9`) → solución guiada embebida.
-Tiers: **Núcleo** = los primeros (en clase), **Si vamos bien** = el resto, **Auxiliares** = cuaderno `03_auxiliary.ipynb`.
+Clasificación: **LIVE / REQUIRED / OPTIONAL**, decidida en `pedagogy/exercise_routes.yml`. Auxiliares: `03_auxiliary.ipynb`.
 
 El contenido se genera desde `framework/_build/` — para editar esta clase, edita su spec y regenera con `build_course.py`. No edites a mano los notebooks.
 
 ## Continuidad
 
-Aún sin paquete: el código se construye en celdas del notebook. El vocabulario de hoy se convierte en los atributos de las clases en L4.
+Aún sin paquete: el código se construye en celdas del notebook. El vocabulario de L1-L3 se convierte en los atributos de las clases en L4.

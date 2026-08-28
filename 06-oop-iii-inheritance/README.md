@@ -12,7 +12,7 @@ objetos distintos y que cada uno responda lo suyo — el código que los usa no 
 es cuál.
 
 Se enseña construyendo una familia `Strategy` de juguete (Momentum, Contrarian): exactamente el
-patrón que en la clase 10 se conecta al motor real. El alumno llega al framework con la herencia
+patrón que en L10 se conecta al motor real. El alumno llega al framework con la herencia
 ya dominada, no a presión.
 
 ## Qué construyes hoy
@@ -42,7 +42,7 @@ al `Backtest`.
 ## Estructura de la carpeta
 
 - `presentation/` — documento interactivo (o deck) + guion del profesor
-- `exercises/06_build_exercises.ipynb` — construyes la pieza (núcleo 1-3, luego el resto)
+- `exercises/06_build_exercises.ipynb` — construyes la pieza (rutas LIVE / REQUIRED / OPTIONAL declaradas)
 - `exercises/06_auxiliary.ipynb` — el gimnasio: drills + profundización opcional
 - `exercises/exchange/` — el paquete que vienes construyendo (starter de hoy)
 

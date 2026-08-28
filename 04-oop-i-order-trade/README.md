@@ -1,6 +1,6 @@
 # Clase 4 — OOP I — Order y Fill
 
-> Convertir el dict de orden en una clase Order con métodos, y modelar el resultado de un cruce con Fill. Primer módulo de verdad del paquete exchange.
+> Convertir el dict de orden en una clase didáctica con métodos, modelar el resultado de un cruce y migrar sin ambigüedad a las firmas estables de Order y Fill del paquete exchange.
 
 ## Contexto teórico
 
@@ -15,7 +15,7 @@ base de todo el PnL del curso.
 
 ## Qué construyes hoy
 
-**clases Order y Fill (exchange/orders.py, trades.py)**
+**OrderMini y FillMini como modelos didácticos; migración explícita a exchange.Order y exchange.Fill**
 
 Primeros módulos reales del paquete: `exchange/orders.py` (`Order`, `Side`, `OrderType`) y
 `exchange/trades.py` (`Fill`). `Side` y `OrderType` heredan de `str, Enum`: se comparan con
@@ -27,9 +27,13 @@ side/price/size y ves notional y `__repr__`) y un visualizador del **signo del c
 núcleo son 6 ejercicios que culminan en "de la orden al dinero" (Order→Fill→cash_flow); el `.py`
 entregable es `orders_demo.py`.
 
-Continuidad: los atributos son los campos del dict de L1. En el cuaderno se construyen las
-clases *inline* (estilo L1-L2); el paquete `exchange/` las trae ya pulidas como referencia.
-Puente: una orden suelta; ¿quién suma los cash_flows y lleva la cuenta? El PositionTracker (L5).
+Continuidad: los atributos son los campos del dict de L1. Para no fingir que dos firmas distintas
+son la misma API, el cuaderno construye `OrderMini(symbol, side, price, size)` y
+`FillMini(symbol, side, price, size)`. Antes de entrar en `exchange/` se muestra la migración:
+`Order(symbol, side, size, price=...)` añade tipo/id y `Fill(order_id, symbol, side, price, size)`
+añade trazabilidad. Esos nombres y firmas públicas quedan estables desde L4.
+
+Puente: una orden suelta; ¿quién suma los cash flows y lleva la cuenta? `PositionTracker` (L5).
 
 ## Ejercicios de construcción
 
@@ -43,7 +47,7 @@ Puente: una orden suelta; ¿quién suma los cash_flows y lleva la cuenta? El Pos
 ## Estructura de la carpeta
 
 - `presentation/` — documento interactivo (o deck) + guion del profesor
-- `exercises/04_build_exercises.ipynb` — construyes la pieza (núcleo 1-3, luego el resto)
+- `exercises/04_build_exercises.ipynb` — construyes la pieza (rutas LIVE / REQUIRED / OPTIONAL declaradas)
 - `exercises/04_auxiliary.ipynb` — el gimnasio: drills + profundización opcional
 - `exercises/exchange/` — el paquete que vienes construyendo (starter de hoy)
 

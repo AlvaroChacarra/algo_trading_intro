@@ -19,7 +19,7 @@
 
   <div class="code">
     <div class="code-head"><span>el pecado de siempre, ahora con clases</span><span>python</span></div>
-    <pre><span class="ln"><span class="k">class</span> MomentumStrategy:</span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, name): self.name = name   <span class="c"># igual…</span></span><span class="ln">    <span class="k">def</span> <span class="fn">decide</span>(self, book): <span class="k">return</span> <span class="s">'buy'</span></span><span class="ln"></span><span class="ln"><span class="k">class</span> MeanRevStrategy:</span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, name): self.name = name   <span class="c"># …que aquí</span></span><span class="ln">    <span class="k">def</span> <span class="fn">decide</span>(self, book): <span class="k">return</span> <span class="s">'sell'</span></span></pre>
+    <pre><span class="ln"><span class="k">class</span> MomentumStrategy:</span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, name): self.name = name   <span class="c"># igual…</span></span><span class="ln">    <span class="k">def</span> <span class="fn">decide</span>(self, imbalance): <span class="k">return</span> <span class="s">'buy'</span></span><span class="ln"></span><span class="ln"><span class="k">class</span> MeanRevStrategy:</span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, name): self.name = name   <span class="c"># …que aquí</span></span><span class="ln">    <span class="k">def</span> <span class="fn">decide</span>(self, imbalance): <span class="k">return</span> <span class="s">'sell'</span></span></pre>
   </div>
 
   <div class="challenge">
@@ -60,7 +60,7 @@
       <div class="step" data-stage="1" data-name="la base"><div class="step-inner">
         <h3><span class="n">1/5</span>La base: <code>Strategy</code></h3>
         <p>El esqueleto se escribe <strong>una vez</strong>, en una clase madre: el
-        <code>__init__</code> común y un <code>decide(book)</code> por defecto (el más
+        <code>__init__</code> común y un <code>decide(imbalance)</code> por defecto (el más
         prudente: <code>'hold'</code>).</p>
       </div></div>
       <div class="step" data-stage="2" data-name="heredar"><div class="step-inner">
@@ -79,7 +79,7 @@
       <div class="step" data-stage="4" data-name="polimorfismo"><div class="step-inner">
         <h3><span class="n">4/5</span>El momento estrella: polimorfismo</h3>
         <p>Un bucle recorre una lista de estrategias <em>distintas</em> y a todas les dice
-        lo mismo: <code>s.decide(book)</code>. <strong>Cada una responde a su manera.</strong></p>
+        lo mismo: <code>s.decide(imbalance)</code>. <strong>Cada una responde a su manera.</strong></p>
         <p>El bucle no sabe ni le importa qué clase es cada una. Ese desacople es lo que
         hará enchufable el motor.</p>
       </div></div>
@@ -98,11 +98,11 @@
         <pre style="font-family:var(--mono);font-size:.74rem;line-height:1.9;margin:6px 0 0">
 <span class="k">class</span> <span style="color:var(--num)">MomentumStrategy</span>:
     <span style="color:var(--ask)">def __init__(self, name): …</span>
-    <span class="k">def</span> <span class="fn">decide</span>(self, book): …
+    <span class="k">def</span> <span class="fn">decide</span>(self, imbalance): …
 
 <span class="k">class</span> <span style="color:var(--num)">MeanRevStrategy</span>:
     <span style="color:var(--ask)">def __init__(self, name): …</span>  <span class="c">← copia</span>
-    <span class="k">def</span> <span class="fn">decide</span>(self, book): …</pre>
+    <span class="k">def</span> <span class="fn">decide</span>(self, imbalance): …</pre>
         <p style="color:var(--faint);font-size:.8rem;margin-top:16px">solo la decisión es
         distinta; el resto es deuda duplicada</p>
       </div>
@@ -114,7 +114,7 @@
 <span class="k">class</span> <span style="color:var(--num)">Strategy</span>:
     <span class="k">def</span> <span class="fn">__init__</span>(self, name):
         self.name = name
-    <span class="k">def</span> <span class="fn">decide</span>(self, book):
+    <span class="k">def</span> <span class="fn">decide</span>(self, imbalance):
         <span class="k">return</span> <span class="s">'hold'</span>   <span class="c"># lo prudente</span></pre>
       </div>
       <div class="fig-stage" data-stage="2">
@@ -128,7 +128,7 @@
     <span class="k">pass</span>            <span class="c"># vacía…</span>
 
 m = Momentum(<span class="s">'mi primera'</span>)
-m.decide(book)  <span class="c"># 'hold' — heredado</span></pre>
+m.decide(imbalance)  <span class="c"># 'hold' — heredado</span></pre>
       </div>
       <div class="fig-stage" data-stage="3">
         <div class="treebox" style="text-align:center;margin-top:8px">
@@ -138,8 +138,8 @@ m.decide(book)  <span class="c"># 'hold' — heredado</span></pre>
         </div>
         <pre style="font-family:var(--mono);font-size:.76rem;line-height:1.95;margin:14px 0 0">
 <span class="k">class</span> <span style="color:var(--num)">Momentum</span>(Strategy):
-    <span class="k">def</span> <span class="fn">decide</span>(self, book):   <span class="c"># override</span>
-        <span class="k">if</span> book.imbalance() &gt; <span class="num">0.6</span>:
+    <span class="k">def</span> <span class="fn">decide</span>(self, imbalance):   <span class="c"># override</span>
+        <span class="k">if</span> imbalance &gt; <span class="num">0.6</span>:
             <span class="k">return</span> <span class="s">'buy'</span>
         <span class="k">return</span> <span class="s">'hold'</span></pre>
       </div>
@@ -150,7 +150,7 @@ familia = [Momentum(<span class="s">'m1'</span>),
            Strategy(<span class="s">'base'</span>)]
 
 <span class="k">for</span> s <span class="k">in</span> familia:
-    <span class="fn">print</span>(s.name, <span class="s">'→'</span>, s.decide(book))</pre>
+    <span class="fn">print</span>(s.name, <span class="s">'→'</span>, s.decide(imbalance))</pre>
         <pre style="font-family:var(--mono);font-size:.78rem;line-height:1.9;margin:12px 0 0">
 m1   → <span style="color:var(--bid)">buy</span>
 r1   → <span style="color:var(--ask)">sell</span>
@@ -164,7 +164,7 @@ base → <span style="color:var(--muted)">hold</span></pre>
 
 <span class="k">class</span> <span style="color:var(--kw)">Strategy</span>(ABC):
     <span style="color:var(--warn)">@abstractmethod</span>
-    <span class="k">def</span> <span class="fn">decide</span>(self, book): ...
+    <span class="k">def</span> <span class="fn">decide</span>(self, imbalance): ...
 
 <span class="k">class</span> <span style="color:var(--num)">Incompleta</span>(Strategy):
     <span class="k">pass</span>   <span class="c"># sin decide()</span>
@@ -200,7 +200,7 @@ Incompleta with abstract method decide</pre>
 
     <div class="note"><span class="tag">super() en una frase</span>
     "Madre, haz tu parte." La hija no copia el <code>__init__</code> de la base — lo
-    <strong>invoca</strong> y luego añade lo suyo. Si mañana la base guarda algo más, todas
+    <strong>invoca</strong> y luego añade lo suyo. Si más adelante la base guarda algo más, todas
     las hijas lo heredan sin tocarlas.</div>
   </div>
 </section>
@@ -211,13 +211,13 @@ Incompleta with abstract method decide</pre>
     <div class="eyebrow">§3 · <b>Simulador</b></div>
     <h2>Polimorfismo vivo</h2>
     <p class="lede">Tres objetos de tres clases distintas, una sola llamada:
-    <code>s.decide(book)</code>. Mueve el imbalance del libro y mira cómo cada miembro de
+    <code>s.decide(imbalance)</code>. Mueve la señal y mira cómo cada miembro de
     la familia responde a su manera — sin un solo <code>if isinstance</code> en el bucle.</p>
 
     <div class="simcard">
-      <h4>simulador · for s in familia: s.decide(book)</h4>
+      <h4>simulador · for s in familia: s.decide(imbalance)</h4>
       <div class="simrow">
-        <label>book.imbalance()</label>
+        <label>imbalance</label>
         <input type="range" id="pf-imb" min="-100" max="100" value="50" step="5" style="flex:1;min-width:180px">
         <span class="spread-val"><b id="pf-imbv">+0.50</b></span>
       </div>
@@ -311,7 +311,7 @@ Incompleta with abstract method decide</pre>
           <button class="opt">B · Misma llamada, comportamiento distinto según el objeto</button>
           <button class="opt">C · Heredar de varias clases a la vez</button>
         </div>
-        <div class="why"><code>for s in familia: s.decide(book)</code> — el bucle es uno;
+        <div class="why"><code>for s in familia: s.decide(imbalance)</code> — el bucle es uno;
         las respuestas, tantas como clases.</div>
       </div>
       <div class="q" data-ok="2">
@@ -343,9 +343,8 @@ Incompleta with abstract method decide</pre>
       <div class="pk done">L4 · Order y Fill<span>exchange/orders.py · trades.py</span></div>
       <div class="pk done">L5 · OrderBook + Tracker<span>exchange/book.py · portfolio.py</span></div>
       <div class="pk today">L6 · familia Strategy<span>herencia y polimorfismo</span></div>
-      <div class="pk future">L7-9 · el motor<span>matching, market</span></div>
-      <div class="pk future">L10-11 · el framework<span>Strategy + Backtest</span></div>
-      <div class="pk future">L12-14 · estrategias<span>VWAP, market making</span></div>
+      <div class="pk future">L7-10 · motor y framework<span>matching, Market, Strategy, Backtest</span></div>
+      <div class="pk future">L11-14 · estrategias<span>métricas, VWAP, market making</span></div>
     </div>
 
     <div class="cta" style="margin:22px 0;grid-template-columns:1fr">
@@ -359,9 +358,9 @@ Incompleta with abstract method decide</pre>
     <div class="bridge">
       <div class="tag">El puente a L7</div>
       <p style="margin:.2em 0"><strong>Sabes programar. Ahora toca el mercado de verdad.</strong></p>
-      <p>Tus estrategias de juguete deciden sobre un libro de juguete. En la próxima clase
-      cargamos <strong>500 snapshots reales de BTCUSDT</strong> y les hacemos la pregunta
-      seria: ¿hacia dónde empuja el libro? Imbalance, microprice, profundidad — leer el
+      <p>Tus estrategias de juguete deciden a partir de una señal numérica. En L7 cargamos
+      <strong>500 snapshots reales de BTCUSDT</strong> y construimos esa señal desde datos.
+      La pregunta seria es: ¿hacia dónde empuja el libro? Imbalance, microprice, profundidad — leer el
       mercado por dentro.</p>
       <p style="margin-bottom:0">Y en L10, esta familia <code>Strategy</code> vuelve — ya no
       de juguete, sino enchufada al motor con un <code>Backtest</code> de verdad.</p>

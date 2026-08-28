@@ -1,6 +1,6 @@
 # Clase 5 — OOP II — OrderBook y PositionTracker
 
-> Construir el libro como objeto que contiene niveles, con métricas sin argumentos estabilizadas como propiedades. Y un PositionTracker que consume objetos Fill. Aquí ves cómo los objetos se entrelazan.
+> Construir un libro didáctico que contiene niveles, estabilizar las métricas sin argumentos como propiedades y migrar después a la firma pública de OrderBook sin un cambio silencioso.
 
 ## Contexto teórico
 
@@ -15,15 +15,17 @@ todos los backtests.
 
 ## Qué construyes hoy
 
-**clases OrderBook y PositionTracker (composición)**
+**OrderBookMini + PositionTracker; migración explícita al OrderBook estable de exchange**
 
 `exchange/book.py` (`OrderBook`, `Level`) con bids ordenados desc y asks asc;
 `best_bid/best_ask/spread/mid` son properties e `imbalance(levels)` es método. `exchange/portfolio.py` (`PositionTracker`) con
 `_cash`/`_position` como implementación interna, `apply_fill(fill)` y `equity(mark)`.
 
-Composición explícita: `OrderBook` contiene `Level`; `PositionTracker.apply_fill` consume
-objetos `Fill` de L3. Aquí el alumno *ve* a los objetos hablándose entre sí — el objetivo
-declarado del curso.
+La construcción usa `OrderBookMini(bids, asks)` con tuplas para aislar composición y properties.
+La migración se declara antes de usar el paquete: `OrderBook(symbol, bids: list[Level],
+asks: list[Level])`. Las lecturas `best_bid`, `best_ask`, `spread`, `mid` siguen siendo properties
+e `imbalance(levels)` sigue siendo método. `PositionTracker.apply_fill` consume el `Fill` estable
+introducido en L4.
 
 El deck a medida (Pyodide) trae un inspector del `OrderBook` (métricas como properties) y un widget
 del `PositionTracker` (pulsas fills y ves cash/posición/equity, con slider de mark). El núcleo

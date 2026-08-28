@@ -50,7 +50,7 @@ def main():                                  # ej. 8: construir y leer el libro
     print("spread:", spread(book))
     print("mid:", mid(book))
     print("imbalance:", round(imbalance(book), 4))
-    # Fijate: TODAS estas funciones reciben book. En la clase 3, book sera un objeto.
+    # Fíjate: todas reciben book. L3 lo vuelve módulo; en L5 será un objeto.
 
 
 if __name__ == "__main__":

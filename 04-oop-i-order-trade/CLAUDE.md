@@ -1,6 +1,6 @@
 # Clase 4 — OOP I — Order y Fill (guía de implementación)
 
-Pieza del framework: **clases Order y Fill (exchange/orders.py, trades.py)**.
+Pieza del framework: **OrderMini y FillMini como modelos didácticos; migración explícita a exchange.Order y exchange.Fill**.
 
 ## Teoría que cubre
 
@@ -25,9 +25,13 @@ side/price/size y ves notional y `__repr__`) y un visualizador del **signo del c
 núcleo son 6 ejercicios que culminan en "de la orden al dinero" (Order→Fill→cash_flow); el `.py`
 entregable es `orders_demo.py`.
 
-Continuidad: los atributos son los campos del dict de L1. En el cuaderno se construyen las
-clases *inline* (estilo L1-L2); el paquete `exchange/` las trae ya pulidas como referencia.
-Puente: una orden suelta; ¿quién suma los cash_flows y lleva la cuenta? El PositionTracker (L5).
+Continuidad: los atributos son los campos del dict de L1. Para no fingir que dos firmas distintas
+son la misma API, el cuaderno construye `OrderMini(symbol, side, price, size)` y
+`FillMini(symbol, side, price, size)`. Antes de entrar en `exchange/` se muestra la migración:
+`Order(symbol, side, size, price=...)` añade tipo/id y `Fill(order_id, symbol, side, price, size)`
+añade trazabilidad. Esos nombres y firmas públicas quedan estables desde L4.
+
+Puente: una orden suelta; ¿quién suma los cash flows y lleva la cuenta? `PositionTracker` (L5).
 
 ## Presentación (3 bloques)
 
@@ -38,10 +42,10 @@ Puente: una orden suelta; ¿quién suma los cash_flows y lleva la cuenta? El Pos
 ## Cuaderno de construcción
 
 Patrón por ejercicio: enunciado → starter (`pass`/`None`) → validador (`assert` con mensaje claro, tolerancia `1e-9`) → solución guiada embebida.
-Tiers: **Núcleo** = los primeros (en clase), **Si vamos bien** = el resto, **Auxiliares** = cuaderno `04_auxiliary.ipynb`.
+Clasificación: **LIVE / REQUIRED / OPTIONAL**, decidida en `pedagogy/exercise_routes.yml`. Auxiliares: `04_auxiliary.ipynb`.
 
 El contenido se genera desde `framework/_build/` — para editar esta clase, edita su spec y regenera con `build_course.py`. No edites a mano los notebooks.
 
 ## Continuidad
 
-El paquete `exchange/` llega con lo construido hasta la clase anterior; hoy se añade la pieza nueva, que se convierte en el starter de la siguiente.
+El snapshot de `exchange/` declara exactamente la superficie disponible en L4. La lección construye su pieza sobre esa superficie; el snapshot siguiente conserva el estado acumulado sin presuponer que cada clase añada un módulo nuevo.
