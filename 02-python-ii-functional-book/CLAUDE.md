@@ -16,8 +16,9 @@ de ser un dato pasivo y se convierta en un **objeto con métodos**. Ese es el pu
 
 Funciones puras que construyen y transforman datos: `make_order`, `add_order(book, order)`,
 `cancel_order(book, id)`, `best_bid/best_ask(book)`, `spread/mid(book)`, `imbalance(book)`. Todas
-reciben `book` explícitamente — anticipan exactamente los métodos de `OrderBook` en L4
-(`book.best_bid()`, `book.imbalance()`). Cero clases: el objetivo es *sentir el dolor* del estado
+reciben `book` explícitamente — anticipan la API de `OrderBook` en L5: métricas sin
+argumentos como properties (`book.best_bid`, `book.mid`) y operaciones parametrizadas
+como métodos (`book.imbalance(levels)`). Cero clases: el objetivo es *sentir el dolor* del estado
 compartido.
 
 El deck a medida (Pyodide) trae un **libro vivo** interactivo: añades/cancelas órdenes y ves

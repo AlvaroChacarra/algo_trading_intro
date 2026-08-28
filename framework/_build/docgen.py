@@ -23,6 +23,7 @@ import os
 HERE = os.path.dirname(__file__)
 ASSETS = os.path.join(HERE, "doc_assets")
 DOCS = os.path.join(HERE, "docs")
+PEDAGOGY = os.path.abspath(os.path.join(HERE, "..", "..", "pedagogy", "lessons"))
 
 
 def _doc_data(n: int) -> str:
@@ -37,6 +38,32 @@ def _doc_data(n: int) -> str:
     spec.loader.exec_module(mod)
     payload = json.dumps(mod.build(), separators=(",", ":"))
     return f"<script>const DOC_DATA={payload};</script>\n"
+
+
+def _pedagogy_payload(n: int) -> dict:
+    path = os.path.join(PEDAGOGY, f"{n:02d}.yml")
+    if not os.path.exists(path):
+        return {}
+    with open(path, encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+def _pedagogy_contract(n: int) -> str:
+    """Embed one lesson contract as JSON; aula and estudio share this source."""
+    payload = _pedagogy_payload(n)
+    if not payload.get("scenes"):
+        return ""
+    text = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
+    text = text.replace("</", "<\\/")
+    return f'<script type="application/json" id="pedagogy-contract">{text}</script>\n'
+
+
+def _learning_runtime_js(n: int) -> str:
+    if not _pedagogy_payload(n).get("scenes"):
+        return ""
+    path = os.path.join(ASSETS, "learning_runtime.js")
+    with open(path, encoding="utf-8") as fh:
+        return fh.read()
 
 
 SHARED_JS = r"""
@@ -173,6 +200,7 @@ DOC.save=function(patch){
   const steps=$$('.scrolly .step');
   if(!steps.length)return;
   document.addEventListener('keydown',e=>{
+    if(document.body.classList.contains('mode-aula'))return;
     if(!['ArrowDown','ArrowUp','PageDown','PageUp'].includes(e.key))return;
     if(/INPUT|TEXTAREA|SELECT|BUTTON/.test(document.activeElement.tagName))return;
     const mid=innerHeight/2;
@@ -237,10 +265,13 @@ $$('.scrolly[data-scrolly]').forEach(sc=>{
 """
 
 
-def _css() -> str:
-    return (open(os.path.join(ASSETS, "fonts_embed.css")).read()
-            + open(os.path.join(ASSETS, "shared.css")).read()
-            + open(os.path.join(ASSETS, "extra.css")).read())
+def _css(n: int | None = None) -> str:
+    css = (open(os.path.join(ASSETS, "fonts_embed.css")).read()
+           + open(os.path.join(ASSETS, "shared.css")).read()
+           + open(os.path.join(ASSETS, "extra.css")).read())
+    if n is not None and _pedagogy_payload(n).get("scenes"):
+        css += open(os.path.join(ASSETS, "learning_runtime.css")).read()
+    return css
 
 
 def _guion_embed(n: int) -> str:
@@ -257,12 +288,16 @@ def build_doc(lesson: dict) -> str:
     body = open(os.path.join(DOCS, f"{n:02d}_body.html")).read()
     custom_js_path = os.path.join(DOCS, f"{n:02d}_custom.js")
     custom_js = open(custom_js_path).read() if os.path.exists(custom_js_path) else ""
+    runtime_js = _learning_runtime_js(n)
+    scripts = f"{SHARED_JS}\n{custom_js}" + (f"\n{runtime_js}" if runtime_js else "")
     title = f"L{n} · {lesson['title']} — documento interactivo"
     return (f'<!doctype html>\n<html lang="es">\n<head>\n<meta charset="utf-8">\n'
             f'<meta name="viewport" content="width=device-width, initial-scale=1">\n'
-            f'<title>{title}</title>\n<style>\n{_css()}</style>\n</head>\n'
+            f'<title>{title}</title>\n<style>\n{_css(n)}</style>\n</head>\n'
             f'<body data-lesson="{n:02d}">\n'
-            f'{body}\n{_guion_embed(n)}{_doc_data(n)}<script>\n{SHARED_JS}\n{custom_js}\n</script>\n</body>\n</html>\n')
+            f'{body}\n{_guion_embed(n)}{_doc_data(n)}{_pedagogy_contract(n)}'
+            f'<script>\n{scripts}\n</script>\n'
+            f'</body>\n</html>\n')
 
 
 def build_index(lessons: list[dict], root: str) -> str:

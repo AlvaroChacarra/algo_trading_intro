@@ -375,7 +375,7 @@ LESSONS.append({
          "solution": "inv_low = corre(0.1).max_inventory\ninv_high = corre(1.0).max_inventory"},
 
         {"section": "Para terminar — profundización",
-         "blurb": "El decaimiento temporal completo y TU market maker — la plantilla del examen."},
+         "blurb": "El decaimiento temporal completo y TU market maker — capstone autónomo separado."},
         {"title": "A6. El tiempo apaga el ajuste", "practice": "decaimiento temporal",
          "statement": "El término de inventario se hace 0 al cierre. Guarda `r_start` (t=0) y `r_end` (t=horizon) con inventario 5: r_end debe estar más cerca del mid.",
          "starter": "from exchange.strategies import AvellanedaStoikov\nr_start = None\nr_end = None\n",

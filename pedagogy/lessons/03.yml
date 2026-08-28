@@ -1,0 +1,15 @@
+{
+  "lesson": 3,
+  "status": "legacy-unmigrated",
+  "title": "Python III — Módulos y errores",
+  "delivery": "lesson",
+  "requires": {"concepts": ["python.functions", "functional.order_book"], "apis": ["functional.best_bid", "functional.spread"]},
+  "introduces": {"concepts": [{"id": "python.modules", "importance": "supporting"}, {"id": "python.exceptions", "importance": "major"}], "apis": []},
+  "recalls": [],
+  "api_surface": [],
+  "routes": {"LIVE": [], "REQUIRED": [], "OPTIONAL": []},
+  "objectives": [],
+  "load": {"live_presentation_minutes": 20, "guided_minutes": 20, "required_autonomous_minutes": 35, "optional_minutes": 10, "overflow_policy": "legacy-to-migrate"},
+  "scenes": [],
+  "package_checks": []
+}

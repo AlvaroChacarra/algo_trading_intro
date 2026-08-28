@@ -1,0 +1,46 @@
+{
+  "lesson": 14,
+  "status": "pilot",
+  "title": "Avellaneda-Stoikov — modelo y simulación",
+  "delivery": "lesson",
+  "source_path": "framework/_build/docs/14_body.html",
+  "requires": {"concepts": ["framework.strategy_contract", "inventory.risk", "inventory.skew"], "apis": ["strategy.on_book_update", "strategy.on_fill"]},
+  "introduces": {
+    "concepts": [{"id": "as.reservation_price", "importance": "major"}, {"id": "as.optimal_spread", "importance": "major"}, {"id": "as.parameters", "importance": "major"}, {"id": "simulation.parameter_sweep", "importance": "major"}],
+    "apis": []
+  },
+  "recalls": [
+    {
+      "concept": "framework.strategy_contract",
+      "introduced_in": 10,
+      "mapping": {
+        "before": "on_book_update(book) -> list[Action]",
+        "now": "AvellanedaStoikov computes reservation price and quotes inside the same contract",
+        "conserved": "decision remains separate from execution"
+      }
+    }
+  ],
+  "api_surface": [],
+  "routes": {"LIVE": ["l14-challenge", "l14-formulas", "l14-lab", "l14-recap"], "REQUIRED": ["l14-capstone", "l14-quiz"], "OPTIONAL": []},
+  "objectives": [
+    {"id": "l14-interpret-reservation-price", "route": "LIVE", "concepts": ["as.reservation_price", "as.parameters"]},
+    {"id": "l14-interpret-optimal-spread", "route": "LIVE", "concepts": ["as.optimal_spread", "as.parameters"]},
+    {"id": "l14-run-parameter-lab", "route": "LIVE", "concepts": ["simulation.parameter_sweep"]},
+    {"id": "l14-build-capstone", "route": "REQUIRED", "concepts": ["framework.strategy_contract", "inventory.skew"]}
+  ],
+  "load": {"live_presentation_minutes": 22, "guided_minutes": 20, "required_autonomous_minutes": 90, "optional_minutes": 20, "overflow_policy": "capstone-is-separate-autonomous-work"},
+  "scenes": [
+    {"id": "l14-challenge", "dom_id": "s0", "type": "hero-challenge", "route": "LIVE", "layout": "focus", "concepts": ["inventory.skew"], "duration_minutes": 2, "stages": [{"id": "challenge", "route": "LIVE"}]},
+    {"id": "l14-formulas", "dom_id": "s1", "type": "code-state", "route": "LIVE", "layout": "split-42-58", "concepts": ["as.reservation_price", "as.optimal_spread", "as.parameters"], "duration_minutes": 12, "stages": [
+      {"id": "question", "dom_stage": 0, "route": "LIVE"}, {"id": "reservation", "dom_stage": 1, "route": "LIVE"}, {"id": "spread", "dom_stage": 2, "route": "LIVE"}, {"id": "tau", "dom_stage": 3, "route": "LIVE"}, {"id": "duel", "dom_stage": 4, "route": "LIVE"}
+    ]},
+    {"id": "l14-lab", "dom_id": "s2", "type": "concept-simulator", "route": "LIVE", "layout": "split-45-55", "concepts": ["as.parameters", "simulation.parameter_sweep"], "duration_minutes": 6, "stages": [{"id": "gamma-lab", "route": "LIVE"}]},
+    {"id": "l14-capstone", "dom_id": "s3", "type": "guided-exercise", "route": "REQUIRED", "layout": "focus", "concepts": ["framework.strategy_contract", "inventory.skew"], "duration_minutes": 90, "stages": [{"id": "capstone", "route": "REQUIRED"}]},
+    {"id": "l14-quiz", "dom_id": "s4", "type": "diagnostic-quiz", "route": "REQUIRED", "layout": "focus", "concepts": ["as.reservation_price", "as.optimal_spread", "as.parameters"], "duration_minutes": 8, "stages": [{"id": "quiz", "route": "REQUIRED"}]},
+    {"id": "l14-recap", "dom_id": "s5", "type": "recap", "route": "LIVE", "layout": "focus", "concepts": ["as.reservation_price", "as.optimal_spread"], "duration_minutes": 2, "stages": [{"id": "recap", "route": "LIVE"}]}
+  ],
+  "package_checks": [{"path": "14-avellaneda-stoikov/exercises/exchange/strategy.py", "class": "Strategy", "members": {
+    "on_book_update": {"api": "strategy.on_book_update", "kind": "method", "parameters": [{"name": "book", "kind": "positional_or_keyword", "annotation": "OrderBook"}], "returns": "list[Action]"},
+    "on_fill": {"api": "strategy.on_fill", "kind": "method", "parameters": [{"name": "fill", "kind": "positional_or_keyword", "annotation": "Fill"}], "returns": "None"}
+  }}]
+}

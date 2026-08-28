@@ -24,8 +24,8 @@ A mitad de camino, tras la clase 6, hay un **[checkpoint](06-oop-iii-inheritance
 
 ## Cada clase
 
-1. **Documento interactivo** (`presentation/*-doc.html`) — la teoría como página que se recorre con scroll: scrollytelling, simuladores con datos reales del motor, y un quiz de diagnóstico. Autocontenido y sin internet.
-2. **Construcción** (`exercises/NN_build_exercises.ipynb`) — montas la pieza del día con validadores automáticos. Cada ejercicio marca su nivel: 🟢 núcleo · 🔵 si vamos bien · 🟣 bonus.
+1. **Documento interactivo** (`presentation/*-doc.html`) — una fuente con dos recorridos en las lessons migradas: `?mode=aula` usa escenas y teclado sin scroll del body; `?mode=estudio` conserva la lectura autónoma vertical. En móvil se usa el fallback vertical.
+2. **Construcción** (`exercises/NN_build_exercises.ipynb`) — montas la pieza del día con validadores automáticos. El piloto declara cada ejercicio como 🟢 LIVE, 🔵 REQUIRED o 🟣 OPTIONAL en `pedagogy/exercise_routes.yml`.
 3. **El gimnasio** (`exercises/NN_auxiliary.ipynb`) — drills cortos de primitivas de Python con datos de mercado, un calentamiento que recicla la clase anterior y un ejercicio de transferencia que lleva la idea a otro dominio.
 
 El paquete que vienes construyendo viaja contigo en `exercises/exchange/` (a partir de la clase 4).
@@ -59,6 +59,7 @@ NN-.../                     una carpeta por clase
   presentation/            documento interactivo + guion del profe
   exercises/               notebooks + el paquete exchange/ acumulado
 data/                      dataset de snapshots del libro (ver data/README.md)
+pedagogy/                 grafo, superficies de API, rutas, carga y blueprint
 framework/                 implementación de referencia y generador del curso
 15-final-exam/             examen, checkpoint y banco de preguntas
 annex-bonds-rfq/           material opcional (bonos y RFQ), fuera del arco principal
@@ -66,4 +67,4 @@ annex-bonds-rfq/           material opcional (bonos y RFQ), fuera del arco princ
 
 ## Para el profesor
 
-Todo el material se **genera** desde specs en `framework/_build/` — no se editan los notebooks ni los docs a mano. Ver **[`CLAUDE.md`](CLAUDE.md)** (cómo funciona el generador y cómo tocar el curso) y **[`PLAN_MAESTRO_CURSO_TRADING_2026.md`](PLAN_MAESTRO_CURSO_TRADING_2026.md)** (diseño pedagógico). Añade `?profe=1` a la URL de cualquier documento para abrir el cajón con el guion.
+Todo el material se **genera** desde specs en `framework/_build/` — no se editan los notebooks ni los docs a mano. La gobernanza vive en [`AGENTS.md`](AGENTS.md); el contrato ejecutable, en `pedagogy/`; y la arquitectura del piloto, en [`docs/work1-desktop-pedagogy-pilot.md`](docs/work1-desktop-pedagogy-pilot.md). Añade `?profe=1` a la URL de cualquier documento para abrir el cajón con el guion.

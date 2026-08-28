@@ -1,0 +1,59 @@
+{
+  "lesson": 7,
+  "status": "fixture",
+  "title": "Del snapshot real al OrderBook",
+  "delivery": "lesson",
+  "source_path": "framework/_build/docs/07_body.html",
+  "requires": {"concepts": ["oop.classes", "oop.composition", "exchange.orderbook", "python.modules"], "apis": ["orderbook.best_bid", "orderbook.best_ask", "orderbook.spread", "orderbook.mid", "orderbook.imbalance"]},
+  "introduces": {
+    "concepts": [{"id": "market.level", "importance": "major"}, {"id": "market.book_metrics", "importance": "major"}, {"id": "market.external_boundary", "importance": "major"}],
+    "apis": ["orderbook.from_snapshot", "orderbook.depth", "orderbook.microprice"]
+  },
+  "recalls": [
+    {
+      "concept": "oop.classes",
+      "introduced_in": 4,
+      "mapping": {
+        "before": "a class groups data and behavior",
+        "now": "Level and OrderBook protect market-state invariants"
+      }
+    }
+  ],
+  "api_surface": [
+    {"id": "orderbook.best_bid", "name": "best_bid", "kind": "property", "signature": "best_bid -> float | None", "returns": "float | None", "responsibility": "read the highest bid price"},
+    {"id": "orderbook.best_ask", "name": "best_ask", "kind": "property", "signature": "best_ask -> float | None", "returns": "float | None", "responsibility": "read the lowest ask price"},
+    {"id": "orderbook.spread", "name": "spread", "kind": "property", "signature": "spread -> float | None", "returns": "float | None", "responsibility": "compute best ask minus best bid"},
+    {"id": "orderbook.mid", "name": "mid", "kind": "property", "signature": "mid -> float | None", "returns": "float | None", "responsibility": "compute the midpoint of best bid and best ask"},
+    {"id": "orderbook.imbalance", "name": "imbalance", "kind": "method", "signature": "imbalance(levels: int = 1) -> float | None", "returns": "float | None", "responsibility": "compute depth imbalance for a selected number of levels"},
+    {"id": "orderbook.from_snapshot", "name": "from_snapshot", "kind": "classmethod", "signature": "from_snapshot(symbol: str, row: dict, depth: int = 10) -> OrderBook", "returns": "OrderBook", "responsibility": "translate one external snapshot into the canonical book"},
+    {"id": "orderbook.depth", "name": "depth", "kind": "method", "signature": "depth(side: Side, levels: int = 10) -> float", "returns": "float", "responsibility": "sum visible size by side and depth"},
+    {"id": "orderbook.microprice", "name": "microprice", "kind": "property", "signature": "microprice -> float | None", "returns": "float | None", "responsibility": "compute size-weighted top-of-book price"}
+  ],
+  "routes": {"LIVE": ["l07-challenge", "l07-build", "l07-scrubber", "l07-bridge"], "REQUIRED": ["l07-signal", "l07-quiz"], "OPTIONAL": []},
+  "objectives": [
+    {"id": "l07-build-book", "route": "LIVE", "concepts": ["market.level", "market.external_boundary"]},
+    {"id": "l07-read-metrics", "route": "REQUIRED", "concepts": ["market.book_metrics"]}
+  ],
+  "load": {"live_presentation_minutes": 20, "guided_minutes": 20, "required_autonomous_minutes": 40, "optional_minutes": 10, "overflow_policy": "intentional"},
+  "scenes": [
+    {"id": "l07-challenge", "dom_id": "s0", "type": "hero-challenge", "route": "LIVE", "layout": "focus", "concepts": ["market.external_boundary"], "duration_minutes": 2, "stages": [{"id": "challenge", "route": "LIVE"}]},
+    {"id": "l07-build", "dom_id": "s1", "type": "code-state", "route": "LIVE", "layout": "split-42-58", "concepts": ["market.level", "market.external_boundary"], "duration_minutes": 11, "stages": [
+      {"id": "raw", "dom_stage": 0, "route": "LIVE"}, {"id": "level", "dom_stage": 1, "route": "LIVE"}, {"id": "sides", "dom_stage": 2, "route": "LIVE"}, {"id": "sort", "dom_stage": 3, "route": "LIVE"},
+      {"id": "constructors", "dom_stage": 4, "route": "REQUIRED"}, {"id": "factory", "dom_stage": 5, "route": "REQUIRED"}, {"id": "api", "dom_stage": 6, "route": "REQUIRED"}
+    ]},
+    {"id": "l07-scrubber", "dom_id": "s2", "type": "concept-simulator", "route": "LIVE", "layout": "split-45-55", "concepts": ["market.book_metrics"], "duration_minutes": 5, "stages": [{"id": "scrubber", "route": "LIVE"}]},
+    {"id": "l07-signal", "dom_id": "s3", "type": "guided-exercise", "route": "REQUIRED", "layout": "focus", "concepts": ["market.book_metrics"], "duration_minutes": 10, "stages": [{"id": "signal", "route": "REQUIRED"}]},
+    {"id": "l07-quiz", "dom_id": "s4", "type": "diagnostic-quiz", "route": "REQUIRED", "layout": "focus", "concepts": ["market.level", "market.book_metrics"], "duration_minutes": 8, "stages": [{"id": "quiz", "route": "REQUIRED"}]},
+    {"id": "l07-bridge", "dom_id": "s5", "type": "bridge", "route": "LIVE", "layout": "focus", "concepts": ["market.external_boundary"], "duration_minutes": 2, "stages": [{"id": "bridge", "route": "LIVE"}]}
+  ],
+  "package_checks": [{"path": "07-microstructure-reading-book/exercises/exchange/book.py", "class": "OrderBook", "members": {
+    "best_bid": {"api": "orderbook.best_bid", "kind": "property", "parameters": [], "returns": "float | None"},
+    "best_ask": {"api": "orderbook.best_ask", "kind": "property", "parameters": [], "returns": "float | None"},
+    "spread": {"api": "orderbook.spread", "kind": "property", "parameters": [], "returns": "float | None"},
+    "mid": {"api": "orderbook.mid", "kind": "property", "parameters": [], "returns": "float | None"},
+    "imbalance": {"api": "orderbook.imbalance", "kind": "method", "parameters": [{"name": "levels", "kind": "positional_or_keyword", "annotation": "int", "default": "1"}], "returns": "float | None"},
+    "from_snapshot": {"api": "orderbook.from_snapshot", "kind": "classmethod", "parameters": [{"name": "symbol", "kind": "positional_or_keyword", "annotation": "str"}, {"name": "row", "kind": "positional_or_keyword", "annotation": "dict"}, {"name": "depth", "kind": "positional_or_keyword", "annotation": "int", "default": "10"}], "returns": "OrderBook"},
+    "depth": {"api": "orderbook.depth", "kind": "method", "parameters": [{"name": "side", "kind": "positional_or_keyword", "annotation": "Side"}, {"name": "levels", "kind": "positional_or_keyword", "annotation": "int", "default": "10"}], "returns": "float"},
+    "microprice": {"api": "orderbook.microprice", "kind": "property", "parameters": [], "returns": "float | None"}
+  }}]
+}

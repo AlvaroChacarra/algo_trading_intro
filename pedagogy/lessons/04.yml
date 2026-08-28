@@ -1,0 +1,21 @@
+{
+  "lesson": 4,
+  "status": "legacy-unmigrated",
+  "title": "OOP I — Order y Fill",
+  "delivery": "lesson",
+  "requires": {"concepts": ["python.variables", "python.functions"], "apis": []},
+  "introduces": {
+    "concepts": [{"id": "oop.classes", "importance": "major"}, {"id": "exchange.order", "importance": "major"}, {"id": "exchange.fill", "importance": "major"}],
+    "apis": ["order.notional", "fill.cash_flow"]
+  },
+  "recalls": [],
+  "api_surface": [
+    {"id": "order.notional", "name": "notional", "kind": "method", "signature": "notional() -> float", "returns": "float", "responsibility": "compute order price times size"},
+    {"id": "fill.cash_flow", "name": "cash_flow", "kind": "method", "signature": "cash_flow() -> float", "returns": "float", "responsibility": "compute signed fill cash flow"}
+  ],
+  "routes": {"LIVE": [], "REQUIRED": [], "OPTIONAL": []},
+  "objectives": [],
+  "load": {"live_presentation_minutes": 20, "guided_minutes": 20, "required_autonomous_minutes": 40, "optional_minutes": 10, "overflow_policy": "legacy-to-migrate"},
+  "scenes": [],
+  "package_checks": []
+}

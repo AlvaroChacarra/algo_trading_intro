@@ -61,10 +61,11 @@
       </div></div>
       <div class="step" data-stage="2" data-name="métodos"><div class="step-inner">
         <h3><span class="n">2/5</span>Se deja preguntar</h3>
-        <p>Las funciones de L2 se mudan adentro, como hizo <code>notional()</code> en L4:
-        <code>ob.best_bid()</code>, <code>ob.spread()</code>, <code>ob.mid()</code>.</p>
-        <p>Sin argumentos: el objeto ya tiene sus datos. <strong>Se acabó pasar
-        <code>book</code> a todas partes.</strong></p>
+        <p>Las funciones de L2 se mudan adentro. Las métricas sin argumentos se estabilizan
+        como <strong>propiedades calculadas</strong>: <code>ob.best_bid</code>,
+        <code>ob.spread</code>, <code>ob.mid</code>.</p>
+        <p><code>@property</code> conserva el cálculo de un método, pero se lee como un
+        atributo. El objeto ya tiene sus datos y esta API no cambiará silenciosamente en L7.</p>
       </div></div>
       <div class="step" data-stage="3" data-name="imbalance"><div class="step-inner">
         <h3><span class="n">3/5</span>La señal, ahora de serie</h3>
@@ -116,11 +117,11 @@ o5 = Order('buy',  99960, 0.1)</pre>
       </div>
       <div class="fig-stage" data-stage="2">
         <pre style="font-family:var(--mono);font-size:.78rem;line-height:2;margin:6px 0 0">
-ob.best_bid()   <span class="c"># 99950</span>
-ob.best_ask()   <span class="c"># 100000</span>
-ob.spread()     <span class="c"># 50</span>
-ob.mid()        <span class="c"># 99975.0</span></pre>
-        <div class="result-chip">de best_bid(book) → a ob.best_bid()</div>
+ob.best_bid     <span class="c"># 99950 · property</span>
+ob.best_ask     <span class="c"># 100000 · property</span>
+ob.spread       <span class="c"># 50 · property</span>
+ob.mid          <span class="c"># 99975.0 · property</span></pre>
+        <div class="result-chip">de best_bid(book) → a ob.best_bid</div>
       </div>
       <div class="fig-stage" data-stage="3">
         <div class="statgrid" style="border:none;padding-top:10px">
@@ -163,23 +164,23 @@ tracker.apply_fill(Fill(<span class="s">'sell'</span>, <span class="num">100050<
 
     <div class="code">
       <div class="code-head"><span>book.py — composición en 12 líneas</span><span>python</span></div>
-      <pre><span class="ln"><span class="k">class</span> OrderBook:</span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, bids, asks):</span><span class="ln">        self.bids = bids  <span class="c"># lista de (price, size)</span></span><span class="ln">        self.asks = asks</span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">best_bid</span>(self):</span><span class="ln">        <span class="k">return</span> <span class="fn">max</span>(p <span class="k">for</span> p, s <span class="k">in</span> self.bids)</span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">best_ask</span>(self):</span><span class="ln">        <span class="k">return</span> <span class="fn">min</span>(p <span class="k">for</span> p, s <span class="k">in</span> self.asks)</span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">mid</span>(self):</span><span class="ln">        <span class="k">return</span> (self.best_bid() + self.best_ask()) / <span class="num">2</span></span><span class="ln"></span><span class="ln">ob = OrderBook(bids=[(<span class="num">99950</span>, <span class="num">0.5</span>), (<span class="num">99940</span>, <span class="num">0.2</span>)],</span><span class="ln">               asks=[(<span class="num">100000</span>, <span class="num">0.3</span>), (<span class="num">100010</span>, <span class="num">0.15</span>)])</span><span class="ln"><span class="fn">print</span>(ob.mid())</span></pre>
+      <pre><span class="ln"><span class="k">class</span> OrderBook:</span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, bids, asks):</span><span class="ln">        self.bids = bids  <span class="c"># lista de (price, size)</span></span><span class="ln">        self.asks = asks</span><span class="ln"></span><span class="ln">    <span style="color:var(--warn)">@property</span></span><span class="ln">    <span class="k">def</span> <span class="fn">best_bid</span>(self):</span><span class="ln">        <span class="k">return</span> <span class="fn">max</span>(p <span class="k">for</span> p, s <span class="k">in</span> self.bids)</span><span class="ln"></span><span class="ln">    <span style="color:var(--warn)">@property</span></span><span class="ln">    <span class="k">def</span> <span class="fn">best_ask</span>(self):</span><span class="ln">        <span class="k">return</span> <span class="fn">min</span>(p <span class="k">for</span> p, s <span class="k">in</span> self.asks)</span><span class="ln"></span><span class="ln">    <span style="color:var(--warn)">@property</span></span><span class="ln">    <span class="k">def</span> <span class="fn">mid</span>(self):</span><span class="ln">        <span class="k">return</span> (self.best_bid + self.best_ask) / <span class="num">2</span></span><span class="ln"></span><span class="ln">ob = OrderBook(bids=[(<span class="num">99950</span>, <span class="num">0.5</span>), (<span class="num">99940</span>, <span class="num">0.2</span>)],</span><span class="ln">               asks=[(<span class="num">100000</span>, <span class="num">0.3</span>), (<span class="num">100010</span>, <span class="num">0.15</span>)])</span><span class="ln"><span class="fn">print</span>(ob.mid)</span></pre>
       <div class="predict predictgate" style="margin:0;border-radius:0;border-left:none;border-right:none;border-bottom:none">
         <div class="tag">Predice antes de ejecutar</div>
-        <p style="margin:.2em 0 .8em;font-size:.94rem">Un método llamando a otros dos
-        métodos del mismo objeto. ¿Qué imprime <code>ob.mid()</code>?</p>
+        <p style="margin:.2em 0 .8em;font-size:.94rem">Una propiedad calculada apoyándose
+        en otras dos propiedades del mismo objeto. ¿Qué imprime <code>ob.mid</code>?</p>
         <div class="btnrow" style="margin:0">
           <input type="text" placeholder="mi predicción…" aria-label="Tu predicción">
           <button class="btn runbtn" data-target="out-mid" disabled>▶ Ejecutar</button>
         </div>
       </div>
       <div class="out hidden" id="out-mid"><span class="prompt">&gt;&gt;&gt; </span><span class="val">99975.0</span>
-        <span style="color:var(--faint)">   # mid() usa self.best_bid() y self.best_ask() — los métodos se componen</span></div>
+        <span style="color:var(--faint)">   # mid usa self.best_bid y self.best_ask — las properties se componen</span></div>
     </div>
 
     <div class="note"><span class="tag">Fíjate en la composición doble</span>
-    El objeto contiene <em>datos</em> (bids, asks) y los métodos se contienen <em>entre sí</em>:
-    <code>mid()</code> llama a <code>best_bid()</code>. Cada pieza pequeña y comprobable —
+    El objeto contiene <em>datos</em> (bids, asks) y sus propiedades calculadas se apoyan entre sí:
+    <code>mid</code> lee <code>best_bid</code>. Cada pieza pequeña y comprobable —
     el estilo que mantiene vivo un sistema cuando crece.</div>
   </div>
 </section>
@@ -309,14 +310,14 @@ tracker.apply_fill(Fill(<span class="s">'sell'</span>, <span class="num">100050<
         (_position &lt; 0), el término resta — como debe ser.</div>
       </div>
       <div class="q" data-ok="0">
-        <div class="qt">¿Por qué <code>ob.mid()</code> sin argumentos, si <code>mid(book)</code> los necesitaba?</div>
+        <div class="qt">¿Por qué <code>ob.mid</code> sin argumentos, si <code>mid(book)</code> los necesitaba?</div>
         <div class="opts">
           <button class="opt">A · El objeto ya contiene sus datos: self.bids y self.asks</button>
-          <button class="opt">B · Los métodos no aceptan argumentos en Python</button>
-          <button class="opt">C · mid() usa variables globales</button>
+          <button class="opt">B · Las properties no pueden calcular</button>
+          <button class="opt">C · mid usa variables globales</button>
         </div>
         <div class="why">Era el dolor de L2-L3: pasar <code>book</code> a todas partes. El
-        método lo tiene en casa, vía <code>self</code>.</div>
+        objeto lo tiene en casa, vía <code>self</code>; <code>@property</code> fija la lectura sin paréntesis.</div>
       </div>
       <div class="score"></div>
     </div>

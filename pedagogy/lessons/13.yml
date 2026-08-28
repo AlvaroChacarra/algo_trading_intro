@@ -1,0 +1,15 @@
+{
+  "lesson": 13,
+  "status": "legacy-unmigrated",
+  "title": "Market making — Intro",
+  "delivery": "lesson",
+  "requires": {"concepts": ["framework.strategy_contract", "metrics.slippage"], "apis": ["strategy.on_book_update", "strategy.on_fill"]},
+  "introduces": {"concepts": [{"id": "market_making.quotes", "importance": "major"}, {"id": "inventory.risk", "importance": "major"}, {"id": "inventory.skew", "importance": "major"}], "apis": []},
+  "recalls": [],
+  "api_surface": [],
+  "routes": {"LIVE": [], "REQUIRED": [], "OPTIONAL": []},
+  "objectives": [],
+  "load": {"live_presentation_minutes": 20, "guided_minutes": 20, "required_autonomous_minutes": 45, "optional_minutes": 15, "overflow_policy": "legacy-to-migrate"},
+  "scenes": [],
+  "package_checks": []
+}

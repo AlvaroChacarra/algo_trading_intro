@@ -11,6 +11,7 @@ Uso:  python build_course.py [--check-only]
 from __future__ import annotations
 
 import os
+import json
 import shutil
 import sys
 import tempfile
@@ -39,6 +40,9 @@ DOCS.update(EXTRA_DOCS)  # textos de las clases nuevas (L3 módulos, L6 herencia
 
 LESSONS = L_FOUND + L_ENG + L_STRAT
 EXCHANGE_SRC = os.path.join(FRAMEWORK, "exchange")
+EXERCISE_ROUTES_PATH = os.path.join(ROOT, "pedagogy", "exercise_routes.yml")
+with open(EXERCISE_ROUTES_PATH, encoding="utf-8") as _fh:
+    EXERCISE_ROUTES = json.load(_fh)["lessons"]
 
 
 # ---------------------------------------------------------------------------
@@ -48,6 +52,11 @@ EXCHANGE_SRC = os.path.join(FRAMEWORK, "exchange")
 def self_test() -> list[str]:
     failures = []
     for lesson in LESSONS:
+        for kind in ("build", "aux"):
+            try:
+                assign_tiers(lesson[kind], kind, lesson["n"])
+            except ValueError as exc:
+                failures.append(str(exc))
         # Algunos ejercicios prueban imports y ejecución directa de los archivos
         # auxiliares reales de la lección. Los validamos en un workspace aislado
         # para que el check no dependa de una generación anterior ni ensucie el repo.
@@ -156,7 +165,16 @@ def stage_package(n: int, dest_exercises: str) -> bool:
 # 3) Documentos por lección
 # ---------------------------------------------------------------------------
 
-def tiers_md(kind: str) -> str:
+def tiers_md(kind: str, explicit_routes: bool = False) -> str:
+    if explicit_routes:
+        intro = ("### Cómo funciona este cuaderno\n\n" if kind == "build" else
+                 "### El gimnasio\n\n")
+        return (intro
+                + "Cada ejercicio declara una ruta pedagógica, decidida por contenido y no por posición: "
+                "**🟢 LIVE** (núcleo presencial) · **🔵 REQUIRED** (consolidación autónoma "
+                "requerida y evaluable) · **🟣 OPTIONAL** (profundización no obligatoria y no "
+                "evaluable). Escribe tu respuesta, ejecuta la **✅ comprobación plegada** con "
+                "`Shift+Enter` y usa la pista o solución solo cuando la necesites.")
     if kind == "build":
         return ("### Cómo funciona este cuaderno\n\n"
                 "1. Escribe tu respuesta en la celda de código.\n"
@@ -176,7 +194,7 @@ def tiers_md(kind: str) -> str:
             "primeros drills de cada bloque. Lo **🔵 si vamos bien** y lo **🟣 bonus**, para volver otro día.")
 
 
-def assign_tiers(exercises: list[dict], kind: str) -> None:
+def assign_tiers(exercises: list[dict], kind: str, lesson_n: int | None = None) -> None:
     """Rellena tier/min donde el spec no los fija, siguiendo la política declarada.
 
     build:  los 3 primeros = núcleo, el resto = si vamos bien.
@@ -185,6 +203,29 @@ def assign_tiers(exercises: list[dict], kind: str) -> None:
             y las secciones de profundización/curiosos/transferencia = bonus.
     Un `tier`/`min` explícito en el spec siempre gana.
     """
+    explicit = EXERCISE_ROUTES.get(str(lesson_n), {}).get(kind) if lesson_n else None
+    if explicit is not None:
+        declared = {item["title"]: item for item in explicit}
+        actual = [ex["title"] for ex in exercises if "section" not in ex]
+        if set(actual) != set(declared) or len(actual) != len(declared):
+            missing = sorted(set(actual) - set(declared))
+            stale = sorted(set(declared) - set(actual))
+            raise ValueError(
+                f"L{lesson_n} {kind}: exercise route contract mismatch; "
+                f"missing={missing}, stale={stale}"
+            )
+        for ex in exercises:
+            if "section" in ex:
+                continue
+            decision = declared[ex["title"]]
+            if decision["route"] not in {"LIVE", "REQUIRED", "OPTIONAL"}:
+                raise ValueError(
+                    f"L{lesson_n} {kind}: invalid route {decision['route']} for {ex['title']}"
+                )
+            ex["route"] = decision["route"]
+            ex["min"] = decision["minutes"]
+        return
+
     if kind == "build":
         i = 0
         for ex in exercises:
@@ -220,6 +261,17 @@ def assign_tiers(exercises: list[dict], kind: str) -> None:
 
 
 def time_totals_md(exercises: list[dict]) -> str:
+    if any(ex.get("route") for ex in exercises if "section" not in ex):
+        totals = {"LIVE": 0, "REQUIRED": 0, "OPTIONAL": 0}
+        for ex in exercises:
+            if "section" not in ex:
+                totals[ex["route"]] += ex.get("min", 0)
+        parts = [f"🟢 LIVE ~{totals['LIVE']} min"]
+        if totals["REQUIRED"]:
+            parts.append(f"🔵 REQUIRED +{totals['REQUIRED']} min")
+        if totals["OPTIONAL"]:
+            parts.append(f"🟣 OPTIONAL +{totals['OPTIONAL']} min")
+        return "⏱️ " + " · ".join(parts) + "."
     tot = {"nucleo": 0, "bien": 0, "bonus": 0}
     for ex in exercises:
         if "section" not in ex:
@@ -242,6 +294,8 @@ def readme(lesson: dict, has_pkg: bool) -> str:
     pkg_line = ("- `exercises/exchange/` — el paquete que vienes construyendo (starter de hoy)\n"
                 if has_pkg else "")
     build = "\n".join(f"- **{ex['title']}** — {ex['practice']}" for ex in lesson["build"])
+    route_note = ("rutas LIVE / REQUIRED / OPTIONAL declaradas"
+                  if str(lesson["n"]) in EXERCISE_ROUTES else "núcleo 1-3, luego el resto")
     return (f"# Clase {lesson['n']} — {lesson['title']}\n\n"
             f"> {lesson['objective']}\n\n"
             f"## Contexto teórico\n\n{doc.get('theory', '')}\n\n"
@@ -250,7 +304,7 @@ def readme(lesson: dict, has_pkg: bool) -> str:
             f"## Ejercicios de construcción\n\n{build}\n\n"
             f"## Estructura de la carpeta\n\n"
             f"- `presentation/` — documento interactivo (o deck) + guion del profesor\n"
-            f"- `exercises/{lesson['n']:02d}_build_exercises.ipynb` — construyes la pieza (núcleo 1-3, luego el resto)\n"
+            f"- `exercises/{lesson['n']:02d}_build_exercises.ipynb` — construyes la pieza ({route_note})\n"
             f"- `exercises/{lesson['n']:02d}_auxiliary.ipynb` — el gimnasio: drills + profundización opcional\n"
             f"{pkg_line}\n"
             f"## Idea central\n\n> {_strip_html(lesson['frase'])}\n")
@@ -259,6 +313,14 @@ def readme(lesson: dict, has_pkg: bool) -> str:
 def claude_md(lesson: dict, has_pkg: bool) -> str:
     doc = DOCS.get(lesson["n"], {})
     blocks = "\n".join(f"{i}. **{b[0]}** — {b[1]}" for i, b in enumerate(lesson["concepts"], 1))
+    classification = (
+        "Clasificación: **LIVE / REQUIRED / OPTIONAL**, decidida en "
+        "`pedagogy/exercise_routes.yml`. Auxiliares: "
+        f"`{lesson['n']:02d}_auxiliary.ipynb`."
+        if str(lesson["n"]) in EXERCISE_ROUTES else
+        "Tiers: **Núcleo** = los primeros (en clase), **Si vamos bien** = el resto, "
+        f"**Auxiliares** = cuaderno `{lesson['n']:02d}_auxiliary.ipynb`."
+    )
     return (f"# Clase {lesson['n']} — {lesson['title']} (guía de implementación)\n\n"
             f"Pieza del framework: **{lesson['piece']}**.\n\n"
             f"## Teoría que cubre\n\n{doc.get('theory', '')}\n\n"
@@ -267,8 +329,7 @@ def claude_md(lesson: dict, has_pkg: bool) -> str:
             f"## Cuaderno de construcción\n\n"
             f"Patrón por ejercicio: enunciado → starter (`pass`/`None`) → validador (`assert` con "
             f"mensaje claro, tolerancia `1e-9`) → solución guiada embebida.\n"
-            f"Tiers: **Núcleo** = los primeros (en clase), **Si vamos bien** = el resto, **Auxiliares** = "
-            f"cuaderno `{lesson['n']:02d}_auxiliary.ipynb`.\n\n"
+            f"{classification}\n\n"
             f"El contenido se genera desde `framework/_build/` — para editar esta clase, edita su "
             f"spec y regenera con `build_course.py`. No edites a mano los notebooks.\n\n"
             f"## Continuidad\n\n"
@@ -347,13 +408,14 @@ def emit(lesson: dict) -> None:
             f.write(nbgen.build_html(lesson))
 
     # notebooks
-    assign_tiers(lesson["build"], "build")
-    assign_tiers(lesson["aux"], "aux")
+    explicit_routes = str(lesson["n"]) in EXERCISE_ROUTES
+    assign_tiers(lesson["build"], "build", lesson["n"])
+    assign_tiers(lesson["aux"], "aux", lesson["n"])
     intro = (f"# 🐍 Clase {lesson['n']} · {lesson['title']}\n\n"
              f"> {lesson['objective']}\n\n"
              f"**Hoy construyes:** {lesson['piece']}.\n\n"
              f"{time_totals_md(lesson['build'])}")
-    build_nb = nbgen.build_notebook(intro, tiers_md("build"), lesson["build"],
+    build_nb = nbgen.build_notebook(intro, tiers_md("build", explicit_routes), lesson["build"],
                                     closing_build(lesson))
 
     # archivos extra (p.ej. un módulo que el alumno importa)
@@ -403,7 +465,7 @@ def emit(lesson: dict) -> None:
                  f"{n_aux} ejercicios cortos sobre *{lesson['title']}*: drills para ganar "
                  f"soltura con las primitivas y profundizaciones opcionales.\n\n"
                  f"{time_totals_md(lesson['aux'])}")
-    aux_nb = nbgen.build_notebook(aux_intro, tiers_md("aux"), lesson["aux"],
+    aux_nb = nbgen.build_notebook(aux_intro, tiers_md("aux", explicit_routes), lesson["aux"],
                                   "## Fin de los auxiliares\n\nVuelve al cuaderno principal cuando quieras.")
     nbgen.write_notebook(os.path.join(exer, f"{lesson['n']:02d}_auxiliary.ipynb"), aux_nb)
 

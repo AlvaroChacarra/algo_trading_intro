@@ -1,0 +1,15 @@
+{
+  "lesson": 12,
+  "status": "legacy-unmigrated",
+  "title": "VWAP — Ejecución",
+  "delivery": "lesson",
+  "requires": {"concepts": ["framework.strategy_contract", "metrics.arrival_price", "metrics.slippage"], "apis": ["strategy.on_book_update"]},
+  "introduces": {"concepts": [{"id": "execution.slicing", "importance": "major"}, {"id": "execution.vwap", "importance": "major"}, {"id": "execution.volume_profile", "importance": "major"}], "apis": []},
+  "recalls": [],
+  "api_surface": [],
+  "routes": {"LIVE": [], "REQUIRED": [], "OPTIONAL": []},
+  "objectives": [],
+  "load": {"live_presentation_minutes": 20, "guided_minutes": 20, "required_autonomous_minutes": 50, "optional_minutes": 20, "overflow_policy": "legacy-to-migrate"},
+  "scenes": [],
+  "package_checks": []
+}

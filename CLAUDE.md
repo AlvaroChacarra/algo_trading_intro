@@ -6,6 +6,10 @@ Guía para cualquiera (persona o agente) que edite el curso. La regla de oro:
 > clase, guiones ni el paquete `exchange/` de las lecciones a mano. Edita el
 > spec y regenera.**
 
+Antes de decidir, lee `AGENTS.md`. Para pedagogía manda
+`CONTRATO_PEDAGOGICO_ALGO_TRADING_2026.md`; para infraestructura,
+`ARCHITECTURE.md`. El contrato verificable de continuidad vive en `pedagogy/`.
+
 ## Cómo se genera el curso
 
 El generador vive en `framework/_build/`:
@@ -14,12 +18,15 @@ El generador vive en `framework/_build/`:
 - `lessons_docs.py` / `lessons_scripts.py` — textos teóricos y los `.py` consolidados por clase.
 - `docs/NN_body.html` + `NN_custom.js` + `NN_data.py` — el documento interactivo de cada clase. `NN_data.py::build()` corre el **motor real** en tiempo de compilación y embebe los números, para que los simuladores no mientan.
 - `doc_assets/` — CSS y fuentes embebidas (data-URI) compartidos por todos los docs.
+- `doc_assets/learning_runtime.{css,js}` — interpreta escenas para `?mode=aula` y
+  `?mode=estudio` sin duplicar contenido.
 - `capstone/` — plantilla, corrector y baremo del capstone (se copian a L14).
 - `docgen.py` / `nbgen.py` — ensamblan docs y notebooks desde los specs.
 - `build_course.py` — orquesta todo: autovalida los ~270 ejercicios (ejecuta given+solución+validador), y solo si pasan, emite cada clase (README, CLAUDE, presentación, notebooks, paquete `exchange/` acumulado, `data/`) y el `index.html` raíz.
 
 ```bash
 python framework/_build/build_course.py --check-only   # solo valida los ejercicios
+python pedagogy_check.py                               # PED-CHECK-01..09
 python framework/_build/build_course.py                # valida y regenera todo
 (cd 15-final-exam && python generate_exam.py)          # examen + checkpoint
 ```
@@ -37,6 +44,7 @@ importan de aquí.
 cd framework && python -m pytest tests/ -q        # motor, doc-data, examen, capstone
 cd framework && python smoke_test.py              # end-to-end sobre el CSV real
 node framework/_build/e2e_check.js                # abre los 15 docs + índice sin errores
+node framework/_build/desktop_e2e.js               # viewports, teclado y modos del piloto
 ```
 
 CI (`.github/workflows/course.yml`) corre pytest, el smoke, `--check-only`, los

@@ -41,7 +41,7 @@ Tres escenarios sobre el mismo libro vacío, en orden:
 
 ## §6 · Puente + mapa (2 min)
 - Mapa: L1-L2 ✓, L3 iluminada.
-- **Puente:** "mirad vuestras firmas: `best_bid(book)`, `add_order(book, …)` — el dato por un lado, las funciones por otro, y vosotros de repartidores. ¿Y si el dato supiera operar consigo mismo? `book.best_bid()`. Eso es un objeto. Próxima clase nacen Order y Fill."
+- **Puente:** "mirad vuestras firmas: `best_bid(book)`, `add_order(book, …)` — el dato por un lado, las funciones por otro, y vosotros de repartidores. ¿Y si el dato supiera operar consigo mismo? En L5 la métrica sin argumentos se leerá como property: `book.best_bid`. Próxima clase nacen Order y Fill."
 - Notebook + gimnasio (15 drills: imports, tracebacks de dos saltos, errores diseñados).
 
 ## Checklist

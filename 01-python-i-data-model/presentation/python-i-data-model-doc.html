@@ -594,6 +594,124 @@
   .pkgmap .pk{border-color:#ccc}
   a{color:#0e7490;text-decoration:none}
 }
+/* Desktop scene renderer. Injected only into lessons with declared scenes. */
+.lr-sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;
+  margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;
+  border:0!important}
+#lr-nav{position:fixed;inset:0 auto 0 0;width:var(--lr-nav-w,230px);z-index:52;
+  display:flex;flex-direction:column;background:rgba(9,9,11,.97);border-right:1px solid var(--line);
+  padding:18px 12px 14px;overflow:hidden}
+.lr-brand{display:grid;gap:5px;padding:4px 8px 14px;border-bottom:1px solid var(--line)}
+.lr-brand b{font:600 .78rem var(--mono);color:var(--accent);letter-spacing:.12em}
+.lr-brand span{font-size:.82rem;line-height:1.3;color:var(--muted)}
+.lr-modes{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:12px 6px}
+.lr-modes a{display:flex;justify-content:center;align-items:center;min-height:36px;border:1px solid var(--line);
+  border-radius:8px;text-decoration:none;color:var(--muted);font:600 .68rem var(--mono);text-transform:uppercase}
+.lr-modes a.on{border-color:var(--accent);background:var(--accent-dim);color:var(--accent)}
+.lr-modes a:focus-visible,#lr-nav button:focus-visible,#lr-controls button:focus-visible{
+  outline:2px solid var(--accent);outline-offset:2px}
+.lr-fallback-note{margin:0 8px 10px;color:var(--warn);font-size:.72rem;line-height:1.4}
+.lr-scene-links{display:grid;gap:4px;overflow:auto;padding:2px 4px 18px}
+#lr-teacher-toggle{margin:0 6px 10px;min-height:36px;border:1px solid rgba(34,211,238,.38);
+  border-radius:8px;background:var(--accent-dim);color:var(--accent);font:600 .68rem var(--mono);cursor:pointer}
+#lr-teacher-toggle:focus-visible,.lr-teacher-close:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#lr-teacher-drawer{position:fixed;z-index:90;top:0;right:0;width:min(420px,92vw);height:100vh;
+  display:grid;grid-template-rows:auto minmax(0,1fr);transform:translateX(105%);transition:transform .2s ease;
+  border-left:1px solid var(--line);background:rgba(9,9,11,.98);box-shadow:-18px 0 48px rgba(0,0,0,.38)}
+#lr-teacher-drawer.open{transform:translateX(0)}
+.lr-teacher-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line)}
+.lr-teacher-head b{font:600 .78rem var(--mono);color:var(--accent);text-transform:uppercase;letter-spacing:.08em}
+.lr-teacher-close{width:38px;height:38px;border:1px solid var(--line);border-radius:8px;background:var(--panel);
+  color:var(--text);font-size:1.25rem;cursor:pointer}
+.lr-teacher-body{overflow:auto;padding:18px;color:var(--muted);font-size:.86rem;line-height:1.5}
+.lr-teacher-body h2{margin:.2em 0 .9em;color:var(--text);font:600 1rem var(--mono)}
+.lr-teacher-body h3{margin:1.2em 0 .45em;color:var(--text);font-size:.78rem;text-transform:uppercase;letter-spacing:.06em}
+.lr-teacher-body ul{margin:.4em 0;padding-left:1.2em}.lr-teacher-body code{color:var(--kw)}
+.lr-teacher-kicker{margin:0;color:var(--accent);font:600 .68rem var(--mono);text-transform:uppercase}
+.lr-scene-links button{display:grid;grid-template-columns:56px 1fr;gap:6px;align-items:center;width:100%;
+  min-height:43px;padding:7px 9px;border:1px solid transparent;border-radius:9px;background:transparent;
+  color:var(--muted);text-align:left;cursor:pointer}
+.lr-scene-links button span{font:600 .55rem var(--mono);letter-spacing:.08em}
+.lr-scene-links button b{font:500 .67rem var(--mono);overflow-wrap:anywhere}
+.lr-scene-links button.on{border-color:var(--line);background:var(--panel);color:var(--text)}
+.lr-scene-links button.lr-route-live span{color:var(--accent)}
+.lr-scene-links button.lr-route-required span{color:var(--kw)}
+.lr-scene-links button.lr-route-optional span{color:var(--faint)}
+.lr-scene-badge{display:flex;gap:8px;align-items:center;margin:0 0 12px;font:600 .58rem var(--mono);
+  letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+.lr-scene-badge span{padding:3px 7px;border:1px solid var(--line);border-radius:99px}
+.lr-scene-badge.lr-route-live span:first-child{border-color:rgba(34,211,238,.42);color:var(--accent)}
+.lr-scene-badge.lr-route-required span:first-child{border-color:rgba(192,132,252,.45);color:var(--kw)}
+.lr-scene-badge.lr-route-optional span:first-child{border-color:var(--line);color:var(--faint)}
+#lr-controls{position:fixed;left:var(--lr-nav-w,230px);right:0;bottom:0;height:58px;z-index:55;
+  display:grid;grid-template-columns:minmax(120px,1fr) auto auto minmax(120px,1fr);align-items:center;
+  gap:14px;padding:7px 18px;background:rgba(9,9,11,.96);border-top:1px solid var(--line);
+  backdrop-filter:blur(8px)}
+#lr-controls button{min-height:40px;border:1px solid var(--line);border-radius:9px;background:var(--panel);
+  color:var(--text);font:600 .72rem var(--mono);cursor:pointer}
+#lr-controls button:hover:not(:disabled){border-color:var(--accent)}
+#lr-controls button:disabled{opacity:.3;cursor:default}
+#lr-controls .lr-next{text-align:right;padding-right:14px}
+#lr-controls .lr-prev{text-align:left;padding-left:14px}
+.lr-progress{display:flex;gap:8px;align-items:center;justify-content:center;white-space:nowrap;
+  font:.68rem var(--mono);color:var(--faint)}
+.lr-progress b{color:var(--muted);font-weight:500}
+#lr-controls .lr-route-scope{padding:0 12px;color:var(--accent);border-color:rgba(34,211,238,.38)}
+
+@media(min-width:901px){
+  body.lr-has-contract{--lr-nav-w:clamp(190px,16vw,238px)}
+  body.mode-estudio.lr-has-contract{padding-left:var(--lr-nav-w)}
+  body.mode-estudio.lr-has-contract .wrap{max-width:min(1040px,calc(100vw - var(--lr-nav-w) - 48px))}
+  body.mode-estudio.lr-has-contract .wrap>p{max-width:78ch}
+  body.mode-estudio.lr-has-contract .scrolly{max-width:min(1280px,calc(100vw - var(--lr-nav-w) - 30px))}
+  body.mode-estudio.lr-has-contract #rail{display:none}
+  body.mode-estudio.lr-has-contract #lr-controls{display:none}
+
+  html:has(body.mode-aula){overflow:hidden}
+  body.mode-aula{height:100vh;overflow:hidden;padding-left:var(--lr-nav-w);padding-bottom:58px}
+  body.mode-aula #rail,body.mode-aula>footer{display:none}
+  body.mode-aula>#gd-toggle{bottom:72px}
+  body.mode-aula>.lr-scene{display:none!important}
+  body.mode-aula>.lr-scene.lr-scene-active{display:grid!important;width:auto;max-width:none;height:calc(100vh - 58px);
+    margin:0;padding:clamp(14px,2.1vh,26px) clamp(18px,2.4vw,42px);border:0;overflow:hidden;
+    align-content:stretch;background:var(--bg)}
+  body.mode-aula>header.lr-scene-active{align-content:center}
+  body.mode-aula>.lr-scene-active>.wrap,body.mode-aula>header.lr-scene-active.wrap{
+    width:100%;max-width:1900px;min-height:0;max-height:100%;overflow:auto;padding:0 8px;margin:auto}
+  body.mode-aula>.lr-scene-active:has(.scrolly){grid-template-rows:auto minmax(0,1fr);gap:10px}
+  body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child{overflow:visible;max-width:1900px;margin:0 auto}
+  body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child h2{font-size:clamp(1.2rem,2.2vh,1.8rem);margin:.1em 0 .25em}
+  body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child .lede{font-size:clamp(.78rem,1.45vh,.98rem);margin:.3em 0}
+  body.mode-aula>.lr-scene-active>.scrolly{width:100%;max-width:1900px;height:100%;min-height:0;margin:0 auto;
+    padding:0;grid-template-columns:minmax(300px,42%) minmax(0,58%);gap:clamp(16px,2vw,34px)}
+  body.mode-aula>.lr-scene-active>.scrolly~.wrap{display:none}
+  body.mode-aula .steps{min-height:0;height:100%}
+  body.mode-aula .steps .step{display:none;min-height:0;height:100%;align-items:center}
+  body.mode-aula .steps .step.lr-stage-active{display:flex}
+  body.mode-aula .steps .step-inner{width:100%;padding:clamp(16px,2vh,24px);opacity:1;border-color:#3a3a44}
+  body.mode-aula .steps .step-inner p{font-size:clamp(.78rem,1.45vh,.96rem)}
+  body.mode-aula .figwrap{position:relative;height:100%;min-height:0;top:auto;order:initial}
+  body.mode-aula .fig{position:relative;top:0;height:100%;min-height:0;box-shadow:none}
+  body.mode-aula .fig-stage{overflow:auto}
+  body.mode-aula .full-code{display:none!important}
+  body.mode-aula .hero{padding:0}
+  body.mode-aula .hero h1{font-size:clamp(2.3rem,5.4vw,5.1rem)}
+  body.mode-aula .hero .lede{font-size:clamp(1rem,1.6vw,1.35rem);max-width:72ch}
+  body.mode-aula .lr-scene-badge{margin-bottom:8px}
+}
+
+@media(max-width:900px){
+  #lr-nav,#lr-controls,.lr-scene-badge,#lr-teacher-drawer{display:none!important}
+  body.lr-has-contract{padding-left:0}
+}
+
+@media(max-width:1180px) and (min-width:901px){
+  #lr-controls{grid-template-columns:110px 1fr auto 110px;gap:8px;padding-inline:10px}
+  #lr-controls button span{display:none}
+}
+
+@media(prefers-reduced-motion:reduce){#lr-teacher-drawer{transition:none}}
+@media print{#lr-nav,#lr-controls,.lr-scene-badge,#lr-teacher-drawer{display:none!important}body.lr-has-contract{padding:0!important}}
 </style>
 </head>
 <body data-lesson="01">
@@ -1286,6 +1404,7 @@ El simulador «tu propia línea» queda para exploración autónoma; no consumir
 - [ ] Order book y `mid = (bid + ask) / 2` siguen siendo el hilo héroe.
 - [ ] Se ejecuta el algoritmo y se conserva el puente a funciones en L2.
 </script>
+<script type="application/json" id="pedagogy-contract">{"lesson":1,"status":"pilot","title":"Python I — El modelo de datos","delivery":"lesson","source_path":"framework/_build/docs/01_body.html","requires":{"concepts":[],"apis":[]},"introduces":{"concepts":[{"id":"python.execution_model","importance":"major"},{"id":"python.variables","importance":"major"},{"id":"python.collections","importance":"major"},{"id":"python.control_flow","importance":"major"}],"apis":[]},"recalls":[],"api_surface":[],"routes":{"LIVE":["l01-challenge","l01-execution","l01-variables","l01-loops","l01-order-data","l01-decision"],"REQUIRED":["l01-errors","l01-recap"],"OPTIONAL":[]},"objectives":[{"id":"l01-explain-execution","route":"LIVE","concepts":["python.execution_model"]},{"id":"l01-model-market-data","route":"LIVE","concepts":["python.variables","python.collections"]},{"id":"l01-turn-data-into-decision","route":"LIVE","concepts":["python.control_flow"]},{"id":"l01-read-basic-errors","route":"REQUIRED","concepts":["python.execution_model"]}],"load":{"live_presentation_minutes":20,"guided_minutes":20,"required_autonomous_minutes":35,"optional_minutes":5,"overflow_policy":"intentional"},"scenes":[{"id":"l01-challenge","dom_id":"s0","type":"hero-challenge","route":"LIVE","layout":"focus","concepts":["python.execution_model"],"duration_minutes":2,"stages":[{"id":"challenge","route":"LIVE"}]},{"id":"l01-execution","dom_id":"s1","type":"concept-simulator","route":"LIVE","layout":"split-42-58","concepts":["python.execution_model"],"duration_minutes":5,"stages":[{"id":"source","dom_stage":0,"route":"LIVE"},{"id":"tokens","dom_stage":1,"route":"LIVE"},{"id":"ast","dom_stage":2,"route":"LIVE"},{"id":"bytecode","dom_stage":3,"route":"LIVE"},{"id":"vm","dom_stage":4,"route":"LIVE"},{"id":"machine-code","dom_stage":5,"route":"OPTIONAL"}]},{"id":"l01-variables","dom_id":"s2","type":"code-state","route":"LIVE","layout":"split-50-50","concepts":["python.variables"],"duration_minutes":3,"stages":[{"id":"variables","route":"LIVE"}]},{"id":"l01-loops","dom_id":"s3","type":"code-state","route":"LIVE","layout":"split-50-50","concepts":["python.collections","python.control_flow"],"duration_minutes":3,"stages":[{"id":"loop","route":"LIVE"}]},{"id":"l01-order-data","dom_id":"s4","type":"code-state","route":"LIVE","layout":"split-50-50","concepts":["python.collections"],"duration_minutes":3,"stages":[{"id":"dict","route":"LIVE"}]},{"id":"l01-decision","dom_id":"s5","type":"guided-exercise","route":"LIVE","layout":"split-50-50","concepts":["python.control_flow"],"duration_minutes":3,"stages":[{"id":"decision","route":"LIVE"}]},{"id":"l01-errors","dom_id":"s6","type":"guided-exercise","route":"REQUIRED","layout":"focus","concepts":["python.execution_model"],"duration_minutes":10,"stages":[{"id":"errors","route":"REQUIRED"}]},{"id":"l01-recap","dom_id":"s7","type":"recap","route":"REQUIRED","layout":"focus","concepts":["python.variables","python.collections","python.control_flow"],"duration_minutes":10,"stages":[{"id":"recap","route":"REQUIRED"}]}],"package_checks":[]}</script>
 <script>
 
 (function(){
@@ -1421,6 +1540,7 @@ DOC.save=function(patch){
   const steps=$$('.scrolly .step');
   if(!steps.length)return;
   document.addEventListener('keydown',e=>{
+    if(document.body.classList.contains('mode-aula'))return;
     if(!['ArrowDown','ArrowUp','PageDown','PageUp'].includes(e.key))return;
     if(/INPUT|TEXTAREA|SELECT|BUTTON/.test(document.activeElement.tagName))return;
     const mid=innerHeight/2;
@@ -1821,6 +1941,298 @@ function treeLines(node){
 })();
 
 /* §7: finalRun y quiz usan los motores genéricos (runbtn + data-quiz) */
+})();
+
+(function(){
+'use strict';
+
+const contractNode=document.getElementById('pedagogy-contract');
+if(!contractNode)return;
+
+let contract;
+try{contract=JSON.parse(contractNode.textContent);}catch(error){
+  console.error('Invalid pedagogy contract',error);return;
+}
+if(!contract.scenes||!contract.scenes.length)return;
+
+const body=document.body;
+const params=new URLSearchParams(location.search);
+const mobileQuery=matchMedia('(max-width: 900px)');
+const requestedMode=params.get('mode')==='aula'?'aula':'estudio';
+const mode=requestedMode==='aula'&&!mobileQuery.matches?'aula':'estudio';
+const isProfessor=params.has('profe');
+const routeScopes=isProfessor?['LIVE','LIVE+REQUIRED','ALL']:['LIVE','LIVE+REQUIRED'];
+let routeScope='LIVE';
+let currentScene=0,currentStage=0,lastInput='pointer';
+
+const esc=value=>String(value).replace(/[&<>"']/g,ch=>({
+  '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+})[ch]);
+const routeClass=route=>`lr-route-${route.toLowerCase()}`;
+const scopeRoutes=()=>routeScope==='ALL'?['LIVE','REQUIRED','OPTIONAL']:
+  routeScope==='LIVE+REQUIRED'?['LIVE','REQUIRED']:['LIVE'];
+const modeUrl=next=>{
+  const q=new URLSearchParams(location.search);q.set('mode',next);
+  return `${location.pathname}?${q.toString()}${location.hash}`;
+};
+
+const models=contract.scenes.map(scene=>{
+  const element=document.getElementById(scene.dom_id);
+  if(!element)return null;
+  element.classList.add('lr-scene',routeClass(scene.route));
+  element.dataset.sceneId=scene.id;
+  element.dataset.sceneType=scene.type;
+  element.dataset.sceneLayout=scene.layout;
+  element.dataset.route=scene.route;
+  const stages=(scene.stages||[{id:'stage',route:scene.route}]).map(stage=>({
+    ...stage,
+    route:stage.route||scene.route,
+    step:stage.dom_stage===undefined?null:
+      element.querySelector(`.step[data-stage="${stage.dom_stage}"]`),
+    figure:stage.dom_stage===undefined?null:
+      element.querySelector(`.fig-stage[data-stage="${stage.dom_stage}"]`),
+  }));
+  stages.forEach(stage=>{
+    if(stage.step){stage.step.dataset.route=stage.route;stage.step.classList.add(routeClass(stage.route));}
+    if(stage.figure){stage.figure.dataset.route=stage.route;stage.figure.classList.add(routeClass(stage.route));}
+  });
+  const firstWrap=element.matches('.wrap')?element:element.querySelector(':scope > .wrap');
+  if(firstWrap){
+    const badge=document.createElement('div');
+    badge.className=`lr-scene-badge ${routeClass(scene.route)}`;
+    badge.innerHTML=`<span>${esc(scene.route)}</span><span>${esc(scene.type)}</span><span>${scene.duration_minutes} min</span>`;
+    firstWrap.insertBefore(badge,firstWrap.firstChild);
+  }
+  return {...scene,element,stages};
+}).filter(Boolean);
+
+if(!models.length)return;
+body.classList.add('lr-has-contract',`mode-${mode}`);
+body.dataset.learningMode=mode;
+body.dataset.requestedMode=requestedMode;
+if(requestedMode!==mode)body.classList.add('lr-mobile-fallback');
+
+const nav=document.createElement('aside');
+nav.id='lr-nav';
+nav.setAttribute('aria-label','Navegación de la lesson');
+nav.innerHTML=`
+  <div class="lr-brand"><b>L${Number(contract.lesson)}</b><span>${esc(contract.title)}</span></div>
+  <div class="lr-modes" aria-label="Modo de lectura">
+    <a href="${modeUrl('aula')}" class="${mode==='aula'?'on':''}">Aula</a>
+    <a href="${modeUrl('estudio')}" class="${mode==='estudio'?'on':''}">Estudio</a>
+  </div>
+  ${requestedMode!==mode?'<p class="lr-fallback-note">Aula usa el fallback vertical en esta pantalla.</p>':''}
+  <div class="lr-scene-links"></div>`;
+body.appendChild(nav);
+
+const navLinks=nav.querySelector('.lr-scene-links');
+models.forEach((scene,index)=>{
+  const button=document.createElement('button');
+  button.type='button';button.dataset.sceneIndex=String(index);
+  button.className=routeClass(scene.route);
+  button.innerHTML=`<span>${esc(scene.route)}</span><b>${esc(scene.id.replace(/^l\d+-/,''))}</b>`;
+  button.addEventListener('click',()=>{
+    lastInput='pointer';
+    if(mode==='aula')goTo(index,0,false);
+    else scene.element.scrollIntoView({behavior:reducedMotion()?'auto':'smooth',block:'start'});
+  });
+  navLinks.appendChild(button);
+});
+
+const controls=document.createElement('div');
+controls.id='lr-controls';
+controls.innerHTML=`
+  <button type="button" class="lr-prev" aria-label="Etapa anterior">← <span>Anterior</span></button>
+  <div class="lr-progress" aria-live="polite">
+    <b class="lr-scene-progress">Escena</b><span>·</span><b class="lr-stage-progress">Etapa</b>
+  </div>
+  <button type="button" class="lr-route-scope" aria-label="Cambiar ruta">LIVE</button>
+  <button type="button" class="lr-next" aria-label="Etapa siguiente"><span>Siguiente</span> →</button>`;
+body.appendChild(controls);
+
+const liveRegion=document.createElement('div');
+liveRegion.className='lr-sr-only';liveRegion.setAttribute('aria-live','polite');
+body.appendChild(liveRegion);
+
+let teacherToggle=null,teacherDrawer=null,teacherBody=null;
+if(isProfessor){
+  teacherToggle=document.createElement('button');
+  teacherToggle.id='lr-teacher-toggle';teacherToggle.type='button';
+  teacherToggle.textContent='Guía docente';teacherToggle.setAttribute('aria-expanded','false');
+  teacherToggle.setAttribute('aria-controls','lr-teacher-drawer');
+  nav.insertBefore(teacherToggle,navLinks);
+  teacherDrawer=document.createElement('aside');
+  teacherDrawer.id='lr-teacher-drawer';teacherDrawer.dataset.overlay='teacher';
+  teacherDrawer.setAttribute('aria-label','Guía docente de la escena');
+  teacherDrawer.innerHTML='<div class="lr-teacher-head"><b>Guía docente</b>'
+    +'<button type="button" class="lr-teacher-close" aria-label="Cerrar guía docente">×</button></div>'
+    +'<div class="lr-teacher-body"></div>';
+  body.appendChild(teacherDrawer);teacherBody=teacherDrawer.querySelector('.lr-teacher-body');
+  const toggleTeacher=force=>{
+    const open=force===undefined?!teacherDrawer.classList.contains('open'):force;
+    teacherDrawer.classList.toggle('open',open);teacherToggle.setAttribute('aria-expanded',String(open));
+    if(open)teacherDrawer.querySelector('.lr-teacher-close').focus();
+  };
+  teacherToggle.addEventListener('click',()=>toggleTeacher());
+  teacherDrawer.querySelector('.lr-teacher-close').addEventListener('click',()=>toggleTeacher(false));
+}
+
+function reducedMotion(){return matchMedia('(prefers-reduced-motion: reduce)').matches;}
+function allowed(scene){return scopeRoutes().includes(scene.route);}
+function allowedStages(scene){
+  const allowedRoutes=scopeRoutes();
+  const stages=scene.stages.filter(stage=>allowedRoutes.includes(stage.route));
+  return stages.length?stages:scene.stages.slice(0,1);
+}
+function availableModels(){return models.filter(allowed);}
+function persist(scene,stage){
+  if(!window.DOC||!DOC.save)return;
+  DOC.save({runtime:{mode,routeScope,scene:scene.id,stage:stage.id,ts:Date.now()}});
+}
+function restore(){
+  try{
+    const state=JSON.parse(localStorage.getItem(DOC.key())||'{}').runtime;
+    if(!state)return;
+    if(routeScopes.includes(state.routeScope))routeScope=state.routeScope;
+    const sceneIndex=models.findIndex(scene=>scene.id===state.scene&&allowed(scene));
+    if(sceneIndex<0)return;
+    const stages=allowedStages(models[sceneIndex]);
+    const stageIndex=stages.findIndex(stage=>stage.id===state.stage);
+    currentScene=sceneIndex;currentStage=Math.max(stageIndex,0);
+  }catch(_error){}
+}
+function activateStage(scene,stage){
+  const allSteps=[...scene.element.querySelectorAll('.scrolly .step')];
+  const allFigures=[...scene.element.querySelectorAll('.fig-stage')];
+  allSteps.forEach(step=>{
+    const active=stage.step===step;
+    step.classList.toggle('lr-stage-active',active);
+    step.classList.toggle('on',active);
+    step.setAttribute('aria-hidden',String(!active));
+  });
+  allFigures.forEach(figure=>{
+    const active=stage.figure===figure;
+    figure.classList.toggle('on',active);
+    figure.setAttribute('aria-hidden',String(!active));
+  });
+  const name=scene.element.querySelector('.stage-name');
+  if(name){
+    const source=stage.step&&stage.step.dataset.name;
+    name.textContent=source||stage.id;
+  }
+  const fig=scene.element.querySelector('.fig');
+  if(fig&&stage.dom_stage!==undefined){
+    fig.dispatchEvent(new CustomEvent('stagechange',{detail:{stage:stage.dom_stage}}));
+  }
+}
+function syncNav(scene){
+  [...navLinks.querySelectorAll('button')].forEach(button=>{
+    const index=Number(button.dataset.sceneIndex);
+    button.hidden=mode==='aula'&&!allowed(models[index]);
+    button.classList.toggle('on',models[index]===scene);
+    button.setAttribute('aria-current',models[index]===scene?'step':'false');
+  });
+}
+function syncTeacher(scene){
+  if(!teacherBody)return;
+  const concepts=scene.concepts||[];
+  const objectives=(contract.objectives||[]).filter(objective=>
+    (objective.concepts||[]).some(concept=>concepts.includes(concept)));
+  teacherBody.innerHTML=`<p class="lr-teacher-kicker">${esc(scene.route)} · ${esc(scene.type)} · ${scene.duration_minutes} min</p>`
+    +`<h2>${esc(scene.id)}</h2>`
+    +`<h3>Conceptos</h3><ul>${concepts.map(concept=>`<li><code>${esc(concept)}</code></li>`).join('')}</ul>`
+    +`<h3>Objetivos relacionados</h3><ul>${objectives.length?objectives.map(objective=>
+      `<li><code>${esc(objective.id)}</code> · ${esc(objective.route)}</li>`).join(''):'<li>Ninguno declarado para esta escena.</li>'}</ul>`;
+}
+function goTo(sceneIndex,stageIndex,focusHeading){
+  let scene=models[sceneIndex];
+  if(!scene||!allowed(scene)){
+    scene=availableModels()[0];sceneIndex=models.indexOf(scene);stageIndex=0;
+  }
+  const stages=allowedStages(scene);
+  stageIndex=Math.max(0,Math.min(stageIndex,stages.length-1));
+  const stage=stages[stageIndex];
+  currentScene=sceneIndex;currentStage=stageIndex;
+  body.dataset.currentSceneId=scene.id;
+  body.dataset.currentStageId=stage.id;
+  body.dataset.routeScope=routeScope;
+  scene.element.dataset.currentStageId=stage.id;
+  models.forEach(model=>{
+    const active=model===scene;
+    model.element.classList.toggle('lr-scene-active',active);
+    model.element.setAttribute('aria-hidden',String(!active));
+  });
+  activateStage(scene,stage);
+  const available=availableModels();
+  const scenePosition=available.indexOf(scene)+1;
+  controls.querySelector('.lr-scene-progress').textContent=`Escena ${scenePosition}/${available.length}`;
+  controls.querySelector('.lr-stage-progress').textContent=`Etapa ${stageIndex+1}/${stages.length}`;
+  controls.querySelector('.lr-route-scope').textContent=routeScope;
+  controls.querySelector('.lr-prev').disabled=scenePosition===1&&stageIndex===0;
+  controls.querySelector('.lr-next').disabled=scenePosition===available.length&&stageIndex===stages.length-1;
+  syncNav(scene);syncTeacher(scene);persist(scene,stage);
+  liveRegion.textContent=`${scene.id}, etapa ${stageIndex+1} de ${stages.length}`;
+  if(focusHeading){
+    const heading=scene.element.querySelector('h1,h2,h3');
+    if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}
+  }
+}
+function move(delta,focusHeading=true){
+  const scene=models[currentScene],stages=allowedStages(scene);
+  if(delta>0&&currentStage<stages.length-1)return goTo(currentScene,currentStage+1,focusHeading);
+  if(delta<0&&currentStage>0)return goTo(currentScene,currentStage-1,focusHeading);
+  const available=availableModels(),position=available.indexOf(scene);
+  const next=available[position+delta];
+  if(!next)return;
+  const nextIndex=models.indexOf(next),nextStages=allowedStages(next);
+  goTo(nextIndex,delta>0?0:nextStages.length-1,focusHeading);
+}
+function closeOverlays(){
+  document.getElementById('guion-drawer')?.classList.remove('open');
+  teacherDrawer?.classList.remove('open');
+  teacherToggle?.setAttribute('aria-expanded','false');
+  document.querySelectorAll('dialog[open]').forEach(dialog=>dialog.close());
+  document.querySelectorAll('[data-overlay].open').forEach(node=>node.classList.remove('open'));
+}
+function cycleScope(){
+  const index=routeScopes.indexOf(routeScope);
+  routeScope=routeScopes[(index+1)%routeScopes.length];
+  goTo(currentScene,currentStage,false);
+}
+
+controls.querySelector('.lr-prev').addEventListener('click',()=>move(-1,false));
+controls.querySelector('.lr-next').addEventListener('click',()=>move(1,false));
+controls.querySelector('.lr-route-scope').addEventListener('click',cycleScope);
+
+document.addEventListener('keydown',event=>{
+  lastInput='keyboard';
+  if(event.key==='Escape'){closeOverlays();return;}
+  if(mode!=='aula')return;
+  const active=document.activeElement;
+  if(active&&(/INPUT|TEXTAREA|SELECT/.test(active.tagName)||active.isContentEditable))return;
+  if(active&&active.tagName==='BUTTON'&&(event.key===' '||event.key==='Enter'))return;
+  if(['ArrowRight','PageDown',' '].includes(event.key)){
+    event.preventDefault();move(1,true);
+  }else if(['ArrowLeft','PageUp'].includes(event.key)){
+    event.preventDefault();move(-1,true);
+  }
+});
+
+if(mode==='aula'){
+  restore();goTo(currentScene,currentStage,false);
+}else{
+  controls.hidden=true;
+  models.forEach(scene=>scene.element.setAttribute('aria-hidden','false'));
+  const observer=new IntersectionObserver(entries=>{
+    const visible=entries.filter(entry=>entry.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
+    if(!visible)return;
+    const scene=models.find(item=>item.element===visible.target);
+    if(scene)syncNav(scene);
+  },{rootMargin:'-25% 0px -60% 0px',threshold:[0,.2,.5]});
+  models.forEach(scene=>observer.observe(scene.element));
+}
+
+mobileQuery.addEventListener?.('change',()=>location.reload());
 })();
 
 </script>

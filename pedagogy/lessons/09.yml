@@ -1,0 +1,19 @@
+{
+  "lesson": 9,
+  "status": "legacy-unmigrated",
+  "title": "Construir Market y su API",
+  "delivery": "lesson",
+  "requires": {"concepts": ["matching.plan_validate_commit", "exchange.orderbook"], "apis": ["matching.process"]},
+  "introduces": {"concepts": [{"id": "engine.market", "importance": "major"}, {"id": "engine.time_loop", "importance": "major"}, {"id": "engine.delegation", "importance": "major"}], "apis": ["market.step", "market.submit", "market.reset"]},
+  "recalls": [],
+  "api_surface": [
+    {"id": "market.step", "name": "step", "kind": "method", "signature": "step() -> OrderBook | None", "returns": "OrderBook | None", "responsibility": "advance replay time and replace the active book"},
+    {"id": "market.submit", "name": "submit", "kind": "method", "signature": "submit(order: Order) -> list[Fill]", "returns": "list[Fill]", "responsibility": "delegate matching against the active book"},
+    {"id": "market.reset", "name": "reset", "kind": "method", "signature": "reset() -> None", "returns": "None", "responsibility": "restore replay state"}
+  ],
+  "routes": {"LIVE": [], "REQUIRED": [], "OPTIONAL": []},
+  "objectives": [],
+  "load": {"live_presentation_minutes": 20, "guided_minutes": 20, "required_autonomous_minutes": 40, "optional_minutes": 10, "overflow_policy": "legacy-to-migrate"},
+  "scenes": [],
+  "package_checks": []
+}

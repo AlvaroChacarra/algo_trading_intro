@@ -1,0 +1,31 @@
+{
+  "lesson": 15,
+  "status": "contract-strict",
+  "title": "Examen final",
+  "delivery": "assessment-linear",
+  "requires": {
+    "concepts": ["python.control_flow", "oop.polymorphism", "matching.atomicity", "framework.strategy_contract", "metrics.slippage", "execution.vwap", "inventory.skew", "as.reservation_price", "as.optimal_spread"],
+    "apis": ["matching.process", "strategy.on_book_update", "backtest.run"]
+  },
+  "introduces": {"concepts": [], "apis": []},
+  "recalls": [],
+  "api_surface": [],
+  "routes": {"LIVE": [], "REQUIRED": ["l15-official-assessment"], "OPTIONAL": []},
+  "objectives": [
+    {"id": "l15-integrate-course", "route": "REQUIRED", "concepts": ["python.control_flow", "oop.polymorphism", "matching.atomicity", "framework.strategy_contract", "metrics.slippage", "execution.vwap", "inventory.skew", "as.reservation_price", "as.optimal_spread"]}
+  ],
+  "load": {"assessment_minutes": 40, "live_presentation_minutes": 0, "guided_minutes": 0, "required_autonomous_minutes": 0, "optional_minutes": 0, "overflow_policy": "official-assessment-is-not-a-scene-deck"},
+  "scenes": [],
+  "assessment_artifact": "15-final-exam/examen.html",
+  "package_checks": [
+    {"path": "14-avellaneda-stoikov/exercises/exchange/matching.py", "class": "MatchingEngine", "members": {
+      "process": {"api": "matching.process", "kind": "method", "parameters": [{"name": "order", "kind": "positional_or_keyword", "annotation": "Order"}, {"name": "book", "kind": "positional_or_keyword", "annotation": "OrderBook"}, {"name": "timestamp", "kind": "positional_or_keyword", "annotation": "int | None", "default": "None"}], "returns": "list[Fill]"}
+    }},
+    {"path": "14-avellaneda-stoikov/exercises/exchange/strategy.py", "class": "Strategy", "members": {
+      "on_book_update": {"api": "strategy.on_book_update", "kind": "method", "parameters": [{"name": "book", "kind": "positional_or_keyword", "annotation": "OrderBook"}], "returns": "list[Action]"}
+    }},
+    {"path": "14-avellaneda-stoikov/exercises/exchange/backtest.py", "class": "Backtest", "members": {
+      "run": {"api": "backtest.run", "kind": "method", "parameters": [], "returns": "BacktestResult"}
+    }}
+  ]
+}

@@ -15,6 +15,9 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Validar el contrato pedagógico PED-CHECK-01..09
+        run: python pedagogy_check.py
+
       - name: Tests del motor
         run: pip install pytest && cd framework && python -m pytest tests/ -q
 
@@ -54,7 +57,6 @@ jobs:
 
   # ── Job e2e: los 15 HTML abren sin errores (solo PRs) ────────────────────
   e2e:
-    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -62,6 +64,15 @@ jobs:
         with:
           node-version: "20"
       - name: Instalar Playwright + Chromium
-        run: npm i playwright && npx playwright install --with-deps chromium
+        run: npm i playwright@1.62.1 && npx playwright install --with-deps chromium
       - name: Abrir los 15 documentos y fallar ante cualquier error de página
         run: node framework/_build/e2e_check.js
+      - name: Validar aula/estudio, teclado y geometría desktop
+        run: node framework/_build/desktop_e2e.js --audit-dir artifacts/work1-desktop-pedagogy-pilot
+      - name: Conservar screenshots y matriz de auditoría
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: work1-desktop-pedagogy-pilot
+          path: artifacts/work1-desktop-pedagogy-pilot
+          if-no-files-found: warn

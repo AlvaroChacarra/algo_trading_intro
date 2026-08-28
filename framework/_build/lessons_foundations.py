@@ -644,7 +644,7 @@ LESSONS.append({
          "validator": "try:\n    make_order('X','byu',1,1)\n    raise SystemExit('deberia haber fallado')\nexcept ValueError:\n    pass\nassert make_order('X','buy',1,1)['side'] == 'buy'\nprint('ok')",
          "solution": "def make_order(symbol, side, price, size):\n    if side not in ('buy','sell'):\n        raise ValueError('side debe ser buy o sell')\n    return {'symbol': symbol, 'side': side, 'price': price, 'size': size}"},
         {"title": "A24. Cuenta el problema", "practice": "reflexión → POO",
-         "statement": "¿Cuántas de tus funciones reciben `book` como primer argumento (add, cancel, best_bid, best_ask, imbalance, spread, mid)? Guárdalo en `funcs_con_book`. En la clase 4 nacen los objetos, y en la 5 todas estas funciones se vuelven **métodos** de un `OrderBook`.",
+         "statement": "¿Cuántas de tus funciones reciben `book` como primer argumento (add, cancel, best_bid, best_ask, imbalance, spread, mid)? Guárdalo en `funcs_con_book`. En L4 nacen los objetos y en L5 estas funciones pasan a la API de `OrderBook`: métricas sin argumentos como properties; operaciones parametrizadas como métodos.",
          "starter": "funcs_con_book = None\n",
          "validator": "assert funcs_con_book == 7\nprint('ok -> un dato + las funciones que lo manosean = un OBJETO (clases 4-5)')",
          "solution": "funcs_con_book = 7"},
@@ -1179,11 +1179,11 @@ LESSONS.append({
     "n": 5, "slug": "05-oop-ii-book-portfolio",
     "title": "OOP II — OrderBook y PositionTracker",
     "piece": "clases OrderBook y PositionTracker (composición)",
-    "objective": "Construir el libro como objeto que contiene niveles, con métricas como métodos. Y un PositionTracker que consume objetos Fill. Aquí ves cómo los objetos se entrelazan.",
+    "objective": "Construir el libro como objeto que contiene niveles, con métricas sin argumentos estabilizadas como propiedades. Y un PositionTracker que consume objetos Fill. Aquí ves cómo los objetos se entrelazan.",
     "frase": "Composición: un OrderBook contiene niveles; un PositionTracker consume Fills. Los objetos se hablan entre sí.",
     "concepts": [
         ("Un objeto que contiene objetos",
-         "El OrderBook guarda dos listas (bids y asks). Esas cinco funciones de la clase 2 que recibían book ahora son métodos: book.spread(), book.mid().",
+         "El OrderBook guarda dos listas (bids y asks). Las funciones de L2 se mudan al objeto: las métricas sin argumentos son propiedades (`book.spread`, `book.mid`); `imbalance(levels)` sigue siendo método porque recibe una decisión de profundidad.",
          "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = bids   # [(price, size), ...]\n        self.asks = asks"),
         ("Estado interno y encapsulación",
          "El PositionTracker guarda _cash y _position con guión bajo: 'no me toques desde fuera, usa mis métodos'. apply_fill recibe un objeto Fill y actualiza el estado.",
@@ -1198,12 +1198,12 @@ LESSONS.append({
          "starter": "class OrderBook:\n    def __init__(self, bids, asks):\n        pass\n",
          "validator": "b = OrderBook([(100,1)], [(101,2)])\nassert b.bids == [(100,1)] and b.asks == [(101,2)]\nprint('ok')",
          "solution": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = bids\n        self.asks = asks"},
-        {"title": "2. best_bid / best_ask / spread / mid", "practice": "métodos sobre el estado",
-         "statement": "Reescribe `OrderBook` con métodos `best_bid()`, `best_ask()`, `spread()` y `mid()`. (Ordena bids desc y asks asc en `__init__`; el mejor es el primero.) Las funciones de la clase 2 ahora son **métodos**.",
+        {"title": "2. best_bid / best_ask / spread / mid", "practice": "@property sobre el estado",
+         "statement": "Reescribe `OrderBook` con propiedades `best_bid`, `best_ask`, `spread` y `mid`. (Ordena bids desc y asks asc en `__init__`; el mejor es el primero.) Son métricas calculadas sin argumentos: se leen como atributos y no cambian de forma más adelante.",
          "hint": "`self.bids = sorted(bids, key=lambda x: -x[0])`.",
-         "starter": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = sorted(bids, key=lambda x: -x[0])\n        self.asks = sorted(asks, key=lambda x: x[0])\n    def best_bid(self):\n        pass\n    def best_ask(self):\n        pass\n    def spread(self):\n        pass\n    def mid(self):\n        pass\n",
-         "validator": "b = OrderBook([(100,1),(99,1)], [(101,1),(102,1)])\nassert b.best_bid()==100 and b.best_ask()==101\nassert b.spread()==1 and b.mid()==100.5\nprint('ok')",
-         "solution": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = sorted(bids, key=lambda x: -x[0])\n        self.asks = sorted(asks, key=lambda x: x[0])\n    def best_bid(self):\n        return self.bids[0][0]\n    def best_ask(self):\n        return self.asks[0][0]\n    def spread(self):\n        return self.best_ask() - self.best_bid()\n    def mid(self):\n        return (self.best_bid() + self.best_ask()) / 2"},
+         "starter": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = sorted(bids, key=lambda x: -x[0])\n        self.asks = sorted(asks, key=lambda x: x[0])\n    @property\n    def best_bid(self):\n        pass\n    @property\n    def best_ask(self):\n        pass\n    @property\n    def spread(self):\n        pass\n    @property\n    def mid(self):\n        pass\n",
+         "validator": "b = OrderBook([(100,1),(99,1)], [(101,1),(102,1)])\nassert b.best_bid==100 and b.best_ask==101\nassert b.spread==1 and b.mid==100.5\nprint('ok')",
+         "solution": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = sorted(bids, key=lambda x: -x[0])\n        self.asks = sorted(asks, key=lambda x: x[0])\n    @property\n    def best_bid(self):\n        return self.bids[0][0]\n    @property\n    def best_ask(self):\n        return self.asks[0][0]\n    @property\n    def spread(self):\n        return self.best_ask - self.best_bid\n    @property\n    def mid(self):\n        return (self.best_bid + self.best_ask) / 2"},
         {"title": "3. imbalance() del nivel 1", "practice": "otro método",
          "statement": "Añade a `OrderBook` el método `imbalance()` = (bid_size − ask_size)/(bid_size + ask_size) en el mejor nivel.",
          "starter": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = sorted(bids, key=lambda x: -x[0])\n        self.asks = sorted(asks, key=lambda x: x[0])\n    def imbalance(self):\n        pass\n",
@@ -1227,12 +1227,12 @@ LESSONS.append({
          "solution": "class PositionTracker:\n    def __init__(self):\n        self._cash = 0.0\n        self._position = 0.0\n    def apply_fill(self, fill):\n        self._cash += fill.cash_flow()\n        self._position += fill.size if fill.side=='buy' else -fill.size\n    def equity(self, mark_price):\n        return self._cash + self._position * mark_price"},
         {"title": "6. Los dos objetos, juntos", "practice": "composición end-to-end",
          "statement": "Junta las piezas: monta un `OrderBook`, lee su `mid`; crea un `PositionTracker`, aplícale una compra (0.5 @ 100000) y una venta (0.2 @ 100050), y guarda `eq = equity` marcado al `mid` del libro.",
-         "hint": "El equity se marca al `book.mid()`.",
-         "given": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = sorted(bids, key=lambda x: -x[0]); self.asks = sorted(asks, key=lambda x: x[0])\n    def best_bid(self): return self.bids[0][0]\n    def best_ask(self): return self.asks[0][0]\n    def mid(self): return (self.best_bid()+self.best_ask())/2\nclass Fill:\n    def __init__(self, side, price, size):\n        self.side=side; self.price=price; self.size=size\n    def cash_flow(self):\n        return (-1 if self.side=='buy' else 1)*self.price*self.size\nclass PositionTracker:\n    def __init__(self):\n        self._cash=0.0; self._position=0.0\n    def apply_fill(self, fill):\n        self._cash += fill.cash_flow(); self._position += fill.size if fill.side=='buy' else -fill.size\n    def equity(self, mark):\n        return self._cash + self._position*mark\n",
+         "hint": "El equity se marca al `book.mid` (propiedad, sin paréntesis).",
+         "given": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = sorted(bids, key=lambda x: -x[0]); self.asks = sorted(asks, key=lambda x: x[0])\n    @property\n    def best_bid(self): return self.bids[0][0]\n    @property\n    def best_ask(self): return self.asks[0][0]\n    @property\n    def mid(self): return (self.best_bid+self.best_ask)/2\nclass Fill:\n    def __init__(self, side, price, size):\n        self.side=side; self.price=price; self.size=size\n    def cash_flow(self):\n        return (-1 if self.side=='buy' else 1)*self.price*self.size\nclass PositionTracker:\n    def __init__(self):\n        self._cash=0.0; self._position=0.0\n    def apply_fill(self, fill):\n        self._cash += fill.cash_flow(); self._position += fill.size if fill.side=='buy' else -fill.size\n    def equity(self, mark):\n        return self._cash + self._position*mark\n",
          "starter": "book = OrderBook([(99990,2.0),(99980,1.0)], [(100010,1.5)])\ntracker = PositionTracker()\n# aplica los dos fills y guarda eq = equity al mid del libro\neq = None\n",
-         "validator": "assert abs(book.mid() - 100000) < 1e-9\nassert abs(eq - 10.0) < 1e-9, 'equity al mid debe ser 10'\nprint('ok  eq=%.1f' % eq)",
-         "pista": "Tres pasos: `tracker.apply_fill(Fill('buy', 100000, 0.5))`, lo mismo con la venta, y `eq = tracker.equity(book.mid())`. Fíjate en la firma de `Fill` que te da el given.",
-         "solution": "book = OrderBook([(99990,2.0),(99980,1.0)], [(100010,1.5)])\ntracker = PositionTracker()\ntracker.apply_fill(Fill('buy', 100000, 0.5))\ntracker.apply_fill(Fill('sell', 100050, 0.2))\neq = tracker.equity(book.mid())"},
+         "validator": "assert abs(book.mid - 100000) < 1e-9\nassert abs(eq - 10.0) < 1e-9, 'equity al mid debe ser 10'\nprint('ok  eq=%.1f' % eq)",
+         "pista": "Tres pasos: `tracker.apply_fill(Fill('buy', 100000, 0.5))`, lo mismo con la venta, y `eq = tracker.equity(book.mid)`. Fíjate en la firma de `Fill` que te da el given.",
+         "solution": "book = OrderBook([(99990,2.0),(99980,1.0)], [(100010,1.5)])\ntracker = PositionTracker()\ntracker.apply_fill(Fill('buy', 100000, 0.5))\ntracker.apply_fill(Fill('sell', 100050, 0.2))\neq = tracker.equity(book.mid)"},
     ],
     "aux": [
         {"section": "Gimnasio · Calentamiento — repaso exprés de L4",
@@ -1261,16 +1261,16 @@ LESSONS.append({
          "starter": "class Blotter:\n    pass\n",
          "validator": "b = Blotter()\nb.add('f1'); b.add('f2')\nassert b.count() == 2\nprint('ok')",
          "solution": "class Blotter:\n    def __init__(self):\n        self.fills = []\n    def add(self, fill):\n        self.fills.append(fill)\n    def count(self):\n        return len(self.fills)"},
-        {"title": "A2. best_bid y best_ask como métodos", "practice": "métodos sobre el estado",
-         "statement": "Escribe `OrderBook` (bids y asks: listas de tuplas `(price, size)`) con `best_bid()` y `best_ask()`.",
+        {"title": "A2. best_bid y best_ask como properties", "practice": "@property sobre el estado",
+         "statement": "Escribe `OrderBook` (bids y asks: listas de tuplas `(price, size)`) con las propiedades `best_bid` y `best_ask`.",
          "starter": "class OrderBook:\n    pass\n",
-         "validator": "ob = OrderBook([(99950, 0.5), (99940, 0.2)], [(100000, 0.3), (100010, 0.1)])\nassert ob.best_bid() == 99950 and ob.best_ask() == 100000\nprint('ok')",
-         "solution": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = bids\n        self.asks = asks\n    def best_bid(self):\n        return max(p for p, s in self.bids)\n    def best_ask(self):\n        return min(p for p, s in self.asks)"},
-        {"title": "A3. Métodos que se componen", "practice": "spread() y mid()",
-         "statement": "Añade `spread()` y `mid()` que se apoyen en `best_bid()` / `best_ask()` (no repitas los max/min).",
-         "starter": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = bids; self.asks = asks\n    def best_bid(self):\n        return max(p for p, s in self.bids)\n    def best_ask(self):\n        return min(p for p, s in self.asks)\n    def spread(self):\n        pass\n    def mid(self):\n        pass\n\nob = OrderBook([(99950, 0.5)], [(100000, 0.3)])\n",
-         "validator": "assert ob.spread() == 50\nassert ob.mid() == 99975.0\nprint('ok')",
-         "solution": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = bids; self.asks = asks\n    def best_bid(self):\n        return max(p for p, s in self.bids)\n    def best_ask(self):\n        return min(p for p, s in self.asks)\n    def spread(self):\n        return self.best_ask() - self.best_bid()\n    def mid(self):\n        return (self.best_bid() + self.best_ask()) / 2\n\nob = OrderBook([(99950, 0.5)], [(100000, 0.3)])"},
+         "validator": "ob = OrderBook([(99950, 0.5), (99940, 0.2)], [(100000, 0.3), (100010, 0.1)])\nassert ob.best_bid == 99950 and ob.best_ask == 100000\nprint('ok')",
+         "solution": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = bids\n        self.asks = asks\n    @property\n    def best_bid(self):\n        return max(p for p, s in self.bids)\n    @property\n    def best_ask(self):\n        return min(p for p, s in self.asks)"},
+        {"title": "A3. Properties que se componen", "practice": "spread y mid",
+         "statement": "Añade las propiedades `spread` y `mid` apoyándote en `best_bid` / `best_ask` (no repitas los max/min).",
+         "starter": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = bids; self.asks = asks\n    @property\n    def best_bid(self):\n        return max(p for p, s in self.bids)\n    @property\n    def best_ask(self):\n        return min(p for p, s in self.asks)\n    @property\n    def spread(self):\n        pass\n    @property\n    def mid(self):\n        pass\n\nob = OrderBook([(99950, 0.5)], [(100000, 0.3)])\n",
+         "validator": "assert ob.spread == 50\nassert ob.mid == 99975.0\nprint('ok')",
+         "solution": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = bids; self.asks = asks\n    @property\n    def best_bid(self):\n        return max(p for p, s in self.bids)\n    @property\n    def best_ask(self):\n        return min(p for p, s in self.asks)\n    @property\n    def spread(self):\n        return self.best_ask - self.best_bid\n    @property\n    def mid(self):\n        return (self.best_bid + self.best_ask) / 2\n\nob = OrderBook([(99950, 0.5)], [(100000, 0.3)])"},
         {"title": "A4. El nivel más gordo", "practice": "recorrer el estado propio",
          "statement": "Añade `biggest_bid()`: el **precio** del bid con más tamaño (recorre `self.bids` con un for).",
          "given": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = bids; self.asks = asks\n",
@@ -1304,11 +1304,11 @@ LESSONS.append({
          "validator": "assert abs(p.notional - 49975.0) < 1e-9, 'sin parentesis: property'\nprint('ok')",
          "solution": "class Position:\n    def __init__(self, qty, price):\n        self.qty = qty\n        self.price = price\n    @property\n    def notional(self):\n        return self.qty * self.price\n\np = Position(0.5, 99950)"},
         {"title": "A9. El gran reto: libro + contable", "practice": "los dos objetos juntos",
-         "statement": "Compra 0.5 al `best_ask()` del libro (vía `apply_fill`) y guarda `eq = t.equity(ob.mid())`. ¿Por qué sale negativo? Acabas de pagar el medio spread.",
-         "given": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = bids; self.asks = asks\n    def best_bid(self):\n        return max(p for p, s in self.bids)\n    def best_ask(self):\n        return min(p for p, s in self.asks)\n    def mid(self):\n        return (self.best_bid() + self.best_ask()) / 2\n\nclass TrackerMini:\n    def __init__(self):\n        self._cash = 0.0; self._position = 0.0\n    def apply_fill(self, side, price, size):\n        if side == 'buy':\n            self._cash -= price * size; self._position += size\n        else:\n            self._cash += price * size; self._position -= size\n    def equity(self, mark):\n        return self._cash + self._position * mark\n\nob = OrderBook([(99950, 0.5)], [(100000, 0.3)])\nt = TrackerMini()\n",
+         "statement": "Compra 0.5 al `best_ask` del libro (vía `apply_fill`) y guarda `eq = t.equity(ob.mid)`. ¿Por qué sale negativo? Acabas de pagar el medio spread.",
+         "given": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = bids; self.asks = asks\n    @property\n    def best_bid(self):\n        return max(p for p, s in self.bids)\n    @property\n    def best_ask(self):\n        return min(p for p, s in self.asks)\n    @property\n    def mid(self):\n        return (self.best_bid + self.best_ask) / 2\n\nclass TrackerMini:\n    def __init__(self):\n        self._cash = 0.0; self._position = 0.0\n    def apply_fill(self, side, price, size):\n        if side == 'buy':\n            self._cash -= price * size; self._position += size\n        else:\n            self._cash += price * size; self._position -= size\n    def equity(self, mark):\n        return self._cash + self._position * mark\n\nob = OrderBook([(99950, 0.5)], [(100000, 0.3)])\nt = TrackerMini()\n",
          "starter": "# compra 0.5 al best_ask y calcula eq\neq = None\n",
          "validator": "assert abs(eq - (-12.5)) < 1e-9, 'pagaste el ask y te valoran al mid: medio spread x 0.5'\nprint('ok ->', eq)",
-         "solution": "t.apply_fill('buy', ob.best_ask(), 0.5)\neq = t.equity(ob.mid())"},
+         "solution": "t.apply_fill('buy', ob.best_ask, 0.5)\neq = t.equity(ob.mid)"},
 
         {"section": "Para terminar — profundización y el paquete real",
          "blurb": "Profundidad, @property sobre el libro y los objetos pulidos de exchange/."},
@@ -1338,14 +1338,17 @@ class OrderBook:
         self.bids = sorted(bids, key=lambda x: -x[0])
         self.asks = sorted(asks, key=lambda x: x[0])
 
+    @property
     def best_bid(self):                              # ej. 2
         return self.bids[0][0]
 
+    @property
     def best_ask(self):
         return self.asks[0][0]
 
+    @property
     def mid(self):
-        return (self.best_bid() + self.best_ask()) / 2
+        return (self.best_bid + self.best_ask) / 2
 
 
 class Fill:
@@ -1371,13 +1374,13 @@ class PositionTracker:
 
 def main():                                          # ej. 6: los dos juntos
     book = OrderBook([(99990, 2.0), (99980, 1.0)], [(100010, 1.5)])
-    print("mid:", book.mid())
+    print("mid:", book.mid)
 
     tracker = PositionTracker()
     tracker.apply_fill(Fill("buy", 100000, 0.5))
     tracker.apply_fill(Fill("sell", 100050, 0.2))
     print("cash:", round(tracker._cash, 2), "| position:", tracker._position)
-    print("equity @ mid:", round(tracker.equity(book.mid()), 2))
+    print("equity @ mid:", round(tracker.equity(book.mid), 2))
     # OrderBook contiene; PositionTracker lleva la cuenta: los dos objetos del motor.
 
 
@@ -1468,11 +1471,11 @@ LESSONS.append({
          "starter": "class Wallet:\n    pass\n",
          "validator": "w = Wallet()\nw.deposit(75)\nassert w.balance() == 75\nprint('ok')",
          "solution": "class Wallet:\n    def __init__(self):\n        self._cash = 0\n    def deposit(self, x):\n        self._cash += x\n    def balance(self):\n        return self._cash"},
-        {"title": "C2. mid() exprés", "practice": "repaso: métodos compuestos",
-         "statement": "Completa `mid()` apoyándote en los otros dos métodos.",
-         "starter": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = bids; self.asks = asks\n    def best_bid(self):\n        return max(p for p, s in self.bids)\n    def best_ask(self):\n        return min(p for p, s in self.asks)\n    def mid(self):\n        pass\n\nob = OrderBook([(99950, 0.5)], [(100000, 0.3)])\n",
-         "validator": "assert ob.mid() == 99975.0\nprint('ok')",
-         "solution": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = bids; self.asks = asks\n    def best_bid(self):\n        return max(p for p, s in self.bids)\n    def best_ask(self):\n        return min(p for p, s in self.asks)\n    def mid(self):\n        return (self.best_bid() + self.best_ask()) / 2\n\nob = OrderBook([(99950, 0.5)], [(100000, 0.3)])"},
+        {"title": "C2. mid exprés", "practice": "repaso: properties compuestas",
+         "statement": "Completa la propiedad `mid` apoyándote en las otras dos propiedades.",
+         "starter": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = bids; self.asks = asks\n    @property\n    def best_bid(self):\n        return max(p for p, s in self.bids)\n    @property\n    def best_ask(self):\n        return min(p for p, s in self.asks)\n    @property\n    def mid(self):\n        pass\n\nob = OrderBook([(99950, 0.5)], [(100000, 0.3)])\n",
+         "validator": "assert ob.mid == 99975.0\nprint('ok')",
+         "solution": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = bids; self.asks = asks\n    @property\n    def best_bid(self):\n        return max(p for p, s in self.bids)\n    @property\n    def best_ask(self):\n        return min(p for p, s in self.asks)\n    @property\n    def mid(self):\n        return (self.best_bid + self.best_ask) / 2\n\nob = OrderBook([(99950, 0.5)], [(100000, 0.3)])"},
         {"title": "C3. equity exprés", "practice": "repaso: la fórmula",
          "statement": "Con `cash = -49975.0` y `position = 0.5`, calcula `eq` al mark 100000.",
          "given": "cash = -49975.0\nposition = 0.5\nmark = 100000\n",
@@ -1591,17 +1594,17 @@ from abc import ABC, abstractmethod
 
 class Strategy(ABC):
     @abstractmethod
-    def decide(self, imbalance):
+    def decide(self, imbalance: float) -> str:
         ...
 
 
 class Momentum(Strategy):          # sigue al mercado
-    def decide(self, imbalance):
+    def decide(self, imbalance: float) -> str:
         return "buy" if imbalance > 0 else "sell"
 
 
 class Contrarian(Strategy):        # apuesta contra el mercado
-    def decide(self, imbalance):
+    def decide(self, imbalance: float) -> str:
         return "sell" if imbalance > 0 else "buy"
 
 

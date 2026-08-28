@@ -1,0 +1,91 @@
+{
+  "version": 1,
+  "course": "Introducción al Algorithmic Trading con Python — ICAI 2026",
+  "format": "JSON-compatible YAML; parsed with the Python standard library",
+  "lesson_order": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+  "lesson_files": [
+    "lessons/01.yml",
+    "lessons/02.yml",
+    "lessons/03.yml",
+    "lessons/04.yml",
+    "lessons/05.yml",
+    "lessons/06.yml",
+    "lessons/07.yml",
+    "lessons/08.yml",
+    "lessons/09.yml",
+    "lessons/10.yml",
+    "lessons/11.yml",
+    "lessons/12.yml",
+    "lessons/13.yml",
+    "lessons/14.yml",
+    "lessons/15.yml"
+  ],
+  "coverage": {
+    "mode": "pilot",
+    "runtime_lessons": [1, 7, 8, 10, 14],
+    "explicit_exercise_route_lessons": [1, 5, 7, 8, 10, 14],
+    "contract_strict_lessons": [1, 5, 7, 8, 10, 14, 15],
+    "legacy_unmigrated_lessons": [2, 3, 4, 6, 9, 11, 12, 13]
+  },
+  "routes": ["LIVE", "REQUIRED", "OPTIONAL"],
+  "scene_types": [
+    "hero-challenge",
+    "recall",
+    "concept-simulator",
+    "code-state",
+    "architecture-map",
+    "guided-exercise",
+    "recap",
+    "bridge",
+    "diagnostic-quiz"
+  ],
+  "recall_policy": {
+    "gap_lessons": 3,
+    "importance": "major",
+    "assessment_delivery_exempt": true
+  },
+  "load_policy": {
+    "live_presentation_minutes": {
+      "minimum": 18,
+      "target": 20,
+      "maximum": 22
+    },
+    "guided_practice_minutes": {
+      "minimum": 18,
+      "target": 20,
+      "maximum": 22,
+      "allowed_delta_from_declared": 2
+    }
+  },
+  "text_audit": {
+    "strict_paths": [
+      "framework/_build/docs/01_body.html",
+      "framework/_build/docs/03_body.html",
+      "framework/_build/docs/05_body.html",
+      "framework/_build/docs/07_body.html",
+      "framework/_build/docs/08_body.html",
+      "framework/_build/docs/10_body.html",
+      "framework/_build/docs/11_body.html",
+      "framework/_build/docs/12_body.html",
+      "framework/_build/docs/14_body.html",
+      "framework/_build/lessons_engine.py",
+      "framework/_build/lessons_docs.py",
+      "framework/_build/custom/01_guion.md",
+      "framework/_build/custom/03_guion.md",
+      "framework/_build/custom/05_guion.md",
+      "framework/_build/custom/07_guion.md",
+      "framework/_build/custom/08_guion.md"
+    ],
+    "forbidden_phrases": [
+      "pregunta abierta del examen final",
+      "plantilla del examen final",
+      "si vamos bien",
+      "# L8 — Strategy + Backtest",
+      "# L9 — Primera estrategia + métricas",
+      "framework de L8",
+      "la cura empieza mañana",
+      "mañana te cambias de bando",
+      "book.best_bid()"
+    ]
+  }
+}
