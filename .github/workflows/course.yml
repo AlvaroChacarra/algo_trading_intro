@@ -15,8 +15,11 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Validar el contrato pedagógico PED-CHECK-01..09
+      - name: Validar el contrato pedagógico del curso completo
         run: python pedagogy_check.py
+
+      - name: Verificar informes de continuidad generados
+        run: python framework/_build/pedagogy_reports.py --check
 
       - name: Tests del motor
         run: pip install pytest && cd framework && python -m pytest tests/ -q
@@ -30,13 +33,13 @@ jobs:
       - name: Los .py consolidados corren
         run: |
           set -e
-          for d in 0*/exercises 1*/exercises; do
-            for s in "$d"/*.py; do
-              case "$(basename "$s")" in
-                exchange|order_book.py|main.py) ;; # módulos, no scripts de demo
-              esac
-            done
-          done
+          (cd 01-python-i-data-model/exercises && python trading_snapshot.py > /dev/null)
+          (cd 02-python-ii-functional-book/exercises && python order_book.py > /dev/null)
+          (cd 03-python-iii-modules/exercises && python main.py > /dev/null)
+          (cd 03-python-iii-modules/exercises && python demo_guarded.py > /dev/null)
+          (cd 04-oop-i-order-trade/exercises && python orders_demo.py > /dev/null)
+          (cd 05-oop-ii-book-portfolio/exercises && python book_demo.py > /dev/null)
+          (cd 06-oop-iii-inheritance/exercises && python strategies_toy.py > /dev/null)
           (cd 07-microstructure-reading-book/exercises && python read_book.py > /dev/null)
           (cd 08-order-types-matching/exercises && python matching_demo.py > /dev/null)
           (cd 09-market-simulation-loop/exercises && python run_day.py > /dev/null)
@@ -55,7 +58,7 @@ jobs:
             echo '::error::El material generado no coincide con los specs. ¿Editaste un notebook/doc a mano? Edita el spec y regenera.';
             exit 1; }
 
-  # ── Job e2e: los 15 HTML abren sin errores (solo PRs) ────────────────────
+  # ── Job e2e: runtime completo, geometría y documentos ───────────────────
   e2e:
     runs-on: ubuntu-latest
     steps:
@@ -67,12 +70,12 @@ jobs:
         run: npm i playwright@1.62.1 && npx playwright install --with-deps chromium
       - name: Abrir los 15 documentos y fallar ante cualquier error de página
         run: node framework/_build/e2e_check.js
-      - name: Validar aula/estudio, teclado y geometría desktop
-        run: node framework/_build/desktop_e2e.js --audit-dir artifacts/work1-desktop-pedagogy-pilot
+      - name: Validar aula/estudio, teclado y geometría en L1-L14
+        run: node framework/_build/desktop_e2e.js --audit-dir artifacts/work2-full-course-scaleout
       - name: Conservar screenshots y matriz de auditoría
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: work1-desktop-pedagogy-pilot
-          path: artifacts/work1-desktop-pedagogy-pilot
+          name: work2-full-course-scaleout
+          path: artifacts/work2-full-course-scaleout
           if-no-files-found: warn

@@ -10,7 +10,7 @@ function decide(strat, imb){
 }
 function paint(id, d){
   const el=$(id);
-  el.textContent=`decide(book) → '${d}'`;
+  el.textContent=`decide(imbalance) → '${d}'`;
   el.className='dec '+d;
 }
 function update(){
@@ -18,7 +18,7 @@ function update(){
   $('#pf-imbv').textContent=(imb>0?'+':'')+imb.toFixed(2);
   const ds=['base','momentum','contraria'].map(s=>decide(s,imb));
   paint('#pf-d0',ds[0]);paint('#pf-d1',ds[1]);paint('#pf-d2',ds[2]);
-  $('#pf-log').textContent=`» for s in familia: s.decide(book)   # imbalance=${imb.toFixed(2)} → ${ds.join(' · ')}`;
+  $('#pf-log').textContent=`» for s in familia: s.decide(imbalance)   # ${imb.toFixed(2)} → ${ds.join(' · ')}`;
 }
 $('#pf-imb').addEventListener('input',update);
 update();
@@ -54,15 +54,15 @@ update();
 (function(){
   const modes={
     'abc-default':{
-      code:"class Strategy:\n    def decide(self, book):\n        return 'hold'\n\nclass Incompleta(Strategy):\n    pass",
+      code:"class Strategy:\n    def decide(self, imbalance):\n        return 'hold'\n\nclass Incompleta(Strategy):\n    pass",
       trace:[['Incompleta()','ok'],['decide() → "hold"','ok']],
       log:'objeto creado ✓ · hereda comportamiento por defecto'},
     'abc-abstract':{
-      code:"class Strategy(ABC):\n    @abstractmethod\n    def decide(self, book):\n        ...\n\nclass Incompleta(Strategy):\n    pass",
+      code:"class Strategy(ABC):\n    @abstractmethod\n    def decide(self, imbalance):\n        ...\n\nclass Incompleta(Strategy):\n    pass",
       trace:[['Incompleta()','fail'],['TypeError · falta decide','fail']],
       log:'objeto no creado: el contrato obliga a implementar'},
     'abc-return':{
-      code:"class Strategy(ABC):\n    @abstractmethod\n    def decide(self, book):\n        return 'hold'\n\nclass Incompleta(Strategy):\n    pass",
+      code:"class Strategy(ABC):\n    @abstractmethod\n    def decide(self, imbalance):\n        return 'hold'\n\nclass Incompleta(Strategy):\n    pass",
       trace:[['el método tiene cuerpo','ok'],['Incompleta()','fail'],['TypeError · sigue abstracto','fail']],
       log:'return aporta comportamiento; el decorador mantiene el contrato'},
   };
