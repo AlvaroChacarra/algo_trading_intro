@@ -1,4 +1,4 @@
-/* L11 — señal vs monos, arrival mid y la autopsia del coste (datos reales) */
+/* L11 — señal vs monos, dos llegadas y autopsia del coste (datos reales) */
 (function(){
 "use strict";
 const $=s=>document.querySelector(s);
@@ -24,8 +24,8 @@ fig.addEventListener('stagechange',e=>{
     $('#j1n').textContent=`monos (equity final): ${D.monoFinals.join('  ·  ')} — misma munición, cero señal`;
   }
   if(st===2){
-    $('#j2').innerHTML=`<div><span>arrival mid</span><b>${D.arrivalMid}</b></div>
-      <div><span>slippage medio</span><b class="neg">+${D.avgSlip}</b></div>
+    $('#j2').innerHTML=`<div><span>parent arrival · decisión</span><b>${D.arrivalMid}</b></div>
+      <div><span>slippage medio · vs child decision mids</span><b class="neg">+${D.avgSlip}</b></div>
       <div><span>coste ≈</span><b class="neg">${cost.toFixed(1)}</b></div>`;
   }
   if(st===3){

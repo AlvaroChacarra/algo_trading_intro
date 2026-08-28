@@ -1,13 +1,14 @@
 """simulation.py — simulador de market making.
 
-Construido en L14. El backtest de replay (market.py, L9) sirve para ejecución
+Construido en L13. El backtest de replay (market.py, L9) sirve para ejecución
 (VWAP cruza market orders y siempre llena). Pero un market maker pone órdenes
 límite y necesita un modelo de *cuándo le ejecutan*: cuanto más cerca del mid
 cotiza, más probable es que le golpeen.
 
-Modelo (Avellaneda-Stoikov): la intensidad de llegada de órdenes a distancia
-`delta` del mid es lambda(delta) = A * exp(-kappa * delta). El mid sigue un
-paseo aleatorio. Es el entorno mínimo para ver moverse inventario y PnL.
+Modelo mínimo de llegada: la intensidad de órdenes a distancia `delta` del mid
+es lambda(delta) = A * exp(-kappa * delta). L13 usa esta intuición para preparar
+el parámetro kappa; L14 reutiliza el mismo entorno sin exponer su clase antes de
+tiempo. El mid sigue un paseo aleatorio.
 """
 
 from __future__ import annotations
@@ -80,8 +81,8 @@ class MMSimulation:
                 self.strategy.on_fill(_hit(self.strategy.symbol, Side.SELL,
                                            ask_px, self.strategy.quote_size))
 
-            if hasattr(self.strategy, "_t"):
-                self.strategy._t += 1
+            if hasattr(self.strategy, "time"):
+                self.strategy.time += 1
 
             mid += self.rng.gauss(0, self.sigma)  # paseo aleatorio
             res.mid.append(mid)

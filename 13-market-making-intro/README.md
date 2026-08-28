@@ -1,6 +1,6 @@
 # Clase 13 — Market making — Intro
 
-> El otro lado del mercado: en vez de cruzar, cotizas bid y ask y ganas el spread. Pero acumulas inventario, y el inventario es riesgo. Skew por inventario como primera defensa.
+> El otro lado del mercado: en vez de cruzar, cotizas bid y ask y ganas el spread. Pero acumulas inventario, y el inventario es riesgo. Skew por inventario como primera defensa; CARA e intensidad de fills forman el puente LIVE a L14.
 
 ## Contexto teórico
 
@@ -11,7 +11,8 @@ mercado va en su contra (**adverse selection**).
 Aparece la **utilidad CARA** `-e^{-γW}` y el parámetro de **aversión al riesgo** γ. La primera
 defensa es el **skew por inventario**: el *reservation price* = `mid - skew·inventario` baja
 ambas cotizaciones cuando estás largo, para que te compren menos y te vendan más y vuelvas a
-plano.
+plano. CARA y la intuición de intensidad de fills forman un puente **LIVE** a γ/κ en
+L14; la estrategia concreta y sus fórmulas no se exponen en L13.
 
 ## Qué construyes hoy
 
@@ -33,7 +34,7 @@ simula contra un mid en paseo aleatorio con **modelo de intensidad de fills**
 ## Estructura de la carpeta
 
 - `presentation/` — documento interactivo (o deck) + guion del profesor
-- `exercises/13_build_exercises.ipynb` — construyes la pieza (núcleo 1-3, luego el resto)
+- `exercises/13_build_exercises.ipynb` — construyes la pieza (rutas LIVE / REQUIRED / OPTIONAL declaradas)
 - `exercises/13_auxiliary.ipynb` — el gimnasio: drills + profundización opcional
 - `exercises/exchange/` — el paquete que vienes construyendo (starter de hoy)
 

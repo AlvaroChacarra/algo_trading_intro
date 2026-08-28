@@ -1,5 +1,5 @@
-"""Datos reales para el doc de L11: la estrategia con señal contra el mono
-aleatorio, y el coste de ejecución medido contra el mid de llegada."""
+"""Datos reales para L11: señal contra azar, parent arrival para la decisión
+completa y decision mid por orden hija para medir su ejecución."""
 import random
 
 from exchange.backtest import Backtest
@@ -15,7 +15,7 @@ class ImbalanceStrategy(Strategy):
         self.max_pos = max_pos
         self._pos = 0.0
         self._mid = None
-        self.slips = []          # fill.price - mid en el momento de decidir
+        self.slips = []          # child fill vs decision mid de esa orden
 
     def on_book_update(self, book):
         self._mid = book.mid
@@ -80,6 +80,6 @@ def build() -> dict:
                    "finalEquity": round(r_sig.final_equity, 2),
                    "finalPos": round(r_sig.final_position, 4)},
         "monos": mono_curves, "monoFinals": mono_finals,
-        "arrivalMid": round(arrival, 2),
+        "arrivalMid": round(arrival, 2),  # parent-order arrival, primer snapshot
         "avgSlip": round(avg_slip, 3), "nSlips": len(sig.slips),
     }

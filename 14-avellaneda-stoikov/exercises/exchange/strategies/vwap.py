@@ -4,8 +4,10 @@ Construido en L12. Reparte una cantidad objetivo a lo largo de la sesión
 siguiendo un perfil de volumen: en cada tick envía un trozo (market order)
 proporcional al volumen esperado de ese intervalo.
 
-Perfil estático (baseline TWAP / perfil medio) y, como extensión, el perfil
-dinámico predicho sobre la marcha (puente a ML).
+La estrategia canónica consume un perfil fijo durante toda la ejecución
+(baseline TWAP / perfil medio). Los ejercicios OPTIONAL permiten estimar y
+comparar perfiles candidatos fuera de la estrategia, pero no implementan una
+actualización adaptativa online.
 """
 
 from __future__ import annotations

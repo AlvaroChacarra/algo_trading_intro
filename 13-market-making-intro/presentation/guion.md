@@ -21,5 +21,9 @@ Estructura: hero/reto (2 min) → scrollytelling (~7 min, scroll lento: cada par
 
 - **Qué decir:** Cuando estás largo, baja tus dos cotizaciones para que te compren menos y te vendan más, y vuelvas a plano.
 
+### 4. Puente LIVE a L14: gamma y kappa
+
+- **Qué decir:** CARA da significado a gamma como aversión al riesgo. La intensidad lambda(delta)=A*exp(-kappa*delta) explica por qué alejar una quote reduce sus fills y qué controla kappa. L13 fija estas dos intuiciones sin exponer la clase ni las fórmulas de L14.
+
 ## Cierre
 - Recoge la idea central sobre el mapa del paquete y manda al notebook de construcción; presenta el gimnasio (dosis mínima declarada).

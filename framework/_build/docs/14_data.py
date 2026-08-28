@@ -1,7 +1,7 @@
 """Datos reales para el doc de L14: Avellaneda-Stoikov contra el naive y el
 barrido de gamma, con la MMSimulation de referencia (misma semilla)."""
 from exchange.simulation import MMSimulation
-from exchange.strategies.market_maker import AvellanedaStoikov, MarketMaker
+from exchange.strategies import AvellanedaStoikov, MarketMaker
 
 SIGMA = 0.5
 KAPPA = 1.5

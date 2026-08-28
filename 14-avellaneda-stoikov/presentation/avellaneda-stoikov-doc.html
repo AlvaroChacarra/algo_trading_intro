@@ -594,56 +594,71 @@
   .pkgmap .pk{border-color:#ccc}
   a{color:#0e7490;text-decoration:none}
 }
-/* Desktop scene renderer. Injected only into lessons with declared scenes. */
+/* Shared scene renderer for L1-L14. The manifest owns route, stage and layout. */
 .lr-sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;
   margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;
   border:0!important}
+.lr-has-contract [hidden]{display:none!important}
+
 #lr-nav{position:fixed;inset:0 auto 0 0;width:var(--lr-nav-w,230px);z-index:52;
   display:flex;flex-direction:column;background:rgba(9,9,11,.97);border-right:1px solid var(--line);
-  padding:18px 12px 14px;overflow:hidden}
-.lr-brand{display:grid;gap:5px;padding:4px 8px 14px;border-bottom:1px solid var(--line)}
+  padding:12px;overflow:hidden}
+.lr-course-home{display:flex;align-items:center;min-height:34px;margin:0 5px 8px;padding:5px 7px;
+  color:var(--muted);text-decoration:none;font:600 .65rem var(--mono)}
+.lr-course-home:hover{color:var(--accent)}
+.lr-brand{display:grid;gap:5px;padding:4px 8px 12px;border-bottom:1px solid var(--line)}
 .lr-brand b{font:600 .78rem var(--mono);color:var(--accent);letter-spacing:.12em}
-.lr-brand span{font-size:.82rem;line-height:1.3;color:var(--muted)}
-.lr-modes{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:12px 6px}
+.lr-brand span{font-size:.8rem;line-height:1.25;color:var(--muted)}
+.lr-modes{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:10px 6px}
 .lr-modes a{display:flex;justify-content:center;align-items:center;min-height:36px;border:1px solid var(--line);
   border-radius:8px;text-decoration:none;color:var(--muted);font:600 .68rem var(--mono);text-transform:uppercase}
 .lr-modes a.on{border-color:var(--accent);background:var(--accent-dim);color:var(--accent)}
-.lr-modes a:focus-visible,#lr-nav button:focus-visible,#lr-controls button:focus-visible{
+.lr-modes a:focus-visible,#lr-nav button:focus-visible,#lr-controls button:focus-visible,
+#lr-mobile-toolbar a:focus-visible,#lr-mobile-toolbar button:focus-visible{
   outline:2px solid var(--accent);outline-offset:2px}
 .lr-fallback-note{margin:0 8px 10px;color:var(--warn);font-size:.72rem;line-height:1.4}
+.lr-study-optional{min-height:38px;margin:0 6px 9px;border:1px solid rgba(192,132,252,.42);
+  border-radius:8px;background:rgba(192,132,252,.08);color:var(--kw);font:600 .65rem var(--mono);cursor:pointer}
+.lr-study-optional[aria-pressed="true"]{border-color:var(--kw);background:rgba(192,132,252,.16)}
 .lr-scene-links{display:grid;gap:4px;overflow:auto;padding:2px 4px 18px}
-#lr-teacher-toggle{margin:0 6px 10px;min-height:36px;border:1px solid rgba(34,211,238,.38);
-  border-radius:8px;background:var(--accent-dim);color:var(--accent);font:600 .68rem var(--mono);cursor:pointer}
-#lr-teacher-toggle:focus-visible,.lr-teacher-close:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-#lr-teacher-drawer{position:fixed;z-index:90;top:0;right:0;width:min(420px,92vw);height:100vh;
-  display:grid;grid-template-rows:auto minmax(0,1fr);transform:translateX(105%);transition:transform .2s ease;
-  border-left:1px solid var(--line);background:rgba(9,9,11,.98);box-shadow:-18px 0 48px rgba(0,0,0,.38)}
-#lr-teacher-drawer.open{transform:translateX(0)}
-.lr-teacher-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line)}
-.lr-teacher-head b{font:600 .78rem var(--mono);color:var(--accent);text-transform:uppercase;letter-spacing:.08em}
-.lr-teacher-close{width:38px;height:38px;border:1px solid var(--line);border-radius:8px;background:var(--panel);
-  color:var(--text);font-size:1.25rem;cursor:pointer}
-.lr-teacher-body{overflow:auto;padding:18px;color:var(--muted);font-size:.86rem;line-height:1.5}
-.lr-teacher-body h2{margin:.2em 0 .9em;color:var(--text);font:600 1rem var(--mono)}
-.lr-teacher-body h3{margin:1.2em 0 .45em;color:var(--text);font-size:.78rem;text-transform:uppercase;letter-spacing:.06em}
-.lr-teacher-body ul{margin:.4em 0;padding-left:1.2em}.lr-teacher-body code{color:var(--kw)}
-.lr-teacher-kicker{margin:0;color:var(--accent);font:600 .68rem var(--mono);text-transform:uppercase}
-.lr-scene-links button{display:grid;grid-template-columns:56px 1fr;gap:6px;align-items:center;width:100%;
-  min-height:43px;padding:7px 9px;border:1px solid transparent;border-radius:9px;background:transparent;
+.lr-scene-links button{display:grid;grid-template-columns:56px minmax(0,1fr);gap:6px;align-items:center;width:100%;
+  min-height:41px;padding:7px 9px;border:1px solid transparent;border-radius:9px;background:transparent;
   color:var(--muted);text-align:left;cursor:pointer}
 .lr-scene-links button span{font:600 .55rem var(--mono);letter-spacing:.08em}
-.lr-scene-links button b{font:500 .67rem var(--mono);overflow-wrap:anywhere}
+.lr-scene-links button b{font:500 .65rem var(--mono);overflow-wrap:anywhere}
 .lr-scene-links button.on{border-color:var(--line);background:var(--panel);color:var(--text)}
 .lr-scene-links button.lr-route-live span{color:var(--accent)}
 .lr-scene-links button.lr-route-required span{color:var(--kw)}
 .lr-scene-links button.lr-route-optional span{color:var(--faint)}
-.lr-scene-badge{display:flex;gap:8px;align-items:center;margin:0 0 12px;font:600 .58rem var(--mono);
+
+#lr-teacher-toggle{margin:0 6px 9px;min-height:36px;border:1px solid rgba(34,211,238,.38);
+  border-radius:8px;background:var(--accent-dim);color:var(--accent);font:600 .68rem var(--mono);cursor:pointer}
+#lr-teacher-toggle:focus-visible,.lr-teacher-close:focus-visible,.lr-full-guide:focus-visible{
+  outline:2px solid var(--accent);outline-offset:2px}
+#lr-teacher-drawer{position:fixed;z-index:90;top:0;right:0;width:min(420px,92vw);height:100dvh;
+  display:grid;grid-template-rows:auto minmax(0,1fr);transform:translateX(105%);transition:transform .2s ease;
+  border-left:1px solid var(--line);background:rgba(9,9,11,.98);box-shadow:-18px 0 48px rgba(0,0,0,.38)}
+#lr-teacher-drawer.open{transform:translateX(0)}
+.lr-teacher-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line)}
+.lr-teacher-head b{font:600 .78rem var(--mono);color:var(--accent);text-transform:uppercase;letter-spacing:.08em}
+.lr-teacher-close{width:40px;height:40px;border:1px solid var(--line);border-radius:8px;background:var(--panel);
+  color:var(--text);font-size:1.25rem;cursor:pointer}
+.lr-teacher-body{overflow:auto;padding:18px;color:var(--muted);font-size:.86rem;line-height:1.5}
+.lr-teacher-body h2{margin:.2em 0 .7em;color:var(--text);font:600 1rem var(--mono)}
+.lr-teacher-body h3{margin:1.15em 0 .4em;color:var(--text);font-size:.76rem;text-transform:uppercase;letter-spacing:.06em}
+.lr-teacher-body ul{margin:.4em 0;padding-left:1.2em}.lr-teacher-body code{color:var(--kw)}
+.lr-teacher-kicker{margin:0;color:var(--accent);font:600 .68rem var(--mono);text-transform:uppercase}
+.lr-teacher-stage{font-size:.78rem}.lr-full-guide{min-height:40px;margin-top:16px;padding:7px 12px;
+  border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--accent);font:600 .7rem var(--mono);cursor:pointer}
+
+.lr-scene-badge{display:flex;gap:8px;align-items:center;margin:0 0 10px;font:600 .58rem var(--mono);
   letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
 .lr-scene-badge span{padding:3px 7px;border:1px solid var(--line);border-radius:99px}
 .lr-scene-badge.lr-route-live span:first-child{border-color:rgba(34,211,238,.42);color:var(--accent)}
 .lr-scene-badge.lr-route-required span:first-child{border-color:rgba(192,132,252,.45);color:var(--kw)}
 .lr-scene-badge.lr-route-optional span:first-child{border-color:var(--line);color:var(--faint)}
-#lr-controls{position:fixed;left:var(--lr-nav-w,230px);right:0;bottom:0;height:58px;z-index:55;
+
+#lr-controls{position:fixed;left:var(--lr-nav-w,230px);right:0;bottom:0;height:var(--lr-controls-h,58px);z-index:55;
   display:grid;grid-template-columns:minmax(120px,1fr) auto auto minmax(120px,1fr);align-items:center;
   gap:14px;padding:7px 18px;background:rgba(9,9,11,.96);border-top:1px solid var(--line);
   backdrop-filter:blur(8px)}
@@ -653,65 +668,103 @@
 #lr-controls button:disabled{opacity:.3;cursor:default}
 #lr-controls .lr-next{text-align:right;padding-right:14px}
 #lr-controls .lr-prev{text-align:left;padding-left:14px}
-.lr-progress{display:flex;gap:8px;align-items:center;justify-content:center;white-space:nowrap;
-  font:.68rem var(--mono);color:var(--faint)}
+.lr-progress{display:flex;gap:7px;align-items:center;justify-content:center;white-space:nowrap;
+  font:.66rem var(--mono);color:var(--faint)}
 .lr-progress b{color:var(--muted);font-weight:500}
+.lr-progress .lr-route-progress{color:var(--accent)}
 #lr-controls .lr-route-scope{padding:0 12px;color:var(--accent);border-color:rgba(34,211,238,.38)}
+#lr-controls.lr-fixed-scope{grid-template-columns:minmax(120px,1fr) auto minmax(120px,1fr)}
+#lr-mobile-toolbar{display:none}
+
+/* Layout names are operational: they control scene width and native two-panel ratios. */
+.lr-scene{--lr-scene-max:1180px;--lr-left:42fr;--lr-right:58fr}
+.lr-scene[data-scene-layout="focus"]{--lr-scene-max:1120px}
+.lr-scene[data-scene-layout="split-42-58"]{--lr-scene-max:1900px;--lr-left:42fr;--lr-right:58fr}
+.lr-scene[data-scene-layout="split-45-55"]{--lr-scene-max:1900px;--lr-left:45fr;--lr-right:55fr}
+.lr-scene[data-scene-layout="split-50-50"]{--lr-scene-max:1760px;--lr-left:50fr;--lr-right:50fr}
 
 @media(min-width:901px){
-  body.lr-has-contract{--lr-nav-w:clamp(190px,16vw,238px)}
+  body.lr-has-contract{--lr-nav-w:clamp(190px,16vw,238px);--lr-controls-h:58px}
   body.mode-estudio.lr-has-contract{padding-left:var(--lr-nav-w)}
   body.mode-estudio.lr-has-contract .wrap{max-width:min(1040px,calc(100vw - var(--lr-nav-w) - 48px))}
   body.mode-estudio.lr-has-contract .wrap>p{max-width:78ch}
   body.mode-estudio.lr-has-contract .scrolly{max-width:min(1280px,calc(100vw - var(--lr-nav-w) - 30px))}
-  body.mode-estudio.lr-has-contract #rail{display:none}
-  body.mode-estudio.lr-has-contract #lr-controls{display:none}
+  body.mode-estudio.lr-has-contract .lr-scene{scroll-margin-top:18px}
+  body.mode-estudio.lr-has-contract #rail,body.mode-estudio.lr-has-contract #lr-controls{display:none}
 
-  html:has(body.mode-aula){overflow:hidden}
-  body.mode-aula{height:100vh;overflow:hidden;padding-left:var(--lr-nav-w);padding-bottom:58px}
-  body.mode-aula #rail,body.mode-aula>footer{display:none}
-  body.mode-aula>#gd-toggle{bottom:72px}
+  html.lr-mode-aula,html.lr-mode-aula body{height:100%;overflow:hidden}
+  body.mode-aula{height:100dvh;overflow:hidden;padding-left:var(--lr-nav-w);padding-bottom:var(--lr-controls-h)}
+  body.mode-aula #rail,body.mode-aula>footer,body.mode-aula>#gd-toggle{display:none!important}
   body.mode-aula>.lr-scene{display:none!important}
-  body.mode-aula>.lr-scene.lr-scene-active{display:grid!important;width:auto;max-width:none;height:calc(100vh - 58px);
-    margin:0;padding:clamp(14px,2.1vh,26px) clamp(18px,2.4vw,42px);border:0;overflow:hidden;
-    align-content:stretch;background:var(--bg)}
+  body.mode-aula>.lr-scene.lr-scene-active{display:grid!important;width:auto;max-width:none;
+    height:calc(100dvh - var(--lr-controls-h));margin:0;padding:clamp(12px,1.8vh,24px) clamp(16px,2.2vw,38px);
+    border:0;overflow:hidden;align-content:stretch;background:var(--bg)}
   body.mode-aula>header.lr-scene-active{align-content:center}
   body.mode-aula>.lr-scene-active>.wrap,body.mode-aula>header.lr-scene-active.wrap{
-    width:100%;max-width:1900px;min-height:0;max-height:100%;overflow:auto;padding:0 8px;margin:auto}
-  body.mode-aula>.lr-scene-active:has(.scrolly){grid-template-rows:auto minmax(0,1fr);gap:10px}
-  body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child{overflow:visible;max-width:1900px;margin:0 auto}
-  body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child h2{font-size:clamp(1.2rem,2.2vh,1.8rem);margin:.1em 0 .25em}
-  body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child .lede{font-size:clamp(.78rem,1.45vh,.98rem);margin:.3em 0}
-  body.mode-aula>.lr-scene-active>.scrolly{width:100%;max-width:1900px;height:100%;min-height:0;margin:0 auto;
-    padding:0;grid-template-columns:minmax(300px,42%) minmax(0,58%);gap:clamp(16px,2vw,34px)}
+    width:100%;max-width:var(--lr-scene-max);min-height:0;max-height:100%;overflow:auto;padding:0 8px;margin:auto}
+  body.mode-aula>.lr-scene-active:has(.scrolly){grid-template-rows:auto minmax(0,1fr);gap:8px}
+  body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child{overflow:visible;max-width:var(--lr-scene-max);margin:0 auto}
+  body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child h2{font-size:clamp(1.08rem,2.15vh,1.72rem);margin:.05em 0 .2em}
+  body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child .lede{font-size:clamp(.74rem,1.4vh,.95rem);margin:.2em 0}
+  body.mode-aula>.lr-scene-active>.scrolly{width:100%;max-width:var(--lr-scene-max);height:100%;min-height:0;margin:0 auto;
+    padding:0;grid-template-columns:minmax(260px,var(--lr-left)) minmax(0,var(--lr-right));gap:clamp(14px,1.8vw,32px)}
   body.mode-aula>.lr-scene-active>.scrolly~.wrap{display:none}
-  body.mode-aula .steps{min-height:0;height:100%}
-  body.mode-aula .steps .step{display:none;min-height:0;height:100%;align-items:center}
+  body.mode-aula .steps{min-width:0;min-height:0;height:100%;overflow:hidden}
+  body.mode-aula .steps .step{display:none;min-height:0;height:100%;align-items:center;overflow:hidden}
   body.mode-aula .steps .step.lr-stage-active{display:flex}
-  body.mode-aula .steps .step-inner{width:100%;padding:clamp(16px,2vh,24px);opacity:1;border-color:#3a3a44}
-  body.mode-aula .steps .step-inner p{font-size:clamp(.78rem,1.45vh,.96rem)}
-  body.mode-aula .figwrap{position:relative;height:100%;min-height:0;top:auto;order:initial}
+  body.mode-aula .steps .step-inner{width:100%;max-height:100%;padding:clamp(12px,1.7vh,22px);
+    opacity:1;border-color:#3a3a44;overflow:auto}
+  body.mode-aula .steps .step-inner h3{font-size:clamp(.86rem,1.6vh,1.04rem)}
+  body.mode-aula .steps .step-inner p{font-size:clamp(.72rem,1.35vh,.93rem);line-height:1.55}
+  body.mode-aula .figwrap{position:relative;height:100%;min-width:0;min-height:0;top:auto;order:initial}
   body.mode-aula .fig{position:relative;top:0;height:100%;min-height:0;box-shadow:none}
   body.mode-aula .fig-stage{overflow:auto}
   body.mode-aula .full-code{display:none!important}
   body.mode-aula .hero{padding:0}
-  body.mode-aula .hero h1{font-size:clamp(2.3rem,5.4vw,5.1rem)}
-  body.mode-aula .hero .lede{font-size:clamp(1rem,1.6vw,1.35rem);max-width:72ch}
-  body.mode-aula .lr-scene-badge{margin-bottom:8px}
-}
-
-@media(max-width:900px){
-  #lr-nav,#lr-controls,.lr-scene-badge,#lr-teacher-drawer{display:none!important}
-  body.lr-has-contract{padding-left:0}
+  body.mode-aula .hero h1{font-size:clamp(2rem,4.7vw,4.8rem)}
+  body.mode-aula .hero .lede{font-size:clamp(.92rem,1.45vw,1.3rem);max-width:72ch}
+  body.mode-aula .hero .challenge{margin-top:clamp(14px,2.5vh,28px)}
+  body.mode-aula .hero .meta{margin-top:clamp(12px,2.2vh,24px)}
+  body.mode-aula .lr-scene-badge{margin-bottom:7px}
+  body.mode-aula .lr-scene-active[data-scene-layout^="split-"] :is(.code-state,.state-inspector,.dictgrid,.build-grid,.vmgrid,.ownline .cols){
+    grid-template-columns:minmax(0,var(--lr-left)) minmax(0,var(--lr-right))}
 }
 
 @media(max-width:1180px) and (min-width:901px){
-  #lr-controls{grid-template-columns:110px 1fr auto 110px;gap:8px;padding-inline:10px}
-  #lr-controls button span{display:none}
+  #lr-controls{grid-template-columns:105px minmax(0,1fr) auto 105px;gap:7px;padding-inline:9px}
+  #lr-controls.lr-fixed-scope{grid-template-columns:105px minmax(0,1fr) 105px}
+  #lr-controls button span,.lr-progress>span{display:none}
+  .lr-progress{gap:5px;font-size:.61rem}
 }
 
-@media(prefers-reduced-motion:reduce){#lr-teacher-drawer{transition:none}}
-@media print{#lr-nav,#lr-controls,.lr-scene-badge,#lr-teacher-drawer{display:none!important}body.lr-has-contract{padding:0!important}}
+@media(max-width:900px){
+  #lr-nav,#lr-controls,.lr-scene-badge{display:none!important}
+  body.lr-has-contract{padding-left:0;max-width:100%;overflow-x:hidden}
+  #lr-mobile-toolbar{position:sticky;top:0;z-index:58;display:flex;align-items:center;gap:8px;
+    min-height:52px;padding:6px max(10px,env(safe-area-inset-left));border-bottom:1px solid var(--line);
+    background:rgba(9,9,11,.96);backdrop-filter:blur(8px);font:600 .65rem var(--mono)}
+  #lr-mobile-toolbar>a{color:var(--accent);text-decoration:none;white-space:nowrap}
+  #lr-mobile-toolbar>span{min-width:0;flex:1;color:var(--muted);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #lr-mobile-toolbar button{min-height:44px;margin:0;padding:5px 9px;border:1px solid var(--line);border-radius:8px;
+    background:var(--panel);color:var(--kw);font:600 .59rem var(--mono)}
+  #lr-mobile-toolbar .lr-mobile-teacher{color:var(--accent)}
+  body.lr-has-contract .lr-scene{scroll-margin-top:58px}
+  #lr-teacher-drawer{width:min(420px,100vw)}
+}
+
+@media(max-width:520px){
+  #lr-mobile-toolbar>span{display:none}
+  #lr-mobile-toolbar .lr-study-optional{margin-left:auto}
+}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto!important}
+  #lr-teacher-drawer,.lr-scene *{transition:none!important;animation-duration:.001ms!important;animation-iteration-count:1!important}
+}
+@media print{
+  #lr-nav,#lr-controls,#lr-mobile-toolbar,.lr-scene-badge,#lr-teacher-drawer{display:none!important}
+  body.lr-has-contract{padding:0!important}
+}
 </style>
 </head>
 <body data-lesson="14">
@@ -727,7 +780,7 @@
 <header class="hero wrap" id="s0">
   <div class="eyebrow"><b>Algo Trading · ICAI 2026</b> &nbsp;·&nbsp; L14 · Avellaneda-Stoikov &nbsp;·&nbsp; documento interactivo</div>
   <h1>El skew <em>óptimo</em></h1>
-  <p class="lede">Ayer domaste el inventario con un número a ojo. Hoy, la versión con
+  <p class="lede">En L13 domaste el inventario con un número a ojo. Ahora llega la versión con
   apellidos: <strong>Avellaneda &amp; Stoikov (2008)</strong> plantearon "¿dónde cotizo
   para maximizar mi utilidad, con miedo γ, volatilidad σ y tiempo restante τ?" — y lo
   resolvieron. Dos fórmulas. Hoy entiendes qué dice cada letra… tocándolas.</p>
@@ -754,7 +807,7 @@
     <div class="eyebrow">§1 · <b>La idea central</b></div>
     <h2>Dos fórmulas, cuatro letras</h2>
     <p class="lede">Sigue bajando: el panel desmonta el modelo símbolo a símbolo y lo
-    termina midiendo contra el naive de ayer.</p>
+    termina midiendo contra el naive de L13.</p>
   </div>
 
   <div class="scrolly" data-scrolly>
@@ -770,7 +823,7 @@
       <div class="step" data-stage="1" data-name="reservation"><div class="step-inner">
         <h3><span class="n">1/4</span>El centro: reservation price</h3>
         <p><code>r = mid − q·γ·σ²·τ</code></p>
-        <p>El skew de ayer, con física dentro: te alejas del mid proporcional a tu
+        <p>El skew de L13, con física dentro: te alejas del mid proporcional a tu
         inventario (q), tu miedo (γ), lo que se mueve el mundo (σ²) y el tiempo que queda
         para sufrirlo (τ). Cuatro sensores en lugar de un número mágico.</p>
       </div></div>
@@ -784,13 +837,14 @@
       <div class="step" data-stage="3" data-name="tau"><div class="step-inner">
         <h3><span class="n">3/4</span>El reloj: τ → 0</h3>
         <p>Al acercarse el cierre, τ se apaga y con él el término de inventario: el
-        modelo cotiza cada vez más pegado al mid y más simétrico. Traducción:
-        <strong>"suelta el inventario, que se acaba el partido"</strong>. Ninguna
-        heurística a ojo te da ese comportamiento gratis.</p>
+        centro vuelve al mid y las quotes quedan simétricas. <strong>Eso no liquida ni
+        garantiza q=0</strong>: este simulador didáctico necesita una política terminal
+        separada si quieres imponer quedar plano. Aquí τ apaga el ajuste; no vende el
+        inventario por arte de magia.</p>
       </div></div>
       <div class="step" data-stage="4" data-name="A-S vs naive"><div class="step-inner">
         <h3><span class="n">4/4</span>El duelo, medido</h3>
-        <p>Misma semilla, mismo mercado que ayer: el A-S (γ=0.5) acaba con
+        <p>Misma semilla, mismo mercado que en L13: el A-S (γ=0.5) acaba con
         <strong>más PnL</strong> que el naive y un inventario que respeta el reloj. No es
         magia: es que sus dos números ya no son mágicos.</p>
       </div></div>
@@ -816,7 +870,7 @@ q = +1 (largo), γ=0.5, σ=0.5, τ=1
 r = 100 − 1×0.5×0.25×1 = <span style="color:var(--accent)">99.875</span>
 
 q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
-        <p style="color:var(--faint);font-size:.78rem;margin-top:10px">el centro huye de tu inventario — igual que ayer, pero con unidades</p>
+        <p style="color:var(--faint);font-size:.78rem;margin-top:10px">el centro huye de tu inventario — igual que en L13, pero con unidades</p>
       </div>
       <div class="fig-stage" data-stage="2">
         <pre style="font-family:var(--mono);font-size:.8rem;line-height:2.2;margin:8px 0 0">
@@ -877,8 +931,8 @@ q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
     esperando estas líneas: una subclase tuya, con tu idea dentro.</p>
 
     <div class="code">
-      <div class="code-head"><span>mi_market_maker.py — punto de partida del capstone autónomo</span><span>python</span></div>
-      <pre><span class="ln"><span class="k">from</span> exchange.strategies.market_maker <span class="k">import</span> MarketMaker</span><span class="ln"></span><span class="ln"><span class="k">class</span> MiMarketMaker(MarketMaker):</span><span class="ln">    <span class="s">"""Tu idea aquí: hereda el esqueleto, cambia las quotes."""</span></span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">quotes</span>(self, book):</span><span class="ln">        r = self.reservation_price(book.mid)</span><span class="ln">        half = self.half_spread</span><span class="ln">        <span class="k">if</span> <span class="fn">abs</span>(self._inventory) &gt; <span class="num">0.5</span>:   <span class="c"># tu regla, la que quieras</span></span><span class="ln">            half = half * <span class="num">1.5</span>              <span class="c"># p. ej.: cargado → más ancho</span></span><span class="ln">        <span class="k">return</span> r - half, r + half</span><span class="ln"></span><span class="ln">res = MMSimulation(MiMarketMaker(<span class="s">'SIM'</span>, quote_size=<span class="num">0.1</span>), seed=<span class="num">42</span>).run()</span></pre>
+      <div class="code-head"><span>mi_estrategia.py — punto de partida del capstone autónomo</span><span>python</span></div>
+      <pre><span class="ln"><span class="k">from</span> exchange.simulation <span class="k">import</span> MMSimulation</span><span class="ln"><span class="k">from</span> exchange.strategies <span class="k">import</span> MarketMaker</span><span class="ln"></span><span class="ln"><span class="k">class</span> MiEstrategia(MarketMaker):</span><span class="ln">    <span class="s">"""El nombre y la interfaz que exige capstone_check.py."""</span></span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, symbol=<span class="s">'BTC'</span>):</span><span class="ln">        <span class="fn">super</span>().__init__(symbol, quote_size=<span class="num">0.01</span>,</span><span class="ln">                         half_spread=<span class="num">1.0</span>, inventory_skew=<span class="num">2.0</span>)</span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">quotes</span>(self, book):</span><span class="ln">        r = self.reservation_price(book.mid)</span><span class="ln">        half = self.half_spread</span><span class="ln">        <span class="k">if</span> <span class="fn">abs</span>(self.inventory) &gt; <span class="num">0.5</span>:   <span class="c"># tu regla, la que quieras</span></span><span class="ln">            half *= <span class="num">1.5</span>                    <span class="c"># p. ej.: cargado → más ancho</span></span><span class="ln">        <span class="k">return</span> r - half, r + half</span><span class="ln"></span><span class="ln">res = MMSimulation(MiEstrategia(), seed=<span class="num">42</span>).run()</span></pre>
       <div class="out"><div class="btnrow" style="margin:0"><button class="btn runbtn" data-target="out-own">▶ La pregunta de verdad</button></div>
         <div id="out-own" class="hidden" style="margin-top:10px">
           <div><span class="prompt">&gt;&gt;&gt; </span><span class="val">¿cuántas líneas del motor tocaste? 0. ¿Del simulador? 0.</span></div>
@@ -887,10 +941,11 @@ q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
       </div>
     </div>
 
-    <div class="note"><span class="tag">Para el notebook</span>
-    En <code>14_build_exercises.ipynb</code> harás exactamente esto con validadores: tu
-    subclase, tu barrido, tus conclusiones. Este trabajo pertenece al capstone autónomo y
-    <strong>no forma parte del examen final</strong>.</div>
+    <div class="note"><span class="tag">Entregable REQUIRED · capstone</span>
+    <code>14_build_exercises.ipynb</code> prepara las fórmulas y los barridos. La estrategia
+    propia se implementa en <code>exercises/mi_estrategia.py</code> siguiendo
+    <code>CAPSTONE.md</code> y se verifica con <code>capstone_check.py</code>. Es un proyecto
+    autónomo de 90 minutos y <strong>no forma parte del examen final</strong>.</div>
   </div>
 </section>
 
@@ -967,9 +1022,8 @@ q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
       <div class="pk done">L4 · Order y Fill</div>
       <div class="pk done">L5 · OrderBook + Tracker</div>
       <div class="pk done">L6 · familia Strategy</div>
-      <div class="pk done">L7-9 · el motor</div>
-      <div class="pk done">L10-11 · el framework</div>
-      <div class="pk today">L12-14 · estrategias<span>hoy: A-S y TU estrategia (L14)</span></div>
+      <div class="pk done">L7-10 · motor y framework</div>
+      <div class="pk today">L11-14 · estrategias<span>hoy: A-S y TU estrategia (L14)</span></div>
     </div>
 
     <div class="cta" style="margin:22px 0;grid-template-columns:1fr">
@@ -994,8 +1048,9 @@ q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
 
     <div class="cta">
       <div class="box"><span class="tag">Ahora te toca construir</span>
-      Abre <code>14_build_exercises.ipynb</code>: reservation, spread, el barrido y TU
-      estrategia validada.</div>
+      Abre <code>14_build_exercises.ipynb</code> para reservation, spread y barridos;
+      después implementa TU estrategia en <code>mi_estrategia.py</code> y valídala con
+      <code>capstone_check.py</code>.</div>
       <div class="box"><span class="tag">Y el gimnasio final</span>
       <code>14_auxiliary.ipynb</code> — los últimos drills antes del examen.</div>
     </div>
@@ -1005,7 +1060,7 @@ q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
 <footer>L14 · Avellaneda-Stoikov — Algo Trading ICAI 2026 · documento interactivo</footer>
 
 <script>const DOC_DATA={"naive":{"inv":[-0.1,-0.1,-0.2,-0.1,-0.1,0.0,-0.1,-0.1,-0.1,-0.1,-0.1,0.0,0.0,-0.1,-0.1,-0.1,-0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.1,0.1,0.0,0.1,0.0,0.1,0.1,0.0,0.0,-0.1,-0.1,0.0,0.1,0.0,0.0,0.1,0.0,0.1,0.0,0.0,0.0,0.0,0.1,0.2,0.2,0.1,0.1,0.1,0.0,0.0,0.0,0.0,-0.1,-0.1,0.0,-0.1,-0.1,-0.2,-0.2,-0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.1,0.1,0.1,0.1,0.1,0.2,0.1,0.1,0.1,0.1,0.2,0.1,0.1,0.0,-0.1,-0.1,0.0,-0.1,-0.2,-0.3,-0.2,-0.1,-0.1,-0.0,-0.0,-0.0,0.1,-0.0,-0.0,0.1,0.2,0.2,0.2,0.2,0.1,0.1,0.2,0.1,0.1,-0.0,-0.1,-0.2,-0.3,-0.2,-0.1,-0.0,0.1,0.1,0.1,-0.0,0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.1,-0.0,0.1,-0.0,-0.1,-0.1,-0.2,-0.1,-0.1,-0.2,-0.1,-0.0,0.1,0.1,0.1,0.1,-0.0,-0.0,0.1,-0.0,-0.0,-0.0,0.1,-0.0,-0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.1,-0.1,-0.1,-0.0,0.1,0.1,0.1,0.1,0.1,-0.0,-0.0,-0.1,-0.1,-0.2,-0.1,-0.2,-0.2,-0.1,-0.1,-0.1,-0.0,0.1,-0.0,-0.1,-0.1,-0.1,-0.1,-0.0,-0.0,0.1,-0.0,-0.0,-0.0,0.1,0.1,0.2,0.2,0.1,0.1,-0.0,-0.0,-0.1,-0.2,-0.2,-0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.1,-0.1,-0.0,-0.0,-0.1,-0.1,-0.1,-0.1,-0.2,-0.1,-0.1,-0.1,-0.1,-0.1,-0.0,0.1,-0.0,-0.0,-0.0,-0.0,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.0,-0.0,-0.1,-0.0,-0.1,-0.1,-0.0,0.1,0.2,0.1,0.1,0.1,-0.0,-0.0,-0.1,-0.0,0.1,0.2,0.1,-0.0,-0.0,0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.1,-0.1,-0.0,-0.1,-0.2,-0.2,-0.1,-0.0,-0.0,-0.0,-0.0,-0.0,0.1,0.1,-0.0,-0.1,-0.0,-0.0,0.1,0.1,0.2,0.2,0.2,0.1,0.2,0.1,0.2,0.2,0.1,0.2,0.2,0.1,-0.0,0.1,0.1,0.1,0.2,0.1,0.1,0.1,-0.0,-0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.1,-0.1,-0.1,-0.0,-0.0,-0.0,-0.0,0.1,0.1,0.1,0.2,0.1,0.1,0.1,-0.0,-0.1,-0.2,-0.1,-0.0,-0.0,-0.0,-0.0,-0.1,-0.2,-0.1,-0.1,-0.0,0.1,0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.1,-0.1,-0.2,-0.1,-0.2,-0.1,-0.1,-0.0,-0.1,-0.1,-0.2,-0.1,-0.1,-0.0,-0.1,-0.2,-0.2,-0.1,-0.0,-0.0,-0.1,-0.2,-0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.1,-0.2,-0.1,-0.1,-0.0,-0.1,-0.1,-0.2,-0.1,-0.2,-0.1,-0.1,-0.0,-0.0,-0.0,0.1,0.1,0.1,0.1,0.1,-0.0,-0.1,-0.0,-0.0,0.1,-0.0,-0.1,-0.1,-0.2,-0.2,-0.1,-0.1,-0.2,-0.1,-0.0,0.1,0.2,0.1,0.1,-0.0,0.1,0.1,0.1,-0.0,-0.0,-0.0,0.1,0.1,-0.0,-0.0,0.1,0.1,0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,0.1,0.1,-0.0,-0.0,-0.1,-0.0,-0.1,-0.1,-0.1,-0.1,-0.1,-0.0,-0.1,-0.0,0.1,-0.0,-0.1,-0.0,-0.0,0.1,-0.0,-0.0,-0.0,-0.0,-0.1,-0.1,-0.1,-0.1,-0.0,-0.1,-0.0,-0.0,0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,0.1,0.1,0.2,0.2,0.3,0.2,0.1,-0.0,-0.0,-0.1,-0.1,-0.0,-0.1,-0.0,0.1,0.1,-0.0,-0.1,-0.1,-0.0],"pnl":[0.066,0.03,0.132,0.146,0.303,0.343,0.377,0.569,0.551,0.538,0.669,0.709,0.709,0.819,0.907,1.01,1.033,1.073,1.073,1.193,1.193,1.193,1.313,1.41,1.45,1.45,1.57,1.57,1.69,1.81,1.883,1.953,1.993,2.035,2.075,2.206,2.234,2.274,2.274,2.266,2.255,2.295,2.423,2.463,2.463,2.552,2.592,2.662,2.702,2.822,2.822,2.942,3.007,3.157,3.181,3.186,3.366,3.34,3.38,3.38,3.38,3.5,3.54,3.61,3.65,3.675,3.563,3.687,3.835,3.845,3.885,3.885,3.885,3.885,3.885,3.885,3.973,3.989,4.138,4.114,3.998,4.045,4.045,4.008,4.294,4.412,4.643,4.593,4.48,4.52,4.642,4.863,4.903,4.895,5.192,5.268,5.097,5.115,5.121,5.161,5.161,5.281,5.369,5.409,5.529,5.487,5.748,5.542,5.548,5.749,5.775,5.751,5.749,5.779,5.852,5.892,5.891,5.985,5.971,5.989,6.056,6.096,6.27,6.271,6.259,6.299,6.351,6.391,6.511,6.511,6.511,6.631,6.631,6.737,6.777,6.808,6.848,6.983,7.102,7.068,7.062,7.109,7.188,7.294,7.334,7.392,7.318,7.189,7.178,7.218,7.218,7.284,7.324,7.444,7.564,7.617,7.657,7.683,7.723,7.723,7.843,7.843,7.843,7.963,8.062,8.117,8.246,8.286,8.382,8.544,8.668,8.619,8.801,8.841,8.841,8.969,9.037,9.011,8.997,8.958,8.94,8.953,8.958,8.977,9.017,9.022,9.062,9.101,9.001,8.923,8.936,8.976,8.976,9.068,9.108,9.108,9.228,9.262,9.25,9.253,9.205,9.231,9.261,9.301,9.301,9.371,9.452,9.521,9.527,9.567,9.567,9.687,9.807,9.807,9.828,9.87,9.91,9.91,9.907,9.996,9.971,9.972,10.16,10.188,10.237,10.285,10.42,10.565,10.605,10.642,10.682,10.682,10.682,10.682,10.72,10.683,10.832,10.904,10.973,11.08,11.12,11.12,11.098,11.138,11.259,11.416,11.456,11.429,11.558,11.52,11.47,11.504,11.544,11.544,11.714,11.754,11.785,11.818,11.949,11.989,11.989,11.99,12.03,12.03,12.03,12.03,12.03,12.03,12.135,12.146,12.186,12.174,12.259,12.416,12.378,12.418,12.418,12.418,12.418,12.418,12.42,12.341,12.381,12.524,12.564,12.564,12.662,12.623,12.677,12.89,12.91,12.947,13.097,13.16,13.362,13.395,13.381,13.381,13.428,13.451,13.491,13.541,13.606,13.627,13.634,13.625,13.574,13.493,13.533,13.569,13.609,13.609,13.609,13.609,13.609,13.648,13.671,13.809,13.849,13.849,13.849,13.969,13.926,14.004,13.988,14.165,14.27,14.45,14.499,14.539,14.65,14.723,14.65,14.69,14.69,14.81,14.81,14.931,14.92,14.894,14.984,15.024,15.1,15.241,15.281,15.401,15.521,15.521,15.521,15.544,15.598,15.693,15.736,15.923,15.906,15.89,15.93,16.0,16.05,16.269,16.319,16.392,16.432,16.472,16.417,16.324,16.356,16.396,16.396,16.585,16.704,16.754,16.794,16.794,16.794,16.794,16.914,17.034,17.034,17.078,17.238,17.236,17.222,17.262,17.352,17.521,17.675,17.678,17.865,17.843,17.965,18.005,18.125,18.125,18.194,18.197,18.184,18.253,18.184,18.224,18.335,18.375,18.495,18.607,18.647,18.799,18.986,19.168,19.163,19.268,19.338,19.559,19.592,19.632,19.781,19.927,19.891,19.889,19.929,19.921,20.126,20.191,20.231,20.231,20.351,20.461,20.482,20.522,20.522,20.525,20.721,20.706,20.746,20.746,20.746,20.746,20.866,20.866,20.986,21.091,21.135,21.175,21.295,21.429,21.469,21.562,21.604,21.614,21.477,21.644,21.684,21.764,21.804,21.818,21.858,21.958,21.998,22.118,22.193,22.233,22.233,22.353,22.353,22.353,22.441,22.495,22.62,22.66,22.664,22.704,22.824,22.914,22.954,22.954,22.954,22.954,23.074,23.074,23.074,23.074,23.059,23.076,23.075,23.217,22.868,22.839,22.805,22.845,22.965,23.078,23.191,23.231,23.366,23.406,23.442,23.506,23.546,23.64,23.576,23.616],"finalPnl":23.62,"maxInv":0.3},"as":{"inv":[-0.1,-0.1,-0.2,-0.1,-0.1,0.0,-0.1,-0.1,-0.2,-0.2,-0.2,-0.1,-0.1,-0.2,-0.2,-0.2,-0.3,-0.2,-0.2,-0.1,-0.1,-0.1,-0.1,-0.0,-0.1,-0.1,-0.1,-0.1,-0.2,-0.2,-0.1,-0.0,-0.0,0.1,0.1,0.2,0.2,0.1,0.1,-0.0,-0.0,-0.0,0.1,0.1,0.1,0.2,0.1,0.2,0.1,0.1,0.1,0.1,0.2,0.3,0.4,0.5,0.5,0.5,0.4,0.4,0.4,0.3,0.2,0.1,0.2,0.1,0.1,0.0,-0.1,0.0,0.1,0.1,0.1,0.1,0.1,0.1,0.2,0.2,0.2,0.2,0.2,0.3,0.3,0.4,0.5,0.5,0.6,0.5,0.5,0.4,0.3,0.3,0.4,0.3,0.2,0.1,0.0,-0.1,-0.1,0.0,0.0,0.0,0.1,0.0,0.0,0.0,0.1,0.1,0.2,0.2,0.1,0.1,0.2,0.1,0.1,0.0,0.0,-0.1,-0.2,-0.1,-0.2,-0.1,0.0,0.0,0.0,-0.1,0.0,0.1,0.0,0.0,0.0,0.0,0.0,-0.1,-0.1,0.0,-0.1,-0.2,-0.2,-0.3,-0.3,-0.4,-0.5,-0.4,-0.3,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.1,-0.1,-0.1,-0.1,-0.0,-0.1,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.3,-0.3,-0.4,-0.3,-0.2,-0.2,-0.2,-0.2,-0.2,-0.3,-0.3,-0.4,-0.4,-0.5,-0.5,-0.6,-0.6,-0.5,-0.5,-0.5,-0.4,-0.3,-0.4,-0.5,-0.5,-0.5,-0.5,-0.4,-0.4,-0.3,-0.4,-0.4,-0.4,-0.3,-0.2,-0.1,-0.0,-0.0,-0.0,-0.1,-0.1,-0.2,-0.3,-0.3,-0.3,-0.3,-0.3,-0.3,-0.3,-0.3,-0.4,-0.4,-0.4,-0.4,-0.4,-0.4,-0.5,-0.5,-0.6,-0.6,-0.7,-0.7,-0.7,-0.7,-0.6,-0.5,-0.5,-0.5,-0.5,-0.5,-0.6,-0.6,-0.6,-0.6,-0.7,-0.7,-0.6,-0.6,-0.7,-0.7,-0.8,-0.9,-0.9,-0.8,-0.7,-0.8,-0.7,-0.7,-0.7,-0.7,-0.8,-0.8,-0.7,-0.6,-0.7,-0.8,-0.8,-0.7,-0.8,-0.8,-0.8,-0.7,-0.7,-0.7,-0.8,-0.8,-0.9,-1.0,-1.1,-1.1,-1.1,-1.0,-1.0,-1.0,-1.0,-1.0,-0.9,-0.9,-0.9,-1.0,-0.9,-0.9,-0.8,-0.8,-0.7,-0.6,-0.6,-0.6,-0.5,-0.5,-0.4,-0.3,-0.2,-0.1,-0.1,-0.1,-0.2,-0.1,-0.1,-0.1,-0.0,-0.0,-0.0,-0.0,-0.1,-0.2,-0.1,-0.1,-0.1,-0.1,-0.1,-0.2,-0.2,-0.2,-0.1,-0.1,-0.1,-0.1,-0.0,-0.0,-0.0,0.1,0.2,0.3,0.3,0.2,0.1,-0.0,0.1,0.2,0.2,0.2,0.2,0.1,-0.0,0.1,0.1,0.2,0.3,0.3,0.2,0.2,0.2,0.2,0.2,0.1,0.1,0.0,-0.1,-0.2,-0.1,-0.1,0.0,-0.1,-0.1,-0.2,-0.3,-0.3,-0.3,-0.4,-0.5,-0.5,-0.5,-0.4,-0.4,-0.5,-0.6,-0.5,-0.4,-0.4,-0.4,-0.4,-0.4,-0.4,-0.4,-0.5,-0.6,-0.5,-0.5,-0.4,-0.5,-0.6,-0.7,-0.7,-0.8,-0.8,-0.8,-0.7,-0.7,-0.7,-0.6,-0.6,-0.6,-0.6,-0.5,-0.6,-0.7,-0.7,-0.7,-0.6,-0.7,-0.8,-0.8,-0.9,-0.9,-0.9,-0.9,-1.0,-0.9,-0.8,-0.7,-0.6,-0.6,-0.6,-0.6,-0.5,-0.5,-0.4,-0.5,-0.5,-0.5,-0.4,-0.4,-0.5,-0.5,-0.4,-0.4,-0.3,-0.4,-0.4,-0.4,-0.4,-0.4,-0.4,-0.4,-0.3,-0.3,-0.4,-0.4,-0.5,-0.6,-0.7,-0.7,-0.7,-0.8,-0.9,-0.8,-0.9,-0.8,-0.7,-0.8,-0.9,-0.9,-0.9,-0.8,-0.8,-0.8,-0.8,-0.8,-0.9,-0.9,-0.9,-0.9,-0.8,-0.9,-0.8,-0.8,-0.7,-0.8,-0.8,-0.8,-0.8,-0.8,-0.8,-0.8,-0.8,-0.7,-0.7,-0.6,-0.6,-0.5,-0.6,-0.7,-0.8,-0.8,-0.9,-0.9,-0.9,-1.0,-1.1,-1.0,-1.0,-1.0,-1.1,-1.1,-1.0],"pnl":[0.069,0.034,0.121,0.176,0.341,0.403,0.44,0.64,0.668,0.643,0.905,0.996,0.954,1.119,1.183,1.275,1.411,1.421,1.344,1.334,1.406,1.432,1.575,1.637,1.729,1.771,1.934,1.948,1.894,2.022,2.07,2.132,2.132,2.177,2.17,2.377,2.432,2.466,2.444,2.506,2.506,2.633,2.765,2.826,2.875,2.999,2.997,3.081,3.064,3.17,3.114,3.264,3.337,3.507,3.622,3.616,4.041,3.913,4.144,4.266,4.357,4.408,4.508,4.62,4.498,4.593,4.705,4.767,4.844,4.906,4.919,4.933,4.957,4.991,5.053,5.077,5.197,5.228,5.411,5.364,5.132,5.147,5.213,5.13,6.029,6.147,6.667,6.373,5.809,5.486,5.36,5.182,5.21,5.471,5.314,5.382,5.444,5.504,5.511,5.572,5.572,5.697,5.788,5.85,5.975,5.975,6.127,6.025,5.974,6.175,6.241,6.218,6.198,6.269,6.347,6.408,6.408,6.478,6.465,6.534,6.691,6.789,6.85,6.85,6.85,6.898,6.959,6.98,7.041,7.041,7.041,7.166,7.166,7.274,7.265,7.326,7.354,7.568,7.689,7.582,7.503,7.278,7.341,7.741,7.847,7.91,8.057,8.316,8.338,8.455,8.531,8.585,8.613,8.766,8.916,8.977,9.091,9.085,9.218,9.296,9.519,9.385,9.515,9.678,9.858,9.787,9.885,9.968,9.954,9.993,10.11,10.207,10.207,10.247,10.393,10.73,10.644,10.444,10.275,9.984,9.931,9.952,9.974,10.071,9.969,10.191,10.428,10.388,9.887,9.495,9.561,10.135,10.433,10.395,10.349,10.45,10.498,10.632,10.716,10.814,10.874,10.874,10.874,10.916,10.968,11.05,11.113,11.16,11.118,11.022,11.036,11.091,11.331,11.356,11.262,11.433,11.407,11.347,11.096,11.091,11.03,11.034,11.424,11.47,11.883,12.214,12.445,12.74,13.003,13.175,13.393,13.917,14.197,14.054,13.989,13.767,14.063,14.495,14.199,14.228,14.082,14.419,13.914,13.767,14.32,14.713,15.261,16.009,15.893,16.424,16.826,16.588,16.461,16.154,17.093,17.372,17.628,17.824,17.116,17.224,17.323,17.787,18.225,18.35,18.466,17.912,17.972,17.684,18.105,18.194,17.997,17.346,17.441,18.3,17.661,17.786,17.407,17.79,17.953,18.192,18.764,19.475,19.744,20.637,19.326,20.066,19.82,20.131,20.278,20.055,19.996,19.89,19.774,19.676,19.489,19.678,19.804,19.904,20.06,20.056,19.972,20.041,19.976,19.955,20.015,20.015,20.015,20.015,20.136,20.149,20.196,20.172,20.153,20.187,20.2,20.218,20.263,20.539,20.536,20.531,20.479,20.705,20.764,20.884,20.884,20.992,21.223,21.464,21.611,21.635,21.642,21.702,21.855,21.855,21.791,21.989,21.914,21.912,21.971,22.076,22.226,22.22,22.329,22.511,22.745,22.881,22.993,22.871,22.963,23.059,23.004,23.063,23.145,23.312,23.334,23.318,23.376,23.446,23.496,23.695,23.842,23.821,23.882,23.86,23.584,23.351,23.412,23.38,23.475,24.182,24.361,24.567,24.948,25.111,25.14,25.176,25.345,25.627,25.717,25.697,25.997,25.944,25.873,25.897,26.109,26.464,26.783,26.661,27.15,26.937,27.067,26.812,27.048,27.443,27.444,27.428,27.507,27.926,28.332,28.775,29.197,29.54,29.452,29.197,29.349,30.141,30.799,31.316,31.295,32.055,32.693,33.458,33.632,33.385,32.823,32.682,33.016,33.031,32.871,33.266,32.957,32.755,32.811,32.542,32.712,32.569,32.487,32.502,32.079,32.362,32.176,32.28,32.592,32.344,32.441,32.665,32.723,32.598,32.373,32.296,32.163,32.18,32.128,32.561,32.719,33.009,33.303,33.367,32.335,32.818,32.154,32.388,32.087,32.461,32.493,32.91,32.824,32.455,32.397,31.227,31.644,32.332,31.93,31.45,31.277,31.766,31.926,31.865,31.421,31.781,32.396,32.245,32.156,32.179,32.528,32.241,32.269,32.626,32.686,32.581,33.165,33.046,33.344,33.394,34.2,34.345,34.783,34.295,33.904,34.436,35.459,35.443,36.244,36.916,37.209,36.572,36.368,36.8,36.101,35.835],"finalPnl":35.84,"maxInv":1.1},"sweep":[{"gamma":0.05,"pnl":46.3,"maxInv":1.9},{"gamma":0.2,"pnl":37.46,"maxInv":1.4},{"gamma":0.5,"pnl":35.84,"maxInv":1.1},{"gamma":1.0,"pnl":29.68,"maxInv":0.7},{"gamma":2.0,"pnl":28.8,"maxInv":0.7}],"sigma":0.5,"kappa":1.5,"horizon":500};</script>
-<script type="application/json" id="pedagogy-contract">{"lesson":14,"status":"pilot","title":"Avellaneda-Stoikov — modelo y simulación","delivery":"lesson","source_path":"framework/_build/docs/14_body.html","requires":{"concepts":["framework.strategy_contract","inventory.risk","inventory.skew"],"apis":["strategy.on_book_update","strategy.on_fill"]},"introduces":{"concepts":[{"id":"as.reservation_price","importance":"major"},{"id":"as.optimal_spread","importance":"major"},{"id":"as.parameters","importance":"major"},{"id":"simulation.parameter_sweep","importance":"major"}],"apis":[]},"recalls":[{"concept":"framework.strategy_contract","introduced_in":10,"mapping":{"before":"on_book_update(book) -> list[Action]","now":"AvellanedaStoikov computes reservation price and quotes inside the same contract","conserved":"decision remains separate from execution"}}],"api_surface":[],"routes":{"LIVE":["l14-challenge","l14-formulas","l14-lab","l14-recap"],"REQUIRED":["l14-capstone","l14-quiz"],"OPTIONAL":[]},"objectives":[{"id":"l14-interpret-reservation-price","route":"LIVE","concepts":["as.reservation_price","as.parameters"]},{"id":"l14-interpret-optimal-spread","route":"LIVE","concepts":["as.optimal_spread","as.parameters"]},{"id":"l14-run-parameter-lab","route":"LIVE","concepts":["simulation.parameter_sweep"]},{"id":"l14-build-capstone","route":"REQUIRED","concepts":["framework.strategy_contract","inventory.skew"]}],"load":{"live_presentation_minutes":22,"guided_minutes":20,"required_autonomous_minutes":90,"optional_minutes":20,"overflow_policy":"capstone-is-separate-autonomous-work"},"scenes":[{"id":"l14-challenge","dom_id":"s0","type":"hero-challenge","route":"LIVE","layout":"focus","concepts":["inventory.skew"],"duration_minutes":2,"stages":[{"id":"challenge","route":"LIVE"}]},{"id":"l14-formulas","dom_id":"s1","type":"code-state","route":"LIVE","layout":"split-42-58","concepts":["as.reservation_price","as.optimal_spread","as.parameters"],"duration_minutes":12,"stages":[{"id":"question","dom_stage":0,"route":"LIVE"},{"id":"reservation","dom_stage":1,"route":"LIVE"},{"id":"spread","dom_stage":2,"route":"LIVE"},{"id":"tau","dom_stage":3,"route":"LIVE"},{"id":"duel","dom_stage":4,"route":"LIVE"}]},{"id":"l14-lab","dom_id":"s2","type":"concept-simulator","route":"LIVE","layout":"split-45-55","concepts":["as.parameters","simulation.parameter_sweep"],"duration_minutes":6,"stages":[{"id":"gamma-lab","route":"LIVE"}]},{"id":"l14-capstone","dom_id":"s3","type":"guided-exercise","route":"REQUIRED","layout":"focus","concepts":["framework.strategy_contract","inventory.skew"],"duration_minutes":90,"stages":[{"id":"capstone","route":"REQUIRED"}]},{"id":"l14-quiz","dom_id":"s4","type":"diagnostic-quiz","route":"REQUIRED","layout":"focus","concepts":["as.reservation_price","as.optimal_spread","as.parameters"],"duration_minutes":8,"stages":[{"id":"quiz","route":"REQUIRED"}]},{"id":"l14-recap","dom_id":"s5","type":"recap","route":"LIVE","layout":"focus","concepts":["as.reservation_price","as.optimal_spread"],"duration_minutes":2,"stages":[{"id":"recap","route":"LIVE"}]}],"package_checks":[{"path":"14-avellaneda-stoikov/exercises/exchange/strategy.py","class":"Strategy","members":{"on_book_update":{"api":"strategy.on_book_update","kind":"method","parameters":[{"name":"book","kind":"positional_or_keyword","annotation":"OrderBook"}],"returns":"list[Action]"},"on_fill":{"api":"strategy.on_fill","kind":"method","parameters":[{"name":"fill","kind":"positional_or_keyword","annotation":"Fill"}],"returns":"None"}}}]}</script>
+<script type="application/json" id="pedagogy-contract">{"lesson":14,"status":"contract-strict","title":"Avellaneda–Stoikov — Modelo y simulación","delivery":"lesson","source_path":"framework/_build/docs/14_body.html","requires":{"concepts":["framework.strategy_contract","inventory.risk","inventory.skew","market_making.heuristic_reservation_price","market_making.cara_utility","market_making.fill_intensity","python.fstring"],"apis":["level.constructor","orderbook.constructor","orderbook.mid","new_order.constructor","strategy.on_book_update","strategy.on_fill","market_maker.constructor","market_maker.half_spread","market_maker.inventory","market_maker.inventory_skew","market_maker.reservation_price","market_maker.quotes","mm_simulation.constructor","mm_simulation.run","sim_result.final_pnl","sim_result.max_inventory"],"notation":["notation.inventory","notation.heuristic_reservation","notation.cara_utility","notation.fill_intensity"]},"requirement_routes":{"concepts":{"framework.strategy_contract":"LIVE","inventory.risk":"LIVE","inventory.skew":"LIVE","market_making.heuristic_reservation_price":"LIVE","market_making.cara_utility":"LIVE","market_making.fill_intensity":"LIVE","python.fstring":"LIVE"},"apis":{"level.constructor":"LIVE","orderbook.constructor":"LIVE","orderbook.mid":"LIVE","new_order.constructor":"LIVE","strategy.on_book_update":"LIVE","strategy.on_fill":"LIVE","market_maker.constructor":"REQUIRED","market_maker.half_spread":"REQUIRED","market_maker.inventory":"LIVE","market_maker.inventory_skew":"REQUIRED","market_maker.reservation_price":"LIVE","market_maker.quotes":"REQUIRED","mm_simulation.constructor":"LIVE","mm_simulation.run":"LIVE","sim_result.final_pnl":"LIVE","sim_result.max_inventory":"LIVE"},"notation":{"notation.inventory":"LIVE","notation.heuristic_reservation":"LIVE","notation.cara_utility":"LIVE","notation.fill_intensity":"LIVE"}},"introduces":{"concepts":[{"id":"as.reservation_price","importance":"major","route":"LIVE"},{"id":"as.optimal_spread","importance":"major","route":"LIVE"},{"id":"as.gamma","importance":"major","route":"LIVE"},{"id":"as.sigma","importance":"major","route":"LIVE"},{"id":"as.kappa","importance":"major","route":"LIVE"},{"id":"as.time_horizon","importance":"major","route":"LIVE"},{"id":"simulation.parameter_sweep","importance":"major","route":"LIVE"}],"apis":["avellaneda_stoikov.constructor","avellaneda_stoikov.time","avellaneda_stoikov.reservation_price","avellaneda_stoikov.optimal_spread","avellaneda_stoikov.quotes"],"notation":["notation.as_reservation_price","notation.as_optimal_spread"]},"introduction_routes":{"apis":{"avellaneda_stoikov.constructor":"LIVE","avellaneda_stoikov.time":"LIVE","avellaneda_stoikov.reservation_price":"LIVE","avellaneda_stoikov.optimal_spread":"LIVE","avellaneda_stoikov.quotes":"LIVE"},"notation":{"notation.as_reservation_price":"LIVE","notation.as_optimal_spread":"LIVE"}},"recalls":[{"concept":"market_making.heuristic_reservation_price","introduced_in":13,"mapping":{"before":"r = mid - skew_heurístico × inventario","now":"r = s - q γ σ² τ expresa el mismo control con unidades."}},{"concept":"framework.strategy_contract","introduced_in":10,"mapping":{"before":"on_book_update devuelve acciones y on_fill actualiza el estado.","now":"A-S cambia las fórmulas dentro del mismo ciclo de vida."}},{"concept":"market_making.cara_utility","introduced_in":13,"mapping":{"before":"CARA dio a γ el significado de aversión al riesgo.","now":"γ controla cuánto desplazan riesgo e inventario el centro A-S."}},{"concept":"market_making.fill_intensity","introduced_in":13,"mapping":{"before":"λ(δ)=A·exp(−κδ) hizo visible la caída de fills con la distancia.","now":"κ entra en el ancho óptimo y cuantifica ese mismo trade-off."}}],"api_surface":[{"id":"level.constructor","name":"Level","kind":"constructor","signature":"Level(price: float, size: float) -> Level","returns":"Level","responsibility":"construct one visible price level","qualified_name":"exchange.book.Level"},{"id":"orderbook.constructor","name":"OrderBook","kind":"constructor","signature":"OrderBook(symbol: str, bids: list[Level], asks: list[Level]) -> OrderBook","returns":"OrderBook","responsibility":"construct a sorted two-sided book","qualified_name":"exchange.book.OrderBook"},{"id":"orderbook.mid","name":"mid","kind":"property","signature":"mid -> float | None","returns":"float | None","responsibility":"compute the top-of-book midpoint","qualified_name":"exchange.book.OrderBook.mid"},{"id":"new_order.constructor","name":"NewOrder","kind":"constructor","signature":"NewOrder(order: Order) -> NewOrder","returns":"NewOrder","responsibility":"wrap an order as a typed strategy action","qualified_name":"exchange.strategy.NewOrder"},{"id":"strategy.on_book_update","name":"on_book_update","kind":"method","signature":"on_book_update(book: OrderBook) -> list[Action]","returns":"list[Action]","responsibility":"propose typed actions from market state","qualified_name":"exchange.strategy.Strategy.on_book_update"},{"id":"strategy.on_fill","name":"on_fill","kind":"method","signature":"on_fill(fill: Fill) -> None","returns":"None","responsibility":"receive execution feedback","qualified_name":"exchange.strategy.Strategy.on_fill"},{"id":"market_maker.constructor","name":"MarketMaker","kind":"constructor","signature":"MarketMaker(symbol: str, quote_size: float = 0.01, half_spread: float = 5.0, inventory_skew: float = 2.0) -> MarketMaker","returns":"MarketMaker","responsibility":"configure the heuristic market maker","qualified_name":"exchange.strategies.market_maker.MarketMaker"},{"id":"market_maker.inventory","name":"inventory","kind":"property","signature":"inventory -> float","returns":"float","responsibility":"read or set the strategy inventory through its public contract","qualified_name":"exchange.strategies.market_maker.MarketMaker.inventory"},{"id":"market_maker.half_spread","name":"half_spread","kind":"attribute","signature":"half_spread: float","returns":"float","responsibility":"configure half the quoted width around the reservation price","qualified_name":"exchange.strategies.market_maker.MarketMaker.half_spread"},{"id":"market_maker.inventory_skew","name":"inventory_skew","kind":"attribute","signature":"inventory_skew: float","returns":"float","responsibility":"configure the heuristic inventory correction strength","qualified_name":"exchange.strategies.market_maker.MarketMaker.inventory_skew"},{"id":"market_maker.reservation_price","name":"reservation_price","kind":"method","signature":"reservation_price(mid: float) -> float","returns":"float","responsibility":"shift the quote center using inventory","qualified_name":"exchange.strategies.market_maker.MarketMaker.reservation_price"},{"id":"market_maker.quotes","name":"quotes","kind":"method","signature":"quotes(book: OrderBook) -> tuple[float, float]","returns":"tuple[float, float]","responsibility":"produce bid and ask quotes","qualified_name":"exchange.strategies.market_maker.MarketMaker.quotes"},{"id":"mm_simulation.constructor","name":"MMSimulation","kind":"constructor","signature":"MMSimulation(strategy: MarketMaker, s0: float = 100.0, sigma: float = 0.5, steps: int = 500, A: float = 1.0, kappa: float = 1.5, seed: int = 42) -> MMSimulation","returns":"MMSimulation","responsibility":"configure a reproducible fill-intensity simulation","qualified_name":"exchange.simulation.MMSimulation"},{"id":"mm_simulation.run","name":"run","kind":"method","signature":"run() -> SimResult","returns":"SimResult","responsibility":"simulate quotes, fills, inventory, and marked PnL","qualified_name":"exchange.simulation.MMSimulation.run"},{"id":"sim_result.final_pnl","name":"final_pnl","kind":"property","signature":"final_pnl -> float","returns":"float","responsibility":"read final marked-to-market PnL","qualified_name":"exchange.simulation.SimResult.final_pnl"},{"id":"sim_result.max_inventory","name":"max_inventory","kind":"property","signature":"max_inventory -> float","returns":"float","responsibility":"read maximum absolute simulated inventory","qualified_name":"exchange.simulation.SimResult.max_inventory"},{"id":"avellaneda_stoikov.constructor","name":"AvellanedaStoikov","kind":"constructor","signature":"AvellanedaStoikov(symbol: str, quote_size: float = 0.01, gamma: float = 0.1, sigma: float = 10.0, kappa: float = 1.5, horizon: int = 500) -> AvellanedaStoikov","returns":"AvellanedaStoikov","responsibility":"configure the A-S risk, volatility, flow, and horizon parameters","qualified_name":"exchange.strategies.avellaneda_stoikov.AvellanedaStoikov"},{"id":"avellaneda_stoikov.time","name":"time","kind":"property","signature":"time -> int","returns":"int","responsibility":"read or set the model clock through its public contract","qualified_name":"exchange.strategies.avellaneda_stoikov.AvellanedaStoikov.time"},{"id":"avellaneda_stoikov.reservation_price","name":"reservation_price","kind":"method","signature":"reservation_price(mid: float) -> float","returns":"float","responsibility":"compute the A-S inventory- and horizon-adjusted quote center","qualified_name":"exchange.strategies.avellaneda_stoikov.AvellanedaStoikov.reservation_price"},{"id":"avellaneda_stoikov.optimal_spread","name":"optimal_spread","kind":"method","signature":"optimal_spread() -> float","returns":"float","responsibility":"compute the model spread","qualified_name":"exchange.strategies.avellaneda_stoikov.AvellanedaStoikov.optimal_spread"},{"id":"avellaneda_stoikov.quotes","name":"quotes","kind":"method","signature":"quotes(book: OrderBook) -> tuple[float, float]","returns":"tuple[float, float]","responsibility":"center A-S quotes on the model reservation price with optimal width","qualified_name":"exchange.strategies.avellaneda_stoikov.AvellanedaStoikov.quotes"}],"routes":{"LIVE":["l14-challenge","l14-formulas","l14-lab","l14-recap"],"REQUIRED":["l14-capstone","l14-quiz"],"OPTIONAL":[]},"objectives":[{"id":"l14-interpret-reservation-price","route":"LIVE","concepts":["as.reservation_price","as.gamma","as.sigma","as.time_horizon"],"apis":["avellaneda_stoikov.constructor","avellaneda_stoikov.time","market_maker.inventory","avellaneda_stoikov.reservation_price"],"notation":["notation.cara_utility","notation.as_reservation_price"]},{"id":"l14-interpret-optimal-spread","route":"LIVE","concepts":["as.optimal_spread","as.kappa"],"apis":["avellaneda_stoikov.optimal_spread"],"notation":["notation.fill_intensity","notation.as_optimal_spread"]},{"id":"l14-run-parameter-lab","route":"LIVE","concepts":["simulation.parameter_sweep","as.gamma"],"apis":["avellaneda_stoikov.constructor","avellaneda_stoikov.quotes","mm_simulation.constructor","mm_simulation.run","sim_result.final_pnl","sim_result.max_inventory"],"notation":[]},{"id":"l14-build-capstone","route":"REQUIRED","concepts":["framework.strategy_contract","inventory.skew"],"apis":["market_maker.constructor","market_maker.half_spread","market_maker.inventory","market_maker.inventory_skew","market_maker.quotes","strategy.on_book_update","strategy.on_fill"],"notation":[]}],"load":{"live_presentation_minutes":22,"guided_minutes":20,"required_autonomous_minutes":125,"required_project_minutes":90,"optional_minutes":10,"overflow_policy":"explicit-route-plan"},"scenes":[{"id":"l14-challenge","dom_id":"s0","type":"hero-challenge","route":"LIVE","layout":"focus","concepts":["market_making.heuristic_reservation_price"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l14-formulas","dom_id":"s1","type":"mathematical-state","route":"LIVE","layout":"split-42-58","concepts":["as.reservation_price","as.optimal_spread","as.gamma","as.sigma","as.kappa","as.time_horizon"],"duration_minutes":12,"stages":[{"id":"question","route":"LIVE","dom_stage":0},{"id":"reservation","route":"LIVE","dom_stage":1},{"id":"spread","route":"LIVE","dom_stage":2},{"id":"tau","route":"LIVE","dom_stage":3},{"id":"duel","route":"LIVE","dom_stage":4}]},{"id":"l14-lab","dom_id":"s2","type":"concept-simulator","route":"LIVE","layout":"split-45-55","concepts":["as.gamma","simulation.parameter_sweep"],"duration_minutes":6,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l14-capstone","dom_id":"s3","type":"guided-exercise","route":"REQUIRED","layout":"focus","concepts":["framework.strategy_contract","inventory.skew"],"duration_minutes":90,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l14-quiz","dom_id":"s4","type":"diagnostic-quiz","route":"REQUIRED","layout":"focus","concepts":["as.reservation_price","as.optimal_spread","as.gamma","as.sigma","as.kappa","as.time_horizon"],"duration_minutes":8,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l14-recap","dom_id":"s5","type":"recap","route":"LIVE","layout":"focus","concepts":["as.reservation_price","as.optimal_spread"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]}],"bridge":{"target_lesson":15,"known":{"concepts":["matching.atomicity","framework.strategy_contract","metrics.slippage","execution.vwap","inventory.skew","as.reservation_price","as.optimal_spread"],"apis":["matching.process","strategy.on_book_update","backtest.run"],"notation":["notation.slippage_signed","notation.vwap","notation.as_reservation_price","notation.as_optimal_spread"]},"limitation":"El exchange completo aún no se ha demostrado bajo restricciones de evaluación.","need":"La evaluación final muestrea razonamiento acumulativo de todos los bloques."},"api_transitions":[{"from_api":"market_maker.constructor","from_signature":"MarketMaker(symbol: str, quote_size: float = 0.01, half_spread: float = 5.0, inventory_skew: float = 2.0) -> MarketMaker","to_api":"avellaneda_stoikov.constructor","to_signature":"AvellanedaStoikov(symbol: str, quote_size: float = 0.01, gamma: float = 0.1, sigma: float = 10.0, kappa: float = 1.5, horizon: int = 500) -> AvellanedaStoikov","kind":"explicit-specialization","reason":"La subclase conserva symbol y quote_size, y sustituye los parámetros heurísticos por γ, σ, κ y horizonte explícitos."},{"from_api":"market_maker.reservation_price","from_signature":"reservation_price(mid: float) -> float","to_api":"avellaneda_stoikov.reservation_price","to_signature":"reservation_price(mid: float) -> float","kind":"semantic-override","reason":"La firma permanece estable, pero el centro deja el skew fijo y pasa a qγσ²τ; el contrato separado impide ocultar ese cambio de responsabilidad."},{"from_api":"market_maker.quotes","from_signature":"quotes(book: OrderBook) -> tuple[float, float]","to_api":"avellaneda_stoikov.quotes","to_signature":"quotes(book: OrderBook) -> tuple[float, float]","kind":"semantic-override","reason":"El retorno sigue siendo bid/ask, pero ahora usa el reservation price y el ancho óptimo de A-S."}],"package_checks":[{"path":"14-avellaneda-stoikov/exercises/exchange/book.py","class":"Level","members":{"__init__":{"api":"level.constructor","kind":"constructor","parameters":[{"name":"price","kind":"positional_or_keyword","annotation":"float"},{"name":"size","kind":"positional_or_keyword","annotation":"float"}],"returns":"Level"}}},{"path":"14-avellaneda-stoikov/exercises/exchange/book.py","class":"OrderBook","members":{"__init__":{"api":"orderbook.constructor","kind":"constructor","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"bids","kind":"positional_or_keyword","annotation":"list[Level]"},{"name":"asks","kind":"positional_or_keyword","annotation":"list[Level]"}],"returns":"OrderBook"},"mid":{"api":"orderbook.mid","kind":"property","parameters":[],"returns":"float | None"}}},{"path":"14-avellaneda-stoikov/exercises/exchange/strategy.py","class":"NewOrder","members":{"__init__":{"api":"new_order.constructor","kind":"constructor","parameters":[{"name":"order","kind":"positional_or_keyword","annotation":"Order"}],"returns":"NewOrder"}}},{"path":"14-avellaneda-stoikov/exercises/exchange/strategy.py","class":"Strategy","members":{"on_book_update":{"api":"strategy.on_book_update","kind":"method","parameters":[{"name":"book","kind":"positional_or_keyword","annotation":"OrderBook"}],"returns":"list[Action]"},"on_fill":{"api":"strategy.on_fill","kind":"method","parameters":[{"name":"fill","kind":"positional_or_keyword","annotation":"Fill"}],"returns":"None"}}},{"path":"14-avellaneda-stoikov/exercises/exchange/strategies/market_maker.py","class":"MarketMaker","members":{"__init__":{"api":"market_maker.constructor","kind":"constructor","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"quote_size","kind":"positional_or_keyword","annotation":"float","default":"0.01"},{"name":"half_spread","kind":"positional_or_keyword","annotation":"float","default":"5.0"},{"name":"inventory_skew","kind":"positional_or_keyword","annotation":"float","default":"2.0"}],"returns":"MarketMaker"},"inventory":{"api":"market_maker.inventory","kind":"property","parameters":[],"returns":"float"},"half_spread":{"api":"market_maker.half_spread","kind":"attribute","parameters":[],"returns":"float"},"inventory_skew":{"api":"market_maker.inventory_skew","kind":"attribute","parameters":[],"returns":"float"},"reservation_price":{"api":"market_maker.reservation_price","kind":"method","parameters":[{"name":"mid","kind":"positional_or_keyword","annotation":"float"}],"returns":"float"},"quotes":{"api":"market_maker.quotes","kind":"method","parameters":[{"name":"book","kind":"positional_or_keyword","annotation":"OrderBook"}],"returns":"tuple[float, float]"}}},{"path":"14-avellaneda-stoikov/exercises/exchange/simulation.py","class":"MMSimulation","members":{"__init__":{"api":"mm_simulation.constructor","kind":"constructor","parameters":[{"name":"strategy","kind":"positional_or_keyword","annotation":"MarketMaker"},{"name":"s0","kind":"positional_or_keyword","annotation":"float","default":"100.0"},{"name":"sigma","kind":"positional_or_keyword","annotation":"float","default":"0.5"},{"name":"steps","kind":"positional_or_keyword","annotation":"int","default":"500"},{"name":"A","kind":"positional_or_keyword","annotation":"float","default":"1.0"},{"name":"kappa","kind":"positional_or_keyword","annotation":"float","default":"1.5"},{"name":"seed","kind":"positional_or_keyword","annotation":"int","default":"42"}],"returns":"MMSimulation"},"run":{"api":"mm_simulation.run","kind":"method","parameters":[],"returns":"SimResult"}}},{"path":"14-avellaneda-stoikov/exercises/exchange/simulation.py","class":"SimResult","members":{"final_pnl":{"api":"sim_result.final_pnl","kind":"property","parameters":[],"returns":"float"},"max_inventory":{"api":"sim_result.max_inventory","kind":"property","parameters":[],"returns":"float"}}},{"path":"14-avellaneda-stoikov/exercises/exchange/strategies/avellaneda_stoikov.py","class":"AvellanedaStoikov","members":{"__init__":{"api":"avellaneda_stoikov.constructor","kind":"constructor","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"quote_size","kind":"positional_or_keyword","annotation":"float","default":"0.01"},{"name":"gamma","kind":"positional_or_keyword","annotation":"float","default":"0.1"},{"name":"sigma","kind":"positional_or_keyword","annotation":"float","default":"10.0"},{"name":"kappa","kind":"positional_or_keyword","annotation":"float","default":"1.5"},{"name":"horizon","kind":"positional_or_keyword","annotation":"int","default":"500"}],"returns":"AvellanedaStoikov"},"time":{"api":"avellaneda_stoikov.time","kind":"property","parameters":[],"returns":"int"},"reservation_price":{"api":"avellaneda_stoikov.reservation_price","kind":"method","parameters":[{"name":"mid","kind":"positional_or_keyword","annotation":"float"}],"returns":"float"},"optimal_spread":{"api":"avellaneda_stoikov.optimal_spread","kind":"method","parameters":[],"returns":"float"},"quotes":{"api":"avellaneda_stoikov.quotes","kind":"method","parameters":[{"name":"book","kind":"positional_or_keyword","annotation":"OrderBook"}],"returns":"tuple[float, float]"}}}],"used_later":{"concepts":["as.optimal_spread","as.reservation_price"],"apis":[],"notation":["notation.as_optimal_spread","notation.as_reservation_price"]}}</script>
 <script>
 
 (function(){
@@ -1260,6 +1315,8 @@ put('dd-swp',Math.round(a.pnl)+'→'+Math.round(b.pnl));
 (function(){
 'use strict';
 
+const RUNTIME_VERSION=2;
+const ROUTES=['LIVE','REQUIRED','OPTIONAL'];
 const contractNode=document.getElementById('pedagogy-contract');
 if(!contractNode)return;
 
@@ -1267,75 +1324,163 @@ let contract;
 try{contract=JSON.parse(contractNode.textContent);}catch(error){
   console.error('Invalid pedagogy contract',error);return;
 }
-if(!contract.scenes||!contract.scenes.length)return;
+if(!Array.isArray(contract.scenes)||!contract.scenes.length)return;
 
 const body=document.body;
 const params=new URLSearchParams(location.search);
 const mobileQuery=matchMedia('(max-width: 900px)');
 const requestedMode=params.get('mode')==='aula'?'aula':'estudio';
 const mode=requestedMode==='aula'&&!mobileQuery.matches?'aula':'estudio';
-const isProfessor=params.has('profe');
-const routeScopes=isProfessor?['LIVE','LIVE+REQUIRED','ALL']:['LIVE','LIVE+REQUIRED'];
-let routeScope='LIVE';
-let currentScene=0,currentStage=0,lastInput='pointer';
+const isProfessor=['1','true'].includes((params.get('profe')||'').toLowerCase());
+const routeScopes=mode==='aula'
+  ?(isProfessor?['LIVE','LIVE+REQUIRED','ALL']:['LIVE'])
+  :['LIVE+REQUIRED','ALL'];
+let routeScope=mode==='estudio'?'LIVE+REQUIRED':'LIVE';
+if(mode==='estudio'&&params.get('optional')==='1')routeScope='ALL';
+let currentScene=0,currentStage=0;
 
-const esc=value=>String(value).replace(/[&<>"']/g,ch=>({
+const esc=value=>String(value??'').replace(/[&<>"']/g,ch=>({
   '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
 })[ch]);
-const routeClass=route=>`lr-route-${route.toLowerCase()}`;
-const scopeRoutes=()=>routeScope==='ALL'?['LIVE','REQUIRED','OPTIONAL']:
+const slug=value=>String(value||'focus').toLowerCase().replace(/[^a-z0-9-]+/g,'-');
+const route=value=>ROUTES.includes(String(value||'').toUpperCase())
+  ?String(value).toUpperCase():'LIVE';
+const routeClass=value=>`lr-route-${route(value).toLowerCase()}`;
+const scopeRoutes=()=>routeScope==='ALL'?ROUTES:
   routeScope==='LIVE+REQUIRED'?['LIVE','REQUIRED']:['LIVE'];
 const modeUrl=next=>{
   const q=new URLSearchParams(location.search);q.set('mode',next);
   return `${location.pathname}?${q.toString()}${location.hash}`;
 };
+const stateKey=(scene,stage)=>`${scene.id}::${stage.id}`;
+const reducedMotion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-const models=contract.scenes.map(scene=>{
-  const element=document.getElementById(scene.dom_id);
-  if(!element)return null;
-  element.classList.add('lr-scene',routeClass(scene.route));
-  element.dataset.sceneId=scene.id;
-  element.dataset.sceneType=scene.type;
-  element.dataset.sceneLayout=scene.layout;
-  element.dataset.route=scene.route;
-  const stages=(scene.stages||[{id:'stage',route:scene.route}]).map(stage=>({
-    ...stage,
-    route:stage.route||scene.route,
-    step:stage.dom_stage===undefined?null:
-      element.querySelector(`.step[data-stage="${stage.dom_stage}"]`),
-    figure:stage.dom_stage===undefined?null:
-      element.querySelector(`.fig-stage[data-stage="${stage.dom_stage}"]`),
-  }));
-  stages.forEach(stage=>{
-    if(stage.step){stage.step.dataset.route=stage.route;stage.step.classList.add(routeClass(stage.route));}
-    if(stage.figure){stage.figure.dataset.route=stage.route;stage.figure.classList.add(routeClass(stage.route));}
+function elementForStage(nodes,value,index,total){
+  if(value!==undefined&&value!==null){
+    const wanted=String(value);
+    return nodes.find(node=>node.dataset.stage===wanted)||null;
+  }
+  return total===nodes.length?nodes[index]||null:(total===1&&nodes.length===1?nodes[0]:null);
+}
+
+const missingScenes=[];
+const models=contract.scenes.map(rawScene=>{
+  if(!rawScene||!rawScene.id||!rawScene.dom_id)return null;
+  const element=document.getElementById(rawScene.dom_id);
+  if(!element){missingScenes.push(rawScene.id);return null;}
+  const sceneRoute=route(rawScene.route);
+  const layout=slug(rawScene.layout);
+  element.classList.add('lr-scene',routeClass(sceneRoute),`lr-layout-${layout}`);
+  element.dataset.sceneId=rawScene.id;
+  element.dataset.sceneType=rawScene.type||'scene';
+  element.dataset.sceneLayout=layout;
+  element.dataset.layoutApplied='true';
+  element.dataset.route=sceneRoute;
+  const allSteps=[...element.querySelectorAll('.scrolly .step')];
+  const allFigures=[...element.querySelectorAll('.fig-stage')];
+  const declared=Array.isArray(rawScene.stages)&&rawScene.stages.length
+    ?rawScene.stages:[{id:'stage',route:sceneRoute}];
+  const stages=declared.map((rawStage,index)=>{
+    const stage={...rawStage};
+    stage.id=stage.id||`stage-${index+1}`;
+    stage.route=route(stage.route||sceneRoute);
+    stage.step=elementForStage(allSteps,stage.dom_stage,index,declared.length);
+    stage.figure=elementForStage(allFigures,stage.dom_stage,index,declared.length);
+    [stage.step,stage.figure].filter(Boolean).forEach(node=>{
+      node.dataset.route=stage.route;node.classList.add(routeClass(stage.route));
+    });
+    return stage;
   });
   const firstWrap=element.matches('.wrap')?element:element.querySelector(':scope > .wrap');
   if(firstWrap){
     const badge=document.createElement('div');
-    badge.className=`lr-scene-badge ${routeClass(scene.route)}`;
-    badge.innerHTML=`<span>${esc(scene.route)}</span><span>${esc(scene.type)}</span><span>${scene.duration_minutes} min</span>`;
+    badge.className=`lr-scene-badge ${routeClass(sceneRoute)}`;
+    const minutes=Number.isFinite(Number(rawScene.duration_minutes))
+      ?`<span>${esc(rawScene.duration_minutes)} min</span>`:'';
+    badge.innerHTML=`<span>${esc(sceneRoute)}</span><span>${esc(rawScene.type||'scene')}</span>${minutes}`;
     firstWrap.insertBefore(badge,firstWrap.firstChild);
   }
-  return {...scene,element,stages};
+  return {...rawScene,route:sceneRoute,layout,element,stages,allSteps,allFigures};
 }).filter(Boolean);
 
+if(missingScenes.length){
+  body.dataset.runtimeContractError='missing-scene-dom';
+  console.error(`Pedagogy scenes without DOM nodes: ${missingScenes.join(', ')}`);
+}
 if(!models.length)return;
+
 body.classList.add('lr-has-contract',`mode-${mode}`);
 body.dataset.learningMode=mode;
 body.dataset.requestedMode=requestedMode;
+body.dataset.professorMode=String(isProfessor);
+body.dataset.runtimeVersion=String(RUNTIME_VERSION);
+document.documentElement.classList.toggle('lr-mode-aula',mode==='aula');
 if(requestedMode!==mode)body.classList.add('lr-mobile-fallback');
+
+const inventory=models.flatMap(scene=>scene.stages.map(stage=>({
+  key:stateKey(scene,stage),scene,stage,route:stage.route,
+})));
+const inventoryKeys=new Set(inventory.map(item=>item.key));
+const optionalCount=inventory.filter(item=>item.route==='OPTIONAL').length;
+
+function storageKey(){
+  if(window.DOC&&typeof DOC.key==='function')return DOC.key();
+  return `algoTrading.${body.dataset.lesson||String(contract.lesson||'x').padStart(2,'0')}`;
+}
+function readSaved(){
+  try{return JSON.parse(localStorage.getItem(storageKey())||'{}');}catch(_error){return {};}
+}
+const initialSaved=readSaved();
+const savedRuntime=initialSaved.runtime||{};
+if(params.get('optional')!=='1'&&routeScopes.includes(savedRuntime.routeScope)){
+  routeScope=savedRuntime.routeScope;
+}
+const visited=new Set((Array.isArray(savedRuntime.visited)?savedRuntime.visited:[])
+  .filter(key=>inventoryKeys.has(key)));
+if(savedRuntime.scene&&savedRuntime.stage){
+  const prior=inventory.find(item=>item.scene.id===savedRuntime.scene&&item.stage.id===savedRuntime.stage);
+  if(prior)visited.add(prior.key);
+}
+
+function progressSnapshot(){
+  const progress={};
+  ROUTES.forEach(routeName=>{
+    const states=inventory.filter(item=>item.route===routeName);
+    const seen=states.filter(item=>visited.has(item.key)).length;
+    progress[routeName]={
+      visited:seen,total:states.length,
+      percent:states.length?Math.round(100*seen/states.length):100,
+      complete:states.length===0||seen===states.length,
+    };
+  });
+  return progress;
+}
+function saveRuntime(scene=null,stage=null,mark=false){
+  if(scene&&stage&&mark)visited.add(stateKey(scene,stage));
+  const previous=readSaved().runtime||{};
+  const runtime={...previous,version:RUNTIME_VERSION,mode,routeScope,
+    visited:[...visited],progress:progressSnapshot(),ts:Date.now()};
+  if(scene)runtime.scene=scene.id;
+  if(stage)runtime.stage=stage.id;
+  if(window.DOC&&typeof DOC.save==='function')DOC.save({runtime});
+  else{
+    try{localStorage.setItem(storageKey(),JSON.stringify({...readSaved(),runtime}));}catch(_error){}
+  }
+  body.dataset.runtimeProgress=JSON.stringify(runtime.progress);
+}
 
 const nav=document.createElement('aside');
 nav.id='lr-nav';
-nav.setAttribute('aria-label','Navegación de la lesson');
+nav.setAttribute('aria-label','Navegación de la lección');
 nav.innerHTML=`
+  <a class="lr-course-home" href="../../index.html">← Mapa del curso</a>
   <div class="lr-brand"><b>L${Number(contract.lesson)}</b><span>${esc(contract.title)}</span></div>
   <div class="lr-modes" aria-label="Modo de lectura">
     <a href="${modeUrl('aula')}" class="${mode==='aula'?'on':''}">Aula</a>
     <a href="${modeUrl('estudio')}" class="${mode==='estudio'?'on':''}">Estudio</a>
   </div>
-  ${requestedMode!==mode?'<p class="lr-fallback-note">Aula usa el fallback vertical en esta pantalla.</p>':''}
+  ${requestedMode!==mode?'<p class="lr-fallback-note">Aula usa el recorrido vertical en esta pantalla.</p>':''}
+  <button type="button" class="lr-study-optional" aria-pressed="false">Incluir OPTIONAL</button>
   <div class="lr-scene-links"></div>`;
 body.appendChild(nav);
 
@@ -1346,7 +1491,6 @@ models.forEach((scene,index)=>{
   button.className=routeClass(scene.route);
   button.innerHTML=`<span>${esc(scene.route)}</span><b>${esc(scene.id.replace(/^l\d+-/,''))}</b>`;
   button.addEventListener('click',()=>{
-    lastInput='pointer';
     if(mode==='aula')goTo(index,0,false);
     else scene.element.scrollIntoView({behavior:reducedMotion()?'auto':'smooth',block:'start'});
   });
@@ -1359,75 +1503,83 @@ controls.innerHTML=`
   <button type="button" class="lr-prev" aria-label="Etapa anterior">← <span>Anterior</span></button>
   <div class="lr-progress" aria-live="polite">
     <b class="lr-scene-progress">Escena</b><span>·</span><b class="lr-stage-progress">Etapa</b>
+    <span>·</span><b class="lr-route-progress">0%</b>
   </div>
-  <button type="button" class="lr-route-scope" aria-label="Cambiar ruta">LIVE</button>
+  <button type="button" class="lr-route-scope" aria-label="Cambiar alcance de ruta">LIVE</button>
   <button type="button" class="lr-next" aria-label="Etapa siguiente"><span>Siguiente</span> →</button>`;
 body.appendChild(controls);
+
+const mobileToolbar=document.createElement('div');
+mobileToolbar.id='lr-mobile-toolbar';
+mobileToolbar.innerHTML=`<a href="../../index.html">← Curso</a>
+  <span>${requestedMode==='aula'?'Aula → estudio':'Modo estudio'}</span>
+  <button type="button" class="lr-study-optional" aria-pressed="false">+ OPTIONAL</button>
+  ${isProfessor?'<button type="button" class="lr-mobile-teacher" aria-expanded="false">Guía</button>':''}`;
+body.insertBefore(mobileToolbar,body.firstChild);
 
 const liveRegion=document.createElement('div');
 liveRegion.className='lr-sr-only';liveRegion.setAttribute('aria-live','polite');
 body.appendChild(liveRegion);
 
-let teacherToggle=null,teacherDrawer=null,teacherBody=null;
+let teacherToggle=null,teacherDrawer=null,teacherBody=null,mobileTeacherToggle=null;
 if(isProfessor){
   teacherToggle=document.createElement('button');
   teacherToggle.id='lr-teacher-toggle';teacherToggle.type='button';
   teacherToggle.textContent='Guía docente';teacherToggle.setAttribute('aria-expanded','false');
   teacherToggle.setAttribute('aria-controls','lr-teacher-drawer');
   nav.insertBefore(teacherToggle,navLinks);
+  mobileTeacherToggle=mobileToolbar.querySelector('.lr-mobile-teacher');
+  mobileTeacherToggle?.setAttribute('aria-controls','lr-teacher-drawer');
   teacherDrawer=document.createElement('aside');
   teacherDrawer.id='lr-teacher-drawer';teacherDrawer.dataset.overlay='teacher';
   teacherDrawer.setAttribute('aria-label','Guía docente de la escena');
+  teacherDrawer.setAttribute('aria-hidden','true');
   teacherDrawer.innerHTML='<div class="lr-teacher-head"><b>Guía docente</b>'
     +'<button type="button" class="lr-teacher-close" aria-label="Cerrar guía docente">×</button></div>'
     +'<div class="lr-teacher-body"></div>';
   body.appendChild(teacherDrawer);teacherBody=teacherDrawer.querySelector('.lr-teacher-body');
   const toggleTeacher=force=>{
     const open=force===undefined?!teacherDrawer.classList.contains('open'):force;
-    teacherDrawer.classList.toggle('open',open);teacherToggle.setAttribute('aria-expanded',String(open));
+    teacherDrawer.classList.toggle('open',open);
+    teacherDrawer.setAttribute('aria-hidden',String(!open));
+    [teacherToggle,mobileTeacherToggle].filter(Boolean)
+      .forEach(button=>button.setAttribute('aria-expanded',String(open)));
     if(open)teacherDrawer.querySelector('.lr-teacher-close').focus();
+    else (mobileQuery.matches?mobileTeacherToggle:teacherToggle)?.focus();
   };
   teacherToggle.addEventListener('click',()=>toggleTeacher());
+  mobileTeacherToggle?.addEventListener('click',()=>toggleTeacher());
   teacherDrawer.querySelector('.lr-teacher-close').addEventListener('click',()=>toggleTeacher(false));
 }
 
-function reducedMotion(){return matchMedia('(prefers-reduced-motion: reduce)').matches;}
-function allowed(scene){return scopeRoutes().includes(scene.route);}
 function allowedStages(scene){
   const allowedRoutes=scopeRoutes();
-  const stages=scene.stages.filter(stage=>allowedRoutes.includes(stage.route));
-  return stages.length?stages:scene.stages.slice(0,1);
+  return scene.stages.filter(stage=>allowedRoutes.includes(stage.route));
+}
+function allowed(scene){
+  return scopeRoutes().includes(scene.route)&&allowedStages(scene).length>0;
 }
 function availableModels(){return models.filter(allowed);}
-function persist(scene,stage){
-  if(!window.DOC||!DOC.save)return;
-  DOC.save({runtime:{mode,routeScope,scene:scene.id,stage:stage.id,ts:Date.now()}});
-}
-function restore(){
-  try{
-    const state=JSON.parse(localStorage.getItem(DOC.key())||'{}').runtime;
-    if(!state)return;
-    if(routeScopes.includes(state.routeScope))routeScope=state.routeScope;
-    const sceneIndex=models.findIndex(scene=>scene.id===state.scene&&allowed(scene));
-    if(sceneIndex<0)return;
-    const stages=allowedStages(models[sceneIndex]);
-    const stageIndex=stages.findIndex(stage=>stage.id===state.stage);
-    currentScene=sceneIndex;currentStage=Math.max(stageIndex,0);
-  }catch(_error){}
-}
+
 function activateStage(scene,stage){
-  const allSteps=[...scene.element.querySelectorAll('.scrolly .step')];
-  const allFigures=[...scene.element.querySelectorAll('.fig-stage')];
-  allSteps.forEach(step=>{
-    const active=stage.step===step;
-    step.classList.toggle('lr-stage-active',active);
-    step.classList.toggle('on',active);
-    step.setAttribute('aria-hidden',String(!active));
+  const hasMappedSteps=scene.stages.some(item=>item.step);
+  const hasMappedFigures=scene.stages.some(item=>item.figure);
+  scene.allSteps.forEach(step=>{
+    const model=scene.stages.find(item=>item.step===step);
+    const visibleRoute=!model||scopeRoutes().includes(model.route);
+    const active=!hasMappedSteps||stage.step===step;
+    step.hidden=!visibleRoute;
+    step.classList.toggle('lr-stage-active',active&&visibleRoute);
+    step.classList.toggle('on',active&&visibleRoute);
+    step.setAttribute('aria-hidden',String(!(active&&visibleRoute)));
   });
-  allFigures.forEach(figure=>{
-    const active=stage.figure===figure;
-    figure.classList.toggle('on',active);
-    figure.setAttribute('aria-hidden',String(!active));
+  scene.allFigures.forEach(figure=>{
+    const model=scene.stages.find(item=>item.figure===figure);
+    const visibleRoute=!model||scopeRoutes().includes(model.route);
+    const active=!hasMappedFigures||stage.figure===figure;
+    figure.hidden=!visibleRoute;
+    figure.classList.toggle('on',active&&visibleRoute);
+    figure.setAttribute('aria-hidden',String(!(active&&visibleRoute)));
   });
   const name=scene.element.querySelector('.stage-name');
   if(name){
@@ -1439,36 +1591,61 @@ function activateStage(scene,stage){
     fig.dispatchEvent(new CustomEvent('stagechange',{detail:{stage:stage.dom_stage}}));
   }
 }
-function syncNav(scene){
+function syncNav(scene=null){
   [...navLinks.querySelectorAll('button')].forEach(button=>{
-    const index=Number(button.dataset.sceneIndex);
-    button.hidden=mode==='aula'&&!allowed(models[index]);
-    button.classList.toggle('on',models[index]===scene);
-    button.setAttribute('aria-current',models[index]===scene?'step':'false');
+    const index=Number(button.dataset.sceneIndex),model=models[index];
+    button.hidden=!allowed(model);
+    button.classList.toggle('on',model===scene);
+    button.setAttribute('aria-current',model===scene?'step':'false');
   });
 }
-function syncTeacher(scene){
-  if(!teacherBody)return;
+function notesHtml(value){
+  if(!value)return '';
+  const values=Array.isArray(value)?value:[value];
+  return `<ul>${values.map(item=>`<li>${esc(typeof item==='string'?item:JSON.stringify(item))}</li>`).join('')}</ul>`;
+}
+function syncTeacher(scene,stage){
+  if(!teacherBody||!scene||!stage)return;
   const concepts=scene.concepts||[];
   const objectives=(contract.objectives||[]).filter(objective=>
     (objective.concepts||[]).some(concept=>concepts.includes(concept)));
-  teacherBody.innerHTML=`<p class="lr-teacher-kicker">${esc(scene.route)} · ${esc(scene.type)} · ${scene.duration_minutes} min</p>`
-    +`<h2>${esc(scene.id)}</h2>`
-    +`<h3>Conceptos</h3><ul>${concepts.map(concept=>`<li><code>${esc(concept)}</code></li>`).join('')}</ul>`
+  const sceneNotes=scene.professor_notes||scene.teacher_notes||scene.teaching_notes;
+  const stageNotes=stage.professor_notes||stage.teacher_notes||stage.teaching_notes;
+  const fullGuide=document.getElementById('gd-toggle');
+  teacherBody.innerHTML=`<p class="lr-teacher-kicker">${esc(scene.route)} · ${esc(scene.type)} · ${esc(scene.duration_minutes)} min</p>`
+    +`<h2>${esc(scene.id)}</h2><p class="lr-teacher-stage">Etapa <code>${esc(stage.id)}</code> · layout <code>${esc(scene.layout)}</code></p>`
+    +`<h3>Conceptos</h3><ul>${concepts.length?concepts.map(concept=>`<li><code>${esc(concept)}</code></li>`).join(''):'<li>Ninguno declarado.</li>'}</ul>`
     +`<h3>Objetivos relacionados</h3><ul>${objectives.length?objectives.map(objective=>
-      `<li><code>${esc(objective.id)}</code> · ${esc(objective.route)}</li>`).join(''):'<li>Ninguno declarado para esta escena.</li>'}</ul>`;
+      `<li><code>${esc(objective.id)}</code> · ${esc(objective.route)}</li>`).join(''):'<li>Ninguno declarado para esta escena.</li>'}</ul>`
+    +(sceneNotes?`<h3>Notas de escena</h3>${notesHtml(sceneNotes)}`:'')
+    +(stageNotes?`<h3>Notas de etapa</h3>${notesHtml(stageNotes)}`:'')
+    +(fullGuide?'<button type="button" class="lr-full-guide">Abrir guion completo</button>':'');
+  teacherBody.querySelector('.lr-full-guide')?.addEventListener('click',()=>{
+    teacherDrawer.classList.remove('open');teacherDrawer.setAttribute('aria-hidden','true');
+    [teacherToggle,mobileTeacherToggle].filter(Boolean)
+      .forEach(button=>button.setAttribute('aria-expanded','false'));
+    fullGuide.click();
+  });
 }
-function goTo(sceneIndex,stageIndex,focusHeading){
+function updateDeepLink(scene,stage){
+  if(!history.replaceState)return;
+  const next=`#${encodeURIComponent(scene.id)}/${encodeURIComponent(stage.id)}`;
+  if(location.hash!==next)history.replaceState(null,'',`${location.pathname}${location.search}${next}`);
+}
+function goTo(sceneIndex,stageIndex,focusHeading=true){
   let scene=models[sceneIndex];
   if(!scene||!allowed(scene)){
     scene=availableModels()[0];sceneIndex=models.indexOf(scene);stageIndex=0;
   }
+  if(!scene)return;
   const stages=allowedStages(scene);
-  stageIndex=Math.max(0,Math.min(stageIndex,stages.length-1));
+  stageIndex=Math.max(0,Math.min(Number(stageIndex)||0,stages.length-1));
   const stage=stages[stageIndex];
   currentScene=sceneIndex;currentStage=stageIndex;
   body.dataset.currentSceneId=scene.id;
   body.dataset.currentStageId=stage.id;
+  body.dataset.currentStageRoute=stage.route;
+  body.dataset.currentLayout=scene.layout;
   body.dataset.routeScope=routeScope;
   scene.element.dataset.currentStageId=stage.id;
   models.forEach(model=>{
@@ -1479,12 +1656,20 @@ function goTo(sceneIndex,stageIndex,focusHeading){
   activateStage(scene,stage);
   const available=availableModels();
   const scenePosition=available.indexOf(scene)+1;
+  const flatStates=available.flatMap(model=>allowedStages(model).map(item=>({scene:model,stage:item})));
+  const statePosition=flatStates.findIndex(item=>item.scene===scene&&item.stage===stage);
   controls.querySelector('.lr-scene-progress').textContent=`Escena ${scenePosition}/${available.length}`;
   controls.querySelector('.lr-stage-progress').textContent=`Etapa ${stageIndex+1}/${stages.length}`;
   controls.querySelector('.lr-route-scope').textContent=routeScope;
-  controls.querySelector('.lr-prev').disabled=scenePosition===1&&stageIndex===0;
-  controls.querySelector('.lr-next').disabled=scenePosition===available.length&&stageIndex===stages.length-1;
-  syncNav(scene);syncTeacher(scene);persist(scene,stage);
+  controls.querySelector('.lr-prev').disabled=statePosition<=0;
+  controls.querySelector('.lr-next').disabled=statePosition===flatStates.length-1;
+  saveRuntime(scene,stage,true);
+  const scopeProgress=progressSnapshot(),enabledRoutes=scopeRoutes();
+  const routeProgress=Math.round(enabledRoutes.reduce((total,routeName)=>
+    total+scopeProgress[routeName].visited,0)/Math.max(1,enabledRoutes.reduce((total,routeName)=>
+    total+scopeProgress[routeName].total,0))*100);
+  controls.querySelector('.lr-route-progress').textContent=`${routeProgress}% visto`;
+  syncNav(scene);syncTeacher(scene,stage);updateDeepLink(scene,stage);
   liveRegion.textContent=`${scene.id}, etapa ${stageIndex+1} de ${stages.length}`;
   if(focusHeading){
     const heading=scene.element.querySelector('h1,h2,h3');
@@ -1492,7 +1677,9 @@ function goTo(sceneIndex,stageIndex,focusHeading){
   }
 }
 function move(delta,focusHeading=true){
-  const scene=models[currentScene],stages=allowedStages(scene);
+  const scene=models[currentScene];
+  if(!scene)return;
+  const stages=allowedStages(scene);
   if(delta>0&&currentStage<stages.length-1)return goTo(currentScene,currentStage+1,focusHeading);
   if(delta<0&&currentStage>0)return goTo(currentScene,currentStage-1,focusHeading);
   const available=availableModels(),position=available.indexOf(scene);
@@ -1504,22 +1691,59 @@ function move(delta,focusHeading=true){
 function closeOverlays(){
   document.getElementById('guion-drawer')?.classList.remove('open');
   teacherDrawer?.classList.remove('open');
-  teacherToggle?.setAttribute('aria-expanded','false');
+  teacherDrawer?.setAttribute('aria-hidden','true');
+  [teacherToggle,mobileTeacherToggle].filter(Boolean)
+    .forEach(button=>button.setAttribute('aria-expanded','false'));
   document.querySelectorAll('dialog[open]').forEach(dialog=>dialog.close());
   document.querySelectorAll('[data-overlay].open').forEach(node=>node.classList.remove('open'));
 }
 function cycleScope(){
+  if(routeScopes.length<2)return;
+  const scene=models[currentScene];
+  const stageId=body.dataset.currentStageId;
   const index=routeScopes.indexOf(routeScope);
   routeScope=routeScopes[(index+1)%routeScopes.length];
-  goTo(currentScene,currentStage,false);
+  const stages=scene&&allowed(scene)?allowedStages(scene):[];
+  const stageIndex=stages.findIndex(stage=>stage.id===stageId);
+  goTo(currentScene,Math.max(0,stageIndex),false);
+}
+function syncOptionalControls(){
+  document.querySelectorAll('.lr-study-optional').forEach(button=>{
+    button.hidden=mode!=='estudio'||optionalCount===0;
+    button.setAttribute('aria-pressed',String(routeScope==='ALL'));
+    button.textContent=routeScope==='ALL'?'Ocultar OPTIONAL':
+      (button.closest('#lr-mobile-toolbar')?'+ OPTIONAL':'Incluir OPTIONAL');
+  });
+}
+function applyStudyScope(activeScene=null){
+  body.dataset.routeScope=routeScope;
+  models.forEach(scene=>{
+    const sceneVisible=allowed(scene);
+    scene.element.hidden=!sceneVisible;
+    scene.element.setAttribute('aria-hidden',String(!sceneVisible));
+    scene.stages.forEach(stage=>{
+      const stageVisible=scopeRoutes().includes(stage.route);
+      [stage.step,stage.figure].filter(Boolean).forEach(node=>{
+        node.hidden=!stageVisible;node.setAttribute('aria-hidden',String(!stageVisible));
+      });
+    });
+  });
+  syncNav(activeScene);syncOptionalControls();saveRuntime(null,null,false);
+}
+function toggleOptional(){
+  routeScope=routeScope==='ALL'?'LIVE+REQUIRED':'ALL';
+  applyStudyScope();
+  liveRegion.textContent=routeScope==='ALL'?'Contenido OPTIONAL incluido.':'Contenido OPTIONAL oculto.';
 }
 
 controls.querySelector('.lr-prev').addEventListener('click',()=>move(-1,false));
 controls.querySelector('.lr-next').addEventListener('click',()=>move(1,false));
 controls.querySelector('.lr-route-scope').addEventListener('click',cycleScope);
+controls.querySelector('.lr-route-scope').hidden=mode!=='aula'||routeScopes.length<2;
+controls.classList.toggle('lr-fixed-scope',controls.querySelector('.lr-route-scope').hidden);
+document.querySelectorAll('.lr-study-optional').forEach(button=>button.addEventListener('click',toggleOptional));
 
 document.addEventListener('keydown',event=>{
-  lastInput='keyboard';
   if(event.key==='Escape'){closeOverlays();return;}
   if(mode!=='aula')return;
   const active=document.activeElement;
@@ -1532,19 +1756,85 @@ document.addEventListener('keydown',event=>{
   }
 });
 
+function deepLink(){
+  let sceneId=params.get('scene'),stageId=params.get('stage');
+  if(location.hash){
+    const [rawScene,rawStage]=location.hash.slice(1).split('/');
+    try{sceneId=decodeURIComponent(rawScene)||sceneId;stageId=decodeURIComponent(rawStage||'')||stageId;}
+    catch(_error){sceneId=rawScene||sceneId;stageId=rawStage||stageId;}
+  }
+  if(!sceneId)return null;
+  const scene=models.find(item=>item.id===sceneId||item.dom_id===sceneId);
+  if(!scene)return null;
+  const stage=scene.stages.find(item=>item.id===stageId)||scene.stages[0];
+  return {scene,stage};
+}
+function restoredPosition(){
+  const linked=deepLink();
+  if(linked){
+    if(mode==='estudio'&&linked.stage.route==='OPTIONAL')routeScope='ALL';
+    return linked;
+  }
+  if(!savedRuntime.scene)return null;
+  const scene=models.find(item=>item.id===savedRuntime.scene);
+  const stage=scene?.stages.find(item=>item.id===savedRuntime.stage);
+  return scene&&stage?{scene,stage}:null;
+}
+
 if(mode==='aula'){
-  restore();goTo(currentScene,currentStage,false);
+  const restored=restoredPosition();
+  if(restored&&allowed(restored.scene)&&scopeRoutes().includes(restored.stage.route)){
+    currentScene=models.indexOf(restored.scene);
+    currentStage=allowedStages(restored.scene).indexOf(restored.stage);
+  }
+  goTo(currentScene,Math.max(0,currentStage),false);
 }else{
-  controls.hidden=true;
-  models.forEach(scene=>scene.element.setAttribute('aria-hidden','false'));
-  const observer=new IntersectionObserver(entries=>{
-    const visible=entries.filter(entry=>entry.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
+  const restored=restoredPosition();
+  if(restored?.stage.route==='OPTIONAL')routeScope='ALL';
+  applyStudyScope(restored?.scene||null);
+  const sceneObserver=new IntersectionObserver(entries=>{
+    const visible=entries.filter(entry=>entry.isIntersecting&&!entry.target.hidden)
+      .sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
     if(!visible)return;
     const scene=models.find(item=>item.element===visible.target);
-    if(scene)syncNav(scene);
-  },{rootMargin:'-25% 0px -60% 0px',threshold:[0,.2,.5]});
-  models.forEach(scene=>observer.observe(scene.element));
+    if(!scene)return;
+    syncNav(scene);
+    const stage=allowedStages(scene).find(item=>!item.step)||allowedStages(scene)[0];
+    if(stage){saveRuntime(scene,stage,true);updateDeepLink(scene,stage);}
+  },{rootMargin:'-20% 0px -55% 0px',threshold:[0,.15,.4]});
+  models.forEach(scene=>sceneObserver.observe(scene.element));
+  models.forEach(scene=>scene.stages.forEach(stage=>{
+    if(!stage.step)return;
+    const observer=new IntersectionObserver(entries=>{
+      if(entries.some(entry=>entry.isIntersecting)&&!stage.step.hidden){
+        saveRuntime(scene,stage,true);syncNav(scene);updateDeepLink(scene,stage);
+      }
+    },{rootMargin:'-35% 0px -45% 0px',threshold:.1});
+    observer.observe(stage.step);
+  }));
+  if(restored&&allowed(restored.scene))requestAnimationFrame(()=>{
+    (restored.stage.step||restored.scene.element).scrollIntoView({block:'center'});
+  });
 }
+
+syncOptionalControls();
+saveRuntime(null,null,false);
+window.LEARNING_RUNTIME={
+  version:RUNTIME_VERSION,contract,mode,isProfessor,
+  getState:()=>({routeScope,scene:models[currentScene]?.id,stage:body.dataset.currentStageId,
+    progress:progressSnapshot()}),
+  setOptional:enabled=>{if(mode==='estudio'&&(enabled!==(routeScope==='ALL')))toggleOptional();},
+  goTo:(sceneId,stageId)=>{
+    const scene=models.find(item=>item.id===sceneId);if(!scene)return false;
+    if(mode==='estudio'){
+      const stage=scene.stages.find(item=>item.id===stageId)||allowedStages(scene)[0];
+      if(!stage)return false;
+      (stage.step||scene.element).scrollIntoView({block:'center'});return true;
+    }
+    const stages=allowedStages(scene),index=stages.findIndex(item=>item.id===stageId);
+    goTo(models.indexOf(scene),Math.max(0,index),false);return true;
+  },
+};
 
 mobileQuery.addEventListener?.('change',()=>location.reload());
 })();

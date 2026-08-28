@@ -17,6 +17,8 @@ from exchange.trades import Fill
 
 
 class Market:
+    book: OrderBook | None
+
     def __init__(self, symbol: str, snapshots: list[dict], depth: int = 10) -> None:
         self.symbol = symbol
         self._snapshots = snapshots
@@ -46,6 +48,11 @@ class Market:
         if 0 <= self._i < len(self._snapshots):
             return int(self._snapshots[self._i].get("timestamp", self._i))
         return None
+
+    @property
+    def snapshots(self) -> list[dict]:
+        """Return a shallow copy for guided replay exercises."""
+        return list(self._snapshots)
 
     def __len__(self) -> int:
         return len(self._snapshots)

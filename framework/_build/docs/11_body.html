@@ -10,15 +10,16 @@
 <header class="hero wrap" id="s0">
   <div class="eyebrow"><b>Algo Trading · ICAI 2026</b> &nbsp;·&nbsp; L11 · Medir &nbsp;·&nbsp; documento interactivo</div>
   <h1>¿Señal o <em>suerte</em>?</h1>
-  <p class="lede">Tu ImbalanceStrategy corrió ayer: <span id="dd-n0">129</span> operaciones, equity final negativo.
+  <p class="lede">Tu ImbalanceStrategy de L10 corrió: <span id="dd-n0">129</span> operaciones, equity final negativo.
   ¿Estrategia mala? ¿Mala suerte? ¿Mala <em>ejecución</em>? Hoy aprendes a responder como
   un profesional: <strong>contra benchmarks, no contra cero</strong>.</p>
 
   <div class="challenge">
     <div class="tag">El reto de hoy</div>
     <p>Tres jueces van a examinar tu estrategia: el <strong>mono con dardos</strong>
-    (¿lo haría igual de bien operando al azar?), el <strong>arrival mid</strong> (¿a qué
-    distancia del precio que viste ejecutaste de verdad?) y el <strong>inventario</strong>
+    (¿lo haría igual de bien operando al azar?), las <strong>dos llegadas</strong> (el
+    parent arrival para juzgar la decisión completa y cada decision mid para juzgar su
+    ejecución) y el <strong>inventario</strong>
     (¿cuánto riesgo cargaste para ganar eso?). Los tres tienen veredictos incómodos.</p>
   </div>
 
@@ -34,7 +35,7 @@
   <div class="wrap">
     <div class="eyebrow">§1 · <b>La idea central</b></div>
     <h2>Las tres varas de medir</h2>
-    <p class="lede">Sigue bajando: el panel somete la estrategia de ayer a cada juez, con
+    <p class="lede">Sigue bajando: el panel somete la estrategia de L10 a cada juez, con
     los números reales del backtest.</p>
   </div>
 
@@ -55,8 +56,10 @@
         backtest bueno no prueba nada.</p>
       </div></div>
       <div class="step" data-stage="2" data-name="arrival mid"><div class="step-inner">
-        <h3><span class="n">2/4</span>Juez 2: el arrival mid</h3>
-        <p>El benchmark de ejecución: el mid en el momento de decidir. Cada market order
+        <h3><span class="n">2/4</span>Juez 2: la llegada de cada orden hija</h3>
+        <p>El benchmark de ejecución de cada child order es su <strong>decision mid</strong>:
+        el mid en el momento de enviarla. No es el <strong>parent arrival</strong> del primer
+        snapshot, que evalúa la decisión completa. Cada market order
         pagó de media <strong id="dd-slip1">+5.59</strong> sobre él. Por <span id="dd-n1">129</span> fills de 0.05: el peaje de
         ejecución se comió <span id="dd-cost1">~36</span> unidades — <strong>más que toda la pérdida</strong>.</p>
       </div></div>
@@ -87,7 +90,7 @@
       </div>
       <div class="fig-stage" data-stage="2">
         <div class="statgrid" style="border:none;padding-top:8px" id="j2"></div>
-        <pre style="font-family:var(--mono);font-size:.78rem;line-height:2;margin-top:10px">slippage = precio_fill − mid_al_decidir
+        <pre style="font-family:var(--mono);font-size:.78rem;line-height:2;margin-top:10px">child_slippage = signo × (precio_fill − decision_mid)
 coste ≈ slip_medio × n_fills × clip</pre>
       </div>
       <div class="fig-stage" data-stage="3">
@@ -131,7 +134,7 @@ coste ≈ slip_medio × n_fills × clip</pre>
 
     <div class="code">
       <div class="code-head"><span>autopsia.py — ¿dónde se fue el dinero?</span><span>python</span></div>
-      <pre><span class="ln"><span class="c"># slippage de cada fill contra el mid del momento de decidir</span></span><span class="ln">slips = [sign(f) * (f.price - mid_al_decidir) <span class="k">for</span> f <span class="k">in</span> fills]</span><span class="ln">coste_total = <span class="fn">sum</span>(slips) * clip_size</span></pre>
+      <pre><span class="ln"><span class="c"># cada fill contra el decision mid de su orden hija</span></span><span class="ln">slips = [sign(f) * (f.price - decision_mid) <span class="k">for</span> f <span class="k">in</span> fills]</span><span class="ln">coste_total = <span class="fn">sum</span>(slips) * clip_size</span></pre>
       <div class="predict predictgate" style="margin:0;border-radius:0;border-left:none;border-right:none;border-bottom:none">
         <div class="tag">Predice antes de ejecutar</div>
         <p style="margin:.2em 0 .8em;font-size:.94rem"><span id="dd-n2">129</span> fills con slippage medio <span id="dd-slip2">+5.59</span> y
@@ -147,7 +150,7 @@ coste ≈ slip_medio × n_fills × clip</pre>
     <div class="note"><span class="tag">La conclusión que cambia el curso</span>
     La estrategia perdió <span id="dd-eq2">−27.3</span> y solo la ejecución costó <span id="dd-cost2">~36</span>. <strong>Sin el peaje, la señal
     era ligeramente positiva.</strong> El problema nº 1 no era la idea: era ejecutar a lo
-    bruto. Ejecutar bien ES una estrategia — y tiene clase propia: la siguiente.</div>
+    bruto. Ejecutar bien ES una estrategia — y tiene clase propia en L12.</div>
   </div>
 </section>
 
@@ -157,13 +160,14 @@ coste ≈ slip_medio × n_fills × clip</pre>
     <h2>5 preguntas</h2>
     <div class="quiz" data-quiz>
       <div class="q" data-ok="1">
-        <div class="qt">El arrival mid es…</div>
+        <div class="qt">El decision mid de una orden hija es…</div>
         <div class="opts">
           <button class="opt">A · El mid al final del día</button>
-          <button class="opt">B · El mid en el momento de decidir: tu benchmark de ejecución</button>
+          <button class="opt">B · El mid cuando se envía esa orden: su benchmark de ejecución</button>
           <button class="opt">C · La media de todos los mids</button>
         </div>
-        <div class="why">Contra él se mide cada fill: lo que viste vs lo que pagaste.</div>
+        <div class="why">Cada fill se mide contra el decision mid de su orden hija. El parent
+        arrival del primer snapshot responde otra pregunta: si fue buena la decisión completa.</div>
       </div>
       <div class="q" data-ok="0">
         <div class="qt">El slippage de una compra se calcula como…</div>
@@ -197,7 +201,7 @@ coste ≈ slip_medio × n_fills × clip</pre>
       <div class="q" data-ok="0">
         <div class="qt">Para saber si tu estrategia tiene señal de verdad…</div>
         <div class="opts">
-          <button class="opt">A · Compárala contra benchmarks (azar, arrival), no contra cero</button>
+          <button class="opt">A · Compárala contra benchmarks (azar, parent arrival y decision mids), no contra cero</button>
           <button class="opt">B · Basta con que el equity final sea positivo</button>
           <button class="opt">C · Repite el mismo backtest hasta que salga bien</button>
         </div>
@@ -220,9 +224,8 @@ coste ≈ slip_medio × n_fills × clip</pre>
       <div class="pk done">L4 · Order y Fill</div>
       <div class="pk done">L5 · OrderBook + Tracker</div>
       <div class="pk done">L6 · familia Strategy</div>
-      <div class="pk done">L7-9 · el motor</div>
-      <div class="pk today">L10-11 · el framework<span>hoy: medir con criterio (L11)</span></div>
-      <div class="pk future">L12-14 · estrategias<span>VWAP, market making</span></div>
+      <div class="pk done">L7-10 · motor y framework</div>
+      <div class="pk today">L11-14 · estrategias<span>hoy: medir con criterio (L11)</span></div>
     </div>
 
     <div class="bridge">
