@@ -11,7 +11,7 @@ Cierre del curso. No es una lección con notebook: es un test que se genera.
 ## Cobertura (todo el arco del curso)
 Python/OOP y diseño del framework (Strategy, polimorfismo, encapsulación) · microestructura
 (spread, mid, microprice, imbalance, depth) · tipos de orden y matching (market/limit/IOC/FOK,
-slippage) · ejecución VWAP (TWAP vs VWAP, perfil, predicción dinámica) · market making
+slippage) · ejecución VWAP (slicing, TWAP vs VWAP y perfil estático) · market making
 (inventario, adverse selection, CARA) · Avellaneda-Stoikov (reservation price, optimal spread,
 efecto de γ).
 
@@ -24,6 +24,9 @@ python generate_exam.py --seed 3   # examen_s3.html (variante equilibrada, no ve
   - `CANONICAL` — las 40 oficiales, orden fijo → `examen.html` reproducible al byte.
   - `EXTRA` — pool ampliado (80 en total) para variantes por seed con el mismo reparto por tema.
   - `CHECKPOINT` — 24 preguntas de L1-L6 (Python, módulos, POO) para el autoexamen de mitad de curso.
+  - `*_METADATA` — trazabilidad posicional de cada pregunta a lecciones, objetivos,
+    tipo cognitivo y dificultad, sin respuestas ni cambios en la tupla consumida.
+  - `PUBLIC_BANKS` — registro determinista de los tres bancos y sus metadatos.
   - `sample_balanced()` — muestrea equilibrado por tema, reproducible por seed.
 - `generate_exam.py` sin `--seed` emite: `examen.html` (alumno), `examen_con_respuestas.html`
   (clave del profe) y **`../06-oop-iii-inheritance/checkpoint.html`** (20 preguntas, 20 min).
@@ -46,4 +49,10 @@ cuenta validadores que pasan / fallan / sin tocar (sin abrir Jupyter). `--aux` p
 
 ## Notas
 - Mantener exactamente 40 preguntas canónicas (un `assert` lo comprueba).
+- Mantener para L15 el reparto 8×5 del blueprint y al menos ocho integraciones
+  multi-lección/multi-bloque enlazadas a `l15-integrate-course`.
+- La métrica `equity_curve` es contenido core; lo OPTIONAL es dibujarla con
+  matplotlib. No evaluar predicción dinámica de volumen, factor de corrección,
+  la visualización de la curva ni otras profundizaciones OPTIONAL: el test de
+  regresión del banco lo impide.
 - Si tocas la fórmula del checksum en el JS, cámbiala también en `verify_result.py` (y viceversa).

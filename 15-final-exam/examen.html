@@ -657,7 +657,7 @@
 <div class="q" data-ok="0" data-topic="oop"><div class="qt">7. `Fill.cash_flow()` de una compra de 0.5 @ 100 vale… <span class="topic">oop</span></div><div class="opts"><button class="opt">A · -50</button>
 <button class="opt">B · +50</button>
 <button class="opt">C · 0</button></div></div>
-<div class="q" data-ok="2" data-topic="oop"><div class="qt">8. La composición que ve el alumno en L4 es… <span class="topic">oop</span></div><div class="opts"><button class="opt">A · Market hereda de Strategy</button>
+<div class="q" data-ok="2" data-topic="oop"><div class="qt">8. La composición que ve el alumno en L5 es… <span class="topic">oop</span></div><div class="opts"><button class="opt">A · Market hereda de Strategy</button>
 <button class="opt">B · Order hereda de OrderBook</button>
 <button class="opt">C · OrderBook contiene niveles; PositionTracker consume objetos Fill</button></div></div>
 <div class="q" data-ok="2" data-topic="framework"><div class="qt">9. ¿Por qué `on_book_update` devuelve acciones en vez de ejecutar órdenes directamente? <span class="topic">framework</span></div><div class="opts"><button class="opt">A · Para evitar usar clases</button>
@@ -665,7 +665,7 @@
 <button class="opt">C · Para separar la decisión (estrategia) de la ejecución (motor)</button></div></div>
 <div class="q" data-ok="2" data-topic="framework"><div class="qt">10. Polimorfismo en el curso significa que… <span class="topic">framework</span></div><div class="opts"><button class="opt">A · El libro cambia de tipo en tiempo de ejecución</button>
 <button class="opt">B · Una orden puede ser buy y sell a la vez</button>
-<button class="opt">C · VWAP y un market maker se enchufan al mismo Backtest sin cambiar el runner</button></div></div>
+<button class="opt">C · VWAP y un market maker comparten el contrato Strategy, aunque usen Backtest y MMSimulation como runners especializados</button></div></div>
 <div class="q" data-ok="0" data-topic="microstructure"><div class="qt">11. El spread es… <span class="topic">microstructure</span></div><div class="opts"><button class="opt">A · best_ask - best_bid</button>
 <button class="opt">B · best_bid - best_ask</button>
 <button class="opt">C · (best_bid + best_ask)/2</button></div></div>
@@ -717,15 +717,15 @@
 <div class="q" data-ok="0" data-topic="execution"><div class="qt">27. Trocear una orden grande sirve para… <span class="topic">execution</span></div><div class="opts"><button class="opt">A · Reducir el impacto de mercado (slippage)</button>
 <button class="opt">B · Evitar pagar comisiones</button>
 <button class="opt">C · Aumentar el slippage a propósito</button></div></div>
-<div class="q" data-ok="1" data-topic="execution"><div class="qt">28. La predicción dinámica de volumen (L11) usa… <span class="topic">execution</span></div><div class="opts"><button class="opt">A · Solo la media de todos los días</button>
-<button class="opt">B · El flujo reciente (ventana rolada) además de la media histórica</button>
-<button class="opt">C · Únicamente el primer minuto</button></div></div>
-<div class="q" data-ok="1" data-topic="execution"><div class="qt">29. El factor de corrección de un schedule… <span class="topic">execution</span></div><div class="opts"><button class="opt">A · Siempre manda el mismo tamaño</button>
-<button class="opt">B · Acelera si vas por detrás del plan y frena si vas por delante</button>
-<button class="opt">C · Cancela la orden si hay retraso</button></div></div>
-<div class="q" data-ok="2" data-topic="execution"><div class="qt">30. El benchmark natural de una ejecución es… <span class="topic">execution</span></div><div class="opts"><button class="opt">A · El precio de cierre del año</button>
+<div class="q" data-ok="1" data-topic="execution"><div class="qt">28. Un perfil VWAP [0.2, 0.5, 0.3] aplicado a 100 unidades programa… <span class="topic">execution</span></div><div class="opts"><button class="opt">A · Tres trozos de 100 unidades</button>
+<button class="opt">B · 20, 50 y 30 unidades</button>
+<button class="opt">C · 50, 30 y 20 unidades por orden alfabético</button></div></div>
+<div class="q" data-ok="1" data-topic="execution"><div class="qt">29. Antes de usar un perfil de volumen como schedule VWAP hay que… <span class="topic">execution</span></div><div class="opts"><button class="opt">A · Ordenar sus pesos de mayor a menor</button>
+<button class="opt">B · Normalizar sus pesos para que sumen 1</button>
+<button class="opt">C · Sustituir todos los pesos por el máximo</button></div></div>
+<div class="q" data-ok="2" data-topic="execution"><div class="qt">30. Para medir el slippage de un fill individual, el benchmark natural es… <span class="topic">execution</span></div><div class="opts"><button class="opt">A · El precio de cierre del año</button>
 <button class="opt">B · El best ask final</button>
-<button class="opt">C · El mid de llegada (arrival mid)</button></div></div>
+<button class="opt">C · El decision mid de la orden hija que originó ese fill</button></div></div>
 <div class="q" data-ok="1" data-topic="execution"><div class="qt">31. Un equity positivo con un inventario enorme al final indica… <span class="topic">execution</span></div><div class="opts"><button class="opt">A · Una estrategia perfecta</button>
 <button class="opt">B · Riesgo escondido: no es necesariamente una buena estrategia</button>
 <button class="opt">C · Un error de cálculo seguro</button></div></div>
@@ -741,7 +741,7 @@
 <div class="q" data-ok="2" data-topic="as"><div class="qt">35. El reservation price de Avellaneda-Stoikov con inventario largo… <span class="topic">as</span></div><div class="opts"><button class="opt">A · Coincide siempre con el mid</button>
 <button class="opt">B · Está por encima del mid</button>
 <button class="opt">C · Está por debajo del mid (incentiva soltar)</button></div></div>
-<div class="q" data-ok="0" data-topic="as"><div class="qt">36. En r = s - q·γ·σ²·(T-t), al acercarse el cierre (t→T)… <span class="topic">as</span></div><div class="opts"><button class="opt">A · El ajuste por inventario tiende a 0 y r vuelve al mid</button>
+<div class="q" data-ok="0" data-topic="as"><div class="qt">36. En r = s - q·γ·σ²·τ, con τ=(T-t)/T, al acercarse el cierre (t→T)… <span class="topic">as</span></div><div class="opts"><button class="opt">A · El ajuste por inventario tiende a 0 y r vuelve al mid</button>
 <button class="opt">B · El ajuste se hace máximo</button>
 <button class="opt">C · r se vuelve infinito</button></div></div>
 <div class="q" data-ok="0" data-topic="as"><div class="qt">37. Subir γ (aversión al riesgo) en A-S… <span class="topic">as</span></div><div class="opts"><button class="opt">A · Inclina más el reservation price y reduce el inventario acumulado</button>

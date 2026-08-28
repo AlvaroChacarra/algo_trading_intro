@@ -3,7 +3,9 @@ resultado. Si esto pasa, generate_exam.py puede emitir variantes equilibradas y
 verify_result.py valida los códigos que emite el examen."""
 
 import collections
+import json
 import os
+import re
 import sys
 
 import pytest
@@ -16,6 +18,35 @@ import question_bank as qb  # noqa: E402
 import verify_result as vr  # noqa: E402
 
 
+BLUEPRINT = os.path.abspath(os.path.join(HERE, "..", "..", "pedagogy",
+                                         "assessment_blueprint.yml"))
+
+
+def _load_blueprint():
+    with open(BLUEPRINT, encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+def _objective_index(blueprint):
+    return {
+        (entry["lesson"], objective["id"]): objective
+        for entry in blueprint["lesson_blueprints"]
+        for objective in entry["objectives"]
+    }
+
+
+def _course_block(lesson):
+    if 1 <= lesson <= 6:
+        return "FOUNDATIONS"
+    if 7 <= lesson <= 10:
+        return "ENGINE"
+    if 11 <= lesson <= 14:
+        return "STRATEGIES"
+    if lesson == 15:
+        return "ASSESSMENT"
+    raise AssertionError(f"lección fuera del curso: {lesson}")
+
+
 def test_canonical_es_40():
     assert len(qb.CANONICAL) == 40
 
@@ -25,6 +56,82 @@ def test_tuplas_bien_formadas():
         assert len(q) == 6
         assert q[4] in ("A", "B", "C")
         assert q[1] and q[2] and q[3]  # tres opciones no vacías
+        assert len(set(q[1:4])) == 3   # distractores inequívocos
+
+
+def test_preguntas_y_metadatos_son_unicos_y_tienen_cobertura_total():
+    all_stems = []
+    all_ids = []
+    expected_prefixes = {
+        "CANONICAL": "L15-CAN-",
+        "EXTRA": "L15-EXT-",
+        "CHECKPOINT": "CK6-",
+    }
+    for bank_name, (questions, metadata) in qb.PUBLIC_BANKS.items():
+        assert len(questions) == len(metadata) > 0
+        assert tuple(m.item_id for m in metadata) == tuple(
+            f"{expected_prefixes[bank_name]}{i:03d}"
+            for i in range(1, len(questions) + 1)
+        )
+        for meta in metadata:
+            assert len(meta.lessons) == len(meta.objectives) >= 1
+            assert len(set(zip(meta.lessons, meta.objectives))) == len(meta.lessons)
+            assert re.fullmatch(r"(?:L15-(?:CAN|EXT)|CK6)-\d{3}", meta.item_id)
+        all_stems.extend(q[0] for q in questions)
+        all_ids.extend(m.item_id for m in metadata)
+
+    assert len(all_stems) == len(set(all_stems))
+    assert len(all_ids) == len(set(all_ids))
+
+
+def test_cada_metadata_enlaza_objetivos_evaluables_live_o_required():
+    blueprint = _load_blueprint()
+    objective_index = _objective_index(blueprint)
+    allowed_routes = set(blueprint["allowed_routes"])
+    distribution_types = {
+        kind
+        for lesson in blueprint["lesson_blueprints"]
+        for kind in lesson["question_distribution"]
+    }
+    assert allowed_routes == {"LIVE", "REQUIRED"}
+
+    for _, metadata in qb.PUBLIC_BANKS.values():
+        for meta in metadata:
+            assert meta.distribution_type in distribution_types
+            assert meta.cognitive_level in {"understand", "apply", "analyze", "evaluate"}
+            assert meta.difficulty in {"low", "medium", "hard"}
+            for link in zip(meta.lessons, meta.objectives):
+                objective = objective_index.get(link)
+                assert objective is not None, f"objetivo inexistente: {meta.item_id} -> {link}"
+                assert objective["assessed"] is True
+                assert objective["route"] in allowed_routes
+                assert objective["route"] != "OPTIONAL"
+
+
+def test_canonical_cumple_distribucion_l15_y_ocho_integraciones_reales():
+    blueprint = _load_blueprint()
+    l15 = next(x for x in blueprint["lesson_blueprints"] if x["lesson"] == 15)
+    actual = collections.Counter(m.distribution_type for m in qb.CANONICAL_METADATA)
+    assert dict(actual) == l15["question_distribution"]
+
+    integrations = [
+        meta for meta in qb.CANONICAL_METADATA
+        if meta.distribution_type == "integration"
+    ]
+    assert len(integrations) >= 8
+    for meta in integrations:
+        assert "l15-integrate-course" in meta.objectives
+        source_lessons = {lesson for lesson in meta.lessons if lesson != 15}
+        source_blocks = {_course_block(lesson) for lesson in source_lessons}
+        assert len(source_lessons) >= 2
+        assert len(source_blocks) >= 2
+        assert meta.integration_rationale
+
+
+def test_instancia_order_del_checkpoint_usa_firma_canonica():
+    text = " ".join(question[0] for question in qb.CHECKPOINT)
+    assert "Order('BTC', 'buy', 0.5, price=100)" in text
+    assert "Order('BTC', 'buy', 100, 0.5)" not in text
 
 
 def test_pool_cubre_los_targets():
@@ -33,6 +140,23 @@ def test_pool_cubre_los_targets():
         c = collections.Counter(x[5] for x in pool)
         for topic, k in targets.items():
             assert c[topic] >= k, f"{topic}: {c[topic]} < {k}"
+
+
+def test_banco_no_evalua_profundizaciones_optional():
+    text = " ".join(
+        str(field).lower()
+        for question in qb.EXAM_POOL + qb.CHECKPOINT
+        for field in question
+    )
+    forbidden = (
+        "predicción dinámica de volumen",
+        "media rolada",
+        "factor de corrección",
+        "matplotlib",
+        "graficar la equity_curve",
+        "visualizar la equity_curve",
+    )
+    assert not [marker for marker in forbidden if marker in text]
 
 
 def test_muestreo_equilibrado_y_reproducible():
