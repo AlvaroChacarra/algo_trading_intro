@@ -5,6 +5,12 @@ on:
     branches: [main, "v2/**"]
   pull_request:
   workflow_dispatch:
+    inputs:
+      publish:
+        description: Publicar el artefacto de esta rama en GitHub Pages
+        required: true
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -46,7 +52,10 @@ jobs:
           path: _site
 
   deploy:
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    if: >-
+      github.event_name != 'pull_request' &&
+      (github.ref == 'refs/heads/main' ||
+      (github.event_name == 'workflow_dispatch' && inputs.publish))
     needs: build
     runs-on: ubuntu-latest
     environment:
