@@ -1,0 +1,666 @@
+{
+  "schema_version": 1,
+  "lessons": {
+    "1": {
+      "build": [
+        {
+          "title": "1. Enciende el mercado",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "2. Spread y mid",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "3. Una lista de mids",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "4. Media con un bucle",
+          "route": "REQUIRED",
+          "minutes": 6
+        },
+        {
+          "title": "5. Una orden, y cómo leerla",
+          "route": "REQUIRED",
+          "minutes": 6
+        },
+        {
+          "title": "6. Clasifica el mercado",
+          "route": "REQUIRED",
+          "minutes": 6
+        },
+        {
+          "title": "7. Tu primer algoritmo",
+          "route": "REQUIRED",
+          "minutes": 6
+        },
+        {
+          "title": "8. Pregunta qué Python estás usando",
+          "route": "OPTIONAL",
+          "minutes": 2
+        },
+        {
+          "title": "9. Mira el bytecode real",
+          "route": "OPTIONAL",
+          "minutes": 3
+        }
+      ],
+      "aux": [
+        {
+          "title": "A1. Ticks enteros",
+          "route": "LIVE",
+          "minutes": 2
+        },
+        {
+          "title": "A2. Redondea como un exchange",
+          "route": "LIVE",
+          "minutes": 2
+        },
+        {
+          "title": "A3. PnL con signo",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A4. Interés compuesto",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A5. Agregados de un vistazo",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A6. Base y quote",
+          "route": "LIVE",
+          "minutes": 2
+        },
+        {
+          "title": "A7. Limpia el input",
+          "route": "LIVE",
+          "minutes": 2
+        },
+        {
+          "title": "A8. Parsea una quote",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A9. El ticket perfecto",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A10. Dentro de banda",
+          "route": "LIVE",
+          "minutes": 2
+        },
+        {
+          "title": "A11. ¿Puedo operar?",
+          "route": "LIVE",
+          "minutes": 2
+        },
+        {
+          "title": "A12. Señal y cautela",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A13. Ventana de ticks",
+          "route": "LIVE",
+          "minutes": 2
+        },
+        {
+          "title": "A14. Llega un tick",
+          "route": "LIVE",
+          "minutes": 2
+        },
+        {
+          "title": "A15. Deshaz el último",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A16. ¿Está el nivel?",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A17. Ordena el lado bid",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A18. Lee con red",
+          "route": "LIVE",
+          "minutes": 2
+        },
+        {
+          "title": "A19. Actualiza la posición",
+          "route": "LIVE",
+          "minutes": 2
+        },
+        {
+          "title": "A20. ¿Tiene el campo?",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A21. Radiografía de comisiones",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A22. Ticks alcistas",
+          "route": "LIVE",
+          "minutes": 2
+        },
+        {
+          "title": "A23. Censo del libro",
+          "route": "LIVE",
+          "minutes": 2
+        },
+        {
+          "title": "A24. max() a mano",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A25. Semáforo de presión",
+          "route": "LIVE",
+          "minutes": 2
+        },
+        {
+          "title": "A26. Tarifa por tramos",
+          "route": "LIVE",
+          "minutes": 2
+        },
+        {
+          "title": "A27. Función nocional",
+          "route": "OPTIONAL",
+          "minutes": 5
+        },
+        {
+          "title": "A28. Mejor bid y mejor ask",
+          "route": "OPTIONAL",
+          "minutes": 5
+        },
+        {
+          "title": "A29. El problema que viene: dos activos",
+          "route": "OPTIONAL",
+          "minutes": 5
+        },
+        {
+          "title": "A30. El alfabeto de la máquina",
+          "route": "OPTIONAL",
+          "minutes": 5
+        },
+        {
+          "title": "A31. Ver el bytecode con dis",
+          "route": "OPTIONAL",
+          "minutes": 5
+        }
+      ]
+    },
+    "5": {
+      "build": [
+        {
+          "title": "1. OrderBook: un objeto que contiene niveles",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "2. best_bid / best_ask / spread / mid",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "3. imbalance() del nivel 1",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "4. PositionTracker: estado interno",
+          "route": "REQUIRED",
+          "minutes": 6
+        },
+        {
+          "title": "5. equity a mercado",
+          "route": "REQUIRED",
+          "minutes": 6
+        },
+        {
+          "title": "6. Los dos objetos, juntos",
+          "route": "REQUIRED",
+          "minutes": 6
+        }
+      ],
+      "aux": [
+        {
+          "title": "C1. Order exprés",
+          "route": "LIVE",
+          "minutes": 1
+        },
+        {
+          "title": "C2. __repr__ exprés",
+          "route": "LIVE",
+          "minutes": 1
+        },
+        {
+          "title": "C3. Caja exprés",
+          "route": "LIVE",
+          "minutes": 1
+        },
+        {
+          "title": "A1. La caja que contiene",
+          "route": "LIVE",
+          "minutes": 2
+        },
+        {
+          "title": "A2. best_bid y best_ask como properties",
+          "route": "LIVE",
+          "minutes": 2
+        },
+        {
+          "title": "A3. Properties que se componen",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A4. El nivel más gordo",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A5. La cartera cerrada",
+          "route": "LIVE",
+          "minutes": 2
+        },
+        {
+          "title": "A6. La puerta única",
+          "route": "LIVE",
+          "minutes": 2
+        },
+        {
+          "title": "A7. equity a mercado",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A8. notional como property",
+          "route": "LIVE",
+          "minutes": 2
+        },
+        {
+          "title": "A9. El gran reto: libro + contable",
+          "route": "LIVE",
+          "minutes": 2
+        },
+        {
+          "title": "A10. Profundidad del libro",
+          "route": "OPTIONAL",
+          "minutes": 5
+        },
+        {
+          "title": "A11. mid como propiedad (@property)",
+          "route": "OPTIONAL",
+          "minutes": 5
+        },
+        {
+          "title": "A12. Los objetos reales del paquete",
+          "route": "OPTIONAL",
+          "minutes": 5
+        }
+      ]
+    },
+    "7": {
+      "build": [
+        {
+          "title": "B1 · Construye Level",
+          "route": "LIVE",
+          "minutes": 3
+        },
+        {
+          "title": "B2 · Ordena bids y asks",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "B3 · Raw snapshot → niveles",
+          "route": "LIVE",
+          "minutes": 7
+        },
+        {
+          "title": "B4 · Implementa from_snapshot",
+          "route": "LIVE",
+          "minutes": 8
+        },
+        {
+          "title": "B5 · Implementa depth",
+          "route": "REQUIRED",
+          "minutes": 5
+        },
+        {
+          "title": "B6 · Implementa imbalance componiendo métodos",
+          "route": "REQUIRED",
+          "minutes": 6
+        },
+        {
+          "title": "B7 · Implementa microprice",
+          "route": "REQUIRED",
+          "minutes": 5
+        },
+        {
+          "title": "B8 · Snapshot real contra la referencia",
+          "route": "REQUIRED",
+          "minutes": 10
+        }
+      ],
+      "aux": [
+        {
+          "title": "C1. Override exprés",
+          "route": "LIVE",
+          "minutes": 1
+        },
+        {
+          "title": "C2. El bucle exprés",
+          "route": "LIVE",
+          "minutes": 1
+        },
+        {
+          "title": "A1. La primera foto",
+          "route": "LIVE",
+          "minutes": 2
+        },
+        {
+          "title": "A2. Dos imbalances, dos historias",
+          "route": "LIVE",
+          "minutes": 2
+        },
+        {
+          "title": "A3. La inclinación del microprice",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A4. depth, comprobada a mano",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A5. El techo del día",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A6. Spread medio de la sesión",
+          "route": "OPTIONAL",
+          "minutes": 5
+        },
+        {
+          "title": "A7. ¿Predice el imbalance?",
+          "route": "OPTIONAL",
+          "minutes": 5
+        }
+      ]
+    },
+    "8": {
+      "build": [
+        {
+          "title": "B1 · ¿Qué lado consumo?",
+          "route": "LIVE",
+          "minutes": 4
+        },
+        {
+          "title": "B2 · remaining + take",
+          "route": "LIVE",
+          "minutes": 6
+        },
+        {
+          "title": "B3 · Primera MARKET completa",
+          "route": "LIVE",
+          "minutes": 9
+        },
+        {
+          "title": "B4 · Diseña _crosses()",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "B5 · LIMIT marketable",
+          "route": "REQUIRED",
+          "minutes": 8
+        },
+        {
+          "title": "B6 · El remanente LIMIT descansa",
+          "route": "REQUIRED",
+          "minutes": 7
+        },
+        {
+          "title": "B7 · Diseña IOC sin duplicar el engine",
+          "route": "REQUIRED",
+          "minutes": 7
+        },
+        {
+          "title": "B8 · Depura FOK: plan → validate → commit",
+          "route": "REQUIRED",
+          "minutes": 9
+        },
+        {
+          "title": "B9 · Refactor: un único process()",
+          "route": "REQUIRED",
+          "minutes": 10
+        },
+        {
+          "title": "B10 · Prueba contra la referencia",
+          "route": "REQUIRED",
+          "minutes": 8
+        }
+      ],
+      "aux": [
+        {
+          "title": "C1. Foto exprés",
+          "route": "LIVE",
+          "minutes": 1
+        },
+        {
+          "title": "C2. Liquidez exprés",
+          "route": "LIVE",
+          "minutes": 1
+        },
+        {
+          "title": "A1. La orden pequeña no barre",
+          "route": "LIVE",
+          "minutes": 2
+        },
+        {
+          "title": "A2. Precio efectivo",
+          "route": "LIVE",
+          "minutes": 2
+        },
+        {
+          "title": "A3. El slippage con signo",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A4. El barrido, medido",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A5. FOK: todo o nada",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A6. Slippage por tamaño",
+          "route": "OPTIONAL",
+          "minutes": 5
+        }
+      ]
+    },
+    "10": {
+      "build": [
+        {
+          "title": "1. Tu primera estrategia",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "2. Corre el Backtest",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "3. Reacciona a tus fills",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "4. Polimorfismo: cambia la estrategia, no el runner",
+          "route": "REQUIRED",
+          "minutes": 6
+        }
+      ],
+      "aux": [
+        {
+          "title": "C1. El día exprés",
+          "route": "LIVE",
+          "minutes": 1
+        },
+        {
+          "title": "C2. equity exprés",
+          "route": "LIVE",
+          "minutes": 1
+        },
+        {
+          "title": "A1. La estrategia que no hace nada",
+          "route": "LIVE",
+          "minutes": 2
+        },
+        {
+          "title": "A2. Una acción de verdad",
+          "route": "LIVE",
+          "minutes": 2
+        },
+        {
+          "title": "A3. BuyOnce, tuya",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A4. El gancho on_fill",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A5. El mismo runner, dos vidas",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A6. Estrategia con señal",
+          "route": "OPTIONAL",
+          "minutes": 5
+        }
+      ]
+    },
+    "14": {
+      "build": [
+        {
+          "title": "1. Reservation price con inventario",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "2. Optimal spread positivo",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "3. Cotizaciones A-S",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "4. Inventario inclina el centro",
+          "route": "REQUIRED",
+          "minutes": 6
+        },
+        {
+          "title": "5. Simula el A-S",
+          "route": "REQUIRED",
+          "minutes": 6
+        },
+        {
+          "title": "6. El skew reduce el inventario",
+          "route": "REQUIRED",
+          "minutes": 6
+        },
+        {
+          "title": "7. Más gamma, más inclina el reservation price",
+          "route": "REQUIRED",
+          "minutes": 6
+        }
+      ],
+      "aux": [
+        {
+          "title": "C1. Reservation exprés",
+          "route": "LIVE",
+          "minutes": 1
+        },
+        {
+          "title": "C2. La vuelta exprés",
+          "route": "LIVE",
+          "minutes": 1
+        },
+        {
+          "title": "A1. Reservation A-S a mano",
+          "route": "LIVE",
+          "minutes": 2
+        },
+        {
+          "title": "A2. Optimal spread a mano",
+          "route": "LIVE",
+          "minutes": 2
+        },
+        {
+          "title": "A3. γ manda en el miedo",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A4. El reloj lo apaga",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A5. El barrido de γ, tuyo",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A6. El tiempo apaga el ajuste",
+          "route": "OPTIONAL",
+          "minutes": 5
+        },
+        {
+          "title": "A7. Tu propio market maker",
+          "route": "REQUIRED",
+          "minutes": 5
+        },
+        {
+          "title": "T1. Cuánto pagas por dormir tranquilo (la γ, fuera del mercado)",
+          "route": "OPTIONAL",
+          "minutes": 5
+        }
+      ]
+    }
+  }
+}

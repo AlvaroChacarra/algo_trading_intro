@@ -1189,6 +1189,7 @@ DOC.save=function(patch){
   const steps=$$('.scrolly .step');
   if(!steps.length)return;
   document.addEventListener('keydown',e=>{
+    if(document.body.classList.contains('mode-aula'))return;
     if(!['ArrowDown','ArrowUp','PageDown','PageUp'].includes(e.key))return;
     if(/INPUT|TEXTAREA|SELECT|BUTTON/.test(document.activeElement.tagName))return;
     const mid=innerHeight/2;

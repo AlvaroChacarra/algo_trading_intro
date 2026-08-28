@@ -160,7 +160,7 @@ q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
     esperando estas líneas: una subclase tuya, con tu idea dentro.</p>
 
     <div class="code">
-      <div class="code-head"><span>mi_market_maker.py — la plantilla del examen final</span><span>python</span></div>
+      <div class="code-head"><span>mi_market_maker.py — punto de partida del capstone autónomo</span><span>python</span></div>
       <pre><span class="ln"><span class="k">from</span> exchange.strategies.market_maker <span class="k">import</span> MarketMaker</span><span class="ln"></span><span class="ln"><span class="k">class</span> MiMarketMaker(MarketMaker):</span><span class="ln">    <span class="s">"""Tu idea aquí: hereda el esqueleto, cambia las quotes."""</span></span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">quotes</span>(self, book):</span><span class="ln">        r = self.reservation_price(book.mid)</span><span class="ln">        half = self.half_spread</span><span class="ln">        <span class="k">if</span> <span class="fn">abs</span>(self._inventory) &gt; <span class="num">0.5</span>:   <span class="c"># tu regla, la que quieras</span></span><span class="ln">            half = half * <span class="num">1.5</span>              <span class="c"># p. ej.: cargado → más ancho</span></span><span class="ln">        <span class="k">return</span> r - half, r + half</span><span class="ln"></span><span class="ln">res = MMSimulation(MiMarketMaker(<span class="s">'SIM'</span>, quote_size=<span class="num">0.1</span>), seed=<span class="num">42</span>).run()</span></pre>
       <div class="out"><div class="btnrow" style="margin:0"><button class="btn runbtn" data-target="out-own">▶ La pregunta de verdad</button></div>
         <div id="out-own" class="hidden" style="margin-top:10px">
@@ -172,8 +172,8 @@ q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
 
     <div class="note"><span class="tag">Para el notebook</span>
     En <code>14_build_exercises.ipynb</code> harás exactamente esto con validadores: tu
-    subclase, tu barrido, tus conclusiones. Es también la plantilla de la pregunta abierta
-    del examen.</div>
+    subclase, tu barrido, tus conclusiones. Este trabajo pertenece al capstone autónomo y
+    <strong>no forma parte del examen final</strong>.</div>
   </div>
 </section>
 
@@ -269,8 +269,8 @@ q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
       <div class="tag">El puente a L15 — el examen</div>
       <p style="margin:.2em 0"><strong>40 preguntas, 40 minutos, +1 / −0.5.</strong></p>
       <p>Cubre el arco completo: Python y OOP, el paquete <code>exchange</code>, leer el
-      libro, matching, el framework, VWAP y market making. Todo lo que construiste — el
-      examen pregunta por TU código.</p>
+      libro, matching, el framework, VWAP y market making. Es un artefacto independiente:
+      evalúa integración y lectura de código; el capstone se realiza y entrega por separado.</p>
       <p style="margin-bottom:0">La mejor preparación: los gimnasios (los drills son primos
       hermanos de las preguntas) y los mini-tests de cada documento.</p>
     </div>

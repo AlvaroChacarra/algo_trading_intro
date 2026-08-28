@@ -444,7 +444,7 @@ LESSONS.append({
 })
 
 # ---------------------------------------------------------------------------
-# L8 — Strategy + Backtest (el pico arquitectónico)
+# L10 — Strategy + Backtest (el pico arquitectónico)
 # ---------------------------------------------------------------------------
 LESSONS.append({
     "n": 10, "slug": "10-strategy-framework",
@@ -551,7 +551,7 @@ LESSONS.append({
 })
 
 # ---------------------------------------------------------------------------
-# L9 — Primera estrategia + métricas
+# L11 — Primera estrategia + métricas
 # ---------------------------------------------------------------------------
 LESSONS.append({
     "n": 11, "slug": "11-first-strategy-metrics",

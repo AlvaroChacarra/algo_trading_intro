@@ -1,0 +1,55 @@
+{
+  "lesson": 1,
+  "status": "pilot",
+  "title": "Python I — El modelo de datos",
+  "delivery": "lesson",
+  "source_path": "framework/_build/docs/01_body.html",
+  "requires": {"concepts": [], "apis": []},
+  "introduces": {
+    "concepts": [
+      {"id": "python.execution_model", "importance": "major"},
+      {"id": "python.variables", "importance": "major"},
+      {"id": "python.collections", "importance": "major"},
+      {"id": "python.control_flow", "importance": "major"}
+    ],
+    "apis": []
+  },
+  "recalls": [],
+  "api_surface": [],
+  "routes": {
+    "LIVE": ["l01-challenge", "l01-execution", "l01-variables", "l01-loops", "l01-order-data", "l01-decision"],
+    "REQUIRED": ["l01-errors", "l01-recap"],
+    "OPTIONAL": []
+  },
+  "objectives": [
+    {"id": "l01-explain-execution", "route": "LIVE", "concepts": ["python.execution_model"]},
+    {"id": "l01-model-market-data", "route": "LIVE", "concepts": ["python.variables", "python.collections"]},
+    {"id": "l01-turn-data-into-decision", "route": "LIVE", "concepts": ["python.control_flow"]},
+    {"id": "l01-read-basic-errors", "route": "REQUIRED", "concepts": ["python.execution_model"]}
+  ],
+  "load": {
+    "live_presentation_minutes": 20,
+    "guided_minutes": 20,
+    "required_autonomous_minutes": 35,
+    "optional_minutes": 5,
+    "overflow_policy": "intentional"
+  },
+  "scenes": [
+    {"id": "l01-challenge", "dom_id": "s0", "type": "hero-challenge", "route": "LIVE", "layout": "focus", "concepts": ["python.execution_model"], "duration_minutes": 2, "stages": [{"id": "challenge", "route": "LIVE"}]},
+    {"id": "l01-execution", "dom_id": "s1", "type": "concept-simulator", "route": "LIVE", "layout": "split-42-58", "concepts": ["python.execution_model"], "duration_minutes": 5, "stages": [
+      {"id": "source", "dom_stage": 0, "route": "LIVE"},
+      {"id": "tokens", "dom_stage": 1, "route": "LIVE"},
+      {"id": "ast", "dom_stage": 2, "route": "LIVE"},
+      {"id": "bytecode", "dom_stage": 3, "route": "LIVE"},
+      {"id": "vm", "dom_stage": 4, "route": "LIVE"},
+      {"id": "machine-code", "dom_stage": 5, "route": "OPTIONAL"}
+    ]},
+    {"id": "l01-variables", "dom_id": "s2", "type": "code-state", "route": "LIVE", "layout": "split-50-50", "concepts": ["python.variables"], "duration_minutes": 3, "stages": [{"id": "variables", "route": "LIVE"}]},
+    {"id": "l01-loops", "dom_id": "s3", "type": "code-state", "route": "LIVE", "layout": "split-50-50", "concepts": ["python.collections", "python.control_flow"], "duration_minutes": 3, "stages": [{"id": "loop", "route": "LIVE"}]},
+    {"id": "l01-order-data", "dom_id": "s4", "type": "code-state", "route": "LIVE", "layout": "split-50-50", "concepts": ["python.collections"], "duration_minutes": 3, "stages": [{"id": "dict", "route": "LIVE"}]},
+    {"id": "l01-decision", "dom_id": "s5", "type": "guided-exercise", "route": "LIVE", "layout": "split-50-50", "concepts": ["python.control_flow"], "duration_minutes": 3, "stages": [{"id": "decision", "route": "LIVE"}]},
+    {"id": "l01-errors", "dom_id": "s6", "type": "guided-exercise", "route": "REQUIRED", "layout": "focus", "concepts": ["python.execution_model"], "duration_minutes": 10, "stages": [{"id": "errors", "route": "REQUIRED"}]},
+    {"id": "l01-recap", "dom_id": "s7", "type": "recap", "route": "REQUIRED", "layout": "focus", "concepts": ["python.variables", "python.collections", "python.control_flow"], "duration_minutes": 10, "stages": [{"id": "recap", "route": "REQUIRED"}]}
+  ],
+  "package_checks": []
+}

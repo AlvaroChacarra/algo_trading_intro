@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "scope": "Pilot metadata only; question stems and answers remain in the private assessment system",
+  "allowed_routes": ["LIVE", "REQUIRED"],
+  "items": [
+    {
+      "id": "PILOT-L01-EXECUTION-01",
+      "lesson": 1,
+      "objective": "l01-explain-execution",
+      "concept": "python.execution_model",
+      "cognitive_level": "understand",
+      "difficulty": "medium"
+    },
+    {
+      "id": "PILOT-L08-ATOMICITY-01",
+      "lesson": 8,
+      "objective": "l08-explain-atomicity",
+      "concept": "matching.atomicity",
+      "cognitive_level": "analyze",
+      "difficulty": "hard"
+    },
+    {
+      "id": "PILOT-L10-ACTIONS-01",
+      "lesson": 10,
+      "objective": "l10-separate-decision-execution",
+      "concept": "architecture.decision_execution_separation",
+      "cognitive_level": "analyze",
+      "difficulty": "medium"
+    },
+    {
+      "id": "PILOT-L14-RESERVATION-01",
+      "lesson": 14,
+      "objective": "l14-interpret-reservation-price",
+      "concept": "as.reservation_price",
+      "cognitive_level": "apply",
+      "difficulty": "hard"
+    }
+  ]
+}

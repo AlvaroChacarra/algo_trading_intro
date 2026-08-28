@@ -13,13 +13,13 @@
 ## §1 · Scrollytelling — cajas dentro de cajas (7 min)
 - **0/5 sueltas:** "cinco Orders en cinco variables. ¿Best bid? Nadie lo sabe: no hay libro."
 - **1/5 OrderBook:** "composición: un objeto cuyos atributos son OTROS objetos. No hereda, no copia — TIENE bids y asks dentro."
-- **2/5 métodos:** "las funciones de L2 se mudan adentro. Sin argumentos: el objeto ya tiene sus datos. Se acabó pasar book a todas partes" — cierra en voz alta el contador plantado en L2.
+- **2/5 properties:** "las funciones de L2 se mudan adentro. Las métricas sin argumentos se leen como atributos calculados: `best_bid`, `spread`, `mid`. `@property` fija desde hoy la misma API que usará L7" — cierra en voz alta el contador plantado en L2.
 - **3/5 imbalance:** "la señal viaja con el libro. En L7 le daremos 500 snapshots reales."
 - **4/5 estado interno:** el guion bajo. "No bloquea nada: COMUNICA. Si cualquiera puede escribir tracker._cash = 999999, la contabilidad no vale nada."
 - **5/5 equity:** la puerta única apply_fill y la fórmula: caja + posición × mark.
 
 ## §2 · El libro que se deja preguntar (4 min)
-- **El gate:** ¿qué imprime `ob.mid()`? La gracia está en la composición doble: mid() llama a best_bid() y best_ask() — métodos que se apoyan en métodos.
+- **El gate:** ¿qué imprime `ob.mid`? La gracia está en la composición doble: la property `mid` lee `best_bid` y `best_ask` — propiedades que se apoyan entre sí.
 
 ## §3 · El contable en acción (5 min)
 - **Cede el teclado:** fills de compra y venta + slider del mark. Reto: "acabad en verde".
@@ -31,7 +31,7 @@
 - Abre la nota solo si surge la duda: encapsulación no sustituye autenticación, permisos, procesos o base de datos.
 
 ## §5 · Quiz (3 min)
-- 5 A/B/C: composición, guion bajo, apply_fill, equity, por qué mid() sin argumentos.
+- 5 A/B/C: composición, guion bajo, apply_fill, equity, por qué `mid` se lee como property.
 
 ## §6 · Puente + mapa (2 min)
 - Mapa: L1-L4 ✓, L5 iluminada — "el motor ya tiene mercado y contabilidad".
@@ -40,7 +40,7 @@
 
 ## Checklist
 - [ ] Composición = objeto que contiene objetos.
-- [ ] Métodos sin argumentos: el dato vive en self (cierre del contador de L2).
+- [ ] Métricas sin argumentos como properties: el dato vive en self y la API queda estable hasta L14.
 - [ ] _cash = implementación interna por convención; la API pública entra por apply_fill.
 - [ ] Ningún candado visual sugiere que `_cash` sea inaccesible.
 - [ ] equity = cash + position × mark.

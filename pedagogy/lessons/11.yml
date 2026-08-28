@@ -1,0 +1,15 @@
+{
+  "lesson": 11,
+  "status": "legacy-unmigrated",
+  "title": "Primera estrategia + métricas",
+  "delivery": "lesson",
+  "requires": {"concepts": ["framework.strategy_contract", "backtest.runner"], "apis": ["strategy.on_book_update", "backtest.run"]},
+  "introduces": {"concepts": [{"id": "metrics.arrival_price", "importance": "major"}, {"id": "metrics.slippage", "importance": "major"}, {"id": "metrics.random_benchmark", "importance": "major"}], "apis": []},
+  "recalls": [],
+  "api_surface": [],
+  "routes": {"LIVE": [], "REQUIRED": [], "OPTIONAL": []},
+  "objectives": [],
+  "load": {"live_presentation_minutes": 20, "guided_minutes": 20, "required_autonomous_minutes": 45, "optional_minutes": 15, "overflow_policy": "legacy-to-migrate"},
+  "scenes": [],
+  "package_checks": []
+}

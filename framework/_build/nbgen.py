@@ -83,13 +83,19 @@ def _none_guard(ex: dict) -> str:
 
 
 TIER_BADGE = {"nucleo": "🟢 núcleo", "bien": "🔵 si vamos bien", "bonus": "🟣 bonus"}
+ROUTE_BADGE = {
+    "LIVE": "🟢 LIVE · núcleo presencial",
+    "REQUIRED": "🔵 REQUIRED · consolidación requerida",
+    "OPTIONAL": "🟣 OPTIONAL · profundización no evaluable",
+}
 
 
 def _exercise_cells(ex: dict) -> list[dict]:
     cells = []
     head = f"### {ex['title']}"
-    if ex.get("tier"):
-        badge = TIER_BADGE.get(ex["tier"], ex["tier"])
+    if ex.get("route") or ex.get("tier"):
+        badge = (ROUTE_BADGE.get(ex.get("route"), ex.get("route"))
+                 if ex.get("route") else TIER_BADGE.get(ex["tier"], ex["tier"]))
         mins = f" · ~{ex['min']} min" if ex.get("min") else ""
         head += f"\n\n<sub>{badge}{mins}</sub>"
     head += f"\n\n{ex['statement']}"

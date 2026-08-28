@@ -7,14 +7,17 @@ class OrderBook:
         self.bids = sorted(bids, key=lambda x: -x[0])
         self.asks = sorted(asks, key=lambda x: x[0])
 
+    @property
     def best_bid(self):                              # ej. 2
         return self.bids[0][0]
 
+    @property
     def best_ask(self):
         return self.asks[0][0]
 
+    @property
     def mid(self):
-        return (self.best_bid() + self.best_ask()) / 2
+        return (self.best_bid + self.best_ask) / 2
 
 
 class Fill:
@@ -40,13 +43,13 @@ class PositionTracker:
 
 def main():                                          # ej. 6: los dos juntos
     book = OrderBook([(99990, 2.0), (99980, 1.0)], [(100010, 1.5)])
-    print("mid:", book.mid())
+    print("mid:", book.mid)
 
     tracker = PositionTracker()
     tracker.apply_fill(Fill("buy", 100000, 0.5))
     tracker.apply_fill(Fill("sell", 100050, 0.2))
     print("cash:", round(tracker._cash, 2), "| position:", tracker._position)
-    print("equity @ mid:", round(tracker.equity(book.mid()), 2))
+    print("equity @ mid:", round(tracker.equity(book.mid), 2))
     # OrderBook contiene; PositionTracker lleva la cuenta: los dos objetos del motor.
 
 

@@ -1,0 +1,65 @@
+{
+  "lesson": 10,
+  "status": "pilot",
+  "title": "El framework: Strategy + Backtest",
+  "delivery": "lesson",
+  "source_path": "framework/_build/docs/10_body.html",
+  "requires": {"concepts": ["oop.polymorphism", "strategy.toy_contract", "engine.market", "matching.plan_validate_commit"], "apis": ["toy_strategy.decide", "market.step", "market.submit"]},
+  "introduces": {
+    "concepts": [{"id": "architecture.actions", "importance": "major"}, {"id": "architecture.decision_execution_separation", "importance": "major"}, {"id": "framework.strategy_contract", "importance": "major"}, {"id": "backtest.runner", "importance": "major"}],
+    "apis": ["strategy.on_book_update", "strategy.on_fill", "backtest.run"]
+  },
+  "recalls": [
+    {
+      "concept": "oop.polymorphism",
+      "introduced_in": 6,
+      "mapping": {
+        "before": "decide(imbalance) -> str",
+        "now": "on_book_update(book) -> list[Action]",
+        "input_change": "float signal -> full OrderBook",
+        "output_change": "label -> typed actions",
+        "responsibility_change": "toy decision -> decision without execution"
+      }
+    },
+    {
+      "concept": "strategy.toy_contract",
+      "introduced_in": 6,
+      "mapping": {
+        "before": "decide(imbalance) -> str",
+        "now": "on_book_update(book) -> list[Action]",
+        "conserved": "subclasses share one callable decision contract"
+      }
+    }
+  ],
+  "api_transitions": [
+    {
+      "from_api": "toy_strategy.decide",
+      "to_api": "strategy.on_book_update",
+      "kind": "explicit pedagogical bridge",
+      "reason": "the production runner needs full market state and typed actions"
+    }
+  ],
+  "api_surface": [
+    {"id": "strategy.on_book_update", "name": "on_book_update", "kind": "method", "signature": "on_book_update(book) -> list[Action]", "returns": "list[Action]", "responsibility": "propose typed actions from current market state"},
+    {"id": "strategy.on_fill", "name": "on_fill", "kind": "method", "signature": "on_fill(fill) -> None", "returns": "None", "responsibility": "receive execution feedback and update strategy state"},
+    {"id": "backtest.run", "name": "run", "kind": "method", "signature": "run() -> BacktestResult", "returns": "BacktestResult", "responsibility": "orchestrate market, strategy, matching, and accounting"}
+  ],
+  "routes": {"LIVE": ["l10-challenge", "l10-contract", "l10-live-runner", "l10-bridge"], "REQUIRED": ["l10-first-strategy", "l10-quiz"], "OPTIONAL": []},
+  "objectives": [
+    {"id": "l10-map-toy-to-production", "route": "LIVE", "concepts": ["oop.polymorphism", "framework.strategy_contract"]},
+    {"id": "l10-separate-decision-execution", "route": "LIVE", "concepts": ["architecture.actions", "architecture.decision_execution_separation"]},
+    {"id": "l10-read-backtest-loop", "route": "REQUIRED", "concepts": ["backtest.runner"]}
+  ],
+  "load": {"live_presentation_minutes": 20, "guided_minutes": 20, "required_autonomous_minutes": 45, "optional_minutes": 10, "overflow_policy": "intentional"},
+  "scenes": [
+    {"id": "l10-challenge", "dom_id": "s0", "type": "hero-challenge", "route": "LIVE", "layout": "focus", "concepts": ["framework.strategy_contract"], "duration_minutes": 2, "stages": [{"id": "challenge", "route": "LIVE"}]},
+    {"id": "l10-contract", "dom_id": "s1", "type": "architecture-map", "route": "LIVE", "layout": "split-42-58", "concepts": ["oop.polymorphism", "architecture.actions", "architecture.decision_execution_separation", "framework.strategy_contract", "backtest.runner"], "duration_minutes": 12, "stages": [
+      {"id": "embedded-if", "dom_stage": 0, "route": "LIVE"}, {"id": "strategy-abc", "dom_stage": 1, "route": "LIVE"}, {"id": "actions", "dom_stage": 2, "route": "LIVE"}, {"id": "runner", "dom_stage": 3, "route": "LIVE"}, {"id": "fill-hook", "dom_stage": 4, "route": "LIVE"}, {"id": "polymorphism", "dom_stage": 5, "route": "LIVE"}
+    ]},
+    {"id": "l10-live-runner", "dom_id": "s2", "type": "concept-simulator", "route": "LIVE", "layout": "split-45-55", "concepts": ["backtest.runner"], "duration_minutes": 4, "stages": [{"id": "runner", "route": "LIVE"}]},
+    {"id": "l10-first-strategy", "dom_id": "s3", "type": "guided-exercise", "route": "REQUIRED", "layout": "focus", "concepts": ["framework.strategy_contract", "architecture.actions"], "duration_minutes": 18, "stages": [{"id": "strategy", "route": "REQUIRED"}]},
+    {"id": "l10-quiz", "dom_id": "s4", "type": "diagnostic-quiz", "route": "REQUIRED", "layout": "focus", "concepts": ["framework.strategy_contract", "backtest.runner"], "duration_minutes": 8, "stages": [{"id": "quiz", "route": "REQUIRED"}]},
+    {"id": "l10-bridge", "dom_id": "s5", "type": "bridge", "route": "LIVE", "layout": "focus", "concepts": ["architecture.decision_execution_separation"], "duration_minutes": 2, "stages": [{"id": "bridge", "route": "LIVE"}]}
+  ],
+  "package_checks": []
+}

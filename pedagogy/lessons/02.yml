@@ -1,0 +1,24 @@
+{
+  "lesson": 2,
+  "status": "legacy-unmigrated",
+  "title": "Python II — El libro funcional",
+  "delivery": "lesson",
+  "requires": {"concepts": ["python.collections", "python.control_flow"], "apis": []},
+  "introduces": {
+    "concepts": [{"id": "functional.order_book", "importance": "major"}, {"id": "python.functions", "importance": "major"}],
+    "apis": ["functional.best_bid", "functional.best_ask", "functional.spread", "functional.mid", "functional.imbalance"]
+  },
+  "recalls": [],
+  "api_surface": [
+    {"id": "functional.best_bid", "name": "best_bid", "kind": "function", "signature": "best_bid(book) -> float", "returns": "float", "responsibility": "read best bid from the functional book"},
+    {"id": "functional.best_ask", "name": "best_ask", "kind": "function", "signature": "best_ask(book) -> float", "returns": "float", "responsibility": "read best ask from the functional book"},
+    {"id": "functional.spread", "name": "spread", "kind": "function", "signature": "spread(book) -> float", "returns": "float", "responsibility": "compute ask minus bid"},
+    {"id": "functional.mid", "name": "mid", "kind": "function", "signature": "mid(book) -> float", "returns": "float", "responsibility": "compute the midpoint"},
+    {"id": "functional.imbalance", "name": "imbalance", "kind": "function", "signature": "imbalance(book) -> float", "returns": "float", "responsibility": "compute size imbalance"}
+  ],
+  "routes": {"LIVE": [], "REQUIRED": [], "OPTIONAL": []},
+  "objectives": [],
+  "load": {"live_presentation_minutes": 20, "guided_minutes": 20, "required_autonomous_minutes": 40, "optional_minutes": 15, "overflow_policy": "legacy-to-migrate"},
+  "scenes": [],
+  "package_checks": []
+}

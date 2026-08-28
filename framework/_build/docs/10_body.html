@@ -53,13 +53,21 @@
         <p><code>Strategy</code> es una ABC — la de L6, en producción. Un método
         obligatorio: <code>on_book_update(book)</code>. Dos ganchos opcionales:
         <code>on_fill</code> y <code>on_start/on_end</code>.</p>
+        <div class="state-list" style="margin-top:12px">
+          <div><span>se conserva</span><b>polimorfismo + contrato</b></div>
+          <div><span>antes · L6</span><b>decide(imbalance) → str</b></div>
+          <div><span>ahora · L10</span><b>on_book_update(book) → list[Action]</b></div>
+          <div><span>input</span><b>señal float → OrderBook</b></div>
+          <div><span>output</span><b>etiqueta → acciones tipadas</b></div>
+        </div>
       </div></div>
       <div class="step" data-stage="2" data-name="acciones"><div class="step-inner">
         <h3><span class="n">2/5</span>La estrategia no ejecuta: <em>propone</em></h3>
         <p><code>on_book_update</code> devuelve una lista de <strong>acciones</strong>
         (<code>NewOrder</code>, <code>Cancel</code>) — no toca el mercado. Quien ejecuta es
         el motor. Esta separación es lo que hace la estrategia testeable y al motor
-        intocable.</p>
+        intocable. La responsabilidad cambia: <strong>L6 decidía una etiqueta; L10 propone
+        acciones y delega sus efectos</strong>.</p>
       </div></div>
       <div class="step" data-stage="3" data-name="Backtest.run"><div class="step-inner">
         <h3><span class="n">3/5</span>El runner lo cablea todo</h3>

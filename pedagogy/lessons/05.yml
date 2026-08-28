@@ -1,0 +1,45 @@
+{
+  "lesson": 5,
+  "status": "contract-strict",
+  "title": "OOP II — OrderBook y PositionTracker",
+  "delivery": "lesson",
+  "source_path": "framework/_build/docs/05_body.html",
+  "requires": {"concepts": ["oop.classes", "exchange.order", "exchange.fill"], "apis": ["fill.cash_flow"]},
+  "introduces": {
+    "concepts": [
+      {"id": "oop.composition", "importance": "major"},
+      {"id": "oop.encapsulation", "importance": "major"},
+      {"id": "oop.computed_property", "importance": "major"},
+      {"id": "exchange.orderbook", "importance": "major"},
+      {"id": "exchange.position_tracker", "importance": "major"}
+    ],
+    "apis": ["orderbook.best_bid", "orderbook.best_ask", "orderbook.spread", "orderbook.mid", "orderbook.imbalance", "tracker.apply_fill", "tracker.equity"]
+  },
+  "recalls": [],
+  "api_surface": [
+    {"id": "orderbook.best_bid", "name": "best_bid", "kind": "property", "signature": "best_bid -> float | None", "returns": "float | None", "responsibility": "read the highest bid price"},
+    {"id": "orderbook.best_ask", "name": "best_ask", "kind": "property", "signature": "best_ask -> float | None", "returns": "float | None", "responsibility": "read the lowest ask price"},
+    {"id": "orderbook.spread", "name": "spread", "kind": "property", "signature": "spread -> float | None", "returns": "float | None", "responsibility": "compute best ask minus best bid"},
+    {"id": "orderbook.mid", "name": "mid", "kind": "property", "signature": "mid -> float | None", "returns": "float | None", "responsibility": "compute the midpoint of best bid and best ask"},
+    {"id": "orderbook.imbalance", "name": "imbalance", "kind": "method", "signature": "imbalance(levels=1) -> float | None", "returns": "float | None", "responsibility": "compute depth imbalance for a selected number of levels"},
+    {"id": "tracker.apply_fill", "name": "apply_fill", "kind": "method", "signature": "apply_fill(fill) -> None", "returns": "None", "responsibility": "update cash and position atomically from a fill"},
+    {"id": "tracker.equity", "name": "equity", "kind": "method", "signature": "equity(mark_price) -> float", "returns": "float", "responsibility": "mark cash and inventory to market"}
+  ],
+  "routes": {"LIVE": [], "REQUIRED": [], "OPTIONAL": []},
+  "objectives": [],
+  "load": {"live_presentation_minutes": 20, "guided_minutes": 20, "required_autonomous_minutes": 45, "optional_minutes": 15, "overflow_policy": "intentional"},
+  "scenes": [],
+  "package_checks": [
+    {
+      "path": "05-oop-ii-book-portfolio/exercises/exchange/book.py",
+      "class": "OrderBook",
+      "members": {
+        "best_bid": "property",
+        "best_ask": "property",
+        "spread": "property",
+        "mid": "property",
+        "imbalance": "method"
+      }
+    }
+  ]
+}

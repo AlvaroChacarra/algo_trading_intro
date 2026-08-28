@@ -1,0 +1,50 @@
+{
+  "lesson": 8,
+  "status": "pilot",
+  "title": "Construir MatchingEngine",
+  "delivery": "lesson",
+  "source_path": "framework/_build/docs/08_body.html",
+  "requires": {"concepts": ["exchange.order", "exchange.fill", "market.book_metrics"], "apis": ["orderbook.best_bid", "orderbook.best_ask", "orderbook.mid"]},
+  "introduces": {
+    "concepts": [{"id": "matching.plan_validate_commit", "importance": "major"}, {"id": "matching.atomicity", "importance": "major"}, {"id": "matching.order_policies", "importance": "major"}],
+    "apis": ["matching.process"]
+  },
+  "recalls": [
+    {
+      "concept": "exchange.order",
+      "introduced_in": 4,
+      "mapping": {
+        "before": "Order represents an intention",
+        "now": "MatchingEngine interprets that intention against liquidity"
+      }
+    },
+    {
+      "concept": "exchange.fill",
+      "introduced_in": 4,
+      "mapping": {
+        "before": "Fill represents one execution result",
+        "now": "commit emits one Fill per consumed level"
+      }
+    }
+  ],
+  "api_surface": [
+    {"id": "matching.process", "name": "process", "kind": "method", "signature": "process(order, book, timestamp=0) -> list[Fill]", "returns": "list[Fill]", "responsibility": "plan, validate, and commit one order against the mutable book"}
+  ],
+  "routes": {"LIVE": ["l08-challenge", "l08-plan-validate-commit", "l08-simulator", "l08-bridge"], "REQUIRED": ["l08-order-policies", "l08-quiz"], "OPTIONAL": []},
+  "objectives": [
+    {"id": "l08-explain-atomicity", "route": "LIVE", "concepts": ["matching.plan_validate_commit", "matching.atomicity"]},
+    {"id": "l08-compare-order-policies", "route": "REQUIRED", "concepts": ["matching.order_policies"]}
+  ],
+  "load": {"live_presentation_minutes": 20, "guided_minutes": 20, "required_autonomous_minutes": 45, "optional_minutes": 10, "overflow_policy": "intentional"},
+  "scenes": [
+    {"id": "l08-challenge", "dom_id": "s0", "type": "hero-challenge", "route": "LIVE", "layout": "focus", "concepts": ["matching.atomicity"], "duration_minutes": 2, "stages": [{"id": "challenge", "route": "LIVE"}]},
+    {"id": "l08-plan-validate-commit", "dom_id": "s1", "type": "code-state", "route": "LIVE", "layout": "split-42-58", "concepts": ["matching.plan_validate_commit", "matching.atomicity"], "duration_minutes": 11, "stages": [
+      {"id": "signature", "dom_stage": 0, "route": "LIVE"}, {"id": "opposite", "dom_stage": 1, "route": "LIVE"}, {"id": "remaining", "dom_stage": 2, "route": "LIVE"}, {"id": "take", "dom_stage": 3, "route": "LIVE"}, {"id": "fok-bug", "dom_stage": 4, "route": "LIVE"}, {"id": "plan", "dom_stage": 5, "route": "LIVE"}, {"id": "validate", "dom_stage": 6, "route": "LIVE"}, {"id": "commit", "dom_stage": 7, "route": "LIVE"}, {"id": "remainder", "dom_stage": 8, "route": "REQUIRED"}
+    ]},
+    {"id": "l08-order-policies", "dom_id": "s2", "type": "architecture-map", "route": "REQUIRED", "layout": "focus", "concepts": ["matching.order_policies"], "duration_minutes": 12, "stages": [{"id": "policies", "route": "REQUIRED"}]},
+    {"id": "l08-simulator", "dom_id": "s3", "type": "concept-simulator", "route": "LIVE", "layout": "split-45-55", "concepts": ["matching.plan_validate_commit", "matching.atomicity"], "duration_minutes": 5, "stages": [{"id": "simulator", "route": "LIVE"}]},
+    {"id": "l08-quiz", "dom_id": "s4", "type": "diagnostic-quiz", "route": "REQUIRED", "layout": "focus", "concepts": ["matching.atomicity", "matching.order_policies"], "duration_minutes": 8, "stages": [{"id": "quiz", "route": "REQUIRED"}]},
+    {"id": "l08-bridge", "dom_id": "s5", "type": "bridge", "route": "LIVE", "layout": "focus", "concepts": ["matching.plan_validate_commit"], "duration_minutes": 2, "stages": [{"id": "bridge", "route": "LIVE"}]}
+  ],
+  "package_checks": []
+}

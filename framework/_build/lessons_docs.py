@@ -44,8 +44,9 @@ El momento clave es pedagógico: cuando cinco funciones distintas reciben todas 
 de ser un dato pasivo y se convierta en un **objeto con métodos**. Ese es el puente a OOP.""",
 "technical": """Funciones puras que construyen y transforman datos: `make_order`, `add_order(book, order)`,
 `cancel_order(book, id)`, `best_bid/best_ask(book)`, `spread/mid(book)`, `imbalance(book)`. Todas
-reciben `book` explícitamente — anticipan exactamente los métodos de `OrderBook` en L4
-(`book.best_bid()`, `book.imbalance()`). Cero clases: el objetivo es *sentir el dolor* del estado
+reciben `book` explícitamente — anticipan la API de `OrderBook` en L5: métricas sin
+argumentos como properties (`book.best_bid`, `book.mid`) y operaciones parametrizadas
+como métodos (`book.imbalance(levels)`). Cero clases: el objetivo es *sentir el dolor* del estado
 compartido.
 
 El deck a medida (Pyodide) trae un **libro vivo** interactivo: añades/cancelas órdenes y ves
@@ -78,22 +79,22 @@ Puente: una orden suelta; ¿quién suma los cash_flows y lleva la cuenta? El Pos
 },
 4: {
 "theory": """Dos ideas de diseño: **composición** (un objeto contiene otros) y **encapsulación**
-(estado interno que se toca solo por métodos). El `OrderBook` contiene niveles de precio y
-expone métricas como métodos. El `PositionTracker` es una pequeña máquina de estado: parte de
+(estado interno que se toca solo por su API). El `OrderBook` contiene niveles de precio y
+expone las métricas sin argumentos como properties estables. El `PositionTracker` es una pequeña máquina de estado: parte de
 caja y posición a cero y las actualiza con cada `Fill`.
 
 El concepto financiero clave es **equity** = `cash + position · mark_price`: tu valor total
 marcando el inventario al precio actual de mercado. Es la fotografía de PnL que se usará en
 todos los backtests.""",
-"technical": """`exchange/book.py` (`OrderBook`, `Level`) con bids ordenados desc y asks asc, y métodos
-`best_bid/best_ask/spread/mid/imbalance`. `exchange/portfolio.py` (`PositionTracker`) con
+"technical": """`exchange/book.py` (`OrderBook`, `Level`) con bids ordenados desc y asks asc;
+`best_bid/best_ask/spread/mid` son properties e `imbalance(levels)` es método. `exchange/portfolio.py` (`PositionTracker`) con
 `_cash`/`_position` como implementación interna, `apply_fill(fill)` y `equity(mark)`.
 
 Composición explícita: `OrderBook` contiene `Level`; `PositionTracker.apply_fill` consume
 objetos `Fill` de L3. Aquí el alumno *ve* a los objetos hablándose entre sí — el objetivo
 declarado del curso.
 
-El deck a medida (Pyodide) trae un inspector del `OrderBook` (métricas como métodos) y un widget
+El deck a medida (Pyodide) trae un inspector del `OrderBook` (métricas como properties) y un widget
 del `PositionTracker` (pulsas fills y ves cash/posición/equity, con slider de mark). El núcleo
 son 6 ejercicios que culminan en "los dos objetos, juntos"; el `.py` entregable es `book_demo.py`.
 Puente: ya creas (L4) y compones (L5) objetos; falta la última pieza de OOP — compartir un
@@ -187,7 +188,7 @@ El perfil son pesos relativos: se normalizan, así que importan las proporciones
 "technical": """`exchange/strategies/vwap.py` (`VWAPStrategy(symbol, side, total_size, horizon, profile)`):
 en cada tick emite una market order del tamaño del trozo (peso normalizado × total). Sin
 perfil → TWAP uniforme. Es una subclase de `Strategy`: se enchufa al `Backtest` exactamente
-igual que cualquier otra — primera demostración del valor del framework de L8.""",
+igual que cualquier otra — primera demostración del valor del framework de L10.""",
 },
 11: {
 "theory": """El perfil fijo asume que hoy se parece a la media. Pero el **flujo reciente informa**: si

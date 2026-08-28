@@ -17,7 +17,7 @@ El perfil son pesos relativos: se normalizan, así que importan las proporciones
 `exchange/strategies/vwap.py` (`VWAPStrategy(symbol, side, total_size, horizon, profile)`):
 en cada tick emite una market order del tamaño del trozo (peso normalizado × total). Sin
 perfil → TWAP uniforme. Es una subclase de `Strategy`: se enchufa al `Backtest` exactamente
-igual que cualquier otra — primera demostración del valor del framework de L8.
+igual que cualquier otra — primera demostración del valor del framework de L10.
 
 ## Presentación (3 bloques)
 

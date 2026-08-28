@@ -75,6 +75,22 @@ const samples = [
     }
   }
 
+  // ?mode=aula deliberately falls back to the vertical study renderer on mobile.
+  await page.goto(origin + '08-order-types-matching/presentation/order-types-matching-doc.html?mode=aula');
+  const fallback = await page.evaluate(() => ({
+    requested: document.body.dataset.requestedMode,
+    mode: document.body.dataset.learningMode,
+    marked: document.body.classList.contains('lr-mobile-fallback'),
+    navHidden: getComputedStyle(document.querySelector('#lr-nav')).display === 'none',
+    horizontal: document.documentElement.scrollWidth > document.documentElement.clientWidth + 2,
+  }));
+  if (fallback.requested !== 'aula' || fallback.mode !== 'estudio' || !fallback.marked ||
+      !fallback.navHidden || fallback.horizontal) {
+    failures++; console.error(`✗ mobile aula fallback ${JSON.stringify(fallback)}`);
+  } else {
+    console.log('✓ mobile aula fallback → vertical study renderer');
+  }
+
   await page.goto(origin);
   const actions = await page.locator('.lc-actions a').count();
   if (actions !== 42) { failures++; console.error(`✗ index actions=${actions}, expected 42`); }

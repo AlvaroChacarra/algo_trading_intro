@@ -175,7 +175,7 @@ $('#grade-btn').addEventListener('click',()=>{
 
 
 def render_page(prepared, *, title, eyebrow, h1, lede, head_left, footer,
-                exam_id, minutes, seed, grade_label) -> str:
+                exam_id, lesson, minutes, seed, grade_label) -> str:
     """Página interactiva genérica (examen o checkpoint). `prepared` es la
     salida de `_shuffled`: lista de (pregunta, opciones, idx_correcto, tema)."""
     qs_html = []
@@ -201,7 +201,7 @@ def render_page(prepared, *, title, eyebrow, h1, lede, head_left, footer,
 {_EXAM_CSS}
 </style>
 </head>
-<body>
+<body class="assessment-linear" data-lesson="{lesson:02d}" data-delivery="assessment-linear">
 <div class="exam-head"><div class="wrap">
   <span class="t">{head_left}</span>
   <span class="t">respondidas <b id="prog">0 / {n}</b></span>
@@ -249,10 +249,11 @@ def render_interactive(seed: int = 0) -> str:
         lede='Baremo: acierto <b style="color:var(--bid)">+1</b> · fallo '
              '<b style="color:var(--ask)">−0.5</b> · en blanco 0. Pulsa una opción para '
              'marcarla; vuelve a pulsarla para dejarla en blanco. Al final (o cuando el '
-             'reloj llegue a cero), <strong>Corregir</strong>.',
+             'reloj llegue a cero), <strong>Corregir</strong>. Este assessment conserva una '
+             'experiencia lineal; el capstone de L14 es una entrega autónoma separada.',
         head_left="<b>Examen final</b> · Algo Trading ICAI 2026",
         footer="L15 · Examen final — el curso entero, preguntado",
-        exam_id="L15", minutes=40, seed=seed, grade_label="Corregir examen")
+        exam_id="L15", lesson=15, minutes=40, seed=seed, grade_label="Corregir examen")
 
 
 def render_checkpoint(seed: int = 0) -> str:
@@ -270,7 +271,7 @@ def render_checkpoint(seed: int = 0) -> str:
               'o más, tienes la base para la segunda mitad (el motor).'),
         head_left="<b>Checkpoint L1-L6</b> · repaso de la base",
         footer="Checkpoint · la base de Python y POO antes de construir el motor",
-        exam_id="CK6", minutes=20, seed=seed, grade_label="Corregir checkpoint")
+        exam_id="CK6", lesson=6, minutes=20, seed=seed, grade_label="Corregir checkpoint")
 
 
 def render_key() -> str:

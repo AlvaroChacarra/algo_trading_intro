@@ -1,0 +1,25 @@
+{
+  "lesson": 6,
+  "status": "legacy-unmigrated",
+  "title": "OOP III — Herencia y polimorfismo",
+  "delivery": "lesson",
+  "requires": {"concepts": ["oop.classes", "oop.composition"], "apis": []},
+  "introduces": {
+    "concepts": [
+      {"id": "oop.inheritance", "importance": "major"},
+      {"id": "oop.abstract_base_class", "importance": "major"},
+      {"id": "oop.polymorphism", "importance": "major"},
+      {"id": "strategy.toy_contract", "importance": "major"}
+    ],
+    "apis": ["toy_strategy.decide"]
+  },
+  "recalls": [],
+  "api_surface": [
+    {"id": "toy_strategy.decide", "name": "decide", "kind": "method", "signature": "decide(imbalance) -> str", "returns": "str", "responsibility": "return a pedagogical buy, sell, or hold label"}
+  ],
+  "routes": {"LIVE": [], "REQUIRED": [], "OPTIONAL": []},
+  "objectives": [],
+  "load": {"live_presentation_minutes": 20, "guided_minutes": 20, "required_autonomous_minutes": 45, "optional_minutes": 15, "overflow_policy": "legacy-to-migrate"},
+  "scenes": [],
+  "package_checks": []
+}
