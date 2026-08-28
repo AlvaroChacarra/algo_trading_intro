@@ -198,17 +198,17 @@ Solo `main` puede llegar al job de despliegue.
 - El modo aula permite overflow interno en paneles de detalle, pero no scroll del
   body. La información esencial y los controles permanecen dentro del viewport.
 - El estado actual sigue siendo un repositorio único, tal como exige el alcance.
-- La dry-run humana todavía no puede deducirse de CI. Su protocolo y registro
-  versionado viven en [`work1-teaching-dry-run.md`](work1-teaching-dry-run.md) y
-  permanecen pendientes hasta que el docente mida las cuatro lessons.
+- El owner aceptó visualmente el piloto y autorizó el merge el 28 de agosto de
+  2026. No se registraron tiempos reales por lesson. La evidencia, la desviación
+  y el riesgo residual están en
+  [`work1-teaching-dry-run.md`](work1-teaching-dry-run.md).
 
 ## Gate para Work 2
 
-Escalar solo si CI mantiene verdes el checker, generación, motor, Pages/WebKit y
-la matriz desktop; si las cuatro formas piloto y L15 resultan utilizables; y si una
-prueba de impartición confirma que las rutas LIVE caben en 18–22 minutos sin ocultar
-prerrequisitos. La dry-run debe registrar también una práctica guiada próxima a
-20 minutos y una decisión `PASS` por lesson. Después se requiere reauditar el PR,
-mergear Work 1 y registrar el SHA de merge antes de crear la rama de Work 2.
-Work 2 debe migrar las lessons legacy de forma incremental y conservar L7–L9
+El owner autoriza el scale-out tras mantener verdes checker, generación, motor,
+Pages/WebKit y matriz desktop, y aceptar visualmente las cuatro formas piloto y
+L15. La ausencia de cronometraje real no bloquea el merge por decisión explícita,
+pero Work 2 debe cerrarla en su primer hito de validación antes de generalizar el
+runtime. Tras mergear, se registra el SHA de merge y la nueva rama debe partir de
+ese `main`. Work 2 migrará las lessons legacy incrementalmente y conservará L7–L9
 como oráculo conceptual.
