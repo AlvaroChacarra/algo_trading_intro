@@ -17,5 +17,15 @@
   "load": {"assessment_minutes": 40, "live_presentation_minutes": 0, "guided_minutes": 0, "required_autonomous_minutes": 0, "optional_minutes": 0, "overflow_policy": "official-assessment-is-not-a-scene-deck"},
   "scenes": [],
   "assessment_artifact": "15-final-exam/examen.html",
-  "package_checks": []
+  "package_checks": [
+    {"path": "14-avellaneda-stoikov/exercises/exchange/matching.py", "class": "MatchingEngine", "members": {
+      "process": {"api": "matching.process", "kind": "method", "parameters": [{"name": "order", "kind": "positional_or_keyword", "annotation": "Order"}, {"name": "book", "kind": "positional_or_keyword", "annotation": "OrderBook"}, {"name": "timestamp", "kind": "positional_or_keyword", "annotation": "int | None", "default": "None"}], "returns": "list[Fill]"}
+    }},
+    {"path": "14-avellaneda-stoikov/exercises/exchange/strategy.py", "class": "Strategy", "members": {
+      "on_book_update": {"api": "strategy.on_book_update", "kind": "method", "parameters": [{"name": "book", "kind": "positional_or_keyword", "annotation": "OrderBook"}], "returns": "list[Action]"}
+    }},
+    {"path": "14-avellaneda-stoikov/exercises/exchange/backtest.py", "class": "Backtest", "members": {
+      "run": {"api": "backtest.run", "kind": "method", "parameters": [], "returns": "BacktestResult"}
+    }}
+  ]
 }

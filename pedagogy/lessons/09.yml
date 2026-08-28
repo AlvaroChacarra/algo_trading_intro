@@ -8,7 +8,7 @@
   "recalls": [],
   "api_surface": [
     {"id": "market.step", "name": "step", "kind": "method", "signature": "step() -> OrderBook | None", "returns": "OrderBook | None", "responsibility": "advance replay time and replace the active book"},
-    {"id": "market.submit", "name": "submit", "kind": "method", "signature": "submit(order) -> list[Fill]", "returns": "list[Fill]", "responsibility": "delegate matching against the active book"},
+    {"id": "market.submit", "name": "submit", "kind": "method", "signature": "submit(order: Order) -> list[Fill]", "returns": "list[Fill]", "responsibility": "delegate matching against the active book"},
     {"id": "market.reset", "name": "reset", "kind": "method", "signature": "reset() -> None", "returns": "None", "responsibility": "restore replay state"}
   ],
   "routes": {"LIVE": [], "REQUIRED": [], "OPTIONAL": []},

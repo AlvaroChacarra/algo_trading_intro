@@ -44,6 +44,19 @@
     "importance": "major",
     "assessment_delivery_exempt": true
   },
+  "load_policy": {
+    "live_presentation_minutes": {
+      "minimum": 18,
+      "target": 20,
+      "maximum": 22
+    },
+    "guided_practice_minutes": {
+      "minimum": 18,
+      "target": 20,
+      "maximum": 22,
+      "allowed_delta_from_declared": 2
+    }
+  },
   "text_audit": {
     "strict_paths": [
       "framework/_build/docs/01_body.html",

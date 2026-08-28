@@ -54,8 +54,11 @@ Esto permite reutilizar el contenido existente sin duplicar una versión para au
 
 Las rutas de ejercicios piloto viven en `pedagogy/exercise_routes.yml`. Son
 decisiones explícitas por título, con tiempo; el generador falla si falta o sobra un
-ejercicio. L2, L3, L4, L6, L9 y L11–L13 conservan temporalmente sus tiers legacy y
-deben recibir una decisión explícita en Work 2.
+ejercicio. El checker suma todos los ejercicios LIVE y exige 18–22 minutos de
+práctica guiada, con una desviación máxima de dos minutos respecto a
+`guided_minutes`. La selección queda en 19 minutos para L1, L7 y L8; 20 para L5;
+y 21 para L10 y L14. L2, L3, L4, L6, L9 y L11–L13 conservan temporalmente sus
+tiers legacy y deben recibir una decisión explícita en Work 2.
 
 ### Continuidad de APIs
 
@@ -89,7 +92,11 @@ pedagogy/
 
 Cada lesson declara `requires`, `introduces`, `recalls`, `api_surface`, `routes`,
 `objectives`, `load`, `scenes` y, cuando procede, `api_transitions` y
-`package_checks`.
+`package_checks`. Estos últimos vinculan una API material con el archivo y clase
+reales del starter, además de su tipo (`method`, `property` o `classmethod`),
+argumentos, anotaciones, defaults y retorno. La cobertura estricta incluye
+`MatchingEngine.process`, `Strategy.on_book_update`, `Strategy.on_fill` y
+`Backtest.run`, junto con sus prerrequisitos acumulativos.
 
 Ejemplo de dependencia y recuperación:
 
@@ -149,7 +156,9 @@ Ejemplo:
 3. Declarar recuperaciones distantes y transiciones de API; nunca encubrir una
    ruptura cambiando solo el código final.
 4. Diseñar LIVE para 18–22 minutos por densidad cognitiva, no por número de
-   pantallas, y declarar por separado carga guiada, requerida y opcional.
+   pantallas, y declarar por separado carga guiada, requerida y opcional. La suma
+   de todos los ejercicios LIVE debe caber también en 18–22 minutos; lo que no
+   quepa se decide como REQUIRED u OPTIONAL, nunca como desbordamiento implícito.
 5. Clasificar cada escena y cada ejercicio. No derivar la ruta de la posición.
 6. Regenerar los outputs; nunca editar a mano notebooks o HTML generados.
 7. Ejecutar `python pedagogy_check.py`, pytest, smoke, build check, E2E general,
@@ -160,15 +169,19 @@ Ejemplo:
 `pedagogy_check.py` implementa PED-CHECK-01…09: uso antes de introducción,
 superficies de API, referencias/anchors vigentes, recalls distantes, clasificación,
 restricciones de assessment, metadata de preguntas, carga y consistencia del
-starter acumulativo. Los tests introducen regresiones sintéticas para demostrar
-que el checker falla, incluida una conversión realista de property a method.
+starter acumulativo. Los tests introducen regresiones sintéticas de sobrecarga,
+tiempo ausente, doble clasificación, property → method y divergencias de
+argumentos, tipos, defaults o retornos en los starters de L8/L10.
 
 `desktop_e2e.js` valida L1, L8, L10 y L14 en 1280×720, 1440×900, 1920×1080 y
-2560×1440. Recorre cada etapa LIVE por teclado, comprueba geometría, ausencia de
-scroll del body y overflow horizontal, foco, Escape, persistencia y errores JS.
-También valida estudio, reduced motion, el fallback 390×844 y que L15 no adopte
-el runtime de escenas. CI conserva screenshots y el JSON de la matriz como
-artefacto `work1-desktop-pedagogy-pilot`.
+2560×1440. Después de cada transición registra lesson, viewport, alcance, escena
+y etapa; comprueba geometría, controles, contenido esencial, ausencia de scroll
+del body, overflow, foco, Escape, persistencia y errores JS. Una fixture inyecta
+overflow únicamente en una etapa intermedia de L8 y exige que el detector la
+rechace. La matriz recorre también LIVE+REQUIRED a 1440×900, y repite estudio,
+reduced motion y fallback 390×844 en los cuatro pilotos. El estado exacto que
+falle conserva screenshot; el JSON completo queda en el artefacto
+`work1-desktop-pedagogy-pilot`. L15 sigue validándose como assessment lineal.
 
 El workflow de Pages también valida cada push `v2/**`: construye el site con
 JupyterLite, comprueba enlaces/base path y ejecuta el fallback móvil en WebKit.
@@ -185,11 +198,17 @@ Solo `main` puede llegar al job de despliegue.
 - El modo aula permite overflow interno en paneles de detalle, pero no scroll del
   body. La información esencial y los controles permanecen dentro del viewport.
 - El estado actual sigue siendo un repositorio único, tal como exige el alcance.
+- La dry-run humana todavía no puede deducirse de CI. Su protocolo y registro
+  versionado viven en [`work1-teaching-dry-run.md`](work1-teaching-dry-run.md) y
+  permanecen pendientes hasta que el docente mida las cuatro lessons.
 
 ## Gate para Work 2
 
 Escalar solo si CI mantiene verdes el checker, generación, motor, Pages/WebKit y
 la matriz desktop; si las cuatro formas piloto y L15 resultan utilizables; y si una
 prueba de impartición confirma que las rutas LIVE caben en 18–22 minutos sin ocultar
-prerrequisitos. Work 2 debe migrar las lessons legacy de forma incremental y
-conservar L7–L9 como oráculo conceptual.
+prerrequisitos. La dry-run debe registrar también una práctica guiada próxima a
+20 minutos y una decisión `PASS` por lesson. Después se requiere reauditar el PR,
+mergear Work 1 y registrar el SHA de merge antes de crear la rama de Work 2.
+Work 2 debe migrar las lessons legacy de forma incremental y conservar L7–L9
+como oráculo conceptual.

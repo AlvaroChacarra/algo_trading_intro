@@ -2153,6 +2153,10 @@ function goTo(sceneIndex,stageIndex,focusHeading){
   stageIndex=Math.max(0,Math.min(stageIndex,stages.length-1));
   const stage=stages[stageIndex];
   currentScene=sceneIndex;currentStage=stageIndex;
+  body.dataset.currentSceneId=scene.id;
+  body.dataset.currentStageId=stage.id;
+  body.dataset.routeScope=routeScope;
+  scene.element.dataset.currentStageId=stage.id;
   models.forEach(model=>{
     const active=model===scene;
     model.element.classList.toggle('lr-scene-active',active);

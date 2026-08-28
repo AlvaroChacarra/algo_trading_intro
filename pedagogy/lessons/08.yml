@@ -28,7 +28,7 @@
     }
   ],
   "api_surface": [
-    {"id": "matching.process", "name": "process", "kind": "method", "signature": "process(order, book, timestamp=0) -> list[Fill]", "returns": "list[Fill]", "responsibility": "plan, validate, and commit one order against the mutable book"}
+    {"id": "matching.process", "name": "process", "kind": "method", "signature": "process(order: Order, book: OrderBook, timestamp: int | None = None) -> list[Fill]", "returns": "list[Fill]", "responsibility": "plan, validate, and commit one order against the mutable book"}
   ],
   "routes": {"LIVE": ["l08-challenge", "l08-plan-validate-commit", "l08-simulator", "l08-bridge"], "REQUIRED": ["l08-order-policies", "l08-quiz"], "OPTIONAL": []},
   "objectives": [
@@ -46,5 +46,14 @@
     {"id": "l08-quiz", "dom_id": "s4", "type": "diagnostic-quiz", "route": "REQUIRED", "layout": "focus", "concepts": ["matching.atomicity", "matching.order_policies"], "duration_minutes": 8, "stages": [{"id": "quiz", "route": "REQUIRED"}]},
     {"id": "l08-bridge", "dom_id": "s5", "type": "bridge", "route": "LIVE", "layout": "focus", "concepts": ["matching.plan_validate_commit"], "duration_minutes": 2, "stages": [{"id": "bridge", "route": "LIVE"}]}
   ],
-  "package_checks": []
+  "package_checks": [
+    {"path": "08-order-types-matching/exercises/exchange/book.py", "class": "OrderBook", "members": {
+      "best_bid": {"api": "orderbook.best_bid", "kind": "property", "parameters": [], "returns": "float | None"},
+      "best_ask": {"api": "orderbook.best_ask", "kind": "property", "parameters": [], "returns": "float | None"},
+      "mid": {"api": "orderbook.mid", "kind": "property", "parameters": [], "returns": "float | None"}
+    }},
+    {"path": "08-order-types-matching/exercises/exchange/matching.py", "class": "MatchingEngine", "members": {
+      "process": {"api": "matching.process", "kind": "method", "parameters": [{"name": "order", "kind": "positional_or_keyword", "annotation": "Order"}, {"name": "book", "kind": "positional_or_keyword", "annotation": "OrderBook"}, {"name": "timestamp", "kind": "positional_or_keyword", "annotation": "int | None", "default": "None"}], "returns": "list[Fill]"}
+    }}
+  ]
 }

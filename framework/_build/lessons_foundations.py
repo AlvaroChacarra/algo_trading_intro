@@ -1594,17 +1594,17 @@ from abc import ABC, abstractmethod
 
 class Strategy(ABC):
     @abstractmethod
-    def decide(self, imbalance):
+    def decide(self, imbalance: float) -> str:
         ...
 
 
 class Momentum(Strategy):          # sigue al mercado
-    def decide(self, imbalance):
+    def decide(self, imbalance: float) -> str:
         return "buy" if imbalance > 0 else "sell"
 
 
 class Contrarian(Strategy):        # apuesta contra el mercado
-    def decide(self, imbalance):
+    def decide(self, imbalance: float) -> str:
         return "sell" if imbalance > 0 else "buy"
 
 

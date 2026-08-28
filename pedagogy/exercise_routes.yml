@@ -77,12 +77,12 @@
         },
         {
           "title": "A6. Base y quote",
-          "route": "LIVE",
+          "route": "REQUIRED",
           "minutes": 2
         },
         {
           "title": "A7. Limpia el input",
-          "route": "LIVE",
+          "route": "REQUIRED",
           "minutes": 2
         },
         {
@@ -97,12 +97,12 @@
         },
         {
           "title": "A10. Dentro de banda",
-          "route": "LIVE",
+          "route": "REQUIRED",
           "minutes": 2
         },
         {
           "title": "A11. ¿Puedo operar?",
-          "route": "LIVE",
+          "route": "REQUIRED",
           "minutes": 2
         },
         {
@@ -112,12 +112,12 @@
         },
         {
           "title": "A13. Ventana de ticks",
-          "route": "LIVE",
+          "route": "REQUIRED",
           "minutes": 2
         },
         {
           "title": "A14. Llega un tick",
-          "route": "LIVE",
+          "route": "REQUIRED",
           "minutes": 2
         },
         {
@@ -137,12 +137,12 @@
         },
         {
           "title": "A18. Lee con red",
-          "route": "LIVE",
+          "route": "REQUIRED",
           "minutes": 2
         },
         {
           "title": "A19. Actualiza la posición",
-          "route": "LIVE",
+          "route": "REQUIRED",
           "minutes": 2
         },
         {
@@ -157,12 +157,12 @@
         },
         {
           "title": "A22. Ticks alcistas",
-          "route": "LIVE",
+          "route": "REQUIRED",
           "minutes": 2
         },
         {
           "title": "A23. Censo del libro",
-          "route": "LIVE",
+          "route": "REQUIRED",
           "minutes": 2
         },
         {
@@ -172,12 +172,12 @@
         },
         {
           "title": "A25. Semáforo de presión",
-          "route": "LIVE",
+          "route": "REQUIRED",
           "minutes": 2
         },
         {
           "title": "A26. Tarifa por tramos",
-          "route": "LIVE",
+          "route": "REQUIRED",
           "minutes": 2
         },
         {
@@ -258,7 +258,7 @@
         },
         {
           "title": "A1. La caja que contiene",
-          "route": "LIVE",
+          "route": "REQUIRED",
           "minutes": 2
         },
         {
@@ -278,12 +278,12 @@
         },
         {
           "title": "A5. La cartera cerrada",
-          "route": "LIVE",
+          "route": "REQUIRED",
           "minutes": 2
         },
         {
           "title": "A6. La puerta única",
-          "route": "LIVE",
+          "route": "REQUIRED",
           "minutes": 2
         },
         {
@@ -293,12 +293,12 @@
         },
         {
           "title": "A8. notional como property",
-          "route": "LIVE",
+          "route": "REQUIRED",
           "minutes": 2
         },
         {
           "title": "A9. El gran reto: libro + contable",
-          "route": "LIVE",
+          "route": "REQUIRED",
           "minutes": 2
         },
         {
@@ -337,7 +337,7 @@
         },
         {
           "title": "B4 · Implementa from_snapshot",
-          "route": "LIVE",
+          "route": "REQUIRED",
           "minutes": 8
         },
         {
@@ -379,7 +379,7 @@
         },
         {
           "title": "A2. Dos imbalances, dos historias",
-          "route": "LIVE",
+          "route": "REQUIRED",
           "minutes": 2
         },
         {
@@ -428,7 +428,7 @@
         },
         {
           "title": "B4 · Diseña _crosses()",
-          "route": "LIVE",
+          "route": "REQUIRED",
           "minutes": 5
         },
         {
@@ -465,22 +465,22 @@
       "aux": [
         {
           "title": "C1. Foto exprés",
-          "route": "LIVE",
+          "route": "REQUIRED",
           "minutes": 1
         },
         {
           "title": "C2. Liquidez exprés",
-          "route": "LIVE",
+          "route": "REQUIRED",
           "minutes": 1
         },
         {
           "title": "A1. La orden pequeña no barre",
-          "route": "LIVE",
+          "route": "REQUIRED",
           "minutes": 2
         },
         {
           "title": "A2. Precio efectivo",
-          "route": "LIVE",
+          "route": "REQUIRED",
           "minutes": 2
         },
         {

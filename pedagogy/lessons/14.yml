@@ -39,5 +39,8 @@
     {"id": "l14-quiz", "dom_id": "s4", "type": "diagnostic-quiz", "route": "REQUIRED", "layout": "focus", "concepts": ["as.reservation_price", "as.optimal_spread", "as.parameters"], "duration_minutes": 8, "stages": [{"id": "quiz", "route": "REQUIRED"}]},
     {"id": "l14-recap", "dom_id": "s5", "type": "recap", "route": "LIVE", "layout": "focus", "concepts": ["as.reservation_price", "as.optimal_spread"], "duration_minutes": 2, "stages": [{"id": "recap", "route": "LIVE"}]}
   ],
-  "package_checks": []
+  "package_checks": [{"path": "14-avellaneda-stoikov/exercises/exchange/strategy.py", "class": "Strategy", "members": {
+    "on_book_update": {"api": "strategy.on_book_update", "kind": "method", "parameters": [{"name": "book", "kind": "positional_or_keyword", "annotation": "OrderBook"}], "returns": "list[Action]"},
+    "on_fill": {"api": "strategy.on_fill", "kind": "method", "parameters": [{"name": "fill", "kind": "positional_or_keyword", "annotation": "Fill"}], "returns": "None"}
+  }}]
 }

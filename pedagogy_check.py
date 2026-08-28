@@ -54,11 +54,61 @@ def _source_dom(source: Path) -> tuple[set[str], set[int]]:
     return ids, stages
 
 
-def _class_member_kinds(path: Path, class_name: str) -> dict[str, str]:
+def _annotation(node: ast.expr | None) -> str | None:
+    if node is None:
+        return None
+    if isinstance(node, ast.Constant) and isinstance(node.value, str):
+        return node.value
+    return ast.unparse(node)
+
+
+def _parameter(
+    node: ast.arg,
+    kind: str,
+    default: ast.expr | None = None,
+    *,
+    has_default: bool = False,
+) -> dict[str, Any]:
+    result: dict[str, Any] = {
+        "name": node.arg,
+        "kind": kind,
+        "annotation": _annotation(node.annotation),
+    }
+    if has_default:
+        result["default"] = ast.unparse(default) if default is not None else None
+    return result
+
+
+def _function_parameters(node: ast.FunctionDef | ast.AsyncFunctionDef) -> list[dict[str, Any]]:
+    positional = [
+        (arg, "positional_only") for arg in node.args.posonlyargs
+    ] + [
+        (arg, "positional_or_keyword") for arg in node.args.args
+    ]
+    default_offset = len(positional) - len(node.args.defaults)
+    parameters: list[dict[str, Any]] = []
+    for index, (arg, kind) in enumerate(positional):
+        has_default = index >= default_offset
+        default = node.args.defaults[index - default_offset] if has_default else None
+        parameters.append(_parameter(
+            arg, kind, default, has_default=has_default,
+        ))
+    if node.args.vararg:
+        parameters.append(_parameter(node.args.vararg, "var_positional"))
+    for arg, default in zip(node.args.kwonlyargs, node.args.kw_defaults):
+        parameters.append(_parameter(
+            arg, "keyword_only", default, has_default=default is not None,
+        ))
+    if node.args.kwarg:
+        parameters.append(_parameter(node.args.kwarg, "var_keyword"))
+    return parameters
+
+
+def _class_member_surfaces(path: Path, class_name: str) -> dict[str, dict[str, Any]]:
     tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
     for node in tree.body:
         if isinstance(node, ast.ClassDef) and node.name == class_name:
-            out: dict[str, str] = {}
+            out: dict[str, dict[str, Any]] = {}
             for member in node.body:
                 if not isinstance(member, (ast.FunctionDef, ast.AsyncFunctionDef)):
                     continue
@@ -73,9 +123,39 @@ def _class_member_kinds(path: Path, class_name: str) -> dict[str, str]:
                     kind = "staticmethod"
                 else:
                     kind = "method"
-                out[member.name] = kind
+                parameters = _function_parameters(member)
+                if parameters and parameters[0]["name"] in {"self", "cls"}:
+                    parameters = parameters[1:]
+                out[member.name] = {
+                    "kind": kind,
+                    "parameters": parameters,
+                    "returns": _annotation(member.returns),
+                }
             return out
     return {}
+
+
+def _render_signature(
+    name: str,
+    kind: str,
+    parameters: list[dict[str, Any]],
+    returns: str,
+) -> str:
+    if kind == "property":
+        return f"{name} -> {returns}"
+    rendered = []
+    for parameter in parameters:
+        part = parameter["name"]
+        if parameter["kind"] == "var_positional":
+            part = f"*{part}"
+        elif parameter["kind"] == "var_keyword":
+            part = f"**{part}"
+        if parameter.get("annotation"):
+            part += f": {parameter['annotation']}"
+        if "default" in parameter:
+            part += f" = {parameter['default']}"
+        rendered.append(part)
+    return f"{name}({', '.join(rendered)}) -> {returns}"
 
 
 def validate_repository(
@@ -110,14 +190,28 @@ def validate_repository(
             f"explicit exercise route lessons are {sorted(declared_route_lessons)}; "
             f"expected {sorted(expected_route_lessons)}",
         ))
+    guided_policy = graph.get("load_policy", {}).get("guided_practice_minutes", {})
+    guided_minimum = guided_policy.get("minimum")
+    guided_maximum = guided_policy.get("maximum")
+    guided_delta = guided_policy.get("allowed_delta_from_declared")
+    if not all(isinstance(value, int) for value in (
+        guided_minimum, guided_maximum, guided_delta,
+    )):
+        issues.append(Issue(
+            "PED-CHECK-08", None,
+            "guided practice policy must declare integer minimum, maximum, and allowed delta",
+        ))
     for lesson_key, kinds in exercise_routes.get("lessons", {}).items():
         n = int(lesson_key)
+        all_titles: list[str | None] = []
+        live_minutes = 0
         for kind in ("build", "aux"):
             items = kinds.get(kind)
             if items is None:
                 issues.append(Issue("PED-CHECK-05", n, f"exercise routes miss {kind}"))
                 continue
             titles = [item.get("title") for item in items]
+            all_titles.extend(titles)
             if len(titles) != len(set(titles)):
                 issues.append(Issue("PED-CHECK-05", n, f"duplicate {kind} exercise title"))
             for item in items:
@@ -131,6 +225,32 @@ def validate_repository(
                         "PED-CHECK-08", n,
                         f"exercise {item.get('title')!r} has no positive load",
                     ))
+                elif item.get("route") == "LIVE":
+                    live_minutes += item["minutes"]
+        if len(all_titles) != len(set(all_titles)):
+            issues.append(Issue(
+                "PED-CHECK-05", n,
+                "an exercise appears more than once across build/aux classifications",
+            ))
+        guided_minutes = by_number.get(n, {}).get("load", {}).get("guided_minutes")
+        if isinstance(guided_minimum, int) and isinstance(guided_maximum, int):
+            if not guided_minimum <= live_minutes <= guided_maximum:
+                issues.append(Issue(
+                    "PED-CHECK-08", n,
+                    f"LIVE exercises total {live_minutes} minutes; "
+                    f"expected {guided_minimum}–{guided_maximum}",
+                ))
+        if not isinstance(guided_minutes, int) or guided_minutes <= 0:
+            issues.append(Issue(
+                "PED-CHECK-08", n,
+                "guided_minutes must be a positive integer",
+            ))
+        elif isinstance(guided_delta, int) and abs(live_minutes - guided_minutes) > guided_delta:
+            issues.append(Issue(
+                "PED-CHECK-08", n,
+                f"LIVE exercises total {live_minutes} minutes but guided_minutes is "
+                f"{guided_minutes}; allowed delta is {guided_delta}",
+            ))
 
     # PED-CHECK-03 — lesson references and source anchors must be current.
     actual_order = [item["lesson"] for item in lessons]
@@ -307,10 +427,20 @@ def validate_repository(
             issues.append(Issue("PED-CHECK-08", n, f"load contract misses {missing_load}"))
         if scenes and lesson.get("delivery") == "lesson":
             live_minutes = load.get("live_presentation_minutes", -1)
-            if not 18 <= live_minutes <= 22:
+            presentation_policy = graph.get("load_policy", {}).get(
+                "live_presentation_minutes", {}
+            )
+            minimum = presentation_policy.get("minimum")
+            maximum = presentation_policy.get("maximum")
+            if not (
+                isinstance(live_minutes, int)
+                and isinstance(minimum, int)
+                and isinstance(maximum, int)
+                and minimum <= live_minutes <= maximum
+            ):
                 issues.append(Issue(
                     "PED-CHECK-08", n,
-                    f"LIVE route is {live_minutes} minutes; expected 18–22",
+                    f"LIVE route is {live_minutes} minutes; expected {minimum}–{maximum}",
                 ))
 
     # PED-CHECK-06/07 — assessment metadata and optional exclusion.
@@ -353,21 +483,94 @@ def validate_repository(
                     f"stale phrase {phrase!r} in {relative}",
                 ))
 
-    # PED-CHECK-09 — generated package surfaces must match the contract.
+    # PED-CHECK-09 — material APIs must bind to exact generated starter surfaces.
+    bound_apis_by_lesson: dict[int, set[str]] = {}
     for lesson in lessons:
         n = lesson["lesson"]
+        lesson_bound_apis = bound_apis_by_lesson.setdefault(n, set())
         for check in lesson.get("package_checks", []):
             path = root / check["path"]
             if not path.exists():
                 issues.append(Issue("PED-CHECK-09", n, f"missing starter package {path}"))
                 continue
-            actual = _class_member_kinds(path, check["class"])
-            for member, expected_kind in check["members"].items():
-                if actual.get(member) != expected_kind:
+            actual = _class_member_surfaces(path, check["class"])
+            if not actual:
+                issues.append(Issue(
+                    "PED-CHECK-09", n,
+                    f"missing class {check['class']} in {check['path']}",
+                ))
+                continue
+            for member, expected in check["members"].items():
+                if not isinstance(expected, dict):
                     issues.append(Issue(
                         "PED-CHECK-09", n,
-                        f"{check['class']}.{member} is {actual.get(member)!r}, expected {expected_kind}",
+                        f"{check['class']}.{member} binding must declare api, kind, parameters, and returns",
                     ))
+                    continue
+                missing = [
+                    key for key in ("api", "kind", "parameters", "returns")
+                    if key not in expected
+                ]
+                if missing:
+                    issues.append(Issue(
+                        "PED-CHECK-09", n,
+                        f"{check['class']}.{member} binding misses {missing}",
+                    ))
+                    continue
+                api_id = expected["api"]
+                lesson_bound_apis.add(api_id)
+                actual_member = actual.get(member)
+                expected_member = {
+                    "kind": expected["kind"],
+                    "parameters": expected["parameters"],
+                    "returns": expected["returns"],
+                }
+                if actual_member != expected_member:
+                    issues.append(Issue(
+                        "PED-CHECK-09", n,
+                        f"{check['class']}.{member} is {actual_member!r}, "
+                        f"expected {expected_member!r}",
+                    ))
+                    continue
+                contract_entry = api_contract.get(api_id)
+                if contract_entry is None:
+                    issues.append(Issue(
+                        "PED-CHECK-09", n,
+                        f"{check['class']}.{member} binds unknown API {api_id}",
+                    ))
+                    continue
+                _, surface = contract_entry
+                rendered = _render_signature(
+                    member,
+                    expected["kind"],
+                    expected["parameters"],
+                    expected["returns"],
+                )
+                if (
+                    surface["name"] != member
+                    or surface["kind"] != expected["kind"]
+                    or surface["returns"] != expected["returns"]
+                    or surface["signature"] != rendered
+                ):
+                    issues.append(Issue(
+                        "PED-CHECK-09", n,
+                        f"starter binding for {api_id} renders {rendered!r}, "
+                        f"contract declares {surface['signature']!r}",
+                    ))
+
+    for lesson in lessons:
+        n = lesson["lesson"]
+        if lesson.get("status") not in STRICT_STATUSES:
+            continue
+        material_apis = set(lesson["requires"]["apis"]) | set(
+            lesson["introduces"]["apis"]
+        )
+        missing = sorted(material_apis - bound_apis_by_lesson.get(n, set()))
+        if missing:
+            issues.append(Issue(
+                "PED-CHECK-09", n,
+                f"material APIs have no typed starter binding: {missing}",
+            ))
 
     return issues
 

@@ -15,7 +15,7 @@
   },
   "recalls": [],
   "api_surface": [
-    {"id": "toy_strategy.decide", "name": "decide", "kind": "method", "signature": "decide(imbalance) -> str", "returns": "str", "responsibility": "return a pedagogical buy, sell, or hold label"}
+    {"id": "toy_strategy.decide", "name": "decide", "kind": "method", "signature": "decide(imbalance: float) -> str", "returns": "str", "responsibility": "return a pedagogical buy, sell, or hold label"}
   ],
   "routes": {"LIVE": [], "REQUIRED": [], "OPTIONAL": []},
   "objectives": [],
