@@ -594,6 +594,177 @@
   .pkgmap .pk{border-color:#ccc}
   a{color:#0e7490;text-decoration:none}
 }
+/* Shared scene renderer for L1-L14. The manifest owns route, stage and layout. */
+.lr-sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;
+  margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;
+  border:0!important}
+.lr-has-contract [hidden]{display:none!important}
+
+#lr-nav{position:fixed;inset:0 auto 0 0;width:var(--lr-nav-w,230px);z-index:52;
+  display:flex;flex-direction:column;background:rgba(9,9,11,.97);border-right:1px solid var(--line);
+  padding:12px;overflow:hidden}
+.lr-course-home{display:flex;align-items:center;min-height:34px;margin:0 5px 8px;padding:5px 7px;
+  color:var(--muted);text-decoration:none;font:600 .65rem var(--mono)}
+.lr-course-home:hover{color:var(--accent)}
+.lr-brand{display:grid;gap:5px;padding:4px 8px 12px;border-bottom:1px solid var(--line)}
+.lr-brand b{font:600 .78rem var(--mono);color:var(--accent);letter-spacing:.12em}
+.lr-brand span{font-size:.8rem;line-height:1.25;color:var(--muted)}
+.lr-modes{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:10px 6px}
+.lr-modes a{display:flex;justify-content:center;align-items:center;min-height:36px;border:1px solid var(--line);
+  border-radius:8px;text-decoration:none;color:var(--muted);font:600 .68rem var(--mono);text-transform:uppercase}
+.lr-modes a.on{border-color:var(--accent);background:var(--accent-dim);color:var(--accent)}
+.lr-modes a:focus-visible,#lr-nav button:focus-visible,#lr-controls button:focus-visible,
+#lr-mobile-toolbar a:focus-visible,#lr-mobile-toolbar button:focus-visible{
+  outline:2px solid var(--accent);outline-offset:2px}
+.lr-fallback-note{margin:0 8px 10px;color:var(--warn);font-size:.72rem;line-height:1.4}
+.lr-study-optional{min-height:38px;margin:0 6px 9px;border:1px solid rgba(192,132,252,.42);
+  border-radius:8px;background:rgba(192,132,252,.08);color:var(--kw);font:600 .65rem var(--mono);cursor:pointer}
+.lr-study-optional[aria-pressed="true"]{border-color:var(--kw);background:rgba(192,132,252,.16)}
+.lr-scene-links{display:grid;gap:4px;overflow:auto;padding:2px 4px 18px}
+.lr-scene-links button{display:grid;grid-template-columns:56px minmax(0,1fr);gap:6px;align-items:center;width:100%;
+  min-height:41px;padding:7px 9px;border:1px solid transparent;border-radius:9px;background:transparent;
+  color:var(--muted);text-align:left;cursor:pointer}
+.lr-scene-links button span{font:600 .55rem var(--mono);letter-spacing:.08em}
+.lr-scene-links button b{font:500 .65rem var(--mono);overflow-wrap:anywhere}
+.lr-scene-links button.on{border-color:var(--line);background:var(--panel);color:var(--text)}
+.lr-scene-links button.lr-route-live span{color:var(--accent)}
+.lr-scene-links button.lr-route-required span{color:var(--kw)}
+.lr-scene-links button.lr-route-optional span{color:var(--faint)}
+
+#lr-teacher-toggle{margin:0 6px 9px;min-height:36px;border:1px solid rgba(34,211,238,.38);
+  border-radius:8px;background:var(--accent-dim);color:var(--accent);font:600 .68rem var(--mono);cursor:pointer}
+#lr-teacher-toggle:focus-visible,.lr-teacher-close:focus-visible,.lr-full-guide:focus-visible{
+  outline:2px solid var(--accent);outline-offset:2px}
+#lr-teacher-drawer{position:fixed;z-index:90;top:0;right:0;width:min(420px,92vw);height:100dvh;
+  display:grid;grid-template-rows:auto minmax(0,1fr);transform:translateX(105%);transition:transform .2s ease;
+  border-left:1px solid var(--line);background:rgba(9,9,11,.98);box-shadow:-18px 0 48px rgba(0,0,0,.38)}
+#lr-teacher-drawer.open{transform:translateX(0)}
+.lr-teacher-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line)}
+.lr-teacher-head b{font:600 .78rem var(--mono);color:var(--accent);text-transform:uppercase;letter-spacing:.08em}
+.lr-teacher-close{width:40px;height:40px;border:1px solid var(--line);border-radius:8px;background:var(--panel);
+  color:var(--text);font-size:1.25rem;cursor:pointer}
+.lr-teacher-body{overflow:auto;padding:18px;color:var(--muted);font-size:.86rem;line-height:1.5}
+.lr-teacher-body h2{margin:.2em 0 .7em;color:var(--text);font:600 1rem var(--mono)}
+.lr-teacher-body h3{margin:1.15em 0 .4em;color:var(--text);font-size:.76rem;text-transform:uppercase;letter-spacing:.06em}
+.lr-teacher-body ul{margin:.4em 0;padding-left:1.2em}.lr-teacher-body code{color:var(--kw)}
+.lr-teacher-kicker{margin:0;color:var(--accent);font:600 .68rem var(--mono);text-transform:uppercase}
+.lr-teacher-stage{font-size:.78rem}.lr-full-guide{min-height:40px;margin-top:16px;padding:7px 12px;
+  border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--accent);font:600 .7rem var(--mono);cursor:pointer}
+
+.lr-scene-badge{display:flex;gap:8px;align-items:center;margin:0 0 10px;font:600 .58rem var(--mono);
+  letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+.lr-scene-badge span{padding:3px 7px;border:1px solid var(--line);border-radius:99px}
+.lr-scene-badge.lr-route-live span:first-child{border-color:rgba(34,211,238,.42);color:var(--accent)}
+.lr-scene-badge.lr-route-required span:first-child{border-color:rgba(192,132,252,.45);color:var(--kw)}
+.lr-scene-badge.lr-route-optional span:first-child{border-color:var(--line);color:var(--faint)}
+
+#lr-controls{position:fixed;left:var(--lr-nav-w,230px);right:0;bottom:0;height:var(--lr-controls-h,58px);z-index:55;
+  display:grid;grid-template-columns:minmax(120px,1fr) auto auto minmax(120px,1fr);align-items:center;
+  gap:14px;padding:7px 18px;background:rgba(9,9,11,.96);border-top:1px solid var(--line);
+  backdrop-filter:blur(8px)}
+#lr-controls button{min-height:40px;border:1px solid var(--line);border-radius:9px;background:var(--panel);
+  color:var(--text);font:600 .72rem var(--mono);cursor:pointer}
+#lr-controls button:hover:not(:disabled){border-color:var(--accent)}
+#lr-controls button:disabled{opacity:.3;cursor:default}
+#lr-controls .lr-next{text-align:right;padding-right:14px}
+#lr-controls .lr-prev{text-align:left;padding-left:14px}
+.lr-progress{display:flex;gap:7px;align-items:center;justify-content:center;white-space:nowrap;
+  font:.66rem var(--mono);color:var(--faint)}
+.lr-progress b{color:var(--muted);font-weight:500}
+.lr-progress .lr-route-progress{color:var(--accent)}
+#lr-controls .lr-route-scope{padding:0 12px;color:var(--accent);border-color:rgba(34,211,238,.38)}
+#lr-controls.lr-fixed-scope{grid-template-columns:minmax(120px,1fr) auto minmax(120px,1fr)}
+#lr-mobile-toolbar{display:none}
+
+/* Layout names are operational: they control scene width and native two-panel ratios. */
+.lr-scene{--lr-scene-max:1180px;--lr-left:42fr;--lr-right:58fr}
+.lr-scene[data-scene-layout="focus"]{--lr-scene-max:1120px}
+.lr-scene[data-scene-layout="split-42-58"]{--lr-scene-max:1900px;--lr-left:42fr;--lr-right:58fr}
+.lr-scene[data-scene-layout="split-45-55"]{--lr-scene-max:1900px;--lr-left:45fr;--lr-right:55fr}
+.lr-scene[data-scene-layout="split-50-50"]{--lr-scene-max:1760px;--lr-left:50fr;--lr-right:50fr}
+
+@media(min-width:901px){
+  body.lr-has-contract{--lr-nav-w:clamp(190px,16vw,238px);--lr-controls-h:58px}
+  body.mode-estudio.lr-has-contract{padding-left:var(--lr-nav-w)}
+  body.mode-estudio.lr-has-contract .wrap{max-width:min(1040px,calc(100vw - var(--lr-nav-w) - 48px))}
+  body.mode-estudio.lr-has-contract .wrap>p{max-width:78ch}
+  body.mode-estudio.lr-has-contract .scrolly{max-width:min(1280px,calc(100vw - var(--lr-nav-w) - 30px))}
+  body.mode-estudio.lr-has-contract .lr-scene{scroll-margin-top:18px}
+  body.mode-estudio.lr-has-contract #rail,body.mode-estudio.lr-has-contract #lr-controls{display:none}
+
+  html.lr-mode-aula,html.lr-mode-aula body{height:100%;overflow:hidden}
+  body.mode-aula{height:100dvh;overflow:hidden;padding-left:var(--lr-nav-w);padding-bottom:var(--lr-controls-h)}
+  body.mode-aula #rail,body.mode-aula>footer,body.mode-aula>#gd-toggle{display:none!important}
+  body.mode-aula>.lr-scene{display:none!important}
+  body.mode-aula>.lr-scene.lr-scene-active{display:grid!important;width:auto;max-width:none;
+    height:calc(100dvh - var(--lr-controls-h));margin:0;padding:clamp(12px,1.8vh,24px) clamp(16px,2.2vw,38px);
+    border:0;overflow:hidden;align-content:stretch;background:var(--bg)}
+  body.mode-aula>header.lr-scene-active{align-content:center}
+  body.mode-aula>.lr-scene-active>.wrap,body.mode-aula>header.lr-scene-active.wrap{
+    width:100%;max-width:var(--lr-scene-max);min-height:0;max-height:100%;overflow:auto;padding:0 8px;margin:auto}
+  body.mode-aula>.lr-scene-active:has(.scrolly){grid-template-rows:auto minmax(0,1fr);gap:8px}
+  body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child{overflow:visible;max-width:var(--lr-scene-max);margin:0 auto}
+  body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child h2{font-size:clamp(1.08rem,2.15vh,1.72rem);margin:.05em 0 .2em}
+  body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child .lede{font-size:clamp(.74rem,1.4vh,.95rem);margin:.2em 0}
+  body.mode-aula>.lr-scene-active>.scrolly{width:100%;max-width:var(--lr-scene-max);height:100%;min-height:0;margin:0 auto;
+    padding:0;grid-template-columns:minmax(260px,var(--lr-left)) minmax(0,var(--lr-right));gap:clamp(14px,1.8vw,32px)}
+  body.mode-aula>.lr-scene-active>.scrolly~.wrap{display:none}
+  body.mode-aula .steps{min-width:0;min-height:0;height:100%;overflow:hidden}
+  body.mode-aula .steps .step{display:none;min-height:0;height:100%;align-items:center;overflow:hidden}
+  body.mode-aula .steps .step.lr-stage-active{display:flex}
+  body.mode-aula .steps .step-inner{width:100%;max-height:100%;padding:clamp(12px,1.7vh,22px);
+    opacity:1;border-color:#3a3a44;overflow:auto}
+  body.mode-aula .steps .step-inner h3{font-size:clamp(.86rem,1.6vh,1.04rem)}
+  body.mode-aula .steps .step-inner p{font-size:clamp(.72rem,1.35vh,.93rem);line-height:1.55}
+  body.mode-aula .figwrap{position:relative;height:100%;min-width:0;min-height:0;top:auto;order:initial}
+  body.mode-aula .fig{position:relative;top:0;height:100%;min-height:0;box-shadow:none}
+  body.mode-aula .fig-stage{overflow:auto}
+  body.mode-aula .full-code{display:none!important}
+  body.mode-aula .hero{padding:0}
+  body.mode-aula .hero h1{font-size:clamp(2rem,4.7vw,4.8rem)}
+  body.mode-aula .hero .lede{font-size:clamp(.92rem,1.45vw,1.3rem);max-width:72ch}
+  body.mode-aula .hero .challenge{margin-top:clamp(14px,2.5vh,28px)}
+  body.mode-aula .hero .meta{margin-top:clamp(12px,2.2vh,24px)}
+  body.mode-aula .lr-scene-badge{margin-bottom:7px}
+  body.mode-aula .lr-scene-active[data-scene-layout^="split-"] :is(.code-state,.state-inspector,.dictgrid,.build-grid,.vmgrid,.ownline .cols){
+    grid-template-columns:minmax(0,var(--lr-left)) minmax(0,var(--lr-right))}
+}
+
+@media(max-width:1180px) and (min-width:901px){
+  #lr-controls{grid-template-columns:105px minmax(0,1fr) auto 105px;gap:7px;padding-inline:9px}
+  #lr-controls.lr-fixed-scope{grid-template-columns:105px minmax(0,1fr) 105px}
+  #lr-controls button span,.lr-progress>span{display:none}
+  .lr-progress{gap:5px;font-size:.61rem}
+}
+
+@media(max-width:900px){
+  #lr-nav,#lr-controls,.lr-scene-badge{display:none!important}
+  body.lr-has-contract{padding-left:0;max-width:100%;overflow-x:hidden}
+  #lr-mobile-toolbar{position:sticky;top:0;z-index:58;display:flex;align-items:center;gap:8px;
+    min-height:52px;padding:6px max(10px,env(safe-area-inset-left));border-bottom:1px solid var(--line);
+    background:rgba(9,9,11,.96);backdrop-filter:blur(8px);font:600 .65rem var(--mono)}
+  #lr-mobile-toolbar>a{color:var(--accent);text-decoration:none;white-space:nowrap}
+  #lr-mobile-toolbar>span{min-width:0;flex:1;color:var(--muted);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #lr-mobile-toolbar button{min-height:44px;margin:0;padding:5px 9px;border:1px solid var(--line);border-radius:8px;
+    background:var(--panel);color:var(--kw);font:600 .59rem var(--mono)}
+  #lr-mobile-toolbar .lr-mobile-teacher{color:var(--accent)}
+  body.lr-has-contract .lr-scene{scroll-margin-top:58px}
+  #lr-teacher-drawer{width:min(420px,100vw)}
+}
+
+@media(max-width:520px){
+  #lr-mobile-toolbar>span{display:none}
+  #lr-mobile-toolbar .lr-study-optional{margin-left:auto}
+}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto!important}
+  #lr-teacher-drawer,.lr-scene *{transition:none!important;animation-duration:.001ms!important;animation-iteration-count:1!important}
+}
+@media print{
+  #lr-nav,#lr-controls,#lr-mobile-toolbar,.lr-scene-badge,#lr-teacher-drawer{display:none!important}
+  body.lr-has-contract{padding:0!important}
+}
 </style>
 </head>
 <body data-lesson="09">
@@ -647,7 +818,7 @@
   <div class="q" data-ok="2"><div class="qt"><code>reset()</code> debe…</div><div class="opts"><button class="opt">A · borrar snapshots</button><button class="opt">B · crear otro engine</button><button class="opt">C · restaurar _i=-1 y book=None</button></div><div class="why">Vuelve al estado previo al primer tick.</div></div><div class="score"></div>
 </div></div></section>
 
-<section id="s5"><div class="wrap"><div class="eyebrow">§5 · <b>El motor acumulativo</b></div><h2>Ya puedes leer las tres clases principales</h2><div class="engine-map"><span class="unit">RAW SNAPSHOT</span><span class="arrow">→</span><span class="unit">OrderBook</span><span class="arrow">→</span><span class="unit">MatchingEngine</span><span class="arrow">→</span><span class="unit today">Market · HECHO</span></div><div class="bridge"><div class="tag">Resultado</div><p><strong>step cambia el estado; timestamp lo describe; submit delega la dinámica; reset restaura.</strong></p><p>La siguiente capa podrá enchufar estrategias al loop sin tocar estas responsabilidades.</p></div><div class="cta"><div class="box"><span class="tag">Núcleo presencial</span><code>__init__ → step → submit → composición</code>.</div><div class="box"><span class="tag">Consolidación requerida</span><code>timestamp → reset → clase completa → B6–B8</code>.</div></div></div></section>
+<section id="s5"><div class="wrap"><div class="eyebrow">§5 · <b>El motor acumulativo</b></div><h2>Ya puedes leer las tres clases principales</h2><div class="engine-map"><span class="unit">RAW SNAPSHOT</span><span class="arrow">→</span><span class="unit">OrderBook</span><span class="arrow">→</span><span class="unit">MatchingEngine</span><span class="arrow">→</span><span class="unit today">Market · HECHO</span></div><div class="bridge"><div class="tag">Resultado</div><p><strong>step cambia el estado; timestamp lo describe; submit delega la dinámica; reset restaura.</strong></p><p>En L10, la capa Strategy + Backtest podrá enchufar estrategias al loop sin tocar estas responsabilidades.</p></div><div class="cta"><div class="box"><span class="tag">Núcleo presencial</span><code>__init__ → step → submit → composición</code>.</div><div class="box"><span class="tag">Consolidación requerida</span><code>timestamp → reset → clase completa → B6–B8</code>.</div></div></div></section>
 <footer>L9 · Construir Market y su API — Algo Trading ICAI 2026</footer>
 
 <script type="text/plain" id="guion-src"># Guion — Clase 9: Construir Market y su API
@@ -696,6 +867,7 @@
 - En el recorrido autónomo, el alumno abre la clase completa y atribuye cada línea a Market, MatchingEngine u OrderBook.
 </script>
 <script>const DOC_DATA={"anatomy":[{"i":0,"timestamp":1717200000,"bestBid":99978.2,"bestAsk":100021.8,"mid":100000.0},{"i":1,"timestamp":1717200060,"bestBid":99993.96,"bestAsk":100003.74,"mid":99998.85},{"i":2,"timestamp":1717200120,"bestBid":99992.04,"bestAsk":100002.9,"mid":99997.47},{"i":3,"timestamp":1717200180,"bestBid":99975.26,"bestAsk":100017.64,"mid":99996.45}],"equity":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,-3.67,-3.29,-3.77,-6.84,-7.57,-11.61,-9.85,-10.24,-5.54,-3.24,-5.7,-1.82,3.73,3.57,49.86,46.2,45.6,46.78,50.63,52.88,52.96,50.75,49.87,57.83,51.42,49.72,55.4,55.09,57.03,58.87,59.08,61.75,62.75,71.22,71.51,77.28,81.89,79.66,80.4,77.79,73.63,75.54,77.19,76.83,78.61,76.13,73.11,74.47,66.85,69.48,76.93,76.73,77.96,75.82,74.52,75.17,74.33,81.14,93.62,89.93,91.63,94.2,87.59,85.65,77.64,77.32,79.4,80.46,80.47,82.3,77.51,74.23,64.81,63.33,63.47,67.33,64.48,70.45,83.61,83.3,82.23,91.31,89.51,91.03,81.81,82.63,79.37,81.19,80.2,77.01,75.79,77.25,82.51,88.74,84.21,83.97,84.11,83.43,89.81,91.19,91.08,83.6,81.27,83.48,85.76,91.06,84.29,89.66,93.66,91.77,89.97,96.99,93.8,90.01,92.39,84.63,84.89,82.84,83.92,90.99,74.36,75.44,78.61,77.4,82.86,73.45,71.15,75.44,84.51,78.4,80.81,76.69,76.24,76.01,75.61,74.19,67.56,72.75,75.1,78.62,73.24,69.67,71.72,63.23,67.64,64.95,56.47,60.46,57.8,53.97,45.36,46.7,50.73,53.06,55.71,49.52,49.68,50.41,51.21,49.83,51.82,57.5,57.14,56.66,59.83,62.3,60.88,60.6,53.53,55.35,47.14,41.5,40.49,35.74,40.92,36.85,36.86,42.47,40.13,37.74,37.17,40.55,41.18,47.19,42.9,45.54,37.82,41.9,46.04,15.63,20.95,24.88,23.61,21.3,19.53,23.04,23.63,25.85,29.65,33.52,25.68,23.93,27.57,28.71,28.91,24.94,35.19,18.38,14.1,15.19,9.44,9.66,10.4,7.86,3.32,3.56,1.12,6.67,11.51,14.89,15.4,10.3,14.1,12.76,11.38,9.7,8.47,6.01,9.44,5.18,11.7,17.17,15.73,9.7,12.23,13.96,9.27,8.86,5.69,12.73,16.97,-1.68,-0.19,-2.25,-6.7,0.25,9.94,10.52,3.76,4.22,-2.89,-2.49,-3.73,-6.93,-11.07,-11.88,-12.8,-15.83,-15.11,-13.21,-12.09,-9.52,-4.7,-5.42,-4.44,-21.31,-21.96,-27.78,-29.77,-37.84,-37.31,-39.63,-38.64,-45.94,-44.83,-45.67,-46.56,-50.72,-38.58,-44.08,-48.39,-52.43,-51.02,-52.83,-47.51,-44.85,-45.66,-44.22,-74.04,-72.26,-71.41,-65.06,-68.43,-76.69,-81.49,-89.25,-94.34,-101.16,-99.25,-96.1,-96.42,-94.25,-89.67,-91.17,-86.88,-85.67,-76.93,-71.24,-56.11,-60.81,-54.2,-52.43,-50.15,-51.34,-53.0,-52.82,-56.53,-63.36,-65.55,-56.07,-59.31,-58.24,-62.1,-59.27,-63.15,-64.14,-63.8,-69.29,-77.9,-80.55,-72.63,-65.06,-62.19,-57.84,-48.92,-49.27,-46.87,-50.88,-51.91,-44.31,-47.97,-49.14,-43.25,-48.68,-56.63,-51.78,-52.38,-49.0,-51.18,-50.95,-55.61,-57.12,-54.69,-48.87,-48.6,-49.7,-48.13,-51.71,-46.98,-47.46,-54.2,-58.44,-62.7,-63.31,-64.51,-66.31,-69.44,-64.1,-59.24,-65.48,-66.68,-73.19,-67.92,-65.45,-65.42,-69.58,-66.44,-69.43,-62.47,-60.33,-57.23,-53.23,-52.36,-50.85,-50.25,-41.35,-22.17,-19.24,-27.33,-30.73,-29.36,-32.02,-30.58,-33.98,-30.89,-42.03,-47.64,-49.31,-51.92,-51.87,-53.05,-50.26,-52.03,-55.36,-50.71,-51.69,-57.37,-52.54,-55.74,-61.34,-64.35,-64.28,-66.66,-61.7,-62.47,-62.69,-55.12,-55.11,-58.65,-51.95,-43.8,-33.35,-34.61,-34.39,-34.99,-37.72,-42.95,-41.1,-17.77,-21.16,-20.88,-19.43,-20.73,-16.83,-18.37,-13.96,-11.06,-7.74,-3.81,-5.21,-6.79,-5.87,-4.89,-5.2,2.28,-0.14,-10.77,-13.81,-13.05,-11.14,-14.12],"fills":[{"i":49,"price":100016.63,"size":0.2961},{"i":49,"price":100018.48,"size":0.2039}],"filled":0.5,"steps":500,"nFills":2,"finalEquity":-14.12,"finalPos":0.5};</script>
+<script type="application/json" id="pedagogy-contract">{"lesson":9,"status":"contract-strict","title":"Market — Estado, dinámica y tiempo","delivery":"lesson","source_path":"framework/_build/docs/09_body.html","requires":{"concepts":["matching.plan_validate_commit","exchange.orderbook","oop.composition","market.external_boundary","python.fstring","python.dict_get","python.generator_expression"],"apis":["matching.constructor","matching.process","orderbook.from_snapshot","tracker.constructor","tracker.position","tracker.apply_fill","tracker.equity"],"notation":[]},"requirement_routes":{"concepts":{"matching.plan_validate_commit":"LIVE","exchange.orderbook":"LIVE","oop.composition":"LIVE","market.external_boundary":"LIVE","python.fstring":"REQUIRED","python.dict_get":"LIVE","python.generator_expression":"REQUIRED"},"apis":{"matching.constructor":"LIVE","matching.process":"LIVE","orderbook.from_snapshot":"LIVE","tracker.constructor":"REQUIRED","tracker.position":"REQUIRED","tracker.apply_fill":"REQUIRED","tracker.equity":"REQUIRED"},"notation":{}},"introduces":{"concepts":[{"id":"engine.market","importance":"major","route":"LIVE"},{"id":"engine.time_loop","importance":"major","route":"LIVE"},{"id":"engine.delegation","importance":"major","route":"LIVE"},{"id":"engine.lifecycle","importance":"major","route":"LIVE"},{"id":"metrics.equity_curve","importance":"supporting","route":"REQUIRED"}],"apis":["market.constructor","market.sample","market.snapshots","market.book","market.step","market.submit","market.timestamp","market.reset"],"notation":[]},"introduction_routes":{"apis":{"market.constructor":"LIVE","market.sample":"REQUIRED","market.snapshots":"REQUIRED","market.book":"LIVE","market.step":"LIVE","market.submit":"LIVE","market.timestamp":"REQUIRED","market.reset":"REQUIRED"},"notation":{}},"recalls":[{"concept":"oop.composition","introduced_in":5,"mapping":{"before":"OrderBook contiene una colección de niveles.","now":"Market contiene un MatchingEngine y un OrderBook activo."}}],"api_surface":[{"id":"matching.constructor","name":"MatchingEngine","kind":"constructor","signature":"MatchingEngine() -> MatchingEngine","returns":"MatchingEngine","responsibility":"construct the stateless canonical matching engine","qualified_name":"exchange.matching.MatchingEngine"},{"id":"matching.process","name":"process","kind":"method","signature":"process(order: Order, book: OrderBook, timestamp: int | None = None) -> list[Fill]","returns":"list[Fill]","responsibility":"plan, validate, and commit one order","qualified_name":"exchange.matching.MatchingEngine.process"},{"id":"orderbook.from_snapshot","name":"from_snapshot","kind":"classmethod","signature":"from_snapshot(symbol: str, row: dict, depth: int = 10) -> OrderBook","returns":"OrderBook","responsibility":"translate one external snapshot into the canonical book","qualified_name":"exchange.book.OrderBook.from_snapshot"},{"id":"market.constructor","name":"Market","kind":"constructor","signature":"Market(symbol: str, snapshots: list[dict], depth: int = 10) -> Market","returns":"Market","responsibility":"compose snapshots, matching, active book, and replay cursor","qualified_name":"exchange.market.Market"},{"id":"market.sample","name":"sample","kind":"classmethod","signature":"sample(symbol: str = 'BTCUSDT', depth: int = 10) -> Market","returns":"Market","responsibility":"load the reproducible packaged market replay","qualified_name":"exchange.market.Market.sample"},{"id":"market.snapshots","name":"snapshots","kind":"property","signature":"snapshots -> list[dict]","returns":"list[dict]","responsibility":"expose a defensive copy of the packaged replay rows","qualified_name":"exchange.market.Market.snapshots"},{"id":"market.book","name":"book","kind":"attribute","signature":"book: OrderBook | None","returns":"OrderBook | None","responsibility":"expose the active replay book or None outside the lifecycle","qualified_name":"exchange.market.Market.book"},{"id":"market.step","name":"step","kind":"method","signature":"step() -> OrderBook | None","returns":"OrderBook | None","responsibility":"advance replay time and replace the active book","qualified_name":"exchange.market.Market.step"},{"id":"market.submit","name":"submit","kind":"method","signature":"submit(order: Order) -> list[Fill]","returns":"list[Fill]","responsibility":"delegate matching against the active book","qualified_name":"exchange.market.Market.submit"},{"id":"market.timestamp","name":"timestamp","kind":"property","signature":"timestamp -> int | None","returns":"int | None","responsibility":"read the current replay timestamp","qualified_name":"exchange.market.Market.timestamp"},{"id":"market.reset","name":"reset","kind":"method","signature":"reset() -> None","returns":"None","responsibility":"restore replay state","qualified_name":"exchange.market.Market.reset"},{"id":"tracker.constructor","name":"PositionTracker","kind":"constructor","signature":"PositionTracker(cash: float = 0.0) -> PositionTracker","returns":"PositionTracker","responsibility":"initialize cash, inventory, and fill accounting","qualified_name":"exchange.portfolio.PositionTracker"},{"id":"tracker.position","name":"position","kind":"property","signature":"position -> float","returns":"float","responsibility":"read current signed inventory","qualified_name":"exchange.portfolio.PositionTracker.position"},{"id":"tracker.apply_fill","name":"apply_fill","kind":"method","signature":"apply_fill(fill: Fill) -> None","returns":"None","responsibility":"update cash and position atomically from a fill","qualified_name":"exchange.portfolio.PositionTracker.apply_fill"},{"id":"tracker.equity","name":"equity","kind":"method","signature":"equity(mark_price: float) -> float","returns":"float","responsibility":"mark cash and inventory to market","qualified_name":"exchange.portfolio.PositionTracker.equity"}],"routes":{"LIVE":["l09-challenge","l09-composition-recall","l09-market-api","l09-day-loop","l09-bridge"],"REQUIRED":["l09-quiz"],"OPTIONAL":[]},"objectives":[{"id":"l09-compose-market","route":"LIVE","concepts":["engine.market","engine.delegation","oop.composition"],"apis":["market.constructor","market.book","market.step","market.submit"],"notation":[]},{"id":"l09-run-time-loop","route":"LIVE","concepts":["engine.time_loop"],"apis":["market.step"],"notation":[]},{"id":"l09-reset-lifecycle","route":"REQUIRED","concepts":["engine.lifecycle"],"apis":["market.sample","market.snapshots","market.timestamp","market.reset"],"notation":[]},{"id":"l09-track-equity-over-time","route":"REQUIRED","concepts":["metrics.equity_curve"],"apis":["tracker.constructor","tracker.position","tracker.apply_fill","tracker.equity"],"notation":[]}],"load":{"live_presentation_minutes":20,"guided_minutes":20,"required_autonomous_minutes":34,"optional_minutes":10,"overflow_policy":"explicit-route-plan"},"scenes":[{"id":"l09-challenge","dom_id":"s0","type":"hero-challenge","route":"LIVE","layout":"focus","concepts":["engine.market"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l09-composition-recall","dom_id":"s1","type":"recall","route":"LIVE","layout":"split-50-50","concepts":["oop.composition","engine.market"],"duration_minutes":3,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l09-market-api","dom_id":"s2","type":"code-state","route":"LIVE","layout":"split-42-58","concepts":["engine.time_loop","engine.delegation","engine.lifecycle"],"duration_minutes":11,"stages":[{"id":"cursor","route":"LIVE","dom_stage":0},{"id":"book","route":"LIVE","dom_stage":1},{"id":"end","route":"LIVE","dom_stage":2},{"id":"timestamp","route":"REQUIRED","dom_stage":3},{"id":"submit","route":"LIVE","dom_stage":4},{"id":"composition","route":"LIVE","dom_stage":5},{"id":"reset","route":"REQUIRED","dom_stage":6}]},{"id":"l09-day-loop","dom_id":"s3","type":"concept-simulator","route":"LIVE","layout":"split-45-55","concepts":["engine.time_loop"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l09-quiz","dom_id":"s4","type":"diagnostic-quiz","route":"REQUIRED","layout":"focus","concepts":["engine.market","engine.delegation"],"duration_minutes":8,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l09-bridge","dom_id":"s5","type":"bridge","route":"LIVE","layout":"focus","concepts":["engine.lifecycle"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]}],"bridge":{"target_lesson":10,"known":{"concepts":["oop.polymorphism","engine.market","engine.time_loop"],"apis":["market.step","market.submit"],"notation":[]},"limitation":"El loop incrusta una decisión y no puede intercambiar estrategias con seguridad.","need":"Un contrato Strategy de producción devuelve acciones y Backtest se responsabiliza de ejecutarlas."},"api_transitions":[],"package_checks":[{"path":"09-market-simulation-loop/exercises/exchange/book.py","class":"OrderBook","members":{"from_snapshot":{"api":"orderbook.from_snapshot","kind":"classmethod","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"row","kind":"positional_or_keyword","annotation":"dict"},{"name":"depth","kind":"positional_or_keyword","annotation":"int","default":"10"}],"returns":"OrderBook"}}},{"path":"09-market-simulation-loop/exercises/exchange/matching.py","class":"MatchingEngine","members":{"__init__":{"api":"matching.constructor","kind":"constructor","parameters":[],"returns":"MatchingEngine"},"process":{"api":"matching.process","kind":"method","parameters":[{"name":"order","kind":"positional_or_keyword","annotation":"Order"},{"name":"book","kind":"positional_or_keyword","annotation":"OrderBook"},{"name":"timestamp","kind":"positional_or_keyword","annotation":"int | None","default":"None"}],"returns":"list[Fill]"}}},{"path":"09-market-simulation-loop/exercises/exchange/portfolio.py","class":"PositionTracker","members":{"__init__":{"api":"tracker.constructor","kind":"constructor","parameters":[{"name":"cash","kind":"positional_or_keyword","annotation":"float","default":"0.0"}],"returns":"PositionTracker"},"position":{"api":"tracker.position","kind":"property","parameters":[],"returns":"float"},"apply_fill":{"api":"tracker.apply_fill","kind":"method","parameters":[{"name":"fill","kind":"positional_or_keyword","annotation":"Fill"}],"returns":"None"},"equity":{"api":"tracker.equity","kind":"method","parameters":[{"name":"mark_price","kind":"positional_or_keyword","annotation":"float"}],"returns":"float"}}},{"path":"09-market-simulation-loop/exercises/exchange/market.py","class":"Market","members":{"__init__":{"api":"market.constructor","kind":"constructor","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"snapshots","kind":"positional_or_keyword","annotation":"list[dict]"},{"name":"depth","kind":"positional_or_keyword","annotation":"int","default":"10"}],"returns":"Market"},"sample":{"api":"market.sample","kind":"classmethod","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str","default":"'BTCUSDT'"},{"name":"depth","kind":"positional_or_keyword","annotation":"int","default":"10"}],"returns":"Market"},"snapshots":{"api":"market.snapshots","kind":"property","parameters":[],"returns":"list[dict]"},"book":{"api":"market.book","kind":"attribute","parameters":[],"returns":"OrderBook | None"},"timestamp":{"api":"market.timestamp","kind":"property","parameters":[],"returns":"int | None"},"step":{"api":"market.step","kind":"method","parameters":[],"returns":"OrderBook | None"},"submit":{"api":"market.submit","kind":"method","parameters":[{"name":"order","kind":"positional_or_keyword","annotation":"Order"}],"returns":"list[Fill]"},"reset":{"api":"market.reset","kind":"method","parameters":[],"returns":"None"}}}],"used_later":{"concepts":["engine.market","metrics.equity_curve"],"apis":["market.reset","market.sample","market.snapshots","market.step","market.submit"],"notation":[]}}</script>
 <script>
 
 (function(){
@@ -1000,6 +1172,533 @@ function stop(){if(timer)clearInterval(timer);timer=null;}
 $('#pl-play').addEventListener('click',()=>{stop();let i=2;$('#pl-play').disabled=true;timer=setInterval(()=>{i=Math.min(E.length,i+5);DOC.chart('#pl-chart',[{data:E,color:'#22d3ee',upTo:i,endDot:true}],{zero:true,marks:i>F.i?[mark]:[]});$('#pl-log').textContent=`paso ${i}/${E.length} · equity ${E[i-1]}`;$('#pl-owner').innerHTML=owner(i);if(i>=E.length){stop();$('#pl-play').disabled=false;$('#pl-log').textContent=`día completo · equity final ${D.finalEquity}`;}},30);});
 $('#pl-reset').addEventListener('click',()=>{stop();$('#pl-play').disabled=false;DOC.chart('#pl-chart',[{data:E,color:'#22d3ee',upTo:2}]);$('#pl-log').textContent='pulsa play';$('#pl-owner').innerHTML=owner(0);});
 DOC.chart('#pl-chart',[{data:E,color:'#22d3ee',upTo:2}]);$('#pl-owner').innerHTML=owner(0);
+})();
+
+(function(){
+'use strict';
+
+const RUNTIME_VERSION=2;
+const ROUTES=['LIVE','REQUIRED','OPTIONAL'];
+const contractNode=document.getElementById('pedagogy-contract');
+if(!contractNode)return;
+
+let contract;
+try{contract=JSON.parse(contractNode.textContent);}catch(error){
+  console.error('Invalid pedagogy contract',error);return;
+}
+if(!Array.isArray(contract.scenes)||!contract.scenes.length)return;
+
+const body=document.body;
+const params=new URLSearchParams(location.search);
+const mobileQuery=matchMedia('(max-width: 900px)');
+const requestedMode=params.get('mode')==='aula'?'aula':'estudio';
+const mode=requestedMode==='aula'&&!mobileQuery.matches?'aula':'estudio';
+const isProfessor=['1','true'].includes((params.get('profe')||'').toLowerCase());
+const routeScopes=mode==='aula'
+  ?(isProfessor?['LIVE','LIVE+REQUIRED','ALL']:['LIVE'])
+  :['LIVE+REQUIRED','ALL'];
+let routeScope=mode==='estudio'?'LIVE+REQUIRED':'LIVE';
+if(mode==='estudio'&&params.get('optional')==='1')routeScope='ALL';
+let currentScene=0,currentStage=0;
+
+const esc=value=>String(value??'').replace(/[&<>"']/g,ch=>({
+  '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+})[ch]);
+const slug=value=>String(value||'focus').toLowerCase().replace(/[^a-z0-9-]+/g,'-');
+const route=value=>ROUTES.includes(String(value||'').toUpperCase())
+  ?String(value).toUpperCase():'LIVE';
+const routeClass=value=>`lr-route-${route(value).toLowerCase()}`;
+const scopeRoutes=()=>routeScope==='ALL'?ROUTES:
+  routeScope==='LIVE+REQUIRED'?['LIVE','REQUIRED']:['LIVE'];
+const modeUrl=next=>{
+  const q=new URLSearchParams(location.search);q.set('mode',next);
+  return `${location.pathname}?${q.toString()}${location.hash}`;
+};
+const stateKey=(scene,stage)=>`${scene.id}::${stage.id}`;
+const reducedMotion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function elementForStage(nodes,value,index,total){
+  if(value!==undefined&&value!==null){
+    const wanted=String(value);
+    return nodes.find(node=>node.dataset.stage===wanted)||null;
+  }
+  return total===nodes.length?nodes[index]||null:(total===1&&nodes.length===1?nodes[0]:null);
+}
+
+const missingScenes=[];
+const models=contract.scenes.map(rawScene=>{
+  if(!rawScene||!rawScene.id||!rawScene.dom_id)return null;
+  const element=document.getElementById(rawScene.dom_id);
+  if(!element){missingScenes.push(rawScene.id);return null;}
+  const sceneRoute=route(rawScene.route);
+  const layout=slug(rawScene.layout);
+  element.classList.add('lr-scene',routeClass(sceneRoute),`lr-layout-${layout}`);
+  element.dataset.sceneId=rawScene.id;
+  element.dataset.sceneType=rawScene.type||'scene';
+  element.dataset.sceneLayout=layout;
+  element.dataset.layoutApplied='true';
+  element.dataset.route=sceneRoute;
+  const allSteps=[...element.querySelectorAll('.scrolly .step')];
+  const allFigures=[...element.querySelectorAll('.fig-stage')];
+  const declared=Array.isArray(rawScene.stages)&&rawScene.stages.length
+    ?rawScene.stages:[{id:'stage',route:sceneRoute}];
+  const stages=declared.map((rawStage,index)=>{
+    const stage={...rawStage};
+    stage.id=stage.id||`stage-${index+1}`;
+    stage.route=route(stage.route||sceneRoute);
+    stage.step=elementForStage(allSteps,stage.dom_stage,index,declared.length);
+    stage.figure=elementForStage(allFigures,stage.dom_stage,index,declared.length);
+    [stage.step,stage.figure].filter(Boolean).forEach(node=>{
+      node.dataset.route=stage.route;node.classList.add(routeClass(stage.route));
+    });
+    return stage;
+  });
+  const firstWrap=element.matches('.wrap')?element:element.querySelector(':scope > .wrap');
+  if(firstWrap){
+    const badge=document.createElement('div');
+    badge.className=`lr-scene-badge ${routeClass(sceneRoute)}`;
+    const minutes=Number.isFinite(Number(rawScene.duration_minutes))
+      ?`<span>${esc(rawScene.duration_minutes)} min</span>`:'';
+    badge.innerHTML=`<span>${esc(sceneRoute)}</span><span>${esc(rawScene.type||'scene')}</span>${minutes}`;
+    firstWrap.insertBefore(badge,firstWrap.firstChild);
+  }
+  return {...rawScene,route:sceneRoute,layout,element,stages,allSteps,allFigures};
+}).filter(Boolean);
+
+if(missingScenes.length){
+  body.dataset.runtimeContractError='missing-scene-dom';
+  console.error(`Pedagogy scenes without DOM nodes: ${missingScenes.join(', ')}`);
+}
+if(!models.length)return;
+
+body.classList.add('lr-has-contract',`mode-${mode}`);
+body.dataset.learningMode=mode;
+body.dataset.requestedMode=requestedMode;
+body.dataset.professorMode=String(isProfessor);
+body.dataset.runtimeVersion=String(RUNTIME_VERSION);
+document.documentElement.classList.toggle('lr-mode-aula',mode==='aula');
+if(requestedMode!==mode)body.classList.add('lr-mobile-fallback');
+
+const inventory=models.flatMap(scene=>scene.stages.map(stage=>({
+  key:stateKey(scene,stage),scene,stage,route:stage.route,
+})));
+const inventoryKeys=new Set(inventory.map(item=>item.key));
+const optionalCount=inventory.filter(item=>item.route==='OPTIONAL').length;
+
+function storageKey(){
+  if(window.DOC&&typeof DOC.key==='function')return DOC.key();
+  return `algoTrading.${body.dataset.lesson||String(contract.lesson||'x').padStart(2,'0')}`;
+}
+function readSaved(){
+  try{return JSON.parse(localStorage.getItem(storageKey())||'{}');}catch(_error){return {};}
+}
+const initialSaved=readSaved();
+const savedRuntime=initialSaved.runtime||{};
+if(params.get('optional')!=='1'&&routeScopes.includes(savedRuntime.routeScope)){
+  routeScope=savedRuntime.routeScope;
+}
+const visited=new Set((Array.isArray(savedRuntime.visited)?savedRuntime.visited:[])
+  .filter(key=>inventoryKeys.has(key)));
+if(savedRuntime.scene&&savedRuntime.stage){
+  const prior=inventory.find(item=>item.scene.id===savedRuntime.scene&&item.stage.id===savedRuntime.stage);
+  if(prior)visited.add(prior.key);
+}
+
+function progressSnapshot(){
+  const progress={};
+  ROUTES.forEach(routeName=>{
+    const states=inventory.filter(item=>item.route===routeName);
+    const seen=states.filter(item=>visited.has(item.key)).length;
+    progress[routeName]={
+      visited:seen,total:states.length,
+      percent:states.length?Math.round(100*seen/states.length):100,
+      complete:states.length===0||seen===states.length,
+    };
+  });
+  return progress;
+}
+function saveRuntime(scene=null,stage=null,mark=false){
+  if(scene&&stage&&mark)visited.add(stateKey(scene,stage));
+  const previous=readSaved().runtime||{};
+  const runtime={...previous,version:RUNTIME_VERSION,mode,routeScope,
+    visited:[...visited],progress:progressSnapshot(),ts:Date.now()};
+  if(scene)runtime.scene=scene.id;
+  if(stage)runtime.stage=stage.id;
+  if(window.DOC&&typeof DOC.save==='function')DOC.save({runtime});
+  else{
+    try{localStorage.setItem(storageKey(),JSON.stringify({...readSaved(),runtime}));}catch(_error){}
+  }
+  body.dataset.runtimeProgress=JSON.stringify(runtime.progress);
+}
+
+const nav=document.createElement('aside');
+nav.id='lr-nav';
+nav.setAttribute('aria-label','Navegación de la lección');
+nav.innerHTML=`
+  <a class="lr-course-home" href="../../index.html">← Mapa del curso</a>
+  <div class="lr-brand"><b>L${Number(contract.lesson)}</b><span>${esc(contract.title)}</span></div>
+  <div class="lr-modes" aria-label="Modo de lectura">
+    <a href="${modeUrl('aula')}" class="${mode==='aula'?'on':''}">Aula</a>
+    <a href="${modeUrl('estudio')}" class="${mode==='estudio'?'on':''}">Estudio</a>
+  </div>
+  ${requestedMode!==mode?'<p class="lr-fallback-note">Aula usa el recorrido vertical en esta pantalla.</p>':''}
+  <button type="button" class="lr-study-optional" aria-pressed="false">Incluir OPTIONAL</button>
+  <div class="lr-scene-links"></div>`;
+body.appendChild(nav);
+
+const navLinks=nav.querySelector('.lr-scene-links');
+models.forEach((scene,index)=>{
+  const button=document.createElement('button');
+  button.type='button';button.dataset.sceneIndex=String(index);
+  button.className=routeClass(scene.route);
+  button.innerHTML=`<span>${esc(scene.route)}</span><b>${esc(scene.id.replace(/^l\d+-/,''))}</b>`;
+  button.addEventListener('click',()=>{
+    if(mode==='aula')goTo(index,0,false);
+    else scene.element.scrollIntoView({behavior:reducedMotion()?'auto':'smooth',block:'start'});
+  });
+  navLinks.appendChild(button);
+});
+
+const controls=document.createElement('div');
+controls.id='lr-controls';
+controls.innerHTML=`
+  <button type="button" class="lr-prev" aria-label="Etapa anterior">← <span>Anterior</span></button>
+  <div class="lr-progress" aria-live="polite">
+    <b class="lr-scene-progress">Escena</b><span>·</span><b class="lr-stage-progress">Etapa</b>
+    <span>·</span><b class="lr-route-progress">0%</b>
+  </div>
+  <button type="button" class="lr-route-scope" aria-label="Cambiar alcance de ruta">LIVE</button>
+  <button type="button" class="lr-next" aria-label="Etapa siguiente"><span>Siguiente</span> →</button>`;
+body.appendChild(controls);
+
+const mobileToolbar=document.createElement('div');
+mobileToolbar.id='lr-mobile-toolbar';
+mobileToolbar.innerHTML=`<a href="../../index.html">← Curso</a>
+  <span>${requestedMode==='aula'?'Aula → estudio':'Modo estudio'}</span>
+  <button type="button" class="lr-study-optional" aria-pressed="false">+ OPTIONAL</button>
+  ${isProfessor?'<button type="button" class="lr-mobile-teacher" aria-expanded="false">Guía</button>':''}`;
+body.insertBefore(mobileToolbar,body.firstChild);
+
+const liveRegion=document.createElement('div');
+liveRegion.className='lr-sr-only';liveRegion.setAttribute('aria-live','polite');
+body.appendChild(liveRegion);
+
+let teacherToggle=null,teacherDrawer=null,teacherBody=null,mobileTeacherToggle=null;
+if(isProfessor){
+  teacherToggle=document.createElement('button');
+  teacherToggle.id='lr-teacher-toggle';teacherToggle.type='button';
+  teacherToggle.textContent='Guía docente';teacherToggle.setAttribute('aria-expanded','false');
+  teacherToggle.setAttribute('aria-controls','lr-teacher-drawer');
+  nav.insertBefore(teacherToggle,navLinks);
+  mobileTeacherToggle=mobileToolbar.querySelector('.lr-mobile-teacher');
+  mobileTeacherToggle?.setAttribute('aria-controls','lr-teacher-drawer');
+  teacherDrawer=document.createElement('aside');
+  teacherDrawer.id='lr-teacher-drawer';teacherDrawer.dataset.overlay='teacher';
+  teacherDrawer.setAttribute('aria-label','Guía docente de la escena');
+  teacherDrawer.setAttribute('aria-hidden','true');
+  teacherDrawer.innerHTML='<div class="lr-teacher-head"><b>Guía docente</b>'
+    +'<button type="button" class="lr-teacher-close" aria-label="Cerrar guía docente">×</button></div>'
+    +'<div class="lr-teacher-body"></div>';
+  body.appendChild(teacherDrawer);teacherBody=teacherDrawer.querySelector('.lr-teacher-body');
+  const toggleTeacher=force=>{
+    const open=force===undefined?!teacherDrawer.classList.contains('open'):force;
+    teacherDrawer.classList.toggle('open',open);
+    teacherDrawer.setAttribute('aria-hidden',String(!open));
+    [teacherToggle,mobileTeacherToggle].filter(Boolean)
+      .forEach(button=>button.setAttribute('aria-expanded',String(open)));
+    if(open)teacherDrawer.querySelector('.lr-teacher-close').focus();
+    else (mobileQuery.matches?mobileTeacherToggle:teacherToggle)?.focus();
+  };
+  teacherToggle.addEventListener('click',()=>toggleTeacher());
+  mobileTeacherToggle?.addEventListener('click',()=>toggleTeacher());
+  teacherDrawer.querySelector('.lr-teacher-close').addEventListener('click',()=>toggleTeacher(false));
+}
+
+function allowedStages(scene){
+  const allowedRoutes=scopeRoutes();
+  return scene.stages.filter(stage=>allowedRoutes.includes(stage.route));
+}
+function allowed(scene){
+  return scopeRoutes().includes(scene.route)&&allowedStages(scene).length>0;
+}
+function availableModels(){return models.filter(allowed);}
+
+function activateStage(scene,stage){
+  const hasMappedSteps=scene.stages.some(item=>item.step);
+  const hasMappedFigures=scene.stages.some(item=>item.figure);
+  scene.allSteps.forEach(step=>{
+    const model=scene.stages.find(item=>item.step===step);
+    const visibleRoute=!model||scopeRoutes().includes(model.route);
+    const active=!hasMappedSteps||stage.step===step;
+    step.hidden=!visibleRoute;
+    step.classList.toggle('lr-stage-active',active&&visibleRoute);
+    step.classList.toggle('on',active&&visibleRoute);
+    step.setAttribute('aria-hidden',String(!(active&&visibleRoute)));
+  });
+  scene.allFigures.forEach(figure=>{
+    const model=scene.stages.find(item=>item.figure===figure);
+    const visibleRoute=!model||scopeRoutes().includes(model.route);
+    const active=!hasMappedFigures||stage.figure===figure;
+    figure.hidden=!visibleRoute;
+    figure.classList.toggle('on',active&&visibleRoute);
+    figure.setAttribute('aria-hidden',String(!(active&&visibleRoute)));
+  });
+  const name=scene.element.querySelector('.stage-name');
+  if(name){
+    const source=stage.step&&stage.step.dataset.name;
+    name.textContent=source||stage.id;
+  }
+  const fig=scene.element.querySelector('.fig');
+  if(fig&&stage.dom_stage!==undefined){
+    fig.dispatchEvent(new CustomEvent('stagechange',{detail:{stage:stage.dom_stage}}));
+  }
+}
+function syncNav(scene=null){
+  [...navLinks.querySelectorAll('button')].forEach(button=>{
+    const index=Number(button.dataset.sceneIndex),model=models[index];
+    button.hidden=!allowed(model);
+    button.classList.toggle('on',model===scene);
+    button.setAttribute('aria-current',model===scene?'step':'false');
+  });
+}
+function notesHtml(value){
+  if(!value)return '';
+  const values=Array.isArray(value)?value:[value];
+  return `<ul>${values.map(item=>`<li>${esc(typeof item==='string'?item:JSON.stringify(item))}</li>`).join('')}</ul>`;
+}
+function syncTeacher(scene,stage){
+  if(!teacherBody||!scene||!stage)return;
+  const concepts=scene.concepts||[];
+  const objectives=(contract.objectives||[]).filter(objective=>
+    (objective.concepts||[]).some(concept=>concepts.includes(concept)));
+  const sceneNotes=scene.professor_notes||scene.teacher_notes||scene.teaching_notes;
+  const stageNotes=stage.professor_notes||stage.teacher_notes||stage.teaching_notes;
+  const fullGuide=document.getElementById('gd-toggle');
+  teacherBody.innerHTML=`<p class="lr-teacher-kicker">${esc(scene.route)} · ${esc(scene.type)} · ${esc(scene.duration_minutes)} min</p>`
+    +`<h2>${esc(scene.id)}</h2><p class="lr-teacher-stage">Etapa <code>${esc(stage.id)}</code> · layout <code>${esc(scene.layout)}</code></p>`
+    +`<h3>Conceptos</h3><ul>${concepts.length?concepts.map(concept=>`<li><code>${esc(concept)}</code></li>`).join(''):'<li>Ninguno declarado.</li>'}</ul>`
+    +`<h3>Objetivos relacionados</h3><ul>${objectives.length?objectives.map(objective=>
+      `<li><code>${esc(objective.id)}</code> · ${esc(objective.route)}</li>`).join(''):'<li>Ninguno declarado para esta escena.</li>'}</ul>`
+    +(sceneNotes?`<h3>Notas de escena</h3>${notesHtml(sceneNotes)}`:'')
+    +(stageNotes?`<h3>Notas de etapa</h3>${notesHtml(stageNotes)}`:'')
+    +(fullGuide?'<button type="button" class="lr-full-guide">Abrir guion completo</button>':'');
+  teacherBody.querySelector('.lr-full-guide')?.addEventListener('click',()=>{
+    teacherDrawer.classList.remove('open');teacherDrawer.setAttribute('aria-hidden','true');
+    [teacherToggle,mobileTeacherToggle].filter(Boolean)
+      .forEach(button=>button.setAttribute('aria-expanded','false'));
+    fullGuide.click();
+  });
+}
+function updateDeepLink(scene,stage){
+  if(!history.replaceState)return;
+  const next=`#${encodeURIComponent(scene.id)}/${encodeURIComponent(stage.id)}`;
+  if(location.hash!==next)history.replaceState(null,'',`${location.pathname}${location.search}${next}`);
+}
+function goTo(sceneIndex,stageIndex,focusHeading=true){
+  let scene=models[sceneIndex];
+  if(!scene||!allowed(scene)){
+    scene=availableModels()[0];sceneIndex=models.indexOf(scene);stageIndex=0;
+  }
+  if(!scene)return;
+  const stages=allowedStages(scene);
+  stageIndex=Math.max(0,Math.min(Number(stageIndex)||0,stages.length-1));
+  const stage=stages[stageIndex];
+  currentScene=sceneIndex;currentStage=stageIndex;
+  body.dataset.currentSceneId=scene.id;
+  body.dataset.currentStageId=stage.id;
+  body.dataset.currentStageRoute=stage.route;
+  body.dataset.currentLayout=scene.layout;
+  body.dataset.routeScope=routeScope;
+  scene.element.dataset.currentStageId=stage.id;
+  models.forEach(model=>{
+    const active=model===scene;
+    model.element.classList.toggle('lr-scene-active',active);
+    model.element.setAttribute('aria-hidden',String(!active));
+  });
+  activateStage(scene,stage);
+  const available=availableModels();
+  const scenePosition=available.indexOf(scene)+1;
+  const flatStates=available.flatMap(model=>allowedStages(model).map(item=>({scene:model,stage:item})));
+  const statePosition=flatStates.findIndex(item=>item.scene===scene&&item.stage===stage);
+  controls.querySelector('.lr-scene-progress').textContent=`Escena ${scenePosition}/${available.length}`;
+  controls.querySelector('.lr-stage-progress').textContent=`Etapa ${stageIndex+1}/${stages.length}`;
+  controls.querySelector('.lr-route-scope').textContent=routeScope;
+  controls.querySelector('.lr-prev').disabled=statePosition<=0;
+  controls.querySelector('.lr-next').disabled=statePosition===flatStates.length-1;
+  saveRuntime(scene,stage,true);
+  const scopeProgress=progressSnapshot(),enabledRoutes=scopeRoutes();
+  const routeProgress=Math.round(enabledRoutes.reduce((total,routeName)=>
+    total+scopeProgress[routeName].visited,0)/Math.max(1,enabledRoutes.reduce((total,routeName)=>
+    total+scopeProgress[routeName].total,0))*100);
+  controls.querySelector('.lr-route-progress').textContent=`${routeProgress}% visto`;
+  syncNav(scene);syncTeacher(scene,stage);updateDeepLink(scene,stage);
+  liveRegion.textContent=`${scene.id}, etapa ${stageIndex+1} de ${stages.length}`;
+  if(focusHeading){
+    const heading=scene.element.querySelector('h1,h2,h3');
+    if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}
+  }
+}
+function move(delta,focusHeading=true){
+  const scene=models[currentScene];
+  if(!scene)return;
+  const stages=allowedStages(scene);
+  if(delta>0&&currentStage<stages.length-1)return goTo(currentScene,currentStage+1,focusHeading);
+  if(delta<0&&currentStage>0)return goTo(currentScene,currentStage-1,focusHeading);
+  const available=availableModels(),position=available.indexOf(scene);
+  const next=available[position+delta];
+  if(!next)return;
+  const nextIndex=models.indexOf(next),nextStages=allowedStages(next);
+  goTo(nextIndex,delta>0?0:nextStages.length-1,focusHeading);
+}
+function closeOverlays(){
+  document.getElementById('guion-drawer')?.classList.remove('open');
+  teacherDrawer?.classList.remove('open');
+  teacherDrawer?.setAttribute('aria-hidden','true');
+  [teacherToggle,mobileTeacherToggle].filter(Boolean)
+    .forEach(button=>button.setAttribute('aria-expanded','false'));
+  document.querySelectorAll('dialog[open]').forEach(dialog=>dialog.close());
+  document.querySelectorAll('[data-overlay].open').forEach(node=>node.classList.remove('open'));
+}
+function cycleScope(){
+  if(routeScopes.length<2)return;
+  const scene=models[currentScene];
+  const stageId=body.dataset.currentStageId;
+  const index=routeScopes.indexOf(routeScope);
+  routeScope=routeScopes[(index+1)%routeScopes.length];
+  const stages=scene&&allowed(scene)?allowedStages(scene):[];
+  const stageIndex=stages.findIndex(stage=>stage.id===stageId);
+  goTo(currentScene,Math.max(0,stageIndex),false);
+}
+function syncOptionalControls(){
+  document.querySelectorAll('.lr-study-optional').forEach(button=>{
+    button.hidden=mode!=='estudio'||optionalCount===0;
+    button.setAttribute('aria-pressed',String(routeScope==='ALL'));
+    button.textContent=routeScope==='ALL'?'Ocultar OPTIONAL':
+      (button.closest('#lr-mobile-toolbar')?'+ OPTIONAL':'Incluir OPTIONAL');
+  });
+}
+function applyStudyScope(activeScene=null){
+  body.dataset.routeScope=routeScope;
+  models.forEach(scene=>{
+    const sceneVisible=allowed(scene);
+    scene.element.hidden=!sceneVisible;
+    scene.element.setAttribute('aria-hidden',String(!sceneVisible));
+    scene.stages.forEach(stage=>{
+      const stageVisible=scopeRoutes().includes(stage.route);
+      [stage.step,stage.figure].filter(Boolean).forEach(node=>{
+        node.hidden=!stageVisible;node.setAttribute('aria-hidden',String(!stageVisible));
+      });
+    });
+  });
+  syncNav(activeScene);syncOptionalControls();saveRuntime(null,null,false);
+}
+function toggleOptional(){
+  routeScope=routeScope==='ALL'?'LIVE+REQUIRED':'ALL';
+  applyStudyScope();
+  liveRegion.textContent=routeScope==='ALL'?'Contenido OPTIONAL incluido.':'Contenido OPTIONAL oculto.';
+}
+
+controls.querySelector('.lr-prev').addEventListener('click',()=>move(-1,false));
+controls.querySelector('.lr-next').addEventListener('click',()=>move(1,false));
+controls.querySelector('.lr-route-scope').addEventListener('click',cycleScope);
+controls.querySelector('.lr-route-scope').hidden=mode!=='aula'||routeScopes.length<2;
+controls.classList.toggle('lr-fixed-scope',controls.querySelector('.lr-route-scope').hidden);
+document.querySelectorAll('.lr-study-optional').forEach(button=>button.addEventListener('click',toggleOptional));
+
+document.addEventListener('keydown',event=>{
+  if(event.key==='Escape'){closeOverlays();return;}
+  if(mode!=='aula')return;
+  const active=document.activeElement;
+  if(active&&(/INPUT|TEXTAREA|SELECT/.test(active.tagName)||active.isContentEditable))return;
+  if(active&&active.tagName==='BUTTON'&&(event.key===' '||event.key==='Enter'))return;
+  if(['ArrowRight','PageDown',' '].includes(event.key)){
+    event.preventDefault();move(1,true);
+  }else if(['ArrowLeft','PageUp'].includes(event.key)){
+    event.preventDefault();move(-1,true);
+  }
+});
+
+function deepLink(){
+  let sceneId=params.get('scene'),stageId=params.get('stage');
+  if(location.hash){
+    const [rawScene,rawStage]=location.hash.slice(1).split('/');
+    try{sceneId=decodeURIComponent(rawScene)||sceneId;stageId=decodeURIComponent(rawStage||'')||stageId;}
+    catch(_error){sceneId=rawScene||sceneId;stageId=rawStage||stageId;}
+  }
+  if(!sceneId)return null;
+  const scene=models.find(item=>item.id===sceneId||item.dom_id===sceneId);
+  if(!scene)return null;
+  const stage=scene.stages.find(item=>item.id===stageId)||scene.stages[0];
+  return {scene,stage};
+}
+function restoredPosition(){
+  const linked=deepLink();
+  if(linked){
+    if(mode==='estudio'&&linked.stage.route==='OPTIONAL')routeScope='ALL';
+    return linked;
+  }
+  if(!savedRuntime.scene)return null;
+  const scene=models.find(item=>item.id===savedRuntime.scene);
+  const stage=scene?.stages.find(item=>item.id===savedRuntime.stage);
+  return scene&&stage?{scene,stage}:null;
+}
+
+if(mode==='aula'){
+  const restored=restoredPosition();
+  if(restored&&allowed(restored.scene)&&scopeRoutes().includes(restored.stage.route)){
+    currentScene=models.indexOf(restored.scene);
+    currentStage=allowedStages(restored.scene).indexOf(restored.stage);
+  }
+  goTo(currentScene,Math.max(0,currentStage),false);
+}else{
+  const restored=restoredPosition();
+  if(restored?.stage.route==='OPTIONAL')routeScope='ALL';
+  applyStudyScope(restored?.scene||null);
+  const sceneObserver=new IntersectionObserver(entries=>{
+    const visible=entries.filter(entry=>entry.isIntersecting&&!entry.target.hidden)
+      .sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
+    if(!visible)return;
+    const scene=models.find(item=>item.element===visible.target);
+    if(!scene)return;
+    syncNav(scene);
+    const stage=allowedStages(scene).find(item=>!item.step)||allowedStages(scene)[0];
+    if(stage){saveRuntime(scene,stage,true);updateDeepLink(scene,stage);}
+  },{rootMargin:'-20% 0px -55% 0px',threshold:[0,.15,.4]});
+  models.forEach(scene=>sceneObserver.observe(scene.element));
+  models.forEach(scene=>scene.stages.forEach(stage=>{
+    if(!stage.step)return;
+    const observer=new IntersectionObserver(entries=>{
+      if(entries.some(entry=>entry.isIntersecting)&&!stage.step.hidden){
+        saveRuntime(scene,stage,true);syncNav(scene);updateDeepLink(scene,stage);
+      }
+    },{rootMargin:'-35% 0px -45% 0px',threshold:.1});
+    observer.observe(stage.step);
+  }));
+  if(restored&&allowed(restored.scene))requestAnimationFrame(()=>{
+    (restored.stage.step||restored.scene.element).scrollIntoView({block:'center'});
+  });
+}
+
+syncOptionalControls();
+saveRuntime(null,null,false);
+window.LEARNING_RUNTIME={
+  version:RUNTIME_VERSION,contract,mode,isProfessor,
+  getState:()=>({routeScope,scene:models[currentScene]?.id,stage:body.dataset.currentStageId,
+    progress:progressSnapshot()}),
+  setOptional:enabled=>{if(mode==='estudio'&&(enabled!==(routeScope==='ALL')))toggleOptional();},
+  goTo:(sceneId,stageId)=>{
+    const scene=models.find(item=>item.id===sceneId);if(!scene)return false;
+    if(mode==='estudio'){
+      const stage=scene.stages.find(item=>item.id===stageId)||allowedStages(scene)[0];
+      if(!stage)return false;
+      (stage.step||scene.element).scrollIntoView({block:'center'});return true;
+    }
+    const stages=allowedStages(scene),index=stages.findIndex(item=>item.id===stageId);
+    goTo(models.indexOf(scene),Math.max(0,index),false);return true;
+  },
+};
+
+mobileQuery.addEventListener?.('change',()=>location.reload());
 })();
 
 </script>

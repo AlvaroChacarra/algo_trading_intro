@@ -4,8 +4,8 @@ Estructura construida en L5 (OOP II): un objeto que *contiene* niveles de
 precio. Es el primer sitio donde el alumno ve composición — el libro está hecho
 de otras piezas.
 
-Las métricas de lectura de mercado (spread, mid, imbalance, depth, microprice)
-se añaden en L5 y se afianzan en L7 con datos reales.
+Spread, mid e imbalance llegan en L5. La construcción desde filas externas,
+depth y microprice llegan en L7; la mutación se añade cuando L8 la necesita.
 """
 
 from __future__ import annotations
@@ -47,13 +47,6 @@ class OrderBook:
             if ap is not None and as_ is not None and float(as_) > 0:
                 asks.append(Level(float(ap), float(as_)))
         return cls(symbol, bids, asks)
-
-    def copy(self) -> "OrderBook":
-        return OrderBook(
-            self.symbol,
-            [Level(lv.price, lv.size) for lv in self.bids],
-            [Level(lv.price, lv.size) for lv in self.asks],
-        )
 
     # ---- lectura de mercado (L5 y L7) --------------------------------------
 
@@ -107,7 +100,7 @@ class OrderBook:
         book_side = self.bids if side is Side.BUY else self.asks
         return sum(lv.size for lv in book_side[:levels])
 
-    # ---- mutación (L5; usada por el matching en L8) ------------------------
+    # ---- mutación (L8; usada por el matching) -------------------------------
 
     def add_limit(self, side: Side, price: float, size: float) -> None:
         """Inserta liquidez en un lado manteniendo el orden."""

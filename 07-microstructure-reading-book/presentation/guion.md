@@ -34,5 +34,5 @@
 - Consolidación requerida: B5–B8, incluida la comparación contra la referencia real.
 
 ## Puente
-- “Ya tenemos estado ordenado y consultable. Mañana programamos qué ocurre cuando una orden intenta cambiarlo.”
+- “Ya tenemos estado ordenado y consultable. En L8 programamos qué ocurre cuando una orden intenta cambiarlo.”
 - En el recorrido autónomo, el alumno debe abrir “Ver la clase” y reconocer cada fragmento visto.

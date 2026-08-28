@@ -3,6 +3,8 @@
 El JS solo representa estos resultados: fills, planes y books finales salen del
 motor Python de referencia para evitar dos implementaciones numéricas divergentes.
 """
+from copy import deepcopy
+
 from exchange.market import Market
 from exchange.matching import MatchingEngine
 from exchange.orders import Order, OrderType
@@ -26,7 +28,7 @@ def build() -> dict:
     sweeps = []
     for size in sizes:
         fills = engine.process(Order("BTCUSDT", "buy", size, order_type=OrderType.MARKET),
-                               book0.copy())
+                               deepcopy(book0))
         filled = sum(f.size for f in fills)
         notional = sum(f.price * f.size for f in fills)
         eff = notional / filled if filled else None
@@ -44,7 +46,7 @@ def build() -> dict:
     variants = {}
     for name, otype in (("limit", OrderType.LIMIT), ("ioc", OrderType.IOC),
                         ("fok", OrderType.FOK)):
-        bk = book0.copy()
+        bk = deepcopy(book0)
         fills = engine.process(Order("BTCUSDT", "buy", big, price=lim_px,
                                      order_type=otype), bk)
         filled = sum(f.size for f in fills)
@@ -69,8 +71,8 @@ def build() -> dict:
                 price_indexes = [-1] if otype is OrderType.MARKET else range(3)
                 for price_i in price_indexes:
                     price = None if price_i == -1 else limit_prices[price_i]
-                    before = book0.copy()
-                    after = book0.copy()
+                    before = deepcopy(book0)
+                    after = deepcopy(book0)
                     order = Order("BTCUSDT", side, size, price=price, order_type=otype)
 
                     opposite = before.asks if side == "buy" else before.bids
@@ -109,7 +111,7 @@ def build() -> dict:
     # intacto; la versión ingenua aplica el plan antes de validar y lo corrompe.
     fok_key = "buy:fok:2:2"
     fok_scenario = next(s for s in scenarios if s["key"] == fok_key)
-    naive_book = book0.copy()
+    naive_book = deepcopy(book0)
     for price, take in fok_scenario["planned"]:
         naive_book.reduce("sell", price, take)
     fok_bug = {

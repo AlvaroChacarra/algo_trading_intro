@@ -36,7 +36,7 @@ y equity. Es el andamiaje sobre el que se monta el `Backtest` en L10.
 ## Estructura de la carpeta
 
 - `presentation/` — documento interactivo (o deck) + guion del profesor
-- `exercises/09_build_exercises.ipynb` — construyes la pieza (núcleo 1-3, luego el resto)
+- `exercises/09_build_exercises.ipynb` — construyes la pieza (rutas LIVE / REQUIRED / OPTIONAL declaradas)
 - `exercises/09_auxiliary.ipynb` — el gimnasio: drills + profundización opcional
 - `exercises/exchange/` — el paquete que vienes construyendo (starter de hoy)
 

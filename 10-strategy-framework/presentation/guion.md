@@ -9,15 +9,19 @@ Estructura: hero/reto (2 min) → scrollytelling (~7 min, scroll lento: cada par
 ## Los bloques conceptuales
 
 
-### 1. La interfaz Strategy
+### 1. Recall L6 → contrato de producción
+
+- **Qué decir:** En L6 todas las estrategias respondían a decide(imbalance) y devolvían una decisión. Conservamos el polimorfismo, pero el framework necesita más capacidad: recibe el libro completo y devuelve 0..N acciones; el motor ejecuta esas acciones.
+
+### 2. La interfaz Strategy
 
 - **Qué decir:** Una estrategia implementa on_book_update(book) y devuelve una lista de acciones (NewOrder/Cancel). No sabe nada del motor. Esa ignorancia es lo que la hace enchufable.
 
-### 2. Acciones, no efectos
+### 3. Acciones, no efectos
 
 - **Qué decir:** La estrategia no ejecuta órdenes: las pide. Devuelve NewOrder(order). El Backtest decide qué hacer con ellas. Separar decisión de ejecución es la clave del diseño.
 
-### 3. El Backtest lo cablea todo
+### 4. El Backtest lo cablea todo
 
 - **Qué decir:** Recorre el mercado, pasa cada libro a la estrategia, ejecuta sus acciones contra el matching, actualiza el portfolio y mide. El mismo run() para cualquier estrategia.
 
