@@ -612,6 +612,22 @@
   outline:2px solid var(--accent);outline-offset:2px}
 .lr-fallback-note{margin:0 8px 10px;color:var(--warn);font-size:.72rem;line-height:1.4}
 .lr-scene-links{display:grid;gap:4px;overflow:auto;padding:2px 4px 18px}
+#lr-teacher-toggle{margin:0 6px 10px;min-height:36px;border:1px solid rgba(34,211,238,.38);
+  border-radius:8px;background:var(--accent-dim);color:var(--accent);font:600 .68rem var(--mono);cursor:pointer}
+#lr-teacher-toggle:focus-visible,.lr-teacher-close:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#lr-teacher-drawer{position:fixed;z-index:90;top:0;right:0;width:min(420px,92vw);height:100vh;
+  display:grid;grid-template-rows:auto minmax(0,1fr);transform:translateX(105%);transition:transform .2s ease;
+  border-left:1px solid var(--line);background:rgba(9,9,11,.98);box-shadow:-18px 0 48px rgba(0,0,0,.38)}
+#lr-teacher-drawer.open{transform:translateX(0)}
+.lr-teacher-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line)}
+.lr-teacher-head b{font:600 .78rem var(--mono);color:var(--accent);text-transform:uppercase;letter-spacing:.08em}
+.lr-teacher-close{width:38px;height:38px;border:1px solid var(--line);border-radius:8px;background:var(--panel);
+  color:var(--text);font-size:1.25rem;cursor:pointer}
+.lr-teacher-body{overflow:auto;padding:18px;color:var(--muted);font-size:.86rem;line-height:1.5}
+.lr-teacher-body h2{margin:.2em 0 .9em;color:var(--text);font:600 1rem var(--mono)}
+.lr-teacher-body h3{margin:1.2em 0 .45em;color:var(--text);font-size:.78rem;text-transform:uppercase;letter-spacing:.06em}
+.lr-teacher-body ul{margin:.4em 0;padding-left:1.2em}.lr-teacher-body code{color:var(--kw)}
+.lr-teacher-kicker{margin:0;color:var(--accent);font:600 .68rem var(--mono);text-transform:uppercase}
 .lr-scene-links button{display:grid;grid-template-columns:56px 1fr;gap:6px;align-items:center;width:100%;
   min-height:43px;padding:7px 9px;border:1px solid transparent;border-radius:9px;background:transparent;
   color:var(--muted);text-align:left;cursor:pointer}
@@ -685,7 +701,7 @@
 }
 
 @media(max-width:900px){
-  #lr-nav,#lr-controls,.lr-scene-badge{display:none!important}
+  #lr-nav,#lr-controls,.lr-scene-badge,#lr-teacher-drawer{display:none!important}
   body.lr-has-contract{padding-left:0}
 }
 
@@ -694,7 +710,8 @@
   #lr-controls button span{display:none}
 }
 
-@media print{#lr-nav,#lr-controls,.lr-scene-badge{display:none!important}body.lr-has-contract{padding:0!important}}
+@media(prefers-reduced-motion:reduce){#lr-teacher-drawer{transition:none}}
+@media print{#lr-nav,#lr-controls,.lr-scene-badge,#lr-teacher-drawer{display:none!important}body.lr-has-contract{padding:0!important}}
 </style>
 </head>
 <body data-lesson="07">
@@ -1226,6 +1243,29 @@ const liveRegion=document.createElement('div');
 liveRegion.className='lr-sr-only';liveRegion.setAttribute('aria-live','polite');
 body.appendChild(liveRegion);
 
+let teacherToggle=null,teacherDrawer=null,teacherBody=null;
+if(isProfessor){
+  teacherToggle=document.createElement('button');
+  teacherToggle.id='lr-teacher-toggle';teacherToggle.type='button';
+  teacherToggle.textContent='Guía docente';teacherToggle.setAttribute('aria-expanded','false');
+  teacherToggle.setAttribute('aria-controls','lr-teacher-drawer');
+  nav.insertBefore(teacherToggle,navLinks);
+  teacherDrawer=document.createElement('aside');
+  teacherDrawer.id='lr-teacher-drawer';teacherDrawer.dataset.overlay='teacher';
+  teacherDrawer.setAttribute('aria-label','Guía docente de la escena');
+  teacherDrawer.innerHTML='<div class="lr-teacher-head"><b>Guía docente</b>'
+    +'<button type="button" class="lr-teacher-close" aria-label="Cerrar guía docente">×</button></div>'
+    +'<div class="lr-teacher-body"></div>';
+  body.appendChild(teacherDrawer);teacherBody=teacherDrawer.querySelector('.lr-teacher-body');
+  const toggleTeacher=force=>{
+    const open=force===undefined?!teacherDrawer.classList.contains('open'):force;
+    teacherDrawer.classList.toggle('open',open);teacherToggle.setAttribute('aria-expanded',String(open));
+    if(open)teacherDrawer.querySelector('.lr-teacher-close').focus();
+  };
+  teacherToggle.addEventListener('click',()=>toggleTeacher());
+  teacherDrawer.querySelector('.lr-teacher-close').addEventListener('click',()=>toggleTeacher(false));
+}
+
 function reducedMotion(){return matchMedia('(prefers-reduced-motion: reduce)').matches;}
 function allowed(scene){return scopeRoutes().includes(scene.route);}
 function allowedStages(scene){
@@ -1282,6 +1322,17 @@ function syncNav(scene){
     button.setAttribute('aria-current',models[index]===scene?'step':'false');
   });
 }
+function syncTeacher(scene){
+  if(!teacherBody)return;
+  const concepts=scene.concepts||[];
+  const objectives=(contract.objectives||[]).filter(objective=>
+    (objective.concepts||[]).some(concept=>concepts.includes(concept)));
+  teacherBody.innerHTML=`<p class="lr-teacher-kicker">${esc(scene.route)} · ${esc(scene.type)} · ${scene.duration_minutes} min</p>`
+    +`<h2>${esc(scene.id)}</h2>`
+    +`<h3>Conceptos</h3><ul>${concepts.map(concept=>`<li><code>${esc(concept)}</code></li>`).join('')}</ul>`
+    +`<h3>Objetivos relacionados</h3><ul>${objectives.length?objectives.map(objective=>
+      `<li><code>${esc(objective.id)}</code> · ${esc(objective.route)}</li>`).join(''):'<li>Ninguno declarado para esta escena.</li>'}</ul>`;
+}
 function goTo(sceneIndex,stageIndex,focusHeading){
   let scene=models[sceneIndex];
   if(!scene||!allowed(scene)){
@@ -1304,7 +1355,7 @@ function goTo(sceneIndex,stageIndex,focusHeading){
   controls.querySelector('.lr-route-scope').textContent=routeScope;
   controls.querySelector('.lr-prev').disabled=scenePosition===1&&stageIndex===0;
   controls.querySelector('.lr-next').disabled=scenePosition===available.length&&stageIndex===stages.length-1;
-  syncNav(scene);persist(scene,stage);
+  syncNav(scene);syncTeacher(scene);persist(scene,stage);
   liveRegion.textContent=`${scene.id}, etapa ${stageIndex+1} de ${stages.length}`;
   if(focusHeading){
     const heading=scene.element.querySelector('h1,h2,h3');
@@ -1323,6 +1374,8 @@ function move(delta,focusHeading=true){
 }
 function closeOverlays(){
   document.getElementById('guion-drawer')?.classList.remove('open');
+  teacherDrawer?.classList.remove('open');
+  teacherToggle?.setAttribute('aria-expanded','false');
   document.querySelectorAll('dialog[open]').forEach(dialog=>dialog.close());
   document.querySelectorAll('[data-overlay].open').forEach(node=>node.classList.remove('open'));
 }

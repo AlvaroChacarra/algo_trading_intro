@@ -109,6 +109,29 @@ const liveRegion=document.createElement('div');
 liveRegion.className='lr-sr-only';liveRegion.setAttribute('aria-live','polite');
 body.appendChild(liveRegion);
 
+let teacherToggle=null,teacherDrawer=null,teacherBody=null;
+if(isProfessor){
+  teacherToggle=document.createElement('button');
+  teacherToggle.id='lr-teacher-toggle';teacherToggle.type='button';
+  teacherToggle.textContent='Guía docente';teacherToggle.setAttribute('aria-expanded','false');
+  teacherToggle.setAttribute('aria-controls','lr-teacher-drawer');
+  nav.insertBefore(teacherToggle,navLinks);
+  teacherDrawer=document.createElement('aside');
+  teacherDrawer.id='lr-teacher-drawer';teacherDrawer.dataset.overlay='teacher';
+  teacherDrawer.setAttribute('aria-label','Guía docente de la escena');
+  teacherDrawer.innerHTML='<div class="lr-teacher-head"><b>Guía docente</b>'
+    +'<button type="button" class="lr-teacher-close" aria-label="Cerrar guía docente">×</button></div>'
+    +'<div class="lr-teacher-body"></div>';
+  body.appendChild(teacherDrawer);teacherBody=teacherDrawer.querySelector('.lr-teacher-body');
+  const toggleTeacher=force=>{
+    const open=force===undefined?!teacherDrawer.classList.contains('open'):force;
+    teacherDrawer.classList.toggle('open',open);teacherToggle.setAttribute('aria-expanded',String(open));
+    if(open)teacherDrawer.querySelector('.lr-teacher-close').focus();
+  };
+  teacherToggle.addEventListener('click',()=>toggleTeacher());
+  teacherDrawer.querySelector('.lr-teacher-close').addEventListener('click',()=>toggleTeacher(false));
+}
+
 function reducedMotion(){return matchMedia('(prefers-reduced-motion: reduce)').matches;}
 function allowed(scene){return scopeRoutes().includes(scene.route);}
 function allowedStages(scene){
@@ -165,6 +188,17 @@ function syncNav(scene){
     button.setAttribute('aria-current',models[index]===scene?'step':'false');
   });
 }
+function syncTeacher(scene){
+  if(!teacherBody)return;
+  const concepts=scene.concepts||[];
+  const objectives=(contract.objectives||[]).filter(objective=>
+    (objective.concepts||[]).some(concept=>concepts.includes(concept)));
+  teacherBody.innerHTML=`<p class="lr-teacher-kicker">${esc(scene.route)} · ${esc(scene.type)} · ${scene.duration_minutes} min</p>`
+    +`<h2>${esc(scene.id)}</h2>`
+    +`<h3>Conceptos</h3><ul>${concepts.map(concept=>`<li><code>${esc(concept)}</code></li>`).join('')}</ul>`
+    +`<h3>Objetivos relacionados</h3><ul>${objectives.length?objectives.map(objective=>
+      `<li><code>${esc(objective.id)}</code> · ${esc(objective.route)}</li>`).join(''):'<li>Ninguno declarado para esta escena.</li>'}</ul>`;
+}
 function goTo(sceneIndex,stageIndex,focusHeading){
   let scene=models[sceneIndex];
   if(!scene||!allowed(scene)){
@@ -187,7 +221,7 @@ function goTo(sceneIndex,stageIndex,focusHeading){
   controls.querySelector('.lr-route-scope').textContent=routeScope;
   controls.querySelector('.lr-prev').disabled=scenePosition===1&&stageIndex===0;
   controls.querySelector('.lr-next').disabled=scenePosition===available.length&&stageIndex===stages.length-1;
-  syncNav(scene);persist(scene,stage);
+  syncNav(scene);syncTeacher(scene);persist(scene,stage);
   liveRegion.textContent=`${scene.id}, etapa ${stageIndex+1} de ${stages.length}`;
   if(focusHeading){
     const heading=scene.element.querySelector('h1,h2,h3');
@@ -206,6 +240,8 @@ function move(delta,focusHeading=true){
 }
 function closeOverlays(){
   document.getElementById('guion-drawer')?.classList.remove('open');
+  teacherDrawer?.classList.remove('open');
+  teacherToggle?.setAttribute('aria-expanded','false');
   document.querySelectorAll('dialog[open]').forEach(dialog=>dialog.close());
   document.querySelectorAll('[data-overlay].open').forEach(node=>node.classList.remove('open'));
 }

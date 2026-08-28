@@ -84,10 +84,10 @@ const fileUrl = (relative, query = '') => `file://${path.join(ROOT, relative)}${
       const afterForward = await page.evaluate(() =>
         `${document.querySelector('.lr-scene-progress').textContent}|${document.querySelector('.lr-stage-progress').textContent}`);
 
-      await page.locator('#gd-toggle').click();
-      const drawerOpened = await page.locator('#guion-drawer').evaluate(node => node.classList.contains('open'));
+      await page.locator('#lr-teacher-toggle').click();
+      const drawerOpened = await page.locator('#lr-teacher-drawer').evaluate(node => node.classList.contains('open'));
       await page.keyboard.press('Escape');
-      const drawerClosed = await page.locator('#guion-drawer').evaluate(node => !node.classList.contains('open'));
+      const drawerClosed = await page.locator('#lr-teacher-drawer').evaluate(node => !node.classList.contains('open'));
 
       await page.keyboard.press('ArrowLeft');
       const persistedState = await page.evaluate(() =>

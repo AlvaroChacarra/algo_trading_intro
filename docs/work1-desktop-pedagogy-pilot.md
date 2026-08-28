@@ -25,7 +25,8 @@ la lesson y `learning_runtime.js` interpreta sus escenas:
   teclado; el `body` no hace scroll en desktop.
 - `?mode=estudio`: recorrido vertical con navegación lateral, REQUIRED incluido y
   OPTIONAL visible e identificado.
-- `?mode=aula&profe=1`: añade el cajón del guion y permite alternar LIVE,
+- `?mode=aula&profe=1`: añade una guía docente de escena —y el guion detallado
+  cuando existe— y permite alternar LIVE,
   LIVE+REQUIRED y todo el contenido.
 - En pantallas de hasta 900 px, incluso si se solicita aula, se usa el renderer
   vertical de estudio. No se fuerza el layout multicolumna.
