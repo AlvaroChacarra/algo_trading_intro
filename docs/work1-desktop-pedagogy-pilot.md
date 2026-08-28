@@ -170,6 +170,10 @@ También valida estudio, reduced motion, el fallback 390×844 y que L15 no adopt
 el runtime de escenas. CI conserva screenshots y el JSON de la matriz como
 artefacto `work1-desktop-pedagogy-pilot`.
 
+El workflow de Pages también valida cada push `v2/**`: construye el site con
+JupyterLite, comprueba enlaces/base path y ejecuta el fallback móvil en WebKit.
+Solo `main` puede llegar al job de despliegue.
+
 ## Limitaciones conocidas
 
 - El contrato de L2, L3, L4, L6, L9 y L11–L13 es un esqueleto de continuidad, no
