@@ -1,31 +1,208 @@
 {
   "lesson": 15,
   "status": "contract-strict",
-  "title": "Examen final",
+  "title": "Assessment final acumulativo",
   "delivery": "assessment-linear",
   "requires": {
-    "concepts": ["python.control_flow", "oop.polymorphism", "matching.atomicity", "framework.strategy_contract", "metrics.slippage", "execution.vwap", "inventory.skew", "as.reservation_price", "as.optimal_spread"],
-    "apis": ["matching.process", "strategy.on_book_update", "backtest.run"]
+    "concepts": [
+      "python.control_flow",
+      "python.generator_expression",
+      "oop.polymorphism",
+      "matching.atomicity",
+      "framework.strategy_contract",
+      "metrics.slippage",
+      "execution.vwap",
+      "inventory.skew",
+      "as.reservation_price",
+      "as.optimal_spread"
+    ],
+    "apis": [
+      "matching.process",
+      "strategy.on_book_update",
+      "backtest.run"
+    ],
+    "notation": [
+      "notation.slippage_signed",
+      "notation.vwap",
+      "notation.as_reservation_price",
+      "notation.as_optimal_spread"
+    ]
   },
-  "introduces": {"concepts": [], "apis": []},
+  "requirement_routes": {
+    "concepts": {
+      "python.control_flow": "LIVE",
+      "python.generator_expression": "LIVE",
+      "oop.polymorphism": "LIVE",
+      "matching.atomicity": "LIVE",
+      "framework.strategy_contract": "LIVE",
+      "metrics.slippage": "LIVE",
+      "execution.vwap": "LIVE",
+      "inventory.skew": "LIVE",
+      "as.reservation_price": "LIVE",
+      "as.optimal_spread": "LIVE"
+    },
+    "apis": {
+      "matching.process": "REQUIRED",
+      "strategy.on_book_update": "REQUIRED",
+      "backtest.run": "REQUIRED"
+    },
+    "notation": {
+      "notation.slippage_signed": "REQUIRED",
+      "notation.vwap": "REQUIRED",
+      "notation.as_reservation_price": "REQUIRED",
+      "notation.as_optimal_spread": "REQUIRED"
+    }
+  },
+  "introduces": {
+    "concepts": [],
+    "apis": [],
+    "notation": []
+  },
+  "introduction_routes": {
+    "apis": {},
+    "notation": {}
+  },
   "recalls": [],
-  "api_surface": [],
-  "routes": {"LIVE": [], "REQUIRED": ["l15-official-assessment"], "OPTIONAL": []},
-  "objectives": [
-    {"id": "l15-integrate-course", "route": "REQUIRED", "concepts": ["python.control_flow", "oop.polymorphism", "matching.atomicity", "framework.strategy_contract", "metrics.slippage", "execution.vwap", "inventory.skew", "as.reservation_price", "as.optimal_spread"]}
+  "api_surface": [
+    {
+      "id": "matching.process",
+      "name": "process",
+      "kind": "method",
+      "signature": "process(order: Order, book: OrderBook, timestamp: int | None = None) -> list[Fill]",
+      "returns": "list[Fill]",
+      "responsibility": "plan, validate, and commit one order",
+      "qualified_name": "exchange.matching.MatchingEngine.process"
+    },
+    {
+      "id": "strategy.on_book_update",
+      "name": "on_book_update",
+      "kind": "method",
+      "signature": "on_book_update(book: OrderBook) -> list[Action]",
+      "returns": "list[Action]",
+      "responsibility": "propose typed actions from market state",
+      "qualified_name": "exchange.strategy.Strategy.on_book_update"
+    },
+    {
+      "id": "backtest.run",
+      "name": "run",
+      "kind": "method",
+      "signature": "run() -> BacktestResult",
+      "returns": "BacktestResult",
+      "responsibility": "orchestrate market, strategy, matching, and accounting",
+      "qualified_name": "exchange.backtest.Backtest.run"
+    }
   ],
-  "load": {"assessment_minutes": 40, "live_presentation_minutes": 0, "guided_minutes": 0, "required_autonomous_minutes": 0, "optional_minutes": 0, "overflow_policy": "official-assessment-is-not-a-scene-deck"},
+  "routes": {
+    "LIVE": [],
+    "REQUIRED": [
+      "l15-official-assessment"
+    ],
+    "OPTIONAL": []
+  },
+  "objectives": [
+    {
+      "id": "l15-integrate-course",
+      "route": "REQUIRED",
+      "concepts": [
+        "python.control_flow",
+        "oop.polymorphism",
+        "matching.atomicity",
+        "framework.strategy_contract",
+        "metrics.slippage",
+        "execution.vwap",
+        "inventory.skew",
+        "as.reservation_price",
+        "as.optimal_spread"
+      ],
+      "apis": [
+        "matching.process",
+        "strategy.on_book_update",
+        "backtest.run"
+      ],
+      "notation": [
+        "notation.slippage_signed",
+        "notation.vwap",
+        "notation.as_reservation_price",
+        "notation.as_optimal_spread"
+      ]
+    }
+  ],
+  "load": {
+    "assessment_minutes": 40,
+    "live_presentation_minutes": 0,
+    "guided_minutes": 0,
+    "required_autonomous_minutes": 0,
+    "optional_minutes": 0,
+    "overflow_policy": "official-assessment-is-not-a-scene-deck"
+  },
   "scenes": [],
+  "bridge": null,
+  "api_transitions": [],
   "assessment_artifact": "15-final-exam/examen.html",
   "package_checks": [
-    {"path": "14-avellaneda-stoikov/exercises/exchange/matching.py", "class": "MatchingEngine", "members": {
-      "process": {"api": "matching.process", "kind": "method", "parameters": [{"name": "order", "kind": "positional_or_keyword", "annotation": "Order"}, {"name": "book", "kind": "positional_or_keyword", "annotation": "OrderBook"}, {"name": "timestamp", "kind": "positional_or_keyword", "annotation": "int | None", "default": "None"}], "returns": "list[Fill]"}
-    }},
-    {"path": "14-avellaneda-stoikov/exercises/exchange/strategy.py", "class": "Strategy", "members": {
-      "on_book_update": {"api": "strategy.on_book_update", "kind": "method", "parameters": [{"name": "book", "kind": "positional_or_keyword", "annotation": "OrderBook"}], "returns": "list[Action]"}
-    }},
-    {"path": "14-avellaneda-stoikov/exercises/exchange/backtest.py", "class": "Backtest", "members": {
-      "run": {"api": "backtest.run", "kind": "method", "parameters": [], "returns": "BacktestResult"}
-    }}
-  ]
+    {
+      "path": "14-avellaneda-stoikov/exercises/exchange/matching.py",
+      "class": "MatchingEngine",
+      "members": {
+        "process": {
+          "api": "matching.process",
+          "kind": "method",
+          "parameters": [
+            {
+              "name": "order",
+              "kind": "positional_or_keyword",
+              "annotation": "Order"
+            },
+            {
+              "name": "book",
+              "kind": "positional_or_keyword",
+              "annotation": "OrderBook"
+            },
+            {
+              "name": "timestamp",
+              "kind": "positional_or_keyword",
+              "annotation": "int | None",
+              "default": "None"
+            }
+          ],
+          "returns": "list[Fill]"
+        }
+      }
+    },
+    {
+      "path": "14-avellaneda-stoikov/exercises/exchange/strategy.py",
+      "class": "Strategy",
+      "members": {
+        "on_book_update": {
+          "api": "strategy.on_book_update",
+          "kind": "method",
+          "parameters": [
+            {
+              "name": "book",
+              "kind": "positional_or_keyword",
+              "annotation": "OrderBook"
+            }
+          ],
+          "returns": "list[Action]"
+        }
+      }
+    },
+    {
+      "path": "14-avellaneda-stoikov/exercises/exchange/backtest.py",
+      "class": "Backtest",
+      "members": {
+        "run": {
+          "api": "backtest.run",
+          "kind": "method",
+          "parameters": [],
+          "returns": "BacktestResult"
+        }
+      }
+    }
+  ],
+  "used_later": {
+    "concepts": [],
+    "apis": [],
+    "notation": []
+  }
 }

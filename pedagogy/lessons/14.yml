@@ -1,46 +1,1007 @@
 {
   "lesson": 14,
-  "status": "pilot",
-  "title": "Avellaneda-Stoikov — modelo y simulación",
+  "status": "contract-strict",
+  "title": "Avellaneda–Stoikov — Modelo y simulación",
   "delivery": "lesson",
   "source_path": "framework/_build/docs/14_body.html",
-  "requires": {"concepts": ["framework.strategy_contract", "inventory.risk", "inventory.skew"], "apis": ["strategy.on_book_update", "strategy.on_fill"]},
+  "requires": {
+    "concepts": [
+      "framework.strategy_contract",
+      "inventory.risk",
+      "inventory.skew",
+      "market_making.heuristic_reservation_price",
+      "market_making.cara_utility",
+      "market_making.fill_intensity",
+      "python.fstring"
+    ],
+    "apis": [
+      "level.constructor",
+      "orderbook.constructor",
+      "orderbook.mid",
+      "new_order.constructor",
+      "strategy.on_book_update",
+      "strategy.on_fill",
+      "market_maker.constructor",
+      "market_maker.half_spread",
+      "market_maker.inventory",
+      "market_maker.inventory_skew",
+      "market_maker.reservation_price",
+      "market_maker.quotes",
+      "mm_simulation.constructor",
+      "mm_simulation.run",
+      "sim_result.final_pnl",
+      "sim_result.max_inventory"
+    ],
+    "notation": [
+      "notation.inventory",
+      "notation.heuristic_reservation",
+      "notation.cara_utility",
+      "notation.fill_intensity"
+    ]
+  },
+  "requirement_routes": {
+    "concepts": {
+      "framework.strategy_contract": "LIVE",
+      "inventory.risk": "LIVE",
+      "inventory.skew": "LIVE",
+      "market_making.heuristic_reservation_price": "LIVE",
+      "market_making.cara_utility": "LIVE",
+      "market_making.fill_intensity": "LIVE",
+      "python.fstring": "LIVE"
+    },
+    "apis": {
+      "level.constructor": "LIVE",
+      "orderbook.constructor": "LIVE",
+      "orderbook.mid": "LIVE",
+      "new_order.constructor": "LIVE",
+      "strategy.on_book_update": "LIVE",
+      "strategy.on_fill": "LIVE",
+      "market_maker.constructor": "REQUIRED",
+      "market_maker.half_spread": "REQUIRED",
+      "market_maker.inventory": "LIVE",
+      "market_maker.inventory_skew": "REQUIRED",
+      "market_maker.reservation_price": "LIVE",
+      "market_maker.quotes": "REQUIRED",
+      "mm_simulation.constructor": "LIVE",
+      "mm_simulation.run": "LIVE",
+      "sim_result.final_pnl": "LIVE",
+      "sim_result.max_inventory": "LIVE"
+    },
+    "notation": {
+      "notation.inventory": "LIVE",
+      "notation.heuristic_reservation": "LIVE",
+      "notation.cara_utility": "LIVE",
+      "notation.fill_intensity": "LIVE"
+    }
+  },
   "introduces": {
-    "concepts": [{"id": "as.reservation_price", "importance": "major"}, {"id": "as.optimal_spread", "importance": "major"}, {"id": "as.parameters", "importance": "major"}, {"id": "simulation.parameter_sweep", "importance": "major"}],
-    "apis": []
+    "concepts": [
+      {
+        "id": "as.reservation_price",
+        "importance": "major",
+        "route": "LIVE"
+      },
+      {
+        "id": "as.optimal_spread",
+        "importance": "major",
+        "route": "LIVE"
+      },
+      {
+        "id": "as.gamma",
+        "importance": "major",
+        "route": "LIVE"
+      },
+      {
+        "id": "as.sigma",
+        "importance": "major",
+        "route": "LIVE"
+      },
+      {
+        "id": "as.kappa",
+        "importance": "major",
+        "route": "LIVE"
+      },
+      {
+        "id": "as.time_horizon",
+        "importance": "major",
+        "route": "LIVE"
+      },
+      {
+        "id": "simulation.parameter_sweep",
+        "importance": "major",
+        "route": "LIVE"
+      }
+    ],
+    "apis": [
+      "avellaneda_stoikov.constructor",
+      "avellaneda_stoikov.time",
+      "avellaneda_stoikov.reservation_price",
+      "avellaneda_stoikov.optimal_spread",
+      "avellaneda_stoikov.quotes"
+    ],
+    "notation": [
+      "notation.as_reservation_price",
+      "notation.as_optimal_spread"
+    ]
+  },
+  "introduction_routes": {
+    "apis": {
+      "avellaneda_stoikov.constructor": "LIVE",
+      "avellaneda_stoikov.time": "LIVE",
+      "avellaneda_stoikov.reservation_price": "LIVE",
+      "avellaneda_stoikov.optimal_spread": "LIVE",
+      "avellaneda_stoikov.quotes": "LIVE"
+    },
+    "notation": {
+      "notation.as_reservation_price": "LIVE",
+      "notation.as_optimal_spread": "LIVE"
+    }
   },
   "recalls": [
+    {
+      "concept": "market_making.heuristic_reservation_price",
+      "introduced_in": 13,
+      "mapping": {
+        "before": "r = mid - skew_heurístico × inventario",
+        "now": "r = s - q γ σ² τ expresa el mismo control con unidades."
+      }
+    },
     {
       "concept": "framework.strategy_contract",
       "introduced_in": 10,
       "mapping": {
-        "before": "on_book_update(book) -> list[Action]",
-        "now": "AvellanedaStoikov computes reservation price and quotes inside the same contract",
-        "conserved": "decision remains separate from execution"
+        "before": "on_book_update devuelve acciones y on_fill actualiza el estado.",
+        "now": "A-S cambia las fórmulas dentro del mismo ciclo de vida."
+      }
+    },
+    {
+      "concept": "market_making.cara_utility",
+      "introduced_in": 13,
+      "mapping": {
+        "before": "CARA dio a γ el significado de aversión al riesgo.",
+        "now": "γ controla cuánto desplazan riesgo e inventario el centro A-S."
+      }
+    },
+    {
+      "concept": "market_making.fill_intensity",
+      "introduced_in": 13,
+      "mapping": {
+        "before": "λ(δ)=A·exp(−κδ) hizo visible la caída de fills con la distancia.",
+        "now": "κ entra en el ancho óptimo y cuantifica ese mismo trade-off."
       }
     }
   ],
-  "api_surface": [],
-  "routes": {"LIVE": ["l14-challenge", "l14-formulas", "l14-lab", "l14-recap"], "REQUIRED": ["l14-capstone", "l14-quiz"], "OPTIONAL": []},
+  "api_surface": [
+    {
+      "id": "level.constructor",
+      "name": "Level",
+      "kind": "constructor",
+      "signature": "Level(price: float, size: float) -> Level",
+      "returns": "Level",
+      "responsibility": "construct one visible price level",
+      "qualified_name": "exchange.book.Level"
+    },
+    {
+      "id": "orderbook.constructor",
+      "name": "OrderBook",
+      "kind": "constructor",
+      "signature": "OrderBook(symbol: str, bids: list[Level], asks: list[Level]) -> OrderBook",
+      "returns": "OrderBook",
+      "responsibility": "construct a sorted two-sided book",
+      "qualified_name": "exchange.book.OrderBook"
+    },
+    {
+      "id": "orderbook.mid",
+      "name": "mid",
+      "kind": "property",
+      "signature": "mid -> float | None",
+      "returns": "float | None",
+      "responsibility": "compute the top-of-book midpoint",
+      "qualified_name": "exchange.book.OrderBook.mid"
+    },
+    {
+      "id": "new_order.constructor",
+      "name": "NewOrder",
+      "kind": "constructor",
+      "signature": "NewOrder(order: Order) -> NewOrder",
+      "returns": "NewOrder",
+      "responsibility": "wrap an order as a typed strategy action",
+      "qualified_name": "exchange.strategy.NewOrder"
+    },
+    {
+      "id": "strategy.on_book_update",
+      "name": "on_book_update",
+      "kind": "method",
+      "signature": "on_book_update(book: OrderBook) -> list[Action]",
+      "returns": "list[Action]",
+      "responsibility": "propose typed actions from market state",
+      "qualified_name": "exchange.strategy.Strategy.on_book_update"
+    },
+    {
+      "id": "strategy.on_fill",
+      "name": "on_fill",
+      "kind": "method",
+      "signature": "on_fill(fill: Fill) -> None",
+      "returns": "None",
+      "responsibility": "receive execution feedback",
+      "qualified_name": "exchange.strategy.Strategy.on_fill"
+    },
+    {
+      "id": "market_maker.constructor",
+      "name": "MarketMaker",
+      "kind": "constructor",
+      "signature": "MarketMaker(symbol: str, quote_size: float = 0.01, half_spread: float = 5.0, inventory_skew: float = 2.0) -> MarketMaker",
+      "returns": "MarketMaker",
+      "responsibility": "configure the heuristic market maker",
+      "qualified_name": "exchange.strategies.market_maker.MarketMaker"
+    },
+    {
+      "id": "market_maker.inventory",
+      "name": "inventory",
+      "kind": "property",
+      "signature": "inventory -> float",
+      "returns": "float",
+      "responsibility": "read or set the strategy inventory through its public contract",
+      "qualified_name": "exchange.strategies.market_maker.MarketMaker.inventory"
+    },
+    {
+      "id": "market_maker.half_spread",
+      "name": "half_spread",
+      "kind": "attribute",
+      "signature": "half_spread: float",
+      "returns": "float",
+      "responsibility": "configure half the quoted width around the reservation price",
+      "qualified_name": "exchange.strategies.market_maker.MarketMaker.half_spread"
+    },
+    {
+      "id": "market_maker.inventory_skew",
+      "name": "inventory_skew",
+      "kind": "attribute",
+      "signature": "inventory_skew: float",
+      "returns": "float",
+      "responsibility": "configure the heuristic inventory correction strength",
+      "qualified_name": "exchange.strategies.market_maker.MarketMaker.inventory_skew"
+    },
+    {
+      "id": "market_maker.reservation_price",
+      "name": "reservation_price",
+      "kind": "method",
+      "signature": "reservation_price(mid: float) -> float",
+      "returns": "float",
+      "responsibility": "shift the quote center using inventory",
+      "qualified_name": "exchange.strategies.market_maker.MarketMaker.reservation_price"
+    },
+    {
+      "id": "market_maker.quotes",
+      "name": "quotes",
+      "kind": "method",
+      "signature": "quotes(book: OrderBook) -> tuple[float, float]",
+      "returns": "tuple[float, float]",
+      "responsibility": "produce bid and ask quotes",
+      "qualified_name": "exchange.strategies.market_maker.MarketMaker.quotes"
+    },
+    {
+      "id": "mm_simulation.constructor",
+      "name": "MMSimulation",
+      "kind": "constructor",
+      "signature": "MMSimulation(strategy: MarketMaker, s0: float = 100.0, sigma: float = 0.5, steps: int = 500, A: float = 1.0, kappa: float = 1.5, seed: int = 42) -> MMSimulation",
+      "returns": "MMSimulation",
+      "responsibility": "configure a reproducible fill-intensity simulation",
+      "qualified_name": "exchange.simulation.MMSimulation"
+    },
+    {
+      "id": "mm_simulation.run",
+      "name": "run",
+      "kind": "method",
+      "signature": "run() -> SimResult",
+      "returns": "SimResult",
+      "responsibility": "simulate quotes, fills, inventory, and marked PnL",
+      "qualified_name": "exchange.simulation.MMSimulation.run"
+    },
+    {
+      "id": "sim_result.final_pnl",
+      "name": "final_pnl",
+      "kind": "property",
+      "signature": "final_pnl -> float",
+      "returns": "float",
+      "responsibility": "read final marked-to-market PnL",
+      "qualified_name": "exchange.simulation.SimResult.final_pnl"
+    },
+    {
+      "id": "sim_result.max_inventory",
+      "name": "max_inventory",
+      "kind": "property",
+      "signature": "max_inventory -> float",
+      "returns": "float",
+      "responsibility": "read maximum absolute simulated inventory",
+      "qualified_name": "exchange.simulation.SimResult.max_inventory"
+    },
+    {
+      "id": "avellaneda_stoikov.constructor",
+      "name": "AvellanedaStoikov",
+      "kind": "constructor",
+      "signature": "AvellanedaStoikov(symbol: str, quote_size: float = 0.01, gamma: float = 0.1, sigma: float = 10.0, kappa: float = 1.5, horizon: int = 500) -> AvellanedaStoikov",
+      "returns": "AvellanedaStoikov",
+      "responsibility": "configure the A-S risk, volatility, flow, and horizon parameters",
+      "qualified_name": "exchange.strategies.avellaneda_stoikov.AvellanedaStoikov"
+    },
+    {
+      "id": "avellaneda_stoikov.time",
+      "name": "time",
+      "kind": "property",
+      "signature": "time -> int",
+      "returns": "int",
+      "responsibility": "read or set the model clock through its public contract",
+      "qualified_name": "exchange.strategies.avellaneda_stoikov.AvellanedaStoikov.time"
+    },
+    {
+      "id": "avellaneda_stoikov.reservation_price",
+      "name": "reservation_price",
+      "kind": "method",
+      "signature": "reservation_price(mid: float) -> float",
+      "returns": "float",
+      "responsibility": "compute the A-S inventory- and horizon-adjusted quote center",
+      "qualified_name": "exchange.strategies.avellaneda_stoikov.AvellanedaStoikov.reservation_price"
+    },
+    {
+      "id": "avellaneda_stoikov.optimal_spread",
+      "name": "optimal_spread",
+      "kind": "method",
+      "signature": "optimal_spread() -> float",
+      "returns": "float",
+      "responsibility": "compute the model spread",
+      "qualified_name": "exchange.strategies.avellaneda_stoikov.AvellanedaStoikov.optimal_spread"
+    },
+    {
+      "id": "avellaneda_stoikov.quotes",
+      "name": "quotes",
+      "kind": "method",
+      "signature": "quotes(book: OrderBook) -> tuple[float, float]",
+      "returns": "tuple[float, float]",
+      "responsibility": "center A-S quotes on the model reservation price with optimal width",
+      "qualified_name": "exchange.strategies.avellaneda_stoikov.AvellanedaStoikov.quotes"
+    }
+  ],
+  "routes": {
+    "LIVE": [
+      "l14-challenge",
+      "l14-formulas",
+      "l14-lab",
+      "l14-recap"
+    ],
+    "REQUIRED": [
+      "l14-capstone",
+      "l14-quiz"
+    ],
+    "OPTIONAL": []
+  },
   "objectives": [
-    {"id": "l14-interpret-reservation-price", "route": "LIVE", "concepts": ["as.reservation_price", "as.parameters"]},
-    {"id": "l14-interpret-optimal-spread", "route": "LIVE", "concepts": ["as.optimal_spread", "as.parameters"]},
-    {"id": "l14-run-parameter-lab", "route": "LIVE", "concepts": ["simulation.parameter_sweep"]},
-    {"id": "l14-build-capstone", "route": "REQUIRED", "concepts": ["framework.strategy_contract", "inventory.skew"]}
+    {
+      "id": "l14-interpret-reservation-price",
+      "route": "LIVE",
+      "concepts": [
+        "as.reservation_price",
+        "as.gamma",
+        "as.sigma",
+        "as.time_horizon"
+      ],
+      "apis": [
+        "avellaneda_stoikov.constructor",
+        "avellaneda_stoikov.time",
+        "market_maker.inventory",
+        "avellaneda_stoikov.reservation_price"
+      ],
+      "notation": [
+        "notation.cara_utility",
+        "notation.as_reservation_price"
+      ]
+    },
+    {
+      "id": "l14-interpret-optimal-spread",
+      "route": "LIVE",
+      "concepts": [
+        "as.optimal_spread",
+        "as.kappa"
+      ],
+      "apis": [
+        "avellaneda_stoikov.optimal_spread"
+      ],
+      "notation": [
+        "notation.fill_intensity",
+        "notation.as_optimal_spread"
+      ]
+    },
+    {
+      "id": "l14-run-parameter-lab",
+      "route": "LIVE",
+      "concepts": [
+        "simulation.parameter_sweep",
+        "as.gamma"
+      ],
+      "apis": [
+        "avellaneda_stoikov.constructor",
+        "avellaneda_stoikov.quotes",
+        "mm_simulation.constructor",
+        "mm_simulation.run",
+        "sim_result.final_pnl",
+        "sim_result.max_inventory"
+      ],
+      "notation": []
+    },
+    {
+      "id": "l14-build-capstone",
+      "route": "REQUIRED",
+      "concepts": [
+        "framework.strategy_contract",
+        "inventory.skew"
+      ],
+      "apis": [
+        "market_maker.constructor",
+        "market_maker.half_spread",
+        "market_maker.inventory",
+        "market_maker.inventory_skew",
+        "market_maker.quotes",
+        "strategy.on_book_update",
+        "strategy.on_fill"
+      ],
+      "notation": []
+    }
   ],
-  "load": {"live_presentation_minutes": 22, "guided_minutes": 20, "required_autonomous_minutes": 90, "optional_minutes": 20, "overflow_policy": "capstone-is-separate-autonomous-work"},
+  "load": {
+    "live_presentation_minutes": 22,
+    "guided_minutes": 20,
+    "required_autonomous_minutes": 125,
+    "required_project_minutes": 90,
+    "optional_minutes": 10,
+    "overflow_policy": "explicit-route-plan"
+  },
   "scenes": [
-    {"id": "l14-challenge", "dom_id": "s0", "type": "hero-challenge", "route": "LIVE", "layout": "focus", "concepts": ["inventory.skew"], "duration_minutes": 2, "stages": [{"id": "challenge", "route": "LIVE"}]},
-    {"id": "l14-formulas", "dom_id": "s1", "type": "code-state", "route": "LIVE", "layout": "split-42-58", "concepts": ["as.reservation_price", "as.optimal_spread", "as.parameters"], "duration_minutes": 12, "stages": [
-      {"id": "question", "dom_stage": 0, "route": "LIVE"}, {"id": "reservation", "dom_stage": 1, "route": "LIVE"}, {"id": "spread", "dom_stage": 2, "route": "LIVE"}, {"id": "tau", "dom_stage": 3, "route": "LIVE"}, {"id": "duel", "dom_stage": 4, "route": "LIVE"}
-    ]},
-    {"id": "l14-lab", "dom_id": "s2", "type": "concept-simulator", "route": "LIVE", "layout": "split-45-55", "concepts": ["as.parameters", "simulation.parameter_sweep"], "duration_minutes": 6, "stages": [{"id": "gamma-lab", "route": "LIVE"}]},
-    {"id": "l14-capstone", "dom_id": "s3", "type": "guided-exercise", "route": "REQUIRED", "layout": "focus", "concepts": ["framework.strategy_contract", "inventory.skew"], "duration_minutes": 90, "stages": [{"id": "capstone", "route": "REQUIRED"}]},
-    {"id": "l14-quiz", "dom_id": "s4", "type": "diagnostic-quiz", "route": "REQUIRED", "layout": "focus", "concepts": ["as.reservation_price", "as.optimal_spread", "as.parameters"], "duration_minutes": 8, "stages": [{"id": "quiz", "route": "REQUIRED"}]},
-    {"id": "l14-recap", "dom_id": "s5", "type": "recap", "route": "LIVE", "layout": "focus", "concepts": ["as.reservation_price", "as.optimal_spread"], "duration_minutes": 2, "stages": [{"id": "recap", "route": "LIVE"}]}
+    {
+      "id": "l14-challenge",
+      "dom_id": "s0",
+      "type": "hero-challenge",
+      "route": "LIVE",
+      "layout": "focus",
+      "concepts": [
+        "market_making.heuristic_reservation_price"
+      ],
+      "duration_minutes": 2,
+      "stages": [
+        {
+          "id": "main",
+          "route": "LIVE"
+        }
+      ]
+    },
+    {
+      "id": "l14-formulas",
+      "dom_id": "s1",
+      "type": "mathematical-state",
+      "route": "LIVE",
+      "layout": "split-42-58",
+      "concepts": [
+        "as.reservation_price",
+        "as.optimal_spread",
+        "as.gamma",
+        "as.sigma",
+        "as.kappa",
+        "as.time_horizon"
+      ],
+      "duration_minutes": 12,
+      "stages": [
+        {
+          "id": "question",
+          "route": "LIVE",
+          "dom_stage": 0
+        },
+        {
+          "id": "reservation",
+          "route": "LIVE",
+          "dom_stage": 1
+        },
+        {
+          "id": "spread",
+          "route": "LIVE",
+          "dom_stage": 2
+        },
+        {
+          "id": "tau",
+          "route": "LIVE",
+          "dom_stage": 3
+        },
+        {
+          "id": "duel",
+          "route": "LIVE",
+          "dom_stage": 4
+        }
+      ]
+    },
+    {
+      "id": "l14-lab",
+      "dom_id": "s2",
+      "type": "concept-simulator",
+      "route": "LIVE",
+      "layout": "split-45-55",
+      "concepts": [
+        "as.gamma",
+        "simulation.parameter_sweep"
+      ],
+      "duration_minutes": 6,
+      "stages": [
+        {
+          "id": "main",
+          "route": "LIVE"
+        }
+      ]
+    },
+    {
+      "id": "l14-capstone",
+      "dom_id": "s3",
+      "type": "guided-exercise",
+      "route": "REQUIRED",
+      "layout": "focus",
+      "concepts": [
+        "framework.strategy_contract",
+        "inventory.skew"
+      ],
+      "duration_minutes": 90,
+      "stages": [
+        {
+          "id": "main",
+          "route": "REQUIRED"
+        }
+      ]
+    },
+    {
+      "id": "l14-quiz",
+      "dom_id": "s4",
+      "type": "diagnostic-quiz",
+      "route": "REQUIRED",
+      "layout": "focus",
+      "concepts": [
+        "as.reservation_price",
+        "as.optimal_spread",
+        "as.gamma",
+        "as.sigma",
+        "as.kappa",
+        "as.time_horizon"
+      ],
+      "duration_minutes": 8,
+      "stages": [
+        {
+          "id": "main",
+          "route": "REQUIRED"
+        }
+      ]
+    },
+    {
+      "id": "l14-recap",
+      "dom_id": "s5",
+      "type": "recap",
+      "route": "LIVE",
+      "layout": "focus",
+      "concepts": [
+        "as.reservation_price",
+        "as.optimal_spread"
+      ],
+      "duration_minutes": 2,
+      "stages": [
+        {
+          "id": "main",
+          "route": "LIVE"
+        }
+      ]
+    }
   ],
-  "package_checks": [{"path": "14-avellaneda-stoikov/exercises/exchange/strategy.py", "class": "Strategy", "members": {
-    "on_book_update": {"api": "strategy.on_book_update", "kind": "method", "parameters": [{"name": "book", "kind": "positional_or_keyword", "annotation": "OrderBook"}], "returns": "list[Action]"},
-    "on_fill": {"api": "strategy.on_fill", "kind": "method", "parameters": [{"name": "fill", "kind": "positional_or_keyword", "annotation": "Fill"}], "returns": "None"}
-  }}]
+  "bridge": {
+    "target_lesson": 15,
+    "known": {
+      "concepts": [
+        "matching.atomicity",
+        "framework.strategy_contract",
+        "metrics.slippage",
+        "execution.vwap",
+        "inventory.skew",
+        "as.reservation_price",
+        "as.optimal_spread"
+      ],
+      "apis": [
+        "matching.process",
+        "strategy.on_book_update",
+        "backtest.run"
+      ],
+      "notation": [
+        "notation.slippage_signed",
+        "notation.vwap",
+        "notation.as_reservation_price",
+        "notation.as_optimal_spread"
+      ]
+    },
+    "limitation": "El exchange completo aún no se ha demostrado bajo restricciones de evaluación.",
+    "need": "La evaluación final muestrea razonamiento acumulativo de todos los bloques."
+  },
+  "api_transitions": [
+    {
+      "from_api": "market_maker.constructor",
+      "from_signature": "MarketMaker(symbol: str, quote_size: float = 0.01, half_spread: float = 5.0, inventory_skew: float = 2.0) -> MarketMaker",
+      "to_api": "avellaneda_stoikov.constructor",
+      "to_signature": "AvellanedaStoikov(symbol: str, quote_size: float = 0.01, gamma: float = 0.1, sigma: float = 10.0, kappa: float = 1.5, horizon: int = 500) -> AvellanedaStoikov",
+      "kind": "explicit-specialization",
+      "reason": "La subclase conserva symbol y quote_size, y sustituye los parámetros heurísticos por γ, σ, κ y horizonte explícitos."
+    },
+    {
+      "from_api": "market_maker.reservation_price",
+      "from_signature": "reservation_price(mid: float) -> float",
+      "to_api": "avellaneda_stoikov.reservation_price",
+      "to_signature": "reservation_price(mid: float) -> float",
+      "kind": "semantic-override",
+      "reason": "La firma permanece estable, pero el centro deja el skew fijo y pasa a qγσ²τ; el contrato separado impide ocultar ese cambio de responsabilidad."
+    },
+    {
+      "from_api": "market_maker.quotes",
+      "from_signature": "quotes(book: OrderBook) -> tuple[float, float]",
+      "to_api": "avellaneda_stoikov.quotes",
+      "to_signature": "quotes(book: OrderBook) -> tuple[float, float]",
+      "kind": "semantic-override",
+      "reason": "El retorno sigue siendo bid/ask, pero ahora usa el reservation price y el ancho óptimo de A-S."
+    }
+  ],
+  "package_checks": [
+    {
+      "path": "14-avellaneda-stoikov/exercises/exchange/book.py",
+      "class": "Level",
+      "members": {
+        "__init__": {
+          "api": "level.constructor",
+          "kind": "constructor",
+          "parameters": [
+            {
+              "name": "price",
+              "kind": "positional_or_keyword",
+              "annotation": "float"
+            },
+            {
+              "name": "size",
+              "kind": "positional_or_keyword",
+              "annotation": "float"
+            }
+          ],
+          "returns": "Level"
+        }
+      }
+    },
+    {
+      "path": "14-avellaneda-stoikov/exercises/exchange/book.py",
+      "class": "OrderBook",
+      "members": {
+        "__init__": {
+          "api": "orderbook.constructor",
+          "kind": "constructor",
+          "parameters": [
+            {
+              "name": "symbol",
+              "kind": "positional_or_keyword",
+              "annotation": "str"
+            },
+            {
+              "name": "bids",
+              "kind": "positional_or_keyword",
+              "annotation": "list[Level]"
+            },
+            {
+              "name": "asks",
+              "kind": "positional_or_keyword",
+              "annotation": "list[Level]"
+            }
+          ],
+          "returns": "OrderBook"
+        },
+        "mid": {
+          "api": "orderbook.mid",
+          "kind": "property",
+          "parameters": [],
+          "returns": "float | None"
+        }
+      }
+    },
+    {
+      "path": "14-avellaneda-stoikov/exercises/exchange/strategy.py",
+      "class": "NewOrder",
+      "members": {
+        "__init__": {
+          "api": "new_order.constructor",
+          "kind": "constructor",
+          "parameters": [
+            {
+              "name": "order",
+              "kind": "positional_or_keyword",
+              "annotation": "Order"
+            }
+          ],
+          "returns": "NewOrder"
+        }
+      }
+    },
+    {
+      "path": "14-avellaneda-stoikov/exercises/exchange/strategy.py",
+      "class": "Strategy",
+      "members": {
+        "on_book_update": {
+          "api": "strategy.on_book_update",
+          "kind": "method",
+          "parameters": [
+            {
+              "name": "book",
+              "kind": "positional_or_keyword",
+              "annotation": "OrderBook"
+            }
+          ],
+          "returns": "list[Action]"
+        },
+        "on_fill": {
+          "api": "strategy.on_fill",
+          "kind": "method",
+          "parameters": [
+            {
+              "name": "fill",
+              "kind": "positional_or_keyword",
+              "annotation": "Fill"
+            }
+          ],
+          "returns": "None"
+        }
+      }
+    },
+    {
+      "path": "14-avellaneda-stoikov/exercises/exchange/strategies/market_maker.py",
+      "class": "MarketMaker",
+      "members": {
+        "__init__": {
+          "api": "market_maker.constructor",
+          "kind": "constructor",
+          "parameters": [
+            {
+              "name": "symbol",
+              "kind": "positional_or_keyword",
+              "annotation": "str"
+            },
+            {
+              "name": "quote_size",
+              "kind": "positional_or_keyword",
+              "annotation": "float",
+              "default": "0.01"
+            },
+            {
+              "name": "half_spread",
+              "kind": "positional_or_keyword",
+              "annotation": "float",
+              "default": "5.0"
+            },
+            {
+              "name": "inventory_skew",
+              "kind": "positional_or_keyword",
+              "annotation": "float",
+              "default": "2.0"
+            }
+          ],
+          "returns": "MarketMaker"
+        },
+        "inventory": {
+          "api": "market_maker.inventory",
+          "kind": "property",
+          "parameters": [],
+          "returns": "float"
+        },
+        "half_spread": {
+          "api": "market_maker.half_spread",
+          "kind": "attribute",
+          "parameters": [],
+          "returns": "float"
+        },
+        "inventory_skew": {
+          "api": "market_maker.inventory_skew",
+          "kind": "attribute",
+          "parameters": [],
+          "returns": "float"
+        },
+        "reservation_price": {
+          "api": "market_maker.reservation_price",
+          "kind": "method",
+          "parameters": [
+            {
+              "name": "mid",
+              "kind": "positional_or_keyword",
+              "annotation": "float"
+            }
+          ],
+          "returns": "float"
+        },
+        "quotes": {
+          "api": "market_maker.quotes",
+          "kind": "method",
+          "parameters": [
+            {
+              "name": "book",
+              "kind": "positional_or_keyword",
+              "annotation": "OrderBook"
+            }
+          ],
+          "returns": "tuple[float, float]"
+        }
+      }
+    },
+    {
+      "path": "14-avellaneda-stoikov/exercises/exchange/simulation.py",
+      "class": "MMSimulation",
+      "members": {
+        "__init__": {
+          "api": "mm_simulation.constructor",
+          "kind": "constructor",
+          "parameters": [
+            {
+              "name": "strategy",
+              "kind": "positional_or_keyword",
+              "annotation": "MarketMaker"
+            },
+            {
+              "name": "s0",
+              "kind": "positional_or_keyword",
+              "annotation": "float",
+              "default": "100.0"
+            },
+            {
+              "name": "sigma",
+              "kind": "positional_or_keyword",
+              "annotation": "float",
+              "default": "0.5"
+            },
+            {
+              "name": "steps",
+              "kind": "positional_or_keyword",
+              "annotation": "int",
+              "default": "500"
+            },
+            {
+              "name": "A",
+              "kind": "positional_or_keyword",
+              "annotation": "float",
+              "default": "1.0"
+            },
+            {
+              "name": "kappa",
+              "kind": "positional_or_keyword",
+              "annotation": "float",
+              "default": "1.5"
+            },
+            {
+              "name": "seed",
+              "kind": "positional_or_keyword",
+              "annotation": "int",
+              "default": "42"
+            }
+          ],
+          "returns": "MMSimulation"
+        },
+        "run": {
+          "api": "mm_simulation.run",
+          "kind": "method",
+          "parameters": [],
+          "returns": "SimResult"
+        }
+      }
+    },
+    {
+      "path": "14-avellaneda-stoikov/exercises/exchange/simulation.py",
+      "class": "SimResult",
+      "members": {
+        "final_pnl": {
+          "api": "sim_result.final_pnl",
+          "kind": "property",
+          "parameters": [],
+          "returns": "float"
+        },
+        "max_inventory": {
+          "api": "sim_result.max_inventory",
+          "kind": "property",
+          "parameters": [],
+          "returns": "float"
+        }
+      }
+    },
+    {
+      "path": "14-avellaneda-stoikov/exercises/exchange/strategies/avellaneda_stoikov.py",
+      "class": "AvellanedaStoikov",
+      "members": {
+        "__init__": {
+          "api": "avellaneda_stoikov.constructor",
+          "kind": "constructor",
+          "parameters": [
+            {
+              "name": "symbol",
+              "kind": "positional_or_keyword",
+              "annotation": "str"
+            },
+            {
+              "name": "quote_size",
+              "kind": "positional_or_keyword",
+              "annotation": "float",
+              "default": "0.01"
+            },
+            {
+              "name": "gamma",
+              "kind": "positional_or_keyword",
+              "annotation": "float",
+              "default": "0.1"
+            },
+            {
+              "name": "sigma",
+              "kind": "positional_or_keyword",
+              "annotation": "float",
+              "default": "10.0"
+            },
+            {
+              "name": "kappa",
+              "kind": "positional_or_keyword",
+              "annotation": "float",
+              "default": "1.5"
+            },
+            {
+              "name": "horizon",
+              "kind": "positional_or_keyword",
+              "annotation": "int",
+              "default": "500"
+            }
+          ],
+          "returns": "AvellanedaStoikov"
+        },
+        "time": {
+          "api": "avellaneda_stoikov.time",
+          "kind": "property",
+          "parameters": [],
+          "returns": "int"
+        },
+        "reservation_price": {
+          "api": "avellaneda_stoikov.reservation_price",
+          "kind": "method",
+          "parameters": [
+            {
+              "name": "mid",
+              "kind": "positional_or_keyword",
+              "annotation": "float"
+            }
+          ],
+          "returns": "float"
+        },
+        "optimal_spread": {
+          "api": "avellaneda_stoikov.optimal_spread",
+          "kind": "method",
+          "parameters": [],
+          "returns": "float"
+        },
+        "quotes": {
+          "api": "avellaneda_stoikov.quotes",
+          "kind": "method",
+          "parameters": [
+            {
+              "name": "book",
+              "kind": "positional_or_keyword",
+              "annotation": "OrderBook"
+            }
+          ],
+          "returns": "tuple[float, float]"
+        }
+      }
+    }
+  ],
+  "used_later": {
+    "concepts": [
+      "as.optimal_spread",
+      "as.reservation_price"
+    ],
+    "apis": [],
+    "notation": [
+      "notation.as_optimal_spread",
+      "notation.as_reservation_price"
+    ]
+  }
 }

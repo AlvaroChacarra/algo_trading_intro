@@ -1,5 +1,11 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
+  "policy": {
+    "classification": "Each notebook exercise is explicitly routed; OPTIONAL work is never prerequisite or assessed.",
+    "guided_live_target_minutes": "18-22",
+    "autonomous_load_accounting": "Manifest REQUIRED and OPTIONAL minutes are exact sums of their exercise routes.",
+    "required_selection": "REQUIRED work closes the lesson's core objective and progression; redundant drills, cross-domain transfer, tooling internals, and enrichment refactors stay OPTIONAL."
+  },
   "lessons": {
     "1": {
       "build": [
@@ -67,7 +73,7 @@
         },
         {
           "title": "A4. Interés compuesto",
-          "route": "REQUIRED",
+          "route": "OPTIONAL",
           "minutes": 2
         },
         {
@@ -107,7 +113,7 @@
         },
         {
           "title": "A12. Señal y cautela",
-          "route": "REQUIRED",
+          "route": "OPTIONAL",
           "minutes": 2
         },
         {
@@ -122,7 +128,7 @@
         },
         {
           "title": "A15. Deshaz el último",
-          "route": "REQUIRED",
+          "route": "OPTIONAL",
           "minutes": 2
         },
         {
@@ -137,7 +143,7 @@
         },
         {
           "title": "A18. Lee con red",
-          "route": "REQUIRED",
+          "route": "OPTIONAL",
           "minutes": 2
         },
         {
@@ -152,7 +158,7 @@
         },
         {
           "title": "A21. Radiografía de comisiones",
-          "route": "REQUIRED",
+          "route": "OPTIONAL",
           "minutes": 2
         },
         {
@@ -167,7 +173,7 @@
         },
         {
           "title": "A24. max() a mano",
-          "route": "REQUIRED",
+          "route": "OPTIONAL",
           "minutes": 2
         },
         {
@@ -177,7 +183,7 @@
         },
         {
           "title": "A26. Tarifa por tramos",
-          "route": "REQUIRED",
+          "route": "OPTIONAL",
           "minutes": 2
         },
         {
@@ -202,6 +208,439 @@
         },
         {
           "title": "A31. Ver el bytecode con dis",
+          "route": "OPTIONAL",
+          "minutes": 5
+        }
+      ]
+    },
+    "2": {
+      "build": [
+        {
+          "title": "1. Tu fábrica de órdenes",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "2. Añade al libro",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "3. Cancela una orden, paso a paso",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "4. Comprime el filtro",
+          "route": "REQUIRED",
+          "minutes": 6
+        },
+        {
+          "title": "5. Mejor bid y mejor ask",
+          "route": "REQUIRED",
+          "minutes": 6
+        },
+        {
+          "title": "6. Imbalance del libro",
+          "route": "REQUIRED",
+          "minutes": 6
+        },
+        {
+          "title": "7. Spread y mid, componiendo funciones",
+          "route": "REQUIRED",
+          "minutes": 6
+        },
+        {
+          "title": "8. Construye y lee tu libro",
+          "route": "REQUIRED",
+          "minutes": 6
+        },
+        {
+          "title": "9. Lista nueva no significa deep copy",
+          "route": "REQUIRED",
+          "minutes": 6
+        },
+        {
+          "title": "10. Una función como criterio",
+          "route": "REQUIRED",
+          "minutes": 6
+        },
+        {
+          "title": "11. Sustituye el nombre por lambda",
+          "route": "REQUIRED",
+          "minutes": 6
+        }
+      ],
+      "aux": [
+        {
+          "title": "C1. Spread, mid y ticket",
+          "route": "LIVE",
+          "minutes": 1
+        },
+        {
+          "title": "C2. Ventana y media",
+          "route": "LIVE",
+          "minutes": 1
+        },
+        {
+          "title": "C3. Posición con red",
+          "route": "LIVE",
+          "minutes": 1
+        },
+        {
+          "title": "A1. Tu primera quote",
+          "route": "OPTIONAL",
+          "minutes": 2
+        },
+        {
+          "title": "A2. Comisión con default",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A3. Al tick más cercano",
+          "route": "OPTIONAL",
+          "minutes": 2
+        },
+        {
+          "title": "A4. Spread en puntos básicos",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A5. La función que decide",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A6. Desempaqueta la quote",
+          "route": "OPTIONAL",
+          "minutes": 2
+        },
+        {
+          "title": "A7. El feed venía cruzado",
+          "route": "OPTIONAL",
+          "minutes": 2
+        },
+        {
+          "title": "A8. Estadísticas del libro",
+          "route": "OPTIONAL",
+          "minutes": 2
+        },
+        {
+          "title": "A9. Léelo",
+          "route": "OPTIONAL",
+          "minutes": 2
+        },
+        {
+          "title": "A10. Un fill lo mueve",
+          "route": "OPTIONAL",
+          "minutes": 2
+        },
+        {
+          "title": "A11. Símbolo nuevo, con cuidado",
+          "route": "OPTIONAL",
+          "minutes": 2
+        },
+        {
+          "title": "A12. Recorre el portfolio",
+          "route": "OPTIONAL",
+          "minutes": 2
+        },
+        {
+          "title": "A13. Caída hasta el stop",
+          "route": "OPTIONAL",
+          "minutes": 2
+        },
+        {
+          "title": "A14. Primer nivel con tamaño",
+          "route": "OPTIONAL",
+          "minutes": 2
+        },
+        {
+          "title": "A15. Ignora los ticks corruptos",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A16. ¿En qué posición está el mejor?",
+          "route": "OPTIONAL",
+          "minutes": 2
+        },
+        {
+          "title": "A17. Dos listas de la mano",
+          "route": "OPTIONAL",
+          "minutes": 2
+        },
+        {
+          "title": "A18. Nocionales en una línea",
+          "route": "OPTIONAL",
+          "minutes": 2
+        },
+        {
+          "title": "A19. Filtra los grandes",
+          "route": "OPTIONAL",
+          "minutes": 2
+        },
+        {
+          "title": "A20. El VWAP de tus fills",
+          "route": "OPTIONAL",
+          "minutes": 5
+        },
+        {
+          "title": "A21. El gran reto: resumen del libro",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A22. Nocional total del libro",
+          "route": "OPTIONAL",
+          "minutes": 2
+        },
+        {
+          "title": "A23. Órdenes con seguridad",
+          "route": "OPTIONAL",
+          "minutes": 2
+        },
+        {
+          "title": "A24. Cuenta el problema",
+          "route": "OPTIONAL",
+          "minutes": 2
+        }
+      ]
+    },
+    "3": {
+      "build": [
+        {
+          "title": "1. Importa una función del módulo",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "2. Importa el módulo entero",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "3. Blinda con try/except",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "4. Lanza un error claro",
+          "route": "REQUIRED",
+          "minutes": 6
+        },
+        {
+          "title": "5. Combina funciones del módulo",
+          "route": "REQUIRED",
+          "minutes": 6
+        },
+        {
+          "title": "6. Construye y lee un libro con el módulo",
+          "route": "REQUIRED",
+          "minutes": 6
+        },
+        {
+          "title": "7. Observa el side effect al importar",
+          "route": "REQUIRED",
+          "minutes": 6
+        },
+        {
+          "title": "8. El guard separa importar de ejecutar",
+          "route": "REQUIRED",
+          "minutes": 6
+        }
+      ],
+      "aux": [
+        {
+          "title": "C1. Medio spread",
+          "route": "LIVE",
+          "minutes": 1
+        },
+        {
+          "title": "C2. Tamaños compradores",
+          "route": "LIVE",
+          "minutes": 1
+        },
+        {
+          "title": "C3. Desempaqueta",
+          "route": "LIVE",
+          "minutes": 1
+        },
+        {
+          "title": "A1. El módulo entero",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A2. Dos funciones de golpe",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A3. Construye con el módulo",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A4. Caza el ValueError",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A5. Lee el mensaje",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A6. Dos redes distintas",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A7. Falla pronto",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A8. El mensaje útil",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A9. safe_mid",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A10. Importa con alias",
+          "route": "OPTIONAL",
+          "minutes": 5
+        },
+        {
+          "title": "A11. Tu propio tipo de error",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A12. Argumentos por defecto",
+          "route": "REQUIRED",
+          "minutes": 2
+        }
+      ]
+    },
+    "4": {
+      "build": [
+        {
+          "title": "1. La clase Order",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "2. Un método: notional",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "3. __repr__: que sepa describirse",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "4. La clase Fill y su cash_flow",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "5. Instánciala y opérala",
+          "route": "REQUIRED",
+          "minutes": 6
+        },
+        {
+          "title": "6. De la orden al dinero",
+          "route": "REQUIRED",
+          "minutes": 6
+        }
+      ],
+      "aux": [
+        {
+          "title": "C1. Importa y lee",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "C2. La red puesta",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "C3. Quote con default",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A1. Tu primera clase",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A2. Un método que calcula",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A3. Piezas independientes",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A4. Que sepa presentarse",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A5. Order.notional",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A6. Fill.cash_flow con signo",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A7. La caja tras la sesión",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A8. Precio con guardia",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A9. describe()",
+          "route": "OPTIONAL",
+          "minutes": 5
+        },
+        {
+          "title": "A10. ¿Dato o cálculo?",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A11. Lados con seguridad",
+          "route": "OPTIONAL",
+          "minutes": 5
+        },
+        {
+          "title": "A12. El Order real del paquete",
+          "route": "OPTIONAL",
+          "minutes": 5
+        },
+        {
+          "title": "A13. Side como Enum",
           "route": "OPTIONAL",
           "minutes": 5
         }
@@ -313,6 +752,132 @@
         },
         {
           "title": "A12. Los objetos reales del paquete",
+          "route": "OPTIONAL",
+          "minutes": 5
+        }
+      ]
+    },
+    "6": {
+      "build": [
+        {
+          "title": "1. Una clase base con un método",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "2. Hereda y sobrescribe",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "3. El contrato: clase abstracta",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "4. Polimorfismo",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "5. super() en el __init__",
+          "route": "REQUIRED",
+          "minutes": 6
+        },
+        {
+          "title": "6. Tu familia de estrategias",
+          "route": "REQUIRED",
+          "minutes": 6
+        },
+        {
+          "title": "7. Qué se pierde sin super()",
+          "route": "REQUIRED",
+          "minutes": 6
+        },
+        {
+          "title": "8. Un cuerpo no elimina el contrato",
+          "route": "REQUIRED",
+          "minutes": 6
+        }
+      ],
+      "aux": [
+        {
+          "title": "C1. Wallet exprés",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "C2. mid exprés",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "C3. equity exprés",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A1. Hereda gratis",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A2. Override",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A3. super().__init__",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A4. La cadena de búsqueda",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A5. El bucle polimórfico",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A6. Censo de la familia",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A7. La impostora (duck typing)",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A8. Firma el contrato",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A9. Contrato + super",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A10. isinstance y la familia",
+          "route": "OPTIONAL",
+          "minutes": 5
+        },
+        {
+          "title": "A11. La ABC obliga a implementar",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A12. Una estrategia con umbral",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "T1. Alertas de servidor (mismo patrón, otro mundo)",
           "route": "OPTIONAL",
           "minutes": 5
         }
@@ -453,7 +1018,7 @@
         },
         {
           "title": "B9 · Refactor: un único process()",
-          "route": "REQUIRED",
+          "route": "OPTIONAL",
           "minutes": 10
         },
         {
@@ -500,6 +1065,97 @@
         },
         {
           "title": "A6. Slippage por tamaño",
+          "route": "OPTIONAL",
+          "minutes": 5
+        }
+      ]
+    },
+    "9": {
+      "build": [
+        {
+          "title": "B1 · Estado inicial",
+          "route": "LIVE",
+          "minutes": 4
+        },
+        {
+          "title": "B2 · Implementa step()",
+          "route": "LIVE",
+          "minutes": 6
+        },
+        {
+          "title": "B3 · Final de datos",
+          "route": "LIVE",
+          "minutes": 4
+        },
+        {
+          "title": "B4 · submit() sin book: fail fast",
+          "route": "LIVE",
+          "minutes": 3
+        },
+        {
+          "title": "B5 · Delega al MatchingEngine",
+          "route": "LIVE",
+          "minutes": 3
+        },
+        {
+          "title": "B6 · reset()",
+          "route": "REQUIRED",
+          "minutes": 6
+        },
+        {
+          "title": "B7 · Ahora sí: loop completo",
+          "route": "REQUIRED",
+          "minutes": 6
+        },
+        {
+          "title": "B8 · Challenge de integración",
+          "route": "REQUIRED",
+          "minutes": 8
+        }
+      ],
+      "aux": [
+        {
+          "title": "C1. Disparo exprés",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "C2. Factura exprés",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A1. Contar el día",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A2. Apertura y cierre",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A3. La orden en su momento",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A4. La cuenta tras el fill",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A5. Sin posición no hay historia",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A6. Schedule de participación",
+          "route": "OPTIONAL",
+          "minutes": 5
+        },
+        {
+          "title": "T1. El contador de la luz (mismo loop, otro sistema)",
           "route": "OPTIONAL",
           "minutes": 5
         }
@@ -568,6 +1224,244 @@
           "title": "A6. Estrategia con señal",
           "route": "OPTIONAL",
           "minutes": 5
+        }
+      ]
+    },
+    "11": {
+      "build": [
+        {
+          "title": "1. Estrategia de imbalance",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "2. Mídela",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "3. Parent arrival",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "4. Riesgo escondido",
+          "route": "LIVE",
+          "minutes": 5
+        }
+      ],
+      "aux": [
+        {
+          "title": "C1. Contrato exprés",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "C2. Leer el resultado",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A1. El parent arrival mid",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A2. Slippage de un fill",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A3. El coste total de ejecutar",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A4. ¿Fuera de la nube?",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A5. PnL sin riesgo es media verdad",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A6. Graficar la curva de equity",
+          "route": "OPTIONAL",
+          "minutes": 5
+        },
+        {
+          "title": "T1. La cesta que rinde más (ratio, fuera del trading)",
+          "route": "OPTIONAL",
+          "minutes": 5
+        }
+      ]
+    },
+    "12": {
+      "build": [
+        {
+          "title": "1. Schedule TWAP",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "2. Lanza un VWAPStrategy",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "3. Perfil VWAP a medida",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "4. Precio medio de ejecución",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "5. Media rolada",
+          "route": "OPTIONAL",
+          "minutes": 5
+        },
+        {
+          "title": "6. Predice el próximo volumen",
+          "route": "OPTIONAL",
+          "minutes": 5
+        },
+        {
+          "title": "7. Perfil dinámico",
+          "route": "OPTIONAL",
+          "minutes": 5
+        },
+        {
+          "title": "8. Factor de corrección",
+          "route": "OPTIONAL",
+          "minutes": 5
+        }
+      ],
+      "aux": [
+        {
+          "title": "C1. Slippage exprés",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "C2. Media ponderada exprés",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A1. Pesos TWAP",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A2. Normaliza el perfil",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A3. Del peso al trozo",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A4. El VWAP de la sesión",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A5. La estrategia entera, por el motor",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A6. El perfil se normaliza solo",
+          "route": "OPTIONAL",
+          "minutes": 5
+        },
+        {
+          "title": "A7. Regresión lineal (extensión ML, stdlib)",
+          "route": "OPTIONAL",
+          "minutes": 5
+        },
+        {
+          "title": "T1. La panadería que sigue la demanda (VWAP sin mercado)",
+          "route": "OPTIONAL",
+          "minutes": 5
+        }
+      ]
+    },
+    "13": {
+      "build": [
+        {
+          "title": "1. Cotiza alrededor del mid",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "2. El skew baja las cotizaciones si estás largo",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "3. Reservation price",
+          "route": "LIVE",
+          "minutes": 5
+        },
+        {
+          "title": "4. Simula al market maker",
+          "route": "LIVE",
+          "minutes": 5
+        }
+      ],
+      "aux": [
+        {
+          "title": "C1. Pesos exprés",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "C2. Precio medio exprés",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A1. Tus primeras quotes",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A2. El spread de una vuelta",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A3. El skew en acción",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A4. El signo de la correa",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A5. La simulación en corto",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A6. Utilidad CARA",
+          "route": "REQUIRED",
+          "minutes": 2
+        },
+        {
+          "title": "A7. Intensidad de fills",
+          "route": "REQUIRED",
+          "minutes": 3
         }
       ]
     },

@@ -1,80 +1,948 @@
 {
   "lesson": 10,
-  "status": "pilot",
-  "title": "El framework: Strategy + Backtest",
+  "status": "contract-strict",
+  "title": "El framework — Strategy + Backtest",
   "delivery": "lesson",
   "source_path": "framework/_build/docs/10_body.html",
-  "requires": {"concepts": ["oop.polymorphism", "strategy.toy_contract", "engine.market", "matching.plan_validate_commit"], "apis": ["toy_strategy.decide", "market.step", "market.submit"]},
+  "requires": {
+    "concepts": [
+      "oop.polymorphism",
+      "oop.abstract_base_class",
+      "strategy.toy_contract",
+      "engine.market",
+      "matching.plan_validate_commit",
+      "metrics.equity_curve",
+      "python.fstring"
+    ],
+    "apis": [
+      "toy_strategy.decide",
+      "market.sample",
+      "market.snapshots",
+      "market.step",
+      "market.submit",
+      "market.reset",
+      "tracker.apply_fill",
+      "tracker.equity"
+    ],
+    "notation": []
+  },
+  "requirement_routes": {
+    "concepts": {
+      "oop.polymorphism": "LIVE",
+      "oop.abstract_base_class": "LIVE",
+      "strategy.toy_contract": "LIVE",
+      "engine.market": "LIVE",
+      "matching.plan_validate_commit": "LIVE",
+      "metrics.equity_curve": "LIVE",
+      "python.fstring": "REQUIRED"
+    },
+    "apis": {
+      "toy_strategy.decide": "LIVE",
+      "market.sample": "LIVE",
+      "market.snapshots": "LIVE",
+      "market.step": "LIVE",
+      "market.submit": "LIVE",
+      "market.reset": "REQUIRED",
+      "tracker.apply_fill": "LIVE",
+      "tracker.equity": "LIVE"
+    },
+    "notation": {}
+  },
   "introduces": {
-    "concepts": [{"id": "architecture.actions", "importance": "major"}, {"id": "architecture.decision_execution_separation", "importance": "major"}, {"id": "framework.strategy_contract", "importance": "major"}, {"id": "backtest.runner", "importance": "major"}],
-    "apis": ["strategy.on_book_update", "strategy.on_fill", "backtest.run"]
+    "concepts": [
+      {
+        "id": "architecture.actions",
+        "importance": "major",
+        "route": "LIVE"
+      },
+      {
+        "id": "architecture.decision_execution_separation",
+        "importance": "major",
+        "route": "LIVE"
+      },
+      {
+        "id": "architecture.execution_feedback",
+        "importance": "major",
+        "route": "LIVE"
+      },
+      {
+        "id": "framework.strategy_contract",
+        "importance": "major",
+        "route": "LIVE"
+      },
+      {
+        "id": "framework.lifecycle",
+        "importance": "major",
+        "route": "REQUIRED"
+      },
+      {
+        "id": "backtest.runner",
+        "importance": "major",
+        "route": "LIVE"
+      }
+    ],
+    "apis": [
+      "strategy.type",
+      "strategy.on_start",
+      "new_order.constructor",
+      "cancel.constructor",
+      "action.type",
+      "strategy.on_book_update",
+      "strategy.on_fill",
+      "strategy.on_end",
+      "backtest.constructor",
+      "backtest.run",
+      "backtest_result.type",
+      "backtest_result.equity_curve",
+      "backtest_result.fills",
+      "backtest_result.final_position",
+      "backtest_result.final_equity",
+      "backtest_result.n_steps",
+      "backtest_result.n_fills"
+    ],
+    "notation": []
+  },
+  "introduction_routes": {
+    "apis": {
+      "strategy.type": "LIVE",
+      "strategy.on_start": "REQUIRED",
+      "new_order.constructor": "LIVE",
+      "cancel.constructor": "LIVE",
+      "action.type": "LIVE",
+      "strategy.on_book_update": "LIVE",
+      "strategy.on_fill": "LIVE",
+      "strategy.on_end": "REQUIRED",
+      "backtest.constructor": "LIVE",
+      "backtest.run": "LIVE",
+      "backtest_result.type": "LIVE",
+      "backtest_result.fills": "LIVE",
+      "backtest_result.equity_curve": "LIVE",
+      "backtest_result.final_position": "LIVE",
+      "backtest_result.final_equity": "LIVE",
+      "backtest_result.n_steps": "LIVE",
+      "backtest_result.n_fills": "LIVE"
+    },
+    "notation": {}
   },
   "recalls": [
     {
       "concept": "oop.polymorphism",
       "introduced_in": 6,
       "mapping": {
-        "before": "decide(imbalance) -> str",
-        "now": "on_book_update(book) -> list[Action]",
-        "input_change": "float signal -> full OrderBook",
-        "output_change": "label -> typed actions",
-        "responsibility_change": "toy decision -> decision without execution"
+        "before": "decide(imbalance) devuelve una etiqueta.",
+        "now": "on_book_update(book) devuelve una lista de Action."
+      }
+    },
+    {
+      "concept": "oop.abstract_base_class",
+      "introduced_in": 6,
+      "mapping": {
+        "before": "La ABC obliga a cada estrategia de juguete a decidir.",
+        "now": "La ABC Strategy conserva un único contrato para el runner."
       }
     },
     {
       "concept": "strategy.toy_contract",
       "introduced_in": 6,
       "mapping": {
-        "before": "decide(imbalance) -> str",
-        "now": "on_book_update(book) -> list[Action]",
-        "conserved": "subclasses share one callable decision contract"
+        "before": "Un callable devuelve una etiqueta.",
+        "now": "Un callable devuelve acciones tipadas sin ejecutarlas."
       }
     }
   ],
+  "api_surface": [
+    {
+      "id": "toy_strategy.decide",
+      "name": "decide",
+      "kind": "method",
+      "signature": "decide(imbalance: float) -> str",
+      "returns": "str",
+      "responsibility": "return a pedagogical buy, sell, or hold label",
+      "qualified_name": "strategies_toy.Strategy.decide"
+    },
+    {
+      "id": "market.sample",
+      "name": "sample",
+      "kind": "classmethod",
+      "signature": "sample(symbol: str = 'BTCUSDT', depth: int = 10) -> Market",
+      "returns": "Market",
+      "responsibility": "load the reproducible packaged market replay",
+      "qualified_name": "exchange.market.Market.sample"
+    },
+    {
+      "id": "market.snapshots",
+      "name": "snapshots",
+      "kind": "property",
+      "signature": "snapshots -> list[dict]",
+      "returns": "list[dict]",
+      "responsibility": "expose a defensive copy of the packaged replay rows",
+      "qualified_name": "exchange.market.Market.snapshots"
+    },
+    {
+      "id": "market.step",
+      "name": "step",
+      "kind": "method",
+      "signature": "step() -> OrderBook | None",
+      "returns": "OrderBook | None",
+      "responsibility": "advance replay time and replace the active book",
+      "qualified_name": "exchange.market.Market.step"
+    },
+    {
+      "id": "market.submit",
+      "name": "submit",
+      "kind": "method",
+      "signature": "submit(order: Order) -> list[Fill]",
+      "returns": "list[Fill]",
+      "responsibility": "delegate matching against the active book",
+      "qualified_name": "exchange.market.Market.submit"
+    },
+    {
+      "id": "market.reset",
+      "name": "reset",
+      "kind": "method",
+      "signature": "reset() -> None",
+      "returns": "None",
+      "responsibility": "restore replay state",
+      "qualified_name": "exchange.market.Market.reset"
+    },
+    {
+      "id": "tracker.apply_fill",
+      "name": "apply_fill",
+      "kind": "method",
+      "signature": "apply_fill(fill: Fill) -> None",
+      "returns": "None",
+      "responsibility": "update cash and position atomically from a fill",
+      "qualified_name": "exchange.portfolio.PositionTracker.apply_fill"
+    },
+    {
+      "id": "tracker.equity",
+      "name": "equity",
+      "kind": "method",
+      "signature": "equity(mark_price: float) -> float",
+      "returns": "float",
+      "responsibility": "mark cash and inventory to market",
+      "qualified_name": "exchange.portfolio.PositionTracker.equity"
+    },
+    {
+      "id": "strategy.type",
+      "name": "Strategy",
+      "kind": "type",
+      "signature": "Strategy: type",
+      "returns": "Strategy",
+      "responsibility": "define the abstract strategy family accepted by the runner",
+      "qualified_name": "exchange.strategy.Strategy"
+    },
+    {
+      "id": "strategy.on_start",
+      "name": "on_start",
+      "kind": "method",
+      "signature": "on_start(ctx: Context) -> None",
+      "returns": "None",
+      "responsibility": "initialize strategy lifecycle state",
+      "qualified_name": "exchange.strategy.Strategy.on_start"
+    },
+    {
+      "id": "new_order.constructor",
+      "name": "NewOrder",
+      "kind": "constructor",
+      "signature": "NewOrder(order: Order) -> NewOrder",
+      "returns": "NewOrder",
+      "responsibility": "wrap an order as a typed strategy action",
+      "qualified_name": "exchange.strategy.NewOrder"
+    },
+    {
+      "id": "cancel.constructor",
+      "name": "Cancel",
+      "kind": "constructor",
+      "signature": "Cancel(order_id: int) -> Cancel",
+      "returns": "Cancel",
+      "responsibility": "wrap an order id as a typed cancellation action",
+      "qualified_name": "exchange.strategy.Cancel"
+    },
+    {
+      "id": "action.type",
+      "name": "Action",
+      "kind": "type_alias",
+      "signature": "Action = NewOrder | Cancel",
+      "returns": "NewOrder | Cancel",
+      "responsibility": "name the closed union of actions accepted by the runner",
+      "qualified_name": "exchange.strategy.Action"
+    },
+    {
+      "id": "strategy.on_book_update",
+      "name": "on_book_update",
+      "kind": "method",
+      "signature": "on_book_update(book: OrderBook) -> list[Action]",
+      "returns": "list[Action]",
+      "responsibility": "propose typed actions from market state",
+      "qualified_name": "exchange.strategy.Strategy.on_book_update"
+    },
+    {
+      "id": "strategy.on_fill",
+      "name": "on_fill",
+      "kind": "method",
+      "signature": "on_fill(fill: Fill) -> None",
+      "returns": "None",
+      "responsibility": "receive execution feedback",
+      "qualified_name": "exchange.strategy.Strategy.on_fill"
+    },
+    {
+      "id": "strategy.on_end",
+      "name": "on_end",
+      "kind": "method",
+      "signature": "on_end(ctx: Context) -> None",
+      "returns": "None",
+      "responsibility": "close strategy lifecycle state",
+      "qualified_name": "exchange.strategy.Strategy.on_end"
+    },
+    {
+      "id": "backtest.constructor",
+      "name": "Backtest",
+      "kind": "constructor",
+      "signature": "Backtest(market: Market, strategy: Strategy, cash: float = 0.0) -> Backtest",
+      "returns": "Backtest",
+      "responsibility": "wire one market, strategy, and portfolio runner",
+      "qualified_name": "exchange.backtest.Backtest"
+    },
+    {
+      "id": "backtest.run",
+      "name": "run",
+      "kind": "method",
+      "signature": "run() -> BacktestResult",
+      "returns": "BacktestResult",
+      "responsibility": "orchestrate market, strategy, matching, and accounting",
+      "qualified_name": "exchange.backtest.Backtest.run"
+    },
+    {
+      "id": "backtest_result.type",
+      "name": "BacktestResult",
+      "kind": "type",
+      "signature": "BacktestResult: type",
+      "returns": "BacktestResult",
+      "responsibility": "name the structured result returned by a backtest run",
+      "qualified_name": "exchange.backtest.BacktestResult"
+    },
+    {
+      "id": "backtest_result.fills",
+      "name": "fills",
+      "kind": "attribute",
+      "signature": "fills: list[Fill]",
+      "returns": "list[Fill]",
+      "responsibility": "expose executions produced by the run",
+      "qualified_name": "exchange.backtest.BacktestResult.fills"
+    },
+    {
+      "id": "backtest_result.equity_curve",
+      "name": "equity_curve",
+      "kind": "attribute",
+      "signature": "equity_curve: list[float]",
+      "returns": "list[float]",
+      "responsibility": "expose marked-to-market equity at each backtest step",
+      "qualified_name": "exchange.backtest.BacktestResult.equity_curve"
+    },
+    {
+      "id": "backtest_result.final_position",
+      "name": "final_position",
+      "kind": "attribute",
+      "signature": "final_position: float",
+      "returns": "float",
+      "responsibility": "expose final signed inventory",
+      "qualified_name": "exchange.backtest.BacktestResult.final_position"
+    },
+    {
+      "id": "backtest_result.final_equity",
+      "name": "final_equity",
+      "kind": "attribute",
+      "signature": "final_equity: float",
+      "returns": "float",
+      "responsibility": "expose final marked-to-market equity",
+      "qualified_name": "exchange.backtest.BacktestResult.final_equity"
+    },
+    {
+      "id": "backtest_result.n_steps",
+      "name": "n_steps",
+      "kind": "attribute",
+      "signature": "n_steps: int",
+      "returns": "int",
+      "responsibility": "expose the number of processed snapshots",
+      "qualified_name": "exchange.backtest.BacktestResult.n_steps"
+    },
+    {
+      "id": "backtest_result.n_fills",
+      "name": "n_fills",
+      "kind": "property",
+      "signature": "n_fills -> int",
+      "returns": "int",
+      "responsibility": "count executions produced by the run",
+      "qualified_name": "exchange.backtest.BacktestResult.n_fills"
+    }
+  ],
+  "routes": {
+    "LIVE": [
+      "l10-challenge",
+      "l10-contract",
+      "l10-live-runner",
+      "l10-bridge"
+    ],
+    "REQUIRED": [
+      "l10-first-strategy",
+      "l10-quiz"
+    ],
+    "OPTIONAL": []
+  },
+  "objectives": [
+    {
+      "id": "l10-map-toy-to-production",
+      "route": "LIVE",
+      "concepts": [
+        "oop.polymorphism",
+        "oop.abstract_base_class",
+        "framework.strategy_contract"
+      ],
+      "apis": [
+        "toy_strategy.decide",
+        "strategy.type",
+        "strategy.on_book_update"
+      ],
+      "notation": []
+    },
+    {
+      "id": "l10-separate-decision-execution",
+      "route": "LIVE",
+      "concepts": [
+        "architecture.actions",
+        "architecture.decision_execution_separation",
+        "metrics.equity_curve"
+      ],
+      "apis": [
+        "action.type",
+        "new_order.constructor",
+        "cancel.constructor",
+        "strategy.on_book_update",
+        "backtest.constructor",
+        "backtest.run",
+        "backtest_result.type",
+        "backtest_result.equity_curve",
+        "backtest_result.final_position",
+        "backtest_result.final_equity",
+        "backtest_result.n_steps"
+      ],
+      "notation": []
+    },
+    {
+      "id": "l10-close-feedback-loop",
+      "route": "LIVE",
+      "concepts": [
+        "architecture.execution_feedback"
+      ],
+      "apis": [
+        "strategy.on_fill",
+        "backtest_result.fills",
+        "backtest_result.n_fills"
+      ],
+      "notation": []
+    },
+    {
+      "id": "l10-read-lifecycle",
+      "route": "REQUIRED",
+      "concepts": [
+        "framework.lifecycle",
+        "backtest.runner"
+      ],
+      "apis": [
+        "strategy.on_start",
+        "strategy.on_end"
+      ],
+      "notation": []
+    }
+  ],
+  "load": {
+    "live_presentation_minutes": 20,
+    "guided_minutes": 20,
+    "required_autonomous_minutes": 12,
+    "optional_minutes": 5,
+    "overflow_policy": "explicit-route-plan"
+  },
+  "scenes": [
+    {
+      "id": "l10-challenge",
+      "dom_id": "s0",
+      "type": "hero-challenge",
+      "route": "LIVE",
+      "layout": "focus",
+      "concepts": [
+        "framework.strategy_contract"
+      ],
+      "duration_minutes": 2,
+      "stages": [
+        {
+          "id": "main",
+          "route": "LIVE"
+        }
+      ]
+    },
+    {
+      "id": "l10-contract",
+      "dom_id": "s1",
+      "type": "architecture-map",
+      "route": "LIVE",
+      "layout": "split-42-58",
+      "concepts": [
+        "oop.polymorphism",
+        "oop.abstract_base_class",
+        "architecture.actions",
+        "architecture.decision_execution_separation",
+        "framework.strategy_contract",
+        "backtest.runner"
+      ],
+      "duration_minutes": 12,
+      "stages": [
+        {
+          "id": "embedded-if",
+          "route": "LIVE",
+          "dom_stage": 0
+        },
+        {
+          "id": "strategy-abc",
+          "route": "LIVE",
+          "dom_stage": 1
+        },
+        {
+          "id": "actions",
+          "route": "LIVE",
+          "dom_stage": 2
+        },
+        {
+          "id": "runner",
+          "route": "LIVE",
+          "dom_stage": 3
+        },
+        {
+          "id": "fill-hook",
+          "route": "LIVE",
+          "dom_stage": 4
+        },
+        {
+          "id": "polymorphism",
+          "route": "LIVE",
+          "dom_stage": 5
+        }
+      ]
+    },
+    {
+      "id": "l10-live-runner",
+      "dom_id": "s2",
+      "type": "concept-simulator",
+      "route": "LIVE",
+      "layout": "split-45-55",
+      "concepts": [
+        "backtest.runner"
+      ],
+      "duration_minutes": 4,
+      "stages": [
+        {
+          "id": "main",
+          "route": "LIVE"
+        }
+      ]
+    },
+    {
+      "id": "l10-first-strategy",
+      "dom_id": "s3",
+      "type": "guided-exercise",
+      "route": "REQUIRED",
+      "layout": "focus",
+      "concepts": [
+        "framework.strategy_contract",
+        "architecture.actions",
+        "framework.lifecycle"
+      ],
+      "duration_minutes": 18,
+      "stages": [
+        {
+          "id": "main",
+          "route": "REQUIRED"
+        }
+      ]
+    },
+    {
+      "id": "l10-quiz",
+      "dom_id": "s4",
+      "type": "diagnostic-quiz",
+      "route": "REQUIRED",
+      "layout": "focus",
+      "concepts": [
+        "framework.strategy_contract",
+        "backtest.runner"
+      ],
+      "duration_minutes": 8,
+      "stages": [
+        {
+          "id": "main",
+          "route": "REQUIRED"
+        }
+      ]
+    },
+    {
+      "id": "l10-bridge",
+      "dom_id": "s5",
+      "type": "bridge",
+      "route": "LIVE",
+      "layout": "focus",
+      "concepts": [
+        "architecture.decision_execution_separation"
+      ],
+      "duration_minutes": 2,
+      "stages": [
+        {
+          "id": "main",
+          "route": "LIVE"
+        }
+      ]
+    }
+  ],
+  "bridge": {
+    "target_lesson": 11,
+    "known": {
+      "concepts": [
+        "framework.strategy_contract",
+        "backtest.runner",
+        "microstructure.spread_cost"
+      ],
+      "apis": [
+        "strategy.on_book_update",
+        "strategy.on_fill",
+        "backtest.run"
+      ],
+      "notation": [
+        "notation.equity"
+      ]
+    },
+    "limitation": "La equity final no permite separar señal, coste de ejecución e inventario.",
+    "need": "Los benchmarks y el slippage con signo convierten el resultado en evidencia."
+  },
   "api_transitions": [
     {
       "from_api": "toy_strategy.decide",
       "to_api": "strategy.on_book_update",
-      "kind": "explicit pedagogical bridge",
-      "reason": "the production runner needs full market state and typed actions"
+      "kind": "explicit-pedagogical-bridge",
+      "reason": "the runner needs full state and typed actions"
     }
   ],
-  "api_surface": [
-    {"id": "strategy.on_book_update", "name": "on_book_update", "kind": "method", "signature": "on_book_update(book: OrderBook) -> list[Action]", "returns": "list[Action]", "responsibility": "propose typed actions from current market state"},
-    {"id": "strategy.on_fill", "name": "on_fill", "kind": "method", "signature": "on_fill(fill: Fill) -> None", "returns": "None", "responsibility": "receive execution feedback and update strategy state"},
-    {"id": "backtest.run", "name": "run", "kind": "method", "signature": "run() -> BacktestResult", "returns": "BacktestResult", "responsibility": "orchestrate market, strategy, matching, and accounting"}
-  ],
-  "routes": {"LIVE": ["l10-challenge", "l10-contract", "l10-live-runner", "l10-bridge"], "REQUIRED": ["l10-first-strategy", "l10-quiz"], "OPTIONAL": []},
-  "objectives": [
-    {"id": "l10-map-toy-to-production", "route": "LIVE", "concepts": ["oop.polymorphism", "framework.strategy_contract"]},
-    {"id": "l10-separate-decision-execution", "route": "LIVE", "concepts": ["architecture.actions", "architecture.decision_execution_separation"]},
-    {"id": "l10-read-backtest-loop", "route": "REQUIRED", "concepts": ["backtest.runner"]}
-  ],
-  "load": {"live_presentation_minutes": 20, "guided_minutes": 20, "required_autonomous_minutes": 45, "optional_minutes": 10, "overflow_policy": "intentional"},
-  "scenes": [
-    {"id": "l10-challenge", "dom_id": "s0", "type": "hero-challenge", "route": "LIVE", "layout": "focus", "concepts": ["framework.strategy_contract"], "duration_minutes": 2, "stages": [{"id": "challenge", "route": "LIVE"}]},
-    {"id": "l10-contract", "dom_id": "s1", "type": "architecture-map", "route": "LIVE", "layout": "split-42-58", "concepts": ["oop.polymorphism", "architecture.actions", "architecture.decision_execution_separation", "framework.strategy_contract", "backtest.runner"], "duration_minutes": 12, "stages": [
-      {"id": "embedded-if", "dom_stage": 0, "route": "LIVE"}, {"id": "strategy-abc", "dom_stage": 1, "route": "LIVE"}, {"id": "actions", "dom_stage": 2, "route": "LIVE"}, {"id": "runner", "dom_stage": 3, "route": "LIVE"}, {"id": "fill-hook", "dom_stage": 4, "route": "LIVE"}, {"id": "polymorphism", "dom_stage": 5, "route": "LIVE"}
-    ]},
-    {"id": "l10-live-runner", "dom_id": "s2", "type": "concept-simulator", "route": "LIVE", "layout": "split-45-55", "concepts": ["backtest.runner"], "duration_minutes": 4, "stages": [{"id": "runner", "route": "LIVE"}]},
-    {"id": "l10-first-strategy", "dom_id": "s3", "type": "guided-exercise", "route": "REQUIRED", "layout": "focus", "concepts": ["framework.strategy_contract", "architecture.actions"], "duration_minutes": 18, "stages": [{"id": "strategy", "route": "REQUIRED"}]},
-    {"id": "l10-quiz", "dom_id": "s4", "type": "diagnostic-quiz", "route": "REQUIRED", "layout": "focus", "concepts": ["framework.strategy_contract", "backtest.runner"], "duration_minutes": 8, "stages": [{"id": "quiz", "route": "REQUIRED"}]},
-    {"id": "l10-bridge", "dom_id": "s5", "type": "bridge", "route": "LIVE", "layout": "focus", "concepts": ["architecture.decision_execution_separation"], "duration_minutes": 2, "stages": [{"id": "bridge", "route": "LIVE"}]}
-  ],
   "package_checks": [
-    {"path": "06-oop-iii-inheritance/exercises/strategies_toy.py", "class": "Strategy", "members": {
-      "decide": {"api": "toy_strategy.decide", "kind": "method", "parameters": [{"name": "imbalance", "kind": "positional_or_keyword", "annotation": "float"}], "returns": "str"}
-    }},
-    {"path": "10-strategy-framework/exercises/exchange/market.py", "class": "Market", "members": {
-      "step": {"api": "market.step", "kind": "method", "parameters": [], "returns": "OrderBook | None"},
-      "submit": {"api": "market.submit", "kind": "method", "parameters": [{"name": "order", "kind": "positional_or_keyword", "annotation": "Order"}], "returns": "list[Fill]"}
-    }},
-    {"path": "10-strategy-framework/exercises/exchange/strategy.py", "class": "Strategy", "members": {
-      "on_book_update": {"api": "strategy.on_book_update", "kind": "method", "parameters": [{"name": "book", "kind": "positional_or_keyword", "annotation": "OrderBook"}], "returns": "list[Action]"},
-      "on_fill": {"api": "strategy.on_fill", "kind": "method", "parameters": [{"name": "fill", "kind": "positional_or_keyword", "annotation": "Fill"}], "returns": "None"}
-    }},
-    {"path": "10-strategy-framework/exercises/exchange/backtest.py", "class": "Backtest", "members": {
-      "run": {"api": "backtest.run", "kind": "method", "parameters": [], "returns": "BacktestResult"}
-    }}
-  ]
+    {
+      "path": "06-oop-iii-inheritance/exercises/strategies_toy.py",
+      "class": "Strategy",
+      "members": {
+        "decide": {
+          "api": "toy_strategy.decide",
+          "kind": "method",
+          "parameters": [
+            {
+              "name": "imbalance",
+              "kind": "positional_or_keyword",
+              "annotation": "float"
+            }
+          ],
+          "returns": "str"
+        }
+      }
+    },
+    {
+      "path": "10-strategy-framework/exercises/exchange/market.py",
+      "class": "Market",
+      "members": {
+        "sample": {
+          "api": "market.sample",
+          "kind": "classmethod",
+          "parameters": [
+            {
+              "name": "symbol",
+              "kind": "positional_or_keyword",
+              "annotation": "str",
+              "default": "'BTCUSDT'"
+            },
+            {
+              "name": "depth",
+              "kind": "positional_or_keyword",
+              "annotation": "int",
+              "default": "10"
+            }
+          ],
+          "returns": "Market"
+        },
+        "snapshots": {
+          "api": "market.snapshots",
+          "kind": "property",
+          "parameters": [],
+          "returns": "list[dict]"
+        },
+        "step": {
+          "api": "market.step",
+          "kind": "method",
+          "parameters": [],
+          "returns": "OrderBook | None"
+        },
+        "submit": {
+          "api": "market.submit",
+          "kind": "method",
+          "parameters": [
+            {
+              "name": "order",
+              "kind": "positional_or_keyword",
+              "annotation": "Order"
+            }
+          ],
+          "returns": "list[Fill]"
+        },
+        "reset": {
+          "api": "market.reset",
+          "kind": "method",
+          "parameters": [],
+          "returns": "None"
+        }
+      }
+    },
+    {
+      "path": "10-strategy-framework/exercises/exchange/portfolio.py",
+      "class": "PositionTracker",
+      "members": {
+        "apply_fill": {
+          "api": "tracker.apply_fill",
+          "kind": "method",
+          "parameters": [
+            {
+              "name": "fill",
+              "kind": "positional_or_keyword",
+              "annotation": "Fill"
+            }
+          ],
+          "returns": "None"
+        },
+        "equity": {
+          "api": "tracker.equity",
+          "kind": "method",
+          "parameters": [
+            {
+              "name": "mark_price",
+              "kind": "positional_or_keyword",
+              "annotation": "float"
+            }
+          ],
+          "returns": "float"
+        }
+      }
+    },
+    {
+      "path": "10-strategy-framework/exercises/exchange/strategy.py",
+      "class": "NewOrder",
+      "members": {
+        "__init__": {
+          "api": "new_order.constructor",
+          "kind": "constructor",
+          "parameters": [
+            {
+              "name": "order",
+              "kind": "positional_or_keyword",
+              "annotation": "Order"
+            }
+          ],
+          "returns": "NewOrder"
+        }
+      }
+    },
+    {
+      "path": "10-strategy-framework/exercises/exchange/strategy.py",
+      "class": "Cancel",
+      "members": {
+        "__init__": {
+          "api": "cancel.constructor",
+          "kind": "constructor",
+          "parameters": [
+            {
+              "name": "order_id",
+              "kind": "positional_or_keyword",
+              "annotation": "int"
+            }
+          ],
+          "returns": "Cancel"
+        }
+      }
+    },
+    {
+      "path": "10-strategy-framework/exercises/exchange/strategy.py",
+      "class": "Strategy",
+      "members": {
+        "on_start": {
+          "api": "strategy.on_start",
+          "kind": "method",
+          "parameters": [
+            {
+              "name": "ctx",
+              "kind": "positional_or_keyword",
+              "annotation": "Context"
+            }
+          ],
+          "returns": "None"
+        },
+        "on_book_update": {
+          "api": "strategy.on_book_update",
+          "kind": "method",
+          "parameters": [
+            {
+              "name": "book",
+              "kind": "positional_or_keyword",
+              "annotation": "OrderBook"
+            }
+          ],
+          "returns": "list[Action]"
+        },
+        "on_fill": {
+          "api": "strategy.on_fill",
+          "kind": "method",
+          "parameters": [
+            {
+              "name": "fill",
+              "kind": "positional_or_keyword",
+              "annotation": "Fill"
+            }
+          ],
+          "returns": "None"
+        },
+        "on_end": {
+          "api": "strategy.on_end",
+          "kind": "method",
+          "parameters": [
+            {
+              "name": "ctx",
+              "kind": "positional_or_keyword",
+              "annotation": "Context"
+            }
+          ],
+          "returns": "None"
+        }
+      }
+    },
+    {
+      "path": "10-strategy-framework/exercises/exchange/backtest.py",
+      "class": "Backtest",
+      "members": {
+        "__init__": {
+          "api": "backtest.constructor",
+          "kind": "constructor",
+          "parameters": [
+            {
+              "name": "market",
+              "kind": "positional_or_keyword",
+              "annotation": "Market"
+            },
+            {
+              "name": "strategy",
+              "kind": "positional_or_keyword",
+              "annotation": "Strategy"
+            },
+            {
+              "name": "cash",
+              "kind": "positional_or_keyword",
+              "annotation": "float",
+              "default": "0.0"
+            }
+          ],
+          "returns": "Backtest"
+        },
+        "run": {
+          "api": "backtest.run",
+          "kind": "method",
+          "parameters": [],
+          "returns": "BacktestResult"
+        }
+      }
+    },
+    {
+      "path": "10-strategy-framework/exercises/exchange/backtest.py",
+      "class": "BacktestResult",
+      "members": {
+        "fills": {
+          "api": "backtest_result.fills",
+          "kind": "attribute",
+          "parameters": [],
+          "returns": "list[Fill]"
+        },
+        "equity_curve": {
+          "api": "backtest_result.equity_curve",
+          "kind": "attribute",
+          "parameters": [],
+          "returns": "list[float]"
+        },
+        "final_position": {
+          "api": "backtest_result.final_position",
+          "kind": "attribute",
+          "parameters": [],
+          "returns": "float"
+        },
+        "final_equity": {
+          "api": "backtest_result.final_equity",
+          "kind": "attribute",
+          "parameters": [],
+          "returns": "float"
+        },
+        "n_steps": {
+          "api": "backtest_result.n_steps",
+          "kind": "attribute",
+          "parameters": [],
+          "returns": "int"
+        },
+        "n_fills": {
+          "api": "backtest_result.n_fills",
+          "kind": "property",
+          "parameters": [],
+          "returns": "int"
+        }
+      }
+    }
+  ],
+  "symbol_checks": [
+    {
+      "path": "10-strategy-framework/exercises/exchange/strategy.py",
+      "symbol": "Strategy",
+      "api": "strategy.type",
+      "kind": "type",
+      "returns": "Strategy"
+    },
+    {
+      "path": "10-strategy-framework/exercises/exchange/strategy.py",
+      "symbol": "Action",
+      "api": "action.type",
+      "kind": "type_alias",
+      "returns": "NewOrder | Cancel"
+    },
+    {
+      "path": "10-strategy-framework/exercises/exchange/backtest.py",
+      "symbol": "BacktestResult",
+      "api": "backtest_result.type",
+      "kind": "type",
+      "returns": "BacktestResult"
+    }
+  ],
+  "used_later": {
+    "concepts": [
+      "architecture.execution_feedback",
+      "backtest.runner",
+      "framework.strategy_contract"
+    ],
+    "apis": [
+      "backtest.constructor",
+      "backtest.run",
+      "backtest_result.equity_curve",
+      "backtest_result.fills",
+      "backtest_result.final_equity",
+      "backtest_result.final_position",
+      "backtest_result.n_fills",
+      "backtest_result.n_steps",
+      "new_order.constructor",
+      "strategy.on_book_update",
+      "strategy.on_fill"
+    ],
+    "notation": []
+  }
 }
