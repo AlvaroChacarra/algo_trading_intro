@@ -47,6 +47,7 @@
   "text_audit": {
     "strict_paths": [
       "framework/_build/docs/01_body.html",
+      "framework/_build/docs/03_body.html",
       "framework/_build/docs/05_body.html",
       "framework/_build/docs/07_body.html",
       "framework/_build/docs/08_body.html",
@@ -57,6 +58,7 @@
       "framework/_build/lessons_engine.py",
       "framework/_build/lessons_docs.py",
       "framework/_build/custom/01_guion.md",
+      "framework/_build/custom/03_guion.md",
       "framework/_build/custom/05_guion.md",
       "framework/_build/custom/07_guion.md",
       "framework/_build/custom/08_guion.md"
@@ -69,7 +71,8 @@
       "# L9 — Primera estrategia + métricas",
       "framework de L8",
       "la cura empieza mañana",
-      "mañana te cambias de bando"
+      "mañana te cambias de bando",
+      "book.best_bid()"
     ]
   }
 }
