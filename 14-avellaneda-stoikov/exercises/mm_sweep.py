@@ -2,7 +2,7 @@
 # Ejecuta desde exercises/:  python mm_sweep.py
 
 from exchange.simulation import MMSimulation
-from exchange.strategies.market_maker import AvellanedaStoikov, MarketMaker
+from exchange.strategies import AvellanedaStoikov, MarketMaker
 
 
 def run(strategy):

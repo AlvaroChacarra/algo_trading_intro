@@ -39,4 +39,4 @@ El contenido se genera desde `framework/_build/` — para editar esta clase, edi
 
 ## Continuidad
 
-El paquete `exchange/` llega con lo construido hasta la clase anterior; hoy se añade la pieza nueva, que se convierte en el starter de la siguiente.
+El snapshot de `exchange/` declara exactamente la superficie disponible en L8. La lección construye su pieza sobre esa superficie; el snapshot siguiente conserva el estado acumulado sin presuponer que cada clase añada un módulo nuevo.

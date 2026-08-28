@@ -1,4 +1,4 @@
-# L12 — RFQ & Probabilidad de Cierre
+# Anexo independiente — RFQ & Probabilidad de Cierre
 
 ## Misión
 Dado un RFQ de renta fija, **¿cuánto spread debemos cotizar para maximizar el ingreso esperado?**
@@ -42,5 +42,7 @@ exercises/ (12 min en clase)
   E8–E10: visualización, 2 features, RFQModel class [bonus]
 ```
 
-## Continuidad con L13
-`s*` calculado en este ejercicio asume que cotizamos el mismo spread siempre. En L13 veremos que **el inventario acumulado** debería desplazar ese spread en tiempo real — la idea central del modelo Avellaneda-Stoikov.
+## Puente opcional al curso principal
+Este anexo no forma parte de la numeración L1–L15 ni de `KNOWN(n)`. Si se trabaja
+después del curso, `s*` asume un spread estático y contrasta con L14, donde
+Avellaneda–Stoikov desplaza las cotizaciones con inventario, riesgo y tiempo.

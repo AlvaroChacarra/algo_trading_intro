@@ -30,15 +30,16 @@ POO). `order_book.py` consolida las funciones + un `main` 1:1 con el núcleo.
 
 1. **Funciones que construyen datos** — Una función no solo calcula números: puede construir y devolver estructuras. `make_order(...)` te da un dict listo, sin repetir las llaves cada vez.
 2. **Un libro es una lista de órdenes** — Añadir y cancelar son funciones que reciben el libro y lo devuelven cambiado. Recorrer niveles te da spread, mid e imbalance.
-3. **El dolor que viene: estado compartido** — add_order, cancel, imbalance... todas reciben `book` como primer argumento y lo manosean. Eso es la señal de que `book` quiere ser un objeto con métodos. Eso es la clase 3.
+3. **El dolor que viene: estado compartido** — add_order, cancel, imbalance... todas reciben `book` como primer argumento y lo manosean. Eso es la señal de que `book` quiere ser un objeto con métodos. L3 lo vuelve módulo; L4 introduce objetos y L5 convierte el libro en uno.
+4. **Bucles compactos: comprensión y expresión generadora** — Una comprensión con corchetes construye una lista nueva. Una expresión generadora sin corchetes produce un valor cada vez para que max, min o sum lo consuman sin crear esa lista. En ambos casos se lee: expresión, por cada elemento, si cumple el filtro.
 
 ## Cuaderno de construcción
 
 Patrón por ejercicio: enunciado → starter (`pass`/`None`) → validador (`assert` con mensaje claro, tolerancia `1e-9`) → solución guiada embebida.
-Tiers: **Núcleo** = los primeros (en clase), **Si vamos bien** = el resto, **Auxiliares** = cuaderno `02_auxiliary.ipynb`.
+Clasificación: **LIVE / REQUIRED / OPTIONAL**, decidida en `pedagogy/exercise_routes.yml`. Auxiliares: `02_auxiliary.ipynb`.
 
 El contenido se genera desde `framework/_build/` — para editar esta clase, edita su spec y regenera con `build_course.py`. No edites a mano los notebooks.
 
 ## Continuidad
 
-Aún sin paquete: el código se construye en celdas del notebook. El vocabulario de hoy se convierte en los atributos de las clases en L4.
+Aún sin paquete: el código se construye en celdas del notebook. El vocabulario de L1-L3 se convierte en los atributos de las clases en L4.

@@ -2,9 +2,9 @@
 <nav id="rail" aria-label="Progreso">
   <a href="#s0" class="on"><span class="dot"></span><span class="lab">El reto</span></a>
   <a href="#s1"><span class="dot"></span><span class="lab">dict → clase</span></a>
-  <a href="#s2"><span class="dot"></span><span class="lab">Construye Order</span></a>
+  <a href="#s2"><span class="dot"></span><span class="lab">Construye OrderMini</span></a>
   <a href="#s3"><span class="dot"></span><span class="lab">El taller</span></a>
-  <a href="#s4"><span class="dot"></span><span class="lab">Fill y el dinero</span></a>
+  <a href="#s4"><span class="dot"></span><span class="lab">FillMini y el dinero</span></a>
   <a href="#s5"><span class="dot"></span><span class="lab">Quiz</span></a>
   <a href="#s6"><span class="dot"></span><span class="lab">El puente</span></a>
 </nav>
@@ -27,7 +27,8 @@
     <p>¿Y si la orden <strong>supiera calcular su propio nocional</strong>?
     <code>order.notional()</code> — el dato y su comportamiento, en la misma pieza.</p>
     <p>Eso es una <strong>clase</strong>. Hoy nacen los dos primeros objetos del proyecto:
-    <code>Order</code> y <code>Fill</code> — la intención y el hecho consumado.</p>
+    <code>OrderMini</code> y <code>FillMini</code> — nombres didácticos que no se confunden
+    con las firmas públicas estables del paquete.</p>
   </div>
 
   <div class="meta">
@@ -44,7 +45,7 @@
     <div class="eyebrow">§1 · <b>La idea central</b></div>
     <h2>La metamorfosis: de dict a clase</h2>
     <p class="lede">Sigue bajando: el panel transforma el dict de la portada en un objeto
-    <code>Order</code> completo, pieza a pieza.</p>
+    <code>OrderMini</code> completo, pieza a pieza.</p>
   </div>
 
   <div class="scrolly" data-scrolly>
@@ -56,7 +57,7 @@
         <strong>Nadie es responsable de nada.</strong></p>
       </div></div>
       <div class="step" data-stage="1" data-name="class + __init__"><div class="step-inner">
-        <h3><span class="n">1/5</span><code>class Order</code> y su <code>__init__</code></h3>
+        <h3><span class="n">1/5</span><code>class OrderMini</code> y su <code>__init__</code></h3>
         <p>La clase es el <strong>molde</strong>. <code>__init__</code> es lo que ocurre al
         fabricar cada pieza: recibe los campos y los guarda. ¿Te suena? Es tu
         <code>make_order</code> de L2, ascendida.</p>
@@ -75,20 +76,20 @@
       </div></div>
       <div class="step" data-stage="4" data-name="__repr__"><div class="step-inner">
         <h3><span class="n">4/5</span><code>__repr__</code>: que sepa presentarse</h3>
-        <p>Sin él, <code>print(order)</code> escupe <code>&lt;Order object at 0x7f…&gt;</code>.
+        <p>Sin él, <code>print(order)</code> escupe <code>&lt;OrderMini object at 0x7f…&gt;</code>.
         Con él, el objeto se describe como tú decidas. Cinco minutos que te ahorran horas
         de debugging.</p>
       </div></div>
-      <div class="step" data-stage="5" data-name="Fill"><div class="step-inner">
-        <h3><span class="n">5/5</span><code>Fill</code>: el hecho consumado</h3>
-        <p>Una <code>Order</code> es una <em>intención</em>; un <code>Fill</code> es una
+      <div class="step" data-stage="5" data-name="FillMini"><div class="step-inner">
+        <h3><span class="n">5/5</span><code>FillMini</code>: el hecho consumado</h3>
+        <p>Una <code>OrderMini</code> es una <em>intención</em>; un <code>FillMini</code> es una
         ejecución <em>real</em>: movió dinero. Su método <code>cash_flow()</code> lleva el
         signo: comprar <strong>drena</strong> caja, vender la <strong>llena</strong>.</p>
       </div></div>
     </div>
 
     <div class="figwrap"><div class="fig">
-      <div class="fig-head"><span>dict → objeto Order</span><span class="stage-name">separados</span></div>
+      <div class="fig-head"><span>dict → objeto OrderMini</span><span class="stage-name">separados</span></div>
       <div class="fig-stage on" data-stage="0">
         <pre style="font-family:var(--mono);font-size:.76rem;line-height:1.9;margin:6px 0 0">
 <span style="color:var(--muted)">order = {'side': 'buy', …}</span>      <span class="c">← estado</span>
@@ -102,24 +103,25 @@
       </div>
       <div class="fig-stage" data-stage="1">
         <pre style="font-family:var(--mono);font-size:.78rem;line-height:1.95;margin:6px 0 0">
-<span class="k">class</span> <span style="color:var(--num)">Order</span>:
-    <span class="k">def</span> <span class="fn">__init__</span>(self, side, price, size):
+<span class="k">class</span> <span style="color:var(--num)">OrderMini</span>:
+    <span class="k">def</span> <span class="fn">__init__</span>(self, symbol, side, price, size):
+        self.symbol = symbol
         self.side  = side
         self.price = price
         self.size  = size
 
-order = Order(<span class="s">'buy'</span>, <span class="num">99950</span>, <span class="num">0.5</span>)</pre>
+order = OrderMini(<span class="s">'BTCUSDT'</span>, <span class="s">'buy'</span>, <span class="num">99950</span>, <span class="num">0.5</span>)</pre>
         <div><span class="concept-chip">estado del objeto</span></div>
         <p style="color:var(--faint);font-size:.8rem;margin-top:14px">el molde + la
         fabricación de una pieza</p>
       </div>
       <div class="fig-stage" data-stage="2">
         <div class="dictgrid" style="grid-template-columns:1fr 1fr;gap:12px;margin:6px 0 0">
-          <div class="ordercard"><div class="oc-head">o1 = Order('buy', 99950, 0.5)</div>
+          <div class="ordercard"><div class="oc-head">o1 = OrderMini('BTCUSDT', 'buy', 99950, 0.5)</div>
             <div class="oc-row"><span class="kk">self.side</span><span class="vv" style="color:var(--bid)">buy</span></div>
             <div class="oc-row"><span class="kk">self.price</span><span class="vv">99950</span></div>
           </div>
-          <div class="ordercard"><div class="oc-head">o2 = Order('sell', 100010, 0.2)</div>
+          <div class="ordercard"><div class="oc-head">o2 = OrderMini('BTCUSDT', 'sell', 100010, 0.2)</div>
             <div class="oc-row"><span class="kk">self.side</span><span class="vv" style="color:var(--ask)">sell</span></div>
             <div class="oc-row"><span class="kk">self.price</span><span class="vv">100010</span></div>
           </div>
@@ -129,7 +131,7 @@ order = Order(<span class="s">'buy'</span>, <span class="num">99950</span>, <spa
       </div>
       <div class="fig-stage" data-stage="3">
         <pre style="font-family:var(--mono);font-size:.78rem;line-height:1.95;margin:6px 0 0">
-<span class="k">class</span> <span style="color:var(--num)">Order</span>:
+<span class="k">class</span> <span style="color:var(--num)">OrderMini</span>:
     …
     <span class="k">def</span> <span class="fn">notional</span>(self):
         <span class="k">return</span> self.price * self.size
@@ -141,17 +143,17 @@ order.notional()   <span class="c"># 49975.0</span></pre>
       <div class="fig-stage" data-stage="4">
         <pre style="font-family:var(--mono);font-size:.76rem;line-height:1.95;margin:6px 0 0">
 <span class="c"># sin __repr__:</span>
-<span style="color:var(--ask)">&lt;__main__.Order object at 0x7f3a…&gt;</span>
+<span style="color:var(--ask)">&lt;__main__.OrderMini object at 0x7f3a…&gt;</span>
 
 <span class="k">def</span> <span class="fn">__repr__</span>(self):
-    <span class="k">return</span> f<span class="s">"Order({self.side} {self.size} @ {self.price})"</span>
+    <span class="k">return</span> f<span class="s">"OrderMini({self.side} {self.size} @ {self.price})"</span>
 
 <span class="c"># con __repr__:</span>
-<span style="color:var(--bid)">Order(buy 0.5 @ 99950)</span></pre>
+<span style="color:var(--bid)">OrderMini(buy 0.5 @ 99950)</span></pre>
       </div>
       <div class="fig-stage" data-stage="5">
         <pre style="font-family:var(--mono);font-size:.78rem;line-height:1.95;margin:6px 0 0">
-<span class="k">class</span> <span style="color:var(--num)">Fill</span>:
+<span class="k">class</span> <span style="color:var(--num)">FillMini</span>:
     <span class="k">def</span> <span class="fn">cash_flow</span>(self):
         <span class="k">if</span> self.side == <span class="s">'buy'</span>:
             <span class="k">return</span> -self.price * self.size
@@ -173,7 +175,7 @@ order.notional()   <span class="c"># 49975.0</span></pre>
 
     <div class="code">
       <div class="code-head"><span>orders.py — la primera clase del paquete</span><span>python</span></div>
-      <pre><span class="ln"><span class="k">class</span> Order:</span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, side, price, size):</span><span class="ln">        self.side = side</span><span class="ln">        self.price = price</span><span class="ln">        self.size = size</span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">notional</span>(self):</span><span class="ln">        <span class="k">return</span> self.price * self.size</span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">__repr__</span>(self):</span><span class="ln">        <span class="k">return</span> f<span class="s">"Order({self.side} {self.size} @ {self.price})"</span></span><span class="ln"></span><span class="ln">order = Order(<span class="s">'buy'</span>, <span class="num">99950</span>, <span class="num">0.5</span>)</span><span class="ln"><span class="fn">print</span>(order.notional())</span></pre>
+      <pre><span class="ln"><span class="k">class</span> OrderMini:</span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, symbol, side, price, size):</span><span class="ln">        self.symbol = symbol</span><span class="ln">        self.side = side</span><span class="ln">        self.price = price</span><span class="ln">        self.size = size</span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">notional</span>(self):</span><span class="ln">        <span class="k">return</span> self.price * self.size</span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">__repr__</span>(self):</span><span class="ln">        <span class="k">return</span> f<span class="s">"OrderMini({self.side} {self.size} {self.symbol} @ {self.price})"</span></span><span class="ln"></span><span class="ln">order = OrderMini(<span class="s">'BTCUSDT'</span>, <span class="s">'buy'</span>, <span class="num">99950</span>, <span class="num">0.5</span>)</span><span class="ln"><span class="fn">print</span>(order.notional())</span></pre>
       <div class="predict predictgate" style="margin:0;border-radius:0;border-left:none;border-right:none;border-bottom:none">
         <div class="tag">Predice antes de ejecutar</div>
         <p style="margin:.2em 0 .8em;font-size:.94rem">¿Qué imprime exactamente la última
@@ -188,7 +190,7 @@ order.notional()   <span class="c"># 49975.0</span></pre>
     </div>
 
     <div class="note"><span class="tag">Traduce mentalmente</span>
-    <code>order.notional()</code> es azúcar para <code>Order.notional(order)</code>: Python
+    <code>order.notional()</code> es azúcar para <code>OrderMini.notional(order)</code>: Python
     mete el objeto como <code>self</code> por ti. No hay magia — hay un convenio.</div>
   </div>
 </section>
@@ -202,7 +204,7 @@ order.notional()   <span class="c"># 49975.0</span></pre>
     los métodos — y qué pasa con el dinero si esa orden se ejecutara ahora mismo.</p>
 
     <div class="simcard">
-      <h4>simulador · Order(side, price, size) → métodos</h4>
+      <h4>simulador · OrderMini(symbol, side, price, size) → métodos</h4>
       <div class="simrow">
         <div class="toggle" role="group" aria-label="side">
           <button class="on" id="ow-buy">buy</button>
@@ -214,7 +216,7 @@ order.notional()   <span class="c"># 49975.0</span></pre>
       <div class="statgrid">
         <div><span>repr(order)</span><b id="ow-repr" style="font-size:.85rem"></b></div>
         <div><span>order.notional()</span><b id="ow-not"></b></div>
-        <div><span>Fill equivalente · cash_flow()</span><b id="ow-cf"></b></div>
+        <div><span>FillMini equivalente · cash_flow()</span><b id="ow-cf"></b></div>
       </div>
       <div class="looplog" id="ow-log"></div>
     </div>
@@ -236,7 +238,7 @@ order.notional()   <span class="c"># 49975.0</span></pre>
 
     <div class="code">
       <div class="code-head"><span>trades.py</span><span>python</span></div>
-      <pre><span class="ln"><span class="k">class</span> Fill:</span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, side, price, size):</span><span class="ln">        self.side = side</span><span class="ln">        self.price = price</span><span class="ln">        self.size = size</span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">cash_flow</span>(self):</span><span class="ln">        <span class="k">if</span> self.side == <span class="s">'buy'</span>:</span><span class="ln">            <span class="k">return</span> -self.price * self.size</span><span class="ln">        <span class="k">return</span> self.price * self.size</span><span class="ln"></span><span class="ln">fills = [Fill(<span class="s">'buy'</span>, <span class="num">99950</span>, <span class="num">0.5</span>), Fill(<span class="s">'sell'</span>, <span class="num">100050</span>, <span class="num">0.5</span>)]</span><span class="ln"><span class="fn">print</span>(<span class="fn">sum</span>(f.cash_flow() <span class="k">for</span> f <span class="k">in</span> fills))</span></pre>
+      <pre><span class="ln"><span class="k">class</span> FillMini:</span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, symbol, side, price, size):</span><span class="ln">        self.symbol = symbol</span><span class="ln">        self.side = side</span><span class="ln">        self.price = price</span><span class="ln">        self.size = size</span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">cash_flow</span>(self):</span><span class="ln">        <span class="k">if</span> self.side == <span class="s">'buy'</span>:</span><span class="ln">            <span class="k">return</span> -self.price * self.size</span><span class="ln">        <span class="k">return</span> self.price * self.size</span><span class="ln"></span><span class="ln">fills = [FillMini(<span class="s">'BTCUSDT'</span>, <span class="s">'buy'</span>, <span class="num">99950</span>, <span class="num">0.5</span>), FillMini(<span class="s">'BTCUSDT'</span>, <span class="s">'sell'</span>, <span class="num">100050</span>, <span class="num">0.5</span>)]</span><span class="ln"><span class="fn">print</span>(<span class="fn">sum</span>(f.cash_flow() <span class="k">for</span> f <span class="k">in</span> fills))</span></pre>
       <div class="out"><div class="btnrow" style="margin:0"><button class="btn runbtn" data-target="out-cf">▶ Ejecutar</button></div>
         <div id="out-cf" class="hidden" style="margin-top:10px"><div><span class="prompt">&gt;&gt;&gt; </span><span class="val">50.0</span><span style="color:var(--faint)">   # compraste a 99950, vendiste a 100050: +50 de PnL realizado</span></div></div>
       </div>
@@ -264,12 +266,12 @@ order.notional()   <span class="c"># 49975.0</span></pre>
       <div class="q" data-ok="0">
         <div class="qt"><code>__init__</code> se ejecuta…</div>
         <div class="opts">
-          <button class="opt">A · Al crear cada objeto: Order(…)</button>
+          <button class="opt">A · Al crear cada objeto: OrderMini(…)</button>
           <button class="opt">B · Al definir la clase</button>
           <button class="opt">C · Al llamar a cualquier método</button>
         </div>
         <div class="why">Es el momento de fabricación: una vez por objeto, cuando escribes
-        <code>Order('buy', 99950, 0.5)</code>.</div>
+        <code>OrderMini('BTCUSDT', 'buy', 99950, 0.5)</code>.</div>
       </div>
       <div class="q" data-ok="1">
         <div class="qt">¿Atributo o método? <code>order.price</code> y <code>order.notional()</code>…</div>
@@ -289,11 +291,11 @@ order.notional()   <span class="c"># 49975.0</span></pre>
           <button class="opt">C · Es obligatorio en toda clase</button>
         </div>
         <div class="why">Es puro quality-of-life: cuando tengas 50 órdenes en un backtest,
-        leer <code>Order(buy 0.5 @ 99950)</code> en vez de <code>0x7f3a…</code> no tiene
+        leer <code>OrderMini(buy 0.5 @ 99950)</code> en vez de <code>0x7f3a…</code> no tiene
         precio.</div>
       </div>
       <div class="q" data-ok="2">
-        <div class="qt"><code>Fill('sell', 100000, 0.5).cash_flow()</code> devuelve…</div>
+        <div class="qt"><code>FillMini('BTCUSDT', 'sell', 100000, 0.5).cash_flow()</code> devuelve…</div>
         <div class="opts">
           <button class="opt">A · −50000.0 — ejecutar siempre cuesta dinero</button>
           <button class="opt">B · 0.5 — el tamaño ejecutado</button>
@@ -312,6 +314,18 @@ order.notional()   <span class="c"># 49975.0</span></pre>
   <div class="wrap">
     <div class="eyebrow">§6 · <b>El puente</b></div>
     <h2>Dónde estás en el proyecto</h2>
+    <div class="note"><span class="tag">Migración explícita a la API estable</span>
+      La versión didáctica separa la idea de clase de los detalles del motor:
+      el paquete añade id, enums y tipos de orden. La tabla evita un cambio silencioso:
+      <table style="width:100%;margin-top:12px;border-collapse:collapse;font-size:.82rem">
+        <thead><tr><th style="text-align:left;padding:6px">Maqueta de L4</th><th style="text-align:left;padding:6px">API estable de <code>exchange</code></th></tr></thead>
+        <tbody>
+          <tr><td style="padding:6px"><code>OrderMini(symbol, side, price, size)</code></td><td style="padding:6px"><code>Order(symbol, side, size, price=...)</code></td></tr>
+          <tr><td style="padding:6px"><code>FillMini(symbol, side, price, size)</code></td><td style="padding:6px"><code>Fill(order_id, symbol, side, price, size)</code></td></tr>
+        </tbody>
+      </table>
+      Desde este punto, las firmas de <code>exchange.Order</code> y
+      <code>exchange.Fill</code> permanecen estables.</div>
     <div class="pkgmap">
       <div class="pk done">L1 · el dato<span>variables, dicts, decisiones</span></div>
       <div class="pk done">L2 · book funcional<span>funciones sobre el libro</span></div>
@@ -319,26 +333,25 @@ order.notional()   <span class="c"># 49975.0</span></pre>
       <div class="pk today">L4 · Order y Fill<span>exchange/orders.py · trades.py</span></div>
       <div class="pk future">L5 · OrderBook + Tracker<span>exchange/book.py</span></div>
       <div class="pk future">L6 · familia Strategy<span>herencia</span></div>
-      <div class="pk future">L7-9 · el motor<span>matching, market</span></div>
-      <div class="pk future">L10-11 · el framework<span>Strategy + Backtest</span></div>
-      <div class="pk future">L12-14 · estrategias<span>VWAP, market making</span></div>
+      <div class="pk future">L7-10 · motor y framework<span>matching, Market, Strategy, Backtest</span></div>
+      <div class="pk future">L11-14 · estrategias<span>métricas, VWAP, market making</span></div>
     </div>
 
     <div class="bridge">
       <div class="tag">El puente a L5</div>
       <p style="margin:.2em 0"><strong>Ya sabes fabricar órdenes. ¿Y ahora qué haces con ellas?</strong></p>
-      <p>Tienes <code>Order</code>s sueltas por la memoria, igual que en L2 tenías variables
+      <p>Tienes objetos <code>Order</code> sueltos por la memoria, igual que en L2 tenías variables
       sueltas. Falta el objeto que las <strong>contiene</strong> (un libro hecho de niveles)
-      y el que <strong>lleva la cuenta</strong> cuando los Fills empiezan a caer: caja,
+      y el que <strong>lleva la cuenta</strong> cuando los <code>Fill</code> empiezan a caer: caja,
       posición, equity.</p>
       <p style="margin-bottom:0">Composición y encapsulación: <code>OrderBook</code> y
-      <code>PositionTracker</code>. Próxima clase.</p>
+      <code>PositionTracker</code>. Esa limitación abre L5.</p>
     </div>
 
     <div class="cta">
       <div class="box"><span class="tag">Ahora te toca construir</span>
-      Abre <code>04_build_exercises.ipynb</code> y escribe <code>Order</code> y
-      <code>Fill</code> con sus validadores.</div>
+      Abre <code>04_build_exercises.ipynb</code> y escribe <code>OrderMini</code> y
+      <code>FillMini</code>; después compara sus firmas con las del paquete.</div>
       <div class="box"><span class="tag">Y después, al gimnasio</span>
       <code>04_auxiliary.ipynb</code> — drills de clases: moldes, self, __repr__ y el
       signo del dinero.</div>

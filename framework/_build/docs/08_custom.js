@@ -32,7 +32,8 @@ def process(self, order, book, timestamp=None):
     remaining = order.size
     for level in opposite:
         take = min(remaining, level.size)
-<span class="active-line">        book.reduce(order.side.opposite,</span>
+<span class="active-line">        consumed_side = Side.SELL if order.side is Side.BUY else Side.BUY</span>
+<span class="active-line">        book.reduce(consumed_side,</span>
 <span class="active-line">                    level.price, take)</span>
         remaining -= take
     if order.order_type is OrderType.FOK and remaining &gt; _EPS:
@@ -64,7 +65,8 @@ def process(self, order, book, timestamp=None):
     ...  # SELECT + PLAN + VALIDATE
 <span class="active-line">    fills = []</span>
 <span class="active-line">    for price, take in planned:</span>
-<span class="active-line">        book.reduce(order.side.opposite, price, take)</span>
+<span class="active-line">        consumed_side = Side.SELL if order.side is Side.BUY else Side.BUY</span>
+<span class="active-line">        book.reduce(consumed_side, price, take)</span>
 <span class="active-line">        fills.append(Fill(order.id, order.symbol,</span>
 <span class="active-line">                          order.side, price, take, timestamp))</span>`,
 `def process(self, order, book, timestamp=None):

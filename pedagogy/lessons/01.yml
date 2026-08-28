@@ -1,55 +1,354 @@
 {
   "lesson": 1,
-  "status": "pilot",
-  "title": "Python I — El modelo de datos",
+  "status": "contract-strict",
+  "title": "Python I — Dato, cálculo y decisión",
   "delivery": "lesson",
   "source_path": "framework/_build/docs/01_body.html",
-  "requires": {"concepts": [], "apis": []},
+  "requires": {
+    "concepts": [],
+    "apis": [],
+    "notation": []
+  },
+  "requirement_routes": {
+    "concepts": {},
+    "apis": {},
+    "notation": {}
+  },
   "introduces": {
     "concepts": [
-      {"id": "python.execution_model", "importance": "major"},
-      {"id": "python.variables", "importance": "major"},
-      {"id": "python.collections", "importance": "major"},
-      {"id": "python.control_flow", "importance": "major"}
+      {
+        "id": "python.execution_model",
+        "importance": "major",
+        "route": "LIVE"
+      },
+      {
+        "id": "python.variables",
+        "importance": "major",
+        "route": "LIVE"
+      },
+      {
+        "id": "python.collections",
+        "importance": "major",
+        "route": "LIVE"
+      },
+      {
+        "id": "python.list",
+        "importance": "major",
+        "route": "LIVE"
+      },
+      {
+        "id": "python.dict",
+        "importance": "major",
+        "route": "LIVE"
+      },
+      {
+        "id": "python.fstring",
+        "importance": "supporting",
+        "route": "REQUIRED"
+      },
+      {
+        "id": "python.dict_get",
+        "importance": "supporting",
+        "route": "REQUIRED"
+      },
+      {
+        "id": "python.control_flow",
+        "importance": "major",
+        "route": "LIVE"
+      },
+      {
+        "id": "market.order_record",
+        "importance": "supporting",
+        "route": "LIVE"
+      },
+      {
+        "id": "microstructure.spread",
+        "importance": "major",
+        "route": "LIVE"
+      },
+      {
+        "id": "microstructure.mid",
+        "importance": "major",
+        "route": "LIVE"
+      }
     ],
-    "apis": []
+    "apis": [],
+    "notation": [
+      "notation.spread",
+      "notation.mid"
+    ]
+  },
+  "introduction_routes": {
+    "apis": {},
+    "notation": {
+      "notation.spread": "LIVE",
+      "notation.mid": "LIVE"
+    }
   },
   "recalls": [],
   "api_surface": [],
   "routes": {
-    "LIVE": ["l01-challenge", "l01-execution", "l01-variables", "l01-loops", "l01-order-data", "l01-decision"],
-    "REQUIRED": ["l01-errors", "l01-recap"],
+    "LIVE": [
+      "l01-challenge",
+      "l01-execution",
+      "l01-variables",
+      "l01-loops",
+      "l01-order-data",
+      "l01-decision"
+    ],
+    "REQUIRED": [
+      "l01-errors",
+      "l01-recap"
+    ],
     "OPTIONAL": []
   },
   "objectives": [
-    {"id": "l01-explain-execution", "route": "LIVE", "concepts": ["python.execution_model"]},
-    {"id": "l01-model-market-data", "route": "LIVE", "concepts": ["python.variables", "python.collections"]},
-    {"id": "l01-turn-data-into-decision", "route": "LIVE", "concepts": ["python.control_flow"]},
-    {"id": "l01-read-basic-errors", "route": "REQUIRED", "concepts": ["python.execution_model"]}
+    {
+      "id": "l01-explain-execution",
+      "route": "LIVE",
+      "concepts": [
+        "python.execution_model"
+      ],
+      "apis": [],
+      "notation": []
+    },
+    {
+      "id": "l01-model-market-data",
+      "route": "LIVE",
+      "concepts": [
+        "python.variables",
+        "python.list",
+        "python.dict",
+        "market.order_record"
+      ],
+      "apis": [],
+      "notation": [
+        "notation.spread",
+        "notation.mid"
+      ]
+    },
+    {
+      "id": "l01-turn-data-into-decision",
+      "route": "LIVE",
+      "concepts": [
+        "python.control_flow",
+        "microstructure.spread",
+        "microstructure.mid"
+      ],
+      "apis": [],
+      "notation": []
+    }
   ],
   "load": {
     "live_presentation_minutes": 20,
     "guided_minutes": 20,
-    "required_autonomous_minutes": 35,
-    "optional_minutes": 5,
-    "overflow_policy": "intentional"
+    "required_autonomous_minutes": 58,
+    "optional_minutes": 44,
+    "overflow_policy": "explicit-route-plan"
   },
   "scenes": [
-    {"id": "l01-challenge", "dom_id": "s0", "type": "hero-challenge", "route": "LIVE", "layout": "focus", "concepts": ["python.execution_model"], "duration_minutes": 2, "stages": [{"id": "challenge", "route": "LIVE"}]},
-    {"id": "l01-execution", "dom_id": "s1", "type": "concept-simulator", "route": "LIVE", "layout": "split-42-58", "concepts": ["python.execution_model"], "duration_minutes": 5, "stages": [
-      {"id": "source", "dom_stage": 0, "route": "LIVE"},
-      {"id": "tokens", "dom_stage": 1, "route": "LIVE"},
-      {"id": "ast", "dom_stage": 2, "route": "LIVE"},
-      {"id": "bytecode", "dom_stage": 3, "route": "LIVE"},
-      {"id": "vm", "dom_stage": 4, "route": "LIVE"},
-      {"id": "machine-code", "dom_stage": 5, "route": "OPTIONAL"}
-    ]},
-    {"id": "l01-variables", "dom_id": "s2", "type": "code-state", "route": "LIVE", "layout": "split-50-50", "concepts": ["python.variables"], "duration_minutes": 3, "stages": [{"id": "variables", "route": "LIVE"}]},
-    {"id": "l01-loops", "dom_id": "s3", "type": "code-state", "route": "LIVE", "layout": "split-50-50", "concepts": ["python.collections", "python.control_flow"], "duration_minutes": 3, "stages": [{"id": "loop", "route": "LIVE"}]},
-    {"id": "l01-order-data", "dom_id": "s4", "type": "code-state", "route": "LIVE", "layout": "split-50-50", "concepts": ["python.collections"], "duration_minutes": 3, "stages": [{"id": "dict", "route": "LIVE"}]},
-    {"id": "l01-decision", "dom_id": "s5", "type": "guided-exercise", "route": "LIVE", "layout": "split-50-50", "concepts": ["python.control_flow"], "duration_minutes": 3, "stages": [{"id": "decision", "route": "LIVE"}]},
-    {"id": "l01-errors", "dom_id": "s6", "type": "guided-exercise", "route": "REQUIRED", "layout": "focus", "concepts": ["python.execution_model"], "duration_minutes": 10, "stages": [{"id": "errors", "route": "REQUIRED"}]},
-    {"id": "l01-recap", "dom_id": "s7", "type": "recap", "route": "REQUIRED", "layout": "focus", "concepts": ["python.variables", "python.collections", "python.control_flow"], "duration_minutes": 10, "stages": [{"id": "recap", "route": "REQUIRED"}]}
+    {
+      "id": "l01-challenge",
+      "dom_id": "s0",
+      "type": "hero-challenge",
+      "route": "LIVE",
+      "layout": "focus",
+      "concepts": [
+        "market.order_record"
+      ],
+      "duration_minutes": 2,
+      "stages": [
+        {
+          "id": "main",
+          "route": "LIVE"
+        }
+      ]
+    },
+    {
+      "id": "l01-execution",
+      "dom_id": "s1",
+      "type": "concept-simulator",
+      "route": "LIVE",
+      "layout": "split-42-58",
+      "concepts": [
+        "python.execution_model"
+      ],
+      "duration_minutes": 5,
+      "stages": [
+        {
+          "id": "source",
+          "route": "LIVE",
+          "dom_stage": 0
+        },
+        {
+          "id": "tokens",
+          "route": "LIVE",
+          "dom_stage": 1
+        },
+        {
+          "id": "ast",
+          "route": "LIVE",
+          "dom_stage": 2
+        },
+        {
+          "id": "bytecode",
+          "route": "LIVE",
+          "dom_stage": 3
+        },
+        {
+          "id": "vm",
+          "route": "LIVE",
+          "dom_stage": 4
+        },
+        {
+          "id": "machine-code",
+          "route": "OPTIONAL",
+          "dom_stage": 5
+        }
+      ]
+    },
+    {
+      "id": "l01-variables",
+      "dom_id": "s2",
+      "type": "code-state",
+      "route": "LIVE",
+      "layout": "split-50-50",
+      "concepts": [
+        "python.variables"
+      ],
+      "duration_minutes": 3,
+      "stages": [
+        {
+          "id": "main",
+          "route": "LIVE"
+        }
+      ]
+    },
+    {
+      "id": "l01-loops",
+      "dom_id": "s3",
+      "type": "code-state",
+      "route": "LIVE",
+      "layout": "split-50-50",
+      "concepts": [
+        "python.list",
+        "python.control_flow"
+      ],
+      "duration_minutes": 3,
+      "stages": [
+        {
+          "id": "main",
+          "route": "LIVE"
+        }
+      ]
+    },
+    {
+      "id": "l01-order-data",
+      "dom_id": "s4",
+      "type": "code-state",
+      "route": "LIVE",
+      "layout": "split-50-50",
+      "concepts": [
+        "python.dict",
+        "market.order_record"
+      ],
+      "duration_minutes": 3,
+      "stages": [
+        {
+          "id": "main",
+          "route": "LIVE"
+        }
+      ]
+    },
+    {
+      "id": "l01-decision",
+      "dom_id": "s5",
+      "type": "guided-exercise",
+      "route": "LIVE",
+      "layout": "split-50-50",
+      "concepts": [
+        "microstructure.spread",
+        "microstructure.mid",
+        "python.control_flow"
+      ],
+      "duration_minutes": 4,
+      "stages": [
+        {
+          "id": "main",
+          "route": "LIVE"
+        }
+      ]
+    },
+    {
+      "id": "l01-errors",
+      "dom_id": "s6",
+      "type": "guided-exercise",
+      "route": "REQUIRED",
+      "layout": "focus",
+      "concepts": [
+        "python.execution_model"
+      ],
+      "duration_minutes": 10,
+      "stages": [
+        {
+          "id": "main",
+          "route": "REQUIRED"
+        }
+      ]
+    },
+    {
+      "id": "l01-recap",
+      "dom_id": "s7",
+      "type": "diagnostic-quiz",
+      "route": "REQUIRED",
+      "layout": "focus",
+      "concepts": [
+        "python.variables",
+        "python.collections",
+        "python.control_flow"
+      ],
+      "duration_minutes": 10,
+      "stages": [
+        {
+          "id": "main",
+          "route": "REQUIRED"
+        }
+      ]
+    }
   ],
-  "package_checks": []
+  "bridge": {
+    "target_lesson": 2,
+    "known": {
+      "concepts": [
+        "python.variables",
+        "python.collections",
+        "python.control_flow"
+      ],
+      "apis": [],
+      "notation": [
+        "notation.spread",
+        "notation.mid"
+      ]
+    },
+    "limitation": "Un segundo símbolo duplica datos y cálculos.",
+    "need": "Las funciones y un único book compartido convierten la repetición en recetas reutilizables."
+  },
+  "api_transitions": [],
+  "package_checks": [],
+  "used_later": {
+    "concepts": [
+      "microstructure.mid",
+      "microstructure.spread",
+      "python.collections",
+      "python.control_flow",
+      "python.dict_get",
+      "python.fstring",
+      "python.variables"
+    ],
+    "apis": [],
+    "notation": [
+      "notation.mid",
+      "notation.spread"
+    ]
+  }
 }

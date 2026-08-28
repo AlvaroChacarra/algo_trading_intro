@@ -10,7 +10,7 @@
 <header class="hero wrap" id="s0">
   <div class="eyebrow"><b>Algo Trading · ICAI 2026</b> &nbsp;·&nbsp; L14 · Avellaneda-Stoikov &nbsp;·&nbsp; documento interactivo</div>
   <h1>El skew <em>óptimo</em></h1>
-  <p class="lede">Ayer domaste el inventario con un número a ojo. Hoy, la versión con
+  <p class="lede">En L13 domaste el inventario con un número a ojo. Ahora llega la versión con
   apellidos: <strong>Avellaneda &amp; Stoikov (2008)</strong> plantearon "¿dónde cotizo
   para maximizar mi utilidad, con miedo γ, volatilidad σ y tiempo restante τ?" — y lo
   resolvieron. Dos fórmulas. Hoy entiendes qué dice cada letra… tocándolas.</p>
@@ -37,7 +37,7 @@
     <div class="eyebrow">§1 · <b>La idea central</b></div>
     <h2>Dos fórmulas, cuatro letras</h2>
     <p class="lede">Sigue bajando: el panel desmonta el modelo símbolo a símbolo y lo
-    termina midiendo contra el naive de ayer.</p>
+    termina midiendo contra el naive de L13.</p>
   </div>
 
   <div class="scrolly" data-scrolly>
@@ -53,7 +53,7 @@
       <div class="step" data-stage="1" data-name="reservation"><div class="step-inner">
         <h3><span class="n">1/4</span>El centro: reservation price</h3>
         <p><code>r = mid − q·γ·σ²·τ</code></p>
-        <p>El skew de ayer, con física dentro: te alejas del mid proporcional a tu
+        <p>El skew de L13, con física dentro: te alejas del mid proporcional a tu
         inventario (q), tu miedo (γ), lo que se mueve el mundo (σ²) y el tiempo que queda
         para sufrirlo (τ). Cuatro sensores en lugar de un número mágico.</p>
       </div></div>
@@ -67,13 +67,14 @@
       <div class="step" data-stage="3" data-name="tau"><div class="step-inner">
         <h3><span class="n">3/4</span>El reloj: τ → 0</h3>
         <p>Al acercarse el cierre, τ se apaga y con él el término de inventario: el
-        modelo cotiza cada vez más pegado al mid y más simétrico. Traducción:
-        <strong>"suelta el inventario, que se acaba el partido"</strong>. Ninguna
-        heurística a ojo te da ese comportamiento gratis.</p>
+        centro vuelve al mid y las quotes quedan simétricas. <strong>Eso no liquida ni
+        garantiza q=0</strong>: este simulador didáctico necesita una política terminal
+        separada si quieres imponer quedar plano. Aquí τ apaga el ajuste; no vende el
+        inventario por arte de magia.</p>
       </div></div>
       <div class="step" data-stage="4" data-name="A-S vs naive"><div class="step-inner">
         <h3><span class="n">4/4</span>El duelo, medido</h3>
-        <p>Misma semilla, mismo mercado que ayer: el A-S (γ=0.5) acaba con
+        <p>Misma semilla, mismo mercado que en L13: el A-S (γ=0.5) acaba con
         <strong>más PnL</strong> que el naive y un inventario que respeta el reloj. No es
         magia: es que sus dos números ya no son mágicos.</p>
       </div></div>
@@ -99,7 +100,7 @@ q = +1 (largo), γ=0.5, σ=0.5, τ=1
 r = 100 − 1×0.5×0.25×1 = <span style="color:var(--accent)">99.875</span>
 
 q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
-        <p style="color:var(--faint);font-size:.78rem;margin-top:10px">el centro huye de tu inventario — igual que ayer, pero con unidades</p>
+        <p style="color:var(--faint);font-size:.78rem;margin-top:10px">el centro huye de tu inventario — igual que en L13, pero con unidades</p>
       </div>
       <div class="fig-stage" data-stage="2">
         <pre style="font-family:var(--mono);font-size:.8rem;line-height:2.2;margin:8px 0 0">
@@ -160,8 +161,8 @@ q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
     esperando estas líneas: una subclase tuya, con tu idea dentro.</p>
 
     <div class="code">
-      <div class="code-head"><span>mi_market_maker.py — punto de partida del capstone autónomo</span><span>python</span></div>
-      <pre><span class="ln"><span class="k">from</span> exchange.strategies.market_maker <span class="k">import</span> MarketMaker</span><span class="ln"></span><span class="ln"><span class="k">class</span> MiMarketMaker(MarketMaker):</span><span class="ln">    <span class="s">"""Tu idea aquí: hereda el esqueleto, cambia las quotes."""</span></span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">quotes</span>(self, book):</span><span class="ln">        r = self.reservation_price(book.mid)</span><span class="ln">        half = self.half_spread</span><span class="ln">        <span class="k">if</span> <span class="fn">abs</span>(self._inventory) &gt; <span class="num">0.5</span>:   <span class="c"># tu regla, la que quieras</span></span><span class="ln">            half = half * <span class="num">1.5</span>              <span class="c"># p. ej.: cargado → más ancho</span></span><span class="ln">        <span class="k">return</span> r - half, r + half</span><span class="ln"></span><span class="ln">res = MMSimulation(MiMarketMaker(<span class="s">'SIM'</span>, quote_size=<span class="num">0.1</span>), seed=<span class="num">42</span>).run()</span></pre>
+      <div class="code-head"><span>mi_estrategia.py — punto de partida del capstone autónomo</span><span>python</span></div>
+      <pre><span class="ln"><span class="k">from</span> exchange.simulation <span class="k">import</span> MMSimulation</span><span class="ln"><span class="k">from</span> exchange.strategies <span class="k">import</span> MarketMaker</span><span class="ln"></span><span class="ln"><span class="k">class</span> MiEstrategia(MarketMaker):</span><span class="ln">    <span class="s">"""El nombre y la interfaz que exige capstone_check.py."""</span></span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, symbol=<span class="s">'BTC'</span>):</span><span class="ln">        <span class="fn">super</span>().__init__(symbol, quote_size=<span class="num">0.01</span>,</span><span class="ln">                         half_spread=<span class="num">1.0</span>, inventory_skew=<span class="num">2.0</span>)</span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">quotes</span>(self, book):</span><span class="ln">        r = self.reservation_price(book.mid)</span><span class="ln">        half = self.half_spread</span><span class="ln">        <span class="k">if</span> <span class="fn">abs</span>(self.inventory) &gt; <span class="num">0.5</span>:   <span class="c"># tu regla, la que quieras</span></span><span class="ln">            half *= <span class="num">1.5</span>                    <span class="c"># p. ej.: cargado → más ancho</span></span><span class="ln">        <span class="k">return</span> r - half, r + half</span><span class="ln"></span><span class="ln">res = MMSimulation(MiEstrategia(), seed=<span class="num">42</span>).run()</span></pre>
       <div class="out"><div class="btnrow" style="margin:0"><button class="btn runbtn" data-target="out-own">▶ La pregunta de verdad</button></div>
         <div id="out-own" class="hidden" style="margin-top:10px">
           <div><span class="prompt">&gt;&gt;&gt; </span><span class="val">¿cuántas líneas del motor tocaste? 0. ¿Del simulador? 0.</span></div>
@@ -170,10 +171,11 @@ q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
       </div>
     </div>
 
-    <div class="note"><span class="tag">Para el notebook</span>
-    En <code>14_build_exercises.ipynb</code> harás exactamente esto con validadores: tu
-    subclase, tu barrido, tus conclusiones. Este trabajo pertenece al capstone autónomo y
-    <strong>no forma parte del examen final</strong>.</div>
+    <div class="note"><span class="tag">Entregable REQUIRED · capstone</span>
+    <code>14_build_exercises.ipynb</code> prepara las fórmulas y los barridos. La estrategia
+    propia se implementa en <code>exercises/mi_estrategia.py</code> siguiendo
+    <code>CAPSTONE.md</code> y se verifica con <code>capstone_check.py</code>. Es un proyecto
+    autónomo de 90 minutos y <strong>no forma parte del examen final</strong>.</div>
   </div>
 </section>
 
@@ -250,9 +252,8 @@ q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
       <div class="pk done">L4 · Order y Fill</div>
       <div class="pk done">L5 · OrderBook + Tracker</div>
       <div class="pk done">L6 · familia Strategy</div>
-      <div class="pk done">L7-9 · el motor</div>
-      <div class="pk done">L10-11 · el framework</div>
-      <div class="pk today">L12-14 · estrategias<span>hoy: A-S y TU estrategia (L14)</span></div>
+      <div class="pk done">L7-10 · motor y framework</div>
+      <div class="pk today">L11-14 · estrategias<span>hoy: A-S y TU estrategia (L14)</span></div>
     </div>
 
     <div class="cta" style="margin:22px 0;grid-template-columns:1fr">
@@ -277,8 +278,9 @@ q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
 
     <div class="cta">
       <div class="box"><span class="tag">Ahora te toca construir</span>
-      Abre <code>14_build_exercises.ipynb</code>: reservation, spread, el barrido y TU
-      estrategia validada.</div>
+      Abre <code>14_build_exercises.ipynb</code> para reservation, spread y barridos;
+      después implementa TU estrategia en <code>mi_estrategia.py</code> y valídala con
+      <code>capstone_check.py</code>.</div>
       <div class="box"><span class="tag">Y el gimnasio final</span>
       <code>14_auxiliary.ipynb</code> — los últimos drills antes del examen.</div>
     </div>

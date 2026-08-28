@@ -3,7 +3,7 @@
   <a href="#s1"><span class="dot"></span><span class="lab">Trocear</span></a>
   <a href="#s2"><span class="dot"></span><span class="lab">El duelo</span></a>
   <a href="#s3"><span class="dot"></span><span class="lab">La estrategia</span></a>
-  <a href="#s3b"><span class="dot"></span><span class="lab">¿Predecir?</span></a>
+  <a href="#s3b"><span class="dot"></span><span class="lab">OPTIONAL · volumen</span></a>
   <a href="#s4"><span class="dot"></span><span class="lab">Quiz</span></a>
   <a href="#s5"><span class="dot"></span><span class="lab">El puente</span></a>
 </nav>
@@ -11,7 +11,7 @@
 <header class="hero wrap" id="s0">
   <div class="eyebrow"><b>Algo Trading · ICAI 2026</b> &nbsp;·&nbsp; L12 · VWAP &nbsp;·&nbsp; documento interactivo</div>
   <h1>Vender grande sin <em>hundirte</em></h1>
-  <p class="lede">El diagnóstico de ayer fue claro: ejecutar a lo bruto quema el margen.
+  <p class="lede">El diagnóstico de L11 fue claro: ejecutar a lo bruto quema el margen.
   Hoy el problema en su versión seria: tienes que vender <strong><span id="hero-total">≈5</span> BTC</strong>
   — mucho más de lo que aguanta el mejor nivel — y cada satoshi de slippage sale de tu
   bolsillo.</p>
@@ -156,12 +156,14 @@
 
 <section id="s3b">
   <div class="wrap">
-    <div class="eyebrow">§3½ · <b>¿Predecir el volumen?</b></div>
+    <div class="eyebrow">§3½ · <b>Profundización OPTIONAL · ¿predecir el volumen?</b></div>
     <h2>El perfil fijo asume el futuro. ¿Y si lo aprendiéramos?</h2>
-    <p class="lede">Un VWAP dinámico no usa una U de libro fija: <strong>predice</strong> el
-    volumen de la próxima barra con lo que acaba de ver —una <strong>media rolada</strong>— y
-    ajusta el trozo con un <strong>factor de corrección</strong>. Es el primer puente hacia el
-    machine learning. Probémoslo con el volumen <strong>real</strong> del replay.</p>
+    <p class="lede"><strong>Esta sección es opcional y no se evalúa:</strong> ninguna lesson posterior
+    presupone predicción dinámica. Aquí comparamos, fuera del runner, un perfil candidato que
+    <strong>predice</strong> la próxima barra con una <strong>media rolada</strong>. La
+    <code>VWAPStrategy</code> canónica sigue consumiendo un perfil fijo: este prototipo no lo
+    actualiza online ni promete una estrategia adaptativa completa. Es un primer puente hacia
+    machine learning y una prueba honesta con el volumen <strong>real</strong> del replay.</p>
 
     <div class="simcard">
       <h4>volumen real (gris) vs predicción (cian)</h4>
@@ -174,14 +176,16 @@
       <div class="looplog" id="pv-log" style="margin-top:10px"></div>
     </div>
 
-    <div class="note"><span class="tag">La lectura honesta</span>
+    <div class="note"><span class="tag">OPTIONAL · la lectura honesta</span>
     En este mercado la actividad es <strong>ruido casi plano</strong>: la media rolada predice
     <em>peor</em> que la media global (más error medio), y ni con <strong>previsión perfecta</strong>
     del volumen (el oráculo) se mejora la ejecución más que un pelo (<span id="pv-oracle"></span> bps).
     No hay señal que explotar. El modelo dinámico solo gana cuando el volumen <em>sí</em> tiene
     estructura —la U intradía real, ráfagas correlacionadas—. <strong>Saber cuándo NO añadir un
-    modelo es media carrera de quant.</strong> Lo construyes en el gimnasio (media rolada,
-    predicción y factor de corrección); aquí ves por qué, sobre estos datos, el perfil fijo ya gana.</div>
+    modelo es media carrera de quant.</strong> En el gimnasio construyes auxiliares aislados
+    (media rolada, normalización y factor de corrección); integrarlos en una estrategia que
+    replanifique durante el replay queda deliberadamente fuera del alcance. Aquí ves por qué,
+    sobre estos datos, el perfil fijo ya gana.</div>
   </div>
 </section>
 
@@ -254,9 +258,8 @@
       <div class="pk done">L4 · Order y Fill</div>
       <div class="pk done">L5 · OrderBook + Tracker</div>
       <div class="pk done">L6 · familia Strategy</div>
-      <div class="pk done">L7-9 · el motor</div>
-      <div class="pk done">L10-11 · el framework</div>
-      <div class="pk today">L12-14 · estrategias<span>hoy: ejecución VWAP (L12)</span></div>
+      <div class="pk done">L7-10 · motor y framework</div>
+      <div class="pk today">L11-14 · estrategias<span>hoy: ejecución VWAP (L12)</span></div>
     </div>
 
     <div class="bridge">
@@ -271,10 +274,11 @@
 
     <div class="cta">
       <div class="box"><span class="tag">Ahora te toca construir</span>
-      Abre <code>12_build_exercises.ipynb</code>: pesos, schedules, perfiles y la
-      comparación de precios medios.</div>
+      Abre <code>12_build_exercises.ipynb</code>: los ejercicios 1–4 cubren el núcleo;
+      5–8 (predicción dinámica) están marcados OPTIONAL.</div>
       <div class="box"><span class="tag">Y después, al gimnasio</span>
-      <code>12_auxiliary.ipynb</code> — drills de schedules y precio medio.</div>
+      <code>12_auxiliary.ipynb</code> — sigue REQUIRED para schedules y precio medio;
+      las ampliaciones quedan separadas como OPTIONAL.</div>
     </div>
   </div>
 </section>

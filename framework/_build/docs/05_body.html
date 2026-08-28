@@ -53,8 +53,8 @@
         que mirarlas una a una, otra vez con el <code>book</code> a cuestas… pero ahora sin
         ni siquiera tener el book.</p>
       </div></div>
-      <div class="step" data-stage="1" data-name="OrderBook"><div class="step-inner">
-        <h3><span class="n">1/5</span><code>OrderBook</code>: el objeto contenedor</h3>
+      <div class="step" data-stage="1" data-name="OrderBookMini"><div class="step-inner">
+        <h3><span class="n">1/5</span><code>OrderBookMini</code>: el objeto contenedor didáctico</h3>
         <p><strong>Composición</strong>: un objeto cuyos atributos son <em>otros objetos</em>.
         El libro no hereda de nada ni copia nada — simplemente <strong>tiene</strong> bids
         y asks dentro.</p>
@@ -90,20 +90,20 @@
     </div>
 
     <div class="figwrap"><div class="fig">
-      <div class="fig-head"><span>OrderBook + PositionTracker</span><span class="stage-name">sueltas</span></div>
+      <div class="fig-head"><span>OrderBookMini + PositionTracker</span><span class="stage-name">sueltas</span></div>
       <div class="fig-stage on" data-stage="0">
         <pre style="font-family:var(--mono);font-size:.76rem;line-height:2;margin:6px 0 0;color:var(--muted)">
-o1 = Order('buy',  99950, 0.5)
-o2 = Order('buy',  99940, 0.2)
-o3 = Order('sell', 100000, 0.3)
-o4 = Order('sell', 100010, 0.15)
-o5 = Order('buy',  99960, 0.1)</pre>
+o1 = Order('BTCUSDT', 'buy',  0.5, price=99950)
+o2 = Order('BTCUSDT', 'buy',  0.2, price=99940)
+o3 = Order('BTCUSDT', 'sell', 0.3, price=100000)
+o4 = Order('BTCUSDT', 'sell', 0.15, price=100010)
+o5 = Order('BTCUSDT', 'buy',  0.1, price=99960)</pre>
         <p style="color:var(--faint);font-size:.8rem;margin-top:18px">¿best bid? ¿spread?
         — nadie lo sabe: no hay libro</p>
       </div>
       <div class="fig-stage" data-stage="1">
         <pre style="font-family:var(--mono);font-size:.76rem;line-height:1.95;margin:6px 0 0">
-<span class="k">class</span> <span style="color:var(--num)">OrderBook</span>:
+<span class="k">class</span> <span style="color:var(--num)">OrderBookMini</span>:
     <span class="k">def</span> <span class="fn">__init__</span>(self, bids, asks):
         self.bids = bids   <span class="c"># objetos dentro</span>
         self.asks = asks   <span class="c"># de un objeto</span></pre>
@@ -142,8 +142,8 @@ ob.mid          <span class="c"># 99975.0 · property</span></pre>
       </div>
       <div class="fig-stage" data-stage="5">
         <pre style="font-family:var(--mono);font-size:.74rem;line-height:1.9;margin:4px 0 0">
-tracker.apply_fill(Fill(<span class="s">'buy'</span>, <span class="num">99950</span>, <span class="num">0.5</span>))
-tracker.apply_fill(Fill(<span class="s">'sell'</span>, <span class="num">100050</span>, <span class="num">0.2</span>))</pre>
+tracker.apply_fill(Fill(<span class="num">1</span>, <span class="s">'BTCUSDT'</span>, <span class="s">'buy'</span>, <span class="num">99950</span>, <span class="num">0.5</span>))
+tracker.apply_fill(Fill(<span class="num">2</span>, <span class="s">'BTCUSDT'</span>, <span class="s">'sell'</span>, <span class="num">100050</span>, <span class="num">0.2</span>))</pre>
         <div class="statgrid" style="margin-top:14px">
           <div><span>_cash</span><b class="neg">−29965.0</b></div>
           <div><span>_position</span><b>0.3</b></div>
@@ -164,7 +164,7 @@ tracker.apply_fill(Fill(<span class="s">'sell'</span>, <span class="num">100050<
 
     <div class="code">
       <div class="code-head"><span>book.py — composición en 12 líneas</span><span>python</span></div>
-      <pre><span class="ln"><span class="k">class</span> OrderBook:</span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, bids, asks):</span><span class="ln">        self.bids = bids  <span class="c"># lista de (price, size)</span></span><span class="ln">        self.asks = asks</span><span class="ln"></span><span class="ln">    <span style="color:var(--warn)">@property</span></span><span class="ln">    <span class="k">def</span> <span class="fn">best_bid</span>(self):</span><span class="ln">        <span class="k">return</span> <span class="fn">max</span>(p <span class="k">for</span> p, s <span class="k">in</span> self.bids)</span><span class="ln"></span><span class="ln">    <span style="color:var(--warn)">@property</span></span><span class="ln">    <span class="k">def</span> <span class="fn">best_ask</span>(self):</span><span class="ln">        <span class="k">return</span> <span class="fn">min</span>(p <span class="k">for</span> p, s <span class="k">in</span> self.asks)</span><span class="ln"></span><span class="ln">    <span style="color:var(--warn)">@property</span></span><span class="ln">    <span class="k">def</span> <span class="fn">mid</span>(self):</span><span class="ln">        <span class="k">return</span> (self.best_bid + self.best_ask) / <span class="num">2</span></span><span class="ln"></span><span class="ln">ob = OrderBook(bids=[(<span class="num">99950</span>, <span class="num">0.5</span>), (<span class="num">99940</span>, <span class="num">0.2</span>)],</span><span class="ln">               asks=[(<span class="num">100000</span>, <span class="num">0.3</span>), (<span class="num">100010</span>, <span class="num">0.15</span>)])</span><span class="ln"><span class="fn">print</span>(ob.mid)</span></pre>
+      <pre><span class="ln"><span class="k">class</span> OrderBookMini:</span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, bids, asks):</span><span class="ln">        self.bids = bids  <span class="c"># lista de (price, size)</span></span><span class="ln">        self.asks = asks</span><span class="ln"></span><span class="ln">    <span style="color:var(--warn)">@property</span></span><span class="ln">    <span class="k">def</span> <span class="fn">best_bid</span>(self):</span><span class="ln">        <span class="k">return</span> <span class="fn">max</span>(p <span class="k">for</span> p, s <span class="k">in</span> self.bids)</span><span class="ln"></span><span class="ln">    <span style="color:var(--warn)">@property</span></span><span class="ln">    <span class="k">def</span> <span class="fn">best_ask</span>(self):</span><span class="ln">        <span class="k">return</span> <span class="fn">min</span>(p <span class="k">for</span> p, s <span class="k">in</span> self.asks)</span><span class="ln"></span><span class="ln">    <span style="color:var(--warn)">@property</span></span><span class="ln">    <span class="k">def</span> <span class="fn">mid</span>(self):</span><span class="ln">        <span class="k">return</span> (self.best_bid + self.best_ask) / <span class="num">2</span></span><span class="ln"></span><span class="ln">ob = OrderBookMini(bids=[(<span class="num">99950</span>, <span class="num">0.5</span>), (<span class="num">99940</span>, <span class="num">0.2</span>)],</span><span class="ln">               asks=[(<span class="num">100000</span>, <span class="num">0.3</span>), (<span class="num">100010</span>, <span class="num">0.15</span>)])</span><span class="ln"><span class="fn">print</span>(ob.mid)</span></pre>
       <div class="predict predictgate" style="margin:0;border-radius:0;border-left:none;border-right:none;border-bottom:none">
         <div class="tag">Predice antes de ejecutar</div>
         <p style="margin:.2em 0 .8em;font-size:.94rem">Una propiedad calculada apoyándose
@@ -290,7 +290,7 @@ tracker.apply_fill(Fill(<span class="s">'sell'</span>, <span class="num">100050<
         Python confía en el adulto que lo lee.</div>
       </div>
       <div class="q" data-ok="2">
-        <div class="qt"><code>apply_fill(Fill('buy', 100000, 0.5))</code> — ¿qué le pasa al tracker?</div>
+        <div class="qt"><code>apply_fill(Fill(1, 'BTCUSDT', 'buy', 100000, 0.5))</code> — ¿qué le pasa al tracker?</div>
         <div class="opts">
           <button class="opt">A · Solo sube la posición</button>
           <button class="opt">B · Cash sube y posición baja</button>
@@ -329,6 +329,19 @@ tracker.apply_fill(Fill(<span class="s">'sell'</span>, <span class="num">100050<
   <div class="wrap">
     <div class="eyebrow">§6 · <b>El puente</b></div>
     <h2>Dónde estás en el proyecto</h2>
+    <div class="note"><span class="tag">De la maqueta a la API estable</span>
+      <code>OrderBookMini(bids, asks)</code> usa tuplas para concentrarse en composición.
+      El paquete migra de forma visible; cambia la representación de entrada, no las
+      lecturas públicas:
+      <table style="width:100%;margin:12px 0;border-collapse:collapse;font-size:.82rem">
+        <thead><tr><th style="text-align:left;padding:6px">Maqueta de L5</th><th style="text-align:left;padding:6px">API estable de <code>exchange</code></th></tr></thead>
+        <tbody>
+          <tr><td style="padding:6px"><code>OrderBookMini(bids, asks)</code><br>tuplas <code>(price, size)</code></td><td style="padding:6px"><code>OrderBook(symbol, bids: list[Level], asks: list[Level])</code></td></tr>
+          <tr><td style="padding:6px"><code>imbalance()</code><br>mejor nivel</td><td style="padding:6px"><code>imbalance(levels=1)</code><br>profundidad configurable</td></tr>
+        </tbody>
+      </table>
+      <code>best_bid</code>, <code>best_ask</code>, <code>spread</code> y <code>mid</code>
+      son properties, mientras <code>imbalance(levels)</code> es método.</div>
     <div class="pkgmap">
       <div class="pk done">L1 · el dato<span>variables, dicts, decisiones</span></div>
       <div class="pk done">L2 · book funcional<span>funciones sobre el libro</span></div>
@@ -336,9 +349,8 @@ tracker.apply_fill(Fill(<span class="s">'sell'</span>, <span class="num">100050<
       <div class="pk done">L4 · Order y Fill<span>exchange/orders.py · trades.py</span></div>
       <div class="pk today">L5 · OrderBook + Tracker<span>exchange/book.py · portfolio.py</span></div>
       <div class="pk future">L6 · familia Strategy<span>herencia</span></div>
-      <div class="pk future">L7-9 · el motor<span>matching, market</span></div>
-      <div class="pk future">L10-11 · el framework<span>Strategy + Backtest</span></div>
-      <div class="pk future">L12-14 · estrategias<span>VWAP, market making</span></div>
+      <div class="pk future">L7-10 · motor y framework<span>matching, Market, Strategy, Backtest</span></div>
+      <div class="pk future">L11-14 · estrategias<span>métricas, VWAP, market making</span></div>
     </div>
 
     <div class="bridge">
@@ -349,12 +361,12 @@ tracker.apply_fill(Fill(<span class="s">'sell'</span>, <span class="num">100050<
       reaccionan a fills. ¿Vas a copiar ese esqueleto cada vez? <em>Ese pecado ya lo
       cometiste en L2 y sabes cómo huele.</em></p>
       <p style="margin-bottom:0">La cura se llama <strong>herencia</strong>: una clase base
-      con el esqueleto y subclases que solo cambian la decisión. Próxima clase.</p>
+      con el esqueleto y subclases que solo cambian la decisión. Esa necesidad abre L6.</p>
     </div>
 
     <div class="cta">
       <div class="box"><span class="tag">Ahora te toca construir</span>
-      Abre <code>05_build_exercises.ipynb</code>: OrderBook, PositionTracker y los dos
+      Abre <code>05_build_exercises.ipynb</code>: OrderBookMini, PositionTracker y los dos
       juntos.</div>
       <div class="box"><span class="tag">Y después, al gimnasio</span>
       <code>05_auxiliary.ipynb</code> — drills de composición, @property y secuencias de

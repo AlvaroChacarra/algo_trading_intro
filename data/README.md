@@ -1,6 +1,7 @@
 # data/ — dataset del libro de órdenes
 
-`btc_lob_snapshots.csv` — **500 snapshots** de un libro de órdenes limit (L2) que
+`btc_lob_snapshots.csv` — **500 snapshots** de un libro de órdenes limit, introducidos
+como frontera de datos externos en L7, que
 imita a BTCUSDT: 10 niveles por lado (precio y tamaño), a cadencia de 60 s.
 
 ## Provenance
@@ -21,7 +22,8 @@ cuándo NO merece la pena añadir un modelo predictivo).
 - `framework/exchange/_data/btc_lob_snapshots.csv` es la **copia canónica** que
   carga el motor (`Market.sample()` / `Market.from_csv()`). Este archivo de
   `data/` es una copia idéntica para inspección y para `smoke_test.py`.
-- Lo consumen el loop de simulación (L9+), el framework de backtesting (L10+) y
+- Lo consumen por primera vez los ejercicios de lectura de L7; después, el loop de
+  simulación (L9+), el framework de backtesting (L10+) y
   las estrategias de ejecución (L12).
 
 ## Formato

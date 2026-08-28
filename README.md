@@ -12,20 +12,17 @@ Abre **[la web del curso](https://alvarochacarra.github.io/algo_trading_intro/)*
 
 | Bloque | Clases | Qué construyes | Pieza de `exchange` |
 |--------|--------|----------------|---------------------|
-| **Fundamentos** | 1–3 | Python: modelo de datos, funciones sobre el libro, módulos | `order_book.py` |
-| **POO** | 4–6 | Clases: `Order`/`Fill`, `OrderBook`/`PositionTracker`, herencia y la familia `Strategy` | `orders`, `book`, `portfolio` |
-| **El motor** | 7–9 | Leer el libro (imbalance, microprice, depth), matching de órdenes, loop de simulación | `matching`, `market` |
-| **El framework** | 10–11 | `Strategy` + `Backtest` enchufables; métricas honestas de una estrategia | `strategy`, `backtest` |
-| **Ejecución** | 12 | VWAP: trocear siguiendo el perfil de volumen | `strategies/vwap` |
-| **Market making** | 13–14 | Cotizar e inventario; Avellaneda-Stoikov + **tu capstone** | `strategies/market_maker`, `simulation` |
-| **Cierre** | 15 | Examen final (40 preguntas) | — |
+| **FOUNDATIONS** | 1–6 | De dato, cálculo y decisión a objetos compuestos y una familia de estrategias | `orders`, `trades`, `book`, `portfolio` |
+| **ENGINE** | 7–10 | Leer el libro, ejecutar órdenes, coordinar el mercado y enchufar estrategias | `matching`, `market`, `strategy`, `backtest` |
+| **STRATEGIES** | 11–14 | Medir con honestidad, ejecutar con VWAP y controlar inventario al hacer mercado | `strategies/vwap`, `strategies/market_maker`, `simulation` |
+| **ASSESSMENT** | 15 | Integración final de Python, motor, ejecución y market making | — |
 
 A mitad de camino, tras la clase 6, hay un **[checkpoint](06-oop-iii-inheritance/checkpoint.html)** (20 preguntas de L1-L6) para comprobar la base antes de tocar el motor. El curso se corona con el **[capstone](14-avellaneda-stoikov/CAPSTONE.md)**: tu propio market maker, con baremo público y leaderboard.
 
 ## Cada clase
 
-1. **Documento interactivo** (`presentation/*-doc.html`) — una fuente con dos recorridos en las lessons migradas: `?mode=aula` usa escenas y teclado sin scroll del body; `?mode=estudio` conserva la lectura autónoma vertical. En móvil se usa el fallback vertical.
-2. **Construcción** (`exercises/NN_build_exercises.ipynb`) — montas la pieza del día con validadores automáticos. El piloto declara cada ejercicio como 🟢 LIVE, 🔵 REQUIRED o 🟣 OPTIONAL en `pedagogy/exercise_routes.yml`.
+1. **Documento interactivo** (`presentation/*-doc.html`) — una fuente con dos recorridos en L1–L14: `?mode=aula` usa escenas y teclado sin scroll del body; `?mode=estudio` ofrece LIVE + REQUIRED y permite abrir OPTIONAL de forma explícita. En móvil se usa el fallback vertical.
+2. **Construcción** (`exercises/NN_build_exercises.ipynb`) — montas la pieza del día con validadores automáticos. Cada ejercicio está decidido como 🟢 LIVE, 🔵 REQUIRED o 🟣 OPTIONAL en `pedagogy/exercise_routes.yml`.
 3. **El gimnasio** (`exercises/NN_auxiliary.ipynb`) — drills cortos de primitivas de Python con datos de mercado, un calentamiento que recicla la clase anterior y un ejercicio de transferencia que lleva la idea a otro dominio.
 
 El paquete que vienes construyendo viaja contigo en `exercises/exchange/` (a partir de la clase 4).
@@ -67,4 +64,4 @@ annex-bonds-rfq/           material opcional (bonos y RFQ), fuera del arco princ
 
 ## Para el profesor
 
-Todo el material se **genera** desde specs en `framework/_build/` — no se editan los notebooks ni los docs a mano. La gobernanza vive en [`AGENTS.md`](AGENTS.md); el contrato ejecutable, en `pedagogy/`; y la arquitectura del piloto, en [`docs/work1-desktop-pedagogy-pilot.md`](docs/work1-desktop-pedagogy-pilot.md). Añade `?profe=1` a la URL de cualquier documento para abrir el cajón con el guion.
+Todo el material se **genera** desde specs en `framework/_build/` — no se editan los notebooks ni los docs a mano. La gobernanza vive en [`AGENTS.md`](AGENTS.md), el contrato ejecutable en `pedagogy/` y la guía para mantener el runtime en [`docs/learning-runtime-authoring.md`](docs/learning-runtime-authoring.md). Añade `?profe=1` a la URL de cualquier documento para abrir el cajón con el guion.

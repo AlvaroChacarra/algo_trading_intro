@@ -594,6 +594,177 @@
   .pkgmap .pk{border-color:#ccc}
   a{color:#0e7490;text-decoration:none}
 }
+/* Shared scene renderer for L1-L14. The manifest owns route, stage and layout. */
+.lr-sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;
+  margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;
+  border:0!important}
+.lr-has-contract [hidden]{display:none!important}
+
+#lr-nav{position:fixed;inset:0 auto 0 0;width:var(--lr-nav-w,230px);z-index:52;
+  display:flex;flex-direction:column;background:rgba(9,9,11,.97);border-right:1px solid var(--line);
+  padding:12px;overflow:hidden}
+.lr-course-home{display:flex;align-items:center;min-height:34px;margin:0 5px 8px;padding:5px 7px;
+  color:var(--muted);text-decoration:none;font:600 .65rem var(--mono)}
+.lr-course-home:hover{color:var(--accent)}
+.lr-brand{display:grid;gap:5px;padding:4px 8px 12px;border-bottom:1px solid var(--line)}
+.lr-brand b{font:600 .78rem var(--mono);color:var(--accent);letter-spacing:.12em}
+.lr-brand span{font-size:.8rem;line-height:1.25;color:var(--muted)}
+.lr-modes{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:10px 6px}
+.lr-modes a{display:flex;justify-content:center;align-items:center;min-height:36px;border:1px solid var(--line);
+  border-radius:8px;text-decoration:none;color:var(--muted);font:600 .68rem var(--mono);text-transform:uppercase}
+.lr-modes a.on{border-color:var(--accent);background:var(--accent-dim);color:var(--accent)}
+.lr-modes a:focus-visible,#lr-nav button:focus-visible,#lr-controls button:focus-visible,
+#lr-mobile-toolbar a:focus-visible,#lr-mobile-toolbar button:focus-visible{
+  outline:2px solid var(--accent);outline-offset:2px}
+.lr-fallback-note{margin:0 8px 10px;color:var(--warn);font-size:.72rem;line-height:1.4}
+.lr-study-optional{min-height:38px;margin:0 6px 9px;border:1px solid rgba(192,132,252,.42);
+  border-radius:8px;background:rgba(192,132,252,.08);color:var(--kw);font:600 .65rem var(--mono);cursor:pointer}
+.lr-study-optional[aria-pressed="true"]{border-color:var(--kw);background:rgba(192,132,252,.16)}
+.lr-scene-links{display:grid;gap:4px;overflow:auto;padding:2px 4px 18px}
+.lr-scene-links button{display:grid;grid-template-columns:56px minmax(0,1fr);gap:6px;align-items:center;width:100%;
+  min-height:41px;padding:7px 9px;border:1px solid transparent;border-radius:9px;background:transparent;
+  color:var(--muted);text-align:left;cursor:pointer}
+.lr-scene-links button span{font:600 .55rem var(--mono);letter-spacing:.08em}
+.lr-scene-links button b{font:500 .65rem var(--mono);overflow-wrap:anywhere}
+.lr-scene-links button.on{border-color:var(--line);background:var(--panel);color:var(--text)}
+.lr-scene-links button.lr-route-live span{color:var(--accent)}
+.lr-scene-links button.lr-route-required span{color:var(--kw)}
+.lr-scene-links button.lr-route-optional span{color:var(--faint)}
+
+#lr-teacher-toggle{margin:0 6px 9px;min-height:36px;border:1px solid rgba(34,211,238,.38);
+  border-radius:8px;background:var(--accent-dim);color:var(--accent);font:600 .68rem var(--mono);cursor:pointer}
+#lr-teacher-toggle:focus-visible,.lr-teacher-close:focus-visible,.lr-full-guide:focus-visible{
+  outline:2px solid var(--accent);outline-offset:2px}
+#lr-teacher-drawer{position:fixed;z-index:90;top:0;right:0;width:min(420px,92vw);height:100dvh;
+  display:grid;grid-template-rows:auto minmax(0,1fr);transform:translateX(105%);transition:transform .2s ease;
+  border-left:1px solid var(--line);background:rgba(9,9,11,.98);box-shadow:-18px 0 48px rgba(0,0,0,.38)}
+#lr-teacher-drawer.open{transform:translateX(0)}
+.lr-teacher-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line)}
+.lr-teacher-head b{font:600 .78rem var(--mono);color:var(--accent);text-transform:uppercase;letter-spacing:.08em}
+.lr-teacher-close{width:40px;height:40px;border:1px solid var(--line);border-radius:8px;background:var(--panel);
+  color:var(--text);font-size:1.25rem;cursor:pointer}
+.lr-teacher-body{overflow:auto;padding:18px;color:var(--muted);font-size:.86rem;line-height:1.5}
+.lr-teacher-body h2{margin:.2em 0 .7em;color:var(--text);font:600 1rem var(--mono)}
+.lr-teacher-body h3{margin:1.15em 0 .4em;color:var(--text);font-size:.76rem;text-transform:uppercase;letter-spacing:.06em}
+.lr-teacher-body ul{margin:.4em 0;padding-left:1.2em}.lr-teacher-body code{color:var(--kw)}
+.lr-teacher-kicker{margin:0;color:var(--accent);font:600 .68rem var(--mono);text-transform:uppercase}
+.lr-teacher-stage{font-size:.78rem}.lr-full-guide{min-height:40px;margin-top:16px;padding:7px 12px;
+  border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--accent);font:600 .7rem var(--mono);cursor:pointer}
+
+.lr-scene-badge{display:flex;gap:8px;align-items:center;margin:0 0 10px;font:600 .58rem var(--mono);
+  letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+.lr-scene-badge span{padding:3px 7px;border:1px solid var(--line);border-radius:99px}
+.lr-scene-badge.lr-route-live span:first-child{border-color:rgba(34,211,238,.42);color:var(--accent)}
+.lr-scene-badge.lr-route-required span:first-child{border-color:rgba(192,132,252,.45);color:var(--kw)}
+.lr-scene-badge.lr-route-optional span:first-child{border-color:var(--line);color:var(--faint)}
+
+#lr-controls{position:fixed;left:var(--lr-nav-w,230px);right:0;bottom:0;height:var(--lr-controls-h,58px);z-index:55;
+  display:grid;grid-template-columns:minmax(120px,1fr) auto auto minmax(120px,1fr);align-items:center;
+  gap:14px;padding:7px 18px;background:rgba(9,9,11,.96);border-top:1px solid var(--line);
+  backdrop-filter:blur(8px)}
+#lr-controls button{min-height:40px;border:1px solid var(--line);border-radius:9px;background:var(--panel);
+  color:var(--text);font:600 .72rem var(--mono);cursor:pointer}
+#lr-controls button:hover:not(:disabled){border-color:var(--accent)}
+#lr-controls button:disabled{opacity:.3;cursor:default}
+#lr-controls .lr-next{text-align:right;padding-right:14px}
+#lr-controls .lr-prev{text-align:left;padding-left:14px}
+.lr-progress{display:flex;gap:7px;align-items:center;justify-content:center;white-space:nowrap;
+  font:.66rem var(--mono);color:var(--faint)}
+.lr-progress b{color:var(--muted);font-weight:500}
+.lr-progress .lr-route-progress{color:var(--accent)}
+#lr-controls .lr-route-scope{padding:0 12px;color:var(--accent);border-color:rgba(34,211,238,.38)}
+#lr-controls.lr-fixed-scope{grid-template-columns:minmax(120px,1fr) auto minmax(120px,1fr)}
+#lr-mobile-toolbar{display:none}
+
+/* Layout names are operational: they control scene width and native two-panel ratios. */
+.lr-scene{--lr-scene-max:1180px;--lr-left:42fr;--lr-right:58fr}
+.lr-scene[data-scene-layout="focus"]{--lr-scene-max:1120px}
+.lr-scene[data-scene-layout="split-42-58"]{--lr-scene-max:1900px;--lr-left:42fr;--lr-right:58fr}
+.lr-scene[data-scene-layout="split-45-55"]{--lr-scene-max:1900px;--lr-left:45fr;--lr-right:55fr}
+.lr-scene[data-scene-layout="split-50-50"]{--lr-scene-max:1760px;--lr-left:50fr;--lr-right:50fr}
+
+@media(min-width:901px){
+  body.lr-has-contract{--lr-nav-w:clamp(190px,16vw,238px);--lr-controls-h:58px}
+  body.mode-estudio.lr-has-contract{padding-left:var(--lr-nav-w)}
+  body.mode-estudio.lr-has-contract .wrap{max-width:min(1040px,calc(100vw - var(--lr-nav-w) - 48px))}
+  body.mode-estudio.lr-has-contract .wrap>p{max-width:78ch}
+  body.mode-estudio.lr-has-contract .scrolly{max-width:min(1280px,calc(100vw - var(--lr-nav-w) - 30px))}
+  body.mode-estudio.lr-has-contract .lr-scene{scroll-margin-top:18px}
+  body.mode-estudio.lr-has-contract #rail,body.mode-estudio.lr-has-contract #lr-controls{display:none}
+
+  html.lr-mode-aula,html.lr-mode-aula body{height:100%;overflow:hidden}
+  body.mode-aula{height:100dvh;overflow:hidden;padding-left:var(--lr-nav-w);padding-bottom:var(--lr-controls-h)}
+  body.mode-aula #rail,body.mode-aula>footer,body.mode-aula>#gd-toggle{display:none!important}
+  body.mode-aula>.lr-scene{display:none!important}
+  body.mode-aula>.lr-scene.lr-scene-active{display:grid!important;width:auto;max-width:none;
+    height:calc(100dvh - var(--lr-controls-h));margin:0;padding:clamp(12px,1.8vh,24px) clamp(16px,2.2vw,38px);
+    border:0;overflow:hidden;align-content:stretch;background:var(--bg)}
+  body.mode-aula>header.lr-scene-active{align-content:center}
+  body.mode-aula>.lr-scene-active>.wrap,body.mode-aula>header.lr-scene-active.wrap{
+    width:100%;max-width:var(--lr-scene-max);min-height:0;max-height:100%;overflow:auto;padding:0 8px;margin:auto}
+  body.mode-aula>.lr-scene-active:has(.scrolly){grid-template-rows:auto minmax(0,1fr);gap:8px}
+  body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child{overflow:visible;max-width:var(--lr-scene-max);margin:0 auto}
+  body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child h2{font-size:clamp(1.08rem,2.15vh,1.72rem);margin:.05em 0 .2em}
+  body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child .lede{font-size:clamp(.74rem,1.4vh,.95rem);margin:.2em 0}
+  body.mode-aula>.lr-scene-active>.scrolly{width:100%;max-width:var(--lr-scene-max);height:100%;min-height:0;margin:0 auto;
+    padding:0;grid-template-columns:minmax(260px,var(--lr-left)) minmax(0,var(--lr-right));gap:clamp(14px,1.8vw,32px)}
+  body.mode-aula>.lr-scene-active>.scrolly~.wrap{display:none}
+  body.mode-aula .steps{min-width:0;min-height:0;height:100%;overflow:hidden}
+  body.mode-aula .steps .step{display:none;min-height:0;height:100%;align-items:center;overflow:hidden}
+  body.mode-aula .steps .step.lr-stage-active{display:flex}
+  body.mode-aula .steps .step-inner{width:100%;max-height:100%;padding:clamp(12px,1.7vh,22px);
+    opacity:1;border-color:#3a3a44;overflow:auto}
+  body.mode-aula .steps .step-inner h3{font-size:clamp(.86rem,1.6vh,1.04rem)}
+  body.mode-aula .steps .step-inner p{font-size:clamp(.72rem,1.35vh,.93rem);line-height:1.55}
+  body.mode-aula .figwrap{position:relative;height:100%;min-width:0;min-height:0;top:auto;order:initial}
+  body.mode-aula .fig{position:relative;top:0;height:100%;min-height:0;box-shadow:none}
+  body.mode-aula .fig-stage{overflow:auto}
+  body.mode-aula .full-code{display:none!important}
+  body.mode-aula .hero{padding:0}
+  body.mode-aula .hero h1{font-size:clamp(2rem,4.7vw,4.8rem)}
+  body.mode-aula .hero .lede{font-size:clamp(.92rem,1.45vw,1.3rem);max-width:72ch}
+  body.mode-aula .hero .challenge{margin-top:clamp(14px,2.5vh,28px)}
+  body.mode-aula .hero .meta{margin-top:clamp(12px,2.2vh,24px)}
+  body.mode-aula .lr-scene-badge{margin-bottom:7px}
+  body.mode-aula .lr-scene-active[data-scene-layout^="split-"] :is(.code-state,.state-inspector,.dictgrid,.build-grid,.vmgrid,.ownline .cols){
+    grid-template-columns:minmax(0,var(--lr-left)) minmax(0,var(--lr-right))}
+}
+
+@media(max-width:1180px) and (min-width:901px){
+  #lr-controls{grid-template-columns:105px minmax(0,1fr) auto 105px;gap:7px;padding-inline:9px}
+  #lr-controls.lr-fixed-scope{grid-template-columns:105px minmax(0,1fr) 105px}
+  #lr-controls button span,.lr-progress>span{display:none}
+  .lr-progress{gap:5px;font-size:.61rem}
+}
+
+@media(max-width:900px){
+  #lr-nav,#lr-controls,.lr-scene-badge{display:none!important}
+  body.lr-has-contract{padding-left:0;max-width:100%;overflow-x:hidden}
+  #lr-mobile-toolbar{position:sticky;top:0;z-index:58;display:flex;align-items:center;gap:8px;
+    min-height:52px;padding:6px max(10px,env(safe-area-inset-left));border-bottom:1px solid var(--line);
+    background:rgba(9,9,11,.96);backdrop-filter:blur(8px);font:600 .65rem var(--mono)}
+  #lr-mobile-toolbar>a{color:var(--accent);text-decoration:none;white-space:nowrap}
+  #lr-mobile-toolbar>span{min-width:0;flex:1;color:var(--muted);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #lr-mobile-toolbar button{min-height:44px;margin:0;padding:5px 9px;border:1px solid var(--line);border-radius:8px;
+    background:var(--panel);color:var(--kw);font:600 .59rem var(--mono)}
+  #lr-mobile-toolbar .lr-mobile-teacher{color:var(--accent)}
+  body.lr-has-contract .lr-scene{scroll-margin-top:58px}
+  #lr-teacher-drawer{width:min(420px,100vw)}
+}
+
+@media(max-width:520px){
+  #lr-mobile-toolbar>span{display:none}
+  #lr-mobile-toolbar .lr-study-optional{margin-left:auto}
+}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto!important}
+  #lr-teacher-drawer,.lr-scene *{transition:none!important;animation-duration:.001ms!important;animation-iteration-count:1!important}
+}
+@media print{
+  #lr-nav,#lr-controls,#lr-mobile-toolbar,.lr-scene-badge,#lr-teacher-drawer{display:none!important}
+  body.lr-has-contract{padding:0!important}
+}
 </style>
 </head>
 <body data-lesson="11">
@@ -609,15 +780,16 @@
 <header class="hero wrap" id="s0">
   <div class="eyebrow"><b>Algo Trading · ICAI 2026</b> &nbsp;·&nbsp; L11 · Medir &nbsp;·&nbsp; documento interactivo</div>
   <h1>¿Señal o <em>suerte</em>?</h1>
-  <p class="lede">Tu ImbalanceStrategy corrió ayer: <span id="dd-n0">129</span> operaciones, equity final negativo.
+  <p class="lede">Tu ImbalanceStrategy de L10 corrió: <span id="dd-n0">129</span> operaciones, equity final negativo.
   ¿Estrategia mala? ¿Mala suerte? ¿Mala <em>ejecución</em>? Hoy aprendes a responder como
   un profesional: <strong>contra benchmarks, no contra cero</strong>.</p>
 
   <div class="challenge">
     <div class="tag">El reto de hoy</div>
     <p>Tres jueces van a examinar tu estrategia: el <strong>mono con dardos</strong>
-    (¿lo haría igual de bien operando al azar?), el <strong>arrival mid</strong> (¿a qué
-    distancia del precio que viste ejecutaste de verdad?) y el <strong>inventario</strong>
+    (¿lo haría igual de bien operando al azar?), las <strong>dos llegadas</strong> (el
+    parent arrival para juzgar la decisión completa y cada decision mid para juzgar su
+    ejecución) y el <strong>inventario</strong>
     (¿cuánto riesgo cargaste para ganar eso?). Los tres tienen veredictos incómodos.</p>
   </div>
 
@@ -633,7 +805,7 @@
   <div class="wrap">
     <div class="eyebrow">§1 · <b>La idea central</b></div>
     <h2>Las tres varas de medir</h2>
-    <p class="lede">Sigue bajando: el panel somete la estrategia de ayer a cada juez, con
+    <p class="lede">Sigue bajando: el panel somete la estrategia de L10 a cada juez, con
     los números reales del backtest.</p>
   </div>
 
@@ -654,8 +826,10 @@
         backtest bueno no prueba nada.</p>
       </div></div>
       <div class="step" data-stage="2" data-name="arrival mid"><div class="step-inner">
-        <h3><span class="n">2/4</span>Juez 2: el arrival mid</h3>
-        <p>El benchmark de ejecución: el mid en el momento de decidir. Cada market order
+        <h3><span class="n">2/4</span>Juez 2: la llegada de cada orden hija</h3>
+        <p>El benchmark de ejecución de cada child order es su <strong>decision mid</strong>:
+        el mid en el momento de enviarla. No es el <strong>parent arrival</strong> del primer
+        snapshot, que evalúa la decisión completa. Cada market order
         pagó de media <strong id="dd-slip1">+5.59</strong> sobre él. Por <span id="dd-n1">129</span> fills de 0.05: el peaje de
         ejecución se comió <span id="dd-cost1">~36</span> unidades — <strong>más que toda la pérdida</strong>.</p>
       </div></div>
@@ -686,7 +860,7 @@
       </div>
       <div class="fig-stage" data-stage="2">
         <div class="statgrid" style="border:none;padding-top:8px" id="j2"></div>
-        <pre style="font-family:var(--mono);font-size:.78rem;line-height:2;margin-top:10px">slippage = precio_fill − mid_al_decidir
+        <pre style="font-family:var(--mono);font-size:.78rem;line-height:2;margin-top:10px">child_slippage = signo × (precio_fill − decision_mid)
 coste ≈ slip_medio × n_fills × clip</pre>
       </div>
       <div class="fig-stage" data-stage="3">
@@ -730,7 +904,7 @@ coste ≈ slip_medio × n_fills × clip</pre>
 
     <div class="code">
       <div class="code-head"><span>autopsia.py — ¿dónde se fue el dinero?</span><span>python</span></div>
-      <pre><span class="ln"><span class="c"># slippage de cada fill contra el mid del momento de decidir</span></span><span class="ln">slips = [sign(f) * (f.price - mid_al_decidir) <span class="k">for</span> f <span class="k">in</span> fills]</span><span class="ln">coste_total = <span class="fn">sum</span>(slips) * clip_size</span></pre>
+      <pre><span class="ln"><span class="c"># cada fill contra el decision mid de su orden hija</span></span><span class="ln">slips = [sign(f) * (f.price - decision_mid) <span class="k">for</span> f <span class="k">in</span> fills]</span><span class="ln">coste_total = <span class="fn">sum</span>(slips) * clip_size</span></pre>
       <div class="predict predictgate" style="margin:0;border-radius:0;border-left:none;border-right:none;border-bottom:none">
         <div class="tag">Predice antes de ejecutar</div>
         <p style="margin:.2em 0 .8em;font-size:.94rem"><span id="dd-n2">129</span> fills con slippage medio <span id="dd-slip2">+5.59</span> y
@@ -746,7 +920,7 @@ coste ≈ slip_medio × n_fills × clip</pre>
     <div class="note"><span class="tag">La conclusión que cambia el curso</span>
     La estrategia perdió <span id="dd-eq2">−27.3</span> y solo la ejecución costó <span id="dd-cost2">~36</span>. <strong>Sin el peaje, la señal
     era ligeramente positiva.</strong> El problema nº 1 no era la idea: era ejecutar a lo
-    bruto. Ejecutar bien ES una estrategia — y tiene clase propia: la siguiente.</div>
+    bruto. Ejecutar bien ES una estrategia — y tiene clase propia en L12.</div>
   </div>
 </section>
 
@@ -756,13 +930,14 @@ coste ≈ slip_medio × n_fills × clip</pre>
     <h2>5 preguntas</h2>
     <div class="quiz" data-quiz>
       <div class="q" data-ok="1">
-        <div class="qt">El arrival mid es…</div>
+        <div class="qt">El decision mid de una orden hija es…</div>
         <div class="opts">
           <button class="opt">A · El mid al final del día</button>
-          <button class="opt">B · El mid en el momento de decidir: tu benchmark de ejecución</button>
+          <button class="opt">B · El mid cuando se envía esa orden: su benchmark de ejecución</button>
           <button class="opt">C · La media de todos los mids</button>
         </div>
-        <div class="why">Contra él se mide cada fill: lo que viste vs lo que pagaste.</div>
+        <div class="why">Cada fill se mide contra el decision mid de su orden hija. El parent
+        arrival del primer snapshot responde otra pregunta: si fue buena la decisión completa.</div>
       </div>
       <div class="q" data-ok="0">
         <div class="qt">El slippage de una compra se calcula como…</div>
@@ -796,7 +971,7 @@ coste ≈ slip_medio × n_fills × clip</pre>
       <div class="q" data-ok="0">
         <div class="qt">Para saber si tu estrategia tiene señal de verdad…</div>
         <div class="opts">
-          <button class="opt">A · Compárala contra benchmarks (azar, arrival), no contra cero</button>
+          <button class="opt">A · Compárala contra benchmarks (azar, parent arrival y decision mids), no contra cero</button>
           <button class="opt">B · Basta con que el equity final sea positivo</button>
           <button class="opt">C · Repite el mismo backtest hasta que salga bien</button>
         </div>
@@ -819,9 +994,8 @@ coste ≈ slip_medio × n_fills × clip</pre>
       <div class="pk done">L4 · Order y Fill</div>
       <div class="pk done">L5 · OrderBook + Tracker</div>
       <div class="pk done">L6 · familia Strategy</div>
-      <div class="pk done">L7-9 · el motor</div>
-      <div class="pk today">L10-11 · el framework<span>hoy: medir con criterio (L11)</span></div>
-      <div class="pk future">L12-14 · estrategias<span>VWAP, market making</span></div>
+      <div class="pk done">L7-10 · motor y framework</div>
+      <div class="pk today">L11-14 · estrategias<span>hoy: medir con criterio (L11)</span></div>
     </div>
 
     <div class="bridge">
@@ -845,6 +1019,7 @@ coste ≈ slip_medio × n_fills × clip</pre>
 <footer>L11 · Medir con criterio — Algo Trading ICAI 2026 · documento interactivo</footer>
 
 <script>const DOC_DATA={"signal":{"equity":[-1.09,-1.03,-0.96,-0.91,-0.31,-0.23,-0.53,-1.06,-1.15,-1.35,-5.06,-4.19,-5.87,-8.36,-10.26,-11.57,-11.36,-9.87,-7.89,-7.4,-6.29,-5.7,-5.97,-6.59,-6.19,-8.42,-8.72,-10.25,-9.28,-8.49,-4.08,-8.23,-6.67,-3.46,-4.83,-5.1,-8.15,-6.99,-4.17,-6.53,-6.55,-8.09,-9.05,-8.62,-8.17,-8.1,-5.98,-3.94,-0.01,-3.62,-4.0,-3.94,-2.09,-1.66,0.76,-0.29,-0.05,-2.87,-4.56,-3.12,-6.53,-11.52,-11.37,-53.04,-49.74,-49.43,-50.62,-54.47,-56.71,-56.8,-54.59,-53.98,-62.74,-56.48,-54.97,-60.08,-59.8,-61.55,-63.2,-63.39,-65.98,-66.78,-73.72,-74.15,-79.92,-84.53,-82.3,-83.2,-80.33,-76.01,-77.92,-79.57,-79.21,-80.99,-78.51,-75.49,-76.85,-69.23,-71.86,-79.31,-79.11,-80.34,-78.2,-76.9,-77.86,-76.94,-84.43,-98.38,-94.7,-96.39,-98.97,-92.35,-90.42,-82.4,-82.09,-84.16,-85.22,-85.23,-87.07,-82.28,-78.99,-69.58,-68.27,-68.39,-71.87,-69.3,-74.67,-86.52,-86.24,-85.62,-92.89,-91.45,-92.66,-85.28,-85.94,-83.33,-84.79,-84.0,-81.45,-80.47,-81.64,-85.85,-90.83,-87.2,-87.01,-87.13,-86.58,-91.93,-93.18,-93.08,-86.35,-85.04,-86.81,-89.28,-94.38,-88.96,-93.26,-96.73,-95.41,-94.33,-98.7,-97.11,-95.21,-96.58,-93.47,-93.58,-92.76,-93.19,-96.02,-89.67,-90.21,-91.8,-91.42,-95.02,-90.32,-89.17,-91.31,-95.85,-92.79,-93.99,-91.94,-91.71,-91.59,-91.4,-91.04,-87.06,-90.34,-91.51,-93.42,-90.19,-88.35,-90.05,-84.96,-87.89,-86.01,-80.07,-82.86,-81.0,-78.32,-72.29,-73.23,-76.05,-77.68,-79.54,-75.38,-75.51,-76.1,-76.73,-75.63,-77.52,-81.81,-81.59,-81.3,-83.35,-84.58,-83.87,-83.73,-80.41,-81.37,-78.91,-77.22,-76.91,-75.49,-77.2,-75.58,-75.58,-77.99,-77.14,-76.18,-75.95,-77.47,-77.78,-80.79,-78.99,-80.87,-77.01,-79.05,-81.29,-63.05,-66.24,-68.6,-68.13,-66.72,-65.66,-68.11,-68.68,-70.46,-73.67,-76.38,-71.15,-69.75,-72.67,-73.58,-73.74,-70.56,-79.07,-63.95,-60.32,-61.4,-55.66,-55.88,-56.61,-54.08,-49.54,-49.95,-47.27,-53.37,-58.7,-62.42,-62.98,-57.37,-61.55,-60.07,-58.56,-56.71,-55.35,-52.65,-56.43,-51.74,-58.91,-64.92,-63.7,-58.04,-60.32,-61.88,-57.66,-57.49,-54.46,-62.21,-66.87,-46.36,-48.0,-45.73,-40.84,-48.48,-59.14,-59.78,-52.53,-52.99,-45.88,-46.43,-45.07,-41.54,-36.99,-36.1,-35.09,-31.75,-32.55,-34.64,-35.87,-38.69,-44.0,-43.21,-44.29,-25.73,-25.01,-18.82,-17.12,-9.86,-10.33,-8.24,-9.14,-2.93,-3.96,-3.21,-2.4,1.34,-9.58,-4.82,-1.69,1.81,0.68,1.82,-1.91,-3.77,-3.49,-4.63,19.22,17.63,17.03,12.59,14.94,20.73,24.09,29.28,32.99,37.77,36.43,34.23,34.31,32.43,28.86,30.06,26.28,25.43,18.94,15.53,6.45,9.27,5.3,4.1,2.36,3.13,4.03,3.75,7.09,13.23,15.2,6.67,9.59,8.62,11.85,8.73,12.22,13.11,12.8,17.18,24.06,26.18,19.71,14.27,11.66,7.75,-0.46,-0.18,-2.1,1.11,1.93,-4.14,-1.21,-0.47,-5.77,-1.19,6.76,1.91,2.51,-0.87,1.31,0.81,5.93,7.59,4.73,-1.1,-1.37,-0.27,-1.84,1.74,-2.99,-2.5,4.23,8.48,12.6,13.27,14.42,16.22,19.35,14.01,9.15,14.23,15.32,21.17,16.43,14.21,14.18,17.92,15.1,17.79,11.53,9.6,5.81,2.61,1.58,0.52,0.11,-6.13,-19.55,-21.6,-15.94,-13.56,-14.52,-12.66,-13.66,-11.28,-13.77,-7.26,-3.33,-2.31,-0.23,-0.26,0.48,-2.04,-0.44,2.55,-2.27,-1.29,4.4,-0.56,2.96,9.12,12.43,12.36,14.69,9.42,10.11,10.31,3.5,3.49,6.46,1.09,-5.43,-13.92,-13.56,-13.7,-13.34,-11.7,-8.56,-9.67,-23.67,-22.0,-22.2,-23.35,-22.57,-24.91,-23.98,-26.63,-28.37,-30.36,-32.72,-32.18,-31.07,-31.72,-32.69,-32.44,-38.78,-37.08,-29.64,-27.51,-28.05,-29.38,-27.3],"nFills":129,"finalEquity":-27.3,"finalPos":-0.35},"monos":[[0.0,0.0,0.0,0.0,0.0,0.0,-0.25,-0.2,-0.2,-0.2,-0.2,-0.51,0.05,0.88,1.51,1.95,1.88,1.11,-0.5,-1.24,-2.91,-3.79,-3.92,-3.45,-3.75,-2.08,-1.85,-0.94,-1.52,-2.0,-5.01,-1.69,-2.93,-5.76,-4.4,-4.13,-1.08,-2.24,-5.06,-2.9,-2.87,-0.83,0.46,-0.53,-1.24,-1.29,-3.28,-5.33,-9.25,-5.64,-5.49,-5.68,-6.91,-7.2,-8.81,-8.11,-8.27,-6.39,-5.47,-6.45,-4.9,-2.68,-2.74,15.77,14.31,14.07,14.54,16.08,16.98,17.01,16.13,15.78,18.96,16.4,15.72,17.99,17.87,18.64,19.38,19.46,20.53,20.93,24.32,24.44,26.74,28.59,27.69,27.99,26.95,25.28,26.05,26.71,26.56,27.28,26.28,25.07,25.62,22.57,23.32,27.05,26.78,27.27,26.41,25.89,26.15,25.82,28.54,33.53,32.06,32.74,33.77,31.12,30.35,27.14,27.01,27.84,28.27,28.27,29.01,27.09,25.78,22.01,21.42,21.47,23.02,21.88,24.26,29.53,29.4,28.98,32.61,31.89,32.5,28.81,29.14,27.83,28.56,28.17,26.89,26.4,26.99,29.09,31.58,29.77,29.67,29.73,29.46,32.01,32.56,32.52,29.53,28.59,29.48,30.39,32.51,29.8,31.95,33.55,32.79,32.07,34.88,33.6,32.09,33.04,29.94,30.04,29.22,29.65,32.48,25.83,26.26,27.53,27.04,29.23,25.47,24.55,26.26,29.89,27.45,28.41,26.76,26.58,26.49,26.33,25.76,23.11,25.19,26.13,27.53,25.38,23.64,24.26,21.71,23.03,22.23,19.68,20.88,20.08,18.93,16.35,16.75,17.96,18.66,19.45,17.6,17.65,17.86,18.1,17.69,18.29,19.99,19.88,19.74,20.69,21.43,21.01,20.92,18.8,19.35,16.68,14.42,14.02,12.12,14.19,12.56,12.56,14.81,13.87,12.91,12.69,14.04,14.29,16.7,14.98,16.03,12.95,14.58,16.23,4.07,6.2,7.77,7.26,6.34,5.3,6.35,6.53,7.2,8.34,9.5,7.15,6.62,7.71,8.06,8.12,6.92,10.0,4.96,3.45,3.89,1.59,1.67,1.97,0.96,-0.86,-0.77,-1.74,0.48,2.42,3.76,3.97,1.93,3.45,2.91,2.36,1.69,1.2,0.21,1.59,-0.12,2.49,4.68,4.1,1.69,2.7,3.4,1.52,1.35,0.09,2.9,4.6,-2.86,-2.27,-3.09,-4.87,-2.09,1.79,2.02,-0.68,-0.5,-3.35,-3.19,-3.68,-4.96,-6.62,-6.94,-7.31,-8.52,-8.23,-7.84,-7.51,-7.04,-6.08,-6.22,-6.03,-9.4,-9.53,-10.69,-11.09,-12.71,-12.6,-13.07,-12.87,-14.33,-14.1,-14.27,-14.45,-15.28,-12.86,-13.95,-14.82,-15.62,-15.34,-15.71,-14.64,-14.11,-14.27,-13.98,-21.09,-20.56,-20.31,-18.4,-19.41,-21.89,-23.33,-25.66,-27.18,-29.23,-28.66,-27.71,-27.81,-27.16,-25.78,-26.23,-25.3,-24.82,-21.32,-19.05,-12.99,-14.87,-12.23,-11.52,-10.61,-11.09,-12.01,-11.93,-13.78,-17.19,-18.29,-13.55,-15.17,-14.63,-16.57,-15.15,-17.09,-17.58,-17.41,-20.16,-24.46,-25.79,-21.83,-18.05,-16.61,-14.43,-9.97,-10.42,-9.23,-11.24,-11.89,-8.85,-10.32,-10.78,-8.43,-10.6,-13.78,-11.84,-12.08,-10.73,-11.6,-11.51,-13.37,-13.97,-13.0,-10.67,-10.57,-11.18,-10.71,-11.78,-10.36,-10.51,-12.53,-13.8,-15.08,-15.26,-15.62,-16.16,-17.1,-15.5,-14.04,-15.91,-16.27,-18.23,-16.65,-15.9,-15.9,-17.14,-16.2,-17.1,-15.01,-14.37,-13.44,-12.24,-11.98,-11.52,-11.34,-8.67,-2.92,-2.04,-4.47,-5.49,-5.08,-6.14,-5.56,-7.22,-6.3,-9.64,-11.32,-11.98,-13.02,-13.0,-13.47,-12.67,-13.55,-15.22,-12.89,-13.38,-16.22,-13.81,-15.41,-18.21,-19.71,-19.68,-20.87,-18.39,-18.77,-18.88,-15.1,-15.09,-16.86,-13.51,-9.44,-4.21,-4.84,-4.73,-5.03,-6.4,-9.01,-8.09,3.21,1.17,1.35,2.21,1.43,3.78,2.85,5.49,7.24,9.23,11.58,10.74,9.8,10.35,10.94,10.75,15.24,13.79,7.41,5.58,6.04,7.19,5.4],[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,-0.32,0.27,-0.29,-1.12,-1.76,-2.19,-2.12,-1.62,-0.91,-0.66,-0.11,0.19,0.23,0.07,0.18,-0.38,-0.46,-1.07,-1.07,-1.07,-1.07,-1.07,-1.07,-1.07,-1.07,-1.27,-0.51,-0.8,-1.51,-0.97,-0.96,-0.45,-0.13,-0.37,-0.55,-0.56,-1.06,-1.57,-2.55,-1.65,-1.61,-1.66,-1.97,-2.04,-2.44,-2.27,-2.31,-1.84,-1.61,-1.85,-1.46,-1.18,-1.21,8.05,7.32,7.19,7.43,8.2,8.65,8.67,8.23,8.05,9.64,8.36,8.02,9.15,9.09,9.48,9.85,9.89,10.43,10.63,12.32,12.38,13.53,14.45,14.01,14.15,13.63,12.8,13.18,13.51,13.44,13.8,13.3,12.7,12.97,11.45,11.97,13.17,13.15,12.93,12.51,12.25,12.37,12.21,13.57,16.06,15.33,15.67,16.18,14.86,14.47,12.72,12.63,13.25,13.57,13.57,14.12,12.69,11.7,8.88,8.43,8.47,9.63,8.78,10.57,14.52,14.42,14.1,16.83,16.29,16.74,13.97,14.22,13.24,13.79,13.49,12.54,12.17,12.61,14.19,16.05,14.69,14.62,14.67,14.46,16.37,16.79,16.76,14.51,13.81,14.48,15.16,16.75,14.72,16.33,17.53,16.96,16.24,19.05,17.77,16.26,17.21,14.11,14.21,13.39,13.82,16.65,10.0,10.43,11.7,11.21,13.4,9.64,8.72,10.43,14.06,11.62,12.58,10.93,10.75,10.66,10.5,9.93,7.28,9.36,10.3,11.7,9.55,8.12,8.94,5.55,7.31,6.24,2.84,4.44,3.38,1.84,-1.6,-1.07,0.55,1.48,2.54,0.06,-0.14,-0.1,0.06,-0.21,0.19,1.32,1.25,1.15,1.79,2.28,2.0,1.94,0.53,0.89,-0.75,-1.88,-2.08,-3.03,-1.99,-2.81,-2.81,-1.68,-2.15,-2.63,-2.75,-2.07,-1.94,-0.74,-1.6,-1.07,-3.74,-3.33,-2.92,-5.96,-5.43,-5.03,-5.16,-5.39,-5.57,-5.22,-5.16,-4.94,-4.56,-4.17,-4.95,-5.13,-4.77,-4.65,-4.63,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.5,-5.07,-6.94,-6.79,-6.99,-7.79,-6.4,-4.46,-4.35,-5.7,-5.61,-7.03,-6.95,-7.2,-7.84,-8.67,-8.83,-9.01,-9.62,-9.47,-9.09,-8.87,-8.36,-7.39,-7.54,-7.34,-10.71,-10.84,-12.01,-12.41,-14.02,-14.21,-14.9,-14.6,-16.79,-16.46,-16.71,-16.98,-18.23,-14.59,-16.24,-17.53,-18.74,-18.64,-19.37,-17.24,-16.17,-16.5,-15.92,-27.85,-27.14,-26.8,-24.26,-25.82,-28.3,-29.74,-32.07,-33.95,-35.31,-34.93,-34.3,-34.37,-33.93,-33.01,-33.31,-32.46,-32.22,-30.47,-29.33,-26.3,-27.24,-25.92,-25.57,-25.11,-25.53,-25.69,-25.68,-26.26,-26.26,-26.26,-26.26,-26.26,-26.26,-26.26,-26.26,-26.26,-26.26,-26.26,-26.26,-26.26,-26.26,-26.26,-26.26,-26.26,-26.26,-26.26,-26.26,-26.51,-26.11,-26.01,-26.77,-26.4,-26.29,-26.88,-26.33,-25.54,-26.02,-25.96,-26.3,-26.08,-26.11,-25.64,-25.49,-25.73,-26.31,-26.34,-26.23,-26.39,-26.03,-26.78,-26.68,-25.33,-24.48,-23.63,-23.51,-23.27,-22.91,-22.29,-23.35,-24.58,-22.71,-22.34,-20.39,-21.97,-22.72,-22.72,-21.48,-22.68,-21.48,-24.26,-25.12,-26.36,-27.96,-28.31,-28.91,-29.15,-32.71,-40.39,-41.56,-38.32,-36.96,-37.51,-36.45,-37.02,-35.66,-36.9,-32.44,-30.2,-29.53,-28.49,-28.5,-28.03,-29.15,-28.44,-27.11,-28.97,-28.58,-26.3,-28.36,-26.76,-23.96,-22.76,-22.79,-21.84,-23.82,-23.51,-23.43,-26.45,-26.46,-25.04,-27.72,-30.98,-35.16,-34.66,-34.74,-34.51,-33.64,-31.02,-31.95,-43.61,-41.92,-42.06,-42.78,-42.13,-44.08,-43.31,-45.52,-46.97,-48.63,-50.59,-49.89,-49.1,-49.56,-50.34,-50.15,-54.64,-53.19,-47.45,-45.93,-46.45,-47.21,-46.02],[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,-0.31,-0.46,-1.35,-0.52,-0.83,-1.53,-1.19,-1.32,0.2,-0.38,-1.79,-0.71,-0.69,0.33,0.97,0.48,-0.14,-0.18,-1.67,-3.2,-6.15,-3.44,-3.33,-3.47,-4.39,-4.61,-5.82,-5.29,-5.41,-4.0,-3.31,-4.05,-2.88,-1.22,-1.27,12.62,11.34,11.1,11.57,13.11,14.01,14.05,13.16,12.81,15.99,13.43,12.75,15.02,14.9,15.67,16.41,16.49,17.56,17.96,21.35,21.3,24.18,26.49,25.37,25.74,24.43,22.35,23.31,24.0,23.86,24.57,23.58,22.37,22.91,19.87,20.92,23.9,23.82,24.31,23.45,22.93,23.19,22.86,25.58,30.57,29.1,29.78,30.81,28.16,27.39,24.18,24.05,24.88,25.31,25.31,26.05,24.13,22.82,19.05,18.46,18.51,20.06,18.92,21.3,26.57,26.44,26.02,29.65,28.93,29.54,25.85,26.18,24.87,25.6,25.21,23.93,23.44,24.03,26.13,28.62,26.81,26.71,26.77,26.5,28.8,29.21,29.18,26.93,26.23,26.9,27.58,29.17,27.14,28.75,29.95,29.38,28.84,30.95,29.99,28.86,29.57,27.24,27.32,26.7,26.82,29.65,22.99,23.43,24.7,24.21,26.39,22.63,21.71,23.43,27.06,24.61,25.57,23.93,23.75,23.65,23.5,22.93,20.27,22.35,23.29,24.7,22.55,21.12,21.94,18.54,20.31,19.23,15.84,17.44,16.37,14.84,11.4,11.93,13.54,14.47,15.32,13.46,13.51,13.73,13.77,13.49,13.89,15.03,14.95,14.86,15.35,15.79,15.22,15.11,12.28,12.77,10.31,8.62,8.32,6.89,8.44,7.22,7.23,8.91,8.21,7.49,7.32,8.33,8.52,10.33,9.04,9.83,7.51,8.47,9.3,3.21,4.28,5.07,4.81,4.35,4.0,4.35,4.41,4.63,5.01,5.4,4.61,4.44,4.8,4.92,4.94,4.54,5.56,3.88,3.45,3.56,2.99,3.01,3.08,2.83,2.38,2.4,2.16,2.71,3.2,3.53,3.58,2.74,3.5,3.03,2.9,2.73,2.61,2.36,2.7,2.28,2.93,3.48,3.33,2.73,2.98,2.95,2.95,2.95,2.95,2.65,2.23,4.09,3.94,4.15,4.6,3.9,2.71,2.71,2.71,2.71,2.71,2.71,2.38,2.06,1.65,1.57,1.48,1.17,1.24,1.43,1.55,1.8,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,1.87,2.09,2.55,2.4,2.83,2.95,3.82,4.39,5.57,5.57,5.57,5.57,5.57,5.57,5.57,5.57,5.35,4.67,4.45,5.4,5.08,4.95,4.95,4.95,4.95,4.95,4.71,4.17,3.3,3.04,3.83,4.44,5.02,5.89,7.67,7.6,8.08,7.28,7.07,8.59,7.86,7.63,8.8,7.72,6.13,7.1,6.8,7.14,6.92,6.94,6.47,6.32,6.57,7.15,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.58,6.79,7.1,7.5,7.59,7.74,7.8,8.0,8.0,8.0,8.0,7.75,7.62,7.88,7.74,8.08,7.77,8.88,9.44,9.61,9.87,9.87,9.98,9.71,9.88,10.22,9.75,9.85,10.42,9.93,10.25,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.29,10.62,11.02,10.58,10.26,10.44,10.64,10.58,12.07,11.59,9.46,8.86,9.01,9.39,8.57]],"monoFinals":[5.4,-46.02,8.57],"arrivalMid":100000.0,"avgSlip":5.587,"nSlips":129};</script>
+<script type="application/json" id="pedagogy-contract">{"lesson":11,"status":"contract-strict","title":"Primera estrategia + métricas","delivery":"lesson","source_path":"framework/_build/docs/11_body.html","requires":{"concepts":["framework.strategy_contract","backtest.runner","microstructure.spread_cost","metrics.equity_curve","python.fstring"],"apis":["market.sample","market.step","new_order.constructor","order.constructor","orderbook.imbalance","orderbook.mid","strategy.on_book_update","strategy.on_fill","backtest.constructor","backtest.run","backtest_result.fills","backtest_result.equity_curve","backtest_result.final_position","backtest_result.final_equity","backtest_result.n_steps","backtest_result.n_fills","tracker.equity"],"notation":["notation.equity","notation.spread"]},"requirement_routes":{"concepts":{"framework.strategy_contract":"LIVE","backtest.runner":"LIVE","microstructure.spread_cost":"LIVE","metrics.equity_curve":"LIVE","python.fstring":"REQUIRED"},"apis":{"market.sample":"LIVE","market.step":"LIVE","new_order.constructor":"LIVE","order.constructor":"LIVE","orderbook.imbalance":"LIVE","orderbook.mid":"LIVE","strategy.on_book_update":"LIVE","strategy.on_fill":"LIVE","backtest.constructor":"LIVE","backtest.run":"LIVE","backtest_result.fills":"LIVE","backtest_result.equity_curve":"OPTIONAL","backtest_result.final_position":"LIVE","backtest_result.final_equity":"LIVE","backtest_result.n_steps":"LIVE","backtest_result.n_fills":"LIVE","tracker.equity":"LIVE"},"notation":{"notation.equity":"LIVE","notation.spread":"LIVE"}},"introduces":{"concepts":[{"id":"metrics.arrival_price","importance":"major","route":"LIVE"},{"id":"metrics.slippage","importance":"major","route":"LIVE"},{"id":"metrics.random_benchmark","importance":"major","route":"LIVE"},{"id":"metrics.pnl_execution_separation","importance":"major","route":"LIVE"},{"id":"metrics.inventory_exposure","importance":"major","route":"LIVE"}],"apis":[],"notation":["notation.slippage_signed"]},"introduction_routes":{"apis":{},"notation":{"notation.slippage_signed":"LIVE"}},"recalls":[{"concept":"microstructure.spread_cost","introduced_in":5,"mapping":{"before":"Cruzar el spread crea un coste inmediato de ida y vuelta.","now":"El slippage con signo aísla la calidad de ejecución del PnL."}}],"api_surface":[{"id":"market.sample","name":"sample","kind":"classmethod","signature":"sample(symbol: str = 'BTCUSDT', depth: int = 10) -> Market","returns":"Market","responsibility":"load the reproducible packaged market replay","qualified_name":"exchange.market.Market.sample"},{"id":"market.step","name":"step","kind":"method","signature":"step() -> OrderBook | None","returns":"OrderBook | None","responsibility":"advance replay time and replace the active book","qualified_name":"exchange.market.Market.step"},{"id":"new_order.constructor","name":"NewOrder","kind":"constructor","signature":"NewOrder(order: Order) -> NewOrder","returns":"NewOrder","responsibility":"wrap an order as a typed strategy action","qualified_name":"exchange.strategy.NewOrder"},{"id":"order.constructor","name":"Order","kind":"constructor","signature":"Order(symbol: str, side: Side, size: float, price: float | None = None, order_type: OrderType = OrderType.LIMIT, id: int = None) -> Order","returns":"Order","responsibility":"construct the canonical order intent","qualified_name":"exchange.orders.Order"},{"id":"orderbook.imbalance","name":"imbalance","kind":"method","signature":"imbalance(levels: int = 1) -> float | None","returns":"float | None","responsibility":"compute depth imbalance for selected levels","qualified_name":"exchange.book.OrderBook.imbalance"},{"id":"orderbook.mid","name":"mid","kind":"property","signature":"mid -> float | None","returns":"float | None","responsibility":"compute the top-of-book midpoint","qualified_name":"exchange.book.OrderBook.mid"},{"id":"strategy.on_book_update","name":"on_book_update","kind":"method","signature":"on_book_update(book: OrderBook) -> list[Action]","returns":"list[Action]","responsibility":"propose typed actions from market state","qualified_name":"exchange.strategy.Strategy.on_book_update"},{"id":"strategy.on_fill","name":"on_fill","kind":"method","signature":"on_fill(fill: Fill) -> None","returns":"None","responsibility":"receive execution feedback","qualified_name":"exchange.strategy.Strategy.on_fill"},{"id":"backtest.constructor","name":"Backtest","kind":"constructor","signature":"Backtest(market: Market, strategy: Strategy, cash: float = 0.0) -> Backtest","returns":"Backtest","responsibility":"wire one market, strategy, and portfolio runner","qualified_name":"exchange.backtest.Backtest"},{"id":"backtest.run","name":"run","kind":"method","signature":"run() -> BacktestResult","returns":"BacktestResult","responsibility":"orchestrate market, strategy, matching, and accounting","qualified_name":"exchange.backtest.Backtest.run"},{"id":"backtest_result.fills","name":"fills","kind":"attribute","signature":"fills: list[Fill]","returns":"list[Fill]","responsibility":"expose executions produced by the run","qualified_name":"exchange.backtest.BacktestResult.fills"},{"id":"backtest_result.equity_curve","name":"equity_curve","kind":"attribute","signature":"equity_curve: list[float]","returns":"list[float]","responsibility":"expose marked-to-market equity at each backtest step","qualified_name":"exchange.backtest.BacktestResult.equity_curve"},{"id":"backtest_result.final_position","name":"final_position","kind":"attribute","signature":"final_position: float","returns":"float","responsibility":"expose final signed inventory","qualified_name":"exchange.backtest.BacktestResult.final_position"},{"id":"backtest_result.final_equity","name":"final_equity","kind":"attribute","signature":"final_equity: float","returns":"float","responsibility":"expose final marked-to-market equity","qualified_name":"exchange.backtest.BacktestResult.final_equity"},{"id":"backtest_result.n_steps","name":"n_steps","kind":"attribute","signature":"n_steps: int","returns":"int","responsibility":"expose the number of processed snapshots","qualified_name":"exchange.backtest.BacktestResult.n_steps"},{"id":"backtest_result.n_fills","name":"n_fills","kind":"property","signature":"n_fills -> int","returns":"int","responsibility":"count executions produced by the run","qualified_name":"exchange.backtest.BacktestResult.n_fills"},{"id":"tracker.equity","name":"equity","kind":"method","signature":"equity(mark_price: float) -> float","returns":"float","responsibility":"mark cash and inventory to market","qualified_name":"exchange.portfolio.PositionTracker.equity"}],"routes":{"LIVE":["l11-challenge","l11-three-judges","l11-random-benchmark","l11-bridge"],"REQUIRED":["l11-cost-autopsy","l11-quiz"],"OPTIONAL":[]},"objectives":[{"id":"l11-benchmark-strategy","route":"LIVE","concepts":["metrics.random_benchmark","metrics.arrival_price","metrics.equity_curve"],"apis":["market.sample","new_order.constructor","backtest.constructor","backtest.run","backtest_result.final_equity","backtest_result.n_steps"],"notation":[]},{"id":"l11-interpret-slippage","route":"LIVE","concepts":["metrics.slippage","metrics.pnl_execution_separation"],"apis":["backtest_result.fills","backtest_result.n_fills"],"notation":["notation.slippage_signed"]},{"id":"l11-track-inventory-risk","route":"LIVE","concepts":["metrics.inventory_exposure"],"apis":["backtest_result.final_position"],"notation":[]}],"load":{"live_presentation_minutes":20,"guided_minutes":20,"required_autonomous_minutes":14,"optional_minutes":10,"overflow_policy":"explicit-route-plan"},"scenes":[{"id":"l11-challenge","dom_id":"s0","type":"hero-challenge","route":"LIVE","layout":"focus","concepts":["metrics.random_benchmark"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l11-three-judges","dom_id":"s1","type":"code-state","route":"LIVE","layout":"split-42-58","concepts":["metrics.arrival_price","metrics.slippage","metrics.inventory_exposure","metrics.pnl_execution_separation","metrics.equity_curve"],"duration_minutes":10,"stages":[{"id":"equity-alone","route":"LIVE","dom_stage":0},{"id":"random","route":"LIVE","dom_stage":1},{"id":"arrival","route":"LIVE","dom_stage":2},{"id":"inventory","route":"LIVE","dom_stage":3},{"id":"verdict","route":"REQUIRED","dom_stage":4}]},{"id":"l11-random-benchmark","dom_id":"s2","type":"concept-simulator","route":"LIVE","layout":"split-45-55","concepts":["metrics.random_benchmark"],"duration_minutes":6,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l11-cost-autopsy","dom_id":"s3","type":"guided-exercise","route":"REQUIRED","layout":"focus","concepts":["metrics.slippage","metrics.pnl_execution_separation"],"duration_minutes":10,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l11-quiz","dom_id":"s4","type":"diagnostic-quiz","route":"REQUIRED","layout":"focus","concepts":["metrics.arrival_price","metrics.slippage"],"duration_minutes":8,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l11-bridge","dom_id":"s5","type":"bridge","route":"LIVE","layout":"focus","concepts":["metrics.slippage"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]}],"bridge":{"target_lesson":12,"known":{"concepts":["metrics.slippage","execution.market_impact","framework.strategy_contract"],"apis":["strategy.on_book_update","backtest.run"],"notation":["notation.slippage_signed"]},"limitation":"Una única orden de mercado grande concentra el impacto.","need":"El slicing reparte el objetivo en el tiempo con TWAP y VWAP."},"api_transitions":[],"package_checks":[],"used_later":{"concepts":["metrics.arrival_price","metrics.inventory_exposure","metrics.slippage"],"apis":[],"notation":["notation.slippage_signed"]}}</script>
 <script>
 
 (function(){
@@ -1043,7 +1218,7 @@ $$('.scrolly[data-scrolly]').forEach(sc=>{
 });
 })();
 
-/* L11 — señal vs monos, arrival mid y la autopsia del coste (datos reales) */
+/* L11 — señal vs monos, dos llegadas y autopsia del coste (datos reales) */
 (function(){
 "use strict";
 const $=s=>document.querySelector(s);
@@ -1069,8 +1244,8 @@ fig.addEventListener('stagechange',e=>{
     $('#j1n').textContent=`monos (equity final): ${D.monoFinals.join('  ·  ')} — misma munición, cero señal`;
   }
   if(st===2){
-    $('#j2').innerHTML=`<div><span>arrival mid</span><b>${D.arrivalMid}</b></div>
-      <div><span>slippage medio</span><b class="neg">+${D.avgSlip}</b></div>
+    $('#j2').innerHTML=`<div><span>parent arrival · decisión</span><b>${D.arrivalMid}</b></div>
+      <div><span>slippage medio · vs child decision mids</span><b class="neg">+${D.avgSlip}</b></div>
       <div><span>coste ≈</span><b class="neg">${cost.toFixed(1)}</b></div>`;
   }
   if(st===3){
@@ -1117,6 +1292,533 @@ const vals={'dd-n0':D.nSlips,'dd-eq1':SIG.finalEquity,
  'dd-eq3':SIG.finalEquity,'dd-cost3':'~'+cost.toFixed(0),
  'dd-gross':(gross>=0?'+':'')+gross.toFixed(0)};
 Object.entries(vals).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.textContent=v;});
+})();
+
+(function(){
+'use strict';
+
+const RUNTIME_VERSION=2;
+const ROUTES=['LIVE','REQUIRED','OPTIONAL'];
+const contractNode=document.getElementById('pedagogy-contract');
+if(!contractNode)return;
+
+let contract;
+try{contract=JSON.parse(contractNode.textContent);}catch(error){
+  console.error('Invalid pedagogy contract',error);return;
+}
+if(!Array.isArray(contract.scenes)||!contract.scenes.length)return;
+
+const body=document.body;
+const params=new URLSearchParams(location.search);
+const mobileQuery=matchMedia('(max-width: 900px)');
+const requestedMode=params.get('mode')==='aula'?'aula':'estudio';
+const mode=requestedMode==='aula'&&!mobileQuery.matches?'aula':'estudio';
+const isProfessor=['1','true'].includes((params.get('profe')||'').toLowerCase());
+const routeScopes=mode==='aula'
+  ?(isProfessor?['LIVE','LIVE+REQUIRED','ALL']:['LIVE'])
+  :['LIVE+REQUIRED','ALL'];
+let routeScope=mode==='estudio'?'LIVE+REQUIRED':'LIVE';
+if(mode==='estudio'&&params.get('optional')==='1')routeScope='ALL';
+let currentScene=0,currentStage=0;
+
+const esc=value=>String(value??'').replace(/[&<>"']/g,ch=>({
+  '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+})[ch]);
+const slug=value=>String(value||'focus').toLowerCase().replace(/[^a-z0-9-]+/g,'-');
+const route=value=>ROUTES.includes(String(value||'').toUpperCase())
+  ?String(value).toUpperCase():'LIVE';
+const routeClass=value=>`lr-route-${route(value).toLowerCase()}`;
+const scopeRoutes=()=>routeScope==='ALL'?ROUTES:
+  routeScope==='LIVE+REQUIRED'?['LIVE','REQUIRED']:['LIVE'];
+const modeUrl=next=>{
+  const q=new URLSearchParams(location.search);q.set('mode',next);
+  return `${location.pathname}?${q.toString()}${location.hash}`;
+};
+const stateKey=(scene,stage)=>`${scene.id}::${stage.id}`;
+const reducedMotion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function elementForStage(nodes,value,index,total){
+  if(value!==undefined&&value!==null){
+    const wanted=String(value);
+    return nodes.find(node=>node.dataset.stage===wanted)||null;
+  }
+  return total===nodes.length?nodes[index]||null:(total===1&&nodes.length===1?nodes[0]:null);
+}
+
+const missingScenes=[];
+const models=contract.scenes.map(rawScene=>{
+  if(!rawScene||!rawScene.id||!rawScene.dom_id)return null;
+  const element=document.getElementById(rawScene.dom_id);
+  if(!element){missingScenes.push(rawScene.id);return null;}
+  const sceneRoute=route(rawScene.route);
+  const layout=slug(rawScene.layout);
+  element.classList.add('lr-scene',routeClass(sceneRoute),`lr-layout-${layout}`);
+  element.dataset.sceneId=rawScene.id;
+  element.dataset.sceneType=rawScene.type||'scene';
+  element.dataset.sceneLayout=layout;
+  element.dataset.layoutApplied='true';
+  element.dataset.route=sceneRoute;
+  const allSteps=[...element.querySelectorAll('.scrolly .step')];
+  const allFigures=[...element.querySelectorAll('.fig-stage')];
+  const declared=Array.isArray(rawScene.stages)&&rawScene.stages.length
+    ?rawScene.stages:[{id:'stage',route:sceneRoute}];
+  const stages=declared.map((rawStage,index)=>{
+    const stage={...rawStage};
+    stage.id=stage.id||`stage-${index+1}`;
+    stage.route=route(stage.route||sceneRoute);
+    stage.step=elementForStage(allSteps,stage.dom_stage,index,declared.length);
+    stage.figure=elementForStage(allFigures,stage.dom_stage,index,declared.length);
+    [stage.step,stage.figure].filter(Boolean).forEach(node=>{
+      node.dataset.route=stage.route;node.classList.add(routeClass(stage.route));
+    });
+    return stage;
+  });
+  const firstWrap=element.matches('.wrap')?element:element.querySelector(':scope > .wrap');
+  if(firstWrap){
+    const badge=document.createElement('div');
+    badge.className=`lr-scene-badge ${routeClass(sceneRoute)}`;
+    const minutes=Number.isFinite(Number(rawScene.duration_minutes))
+      ?`<span>${esc(rawScene.duration_minutes)} min</span>`:'';
+    badge.innerHTML=`<span>${esc(sceneRoute)}</span><span>${esc(rawScene.type||'scene')}</span>${minutes}`;
+    firstWrap.insertBefore(badge,firstWrap.firstChild);
+  }
+  return {...rawScene,route:sceneRoute,layout,element,stages,allSteps,allFigures};
+}).filter(Boolean);
+
+if(missingScenes.length){
+  body.dataset.runtimeContractError='missing-scene-dom';
+  console.error(`Pedagogy scenes without DOM nodes: ${missingScenes.join(', ')}`);
+}
+if(!models.length)return;
+
+body.classList.add('lr-has-contract',`mode-${mode}`);
+body.dataset.learningMode=mode;
+body.dataset.requestedMode=requestedMode;
+body.dataset.professorMode=String(isProfessor);
+body.dataset.runtimeVersion=String(RUNTIME_VERSION);
+document.documentElement.classList.toggle('lr-mode-aula',mode==='aula');
+if(requestedMode!==mode)body.classList.add('lr-mobile-fallback');
+
+const inventory=models.flatMap(scene=>scene.stages.map(stage=>({
+  key:stateKey(scene,stage),scene,stage,route:stage.route,
+})));
+const inventoryKeys=new Set(inventory.map(item=>item.key));
+const optionalCount=inventory.filter(item=>item.route==='OPTIONAL').length;
+
+function storageKey(){
+  if(window.DOC&&typeof DOC.key==='function')return DOC.key();
+  return `algoTrading.${body.dataset.lesson||String(contract.lesson||'x').padStart(2,'0')}`;
+}
+function readSaved(){
+  try{return JSON.parse(localStorage.getItem(storageKey())||'{}');}catch(_error){return {};}
+}
+const initialSaved=readSaved();
+const savedRuntime=initialSaved.runtime||{};
+if(params.get('optional')!=='1'&&routeScopes.includes(savedRuntime.routeScope)){
+  routeScope=savedRuntime.routeScope;
+}
+const visited=new Set((Array.isArray(savedRuntime.visited)?savedRuntime.visited:[])
+  .filter(key=>inventoryKeys.has(key)));
+if(savedRuntime.scene&&savedRuntime.stage){
+  const prior=inventory.find(item=>item.scene.id===savedRuntime.scene&&item.stage.id===savedRuntime.stage);
+  if(prior)visited.add(prior.key);
+}
+
+function progressSnapshot(){
+  const progress={};
+  ROUTES.forEach(routeName=>{
+    const states=inventory.filter(item=>item.route===routeName);
+    const seen=states.filter(item=>visited.has(item.key)).length;
+    progress[routeName]={
+      visited:seen,total:states.length,
+      percent:states.length?Math.round(100*seen/states.length):100,
+      complete:states.length===0||seen===states.length,
+    };
+  });
+  return progress;
+}
+function saveRuntime(scene=null,stage=null,mark=false){
+  if(scene&&stage&&mark)visited.add(stateKey(scene,stage));
+  const previous=readSaved().runtime||{};
+  const runtime={...previous,version:RUNTIME_VERSION,mode,routeScope,
+    visited:[...visited],progress:progressSnapshot(),ts:Date.now()};
+  if(scene)runtime.scene=scene.id;
+  if(stage)runtime.stage=stage.id;
+  if(window.DOC&&typeof DOC.save==='function')DOC.save({runtime});
+  else{
+    try{localStorage.setItem(storageKey(),JSON.stringify({...readSaved(),runtime}));}catch(_error){}
+  }
+  body.dataset.runtimeProgress=JSON.stringify(runtime.progress);
+}
+
+const nav=document.createElement('aside');
+nav.id='lr-nav';
+nav.setAttribute('aria-label','Navegación de la lección');
+nav.innerHTML=`
+  <a class="lr-course-home" href="../../index.html">← Mapa del curso</a>
+  <div class="lr-brand"><b>L${Number(contract.lesson)}</b><span>${esc(contract.title)}</span></div>
+  <div class="lr-modes" aria-label="Modo de lectura">
+    <a href="${modeUrl('aula')}" class="${mode==='aula'?'on':''}">Aula</a>
+    <a href="${modeUrl('estudio')}" class="${mode==='estudio'?'on':''}">Estudio</a>
+  </div>
+  ${requestedMode!==mode?'<p class="lr-fallback-note">Aula usa el recorrido vertical en esta pantalla.</p>':''}
+  <button type="button" class="lr-study-optional" aria-pressed="false">Incluir OPTIONAL</button>
+  <div class="lr-scene-links"></div>`;
+body.appendChild(nav);
+
+const navLinks=nav.querySelector('.lr-scene-links');
+models.forEach((scene,index)=>{
+  const button=document.createElement('button');
+  button.type='button';button.dataset.sceneIndex=String(index);
+  button.className=routeClass(scene.route);
+  button.innerHTML=`<span>${esc(scene.route)}</span><b>${esc(scene.id.replace(/^l\d+-/,''))}</b>`;
+  button.addEventListener('click',()=>{
+    if(mode==='aula')goTo(index,0,false);
+    else scene.element.scrollIntoView({behavior:reducedMotion()?'auto':'smooth',block:'start'});
+  });
+  navLinks.appendChild(button);
+});
+
+const controls=document.createElement('div');
+controls.id='lr-controls';
+controls.innerHTML=`
+  <button type="button" class="lr-prev" aria-label="Etapa anterior">← <span>Anterior</span></button>
+  <div class="lr-progress" aria-live="polite">
+    <b class="lr-scene-progress">Escena</b><span>·</span><b class="lr-stage-progress">Etapa</b>
+    <span>·</span><b class="lr-route-progress">0%</b>
+  </div>
+  <button type="button" class="lr-route-scope" aria-label="Cambiar alcance de ruta">LIVE</button>
+  <button type="button" class="lr-next" aria-label="Etapa siguiente"><span>Siguiente</span> →</button>`;
+body.appendChild(controls);
+
+const mobileToolbar=document.createElement('div');
+mobileToolbar.id='lr-mobile-toolbar';
+mobileToolbar.innerHTML=`<a href="../../index.html">← Curso</a>
+  <span>${requestedMode==='aula'?'Aula → estudio':'Modo estudio'}</span>
+  <button type="button" class="lr-study-optional" aria-pressed="false">+ OPTIONAL</button>
+  ${isProfessor?'<button type="button" class="lr-mobile-teacher" aria-expanded="false">Guía</button>':''}`;
+body.insertBefore(mobileToolbar,body.firstChild);
+
+const liveRegion=document.createElement('div');
+liveRegion.className='lr-sr-only';liveRegion.setAttribute('aria-live','polite');
+body.appendChild(liveRegion);
+
+let teacherToggle=null,teacherDrawer=null,teacherBody=null,mobileTeacherToggle=null;
+if(isProfessor){
+  teacherToggle=document.createElement('button');
+  teacherToggle.id='lr-teacher-toggle';teacherToggle.type='button';
+  teacherToggle.textContent='Guía docente';teacherToggle.setAttribute('aria-expanded','false');
+  teacherToggle.setAttribute('aria-controls','lr-teacher-drawer');
+  nav.insertBefore(teacherToggle,navLinks);
+  mobileTeacherToggle=mobileToolbar.querySelector('.lr-mobile-teacher');
+  mobileTeacherToggle?.setAttribute('aria-controls','lr-teacher-drawer');
+  teacherDrawer=document.createElement('aside');
+  teacherDrawer.id='lr-teacher-drawer';teacherDrawer.dataset.overlay='teacher';
+  teacherDrawer.setAttribute('aria-label','Guía docente de la escena');
+  teacherDrawer.setAttribute('aria-hidden','true');
+  teacherDrawer.innerHTML='<div class="lr-teacher-head"><b>Guía docente</b>'
+    +'<button type="button" class="lr-teacher-close" aria-label="Cerrar guía docente">×</button></div>'
+    +'<div class="lr-teacher-body"></div>';
+  body.appendChild(teacherDrawer);teacherBody=teacherDrawer.querySelector('.lr-teacher-body');
+  const toggleTeacher=force=>{
+    const open=force===undefined?!teacherDrawer.classList.contains('open'):force;
+    teacherDrawer.classList.toggle('open',open);
+    teacherDrawer.setAttribute('aria-hidden',String(!open));
+    [teacherToggle,mobileTeacherToggle].filter(Boolean)
+      .forEach(button=>button.setAttribute('aria-expanded',String(open)));
+    if(open)teacherDrawer.querySelector('.lr-teacher-close').focus();
+    else (mobileQuery.matches?mobileTeacherToggle:teacherToggle)?.focus();
+  };
+  teacherToggle.addEventListener('click',()=>toggleTeacher());
+  mobileTeacherToggle?.addEventListener('click',()=>toggleTeacher());
+  teacherDrawer.querySelector('.lr-teacher-close').addEventListener('click',()=>toggleTeacher(false));
+}
+
+function allowedStages(scene){
+  const allowedRoutes=scopeRoutes();
+  return scene.stages.filter(stage=>allowedRoutes.includes(stage.route));
+}
+function allowed(scene){
+  return scopeRoutes().includes(scene.route)&&allowedStages(scene).length>0;
+}
+function availableModels(){return models.filter(allowed);}
+
+function activateStage(scene,stage){
+  const hasMappedSteps=scene.stages.some(item=>item.step);
+  const hasMappedFigures=scene.stages.some(item=>item.figure);
+  scene.allSteps.forEach(step=>{
+    const model=scene.stages.find(item=>item.step===step);
+    const visibleRoute=!model||scopeRoutes().includes(model.route);
+    const active=!hasMappedSteps||stage.step===step;
+    step.hidden=!visibleRoute;
+    step.classList.toggle('lr-stage-active',active&&visibleRoute);
+    step.classList.toggle('on',active&&visibleRoute);
+    step.setAttribute('aria-hidden',String(!(active&&visibleRoute)));
+  });
+  scene.allFigures.forEach(figure=>{
+    const model=scene.stages.find(item=>item.figure===figure);
+    const visibleRoute=!model||scopeRoutes().includes(model.route);
+    const active=!hasMappedFigures||stage.figure===figure;
+    figure.hidden=!visibleRoute;
+    figure.classList.toggle('on',active&&visibleRoute);
+    figure.setAttribute('aria-hidden',String(!(active&&visibleRoute)));
+  });
+  const name=scene.element.querySelector('.stage-name');
+  if(name){
+    const source=stage.step&&stage.step.dataset.name;
+    name.textContent=source||stage.id;
+  }
+  const fig=scene.element.querySelector('.fig');
+  if(fig&&stage.dom_stage!==undefined){
+    fig.dispatchEvent(new CustomEvent('stagechange',{detail:{stage:stage.dom_stage}}));
+  }
+}
+function syncNav(scene=null){
+  [...navLinks.querySelectorAll('button')].forEach(button=>{
+    const index=Number(button.dataset.sceneIndex),model=models[index];
+    button.hidden=!allowed(model);
+    button.classList.toggle('on',model===scene);
+    button.setAttribute('aria-current',model===scene?'step':'false');
+  });
+}
+function notesHtml(value){
+  if(!value)return '';
+  const values=Array.isArray(value)?value:[value];
+  return `<ul>${values.map(item=>`<li>${esc(typeof item==='string'?item:JSON.stringify(item))}</li>`).join('')}</ul>`;
+}
+function syncTeacher(scene,stage){
+  if(!teacherBody||!scene||!stage)return;
+  const concepts=scene.concepts||[];
+  const objectives=(contract.objectives||[]).filter(objective=>
+    (objective.concepts||[]).some(concept=>concepts.includes(concept)));
+  const sceneNotes=scene.professor_notes||scene.teacher_notes||scene.teaching_notes;
+  const stageNotes=stage.professor_notes||stage.teacher_notes||stage.teaching_notes;
+  const fullGuide=document.getElementById('gd-toggle');
+  teacherBody.innerHTML=`<p class="lr-teacher-kicker">${esc(scene.route)} · ${esc(scene.type)} · ${esc(scene.duration_minutes)} min</p>`
+    +`<h2>${esc(scene.id)}</h2><p class="lr-teacher-stage">Etapa <code>${esc(stage.id)}</code> · layout <code>${esc(scene.layout)}</code></p>`
+    +`<h3>Conceptos</h3><ul>${concepts.length?concepts.map(concept=>`<li><code>${esc(concept)}</code></li>`).join(''):'<li>Ninguno declarado.</li>'}</ul>`
+    +`<h3>Objetivos relacionados</h3><ul>${objectives.length?objectives.map(objective=>
+      `<li><code>${esc(objective.id)}</code> · ${esc(objective.route)}</li>`).join(''):'<li>Ninguno declarado para esta escena.</li>'}</ul>`
+    +(sceneNotes?`<h3>Notas de escena</h3>${notesHtml(sceneNotes)}`:'')
+    +(stageNotes?`<h3>Notas de etapa</h3>${notesHtml(stageNotes)}`:'')
+    +(fullGuide?'<button type="button" class="lr-full-guide">Abrir guion completo</button>':'');
+  teacherBody.querySelector('.lr-full-guide')?.addEventListener('click',()=>{
+    teacherDrawer.classList.remove('open');teacherDrawer.setAttribute('aria-hidden','true');
+    [teacherToggle,mobileTeacherToggle].filter(Boolean)
+      .forEach(button=>button.setAttribute('aria-expanded','false'));
+    fullGuide.click();
+  });
+}
+function updateDeepLink(scene,stage){
+  if(!history.replaceState)return;
+  const next=`#${encodeURIComponent(scene.id)}/${encodeURIComponent(stage.id)}`;
+  if(location.hash!==next)history.replaceState(null,'',`${location.pathname}${location.search}${next}`);
+}
+function goTo(sceneIndex,stageIndex,focusHeading=true){
+  let scene=models[sceneIndex];
+  if(!scene||!allowed(scene)){
+    scene=availableModels()[0];sceneIndex=models.indexOf(scene);stageIndex=0;
+  }
+  if(!scene)return;
+  const stages=allowedStages(scene);
+  stageIndex=Math.max(0,Math.min(Number(stageIndex)||0,stages.length-1));
+  const stage=stages[stageIndex];
+  currentScene=sceneIndex;currentStage=stageIndex;
+  body.dataset.currentSceneId=scene.id;
+  body.dataset.currentStageId=stage.id;
+  body.dataset.currentStageRoute=stage.route;
+  body.dataset.currentLayout=scene.layout;
+  body.dataset.routeScope=routeScope;
+  scene.element.dataset.currentStageId=stage.id;
+  models.forEach(model=>{
+    const active=model===scene;
+    model.element.classList.toggle('lr-scene-active',active);
+    model.element.setAttribute('aria-hidden',String(!active));
+  });
+  activateStage(scene,stage);
+  const available=availableModels();
+  const scenePosition=available.indexOf(scene)+1;
+  const flatStates=available.flatMap(model=>allowedStages(model).map(item=>({scene:model,stage:item})));
+  const statePosition=flatStates.findIndex(item=>item.scene===scene&&item.stage===stage);
+  controls.querySelector('.lr-scene-progress').textContent=`Escena ${scenePosition}/${available.length}`;
+  controls.querySelector('.lr-stage-progress').textContent=`Etapa ${stageIndex+1}/${stages.length}`;
+  controls.querySelector('.lr-route-scope').textContent=routeScope;
+  controls.querySelector('.lr-prev').disabled=statePosition<=0;
+  controls.querySelector('.lr-next').disabled=statePosition===flatStates.length-1;
+  saveRuntime(scene,stage,true);
+  const scopeProgress=progressSnapshot(),enabledRoutes=scopeRoutes();
+  const routeProgress=Math.round(enabledRoutes.reduce((total,routeName)=>
+    total+scopeProgress[routeName].visited,0)/Math.max(1,enabledRoutes.reduce((total,routeName)=>
+    total+scopeProgress[routeName].total,0))*100);
+  controls.querySelector('.lr-route-progress').textContent=`${routeProgress}% visto`;
+  syncNav(scene);syncTeacher(scene,stage);updateDeepLink(scene,stage);
+  liveRegion.textContent=`${scene.id}, etapa ${stageIndex+1} de ${stages.length}`;
+  if(focusHeading){
+    const heading=scene.element.querySelector('h1,h2,h3');
+    if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}
+  }
+}
+function move(delta,focusHeading=true){
+  const scene=models[currentScene];
+  if(!scene)return;
+  const stages=allowedStages(scene);
+  if(delta>0&&currentStage<stages.length-1)return goTo(currentScene,currentStage+1,focusHeading);
+  if(delta<0&&currentStage>0)return goTo(currentScene,currentStage-1,focusHeading);
+  const available=availableModels(),position=available.indexOf(scene);
+  const next=available[position+delta];
+  if(!next)return;
+  const nextIndex=models.indexOf(next),nextStages=allowedStages(next);
+  goTo(nextIndex,delta>0?0:nextStages.length-1,focusHeading);
+}
+function closeOverlays(){
+  document.getElementById('guion-drawer')?.classList.remove('open');
+  teacherDrawer?.classList.remove('open');
+  teacherDrawer?.setAttribute('aria-hidden','true');
+  [teacherToggle,mobileTeacherToggle].filter(Boolean)
+    .forEach(button=>button.setAttribute('aria-expanded','false'));
+  document.querySelectorAll('dialog[open]').forEach(dialog=>dialog.close());
+  document.querySelectorAll('[data-overlay].open').forEach(node=>node.classList.remove('open'));
+}
+function cycleScope(){
+  if(routeScopes.length<2)return;
+  const scene=models[currentScene];
+  const stageId=body.dataset.currentStageId;
+  const index=routeScopes.indexOf(routeScope);
+  routeScope=routeScopes[(index+1)%routeScopes.length];
+  const stages=scene&&allowed(scene)?allowedStages(scene):[];
+  const stageIndex=stages.findIndex(stage=>stage.id===stageId);
+  goTo(currentScene,Math.max(0,stageIndex),false);
+}
+function syncOptionalControls(){
+  document.querySelectorAll('.lr-study-optional').forEach(button=>{
+    button.hidden=mode!=='estudio'||optionalCount===0;
+    button.setAttribute('aria-pressed',String(routeScope==='ALL'));
+    button.textContent=routeScope==='ALL'?'Ocultar OPTIONAL':
+      (button.closest('#lr-mobile-toolbar')?'+ OPTIONAL':'Incluir OPTIONAL');
+  });
+}
+function applyStudyScope(activeScene=null){
+  body.dataset.routeScope=routeScope;
+  models.forEach(scene=>{
+    const sceneVisible=allowed(scene);
+    scene.element.hidden=!sceneVisible;
+    scene.element.setAttribute('aria-hidden',String(!sceneVisible));
+    scene.stages.forEach(stage=>{
+      const stageVisible=scopeRoutes().includes(stage.route);
+      [stage.step,stage.figure].filter(Boolean).forEach(node=>{
+        node.hidden=!stageVisible;node.setAttribute('aria-hidden',String(!stageVisible));
+      });
+    });
+  });
+  syncNav(activeScene);syncOptionalControls();saveRuntime(null,null,false);
+}
+function toggleOptional(){
+  routeScope=routeScope==='ALL'?'LIVE+REQUIRED':'ALL';
+  applyStudyScope();
+  liveRegion.textContent=routeScope==='ALL'?'Contenido OPTIONAL incluido.':'Contenido OPTIONAL oculto.';
+}
+
+controls.querySelector('.lr-prev').addEventListener('click',()=>move(-1,false));
+controls.querySelector('.lr-next').addEventListener('click',()=>move(1,false));
+controls.querySelector('.lr-route-scope').addEventListener('click',cycleScope);
+controls.querySelector('.lr-route-scope').hidden=mode!=='aula'||routeScopes.length<2;
+controls.classList.toggle('lr-fixed-scope',controls.querySelector('.lr-route-scope').hidden);
+document.querySelectorAll('.lr-study-optional').forEach(button=>button.addEventListener('click',toggleOptional));
+
+document.addEventListener('keydown',event=>{
+  if(event.key==='Escape'){closeOverlays();return;}
+  if(mode!=='aula')return;
+  const active=document.activeElement;
+  if(active&&(/INPUT|TEXTAREA|SELECT/.test(active.tagName)||active.isContentEditable))return;
+  if(active&&active.tagName==='BUTTON'&&(event.key===' '||event.key==='Enter'))return;
+  if(['ArrowRight','PageDown',' '].includes(event.key)){
+    event.preventDefault();move(1,true);
+  }else if(['ArrowLeft','PageUp'].includes(event.key)){
+    event.preventDefault();move(-1,true);
+  }
+});
+
+function deepLink(){
+  let sceneId=params.get('scene'),stageId=params.get('stage');
+  if(location.hash){
+    const [rawScene,rawStage]=location.hash.slice(1).split('/');
+    try{sceneId=decodeURIComponent(rawScene)||sceneId;stageId=decodeURIComponent(rawStage||'')||stageId;}
+    catch(_error){sceneId=rawScene||sceneId;stageId=rawStage||stageId;}
+  }
+  if(!sceneId)return null;
+  const scene=models.find(item=>item.id===sceneId||item.dom_id===sceneId);
+  if(!scene)return null;
+  const stage=scene.stages.find(item=>item.id===stageId)||scene.stages[0];
+  return {scene,stage};
+}
+function restoredPosition(){
+  const linked=deepLink();
+  if(linked){
+    if(mode==='estudio'&&linked.stage.route==='OPTIONAL')routeScope='ALL';
+    return linked;
+  }
+  if(!savedRuntime.scene)return null;
+  const scene=models.find(item=>item.id===savedRuntime.scene);
+  const stage=scene?.stages.find(item=>item.id===savedRuntime.stage);
+  return scene&&stage?{scene,stage}:null;
+}
+
+if(mode==='aula'){
+  const restored=restoredPosition();
+  if(restored&&allowed(restored.scene)&&scopeRoutes().includes(restored.stage.route)){
+    currentScene=models.indexOf(restored.scene);
+    currentStage=allowedStages(restored.scene).indexOf(restored.stage);
+  }
+  goTo(currentScene,Math.max(0,currentStage),false);
+}else{
+  const restored=restoredPosition();
+  if(restored?.stage.route==='OPTIONAL')routeScope='ALL';
+  applyStudyScope(restored?.scene||null);
+  const sceneObserver=new IntersectionObserver(entries=>{
+    const visible=entries.filter(entry=>entry.isIntersecting&&!entry.target.hidden)
+      .sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
+    if(!visible)return;
+    const scene=models.find(item=>item.element===visible.target);
+    if(!scene)return;
+    syncNav(scene);
+    const stage=allowedStages(scene).find(item=>!item.step)||allowedStages(scene)[0];
+    if(stage){saveRuntime(scene,stage,true);updateDeepLink(scene,stage);}
+  },{rootMargin:'-20% 0px -55% 0px',threshold:[0,.15,.4]});
+  models.forEach(scene=>sceneObserver.observe(scene.element));
+  models.forEach(scene=>scene.stages.forEach(stage=>{
+    if(!stage.step)return;
+    const observer=new IntersectionObserver(entries=>{
+      if(entries.some(entry=>entry.isIntersecting)&&!stage.step.hidden){
+        saveRuntime(scene,stage,true);syncNav(scene);updateDeepLink(scene,stage);
+      }
+    },{rootMargin:'-35% 0px -45% 0px',threshold:.1});
+    observer.observe(stage.step);
+  }));
+  if(restored&&allowed(restored.scene))requestAnimationFrame(()=>{
+    (restored.stage.step||restored.scene.element).scrollIntoView({block:'center'});
+  });
+}
+
+syncOptionalControls();
+saveRuntime(null,null,false);
+window.LEARNING_RUNTIME={
+  version:RUNTIME_VERSION,contract,mode,isProfessor,
+  getState:()=>({routeScope,scene:models[currentScene]?.id,stage:body.dataset.currentStageId,
+    progress:progressSnapshot()}),
+  setOptional:enabled=>{if(mode==='estudio'&&(enabled!==(routeScope==='ALL')))toggleOptional();},
+  goTo:(sceneId,stageId)=>{
+    const scene=models.find(item=>item.id===sceneId);if(!scene)return false;
+    if(mode==='estudio'){
+      const stage=scene.stages.find(item=>item.id===stageId)||allowedStages(scene)[0];
+      if(!stage)return false;
+      (stage.step||scene.element).scrollIntoView({block:'center'});return true;
+    }
+    const stages=allowedStages(scene),index=stages.findIndex(item=>item.id===stageId);
+    goTo(models.indexOf(scene),Math.max(0,index),false);return true;
+  },
+};
+
+mobileQuery.addEventListener?.('change',()=>location.reload());
 })();
 
 </script>

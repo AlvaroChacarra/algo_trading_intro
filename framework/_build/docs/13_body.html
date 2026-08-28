@@ -75,7 +75,7 @@
         <p>Con skew, el inventario máximo cae de <span id="dd-i0">1.4</span> a <span id="dd-i1">0.3</span> — el monstruo, domado. Pero el
         PnL también baja: de <span id="dd-p0">37.4</span> a <span id="dd-p1">23.6</span>. <strong>Control de riesgo cuesta rentabilidad
         esperada.</strong> ¿Cuánta correa poner? Eso es un problema de optimización… y
-        tiene solución con nombre propio: mañana.</p>
+        tiene solución con nombre propio: L14.</p>
       </div></div>
     </div>
 
@@ -148,7 +148,7 @@ bid = 98.80   ask = 100.00
     Sin correa: más PnL final <em>esta vez</em>, pero inventarios de ±<span id="dd-i3">1.4</span> — habrías
     sudado cada tick. Con correa: PnL menor pero un libro tranquilo. No hay respuesta
     "correcta": hay un dial de <strong>aversión al riesgo</strong>. Ponerle número a ese
-    dial es exactamente la clase de mañana (γ).</div>
+    dial es exactamente la preparación para L14 (γ).</div>
   </div>
 </section>
 
@@ -159,7 +159,7 @@ bid = 98.80   ask = 100.00
 
     <div class="code">
       <div class="code-head"><span>exchange/strategies/market_maker.py — el corazón</span><span>python</span></div>
-      <pre><span class="ln"><span class="k">def</span> <span class="fn">reservation_price</span>(self, mid):</span><span class="ln">    <span class="k">return</span> mid - self.inventory_skew * self._inventory</span><span class="ln"></span><span class="ln"><span class="k">def</span> <span class="fn">quotes</span>(self, book):</span><span class="ln">    r = self.reservation_price(book.mid)</span><span class="ln">    <span class="k">return</span> r - self.half_spread, r + self.half_spread</span><span class="ln"></span><span class="ln"><span class="k">def</span> <span class="fn">on_fill</span>(self, fill):</span><span class="ln">    self._inventory += fill.size <span class="k">if</span> fill.side == <span class="s">'buy'</span> <span class="k">else</span> -fill.size</span></pre>
+      <pre><span class="ln"><span class="k">def</span> <span class="fn">reservation_price</span>(self, mid):</span><span class="ln">    <span class="k">return</span> mid - self.inventory_skew * self.inventory</span><span class="ln"></span><span class="ln"><span class="k">def</span> <span class="fn">quotes</span>(self, book):</span><span class="ln">    r = self.reservation_price(book.mid)</span><span class="ln">    <span class="k">return</span> r - self.half_spread, r + self.half_spread</span><span class="ln"></span><span class="ln"><span class="k">def</span> <span class="fn">on_fill</span>(self, fill):</span><span class="ln">    self.inventory += fill.size <span class="k">if</span> fill.side == <span class="s">'buy'</span> <span class="k">else</span> -fill.size</span></pre>
       <div class="predict predictgate" style="margin:0;border-radius:0;border-left:none;border-right:none;border-bottom:none">
         <div class="tag">Predice antes de ejecutar</div>
         <p style="margin:.2em 0 .8em;font-size:.94rem">mid=100, skew=2.0, inventario=−0.5
@@ -177,13 +177,25 @@ bid = 98.80   ask = 100.00
     Otra <code>Strategy</code> más: <code>on_book_update</code> propone dos limits,
     <code>on_fill</code> (el gancho de L10) lleva el inventario. Mismo enchufe, negocio
     opuesto al VWAP.</div>
+
+    <div class="note"><span class="tag">LIVE · puente conceptual a L14</span>
+      <p><strong>γ mide aversión al riesgo.</strong> La utilidad CARA
+      <code>U(W) = −exp(−γW)</code> convierte el dial de la correa en una preferencia:
+      cuanto mayor es γ, más penalizas una riqueza final incierta.</p>
+      <p><strong>κ mide lo deprisa que desaparecen los fills al alejarte.</strong> En el
+      simulador, una quote a distancia δ recibe intensidad
+      <code>λ(δ) = A·exp(−κδ)</code>. Con A=1 y κ=1.5, cerca (δ=0.2) da
+      λ≈0.74; lejos (δ=1.0), λ≈0.22. Alejarte protege el precio, pero reduce la
+      probabilidad de ejecutar. Aquí solo fijamos estas dos intuiciones; las fórmulas y la
+      clase de L14 todavía no aparecen.</p>
+    </div>
   </div>
 </section>
 
 <section id="s4">
   <div class="wrap">
     <div class="eyebrow">§4 · <b>Fija lo de hoy</b></div>
-    <h2>5 preguntas</h2>
+    <h2>7 preguntas</h2>
     <div class="quiz" data-quiz>
       <div class="q" data-ok="2">
         <div class="qt">El PnL estructural de un market maker viene de…</div>
@@ -232,8 +244,29 @@ bid = 98.80   ask = 100.00
           <button class="opt">B · Que el skew es un error</button>
           <button class="opt">C · Que la semilla estaba trucada</button>
         </div>
-        <div class="why">Elegir cuánta correa = elegir tu aversión al riesgo. Mañana ese
+        <div class="why">Elegir cuánta correa = elegir tu aversión al riesgo. En L14 ese
         dial se llama gamma.</div>
+      </div>
+      <div class="q" data-ok="1">
+        <div class="qt">En <code>U(W)=−exp(−γW)</code>, aumentar γ representa…</div>
+        <div class="opts">
+          <button class="opt">A · Más predicción de precio</button>
+          <button class="opt">B · Más aversión al riesgo</button>
+          <button class="opt">C · Más volumen disponible</button>
+        </div>
+        <div class="why">CARA da significado económico al dial: γ dice cuánto te duele
+        la incertidumbre de la riqueza final.</div>
+      </div>
+      <div class="q" data-ok="0">
+        <div class="qt">Con el mismo A y κ, ¿qué quote tiene mayor intensidad
+        <code>λ(δ)=A·exp(−κδ)</code>?</div>
+        <div class="opts">
+          <button class="opt">A · La cercana al mid (delta pequeña)</button>
+          <button class="opt">B · La lejana al mid (delta grande)</button>
+          <button class="opt">C · Las dos siempre reciben los mismos fills</button>
+        </div>
+        <div class="why">Al crecer la distancia, el exponente se vuelve más negativo y la
+        intensidad cae. κ controla la rapidez de esa caída.</div>
       </div>
       <div class="score"></div>
     </div>
@@ -251,9 +284,8 @@ bid = 98.80   ask = 100.00
       <div class="pk done">L4 · Order y Fill</div>
       <div class="pk done">L5 · OrderBook + Tracker</div>
       <div class="pk done">L6 · familia Strategy</div>
-      <div class="pk done">L7-9 · el motor</div>
-      <div class="pk done">L10-11 · el framework</div>
-      <div class="pk today">L12-14 · estrategias<span>hoy: market making (L13)</span></div>
+      <div class="pk done">L7-10 · motor y framework</div>
+      <div class="pk today">L11-14 · estrategias<span>hoy: market making (L13)</span></div>
     </div>
 
     <div class="bridge">
@@ -261,7 +293,7 @@ bid = 98.80   ask = 100.00
       <p style="margin:.2em 0"><strong>Tu skew es un número a ojo. ¿Cuál es el óptimo?</strong></p>
       <p>Elegiste <code>skew=2.0</code> porque sonaba razonable. Avellaneda y Stoikov
       (2008) resolvieron el problema de verdad: dado tu miedo (γ), la volatilidad (σ) y el
-      tiempo que queda (τ), <em>calcularon</em> dónde cotizar. Mañana: la fórmula, qué
+      tiempo que queda (τ), <em>calcularon</em> dónde cotizar. En L14: la fórmula, qué
       significa cada letra, y tu propia estrategia enchufada al simulador. Última clase de
       construcción.</p>
     </div>
@@ -271,7 +303,8 @@ bid = 98.80   ask = 100.00
       Abre <code>13_build_exercises.ipynb</code>: quotes, skew, reservation price y la
       simulación.</div>
       <div class="box"><span class="tag">Y después, al gimnasio</span>
-      <code>13_auxiliary.ipynb</code> — drills de cotización e inventario.</div>
+      <code>13_auxiliary.ipynb</code> — drills de cotización e inventario; A6 (CARA)
+      y A7 (intensidad de fills) consolidan como REQUIRED el puente LIVE a L14.</div>
     </div>
   </div>
 </section>

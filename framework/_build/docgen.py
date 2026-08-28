@@ -17,6 +17,7 @@ L1 conserva sus simuladores propios (sin data-attrs, no colisionan).
 from __future__ import annotations
 
 import importlib.util
+import html
 import json
 import os
 
@@ -46,6 +47,19 @@ def _pedagogy_payload(n: int) -> dict:
         return {}
     with open(path, encoding="utf-8") as fh:
         return json.load(fh)
+
+
+def _runtime_state_counts(payload: dict) -> dict[str, int]:
+    """Count navigable states by their effective route (stage overrides scene)."""
+    counts = {"LIVE": 0, "REQUIRED": 0, "OPTIONAL": 0}
+    for scene in payload.get("scenes", []):
+        scene_route = scene.get("route", "LIVE")
+        stages = scene.get("stages") or [{"route": scene_route}]
+        for stage in stages:
+            effective = stage.get("route", scene_route)
+            if effective in counts:
+                counts[effective] += 1
+    return counts
 
 
 def _pedagogy_contract(n: int) -> str:
@@ -300,27 +314,75 @@ def build_doc(lesson: dict) -> str:
             f'</body>\n</html>\n')
 
 
+INDEX_CSS = r"""
+.course-index{max-width:1320px}.course-index-hero{max-width:1100px}
+.course-block{padding:28px 0 18px;border-top:1px solid var(--line)}
+.course-block:first-child{border-top:0}.course-block-head{display:flex;align-items:end;
+  justify-content:space-between;gap:18px;margin-bottom:14px}
+.course-block-head h2{margin:0;font-size:1.4rem}.course-flow{color:var(--accent);
+  font:600 .72rem var(--mono);letter-spacing:.08em}.course-block-head p{margin:0;
+  color:var(--muted);font-size:.86rem;text-align:right}
+.lc-load{display:flex;gap:7px;flex-wrap:wrap;margin:9px 0 2px;font:600 .6rem var(--mono)}
+.lc-load span{padding:3px 7px;border:1px solid var(--line);border-radius:99px;color:var(--muted)}
+.lc-load .live{border-color:rgba(34,211,238,.35);color:var(--accent)}
+.lc-load .required{border-color:rgba(192,132,252,.38);color:var(--kw)}
+.lc-load .optional{color:var(--faint)}
+.lc-route-progress{display:grid;gap:5px;margin:11px 0 7px}
+.lc-route-row{display:grid;grid-template-columns:62px minmax(0,1fr) 34px;gap:7px;
+  align-items:center;font:600 .58rem var(--mono);color:var(--faint)}
+.lc-route-row .lc-bar{margin:0}.lc-route-row.required .lc-fill{background:var(--kw)}
+.lc-route-row output{text-align:right;color:var(--muted)}
+.lc-dep{margin-top:8px;color:var(--faint);font:500 .62rem var(--mono)}
+.lc-meta .lc-status{color:var(--muted)}.lcard.done .lc-status{color:var(--bid)}
+.assessment-grid{display:grid;grid-template-columns:minmax(260px,420px);gap:14px}
+@media(max-width:700px){.course-block-head{display:block}.course-block-head p{text-align:left;margin-top:5px}
+  .course-index{padding-inline:14px}.lgrid{grid-template-columns:1fr}}
+"""
+
+
 def build_index(lessons: list[dict], root: str) -> str:
-    """El índice del curso: 15 tarjetas + progreso local del alumno."""
-    cards = []
-    for L in lessons:
-        n = L["n"]
-        slugname = L["slug"].split("-", 1)[1]
-        doc = f'{L["slug"]}/presentation/{slugname}-doc.html'
-        build = f'{L["slug"]}/exercises/{n:02d}_build_exercises.html'
-        auxiliary = f'{L["slug"]}/exercises/{n:02d}_auxiliary.html'
-        cards.append(f'''<article class="lcard" data-lesson="{n:02d}">
+    """Course map grouped by progression, with route-aware local progress."""
+    cards: dict[int, str] = {}
+    for lesson in lessons:
+        n = lesson["n"]
+        payload = _pedagogy_payload(n)
+        counts = _runtime_state_counts(payload)
+        load = payload.get("load", {})
+        live_min = load.get("live_presentation_minutes", 0)
+        guided_min = load.get("guided_minutes", 0)
+        required_min = load.get("required_autonomous_minutes", 0)
+        optional_min = load.get("optional_minutes", 0)
+        requires = payload.get("requires", {})
+        prerequisite_count = sum(len(requires.get(kind, []))
+                                 for kind in ("concepts", "apis", "notation"))
+        slugname = lesson["slug"].split("-", 1)[1]
+        doc = f'{lesson["slug"]}/presentation/{slugname}-doc.html'
+        build = f'{lesson["slug"]}/exercises/{n:02d}_build_exercises.html'
+        auxiliary = f'{lesson["slug"]}/exercises/{n:02d}_auxiliary.html'
+        optional_chip = (f'<span class="optional">OPTIONAL {optional_min} min</span>'
+                         if optional_min else "")
+        dependency = ("Punto de entrada" if n == 1 else
+                      f"Continúa L{n - 1} · {prerequisite_count} prerrequisitos declarados")
+        cards[n] = f'''<article class="lcard" data-lesson="{n:02d}"
+  data-live-states="{counts['LIVE']}" data-required-states="{counts['REQUIRED']}">
   <div class="lc-n">L{n}</div>
-  <div class="lc-t">{L["title"]}</div>
-  <div class="lc-o">{L["piece"]}</div>
-  <div class="lc-bar"><div class="lc-fill"></div></div>
-  <div class="lc-meta"><span class="lc-scroll">—</span><span class="lc-quiz">quiz —</span></div>
+  <div class="lc-t">{html.escape(lesson["title"])}</div>
+  <div class="lc-o">{html.escape(lesson["piece"])}</div>
+  <div class="lc-load"><span class="live">LIVE {live_min} + práctica {guided_min} min</span>
+    <span class="required">REQUIRED {required_min} min</span>{optional_chip}</div>
+  <div class="lc-dep">{dependency}</div>
+  <div class="lc-route-progress" aria-label="Progreso por ruta">
+    <div class="lc-route-row live"><span>LIVE</span><div class="lc-bar"><div class="lc-fill"></div></div><output>0%</output></div>
+    <div class="lc-route-row required"><span>REQUIRED</span><div class="lc-bar"><div class="lc-fill"></div></div><output>0%</output></div>
+  </div>
+  <div class="lc-meta"><span class="lc-status">sin empezar</span><span class="lc-quiz">quiz —</span></div>
   <nav class="lc-actions" aria-label="Materiales de la clase {n}">
     <a href="{doc}">📖 Documento</a>
     <a href="{build}">🧪 Build exercises</a>
     <a href="{auxiliary}">🏋️ Auxiliary exercises</a>
   </nav>
-</article>''')
+</article>'''
+
     checkpoint = ""
     if os.path.exists(os.path.join(root, "06-oop-iii-inheritance", "checkpoint.html")):
         checkpoint = ('<a class="lcard special" href="06-oop-iii-inheritance/checkpoint.html">'
@@ -330,47 +392,75 @@ def build_index(lessons: list[dict], root: str) -> str:
     if os.path.exists(os.path.join(root, "14-avellaneda-stoikov", "CAPSTONE.md")):
         capstone = ('<a class="lcard special" href="14-avellaneda-stoikov/CAPSTONE.md">'
                     '<div class="lc-n">🏁</div><div class="lc-t">Capstone · tu market maker</div>'
-                    '<div class="lc-o">Proyecto abierto · baremo 30/40/30 · leaderboard</div></a>')
+                    '<div class="lc-o">Proyecto autónomo REQUIRED · baremo 30/40/30</div></a>')
+    blocks = [
+        ("FOUNDATIONS", "L1 → L6", "Python y objetos nacen para representar el mercado", range(1, 7), checkpoint),
+        ("ENGINE", "L7 → L10", "Del snapshot al motor y al runner", range(7, 11), ""),
+        ("STRATEGIES", "L11 → L14", "Medir, ejecutar, cotizar y controlar inventario", range(11, 15), capstone),
+    ]
+    sections = []
+    for name, flow, description, numbers, special in blocks:
+        content = "".join(cards[n] for n in numbers if n in cards) + special
+        sections.append(f'''<section class="course-block" aria-labelledby="block-{name.lower()}">
+  <div class="course-block-head"><div><div class="course-flow">{flow}</div>
+    <h2 id="block-{name.lower()}">{name}</h2></div><p>{description}</p></div>
+  <div class="lgrid">{content}</div>
+</section>''')
     exam = ('<a class="lcard special" href="15-final-exam/examen.html">'
-            '<div class="lc-n">L15</div><div class="lc-t">Examen final</div>'
-            '<div class="lc-o">40 preguntas · 40 minutos · +1/−0.5</div></a>')
-    body = f'''<header class="hero wrap" id="s0" style="padding-bottom:24px">
-  <div class="eyebrow"><b>Algo Trading · ICAI 2026</b> · el curso</div>
+            '<div class="lc-n">L15 · ASSESSMENT</div><div class="lc-t">Examen final</div>'
+            '<div class="lc-o">Recorrido lineal · 40 preguntas · 40 minutos · +1/−0.5</div></a>')
+    sections.append(f'''<section class="course-block" aria-labelledby="block-assessment">
+  <div class="course-block-head"><div><div class="course-flow">L15</div>
+    <h2 id="block-assessment">ASSESSMENT</h2></div><p>Integra la construcción completa</p></div>
+  <div class="assessment-grid">{exam}</div>
+</section>''')
+
+    body = f'''<header class="hero wrap course-index-hero" id="s0" style="padding-bottom:24px">
+  <div class="eyebrow"><b>Algo Trading · ICAI 2026</b> · mapa del curso</div>
   <h1>Un curso, <em>un sistema</em></h1>
-  <p class="lede">Quince clases construyendo <code>exchange</code>: un motor de
-  microestructura y un framework de estrategias. Tu progreso se guarda en este navegador.</p>
+  <p class="lede">Catorce lessons construyen <code>exchange</code> en tres bloques; L15 evalúa
+  la integración. LIVE y REQUIRED forman el recorrido oficial. OPTIONAL solo aparece cuando lo eliges.</p>
 </header>
-<main class="wrap" style="padding-bottom:60px">
-  <div class="lgrid">{''.join(cards)}{checkpoint}{capstone}{exam}</div>
-  <p style="color:var(--faint);font-size:.85rem;margin-top:26px">Cada clase: documento
-  interactivo → <code>NN_build_exercises.ipynb</code> (construcción) →
-  <code>NN_auxiliary.ipynb</code> (el gimnasio). Progreso local:
-  <button class="btn ghost" id="idx-reset" style="font-size:.7rem;padding:4px 10px">borrar</button></p>
+<main class="wrap course-index" style="padding-bottom:60px">
+  {''.join(sections)}
+  <p style="color:var(--faint);font-size:.85rem;margin-top:26px">El progreso registra escenas y
+  etapas visitadas por ruta en este navegador; OPTIONAL no condiciona la finalización.
+  <button class="btn ghost" id="idx-reset" style="font-size:.7rem;padding:4px 10px">borrar progreso</button></p>
 </main>
 <footer>Algo Trading ICAI 2026 · Álvaro López Chacarra</footer>
 <script>
 (function(){{
-document.querySelectorAll('.lcard[data-lesson]').forEach(c=>{{
-  let d={{}};
-  try{{d=JSON.parse(localStorage.getItem('algoTrading.'+c.dataset.lesson)||'{{}}');}}catch(_){{}}
-  const pct=d.scroll||0;
-  c.querySelector('.lc-fill').style.width=pct+'%';
-  c.querySelector('.lc-scroll').textContent=pct>0?('leído '+pct+'%'):'sin empezar';
-  if(d.quiz)c.querySelector('.lc-quiz').textContent='quiz '+d.quiz.right+'/'+d.quiz.total;
-  if(pct>=90&&d.quiz&&d.quiz.right>=Math.ceil(d.quiz.total*0.6))c.classList.add('done');
+const clamp=value=>Math.max(0,Math.min(100,Number(value)||0));
+document.querySelectorAll('.lcard[data-lesson]').forEach(card=>{{
+  let data={{}};
+  try{{data=JSON.parse(localStorage.getItem('algoTrading.'+card.dataset.lesson)||'{{}}');}}catch(_){{}}
+  const runtime=data.runtime||{{}},progress=runtime.progress||{{}};
+  const runtimeAware=runtime.version>=2&&progress.LIVE&&progress.REQUIRED;
+  const live=clamp(runtimeAware?progress.LIVE.percent:(data.scroll||0));
+  const required=clamp(runtimeAware?progress.REQUIRED.percent:0);
+  const rows=card.querySelectorAll('.lc-route-row');
+  [[rows[0],live],[rows[1],required]].forEach(([row,pct])=>{{
+    row.querySelector('.lc-fill').style.width=pct+'%';row.querySelector('output').value=pct+'%';
+  }});
+  const started=live>0||required>0;
+  card.querySelector('.lc-status').textContent=!started?'sin empezar':
+    (live===100&&required===100?'completado':`LIVE ${{live}}% · REQ ${{required}}%`);
+  if(data.quiz)card.querySelector('.lc-quiz').textContent='quiz '+data.quiz.right+'/'+data.quiz.total;
+  if(live===100&&required===100)card.classList.add('done');
+  card.dataset.progressSource=runtimeAware?'runtime':'legacy-scroll';
 }});
 document.getElementById('idx-reset').addEventListener('click',()=>{{
-  if(!confirm('¿Borrar tu progreso local de todas las clases?'))return;
-  for(let i=localStorage.length-1;i>=0;i--){{const k=localStorage.key(i);
-    if(k&&k.startsWith('algoTrading.'))localStorage.removeItem(k);}}
+  if(!confirm('¿Borrar tu progreso local de todas las lessons?'))return;
+  for(let i=localStorage.length-1;i>=0;i--){{const key=localStorage.key(i);
+    if(key&&key.startsWith('algoTrading.'))localStorage.removeItem(key);}}
   location.reload();
 }});
 }})();
 </script>'''
     return (f'<!doctype html>\n<html lang="es">\n<head>\n<meta charset="utf-8">\n'
             f'<meta name="viewport" content="width=device-width, initial-scale=1">\n'
-            f'<title>Algo Trading ICAI 2026 — índice del curso</title>\n'
-            f'<style>\n{_css()}</style>\n</head>\n<body>\n{body}\n</body>\n</html>\n')
+            f'<title>Algo Trading ICAI 2026 — mapa del curso</title>\n'
+            f'<style>\n{_css()}\n{INDEX_CSS}</style>\n</head>\n<body>\n{body}\n</body>\n</html>\n')
 
 
 def has_doc(n: int) -> bool:

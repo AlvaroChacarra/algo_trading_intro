@@ -2,7 +2,7 @@
 # Ejecuta desde exercises/:  python run_mm.py
 
 from exchange.simulation import MMSimulation
-from exchange.strategies.market_maker import MarketMaker
+from exchange.strategies import MarketMaker
 
 
 def run(skew):

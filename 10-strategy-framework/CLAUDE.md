@@ -24,9 +24,10 @@ toda estrategia — el pico arquitectónico del curso.
 
 ## Presentación (3 bloques)
 
-1. **La interfaz Strategy** — Una estrategia implementa on_book_update(book) y devuelve una lista de acciones (NewOrder/Cancel). No sabe nada del motor. Esa ignorancia es lo que la hace enchufable.
-2. **Acciones, no efectos** — La estrategia no ejecuta órdenes: las pide. Devuelve NewOrder(order). El Backtest decide qué hacer con ellas. Separar decisión de ejecución es la clave del diseño.
-3. **El Backtest lo cablea todo** — Recorre el mercado, pasa cada libro a la estrategia, ejecuta sus acciones contra el matching, actualiza el portfolio y mide. El mismo run() para cualquier estrategia.
+1. **Recall L6 → contrato de producción** — En L6 todas las estrategias respondían a decide(imbalance) y devolvían una decisión. Conservamos el polimorfismo, pero el framework necesita más capacidad: recibe el libro completo y devuelve 0..N acciones; el motor ejecuta esas acciones.
+2. **La interfaz Strategy** — Una estrategia implementa on_book_update(book) y devuelve una lista de acciones (NewOrder/Cancel). No sabe nada del motor. Esa ignorancia es lo que la hace enchufable.
+3. **Acciones, no efectos** — La estrategia no ejecuta órdenes: las pide. Devuelve NewOrder(order). El Backtest decide qué hacer con ellas. Separar decisión de ejecución es la clave del diseño.
+4. **El Backtest lo cablea todo** — Recorre el mercado, pasa cada libro a la estrategia, ejecuta sus acciones contra el matching, actualiza el portfolio y mide. El mismo run() para cualquier estrategia.
 
 ## Cuaderno de construcción
 
@@ -37,4 +38,4 @@ El contenido se genera desde `framework/_build/` — para editar esta clase, edi
 
 ## Continuidad
 
-El paquete `exchange/` llega con lo construido hasta la clase anterior; hoy se añade la pieza nueva, que se convierte en el starter de la siguiente.
+El snapshot de `exchange/` declara exactamente la superficie disponible en L10. La lección construye su pieza sobre esa superficie; el snapshot siguiente conserva el estado acumulado sin presuponer que cada clase añada un módulo nuevo.

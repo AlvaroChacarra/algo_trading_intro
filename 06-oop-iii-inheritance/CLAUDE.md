@@ -12,7 +12,7 @@ objetos distintos y que cada uno responda lo suyo — el código que los usa no 
 es cuál.
 
 Se enseña construyendo una familia `Strategy` de juguete (Momentum, Contrarian): exactamente el
-patrón que en la clase 10 se conecta al motor real. El alumno llega al framework con la herencia
+patrón que en L10 se conecta al motor real. El alumno llega al framework con la herencia
 ya dominada, no a presión.
 
 ## Implementación técnica
@@ -35,10 +35,10 @@ al `Backtest`.
 ## Cuaderno de construcción
 
 Patrón por ejercicio: enunciado → starter (`pass`/`None`) → validador (`assert` con mensaje claro, tolerancia `1e-9`) → solución guiada embebida.
-Tiers: **Núcleo** = los primeros (en clase), **Si vamos bien** = el resto, **Auxiliares** = cuaderno `06_auxiliary.ipynb`.
+Clasificación: **LIVE / REQUIRED / OPTIONAL**, decidida en `pedagogy/exercise_routes.yml`. Auxiliares: `06_auxiliary.ipynb`.
 
 El contenido se genera desde `framework/_build/` — para editar esta clase, edita su spec y regenera con `build_course.py`. No edites a mano los notebooks.
 
 ## Continuidad
 
-El paquete `exchange/` llega con lo construido hasta la clase anterior; hoy se añade la pieza nueva, que se convierte en el starter de la siguiente.
+El snapshot de `exchange/` declara exactamente la superficie disponible en L6. La lección construye su pieza sobre esa superficie; el snapshot siguiente conserva el estado acumulado sin presuponer que cada clase añada un módulo nuevo.

@@ -594,6 +594,177 @@
   .pkgmap .pk{border-color:#ccc}
   a{color:#0e7490;text-decoration:none}
 }
+/* Shared scene renderer for L1-L14. The manifest owns route, stage and layout. */
+.lr-sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;
+  margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;
+  border:0!important}
+.lr-has-contract [hidden]{display:none!important}
+
+#lr-nav{position:fixed;inset:0 auto 0 0;width:var(--lr-nav-w,230px);z-index:52;
+  display:flex;flex-direction:column;background:rgba(9,9,11,.97);border-right:1px solid var(--line);
+  padding:12px;overflow:hidden}
+.lr-course-home{display:flex;align-items:center;min-height:34px;margin:0 5px 8px;padding:5px 7px;
+  color:var(--muted);text-decoration:none;font:600 .65rem var(--mono)}
+.lr-course-home:hover{color:var(--accent)}
+.lr-brand{display:grid;gap:5px;padding:4px 8px 12px;border-bottom:1px solid var(--line)}
+.lr-brand b{font:600 .78rem var(--mono);color:var(--accent);letter-spacing:.12em}
+.lr-brand span{font-size:.8rem;line-height:1.25;color:var(--muted)}
+.lr-modes{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:10px 6px}
+.lr-modes a{display:flex;justify-content:center;align-items:center;min-height:36px;border:1px solid var(--line);
+  border-radius:8px;text-decoration:none;color:var(--muted);font:600 .68rem var(--mono);text-transform:uppercase}
+.lr-modes a.on{border-color:var(--accent);background:var(--accent-dim);color:var(--accent)}
+.lr-modes a:focus-visible,#lr-nav button:focus-visible,#lr-controls button:focus-visible,
+#lr-mobile-toolbar a:focus-visible,#lr-mobile-toolbar button:focus-visible{
+  outline:2px solid var(--accent);outline-offset:2px}
+.lr-fallback-note{margin:0 8px 10px;color:var(--warn);font-size:.72rem;line-height:1.4}
+.lr-study-optional{min-height:38px;margin:0 6px 9px;border:1px solid rgba(192,132,252,.42);
+  border-radius:8px;background:rgba(192,132,252,.08);color:var(--kw);font:600 .65rem var(--mono);cursor:pointer}
+.lr-study-optional[aria-pressed="true"]{border-color:var(--kw);background:rgba(192,132,252,.16)}
+.lr-scene-links{display:grid;gap:4px;overflow:auto;padding:2px 4px 18px}
+.lr-scene-links button{display:grid;grid-template-columns:56px minmax(0,1fr);gap:6px;align-items:center;width:100%;
+  min-height:41px;padding:7px 9px;border:1px solid transparent;border-radius:9px;background:transparent;
+  color:var(--muted);text-align:left;cursor:pointer}
+.lr-scene-links button span{font:600 .55rem var(--mono);letter-spacing:.08em}
+.lr-scene-links button b{font:500 .65rem var(--mono);overflow-wrap:anywhere}
+.lr-scene-links button.on{border-color:var(--line);background:var(--panel);color:var(--text)}
+.lr-scene-links button.lr-route-live span{color:var(--accent)}
+.lr-scene-links button.lr-route-required span{color:var(--kw)}
+.lr-scene-links button.lr-route-optional span{color:var(--faint)}
+
+#lr-teacher-toggle{margin:0 6px 9px;min-height:36px;border:1px solid rgba(34,211,238,.38);
+  border-radius:8px;background:var(--accent-dim);color:var(--accent);font:600 .68rem var(--mono);cursor:pointer}
+#lr-teacher-toggle:focus-visible,.lr-teacher-close:focus-visible,.lr-full-guide:focus-visible{
+  outline:2px solid var(--accent);outline-offset:2px}
+#lr-teacher-drawer{position:fixed;z-index:90;top:0;right:0;width:min(420px,92vw);height:100dvh;
+  display:grid;grid-template-rows:auto minmax(0,1fr);transform:translateX(105%);transition:transform .2s ease;
+  border-left:1px solid var(--line);background:rgba(9,9,11,.98);box-shadow:-18px 0 48px rgba(0,0,0,.38)}
+#lr-teacher-drawer.open{transform:translateX(0)}
+.lr-teacher-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line)}
+.lr-teacher-head b{font:600 .78rem var(--mono);color:var(--accent);text-transform:uppercase;letter-spacing:.08em}
+.lr-teacher-close{width:40px;height:40px;border:1px solid var(--line);border-radius:8px;background:var(--panel);
+  color:var(--text);font-size:1.25rem;cursor:pointer}
+.lr-teacher-body{overflow:auto;padding:18px;color:var(--muted);font-size:.86rem;line-height:1.5}
+.lr-teacher-body h2{margin:.2em 0 .7em;color:var(--text);font:600 1rem var(--mono)}
+.lr-teacher-body h3{margin:1.15em 0 .4em;color:var(--text);font-size:.76rem;text-transform:uppercase;letter-spacing:.06em}
+.lr-teacher-body ul{margin:.4em 0;padding-left:1.2em}.lr-teacher-body code{color:var(--kw)}
+.lr-teacher-kicker{margin:0;color:var(--accent);font:600 .68rem var(--mono);text-transform:uppercase}
+.lr-teacher-stage{font-size:.78rem}.lr-full-guide{min-height:40px;margin-top:16px;padding:7px 12px;
+  border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--accent);font:600 .7rem var(--mono);cursor:pointer}
+
+.lr-scene-badge{display:flex;gap:8px;align-items:center;margin:0 0 10px;font:600 .58rem var(--mono);
+  letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+.lr-scene-badge span{padding:3px 7px;border:1px solid var(--line);border-radius:99px}
+.lr-scene-badge.lr-route-live span:first-child{border-color:rgba(34,211,238,.42);color:var(--accent)}
+.lr-scene-badge.lr-route-required span:first-child{border-color:rgba(192,132,252,.45);color:var(--kw)}
+.lr-scene-badge.lr-route-optional span:first-child{border-color:var(--line);color:var(--faint)}
+
+#lr-controls{position:fixed;left:var(--lr-nav-w,230px);right:0;bottom:0;height:var(--lr-controls-h,58px);z-index:55;
+  display:grid;grid-template-columns:minmax(120px,1fr) auto auto minmax(120px,1fr);align-items:center;
+  gap:14px;padding:7px 18px;background:rgba(9,9,11,.96);border-top:1px solid var(--line);
+  backdrop-filter:blur(8px)}
+#lr-controls button{min-height:40px;border:1px solid var(--line);border-radius:9px;background:var(--panel);
+  color:var(--text);font:600 .72rem var(--mono);cursor:pointer}
+#lr-controls button:hover:not(:disabled){border-color:var(--accent)}
+#lr-controls button:disabled{opacity:.3;cursor:default}
+#lr-controls .lr-next{text-align:right;padding-right:14px}
+#lr-controls .lr-prev{text-align:left;padding-left:14px}
+.lr-progress{display:flex;gap:7px;align-items:center;justify-content:center;white-space:nowrap;
+  font:.66rem var(--mono);color:var(--faint)}
+.lr-progress b{color:var(--muted);font-weight:500}
+.lr-progress .lr-route-progress{color:var(--accent)}
+#lr-controls .lr-route-scope{padding:0 12px;color:var(--accent);border-color:rgba(34,211,238,.38)}
+#lr-controls.lr-fixed-scope{grid-template-columns:minmax(120px,1fr) auto minmax(120px,1fr)}
+#lr-mobile-toolbar{display:none}
+
+/* Layout names are operational: they control scene width and native two-panel ratios. */
+.lr-scene{--lr-scene-max:1180px;--lr-left:42fr;--lr-right:58fr}
+.lr-scene[data-scene-layout="focus"]{--lr-scene-max:1120px}
+.lr-scene[data-scene-layout="split-42-58"]{--lr-scene-max:1900px;--lr-left:42fr;--lr-right:58fr}
+.lr-scene[data-scene-layout="split-45-55"]{--lr-scene-max:1900px;--lr-left:45fr;--lr-right:55fr}
+.lr-scene[data-scene-layout="split-50-50"]{--lr-scene-max:1760px;--lr-left:50fr;--lr-right:50fr}
+
+@media(min-width:901px){
+  body.lr-has-contract{--lr-nav-w:clamp(190px,16vw,238px);--lr-controls-h:58px}
+  body.mode-estudio.lr-has-contract{padding-left:var(--lr-nav-w)}
+  body.mode-estudio.lr-has-contract .wrap{max-width:min(1040px,calc(100vw - var(--lr-nav-w) - 48px))}
+  body.mode-estudio.lr-has-contract .wrap>p{max-width:78ch}
+  body.mode-estudio.lr-has-contract .scrolly{max-width:min(1280px,calc(100vw - var(--lr-nav-w) - 30px))}
+  body.mode-estudio.lr-has-contract .lr-scene{scroll-margin-top:18px}
+  body.mode-estudio.lr-has-contract #rail,body.mode-estudio.lr-has-contract #lr-controls{display:none}
+
+  html.lr-mode-aula,html.lr-mode-aula body{height:100%;overflow:hidden}
+  body.mode-aula{height:100dvh;overflow:hidden;padding-left:var(--lr-nav-w);padding-bottom:var(--lr-controls-h)}
+  body.mode-aula #rail,body.mode-aula>footer,body.mode-aula>#gd-toggle{display:none!important}
+  body.mode-aula>.lr-scene{display:none!important}
+  body.mode-aula>.lr-scene.lr-scene-active{display:grid!important;width:auto;max-width:none;
+    height:calc(100dvh - var(--lr-controls-h));margin:0;padding:clamp(12px,1.8vh,24px) clamp(16px,2.2vw,38px);
+    border:0;overflow:hidden;align-content:stretch;background:var(--bg)}
+  body.mode-aula>header.lr-scene-active{align-content:center}
+  body.mode-aula>.lr-scene-active>.wrap,body.mode-aula>header.lr-scene-active.wrap{
+    width:100%;max-width:var(--lr-scene-max);min-height:0;max-height:100%;overflow:auto;padding:0 8px;margin:auto}
+  body.mode-aula>.lr-scene-active:has(.scrolly){grid-template-rows:auto minmax(0,1fr);gap:8px}
+  body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child{overflow:visible;max-width:var(--lr-scene-max);margin:0 auto}
+  body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child h2{font-size:clamp(1.08rem,2.15vh,1.72rem);margin:.05em 0 .2em}
+  body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child .lede{font-size:clamp(.74rem,1.4vh,.95rem);margin:.2em 0}
+  body.mode-aula>.lr-scene-active>.scrolly{width:100%;max-width:var(--lr-scene-max);height:100%;min-height:0;margin:0 auto;
+    padding:0;grid-template-columns:minmax(260px,var(--lr-left)) minmax(0,var(--lr-right));gap:clamp(14px,1.8vw,32px)}
+  body.mode-aula>.lr-scene-active>.scrolly~.wrap{display:none}
+  body.mode-aula .steps{min-width:0;min-height:0;height:100%;overflow:hidden}
+  body.mode-aula .steps .step{display:none;min-height:0;height:100%;align-items:center;overflow:hidden}
+  body.mode-aula .steps .step.lr-stage-active{display:flex}
+  body.mode-aula .steps .step-inner{width:100%;max-height:100%;padding:clamp(12px,1.7vh,22px);
+    opacity:1;border-color:#3a3a44;overflow:auto}
+  body.mode-aula .steps .step-inner h3{font-size:clamp(.86rem,1.6vh,1.04rem)}
+  body.mode-aula .steps .step-inner p{font-size:clamp(.72rem,1.35vh,.93rem);line-height:1.55}
+  body.mode-aula .figwrap{position:relative;height:100%;min-width:0;min-height:0;top:auto;order:initial}
+  body.mode-aula .fig{position:relative;top:0;height:100%;min-height:0;box-shadow:none}
+  body.mode-aula .fig-stage{overflow:auto}
+  body.mode-aula .full-code{display:none!important}
+  body.mode-aula .hero{padding:0}
+  body.mode-aula .hero h1{font-size:clamp(2rem,4.7vw,4.8rem)}
+  body.mode-aula .hero .lede{font-size:clamp(.92rem,1.45vw,1.3rem);max-width:72ch}
+  body.mode-aula .hero .challenge{margin-top:clamp(14px,2.5vh,28px)}
+  body.mode-aula .hero .meta{margin-top:clamp(12px,2.2vh,24px)}
+  body.mode-aula .lr-scene-badge{margin-bottom:7px}
+  body.mode-aula .lr-scene-active[data-scene-layout^="split-"] :is(.code-state,.state-inspector,.dictgrid,.build-grid,.vmgrid,.ownline .cols){
+    grid-template-columns:minmax(0,var(--lr-left)) minmax(0,var(--lr-right))}
+}
+
+@media(max-width:1180px) and (min-width:901px){
+  #lr-controls{grid-template-columns:105px minmax(0,1fr) auto 105px;gap:7px;padding-inline:9px}
+  #lr-controls.lr-fixed-scope{grid-template-columns:105px minmax(0,1fr) 105px}
+  #lr-controls button span,.lr-progress>span{display:none}
+  .lr-progress{gap:5px;font-size:.61rem}
+}
+
+@media(max-width:900px){
+  #lr-nav,#lr-controls,.lr-scene-badge{display:none!important}
+  body.lr-has-contract{padding-left:0;max-width:100%;overflow-x:hidden}
+  #lr-mobile-toolbar{position:sticky;top:0;z-index:58;display:flex;align-items:center;gap:8px;
+    min-height:52px;padding:6px max(10px,env(safe-area-inset-left));border-bottom:1px solid var(--line);
+    background:rgba(9,9,11,.96);backdrop-filter:blur(8px);font:600 .65rem var(--mono)}
+  #lr-mobile-toolbar>a{color:var(--accent);text-decoration:none;white-space:nowrap}
+  #lr-mobile-toolbar>span{min-width:0;flex:1;color:var(--muted);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #lr-mobile-toolbar button{min-height:44px;margin:0;padding:5px 9px;border:1px solid var(--line);border-radius:8px;
+    background:var(--panel);color:var(--kw);font:600 .59rem var(--mono)}
+  #lr-mobile-toolbar .lr-mobile-teacher{color:var(--accent)}
+  body.lr-has-contract .lr-scene{scroll-margin-top:58px}
+  #lr-teacher-drawer{width:min(420px,100vw)}
+}
+
+@media(max-width:520px){
+  #lr-mobile-toolbar>span{display:none}
+  #lr-mobile-toolbar .lr-study-optional{margin-left:auto}
+}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto!important}
+  #lr-teacher-drawer,.lr-scene *{transition:none!important;animation-duration:.001ms!important;animation-iteration-count:1!important}
+}
+@media print{
+  #lr-nav,#lr-controls,#lr-mobile-toolbar,.lr-scene-badge,#lr-teacher-drawer{display:none!important}
+  body.lr-has-contract{padding:0!important}
+}
 </style>
 </head>
 <body data-lesson="13">
@@ -674,7 +845,7 @@
         <p>Con skew, el inventario máximo cae de <span id="dd-i0">1.4</span> a <span id="dd-i1">0.3</span> — el monstruo, domado. Pero el
         PnL también baja: de <span id="dd-p0">37.4</span> a <span id="dd-p1">23.6</span>. <strong>Control de riesgo cuesta rentabilidad
         esperada.</strong> ¿Cuánta correa poner? Eso es un problema de optimización… y
-        tiene solución con nombre propio: mañana.</p>
+        tiene solución con nombre propio: L14.</p>
       </div></div>
     </div>
 
@@ -747,7 +918,7 @@ bid = 98.80   ask = 100.00
     Sin correa: más PnL final <em>esta vez</em>, pero inventarios de ±<span id="dd-i3">1.4</span> — habrías
     sudado cada tick. Con correa: PnL menor pero un libro tranquilo. No hay respuesta
     "correcta": hay un dial de <strong>aversión al riesgo</strong>. Ponerle número a ese
-    dial es exactamente la clase de mañana (γ).</div>
+    dial es exactamente la preparación para L14 (γ).</div>
   </div>
 </section>
 
@@ -758,7 +929,7 @@ bid = 98.80   ask = 100.00
 
     <div class="code">
       <div class="code-head"><span>exchange/strategies/market_maker.py — el corazón</span><span>python</span></div>
-      <pre><span class="ln"><span class="k">def</span> <span class="fn">reservation_price</span>(self, mid):</span><span class="ln">    <span class="k">return</span> mid - self.inventory_skew * self._inventory</span><span class="ln"></span><span class="ln"><span class="k">def</span> <span class="fn">quotes</span>(self, book):</span><span class="ln">    r = self.reservation_price(book.mid)</span><span class="ln">    <span class="k">return</span> r - self.half_spread, r + self.half_spread</span><span class="ln"></span><span class="ln"><span class="k">def</span> <span class="fn">on_fill</span>(self, fill):</span><span class="ln">    self._inventory += fill.size <span class="k">if</span> fill.side == <span class="s">'buy'</span> <span class="k">else</span> -fill.size</span></pre>
+      <pre><span class="ln"><span class="k">def</span> <span class="fn">reservation_price</span>(self, mid):</span><span class="ln">    <span class="k">return</span> mid - self.inventory_skew * self.inventory</span><span class="ln"></span><span class="ln"><span class="k">def</span> <span class="fn">quotes</span>(self, book):</span><span class="ln">    r = self.reservation_price(book.mid)</span><span class="ln">    <span class="k">return</span> r - self.half_spread, r + self.half_spread</span><span class="ln"></span><span class="ln"><span class="k">def</span> <span class="fn">on_fill</span>(self, fill):</span><span class="ln">    self.inventory += fill.size <span class="k">if</span> fill.side == <span class="s">'buy'</span> <span class="k">else</span> -fill.size</span></pre>
       <div class="predict predictgate" style="margin:0;border-radius:0;border-left:none;border-right:none;border-bottom:none">
         <div class="tag">Predice antes de ejecutar</div>
         <p style="margin:.2em 0 .8em;font-size:.94rem">mid=100, skew=2.0, inventario=−0.5
@@ -776,13 +947,25 @@ bid = 98.80   ask = 100.00
     Otra <code>Strategy</code> más: <code>on_book_update</code> propone dos limits,
     <code>on_fill</code> (el gancho de L10) lleva el inventario. Mismo enchufe, negocio
     opuesto al VWAP.</div>
+
+    <div class="note"><span class="tag">LIVE · puente conceptual a L14</span>
+      <p><strong>γ mide aversión al riesgo.</strong> La utilidad CARA
+      <code>U(W) = −exp(−γW)</code> convierte el dial de la correa en una preferencia:
+      cuanto mayor es γ, más penalizas una riqueza final incierta.</p>
+      <p><strong>κ mide lo deprisa que desaparecen los fills al alejarte.</strong> En el
+      simulador, una quote a distancia δ recibe intensidad
+      <code>λ(δ) = A·exp(−κδ)</code>. Con A=1 y κ=1.5, cerca (δ=0.2) da
+      λ≈0.74; lejos (δ=1.0), λ≈0.22. Alejarte protege el precio, pero reduce la
+      probabilidad de ejecutar. Aquí solo fijamos estas dos intuiciones; las fórmulas y la
+      clase de L14 todavía no aparecen.</p>
+    </div>
   </div>
 </section>
 
 <section id="s4">
   <div class="wrap">
     <div class="eyebrow">§4 · <b>Fija lo de hoy</b></div>
-    <h2>5 preguntas</h2>
+    <h2>7 preguntas</h2>
     <div class="quiz" data-quiz>
       <div class="q" data-ok="2">
         <div class="qt">El PnL estructural de un market maker viene de…</div>
@@ -831,8 +1014,29 @@ bid = 98.80   ask = 100.00
           <button class="opt">B · Que el skew es un error</button>
           <button class="opt">C · Que la semilla estaba trucada</button>
         </div>
-        <div class="why">Elegir cuánta correa = elegir tu aversión al riesgo. Mañana ese
+        <div class="why">Elegir cuánta correa = elegir tu aversión al riesgo. En L14 ese
         dial se llama gamma.</div>
+      </div>
+      <div class="q" data-ok="1">
+        <div class="qt">En <code>U(W)=−exp(−γW)</code>, aumentar γ representa…</div>
+        <div class="opts">
+          <button class="opt">A · Más predicción de precio</button>
+          <button class="opt">B · Más aversión al riesgo</button>
+          <button class="opt">C · Más volumen disponible</button>
+        </div>
+        <div class="why">CARA da significado económico al dial: γ dice cuánto te duele
+        la incertidumbre de la riqueza final.</div>
+      </div>
+      <div class="q" data-ok="0">
+        <div class="qt">Con el mismo A y κ, ¿qué quote tiene mayor intensidad
+        <code>λ(δ)=A·exp(−κδ)</code>?</div>
+        <div class="opts">
+          <button class="opt">A · La cercana al mid (delta pequeña)</button>
+          <button class="opt">B · La lejana al mid (delta grande)</button>
+          <button class="opt">C · Las dos siempre reciben los mismos fills</button>
+        </div>
+        <div class="why">Al crecer la distancia, el exponente se vuelve más negativo y la
+        intensidad cae. κ controla la rapidez de esa caída.</div>
       </div>
       <div class="score"></div>
     </div>
@@ -850,9 +1054,8 @@ bid = 98.80   ask = 100.00
       <div class="pk done">L4 · Order y Fill</div>
       <div class="pk done">L5 · OrderBook + Tracker</div>
       <div class="pk done">L6 · familia Strategy</div>
-      <div class="pk done">L7-9 · el motor</div>
-      <div class="pk done">L10-11 · el framework</div>
-      <div class="pk today">L12-14 · estrategias<span>hoy: market making (L13)</span></div>
+      <div class="pk done">L7-10 · motor y framework</div>
+      <div class="pk today">L11-14 · estrategias<span>hoy: market making (L13)</span></div>
     </div>
 
     <div class="bridge">
@@ -860,7 +1063,7 @@ bid = 98.80   ask = 100.00
       <p style="margin:.2em 0"><strong>Tu skew es un número a ojo. ¿Cuál es el óptimo?</strong></p>
       <p>Elegiste <code>skew=2.0</code> porque sonaba razonable. Avellaneda y Stoikov
       (2008) resolvieron el problema de verdad: dado tu miedo (γ), la volatilidad (σ) y el
-      tiempo que queda (τ), <em>calcularon</em> dónde cotizar. Mañana: la fórmula, qué
+      tiempo que queda (τ), <em>calcularon</em> dónde cotizar. En L14: la fórmula, qué
       significa cada letra, y tu propia estrategia enchufada al simulador. Última clase de
       construcción.</p>
     </div>
@@ -870,7 +1073,8 @@ bid = 98.80   ask = 100.00
       Abre <code>13_build_exercises.ipynb</code>: quotes, skew, reservation price y la
       simulación.</div>
       <div class="box"><span class="tag">Y después, al gimnasio</span>
-      <code>13_auxiliary.ipynb</code> — drills de cotización e inventario.</div>
+      <code>13_auxiliary.ipynb</code> — drills de cotización e inventario; A6 (CARA)
+      y A7 (intensidad de fills) consolidan como REQUIRED el puente LIVE a L14.</div>
     </div>
   </div>
 </section>
@@ -878,6 +1082,7 @@ bid = 98.80   ask = 100.00
 <footer>L13 · Market making — Algo Trading ICAI 2026 · documento interactivo</footer>
 
 <script>const DOC_DATA={"skew":{"mid":[99.944,100.295,100.187,100.245,99.876,99.368,99.634,98.907,99.096,99.22,97.91,97.606,98.03,97.529,97.848,98.023,97.788,98.038,98.422,99.133,98.421,98.155,97.998,98.359,98.079,97.663,97.301,97.154,97.751,97.742,97.879,97.373,98.35,98.17,98.095,98.806,99.084,98.809,98.595,99.276,99.386,98.781,99.464,98.813,99.308,99.604,98.98,99.077,98.293,98.095,97.536,97.765,97.809,98.159,98.281,98.133,98.731,98.475,98.91,99.214,99.44,99.418,99.618,100.125,99.194,99.542,100.662,100.441,100.3,100.401,99.898,100.044,100.28,100.627,101.247,101.48,101.761,101.915,102.205,101.966,100.81,100.644,100.444,100.072,101.737,101.721,102.474,101.774,100.647,99.693,99.081,98.07,97.974,98.649,97.566,97.644,98.503,98.522,98.459,98.49,98.825,98.255,98.539,97.587,97.783,96.763,97.665,96.637,96.066,97.071,97.127,96.894,96.481,96.586,96.114,96.995,97.611,97.538,97.92,97.828,97.358,96.987,98.127,98.139,98.014,98.157,98.078,97.663,98.027,98.401,98.203,98.801,98.486,98.024,98.111,97.819,98.166,97.408,97.426,97.994,98.258,98.983,98.989,98.131,97.972,97.954,97.218,95.928,95.814,95.232,94.85,94.911,94.631,94.344,94.08,94.012,93.489,93.832,93.166,92.778,92.278,92.95,92.298,92.104,91.716,92.362,92.278,92.196,92.563,92.982,93.016,92.529,93.147,93.223,92.738,92.055,92.577,93.107,93.444,94.039,94.128,94.199,94.156,93.962,94.361,93.814,93.381,93.59,94.593,95.376,95.244,93.954,93.209,93.528,93.803,93.55,93.738,93.483,93.361,92.978,92.138,92.198,92.493,92.688,92.172,92.07,92.068,92.322,92.46,92.781,92.733,92.958,92.567,92.482,92.876,92.448,92.513,92.662,93.292,93.608,93.859,93.849,93.307,93.23,92.733,92.261,92.105,91.857,91.513,91.282,90.847,89.799,89.24,89.524,89.74,90.11,89.819,89.1,89.615,89.747,90.084,89.522,90.336,90.546,89.936,89.573,89.098,88.233,88.478,87.896,87.401,87.741,87.922,88.36,87.269,86.92,86.633,86.4,87.503,87.449,87.325,86.742,86.275,86.12,85.975,86.846,86.76,87.172,86.725,86.615,86.906,87.622,87.596,86.815,87.395,87.325,87.704,87.321,87.158,86.919,86.344,85.554,85.389,84.561,86.079,85.256,85.633,85.245,85.114,85.581,85.679,85.857,86.202,86.638,87.25,86.812,86.475,86.072,85.706,85.745,86.47,86.369,87.02,87.227,86.862,86.572,86.056,85.253,84.64,84.879,84.999,85.237,85.423,85.086,84.955,85.165,84.94,83.56,84.178,84.232,84.754,83.687,82.658,82.24,82.075,82.56,83.416,84.015,84.506,84.333,83.822,83.856,84.792,84.492,84.174,84.565,84.191,83.58,84.033,84.492,84.797,84.471,84.633,84.841,85.721,85.803,85.771,85.161,85.619,85.994,85.446,85.371,85.144,84.61,84.977,85.138,84.598,84.494,83.994,83.299,83.008,83.474,83.271,83.476,84.149,84.616,84.493,84.717,84.48,83.187,82.99,82.693,81.882,81.475,81.403,81.313,81.187,80.776,80.552,80.713,80.313,80.534,80.675,80.759,80.456,79.965,79.596,79.77,79.235,79.649,79.633,80.079,79.91,79.346,79.439,79.465,79.334,78.831,78.135,77.496,76.98,76.657,76.951,77.471,77.34,76.425,75.749,75.242,75.266,74.422,73.713,73.009,72.878,73.257,74.141,74.471,73.915,73.89,74.156,73.481,74.333,74.982,74.989,75.526,75.42,75.922,76.126,76.216,77.061,76.497,77.255,77.099,76.467,77.086,76.845,76.283,76.43,76.745,77.598,78.048,78.488,78.595,79.015,78.266,78.101,77.772,77.351,77.26,78.624,78.153,79.054,78.86,79.307,78.855,78.888,78.49,78.586,79.125,79.269,80.877,80.356,79.64,80.143,80.742,81.063,80.52,80.47,80.619,81.176,80.798,80.175,80.472,80.656,80.627,80.191,80.549,80.66,80.213,80.139,80.269,79.517,79.687,79.285,79.395,77.898,77.753,77.211,77.892,78.526,77.998,76.863,76.88,76.137,75.579,75.343,75.98,76.299,75.959,76.594,76.917],"inv":[-0.1,-0.1,-0.2,-0.1,-0.1,0.0,-0.1,-0.1,-0.1,-0.1,-0.1,0.0,0.0,-0.1,-0.1,-0.1,-0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.1,0.1,0.0,0.1,0.0,0.1,0.1,0.0,0.0,-0.1,-0.1,0.0,0.1,0.0,0.0,0.1,0.0,0.1,0.0,0.0,0.0,0.0,0.1,0.2,0.2,0.1,0.1,0.1,0.0,0.0,0.0,0.0,-0.1,-0.1,0.0,-0.1,-0.1,-0.2,-0.2,-0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.1,0.1,0.1,0.1,0.1,0.2,0.1,0.1,0.1,0.1,0.2,0.1,0.1,0.0,-0.1,-0.1,0.0,-0.1,-0.2,-0.3,-0.2,-0.1,-0.1,-0.0,-0.0,-0.0,0.1,-0.0,-0.0,0.1,0.2,0.2,0.2,0.2,0.1,0.1,0.2,0.1,0.1,-0.0,-0.1,-0.2,-0.3,-0.2,-0.1,-0.0,0.1,0.1,0.1,-0.0,0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.1,-0.0,0.1,-0.0,-0.1,-0.1,-0.2,-0.1,-0.1,-0.2,-0.1,-0.0,0.1,0.1,0.1,0.1,-0.0,-0.0,0.1,-0.0,-0.0,-0.0,0.1,-0.0,-0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.1,-0.1,-0.1,-0.0,0.1,0.1,0.1,0.1,0.1,-0.0,-0.0,-0.1,-0.1,-0.2,-0.1,-0.2,-0.2,-0.1,-0.1,-0.1,-0.0,0.1,-0.0,-0.1,-0.1,-0.1,-0.1,-0.0,-0.0,0.1,-0.0,-0.0,-0.0,0.1,0.1,0.2,0.2,0.1,0.1,-0.0,-0.0,-0.1,-0.2,-0.2,-0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.1,-0.1,-0.0,-0.0,-0.1,-0.1,-0.1,-0.1,-0.2,-0.1,-0.1,-0.1,-0.1,-0.1,-0.0,0.1,-0.0,-0.0,-0.0,-0.0,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.0,-0.0,-0.1,-0.0,-0.1,-0.1,-0.0,0.1,0.2,0.1,0.1,0.1,-0.0,-0.0,-0.1,-0.0,0.1,0.2,0.1,-0.0,-0.0,0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.1,-0.1,-0.0,-0.1,-0.2,-0.2,-0.1,-0.0,-0.0,-0.0,-0.0,-0.0,0.1,0.1,-0.0,-0.1,-0.0,-0.0,0.1,0.1,0.2,0.2,0.2,0.1,0.2,0.1,0.2,0.2,0.1,0.2,0.2,0.1,-0.0,0.1,0.1,0.1,0.2,0.1,0.1,0.1,-0.0,-0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.1,-0.1,-0.1,-0.0,-0.0,-0.0,-0.0,0.1,0.1,0.1,0.2,0.1,0.1,0.1,-0.0,-0.1,-0.2,-0.1,-0.0,-0.0,-0.0,-0.0,-0.1,-0.2,-0.1,-0.1,-0.0,0.1,0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.1,-0.1,-0.2,-0.1,-0.2,-0.1,-0.1,-0.0,-0.1,-0.1,-0.2,-0.1,-0.1,-0.0,-0.1,-0.2,-0.2,-0.1,-0.0,-0.0,-0.1,-0.2,-0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.1,-0.2,-0.1,-0.1,-0.0,-0.1,-0.1,-0.2,-0.1,-0.2,-0.1,-0.1,-0.0,-0.0,-0.0,0.1,0.1,0.1,0.1,0.1,-0.0,-0.1,-0.0,-0.0,0.1,-0.0,-0.1,-0.1,-0.2,-0.2,-0.1,-0.1,-0.2,-0.1,-0.0,0.1,0.2,0.1,0.1,-0.0,0.1,0.1,0.1,-0.0,-0.0,-0.0,0.1,0.1,-0.0,-0.0,0.1,0.1,0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,0.1,0.1,-0.0,-0.0,-0.1,-0.0,-0.1,-0.1,-0.1,-0.1,-0.1,-0.0,-0.1,-0.0,0.1,-0.0,-0.1,-0.0,-0.0,0.1,-0.0,-0.0,-0.0,-0.0,-0.1,-0.1,-0.1,-0.1,-0.0,-0.1,-0.0,-0.0,0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,0.1,0.1,0.2,0.2,0.3,0.2,0.1,-0.0,-0.0,-0.1,-0.1,-0.0,-0.1,-0.0,0.1,0.1,-0.0,-0.1,-0.1,-0.0],"pnl":[0.066,0.03,0.132,0.146,0.303,0.343,0.377,0.569,0.551,0.538,0.669,0.709,0.709,0.819,0.907,1.01,1.033,1.073,1.073,1.193,1.193,1.193,1.313,1.41,1.45,1.45,1.57,1.57,1.69,1.81,1.883,1.953,1.993,2.035,2.075,2.206,2.234,2.274,2.274,2.266,2.255,2.295,2.423,2.463,2.463,2.552,2.592,2.662,2.702,2.822,2.822,2.942,3.007,3.157,3.181,3.186,3.366,3.34,3.38,3.38,3.38,3.5,3.54,3.61,3.65,3.675,3.563,3.687,3.835,3.845,3.885,3.885,3.885,3.885,3.885,3.885,3.973,3.989,4.138,4.114,3.998,4.045,4.045,4.008,4.294,4.412,4.643,4.593,4.48,4.52,4.642,4.863,4.903,4.895,5.192,5.268,5.097,5.115,5.121,5.161,5.161,5.281,5.369,5.409,5.529,5.487,5.748,5.542,5.548,5.749,5.775,5.751,5.749,5.779,5.852,5.892,5.891,5.985,5.971,5.989,6.056,6.096,6.27,6.271,6.259,6.299,6.351,6.391,6.511,6.511,6.511,6.631,6.631,6.737,6.777,6.808,6.848,6.983,7.102,7.068,7.062,7.109,7.188,7.294,7.334,7.392,7.318,7.189,7.178,7.218,7.218,7.284,7.324,7.444,7.564,7.617,7.657,7.683,7.723,7.723,7.843,7.843,7.843,7.963,8.062,8.117,8.246,8.286,8.382,8.544,8.668,8.619,8.801,8.841,8.841,8.969,9.037,9.011,8.997,8.958,8.94,8.953,8.958,8.977,9.017,9.022,9.062,9.101,9.001,8.923,8.936,8.976,8.976,9.068,9.108,9.108,9.228,9.262,9.25,9.253,9.205,9.231,9.261,9.301,9.301,9.371,9.452,9.521,9.527,9.567,9.567,9.687,9.807,9.807,9.828,9.87,9.91,9.91,9.907,9.996,9.971,9.972,10.16,10.188,10.237,10.285,10.42,10.565,10.605,10.642,10.682,10.682,10.682,10.682,10.72,10.683,10.832,10.904,10.973,11.08,11.12,11.12,11.098,11.138,11.259,11.416,11.456,11.429,11.558,11.52,11.47,11.504,11.544,11.544,11.714,11.754,11.785,11.818,11.949,11.989,11.989,11.99,12.03,12.03,12.03,12.03,12.03,12.03,12.135,12.146,12.186,12.174,12.259,12.416,12.378,12.418,12.418,12.418,12.418,12.418,12.42,12.341,12.381,12.524,12.564,12.564,12.662,12.623,12.677,12.89,12.91,12.947,13.097,13.16,13.362,13.395,13.381,13.381,13.428,13.451,13.491,13.541,13.606,13.627,13.634,13.625,13.574,13.493,13.533,13.569,13.609,13.609,13.609,13.609,13.609,13.648,13.671,13.809,13.849,13.849,13.849,13.969,13.926,14.004,13.988,14.165,14.27,14.45,14.499,14.539,14.65,14.723,14.65,14.69,14.69,14.81,14.81,14.931,14.92,14.894,14.984,15.024,15.1,15.241,15.281,15.401,15.521,15.521,15.521,15.544,15.598,15.693,15.736,15.923,15.906,15.89,15.93,16.0,16.05,16.269,16.319,16.392,16.432,16.472,16.417,16.324,16.356,16.396,16.396,16.585,16.704,16.754,16.794,16.794,16.794,16.794,16.914,17.034,17.034,17.078,17.238,17.236,17.222,17.262,17.352,17.521,17.675,17.678,17.865,17.843,17.965,18.005,18.125,18.125,18.194,18.197,18.184,18.253,18.184,18.224,18.335,18.375,18.495,18.607,18.647,18.799,18.986,19.168,19.163,19.268,19.338,19.559,19.592,19.632,19.781,19.927,19.891,19.889,19.929,19.921,20.126,20.191,20.231,20.231,20.351,20.461,20.482,20.522,20.522,20.525,20.721,20.706,20.746,20.746,20.746,20.746,20.866,20.866,20.986,21.091,21.135,21.175,21.295,21.429,21.469,21.562,21.604,21.614,21.477,21.644,21.684,21.764,21.804,21.818,21.858,21.958,21.998,22.118,22.193,22.233,22.233,22.353,22.353,22.353,22.441,22.495,22.62,22.66,22.664,22.704,22.824,22.914,22.954,22.954,22.954,22.954,23.074,23.074,23.074,23.074,23.059,23.076,23.075,23.217,22.868,22.839,22.805,22.845,22.965,23.078,23.191,23.231,23.366,23.406,23.442,23.506,23.546,23.64,23.576,23.616],"finalPnl":23.62,"maxInv":0.3},"noskew":{"mid":[99.944,100.295,100.187,100.245,99.876,99.368,99.634,98.907,99.096,99.22,97.91,97.606,98.03,97.529,97.848,98.023,97.788,98.038,98.422,99.133,98.421,98.155,97.998,98.359,98.079,97.663,97.301,97.154,97.751,97.742,97.879,97.373,98.35,98.17,98.095,98.806,99.084,98.809,98.595,99.276,99.386,98.781,99.464,98.813,99.308,99.604,98.98,99.077,98.293,98.095,97.536,97.765,97.809,98.159,98.281,98.133,98.731,98.475,98.91,99.214,99.44,99.418,99.618,100.125,99.194,99.542,100.662,100.441,100.3,100.401,99.898,100.044,100.28,100.627,101.247,101.48,101.761,101.915,102.205,101.966,100.81,100.644,100.444,100.072,101.737,101.721,102.474,101.774,100.647,99.693,99.081,98.07,97.974,98.649,97.566,97.644,98.503,98.522,98.459,98.49,98.825,98.255,98.539,97.587,97.783,96.763,97.665,96.637,96.066,97.071,97.127,96.894,96.481,96.586,96.114,96.995,97.611,97.538,97.92,97.828,97.358,96.987,98.127,98.139,98.014,98.157,98.078,97.663,98.027,98.401,98.203,98.801,98.486,98.024,98.111,97.819,98.166,97.408,97.426,97.994,98.258,98.983,98.989,98.131,97.972,97.954,97.218,95.928,95.814,95.232,94.85,94.911,94.631,94.344,94.08,94.012,93.489,93.832,93.166,92.778,92.278,92.95,92.298,92.104,91.716,92.362,92.278,92.196,92.563,92.982,93.016,92.529,93.147,93.223,92.738,92.055,92.577,93.107,93.444,94.039,94.128,94.199,94.156,93.962,94.361,93.814,93.381,93.59,94.593,95.376,95.244,93.954,93.209,93.528,93.803,93.55,93.738,93.483,93.361,92.978,92.138,92.198,92.493,92.688,92.172,92.07,92.068,92.322,92.46,92.781,92.733,92.958,92.567,92.482,92.876,92.448,92.513,92.662,93.292,93.608,93.859,93.849,93.307,93.23,92.733,92.261,92.105,91.857,91.513,91.282,90.847,89.799,89.24,89.524,89.74,90.11,89.819,89.1,89.615,89.747,90.084,89.522,90.336,90.546,89.936,89.573,89.098,88.233,88.478,87.896,87.401,87.741,87.922,88.36,87.269,86.92,86.633,86.4,87.503,87.449,87.325,86.742,86.275,86.12,85.975,86.846,86.76,87.172,86.725,86.615,86.906,87.622,87.596,86.815,87.395,87.325,87.704,87.321,87.158,86.919,86.344,85.554,85.389,84.561,86.079,85.256,85.633,85.245,85.114,85.581,85.679,85.857,86.202,86.638,87.25,86.812,86.475,86.072,85.706,85.745,86.47,86.369,87.02,87.227,86.862,86.572,86.056,85.253,84.64,84.879,84.999,85.237,85.423,85.086,84.955,85.165,84.94,83.56,84.178,84.232,84.754,83.687,82.658,82.24,82.075,82.56,83.416,84.015,84.506,84.333,83.822,83.856,84.792,84.492,84.174,84.565,84.191,83.58,84.033,84.492,84.797,84.471,84.633,84.841,85.721,85.803,85.771,85.161,85.619,85.994,85.446,85.371,85.144,84.61,84.977,85.138,84.598,84.494,83.994,83.299,83.008,83.474,83.271,83.476,84.149,84.616,84.493,84.717,84.48,83.187,82.99,82.693,81.882,81.475,81.403,81.313,81.187,80.776,80.552,80.713,80.313,80.534,80.675,80.759,80.456,79.965,79.596,79.77,79.235,79.649,79.633,80.079,79.91,79.346,79.439,79.465,79.334,78.831,78.135,77.496,76.98,76.657,76.951,77.471,77.34,76.425,75.749,75.242,75.266,74.422,73.713,73.009,72.878,73.257,74.141,74.471,73.915,73.89,74.156,73.481,74.333,74.982,74.989,75.526,75.42,75.922,76.126,76.216,77.061,76.497,77.255,77.099,76.467,77.086,76.845,76.283,76.43,76.745,77.598,78.048,78.488,78.595,79.015,78.266,78.101,77.772,77.351,77.26,78.624,78.153,79.054,78.86,79.307,78.855,78.888,78.49,78.586,79.125,79.269,80.877,80.356,79.64,80.143,80.742,81.063,80.52,80.47,80.619,81.176,80.798,80.175,80.472,80.656,80.627,80.191,80.549,80.66,80.213,80.139,80.269,79.517,79.687,79.285,79.395,77.898,77.753,77.211,77.892,78.526,77.998,76.863,76.88,76.137,75.579,75.343,75.98,76.299,75.959,76.594,76.917],"inv":[-0.1,-0.1,-0.2,-0.1,-0.1,0.0,-0.1,-0.1,-0.2,-0.2,-0.2,-0.1,-0.1,-0.2,-0.2,-0.2,-0.3,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.1,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.1,-0.1,-0.1,-0.0,-0.0,0.1,0.1,-0.0,-0.0,-0.1,-0.1,-0.1,-0.0,-0.0,-0.0,0.1,-0.0,0.1,-0.0,-0.0,-0.0,-0.0,0.1,0.2,0.3,0.4,0.4,0.4,0.3,0.3,0.3,0.3,0.2,0.1,0.2,0.1,0.1,0.0,-0.1,0.0,0.1,0.1,0.1,0.1,0.1,0.1,0.2,0.2,0.2,0.2,0.2,0.3,0.3,0.4,0.5,0.5,0.6,0.6,0.6,0.5,0.4,0.4,0.5,0.4,0.3,0.2,0.1,0.0,0.0,0.1,0.1,0.1,0.2,0.1,0.1,0.2,0.3,0.3,0.4,0.4,0.3,0.3,0.4,0.3,0.3,0.2,0.1,0.0,-0.1,0.0,-0.1,0.0,0.1,0.1,0.1,0.0,0.1,0.2,0.2,0.2,0.2,0.2,0.2,0.1,0.1,0.2,0.1,0.0,0.0,-0.1,-0.1,-0.2,-0.3,-0.2,-0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.1,0.1,0.1,0.1,0.2,0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.0,-0.1,-0.1,-0.2,-0.1,0.0,0.0,0.0,0.0,0.0,-0.1,-0.1,-0.2,-0.2,-0.3,-0.3,-0.4,-0.4,-0.3,-0.4,-0.4,-0.3,-0.2,-0.3,-0.4,-0.4,-0.4,-0.4,-0.3,-0.3,-0.2,-0.3,-0.3,-0.3,-0.2,-0.1,-0.0,0.1,0.1,0.1,-0.0,-0.0,-0.1,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.3,-0.3,-0.3,-0.3,-0.4,-0.4,-0.5,-0.5,-0.6,-0.6,-0.7,-0.7,-0.7,-0.7,-0.6,-0.5,-0.5,-0.5,-0.5,-0.5,-0.6,-0.6,-0.6,-0.6,-0.7,-0.7,-0.6,-0.6,-0.7,-0.7,-0.8,-0.9,-0.9,-0.8,-0.7,-0.8,-0.7,-0.7,-0.7,-0.7,-0.8,-0.8,-0.7,-0.6,-0.7,-0.8,-0.8,-0.7,-0.8,-0.8,-0.8,-0.8,-0.8,-0.8,-0.9,-0.9,-1.0,-1.1,-1.2,-1.3,-1.3,-1.2,-1.2,-1.2,-1.2,-1.2,-1.1,-1.1,-1.1,-1.2,-1.1,-1.1,-1.0,-1.0,-0.9,-0.8,-0.8,-0.8,-0.7,-0.7,-0.6,-0.5,-0.4,-0.3,-0.3,-0.3,-0.4,-0.3,-0.3,-0.3,-0.2,-0.2,-0.2,-0.2,-0.3,-0.4,-0.3,-0.3,-0.3,-0.3,-0.3,-0.4,-0.4,-0.4,-0.3,-0.3,-0.3,-0.3,-0.2,-0.2,-0.2,-0.1,-0.0,0.1,0.1,-0.0,-0.1,-0.2,-0.1,-0.0,-0.0,-0.0,-0.0,-0.1,-0.2,-0.1,-0.1,-0.0,0.1,0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.1,-0.1,-0.2,-0.3,-0.4,-0.3,-0.3,-0.2,-0.3,-0.3,-0.4,-0.5,-0.6,-0.6,-0.7,-0.8,-0.8,-0.8,-0.7,-0.7,-0.8,-0.9,-0.8,-0.7,-0.7,-0.7,-0.7,-0.7,-0.7,-0.7,-0.8,-0.9,-0.8,-0.8,-0.7,-0.8,-0.9,-1.0,-1.0,-1.1,-1.1,-1.1,-1.0,-1.0,-1.0,-0.9,-0.9,-0.9,-0.9,-0.8,-0.9,-1.0,-1.0,-1.0,-0.9,-1.0,-1.1,-1.1,-1.2,-1.2,-1.2,-1.2,-1.3,-1.2,-1.1,-1.0,-0.9,-0.9,-0.9,-0.9,-0.8,-0.8,-0.7,-0.8,-0.8,-0.8,-0.7,-0.7,-0.8,-0.8,-0.7,-0.7,-0.6,-0.7,-0.7,-0.7,-0.7,-0.7,-0.7,-0.7,-0.6,-0.6,-0.7,-0.7,-0.8,-0.8,-0.9,-0.9,-0.9,-1.0,-1.1,-1.0,-1.1,-1.0,-0.9,-1.0,-1.1,-1.1,-1.1,-1.0,-1.0,-1.0,-1.0,-1.0,-1.1,-1.1,-1.1,-1.1,-1.1,-1.2,-1.1,-1.1,-1.0,-1.1,-1.1,-1.1,-1.1,-1.1,-1.1,-1.1,-1.1,-1.0,-1.0,-0.9,-0.9,-0.8,-0.9,-1.0,-1.1,-1.1,-1.2,-1.2,-1.2,-1.3,-1.4,-1.3,-1.3,-1.3,-1.4,-1.4,-1.3],"pnl":[0.066,0.03,0.112,0.166,0.323,0.383,0.417,0.609,0.632,0.607,0.869,0.959,0.917,1.077,1.133,1.218,1.349,1.359,1.282,1.26,1.402,1.455,1.607,1.631,1.747,1.83,2.022,2.052,2.052,2.174,2.221,2.391,2.293,2.353,2.353,2.485,2.512,2.572,2.572,2.564,2.553,2.734,2.794,2.914,2.914,3.003,3.063,3.133,3.193,3.313,3.313,3.433,3.498,3.627,3.724,3.725,4.084,3.981,4.172,4.263,4.331,4.444,4.544,4.655,4.529,4.624,4.736,4.796,4.87,4.93,4.94,4.954,4.978,5.012,5.074,5.098,5.214,5.245,5.423,5.375,5.144,5.154,5.214,5.125,6.018,6.13,6.642,6.342,5.665,5.248,5.064,4.779,4.791,5.121,4.856,4.932,5.078,5.138,5.138,5.201,5.234,5.297,5.414,5.379,5.518,5.375,5.705,5.397,5.228,5.63,5.707,5.637,5.532,5.624,5.602,5.838,5.96,6.02,6.042,6.102,6.209,6.269,6.443,6.444,6.431,6.491,6.543,6.52,6.713,6.788,6.748,6.988,6.925,6.939,6.947,6.949,7.044,7.104,7.224,7.227,7.201,7.115,7.174,7.405,7.481,7.541,7.541,7.541,7.541,7.541,7.541,7.607,7.579,7.671,7.764,7.811,7.818,7.878,7.878,7.878,7.998,7.998,7.998,8.118,8.217,8.273,8.349,8.418,8.478,8.598,8.718,8.718,8.838,8.89,8.939,9.135,9.151,9.052,8.95,8.773,8.737,8.776,8.853,8.931,8.871,9.04,9.23,9.207,8.805,8.492,8.545,8.992,9.215,9.212,9.189,9.265,9.329,9.44,9.512,9.572,9.548,9.554,9.583,9.643,9.643,9.714,9.774,9.843,9.816,9.752,9.761,9.836,10.034,10.051,9.993,10.121,10.102,10.057,9.865,9.859,9.793,9.798,10.183,10.23,10.637,10.968,11.197,11.491,11.757,11.933,12.15,12.674,12.954,12.812,12.742,12.52,12.815,13.246,12.945,12.973,12.831,13.168,12.659,12.511,13.06,13.446,13.993,14.746,14.634,15.16,15.566,15.328,15.201,14.895,15.828,16.107,16.368,16.568,15.856,15.959,16.058,16.526,16.959,17.084,17.2,16.503,16.572,16.242,16.704,16.803,16.573,15.845,15.936,17.011,16.257,16.401,15.946,16.406,16.601,16.888,17.581,18.45,18.751,19.804,18.195,19.1,18.783,19.172,19.349,19.036,18.957,18.815,18.633,18.448,18.141,18.42,18.615,18.796,19.026,19.014,18.784,18.874,18.679,18.617,18.75,18.808,18.911,19.071,19.315,19.28,19.304,19.232,19.176,19.278,19.317,19.293,19.383,19.935,19.81,19.793,19.637,20.077,20.343,20.546,20.579,20.591,20.651,20.771,20.82,20.88,20.991,21.044,21.01,21.07,21.07,21.19,21.19,21.312,21.281,21.295,21.385,21.445,21.521,21.662,21.722,21.842,21.962,21.962,21.962,21.984,22.039,22.114,22.242,22.516,22.465,22.417,22.585,22.677,22.826,23.164,23.37,23.151,23.272,23.189,22.711,22.337,22.435,22.338,22.504,23.599,23.836,24.133,24.761,25.046,25.096,25.159,25.368,25.775,25.932,25.863,26.283,26.167,26.054,26.055,26.357,26.859,27.288,27.114,27.763,27.428,27.565,27.179,27.468,28.032,28.008,27.985,28.103,28.676,29.292,29.927,30.504,30.946,30.772,30.364,30.555,31.622,32.485,33.154,33.125,34.138,34.989,35.964,36.181,35.824,35.0,34.763,35.264,35.286,35.046,35.647,35.085,34.691,34.745,34.316,34.52,34.229,34.086,34.074,33.398,33.853,33.442,33.596,34.099,33.665,33.834,34.227,34.244,34.024,33.546,33.337,33.072,33.058,32.884,33.543,33.675,34.031,34.41,34.492,33.188,33.765,32.925,33.198,32.811,33.278,33.305,33.802,33.697,33.224,33.14,31.653,32.173,33.009,32.506,31.908,31.675,32.272,32.446,32.283,31.674,32.15,32.956,32.719,32.575,32.608,33.087,32.693,32.692,33.183,33.265,33.121,33.933,33.763,34.185,34.206,35.464,35.654,36.257,35.567,34.99,35.683,37.046,37.025,38.051,38.892,39.259,38.431,38.136,38.672,37.784,37.423],"finalPnl":37.42,"maxInv":1.4}};</script>
+<script type="application/json" id="pedagogy-contract">{"lesson":13,"status":"contract-strict","title":"Market making — Spread, inventario y skew","delivery":"lesson","source_path":"framework/_build/docs/13_body.html","requires":{"concepts":["framework.strategy_contract","microstructure.spread_cost","metrics.inventory_exposure","architecture.execution_feedback","python.fstring","python.generator_expression"],"apis":["level.constructor","orderbook.constructor","orderbook.mid","new_order.constructor","strategy.on_book_update","strategy.on_fill"],"notation":["notation.spread","notation.equity"]},"requirement_routes":{"concepts":{"framework.strategy_contract":"LIVE","microstructure.spread_cost":"LIVE","metrics.inventory_exposure":"LIVE","architecture.execution_feedback":"LIVE","python.fstring":"REQUIRED","python.generator_expression":"REQUIRED"},"apis":{"level.constructor":"LIVE","orderbook.constructor":"LIVE","orderbook.mid":"LIVE","new_order.constructor":"LIVE","strategy.on_book_update":"LIVE","strategy.on_fill":"LIVE"},"notation":{"notation.spread":"LIVE","notation.equity":"LIVE"}},"introduces":{"concepts":[{"id":"market_making.liquidity_provision","importance":"major","route":"LIVE"},{"id":"market_making.quotes","importance":"major","route":"LIVE"},{"id":"market_making.adverse_selection","importance":"major","route":"LIVE"},{"id":"inventory.risk","importance":"major","route":"LIVE"},{"id":"inventory.skew","importance":"major","route":"LIVE"},{"id":"market_making.heuristic_reservation_price","importance":"major","route":"LIVE"},{"id":"market_making.cara_utility","importance":"supporting","route":"LIVE"},{"id":"market_making.fill_intensity","importance":"supporting","route":"LIVE"}],"apis":["market_maker.constructor","market_maker.half_spread","market_maker.inventory","market_maker.inventory_skew","market_maker.reservation_price","market_maker.quotes","mm_simulation.constructor","mm_simulation.run","sim_result.type","sim_result.pnl","sim_result.final_pnl","sim_result.max_inventory"],"notation":["notation.inventory","notation.heuristic_reservation","notation.cara_utility","notation.fill_intensity"]},"introduction_routes":{"apis":{"market_maker.constructor":"LIVE","market_maker.half_spread":"LIVE","market_maker.inventory":"LIVE","market_maker.inventory_skew":"LIVE","market_maker.reservation_price":"LIVE","market_maker.quotes":"LIVE","mm_simulation.constructor":"LIVE","mm_simulation.run":"LIVE","sim_result.type":"LIVE","sim_result.pnl":"REQUIRED","sim_result.final_pnl":"LIVE","sim_result.max_inventory":"LIVE"},"notation":{"notation.inventory":"LIVE","notation.heuristic_reservation":"LIVE","notation.cara_utility":"LIVE","notation.fill_intensity":"LIVE"}},"recalls":[{"concept":"microstructure.spread_cost","introduced_in":5,"mapping":{"before":"Un taker pierde el spread en una ida y vuelta.","now":"Un provider intenta cobrar ese spread."}},{"concept":"architecture.execution_feedback","introduced_in":10,"mapping":{"before":"on_fill cierra el bucle de feedback.","now":"El mismo hook actualiza el inventario."}}],"api_surface":[{"id":"level.constructor","name":"Level","kind":"constructor","signature":"Level(price: float, size: float) -> Level","returns":"Level","responsibility":"construct one visible price level","qualified_name":"exchange.book.Level"},{"id":"orderbook.constructor","name":"OrderBook","kind":"constructor","signature":"OrderBook(symbol: str, bids: list[Level], asks: list[Level]) -> OrderBook","returns":"OrderBook","responsibility":"construct a sorted two-sided book","qualified_name":"exchange.book.OrderBook"},{"id":"orderbook.mid","name":"mid","kind":"property","signature":"mid -> float | None","returns":"float | None","responsibility":"compute the top-of-book midpoint","qualified_name":"exchange.book.OrderBook.mid"},{"id":"new_order.constructor","name":"NewOrder","kind":"constructor","signature":"NewOrder(order: Order) -> NewOrder","returns":"NewOrder","responsibility":"wrap an order as a typed strategy action","qualified_name":"exchange.strategy.NewOrder"},{"id":"strategy.on_book_update","name":"on_book_update","kind":"method","signature":"on_book_update(book: OrderBook) -> list[Action]","returns":"list[Action]","responsibility":"propose typed actions from market state","qualified_name":"exchange.strategy.Strategy.on_book_update"},{"id":"strategy.on_fill","name":"on_fill","kind":"method","signature":"on_fill(fill: Fill) -> None","returns":"None","responsibility":"receive execution feedback","qualified_name":"exchange.strategy.Strategy.on_fill"},{"id":"market_maker.constructor","name":"MarketMaker","kind":"constructor","signature":"MarketMaker(symbol: str, quote_size: float = 0.01, half_spread: float = 5.0, inventory_skew: float = 2.0) -> MarketMaker","returns":"MarketMaker","responsibility":"configure the heuristic market maker","qualified_name":"exchange.strategies.market_maker.MarketMaker"},{"id":"market_maker.inventory","name":"inventory","kind":"property","signature":"inventory -> float","returns":"float","responsibility":"read or set the strategy inventory through its public contract","qualified_name":"exchange.strategies.market_maker.MarketMaker.inventory"},{"id":"market_maker.half_spread","name":"half_spread","kind":"attribute","signature":"half_spread: float","returns":"float","responsibility":"configure half the quoted width around the reservation price","qualified_name":"exchange.strategies.market_maker.MarketMaker.half_spread"},{"id":"market_maker.inventory_skew","name":"inventory_skew","kind":"attribute","signature":"inventory_skew: float","returns":"float","responsibility":"configure the heuristic inventory correction strength","qualified_name":"exchange.strategies.market_maker.MarketMaker.inventory_skew"},{"id":"market_maker.reservation_price","name":"reservation_price","kind":"method","signature":"reservation_price(mid: float) -> float","returns":"float","responsibility":"shift the quote center using inventory","qualified_name":"exchange.strategies.market_maker.MarketMaker.reservation_price"},{"id":"market_maker.quotes","name":"quotes","kind":"method","signature":"quotes(book: OrderBook) -> tuple[float, float]","returns":"tuple[float, float]","responsibility":"produce bid and ask quotes","qualified_name":"exchange.strategies.market_maker.MarketMaker.quotes"},{"id":"mm_simulation.constructor","name":"MMSimulation","kind":"constructor","signature":"MMSimulation(strategy: MarketMaker, s0: float = 100.0, sigma: float = 0.5, steps: int = 500, A: float = 1.0, kappa: float = 1.5, seed: int = 42) -> MMSimulation","returns":"MMSimulation","responsibility":"configure a reproducible fill-intensity simulation","qualified_name":"exchange.simulation.MMSimulation"},{"id":"mm_simulation.run","name":"run","kind":"method","signature":"run() -> SimResult","returns":"SimResult","responsibility":"simulate quotes, fills, inventory, and marked PnL","qualified_name":"exchange.simulation.MMSimulation.run"},{"id":"sim_result.type","name":"SimResult","kind":"type","signature":"SimResult: type","returns":"SimResult","responsibility":"name the structured market-making simulation result","qualified_name":"exchange.simulation.SimResult"},{"id":"sim_result.pnl","name":"pnl","kind":"attribute","signature":"pnl: list[float]","returns":"list[float]","responsibility":"expose the marked-to-market PnL path","qualified_name":"exchange.simulation.SimResult.pnl"},{"id":"sim_result.final_pnl","name":"final_pnl","kind":"property","signature":"final_pnl -> float","returns":"float","responsibility":"read final marked-to-market PnL","qualified_name":"exchange.simulation.SimResult.final_pnl"},{"id":"sim_result.max_inventory","name":"max_inventory","kind":"property","signature":"max_inventory -> float","returns":"float","responsibility":"read maximum absolute simulated inventory","qualified_name":"exchange.simulation.SimResult.max_inventory"}],"routes":{"LIVE":["l13-challenge","l13-business-and-risk","l13-mm-simulator","l13-quotes","l13-bridge"],"REQUIRED":["l13-quiz"],"OPTIONAL":[]},"objectives":[{"id":"l13-explain-liquidity-provision","route":"LIVE","concepts":["market_making.liquidity_provision","market_making.quotes","market_making.adverse_selection"],"apis":["market_maker.constructor","market_maker.half_spread","market_maker.inventory","market_maker.inventory_skew","market_maker.quotes","mm_simulation.constructor","mm_simulation.run","sim_result.type","sim_result.final_pnl","sim_result.max_inventory"],"notation":[]},{"id":"l13-control-inventory","route":"LIVE","concepts":["inventory.risk","inventory.skew","market_making.heuristic_reservation_price"],"apis":["market_maker.inventory","market_maker.reservation_price"],"notation":["notation.inventory","notation.heuristic_reservation"]},{"id":"l13-prepare-risk-and-fills","route":"LIVE","concepts":["market_making.cara_utility","market_making.fill_intensity"],"apis":[],"notation":["notation.cara_utility","notation.fill_intensity"]},{"id":"l13-inspect-pnl-path","route":"REQUIRED","concepts":["market_making.quotes"],"apis":["sim_result.pnl"],"notation":["notation.equity"]}],"load":{"live_presentation_minutes":20,"guided_minutes":20,"required_autonomous_minutes":19,"optional_minutes":0,"overflow_policy":"explicit-route-plan"},"scenes":[{"id":"l13-challenge","dom_id":"s0","type":"hero-challenge","route":"LIVE","layout":"focus","concepts":["market_making.liquidity_provision"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l13-business-and-risk","dom_id":"s1","type":"code-state","route":"LIVE","layout":"split-42-58","concepts":["market_making.quotes","market_making.adverse_selection","inventory.risk","inventory.skew"],"duration_minutes":8,"stages":[{"id":"round-trip","route":"LIVE","dom_stage":0},{"id":"one-way-fills","route":"LIVE","dom_stage":1},{"id":"adverse-selection","route":"LIVE","dom_stage":2},{"id":"skew","route":"LIVE","dom_stage":3},{"id":"tradeoff","route":"LIVE","dom_stage":4}]},{"id":"l13-mm-simulator","dom_id":"s2","type":"concept-simulator","route":"LIVE","layout":"split-45-55","concepts":["inventory.risk","inventory.skew"],"duration_minutes":4,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l13-quotes","dom_id":"s3","type":"guided-exercise","route":"LIVE","layout":"split-50-50","concepts":["market_making.heuristic_reservation_price","market_making.quotes","market_making.cara_utility","market_making.fill_intensity"],"duration_minutes":4,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l13-quiz","dom_id":"s4","type":"diagnostic-quiz","route":"REQUIRED","layout":"focus","concepts":["inventory.risk","inventory.skew","market_making.adverse_selection","market_making.cara_utility","market_making.fill_intensity"],"duration_minutes":8,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l13-bridge","dom_id":"s5","type":"bridge","route":"LIVE","layout":"focus","concepts":["market_making.heuristic_reservation_price"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]}],"bridge":{"target_lesson":14,"known":{"concepts":["market_making.heuristic_reservation_price","inventory.risk","inventory.skew","market_making.cara_utility","market_making.fill_intensity"],"apis":["market_maker.reservation_price","market_maker.quotes"],"notation":["notation.heuristic_reservation"]},"limitation":"Un skew ajustado a mano no conecta de forma explícita volatilidad, horizonte e intensidad de fills.","need":"Avellaneda–Stoikov da parámetros interpretables al centro y a la anchura."},"api_transitions":[],"package_checks":[{"path":"13-market-making-intro/exercises/exchange/book.py","class":"Level","members":{"__init__":{"api":"level.constructor","kind":"constructor","parameters":[{"name":"price","kind":"positional_or_keyword","annotation":"float"},{"name":"size","kind":"positional_or_keyword","annotation":"float"}],"returns":"Level"}}},{"path":"13-market-making-intro/exercises/exchange/book.py","class":"OrderBook","members":{"__init__":{"api":"orderbook.constructor","kind":"constructor","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"bids","kind":"positional_or_keyword","annotation":"list[Level]"},{"name":"asks","kind":"positional_or_keyword","annotation":"list[Level]"}],"returns":"OrderBook"},"mid":{"api":"orderbook.mid","kind":"property","parameters":[],"returns":"float | None"}}},{"path":"13-market-making-intro/exercises/exchange/strategy.py","class":"NewOrder","members":{"__init__":{"api":"new_order.constructor","kind":"constructor","parameters":[{"name":"order","kind":"positional_or_keyword","annotation":"Order"}],"returns":"NewOrder"}}},{"path":"13-market-making-intro/exercises/exchange/strategy.py","class":"Strategy","members":{"on_book_update":{"api":"strategy.on_book_update","kind":"method","parameters":[{"name":"book","kind":"positional_or_keyword","annotation":"OrderBook"}],"returns":"list[Action]"},"on_fill":{"api":"strategy.on_fill","kind":"method","parameters":[{"name":"fill","kind":"positional_or_keyword","annotation":"Fill"}],"returns":"None"}}},{"path":"13-market-making-intro/exercises/exchange/strategies/market_maker.py","class":"MarketMaker","members":{"__init__":{"api":"market_maker.constructor","kind":"constructor","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"quote_size","kind":"positional_or_keyword","annotation":"float","default":"0.01"},{"name":"half_spread","kind":"positional_or_keyword","annotation":"float","default":"5.0"},{"name":"inventory_skew","kind":"positional_or_keyword","annotation":"float","default":"2.0"}],"returns":"MarketMaker"},"inventory":{"api":"market_maker.inventory","kind":"property","parameters":[],"returns":"float"},"half_spread":{"api":"market_maker.half_spread","kind":"attribute","parameters":[],"returns":"float"},"inventory_skew":{"api":"market_maker.inventory_skew","kind":"attribute","parameters":[],"returns":"float"},"reservation_price":{"api":"market_maker.reservation_price","kind":"method","parameters":[{"name":"mid","kind":"positional_or_keyword","annotation":"float"}],"returns":"float"},"quotes":{"api":"market_maker.quotes","kind":"method","parameters":[{"name":"book","kind":"positional_or_keyword","annotation":"OrderBook"}],"returns":"tuple[float, float]"}}},{"path":"13-market-making-intro/exercises/exchange/simulation.py","class":"MMSimulation","members":{"__init__":{"api":"mm_simulation.constructor","kind":"constructor","parameters":[{"name":"strategy","kind":"positional_or_keyword","annotation":"MarketMaker"},{"name":"s0","kind":"positional_or_keyword","annotation":"float","default":"100.0"},{"name":"sigma","kind":"positional_or_keyword","annotation":"float","default":"0.5"},{"name":"steps","kind":"positional_or_keyword","annotation":"int","default":"500"},{"name":"A","kind":"positional_or_keyword","annotation":"float","default":"1.0"},{"name":"kappa","kind":"positional_or_keyword","annotation":"float","default":"1.5"},{"name":"seed","kind":"positional_or_keyword","annotation":"int","default":"42"}],"returns":"MMSimulation"},"run":{"api":"mm_simulation.run","kind":"method","parameters":[],"returns":"SimResult"}}},{"path":"13-market-making-intro/exercises/exchange/simulation.py","class":"SimResult","members":{"pnl":{"api":"sim_result.pnl","kind":"attribute","parameters":[],"returns":"list[float]"},"final_pnl":{"api":"sim_result.final_pnl","kind":"property","parameters":[],"returns":"float"},"max_inventory":{"api":"sim_result.max_inventory","kind":"property","parameters":[],"returns":"float"}}}],"symbol_checks":[{"path":"13-market-making-intro/exercises/exchange/simulation.py","symbol":"SimResult","api":"sim_result.type","kind":"type","returns":"SimResult"}],"used_later":{"concepts":["inventory.risk","inventory.skew","market_making.cara_utility","market_making.fill_intensity","market_making.heuristic_reservation_price"],"apis":["market_maker.constructor","market_maker.half_spread","market_maker.inventory","market_maker.inventory_skew","market_maker.quotes","market_maker.reservation_price","mm_simulation.constructor","mm_simulation.run","sim_result.final_pnl","sim_result.max_inventory"],"notation":["notation.cara_utility","notation.fill_intensity","notation.heuristic_reservation","notation.inventory"]}}</script>
 <script>
 
 (function(){
@@ -1124,6 +1329,533 @@ const vals={'dd-i0':D.noskew.maxInv,'dd-i1':D.skew.maxInv,
  'dd-p2':Math.round(D.noskew.finalPnl)+'→'+Math.round(D.skew.finalPnl),
  'dd-i3':D.noskew.maxInv};
 Object.entries(vals).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.textContent=v;});
+})();
+
+(function(){
+'use strict';
+
+const RUNTIME_VERSION=2;
+const ROUTES=['LIVE','REQUIRED','OPTIONAL'];
+const contractNode=document.getElementById('pedagogy-contract');
+if(!contractNode)return;
+
+let contract;
+try{contract=JSON.parse(contractNode.textContent);}catch(error){
+  console.error('Invalid pedagogy contract',error);return;
+}
+if(!Array.isArray(contract.scenes)||!contract.scenes.length)return;
+
+const body=document.body;
+const params=new URLSearchParams(location.search);
+const mobileQuery=matchMedia('(max-width: 900px)');
+const requestedMode=params.get('mode')==='aula'?'aula':'estudio';
+const mode=requestedMode==='aula'&&!mobileQuery.matches?'aula':'estudio';
+const isProfessor=['1','true'].includes((params.get('profe')||'').toLowerCase());
+const routeScopes=mode==='aula'
+  ?(isProfessor?['LIVE','LIVE+REQUIRED','ALL']:['LIVE'])
+  :['LIVE+REQUIRED','ALL'];
+let routeScope=mode==='estudio'?'LIVE+REQUIRED':'LIVE';
+if(mode==='estudio'&&params.get('optional')==='1')routeScope='ALL';
+let currentScene=0,currentStage=0;
+
+const esc=value=>String(value??'').replace(/[&<>"']/g,ch=>({
+  '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+})[ch]);
+const slug=value=>String(value||'focus').toLowerCase().replace(/[^a-z0-9-]+/g,'-');
+const route=value=>ROUTES.includes(String(value||'').toUpperCase())
+  ?String(value).toUpperCase():'LIVE';
+const routeClass=value=>`lr-route-${route(value).toLowerCase()}`;
+const scopeRoutes=()=>routeScope==='ALL'?ROUTES:
+  routeScope==='LIVE+REQUIRED'?['LIVE','REQUIRED']:['LIVE'];
+const modeUrl=next=>{
+  const q=new URLSearchParams(location.search);q.set('mode',next);
+  return `${location.pathname}?${q.toString()}${location.hash}`;
+};
+const stateKey=(scene,stage)=>`${scene.id}::${stage.id}`;
+const reducedMotion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function elementForStage(nodes,value,index,total){
+  if(value!==undefined&&value!==null){
+    const wanted=String(value);
+    return nodes.find(node=>node.dataset.stage===wanted)||null;
+  }
+  return total===nodes.length?nodes[index]||null:(total===1&&nodes.length===1?nodes[0]:null);
+}
+
+const missingScenes=[];
+const models=contract.scenes.map(rawScene=>{
+  if(!rawScene||!rawScene.id||!rawScene.dom_id)return null;
+  const element=document.getElementById(rawScene.dom_id);
+  if(!element){missingScenes.push(rawScene.id);return null;}
+  const sceneRoute=route(rawScene.route);
+  const layout=slug(rawScene.layout);
+  element.classList.add('lr-scene',routeClass(sceneRoute),`lr-layout-${layout}`);
+  element.dataset.sceneId=rawScene.id;
+  element.dataset.sceneType=rawScene.type||'scene';
+  element.dataset.sceneLayout=layout;
+  element.dataset.layoutApplied='true';
+  element.dataset.route=sceneRoute;
+  const allSteps=[...element.querySelectorAll('.scrolly .step')];
+  const allFigures=[...element.querySelectorAll('.fig-stage')];
+  const declared=Array.isArray(rawScene.stages)&&rawScene.stages.length
+    ?rawScene.stages:[{id:'stage',route:sceneRoute}];
+  const stages=declared.map((rawStage,index)=>{
+    const stage={...rawStage};
+    stage.id=stage.id||`stage-${index+1}`;
+    stage.route=route(stage.route||sceneRoute);
+    stage.step=elementForStage(allSteps,stage.dom_stage,index,declared.length);
+    stage.figure=elementForStage(allFigures,stage.dom_stage,index,declared.length);
+    [stage.step,stage.figure].filter(Boolean).forEach(node=>{
+      node.dataset.route=stage.route;node.classList.add(routeClass(stage.route));
+    });
+    return stage;
+  });
+  const firstWrap=element.matches('.wrap')?element:element.querySelector(':scope > .wrap');
+  if(firstWrap){
+    const badge=document.createElement('div');
+    badge.className=`lr-scene-badge ${routeClass(sceneRoute)}`;
+    const minutes=Number.isFinite(Number(rawScene.duration_minutes))
+      ?`<span>${esc(rawScene.duration_minutes)} min</span>`:'';
+    badge.innerHTML=`<span>${esc(sceneRoute)}</span><span>${esc(rawScene.type||'scene')}</span>${minutes}`;
+    firstWrap.insertBefore(badge,firstWrap.firstChild);
+  }
+  return {...rawScene,route:sceneRoute,layout,element,stages,allSteps,allFigures};
+}).filter(Boolean);
+
+if(missingScenes.length){
+  body.dataset.runtimeContractError='missing-scene-dom';
+  console.error(`Pedagogy scenes without DOM nodes: ${missingScenes.join(', ')}`);
+}
+if(!models.length)return;
+
+body.classList.add('lr-has-contract',`mode-${mode}`);
+body.dataset.learningMode=mode;
+body.dataset.requestedMode=requestedMode;
+body.dataset.professorMode=String(isProfessor);
+body.dataset.runtimeVersion=String(RUNTIME_VERSION);
+document.documentElement.classList.toggle('lr-mode-aula',mode==='aula');
+if(requestedMode!==mode)body.classList.add('lr-mobile-fallback');
+
+const inventory=models.flatMap(scene=>scene.stages.map(stage=>({
+  key:stateKey(scene,stage),scene,stage,route:stage.route,
+})));
+const inventoryKeys=new Set(inventory.map(item=>item.key));
+const optionalCount=inventory.filter(item=>item.route==='OPTIONAL').length;
+
+function storageKey(){
+  if(window.DOC&&typeof DOC.key==='function')return DOC.key();
+  return `algoTrading.${body.dataset.lesson||String(contract.lesson||'x').padStart(2,'0')}`;
+}
+function readSaved(){
+  try{return JSON.parse(localStorage.getItem(storageKey())||'{}');}catch(_error){return {};}
+}
+const initialSaved=readSaved();
+const savedRuntime=initialSaved.runtime||{};
+if(params.get('optional')!=='1'&&routeScopes.includes(savedRuntime.routeScope)){
+  routeScope=savedRuntime.routeScope;
+}
+const visited=new Set((Array.isArray(savedRuntime.visited)?savedRuntime.visited:[])
+  .filter(key=>inventoryKeys.has(key)));
+if(savedRuntime.scene&&savedRuntime.stage){
+  const prior=inventory.find(item=>item.scene.id===savedRuntime.scene&&item.stage.id===savedRuntime.stage);
+  if(prior)visited.add(prior.key);
+}
+
+function progressSnapshot(){
+  const progress={};
+  ROUTES.forEach(routeName=>{
+    const states=inventory.filter(item=>item.route===routeName);
+    const seen=states.filter(item=>visited.has(item.key)).length;
+    progress[routeName]={
+      visited:seen,total:states.length,
+      percent:states.length?Math.round(100*seen/states.length):100,
+      complete:states.length===0||seen===states.length,
+    };
+  });
+  return progress;
+}
+function saveRuntime(scene=null,stage=null,mark=false){
+  if(scene&&stage&&mark)visited.add(stateKey(scene,stage));
+  const previous=readSaved().runtime||{};
+  const runtime={...previous,version:RUNTIME_VERSION,mode,routeScope,
+    visited:[...visited],progress:progressSnapshot(),ts:Date.now()};
+  if(scene)runtime.scene=scene.id;
+  if(stage)runtime.stage=stage.id;
+  if(window.DOC&&typeof DOC.save==='function')DOC.save({runtime});
+  else{
+    try{localStorage.setItem(storageKey(),JSON.stringify({...readSaved(),runtime}));}catch(_error){}
+  }
+  body.dataset.runtimeProgress=JSON.stringify(runtime.progress);
+}
+
+const nav=document.createElement('aside');
+nav.id='lr-nav';
+nav.setAttribute('aria-label','Navegación de la lección');
+nav.innerHTML=`
+  <a class="lr-course-home" href="../../index.html">← Mapa del curso</a>
+  <div class="lr-brand"><b>L${Number(contract.lesson)}</b><span>${esc(contract.title)}</span></div>
+  <div class="lr-modes" aria-label="Modo de lectura">
+    <a href="${modeUrl('aula')}" class="${mode==='aula'?'on':''}">Aula</a>
+    <a href="${modeUrl('estudio')}" class="${mode==='estudio'?'on':''}">Estudio</a>
+  </div>
+  ${requestedMode!==mode?'<p class="lr-fallback-note">Aula usa el recorrido vertical en esta pantalla.</p>':''}
+  <button type="button" class="lr-study-optional" aria-pressed="false">Incluir OPTIONAL</button>
+  <div class="lr-scene-links"></div>`;
+body.appendChild(nav);
+
+const navLinks=nav.querySelector('.lr-scene-links');
+models.forEach((scene,index)=>{
+  const button=document.createElement('button');
+  button.type='button';button.dataset.sceneIndex=String(index);
+  button.className=routeClass(scene.route);
+  button.innerHTML=`<span>${esc(scene.route)}</span><b>${esc(scene.id.replace(/^l\d+-/,''))}</b>`;
+  button.addEventListener('click',()=>{
+    if(mode==='aula')goTo(index,0,false);
+    else scene.element.scrollIntoView({behavior:reducedMotion()?'auto':'smooth',block:'start'});
+  });
+  navLinks.appendChild(button);
+});
+
+const controls=document.createElement('div');
+controls.id='lr-controls';
+controls.innerHTML=`
+  <button type="button" class="lr-prev" aria-label="Etapa anterior">← <span>Anterior</span></button>
+  <div class="lr-progress" aria-live="polite">
+    <b class="lr-scene-progress">Escena</b><span>·</span><b class="lr-stage-progress">Etapa</b>
+    <span>·</span><b class="lr-route-progress">0%</b>
+  </div>
+  <button type="button" class="lr-route-scope" aria-label="Cambiar alcance de ruta">LIVE</button>
+  <button type="button" class="lr-next" aria-label="Etapa siguiente"><span>Siguiente</span> →</button>`;
+body.appendChild(controls);
+
+const mobileToolbar=document.createElement('div');
+mobileToolbar.id='lr-mobile-toolbar';
+mobileToolbar.innerHTML=`<a href="../../index.html">← Curso</a>
+  <span>${requestedMode==='aula'?'Aula → estudio':'Modo estudio'}</span>
+  <button type="button" class="lr-study-optional" aria-pressed="false">+ OPTIONAL</button>
+  ${isProfessor?'<button type="button" class="lr-mobile-teacher" aria-expanded="false">Guía</button>':''}`;
+body.insertBefore(mobileToolbar,body.firstChild);
+
+const liveRegion=document.createElement('div');
+liveRegion.className='lr-sr-only';liveRegion.setAttribute('aria-live','polite');
+body.appendChild(liveRegion);
+
+let teacherToggle=null,teacherDrawer=null,teacherBody=null,mobileTeacherToggle=null;
+if(isProfessor){
+  teacherToggle=document.createElement('button');
+  teacherToggle.id='lr-teacher-toggle';teacherToggle.type='button';
+  teacherToggle.textContent='Guía docente';teacherToggle.setAttribute('aria-expanded','false');
+  teacherToggle.setAttribute('aria-controls','lr-teacher-drawer');
+  nav.insertBefore(teacherToggle,navLinks);
+  mobileTeacherToggle=mobileToolbar.querySelector('.lr-mobile-teacher');
+  mobileTeacherToggle?.setAttribute('aria-controls','lr-teacher-drawer');
+  teacherDrawer=document.createElement('aside');
+  teacherDrawer.id='lr-teacher-drawer';teacherDrawer.dataset.overlay='teacher';
+  teacherDrawer.setAttribute('aria-label','Guía docente de la escena');
+  teacherDrawer.setAttribute('aria-hidden','true');
+  teacherDrawer.innerHTML='<div class="lr-teacher-head"><b>Guía docente</b>'
+    +'<button type="button" class="lr-teacher-close" aria-label="Cerrar guía docente">×</button></div>'
+    +'<div class="lr-teacher-body"></div>';
+  body.appendChild(teacherDrawer);teacherBody=teacherDrawer.querySelector('.lr-teacher-body');
+  const toggleTeacher=force=>{
+    const open=force===undefined?!teacherDrawer.classList.contains('open'):force;
+    teacherDrawer.classList.toggle('open',open);
+    teacherDrawer.setAttribute('aria-hidden',String(!open));
+    [teacherToggle,mobileTeacherToggle].filter(Boolean)
+      .forEach(button=>button.setAttribute('aria-expanded',String(open)));
+    if(open)teacherDrawer.querySelector('.lr-teacher-close').focus();
+    else (mobileQuery.matches?mobileTeacherToggle:teacherToggle)?.focus();
+  };
+  teacherToggle.addEventListener('click',()=>toggleTeacher());
+  mobileTeacherToggle?.addEventListener('click',()=>toggleTeacher());
+  teacherDrawer.querySelector('.lr-teacher-close').addEventListener('click',()=>toggleTeacher(false));
+}
+
+function allowedStages(scene){
+  const allowedRoutes=scopeRoutes();
+  return scene.stages.filter(stage=>allowedRoutes.includes(stage.route));
+}
+function allowed(scene){
+  return scopeRoutes().includes(scene.route)&&allowedStages(scene).length>0;
+}
+function availableModels(){return models.filter(allowed);}
+
+function activateStage(scene,stage){
+  const hasMappedSteps=scene.stages.some(item=>item.step);
+  const hasMappedFigures=scene.stages.some(item=>item.figure);
+  scene.allSteps.forEach(step=>{
+    const model=scene.stages.find(item=>item.step===step);
+    const visibleRoute=!model||scopeRoutes().includes(model.route);
+    const active=!hasMappedSteps||stage.step===step;
+    step.hidden=!visibleRoute;
+    step.classList.toggle('lr-stage-active',active&&visibleRoute);
+    step.classList.toggle('on',active&&visibleRoute);
+    step.setAttribute('aria-hidden',String(!(active&&visibleRoute)));
+  });
+  scene.allFigures.forEach(figure=>{
+    const model=scene.stages.find(item=>item.figure===figure);
+    const visibleRoute=!model||scopeRoutes().includes(model.route);
+    const active=!hasMappedFigures||stage.figure===figure;
+    figure.hidden=!visibleRoute;
+    figure.classList.toggle('on',active&&visibleRoute);
+    figure.setAttribute('aria-hidden',String(!(active&&visibleRoute)));
+  });
+  const name=scene.element.querySelector('.stage-name');
+  if(name){
+    const source=stage.step&&stage.step.dataset.name;
+    name.textContent=source||stage.id;
+  }
+  const fig=scene.element.querySelector('.fig');
+  if(fig&&stage.dom_stage!==undefined){
+    fig.dispatchEvent(new CustomEvent('stagechange',{detail:{stage:stage.dom_stage}}));
+  }
+}
+function syncNav(scene=null){
+  [...navLinks.querySelectorAll('button')].forEach(button=>{
+    const index=Number(button.dataset.sceneIndex),model=models[index];
+    button.hidden=!allowed(model);
+    button.classList.toggle('on',model===scene);
+    button.setAttribute('aria-current',model===scene?'step':'false');
+  });
+}
+function notesHtml(value){
+  if(!value)return '';
+  const values=Array.isArray(value)?value:[value];
+  return `<ul>${values.map(item=>`<li>${esc(typeof item==='string'?item:JSON.stringify(item))}</li>`).join('')}</ul>`;
+}
+function syncTeacher(scene,stage){
+  if(!teacherBody||!scene||!stage)return;
+  const concepts=scene.concepts||[];
+  const objectives=(contract.objectives||[]).filter(objective=>
+    (objective.concepts||[]).some(concept=>concepts.includes(concept)));
+  const sceneNotes=scene.professor_notes||scene.teacher_notes||scene.teaching_notes;
+  const stageNotes=stage.professor_notes||stage.teacher_notes||stage.teaching_notes;
+  const fullGuide=document.getElementById('gd-toggle');
+  teacherBody.innerHTML=`<p class="lr-teacher-kicker">${esc(scene.route)} · ${esc(scene.type)} · ${esc(scene.duration_minutes)} min</p>`
+    +`<h2>${esc(scene.id)}</h2><p class="lr-teacher-stage">Etapa <code>${esc(stage.id)}</code> · layout <code>${esc(scene.layout)}</code></p>`
+    +`<h3>Conceptos</h3><ul>${concepts.length?concepts.map(concept=>`<li><code>${esc(concept)}</code></li>`).join(''):'<li>Ninguno declarado.</li>'}</ul>`
+    +`<h3>Objetivos relacionados</h3><ul>${objectives.length?objectives.map(objective=>
+      `<li><code>${esc(objective.id)}</code> · ${esc(objective.route)}</li>`).join(''):'<li>Ninguno declarado para esta escena.</li>'}</ul>`
+    +(sceneNotes?`<h3>Notas de escena</h3>${notesHtml(sceneNotes)}`:'')
+    +(stageNotes?`<h3>Notas de etapa</h3>${notesHtml(stageNotes)}`:'')
+    +(fullGuide?'<button type="button" class="lr-full-guide">Abrir guion completo</button>':'');
+  teacherBody.querySelector('.lr-full-guide')?.addEventListener('click',()=>{
+    teacherDrawer.classList.remove('open');teacherDrawer.setAttribute('aria-hidden','true');
+    [teacherToggle,mobileTeacherToggle].filter(Boolean)
+      .forEach(button=>button.setAttribute('aria-expanded','false'));
+    fullGuide.click();
+  });
+}
+function updateDeepLink(scene,stage){
+  if(!history.replaceState)return;
+  const next=`#${encodeURIComponent(scene.id)}/${encodeURIComponent(stage.id)}`;
+  if(location.hash!==next)history.replaceState(null,'',`${location.pathname}${location.search}${next}`);
+}
+function goTo(sceneIndex,stageIndex,focusHeading=true){
+  let scene=models[sceneIndex];
+  if(!scene||!allowed(scene)){
+    scene=availableModels()[0];sceneIndex=models.indexOf(scene);stageIndex=0;
+  }
+  if(!scene)return;
+  const stages=allowedStages(scene);
+  stageIndex=Math.max(0,Math.min(Number(stageIndex)||0,stages.length-1));
+  const stage=stages[stageIndex];
+  currentScene=sceneIndex;currentStage=stageIndex;
+  body.dataset.currentSceneId=scene.id;
+  body.dataset.currentStageId=stage.id;
+  body.dataset.currentStageRoute=stage.route;
+  body.dataset.currentLayout=scene.layout;
+  body.dataset.routeScope=routeScope;
+  scene.element.dataset.currentStageId=stage.id;
+  models.forEach(model=>{
+    const active=model===scene;
+    model.element.classList.toggle('lr-scene-active',active);
+    model.element.setAttribute('aria-hidden',String(!active));
+  });
+  activateStage(scene,stage);
+  const available=availableModels();
+  const scenePosition=available.indexOf(scene)+1;
+  const flatStates=available.flatMap(model=>allowedStages(model).map(item=>({scene:model,stage:item})));
+  const statePosition=flatStates.findIndex(item=>item.scene===scene&&item.stage===stage);
+  controls.querySelector('.lr-scene-progress').textContent=`Escena ${scenePosition}/${available.length}`;
+  controls.querySelector('.lr-stage-progress').textContent=`Etapa ${stageIndex+1}/${stages.length}`;
+  controls.querySelector('.lr-route-scope').textContent=routeScope;
+  controls.querySelector('.lr-prev').disabled=statePosition<=0;
+  controls.querySelector('.lr-next').disabled=statePosition===flatStates.length-1;
+  saveRuntime(scene,stage,true);
+  const scopeProgress=progressSnapshot(),enabledRoutes=scopeRoutes();
+  const routeProgress=Math.round(enabledRoutes.reduce((total,routeName)=>
+    total+scopeProgress[routeName].visited,0)/Math.max(1,enabledRoutes.reduce((total,routeName)=>
+    total+scopeProgress[routeName].total,0))*100);
+  controls.querySelector('.lr-route-progress').textContent=`${routeProgress}% visto`;
+  syncNav(scene);syncTeacher(scene,stage);updateDeepLink(scene,stage);
+  liveRegion.textContent=`${scene.id}, etapa ${stageIndex+1} de ${stages.length}`;
+  if(focusHeading){
+    const heading=scene.element.querySelector('h1,h2,h3');
+    if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}
+  }
+}
+function move(delta,focusHeading=true){
+  const scene=models[currentScene];
+  if(!scene)return;
+  const stages=allowedStages(scene);
+  if(delta>0&&currentStage<stages.length-1)return goTo(currentScene,currentStage+1,focusHeading);
+  if(delta<0&&currentStage>0)return goTo(currentScene,currentStage-1,focusHeading);
+  const available=availableModels(),position=available.indexOf(scene);
+  const next=available[position+delta];
+  if(!next)return;
+  const nextIndex=models.indexOf(next),nextStages=allowedStages(next);
+  goTo(nextIndex,delta>0?0:nextStages.length-1,focusHeading);
+}
+function closeOverlays(){
+  document.getElementById('guion-drawer')?.classList.remove('open');
+  teacherDrawer?.classList.remove('open');
+  teacherDrawer?.setAttribute('aria-hidden','true');
+  [teacherToggle,mobileTeacherToggle].filter(Boolean)
+    .forEach(button=>button.setAttribute('aria-expanded','false'));
+  document.querySelectorAll('dialog[open]').forEach(dialog=>dialog.close());
+  document.querySelectorAll('[data-overlay].open').forEach(node=>node.classList.remove('open'));
+}
+function cycleScope(){
+  if(routeScopes.length<2)return;
+  const scene=models[currentScene];
+  const stageId=body.dataset.currentStageId;
+  const index=routeScopes.indexOf(routeScope);
+  routeScope=routeScopes[(index+1)%routeScopes.length];
+  const stages=scene&&allowed(scene)?allowedStages(scene):[];
+  const stageIndex=stages.findIndex(stage=>stage.id===stageId);
+  goTo(currentScene,Math.max(0,stageIndex),false);
+}
+function syncOptionalControls(){
+  document.querySelectorAll('.lr-study-optional').forEach(button=>{
+    button.hidden=mode!=='estudio'||optionalCount===0;
+    button.setAttribute('aria-pressed',String(routeScope==='ALL'));
+    button.textContent=routeScope==='ALL'?'Ocultar OPTIONAL':
+      (button.closest('#lr-mobile-toolbar')?'+ OPTIONAL':'Incluir OPTIONAL');
+  });
+}
+function applyStudyScope(activeScene=null){
+  body.dataset.routeScope=routeScope;
+  models.forEach(scene=>{
+    const sceneVisible=allowed(scene);
+    scene.element.hidden=!sceneVisible;
+    scene.element.setAttribute('aria-hidden',String(!sceneVisible));
+    scene.stages.forEach(stage=>{
+      const stageVisible=scopeRoutes().includes(stage.route);
+      [stage.step,stage.figure].filter(Boolean).forEach(node=>{
+        node.hidden=!stageVisible;node.setAttribute('aria-hidden',String(!stageVisible));
+      });
+    });
+  });
+  syncNav(activeScene);syncOptionalControls();saveRuntime(null,null,false);
+}
+function toggleOptional(){
+  routeScope=routeScope==='ALL'?'LIVE+REQUIRED':'ALL';
+  applyStudyScope();
+  liveRegion.textContent=routeScope==='ALL'?'Contenido OPTIONAL incluido.':'Contenido OPTIONAL oculto.';
+}
+
+controls.querySelector('.lr-prev').addEventListener('click',()=>move(-1,false));
+controls.querySelector('.lr-next').addEventListener('click',()=>move(1,false));
+controls.querySelector('.lr-route-scope').addEventListener('click',cycleScope);
+controls.querySelector('.lr-route-scope').hidden=mode!=='aula'||routeScopes.length<2;
+controls.classList.toggle('lr-fixed-scope',controls.querySelector('.lr-route-scope').hidden);
+document.querySelectorAll('.lr-study-optional').forEach(button=>button.addEventListener('click',toggleOptional));
+
+document.addEventListener('keydown',event=>{
+  if(event.key==='Escape'){closeOverlays();return;}
+  if(mode!=='aula')return;
+  const active=document.activeElement;
+  if(active&&(/INPUT|TEXTAREA|SELECT/.test(active.tagName)||active.isContentEditable))return;
+  if(active&&active.tagName==='BUTTON'&&(event.key===' '||event.key==='Enter'))return;
+  if(['ArrowRight','PageDown',' '].includes(event.key)){
+    event.preventDefault();move(1,true);
+  }else if(['ArrowLeft','PageUp'].includes(event.key)){
+    event.preventDefault();move(-1,true);
+  }
+});
+
+function deepLink(){
+  let sceneId=params.get('scene'),stageId=params.get('stage');
+  if(location.hash){
+    const [rawScene,rawStage]=location.hash.slice(1).split('/');
+    try{sceneId=decodeURIComponent(rawScene)||sceneId;stageId=decodeURIComponent(rawStage||'')||stageId;}
+    catch(_error){sceneId=rawScene||sceneId;stageId=rawStage||stageId;}
+  }
+  if(!sceneId)return null;
+  const scene=models.find(item=>item.id===sceneId||item.dom_id===sceneId);
+  if(!scene)return null;
+  const stage=scene.stages.find(item=>item.id===stageId)||scene.stages[0];
+  return {scene,stage};
+}
+function restoredPosition(){
+  const linked=deepLink();
+  if(linked){
+    if(mode==='estudio'&&linked.stage.route==='OPTIONAL')routeScope='ALL';
+    return linked;
+  }
+  if(!savedRuntime.scene)return null;
+  const scene=models.find(item=>item.id===savedRuntime.scene);
+  const stage=scene?.stages.find(item=>item.id===savedRuntime.stage);
+  return scene&&stage?{scene,stage}:null;
+}
+
+if(mode==='aula'){
+  const restored=restoredPosition();
+  if(restored&&allowed(restored.scene)&&scopeRoutes().includes(restored.stage.route)){
+    currentScene=models.indexOf(restored.scene);
+    currentStage=allowedStages(restored.scene).indexOf(restored.stage);
+  }
+  goTo(currentScene,Math.max(0,currentStage),false);
+}else{
+  const restored=restoredPosition();
+  if(restored?.stage.route==='OPTIONAL')routeScope='ALL';
+  applyStudyScope(restored?.scene||null);
+  const sceneObserver=new IntersectionObserver(entries=>{
+    const visible=entries.filter(entry=>entry.isIntersecting&&!entry.target.hidden)
+      .sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
+    if(!visible)return;
+    const scene=models.find(item=>item.element===visible.target);
+    if(!scene)return;
+    syncNav(scene);
+    const stage=allowedStages(scene).find(item=>!item.step)||allowedStages(scene)[0];
+    if(stage){saveRuntime(scene,stage,true);updateDeepLink(scene,stage);}
+  },{rootMargin:'-20% 0px -55% 0px',threshold:[0,.15,.4]});
+  models.forEach(scene=>sceneObserver.observe(scene.element));
+  models.forEach(scene=>scene.stages.forEach(stage=>{
+    if(!stage.step)return;
+    const observer=new IntersectionObserver(entries=>{
+      if(entries.some(entry=>entry.isIntersecting)&&!stage.step.hidden){
+        saveRuntime(scene,stage,true);syncNav(scene);updateDeepLink(scene,stage);
+      }
+    },{rootMargin:'-35% 0px -45% 0px',threshold:.1});
+    observer.observe(stage.step);
+  }));
+  if(restored&&allowed(restored.scene))requestAnimationFrame(()=>{
+    (restored.stage.step||restored.scene.element).scrollIntoView({block:'center'});
+  });
+}
+
+syncOptionalControls();
+saveRuntime(null,null,false);
+window.LEARNING_RUNTIME={
+  version:RUNTIME_VERSION,contract,mode,isProfessor,
+  getState:()=>({routeScope,scene:models[currentScene]?.id,stage:body.dataset.currentStageId,
+    progress:progressSnapshot()}),
+  setOptional:enabled=>{if(mode==='estudio'&&(enabled!==(routeScope==='ALL')))toggleOptional();},
+  goTo:(sceneId,stageId)=>{
+    const scene=models.find(item=>item.id===sceneId);if(!scene)return false;
+    if(mode==='estudio'){
+      const stage=scene.stages.find(item=>item.id===stageId)||allowedStages(scene)[0];
+      if(!stage)return false;
+      (stage.step||scene.element).scrollIntoView({block:'center'});return true;
+    }
+    const stages=allowedStages(scene),index=stages.findIndex(item=>item.id===stageId);
+    goTo(models.indexOf(scene),Math.max(0,index),false);return true;
+  },
+};
+
+mobileQuery.addEventListener?.('change',()=>location.reload());
 })();
 
 </script>

@@ -8,7 +8,7 @@
 
 ## §0 · Hero — el reto (3 min)
 - **Decir:** "Anoche intentasteis añadir ETH. Esto pasó." Lee el script con las líneas duplicadas atenuadas: "copiar… pegar… rezar…".
-- **Callback a L1:** es EXACTAMENTE la pregunta del puente de la clase pasada.
+- **Callback a L1:** es EXACTAMENTE la pregunta del puente de L1.
 - **Salida:** "El conocimiento copiado es deuda; hay que escribirlo una vez."
 
 ## §1 · Scrollytelling — de copiar a recetas (7 min)
@@ -39,7 +39,7 @@
 
 ## §6 · Puente + mapa (2 min)
 - Mapa: L1 ✓, L2 iluminada. "El sistema crece."
-- **Puente:** "vuestras funciones mueren al cerrar el notebook. ¿Copiarlas a otro archivo? Ese es el pecado de esta mañana. La cura: vuestra propia librería importable. Próxima clase."
+- **Puente:** "vuestras funciones mueren al cerrar el notebook. ¿Copiarlas a otro archivo? Ese es el pecado de duplicar. La cura en L3: vuestra propia librería importable."
 - Manda al notebook y al gimnasio (27 drills — con calentamiento de L1).
 
 ## Checklist

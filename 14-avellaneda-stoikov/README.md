@@ -8,8 +8,9 @@
 utilidad CARA sobre la riqueza final con inventario incierto; la solución (vía la ecuación
 HJB de control óptimo estocástico — no hace falta derivarla) da dos fórmulas cerradas:
 
-- **Reservation price**: `r = s − q·γ·σ²·(T−t)` — el mid ajustado por inventario `q` y tiempo.
-- **Optimal spread**: `d = γ·σ²·(T−t) + (2/γ)·ln(1 + γ/κ)` — cuánto separas tus cotizaciones.
+- **Tiempo normalizado**: `τ = (T−t)/T`, por tanto `τ ∈ [0,1]`.
+- **Reservation price**: `r = s − q·γ·σ²·τ` — el mid ajustado por inventario `q` y tiempo.
+- **Optimal spread**: `d = γ·σ²·τ + (2/γ)·ln(1 + γ/κ)` — cuánto separas tus cotizaciones.
 
 Detalle clave: el ajuste por inventario **se apaga al acercarse el cierre** (`t → T`).
 
@@ -17,9 +18,10 @@ Detalle clave: el ajuste por inventario **se apaga al acercarse el cierre** (`t 
 
 **AvellanedaStoikov: reservation price, optimal spread y barridos de gamma**
 
+`exchange/strategies/avellaneda_stoikov.py` introduce por primera vez en L14
 `AvellanedaStoikov(MarketMaker)`: parámetros `gamma`, `sigma`, `kappa`, `horizon`; sobrescribe
 `reservation_price` y añade `optimal_spread`, y `quotes` cotiza simétrico en torno a `r`. El
-contador `_t` avanza el tiempo. Al ser subclase de `MarketMaker`, hereda `on_fill`/inventario y
+reloj público `time` avanza el tiempo. Al ser subclase de `MarketMaker`, hereda `on_fill`/inventario y
 se enchufa al mismo `MMSimulation`. Demuestra herencia + especialización.
 
 ## Ejercicios de construcción

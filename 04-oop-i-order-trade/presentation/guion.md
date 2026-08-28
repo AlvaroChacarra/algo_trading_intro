@@ -35,7 +35,7 @@
 
 ## §6 · Puente + mapa (2 min)
 - Mapa: L1-L3 ✓, L4 iluminada — "primeras piezas DENTRO del paquete exchange/".
-- **Puente:** "sabéis fabricar órdenes… y las tenéis sueltas por la memoria, como en L2 teníais variables sueltas. Falta el objeto que las contiene y el que lleva la cuenta cuando los fills empiezan a caer. Composición: próxima clase."
+- **Puente:** "sabéis fabricar órdenes… y las tenéis sueltas por la memoria, como en L2 teníais variables sueltas. En L5 llega el objeto que las contiene y el que lleva la cuenta cuando los fills empiezan a caer: composición."
 - Notebook + gimnasio (16 drills: el molde, Order/Fill, validación en __init__).
 
 ## Checklist

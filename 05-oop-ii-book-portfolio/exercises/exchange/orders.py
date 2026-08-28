@@ -1,12 +1,7 @@
-"""orders.py — el objeto más básico del motor: una orden.
+"""orders.py — órdenes y lados construidos en L4.
 
-Construido en L4 (OOP I). Continuación directa del `Order` de las clases de
-fundamentos: mismos campos (symbol, side, price, size), ahora con tipo de orden
-y un id para poder cancelarla.
-
-`Side` y `OrderType` heredan de `str` para que sigan comportándose como las
-cadenas "buy"/"sell" que el alumno ya conoce de L1-L2, pero con la seguridad de
-un Enum (no se puede escribir "byu" por error).
+La orden conserva el vocabulario conocido (buy/sell) y distingue las dos
+formas que ya necesita el curso: una LIMIT con precio y una MARKET sin precio.
 """
 
 from __future__ import annotations
@@ -20,16 +15,10 @@ class Side(str, Enum):
     BUY = "buy"
     SELL = "sell"
 
-    @property
-    def opposite(self) -> "Side":
-        return Side.SELL if self is Side.BUY else Side.BUY
-
 
 class OrderType(str, Enum):
     LIMIT = "limit"    # descansa en el libro hasta cruzarse o cancelarse
     MARKET = "market"  # consume liquidez ya; sin precio límite
-    IOC = "ioc"        # immediate-or-cancel: cruza lo que pueda, cancela el resto
-    FOK = "fok"        # fill-or-kill: o se ejecuta entera o nada
 
 
 _order_ids = count(1)
@@ -40,12 +29,11 @@ class Order:
     symbol: str
     side: Side
     size: float
-    price: float | None = None              # None para órdenes MARKET
+    price: float | None = None
     order_type: OrderType = OrderType.LIMIT
     id: int = None  # type: ignore[assignment]
 
     def __post_init__(self) -> None:
-        # normaliza strings -> Enum (acepta Order("BTCUSDT", "buy", ...))
         self.side = Side(self.side)
         self.order_type = OrderType(self.order_type)
         if self.id is None:

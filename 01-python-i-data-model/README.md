@@ -33,8 +33,9 @@ simuladores: texto→bits (`ord`/`bin`), CPython vs compilación nativa, el viaj
 **tokens/AST/bytecode reales** (`tokenize`/`ast`/`dis`), el editor en vivo, los retos de
 romper-código y el rule builder. El notebook refuerza con `ord`/`bin` y `dis` (auxiliares A4-A5).
 
-Continuidad: el vocabulario (`symbol/side/price/size`) será **literalmente** el de los atributos
-de la clase `Order` en L3. Los dicts de hoy son los objetos de pasado mañana.
+Continuidad: el vocabulario (`symbol/side/price/size`) reaparece en `OrderMini` en L4 y, tras
+la migración explícita de firma, en el `Order` estable de `exchange`. Los dicts de L1 son el
+estado que L4 convertirá en objetos.
 
 ## Ejercicios de construcción
 

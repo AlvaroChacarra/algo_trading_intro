@@ -56,15 +56,15 @@ class RandomStrategy(Strategy):
 
 
 def main():
-    arrival = Market.sample().step().mid
-    print(f"arrival mid: {arrival:.2f}")
+    parent_arrival = Market.sample().step().mid
+    print(f"parent-order arrival mid: {parent_arrival:.2f}")
 
     signal = ImbalanceStrategy()
     res = Backtest(Market.sample(), signal).run()
     avg_slip = sum(signal.slips) / len(signal.slips)
     cost = avg_slip * len(signal.slips) * signal.clip
     print(f"senal : equity={res.final_equity:>7.2f}  fills={res.n_fills}  "
-          f"slippage medio={avg_slip:.2f}  coste ejecucion~{cost:.1f}")
+          f"child slippage medio={avg_slip:.2f}  coste ejecucion~{cost:.1f}")
     print(f"bruto sin peaje ~ {res.final_equity + cost:.1f}")
 
     for seed in (7, 21, 99):

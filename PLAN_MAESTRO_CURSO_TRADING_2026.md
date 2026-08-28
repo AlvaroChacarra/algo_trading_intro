@@ -57,8 +57,8 @@ L1 calculo el mid, pero duplico variables por activo
        → L8 ¿y si MANDO una orden contra el libro? (matching, slippage)
         → L9 cruzar en un instante vs a lo largo del tiempo (el loop, PnL)
          → L10 mi estrategia es un if suelto: hazla modular (Strategy real, reusando la herencia de L6)
-          → L11 ¿bate al benchmark o tuve suerte? (slippage vs arrival mid)
-           → L12 ejecutar una orden GRANDE sin mover el mercado (VWAP: baselines + dinámico)
+          → L11 ¿bate al benchmark o tuve suerte? (parent arrival para decidir; decision mid para ejecutar)
+           → L12 ejecutar una orden GRANDE sin mover el mercado (TWAP/VWAP fijo; prototipos dinámicos OPTIONAL)
             → L13 y si en vez de ejecutar, COTIZO (market making, inventario)
              → L14 mi skew es heurístico: el óptimo (Avellaneda-Stoikov: modelo + simulación) + escribe TU estrategia
               → L15 examen
@@ -152,10 +152,10 @@ Ficha: **Reto · Hilo héroe · Pieza · Simuladores · Núcleo · Auxiliares ·
 
 ### BLOQUE B — El motor (L7–L9)
 
-#### L7 · Microestructura — Leer el libro  *(era L5, flagship)*
+#### L7 · Microestructura — Del snapshot real al OrderBook  *(era L5, flagship)*
 - **Reto:** 500 snapshots reales de BTC: ¿hacia dónde empuja? · **Hilo:** el imbalance (y microprice).
-- **Pieza:** métricas en `book.py` + `Market.sample`.
-- **Núcleo:** Market.sample/step · spread/mid · imbalance(levels) · microprice · depth.
+- **Pieza:** `exchange/book.py` y la frontera `OrderBook.from_snapshot`.
+- **Núcleo:** transformar una fila · spread/mid · imbalance(levels) · microprice · depth.
 - **Puente:** sé leer el libro; ¿qué pasa cuando MANDO una orden contra él?
 
 #### L8 · Órdenes y matching  *(era L6, flagship)*
@@ -179,18 +179,18 @@ Ficha: **Reto · Hilo héroe · Pieza · Simuladores · Núcleo · Auxiliares ·
 - **Puente:** tengo el enchufe; ¿una estrategia con señal de verdad y cómo la mido?
 
 #### L11 · Primera estrategia + métricas  *(era L9)*
-- **Reto:** ¿bate al benchmark o tuve suerte? · **Hilo:** el slippage vs el mid de llegada.
-- **Núcleo:** ImbalanceStrategy · medir · arrival mid · inventario como riesgo.
+- **Reto:** ¿bate al benchmark o tuve suerte? · **Hilo:** dos llegadas, dos preguntas.
+- **Núcleo:** ImbalanceStrategy · parent arrival para la decisión completa · decision mid por orden hija para slippage · inventario como riesgo.
 - **Puente:** ejecuté a lo bruto; ¿cómo ejecuto una orden GRANDE sin mover el mercado?
 
 ### BLOQUE D — Ejecución y market making (L12–L14)
 
-#### L12 · VWAP — Ejecución (baselines + dinámico)  *(fusión de los antiguos L10+L11, flagship)*
+#### L12 · VWAP — Ejecución (baselines + perfil fijo)  *(fusión de los antiguos L10+L11, flagship)*
 - **Reto:** vender 10 BTC sin hundir el precio. · **Hilo:** el schedule de participación.
 - **Pieza:** `exchange/strategies/vwap.py`.
-- **Simuladores:** trocear orden grande · perfil de volumen · TWAP vs VWAP · predicción dinámica (ventana rolada) · estático vs dinámico.
-- **Núcleo:** pesos TWAP · VWAPStrategy run · perfil a medida · precio medio · rolling prediction · perfil dinámico/corrección.
-- **Auxiliares:** regresión a mano (puente ML) · cap de participación.
+- **Simuladores:** trocear orden grande · perfil de volumen · TWAP vs VWAP · comparación OPTIONAL de un perfil candidato por ventana rolada.
+- **Núcleo:** pesos TWAP · `VWAPStrategy.run` · perfil fijo a medida · precio medio.
+- **Auxiliares OPTIONAL:** media rolada, normalización y corrección aisladas · regresión a mano (puente ML). No se integran en un controlador online.
 - **`.py`:** `run_vwap.py`. · **Puente:** he sido el que EJECUTA; ¿y si COTIZO?
 
 #### L13 · Market making — Intro  *(era L12, flagship)*
@@ -219,7 +219,7 @@ código del propio framework. Generador en `15-final-exam/generate_exam.py`.
 
 - **Calidad:** las 15 con deck a medida nivel L1. Notebook + auxiliares + `.py` + mini-test en todas.
 - **Autovalidación:** ningún ejercicio se publica sin pasar `build_course.py --check-only`.
-- **Estado:** **curso completo (2026.v1)**. L1–L14 producidas (documento interactivo + notebook +
+- **Estado:** **curso completo (2026.v2)**. L1–L14 producidas (documento interactivo + notebook +
   gimnasio + guion + `.py`) y L15 (examen). Ver el **estado final detallado en §8**.
 - **Anexo:** bonos y RFQ en `annex-bonds-rfq/` (opcional, fuera del arco).
 
@@ -240,7 +240,7 @@ código del propio framework. Generador en `15-final-exam/generate_exam.py`.
 
 ---
 
-## 8. Estado final de producción (curso 2026.v1)
+## 8. Estado final de producción (curso 2026.v2)
 
 Las 15 clases están producidas y el curso se cerró con una capa de infraestructura por encima
 del blueprint original:
@@ -258,7 +258,8 @@ modo impresión ("apuntes") y navegación por teclado en los scrollys.
   proyecto abierto con baremo público 30/40/30 y código de resultado verificable.
 - `check_my_work.py`: corrección de cualquier cuaderno desde la terminal.
 
-**Ejercicios (~270, todos autovalidados).** Cada uno declara **nivel** (🟢 núcleo · 🔵 si vamos
+**Ejercicios (293, todos autovalidados).** Cada uno declara **ruta** (LIVE · REQUIRED · OPTIONAL),
+además de **nivel** (🟢 núcleo · 🔵 si vamos
 bien · 🟣 bonus) y minutos; los más densos traen **pista intermedia**; cada gimnasio cierra con un
 **ejercicio de transferencia** que lleva la primitiva a un dominio ajeno al trading.
 

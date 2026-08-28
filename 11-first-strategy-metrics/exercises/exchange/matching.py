@@ -20,6 +20,9 @@ _EPS = 1e-12
 
 
 class MatchingEngine:
+    def __init__(self) -> None:
+        """Create the stateless canonical matching engine."""
+
     def process(self, order: Order, book: OrderBook,
                 timestamp: int | None = None) -> list[Fill]:
         """Cruza `order` contra `book`. Muta el libro y devuelve los fills."""
@@ -46,7 +49,8 @@ class MatchingEngine:
         # 3) Aplica el cruce: consume liquidez y emite fills.
         fills: list[Fill] = []
         for price, take in planned:
-            book.reduce(order.side.opposite, price, take)
+            consumed_side = Side.SELL if order.side is Side.BUY else Side.BUY
+            book.reduce(consumed_side, price, take)
             fills.append(Fill(order.id, order.symbol, order.side, price, take, timestamp))
 
         # 4) Remanente: una LIMIT descansa; MARKET/IOC se cancelan.

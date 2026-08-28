@@ -31,8 +31,9 @@ simuladores: texto→bits (`ord`/`bin`), CPython vs compilación nativa, el viaj
 **tokens/AST/bytecode reales** (`tokenize`/`ast`/`dis`), el editor en vivo, los retos de
 romper-código y el rule builder. El notebook refuerza con `ord`/`bin` y `dis` (auxiliares A4-A5).
 
-Continuidad: el vocabulario (`symbol/side/price/size`) será **literalmente** el de los atributos
-de la clase `Order` en L3. Los dicts de hoy son los objetos de pasado mañana.""",
+Continuidad: el vocabulario (`symbol/side/price/size`) reaparece en `OrderMini` en L4 y, tras
+la migración explícita de firma, en el `Order` estable de `exchange`. Los dicts de L1 son el
+estado que L4 convertirá en objetos.""",
 },
 2: {
 "theory": """Una función encapsula una idea reutilizable. Un **libro de órdenes** es una lista de
@@ -73,9 +74,13 @@ side/price/size y ves notional y `__repr__`) y un visualizador del **signo del c
 núcleo son 6 ejercicios que culminan en "de la orden al dinero" (Order→Fill→cash_flow); el `.py`
 entregable es `orders_demo.py`.
 
-Continuidad: los atributos son los campos del dict de L1. En el cuaderno se construyen las
-clases *inline* (estilo L1-L2); el paquete `exchange/` las trae ya pulidas como referencia.
-Puente: una orden suelta; ¿quién suma los cash_flows y lleva la cuenta? El PositionTracker (L5).""",
+Continuidad: los atributos son los campos del dict de L1. Para no fingir que dos firmas distintas
+son la misma API, el cuaderno construye `OrderMini(symbol, side, price, size)` y
+`FillMini(symbol, side, price, size)`. Antes de entrar en `exchange/` se muestra la migración:
+`Order(symbol, side, size, price=...)` añade tipo/id y `Fill(order_id, symbol, side, price, size)`
+añade trazabilidad. Esos nombres y firmas públicas quedan estables desde L4.
+
+Puente: una orden suelta; ¿quién suma los cash flows y lleva la cuenta? `PositionTracker` (L5).""",
 },
 4: {
 "theory": """Dos ideas de diseño: **composición** (un objeto contiene otros) y **encapsulación**
@@ -90,9 +95,11 @@ todos los backtests.""",
 `best_bid/best_ask/spread/mid` son properties e `imbalance(levels)` es método. `exchange/portfolio.py` (`PositionTracker`) con
 `_cash`/`_position` como implementación interna, `apply_fill(fill)` y `equity(mark)`.
 
-Composición explícita: `OrderBook` contiene `Level`; `PositionTracker.apply_fill` consume
-objetos `Fill` de L3. Aquí el alumno *ve* a los objetos hablándose entre sí — el objetivo
-declarado del curso.
+La construcción usa `OrderBookMini(bids, asks)` con tuplas para aislar composición y properties.
+La migración se declara antes de usar el paquete: `OrderBook(symbol, bids: list[Level],
+asks: list[Level])`. Las lecturas `best_bid`, `best_ask`, `spread`, `mid` siguen siendo properties
+e `imbalance(levels)` sigue siendo método. `PositionTracker.apply_fill` consume el `Fill` estable
+introducido en L4.
 
 El deck a medida (Pyodide) trae un inspector del `OrderBook` (métricas como properties) y un widget
 del `PositionTracker` (pulsas fills y ves cash/posición/equity, con slider de mark). El núcleo
@@ -167,15 +174,17 @@ toda estrategia — el pico arquitectónico del curso.""",
 "theory": """Una estrategia de verdad necesita una **señal** y una **métrica honesta**. La señal aquí es
 el imbalance: largo cuando el libro empuja arriba, corto cuando empuja abajo.
 
-Medir bien exige un **benchmark**: el **mid de llegada** (arrival mid). Tu ejecución es buena
-si compraste por debajo (o vendiste por encima) de él — eso es el **slippage**. Y cuidado con
-el **riesgo escondido**: un equity positivo acompañado de un inventario enorme no es una buena
-estrategia, es una apuesta direccional disfrazada. Por eso se miran a la vez equity, posición
-final y número de fills.""",
-"technical": """Subclase de `Strategy` parametrizada por umbral, usando `book.imbalance(3)`. Lectura
-completa de `BacktestResult`: `final_equity`, `final_position`, `n_fills`, `equity_curve`.
-Comparación de umbrales (más bajo = más operaciones = más inventario). Cierra el bloque
-L1–L9: el motor está completo y se puede medir. Checkpoint integrador.""",
+Medir bien exige separar dos benchmarks. El **parent arrival** es el mid del primer snapshot y
+evalúa la decisión completa de empezar a operar. El **decision mid** de cada orden hija evalúa
+solo su ejecución: comprar por encima o vender por debajo de ese mid produce slippage adverso.
+No se mezclan ambas preguntas. Y cuidado con el **riesgo escondido**: un equity positivo con un
+inventario enorme no es una buena estrategia, sino una apuesta direccional disfrazada.""",
+"technical": """Subclase de `Strategy` parametrizada por umbral, usando `book.imbalance(3)`. La ruta
+LIVE lee `final_equity`, `final_position` y `n_fills` de `BacktestResult`; el juez de slippage
+usa el decision mid vigente cuando nace cada orden hija. La ruta REQUIRED consolida cálculos e
+interpretación; dibujar `equity_curve` con matplotlib queda **OPTIONAL** y no se evalúa.
+Comparar umbrales (más bajo = más operaciones = más inventario) cierra el bloque L1–L10: L10
+aportó el contrato y el runner que aquí se someten a métricas honestas.""",
 },
 10: {
 "theory": """Primer algoritmo de **ejecución**. Mandar una orden grande de golpe barre el libro y paga
@@ -188,21 +197,26 @@ El perfil son pesos relativos: se normalizan, así que importan las proporciones
 "technical": """`exchange/strategies/vwap.py` (`VWAPStrategy(symbol, side, total_size, horizon, profile)`):
 en cada tick emite una market order del tamaño del trozo (peso normalizado × total). Sin
 perfil → TWAP uniforme. Es una subclase de `Strategy`: se enchufa al `Backtest` exactamente
-igual que cualquier otra — primera demostración del valor del framework de L10.""",
+igual que cualquier otra — primera demostración del valor del framework de L10.
+
+La predicción dinámica de volumen queda como profundización **OPTIONAL**: ningún contenido ni
+assessment posterior la presupone; LIVE + REQUIRED se sostienen con slicing, TWAP, el perfil
+VWAP estático y una comparación empírica honesta.""",
 },
 11: {
-"theory": """El perfil fijo asume que hoy se parece a la media. Pero el **flujo reciente informa**: si
-el volumen de los últimos intervalos se desvía, conviene reaccionar.
+"theory": """El perfil fijo asume que hoy se parece a la media. Como prototipo aislado se puede
+preguntar si el **flujo reciente informa** y comparar un perfil candidato con el baseline.
 - **Ventana rolada**: predice el volumen del próximo intervalo como media de los últimos *k*.
-- **Perfil dinámico**: normaliza las predicciones en pesos.
-- **Factor de corrección**: si vas por detrás del plan, acelera; si vas por delante, frena.
+- **Perfil candidato**: normaliza las predicciones en pesos para compararlas offline.
+- **Factor de corrección**: calcula cuánto faltaría para volver al plan; no se conecta al runner.
 
 Extensión opcional: predecir volumen con una **regresión** es el primer paso de ML aplicado;
 la pendiente de mínimos cuadrados (cov/var) es lo que hace `LinearRegression` por dentro.""",
-"technical": """Funciones de predicción en stdlib: `rolling_mean`, normalización a perfil, `correction(
-target_so_far, executed, remaining)`. El perfil dinámico se pasa a `VWAPStrategy`. La
-regresión a mano (`slope = cov/var`) mantiene el curso sin dependencias y desmitifica el ML.
-Aquí encaja, como auxiliar, el antiguo pipeline de data science del curso.""",
+"technical": """Funciones auxiliares en stdlib: `rolling_mean`, normalización a perfil, `correction(
+target_so_far, executed, remaining)`. Se estudian y validan por separado; la `VWAPStrategy`
+canónica recibe una lista fija y no reestima pesos durante `Backtest`. Integrar esas piezas en
+un controlador adaptativo queda fuera del alcance. La regresión a mano (`slope = cov/var`)
+mantiene el curso sin dependencias y desmitifica el ML.""",
 },
 12: {
 "theory": """El otro lado del mercado: el **market maker** cotiza bid y ask y gana el **spread**. Su
@@ -212,7 +226,8 @@ mercado va en su contra (**adverse selection**).
 Aparece la **utilidad CARA** `-e^{-γW}` y el parámetro de **aversión al riesgo** γ. La primera
 defensa es el **skew por inventario**: el *reservation price* = `mid - skew·inventario` baja
 ambas cotizaciones cuando estás largo, para que te compren menos y te vendan más y vuelvas a
-plano.""",
+plano. CARA y la intuición de intensidad de fills forman un puente **LIVE** a γ/κ en
+L14; la estrategia concreta y sus fórmulas no se exponen en L13.""",
 "technical": """`exchange/strategies/market_maker.py` (`MarketMaker`): `quotes(book) -> (bid, ask)` en torno
 al `reservation_price`, `on_fill` actualiza el inventario interno. Y `exchange/simulation.py`
 (`MMSimulation`): como una limit no se cruza en el replay de snapshots, el market making se
@@ -224,13 +239,15 @@ simula contra un mid en paseo aleatorio con **modelo de intensidad de fills**
 utilidad CARA sobre la riqueza final con inventario incierto; la solución (vía la ecuación
 HJB de control óptimo estocástico — no hace falta derivarla) da dos fórmulas cerradas:
 
-- **Reservation price**: `r = s − q·γ·σ²·(T−t)` — el mid ajustado por inventario `q` y tiempo.
-- **Optimal spread**: `d = γ·σ²·(T−t) + (2/γ)·ln(1 + γ/κ)` — cuánto separas tus cotizaciones.
+- **Tiempo normalizado**: `τ = (T−t)/T`, por tanto `τ ∈ [0,1]`.
+- **Reservation price**: `r = s − q·γ·σ²·τ` — el mid ajustado por inventario `q` y tiempo.
+- **Optimal spread**: `d = γ·σ²·τ + (2/γ)·ln(1 + γ/κ)` — cuánto separas tus cotizaciones.
 
 Detalle clave: el ajuste por inventario **se apaga al acercarse el cierre** (`t → T`).""",
-"technical": """`AvellanedaStoikov(MarketMaker)`: parámetros `gamma`, `sigma`, `kappa`, `horizon`; sobrescribe
+"technical": """`exchange/strategies/avellaneda_stoikov.py` introduce por primera vez en L14
+`AvellanedaStoikov(MarketMaker)`: parámetros `gamma`, `sigma`, `kappa`, `horizon`; sobrescribe
 `reservation_price` y añade `optimal_spread`, y `quotes` cotiza simétrico en torno a `r`. El
-contador `_t` avanza el tiempo. Al ser subclase de `MarketMaker`, hereda `on_fill`/inventario y
+reloj público `time` avanza el tiempo. Al ser subclase de `MarketMaker`, hereda `on_fill`/inventario y
 se enchufa al mismo `MMSimulation`. Demuestra herencia + especialización.""",
 },
 14: {
@@ -255,7 +272,7 @@ EXTRA_DOCS = {
 "theory": """Cuando tus funciones crecen, no pueden vivir sueltas en un notebook: las guardas en un
 archivo `.py` — un **módulo** — y lo **importas** desde donde lo necesites. `import order_book`
 trae el módulo entero; `from order_book import spread` trae solo una función. Así reutilizas
-código sin copiarlo, que es justo lo que harás con el paquete `exchange/` desde la clase 7
+código sin copiarlo, que es justo lo que harás con el paquete `exchange/` desde L4
 (`import exchange`).
 
 La segunda mitad de la clase son los **errores**: una función como `best_bid` revienta con un
@@ -278,7 +295,7 @@ objetos distintos y que cada uno responda lo suyo — el código que los usa no 
 es cuál.
 
 Se enseña construyendo una familia `Strategy` de juguete (Momentum, Contrarian): exactamente el
-patrón que en la clase 10 se conecta al motor real. El alumno llega al framework con la herencia
+patrón que en L10 se conecta al motor real. El alumno llega al framework con la herencia
 ya dominada, no a presión.""",
 "technical": """Pura OOP, sin dependencias: una base abstracta `Strategy` con `@abstractmethod decide` y
 subclases que la implementan; un bucle polimórfico (`[s.decide(imb) for s in strategies]`).

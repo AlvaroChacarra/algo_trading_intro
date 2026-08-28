@@ -22,7 +22,7 @@ function fill(side){
   cash+=side==='buy'?-px*sz:px*sz;
   pos+=side==='buy'?sz:-sz;
   n++;
-  $('#tk-log').textContent=`» tracker.apply_fill(Fill('${side}', ${px}, ${sz}))  →  _cash ${side==='buy'?'−':'+'}${px*sz}, _position ${side==='buy'?'+':'−'}${sz}`;
+  $('#tk-log').textContent=`» tracker.apply_fill(Fill(1, 'BTCUSDT', '${side}', ${px}, ${sz}))  →  _cash ${side==='buy'?'−':'+'}${px*sz}, _position ${side==='buy'?'+':'−'}${sz}`;
   render();
 }
 $('#tk-buy').addEventListener('click',()=>fill('buy'));

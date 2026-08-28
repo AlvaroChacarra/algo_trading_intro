@@ -13,17 +13,17 @@
 <header class="hero wrap" id="s0">
   <div class="eyebrow"><b>Algo Trading · ICAI 2026</b> &nbsp;·&nbsp; L2 · Python II &nbsp;·&nbsp; documento interactivo</div>
   <h1>El libro <em>funcional</em></h1>
-  <p class="lede">Tu algoritmo de L1 funciona. Ayer por la noche intentaste añadir ETH…
+  <p class="lede">Tu algoritmo de L1 funciona. Al añadir ETH intentaste escalarlo…
   y esto es lo que pasó:</p>
 
   <div class="code">
-    <div class="code-head"><span>mi_script.py — la mañana siguiente</span><span>python</span></div>
+    <div class="code-head"><span>mi_script.py — al añadir otro activo</span><span>python</span></div>
     <pre><span class="ln">bid_btc = <span class="num">99950</span></span><span class="ln">ask_btc = <span class="num">100000</span></span><span class="ln">mid_btc = (bid_btc + ask_btc) / <span class="num">2</span></span><span class="ln dim">bid_eth = <span class="num">3400</span>          <span class="c"># copiar…</span></span><span class="ln dim">ask_eth = <span class="num">3402</span>          <span class="c"># pegar…</span></span><span class="ln dim">mid_eth = (bid_eth + ask_eth) / <span class="num">2</span>   <span class="c"># rezar…</span></span><span class="ln dim">bid_sol = <span class="c"># ...¿y con 20 activos?</span></span></pre>
   </div>
 
   <div class="challenge">
     <div class="tag">El reto de hoy</div>
-    <p>Cada activo nuevo duplica tus variables. Y si mañana cambias la fórmula del mid,
+    <p>Cada activo nuevo duplica tus variables. Y si después cambias la fórmula del mid,
     la cambias <strong>en veinte sitios</strong>. El problema no es el tamaño: es que tu
     conocimiento vive <em>copiado</em>, no <em>escrito una vez</em>.</p>
     <p>Hoy sales con dos armas: la <strong>función</strong> (una receta, N usos) y el
@@ -44,7 +44,7 @@
   <div class="wrap">
     <div class="eyebrow">§1 · <b>La idea central</b></div>
     <h2>De copiar código a escribir recetas</h2>
-    <p class="lede">Sigue bajando: el panel convierte el script duplicado de esta mañana
+    <p class="lede">Sigue bajando: el panel convierte el script duplicado
     en un libro de órdenes con su equipo de funciones. Es el mismo viaje que harás en el
     notebook.</p>
   </div>
@@ -61,7 +61,7 @@
         <h3><span class="n">1/5</span>La receta: <code>def</code></h3>
         <p>Una función es una receta con huecos. La escribes <strong>una vez</strong> y la
         llamas N veces: <code>compute_mid(99950, 100000)</code>, <code>compute_mid(3400, 3402)</code>…</p>
-        <p>Si mañana cambia la fórmula, la cambias en <strong>un</strong> sitio.</p>
+        <p>Si después cambia la fórmula, la cambias en <strong>un</strong> sitio.</p>
       </div></div>
       <div class="step" data-stage="2" data-name="make_order"><div class="step-inner">
         <h3><span class="n">2/5</span>Una fábrica de órdenes</h3>
@@ -251,7 +251,7 @@ spread(<b style="color:var(--accent)">book</b>) · mid(<b style="color:var(--acc
     <div class="note"><span class="tag">Fíjate</span>
     Con el libro vacío, <code>best_bid</code> no tiene respuesta posible. Hoy devolvemos
     "—", pero es una pregunta trampa de verdad: ¿qué <em>debería</em> hacer tu función?
-    La respuesta seria (lanzar un error claro) llega en la clase 3.</div>
+    La respuesta seria (lanzar un error claro) llega en L3.</div>
   </div>
 </section>
 
@@ -262,6 +262,12 @@ spread(<b style="color:var(--accent)">book</b>) · mid(<b style="color:var(--acc
     <h2>Leer el libro: métricas y señal</h2>
     <p class="lede">Las funciones de lectura no tocan el libro — lo <em>resumen</em>.
     Componlas y tienes el cuadro de mandos de L1, ahora para N activos sin duplicar nada.</p>
+
+    <div class="note"><span class="tag">Sintaxis nueva · expresión generadora</span>
+      <code>o['price'] for o in book if ...</code> es un bucle compacto: produce un precio
+      por cada orden que pasa el filtro. Sin corchetes no crea una lista; <code>max</code>,
+      <code>min</code> o <code>sum</code> consumen esos valores uno a uno. Léela siempre en
+      tres piezas: <strong>qué produce · de dónde sale · qué deja pasar</strong>.</div>
 
     <div class="code">
       <div class="code-head"><span>order_book.py (lectura)</span><span>python</span></div>
@@ -294,7 +300,7 @@ spread(<b style="color:var(--accent)">book</b>) · mid(<b style="color:var(--acc
     <div class="note"><span class="tag">Honestidad</span>
     Este imbalance suma <em>todo</em> el libro. Los profesionales suelen mirar solo los
     primeros niveles (los precios cerca del mid pesan más). Lo refinaremos cuando
-    leamos el libro real en la clase 7.</div>
+    leamos el libro real en L7.</div>
   </div>
 </section>
 
@@ -325,7 +331,7 @@ spread(<b style="color:var(--accent)">book</b>) · mid(<b style="color:var(--acc
         comprensión de <code>cancel_order</code>, que construye una nueva.</div>
       </div>
       <div class="q" data-ok="0">
-        <div class="qt">La comprensión <code>[o for o in book if o.get('id') != order_id]</code>…</div>
+        <div class="qt">La comprensión <code>[o for o in book if o['id'] != order_id]</code>…</div>
         <div class="opts">
           <button class="opt">A · Crea una lista nueva sin la orden cancelada</button>
           <button class="opt">B · Borra la orden dentro del book original</button>
@@ -352,7 +358,7 @@ spread(<b style="color:var(--accent)">book</b>) · mid(<b style="color:var(--acc
           <button class="opt">C · Todas devuelven números</button>
         </div>
         <div class="why">Un dato y el equipo de funciones que lo manosean, viajando siempre
-        juntos… eso tiene nombre: <strong>objeto</strong>. Llega en la clase 4.</div>
+        juntos… eso tiene nombre: <strong>objeto</strong>. Llega en L4.</div>
       </div>
       <div class="score" id="score"></div>
     </div>
@@ -374,19 +380,18 @@ spread(<b style="color:var(--accent)">book</b>) · mid(<b style="color:var(--acc
       <div class="pk future">L4 · Order y Fill<span>exchange/orders.py</span></div>
       <div class="pk future">L5 · OrderBook + Tracker<span>exchange/book.py</span></div>
       <div class="pk future">L6 · familia Strategy<span>herencia</span></div>
-      <div class="pk future">L7-9 · el motor<span>matching, market</span></div>
-      <div class="pk future">L10-11 · el framework<span>Strategy + Backtest</span></div>
-      <div class="pk future">L12-14 · estrategias<span>VWAP, market making</span></div>
+      <div class="pk future">L7-10 · motor y framework<span>matching, Market, Strategy, Backtest</span></div>
+      <div class="pk future">L11-14 · estrategias<span>métricas, VWAP, market making</span></div>
     </div>
 
     <div class="bridge">
       <div class="tag">El puente a L3</div>
       <p style="margin:.2em 0"><strong>Tus funciones funcionan… dentro de este notebook.</strong></p>
-      <p>Cierra el notebook y mueren. Mañana quieres usarlas en otro archivo, y pasado en
-      otro proyecto. ¿Copiar y pegar otra vez? Eso es exactamente el pecado de esta mañana.</p>
+      <p>Cierra el notebook y mueren. En L3 querrás usarlas desde otro archivo y también en
+      otro proyecto. ¿Copiar y pegar otra vez? Eso repite exactamente el mismo pecado.</p>
       <p style="margin-bottom:0">La cura: convertir tu código en una <strong>librería
       importable</strong> — tu propio <code>order_book.py</code>, como cuando escribes
-      <code>import pandas</code>. Es la próxima clase.</p>
+      <code>import pandas</code>. Ese es el paso de L3.</p>
     </div>
 
     <div class="cta">

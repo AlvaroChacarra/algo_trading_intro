@@ -4,13 +4,13 @@ Implementación de referencia del curso "Introducción al Algo Trading con Pytho
 Cada lección construye una pieza de este paquete. Este es el estado final (L14).
 
 Capas:
-    orders / trades   -> modelo de datos          (L3)
-    book / portfolio  -> estado del mercado        (L4-L5)
-    matching          -> dinámica del mercado      (L6)
-    market            -> loop de simulación        (L7)
-    strategy          -> interfaz enchufable       (L8)
-    backtest          -> runner que lo cablea todo (L8-L9)
-    strategies/*      -> VWAP y market making       (L10-L14)
+    orders / trades   -> modelo de datos          (L4)
+    book / portfolio  -> estado del mercado        (L5)
+    matching          -> dinámica del mercado      (L8)
+    market            -> loop de simulación        (L9)
+    strategy/backtest -> interfaz y runner         (L10)
+    strategies/vwap   -> ejecución                 (L12)
+    strategies/*      -> market making             (L13-L14)
 """
 
 from exchange.orders import Order, Side, OrderType

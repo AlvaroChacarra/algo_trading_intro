@@ -1,6 +1,6 @@
 # Clase 12 — VWAP — Ejecución
 
-> Primer algoritmo de ejecución: repartir una orden grande en trozos a lo largo de la sesión. Empezamos con baselines (TWAP, VWAP) y subimos a predecir el volumen con el flujo reciente.
+> Repartir una orden grande en trozos, comparar ejecución inmediata, TWAP y VWAP, y construir un perfil estático honesto. La predicción dinámica de volumen queda como extensión OPTIONAL y no es prerrequisito posterior.
 
 ## Contexto teórico
 
@@ -14,12 +14,16 @@ El perfil son pesos relativos: se normalizan, así que importan las proporciones
 
 ## Qué construyes hoy
 
-**VWAPStrategy: repartir una orden por el perfil de volumen (estático y dinámico)**
+**VWAPStrategy: slicing, TWAP y perfil de volumen estático**
 
 `exchange/strategies/vwap.py` (`VWAPStrategy(symbol, side, total_size, horizon, profile)`):
 en cada tick emite una market order del tamaño del trozo (peso normalizado × total). Sin
 perfil → TWAP uniforme. Es una subclase de `Strategy`: se enchufa al `Backtest` exactamente
 igual que cualquier otra — primera demostración del valor del framework de L10.
+
+La predicción dinámica de volumen queda como profundización **OPTIONAL**: ningún contenido ni
+assessment posterior la presupone; LIVE + REQUIRED se sostienen con slicing, TWAP, el perfil
+VWAP estático y una comparación empírica honesta.
 
 ## Ejercicios de construcción
 
@@ -35,10 +39,10 @@ igual que cualquier otra — primera demostración del valor del framework de L1
 ## Estructura de la carpeta
 
 - `presentation/` — documento interactivo (o deck) + guion del profesor
-- `exercises/12_build_exercises.ipynb` — construyes la pieza (núcleo 1-3, luego el resto)
+- `exercises/12_build_exercises.ipynb` — construyes la pieza (rutas LIVE / REQUIRED / OPTIONAL declaradas)
 - `exercises/12_auxiliary.ipynb` — el gimnasio: drills + profundización opcional
 - `exercises/exchange/` — el paquete que vienes construyendo (starter de hoy)
 
 ## Idea central
 
-> No mandes la orden de golpe: repártela. TWAP reparte en el tiempo; VWAP, donde hay volumen; y el flujo reciente afina el plan.
+> No mandes la orden de golpe: repártela. TWAP reparte en el tiempo; VWAP, según un perfil de volumen. Un modelo solo merece quedarse si los datos demuestran que mejora el baseline.

@@ -1,6 +1,6 @@
 # Guion — Clase 11: Primera estrategia + métricas
 
-**Idea central:** Sin benchmark no hay estrategia: medir contra el mid de llegada separa la suerte del valor.
+**Idea central:** Sin benchmark no hay estrategia: parent arrival juzga la decisión; cada decision mid juzga su ejecución.
 
 **Formato:** documento interactivo (`first-strategy-metrics-doc.html`), autocontenido y sin internet. Tú haces scroll y narras. Regla de la casa: **"lo cian se toca"**.
 
@@ -13,9 +13,9 @@ Estructura: hero/reto (2 min) → scrollytelling (~7 min, scroll lento: cada par
 
 - **Qué decir:** Compra cuando el libro empuja arriba (imbalance positivo), vende cuando empuja abajo. Simple, pero ya es una decisión basada en microestructura.
 
-### 2. El benchmark: mid de llegada
+### 2. Dos llegadas, dos preguntas
 
-- **Qué decir:** El precio justo de referencia es el mid cuando empezaste. Tu ejecución es buena si compraste por debajo (o vendiste por encima) de él.
+- **Qué decir:** El parent arrival es el primer mid y evalúa la decisión completa. Cada orden hija tiene su propio decision mid y mide solo su ejecución. No se mezclan.
 
 ### 3. Leer el resultado con honestidad
 

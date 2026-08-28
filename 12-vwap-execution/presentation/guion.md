@@ -1,6 +1,6 @@
 # Guion — Clase 12: VWAP — Ejecución
 
-**Idea central:** No mandes la orden de golpe: repártela. TWAP reparte en el tiempo; VWAP, donde hay volumen; y el flujo reciente afina el plan.
+**Idea central:** No mandes la orden de golpe: repártela. TWAP reparte en el tiempo; VWAP, según un perfil de volumen. Un modelo solo merece quedarse si los datos demuestran que mejora el baseline.
 
 **Formato:** documento interactivo (`vwap-execution-doc.html`), autocontenido y sin internet. Tú haces scroll y narras. Regla de la casa: **"lo cian se toca"**.
 
@@ -17,9 +17,9 @@ Estructura: hero/reto (2 min) → scrollytelling (~7 min, scroll lento: cada par
 
 - **Qué decir:** TWAP parte en trozos iguales; VWAP pondera por el perfil de volumen para acercarse al precio medio ponderado por volumen.
 
-### 3. Volumen dinámico
+### 3. OPTIONAL · Volumen dinámico
 
-- **Qué decir:** El perfil fijo asume que hoy es como la media. Predecir el volumen del próximo intervalo con los últimos k afina el schedule.
+- **Qué decir:** Profundización no evaluable: el perfil fijo asume que hoy es como la media. Puedes probar una predicción con los últimos k, pero el replay actual enseña que añadir un modelo no garantiza mejorar el baseline y ninguna lesson posterior lo presupone.
 
 ## Cierre
 - Recoge la idea central sobre el mapa del paquete y manda al notebook de construcción; presenta el gimnasio (dosis mínima declarada).

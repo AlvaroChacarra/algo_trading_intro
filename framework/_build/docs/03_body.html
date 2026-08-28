@@ -21,7 +21,7 @@
   <div class="challenge">
     <div class="tag">El reto de hoy</div>
     <p>Quieres usar <code>best_bid</code> e <code>imbalance</code> en <em>otro</em> archivo,
-    en otro proyecto, mañana. Sin copiar y pegar — eso ya sabemos cómo acaba.</p>
+    en otro proyecto o en L4. Sin copiar y pegar — eso ya sabemos cómo acaba.</p>
     <p>Al final de este documento tendrás <strong>tu propio módulo <code>order_book.py</code></strong>,
     importable y robusto: que en vez de reventar con un traceback críptico, avisa con
     errores claros que tú diseñaste.</p>
@@ -345,9 +345,8 @@ imbalance(book)
       <div class="pk future">L4 · Order y Fill<span>exchange/orders.py</span></div>
       <div class="pk future">L5 · OrderBook + Tracker<span>exchange/book.py</span></div>
       <div class="pk future">L6 · familia Strategy<span>herencia</span></div>
-      <div class="pk future">L7-9 · el motor<span>matching, market</span></div>
-      <div class="pk future">L10-11 · el framework<span>Strategy + Backtest</span></div>
-      <div class="pk future">L12-14 · estrategias<span>VWAP, market making</span></div>
+      <div class="pk future">L7-10 · motor y framework<span>matching, Market, Strategy, Backtest</span></div>
+      <div class="pk future">L11-14 · estrategias<span>métricas, VWAP, market making</span></div>
     </div>
 
     <div class="bridge">
@@ -357,8 +356,8 @@ imbalance(book)
       — el dato va por un lado y sus funciones por otro, y tú haciendo de repartidor,
       pasando <code>book</code> a todas partes.</p>
       <p style="margin-bottom:0">¿Y si el dato <strong>supiera operar consigo mismo</strong>?
-      <code>book.best_bid</code>. Eso es una <strong>property de un objeto</strong> — y en la próxima
-      clase nacen los dos primeros del proyecto: <code>Order</code> y <code>Fill</code>.</p>
+      <code>book.best_bid</code>. Eso es una <strong>property de un objeto</strong> — y en L4
+      nacen los dos primeros del proyecto: <code>Order</code> y <code>Fill</code>.</p>
     </div>
 
     <div class="cta">

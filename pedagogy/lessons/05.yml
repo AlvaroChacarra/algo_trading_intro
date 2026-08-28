@@ -4,45 +4,748 @@
   "title": "OOP II — OrderBook y PositionTracker",
   "delivery": "lesson",
   "source_path": "framework/_build/docs/05_body.html",
-  "requires": {"concepts": ["oop.classes", "exchange.order", "exchange.fill"], "apis": ["fill.cash_flow"]},
+  "requires": {
+    "concepts": [
+      "oop.classes",
+      "exchange.order",
+      "exchange.fill",
+      "python.lambda",
+      "python.sorted_key",
+      "python.fstring",
+      "python.generator_expression"
+    ],
+    "apis": [
+      "order.constructor",
+      "fill.constructor",
+      "fill.cash_flow"
+    ],
+    "notation": [
+      "notation.spread",
+      "notation.mid",
+      "notation.cash_flow"
+    ]
+  },
+  "requirement_routes": {
+    "concepts": {
+      "oop.classes": "LIVE",
+      "exchange.order": "LIVE",
+      "exchange.fill": "LIVE",
+      "python.lambda": "LIVE",
+      "python.sorted_key": "LIVE",
+      "python.fstring": "LIVE",
+      "python.generator_expression": "REQUIRED"
+    },
+    "apis": {
+      "order.constructor": "REQUIRED",
+      "fill.constructor": "REQUIRED",
+      "fill.cash_flow": "LIVE"
+    },
+    "notation": {
+      "notation.spread": "LIVE",
+      "notation.mid": "LIVE",
+      "notation.cash_flow": "LIVE"
+    }
+  },
   "introduces": {
     "concepts": [
-      {"id": "oop.composition", "importance": "major"},
-      {"id": "oop.encapsulation", "importance": "major"},
-      {"id": "oop.computed_property", "importance": "major"},
-      {"id": "exchange.orderbook", "importance": "major"},
-      {"id": "exchange.position_tracker", "importance": "major"}
+      {
+        "id": "oop.composition",
+        "importance": "major",
+        "route": "LIVE"
+      },
+      {
+        "id": "oop.encapsulation",
+        "importance": "major",
+        "route": "REQUIRED"
+      },
+      {
+        "id": "oop.computed_property",
+        "importance": "major",
+        "route": "LIVE"
+      },
+      {
+        "id": "exchange.orderbook",
+        "importance": "major",
+        "route": "LIVE"
+      },
+      {
+        "id": "exchange.position_tracker",
+        "importance": "major",
+        "route": "LIVE"
+      },
+      {
+        "id": "microstructure.spread_cost",
+        "importance": "major",
+        "route": "REQUIRED"
+      }
     ],
-    "apis": ["orderbook.best_bid", "orderbook.best_ask", "orderbook.spread", "orderbook.mid", "orderbook.imbalance", "tracker.apply_fill", "tracker.equity"]
+    "apis": [
+      "orderbook.constructor",
+      "level.constructor",
+      "orderbook.best_bid",
+      "orderbook.best_ask",
+      "orderbook.spread",
+      "orderbook.mid",
+      "orderbook.imbalance",
+      "tracker.constructor",
+      "tracker.position",
+      "tracker.apply_fill",
+      "tracker.equity"
+    ],
+    "notation": [
+      "notation.equity"
+    ]
   },
-  "recalls": [],
-  "api_surface": [
-    {"id": "orderbook.best_bid", "name": "best_bid", "kind": "property", "signature": "best_bid -> float | None", "returns": "float | None", "responsibility": "read the highest bid price"},
-    {"id": "orderbook.best_ask", "name": "best_ask", "kind": "property", "signature": "best_ask -> float | None", "returns": "float | None", "responsibility": "read the lowest ask price"},
-    {"id": "orderbook.spread", "name": "spread", "kind": "property", "signature": "spread -> float | None", "returns": "float | None", "responsibility": "compute best ask minus best bid"},
-    {"id": "orderbook.mid", "name": "mid", "kind": "property", "signature": "mid -> float | None", "returns": "float | None", "responsibility": "compute the midpoint of best bid and best ask"},
-    {"id": "orderbook.imbalance", "name": "imbalance", "kind": "method", "signature": "imbalance(levels: int = 1) -> float | None", "returns": "float | None", "responsibility": "compute depth imbalance for a selected number of levels"},
-    {"id": "tracker.apply_fill", "name": "apply_fill", "kind": "method", "signature": "apply_fill(fill: Fill) -> None", "returns": "None", "responsibility": "update cash and position atomically from a fill"},
-    {"id": "tracker.equity", "name": "equity", "kind": "method", "signature": "equity(mark_price: float) -> float", "returns": "float", "responsibility": "mark cash and inventory to market"}
+  "introduction_routes": {
+    "apis": {
+      "orderbook.constructor": "LIVE",
+      "level.constructor": "LIVE",
+      "orderbook.best_bid": "LIVE",
+      "orderbook.best_ask": "LIVE",
+      "orderbook.spread": "LIVE",
+      "orderbook.mid": "LIVE",
+      "orderbook.imbalance": "LIVE",
+      "tracker.constructor": "LIVE",
+      "tracker.position": "LIVE",
+      "tracker.apply_fill": "LIVE",
+      "tracker.equity": "LIVE"
+    },
+    "notation": {
+      "notation.equity": "LIVE"
+    }
+  },
+  "recalls": [
+    {
+      "concept": "oop.classes",
+      "introduced_in": 4,
+      "mapping": {
+        "before": "Order y Fill vinculan un registro con comportamiento.",
+        "now": "Los contenedores protegen muchos objetos de dominio y su estado compartido."
+      }
+    }
   ],
-  "routes": {"LIVE": [], "REQUIRED": [], "OPTIONAL": []},
-  "objectives": [],
-  "load": {"live_presentation_minutes": 20, "guided_minutes": 20, "required_autonomous_minutes": 45, "optional_minutes": 15, "overflow_policy": "intentional"},
-  "scenes": [],
+  "api_surface": [
+    {
+      "id": "order.constructor",
+      "name": "Order",
+      "kind": "constructor",
+      "signature": "Order(symbol: str, side: Side, size: float, price: float | None = None, order_type: OrderType = OrderType.LIMIT, id: int = None) -> Order",
+      "returns": "Order",
+      "responsibility": "construct the canonical order intent",
+      "qualified_name": "exchange.orders.Order"
+    },
+    {
+      "id": "fill.constructor",
+      "name": "Fill",
+      "kind": "constructor",
+      "signature": "Fill(order_id: int, symbol: str, side: Side, price: float, size: float, timestamp: int | None = None) -> Fill",
+      "returns": "Fill",
+      "responsibility": "construct one canonical execution result",
+      "qualified_name": "exchange.trades.Fill"
+    },
+    {
+      "id": "fill.cash_flow",
+      "name": "cash_flow",
+      "kind": "method",
+      "signature": "cash_flow() -> float",
+      "returns": "float",
+      "responsibility": "compute signed fill cash flow",
+      "qualified_name": "exchange.trades.Fill.cash_flow"
+    },
+    {
+      "id": "orderbook.constructor",
+      "name": "OrderBook",
+      "kind": "constructor",
+      "signature": "OrderBook(symbol: str, bids: list[Level], asks: list[Level]) -> OrderBook",
+      "returns": "OrderBook",
+      "responsibility": "construct a sorted two-sided book",
+      "qualified_name": "exchange.book.OrderBook"
+    },
+    {
+      "id": "level.constructor",
+      "name": "Level",
+      "kind": "constructor",
+      "signature": "Level(price: float, size: float) -> Level",
+      "returns": "Level",
+      "responsibility": "construct one visible price level",
+      "qualified_name": "exchange.book.Level"
+    },
+    {
+      "id": "orderbook.best_bid",
+      "name": "best_bid",
+      "kind": "property",
+      "signature": "best_bid -> float | None",
+      "returns": "float | None",
+      "responsibility": "read the highest bid price",
+      "qualified_name": "exchange.book.OrderBook.best_bid"
+    },
+    {
+      "id": "orderbook.best_ask",
+      "name": "best_ask",
+      "kind": "property",
+      "signature": "best_ask -> float | None",
+      "returns": "float | None",
+      "responsibility": "read the lowest ask price",
+      "qualified_name": "exchange.book.OrderBook.best_ask"
+    },
+    {
+      "id": "orderbook.spread",
+      "name": "spread",
+      "kind": "property",
+      "signature": "spread -> float | None",
+      "returns": "float | None",
+      "responsibility": "compute best ask minus best bid",
+      "qualified_name": "exchange.book.OrderBook.spread"
+    },
+    {
+      "id": "orderbook.mid",
+      "name": "mid",
+      "kind": "property",
+      "signature": "mid -> float | None",
+      "returns": "float | None",
+      "responsibility": "compute the top-of-book midpoint",
+      "qualified_name": "exchange.book.OrderBook.mid"
+    },
+    {
+      "id": "orderbook.imbalance",
+      "name": "imbalance",
+      "kind": "method",
+      "signature": "imbalance(levels: int = 1) -> float | None",
+      "returns": "float | None",
+      "responsibility": "compute depth imbalance for selected levels",
+      "qualified_name": "exchange.book.OrderBook.imbalance"
+    },
+    {
+      "id": "tracker.apply_fill",
+      "name": "apply_fill",
+      "kind": "method",
+      "signature": "apply_fill(fill: Fill) -> None",
+      "returns": "None",
+      "responsibility": "update cash and position atomically from a fill",
+      "qualified_name": "exchange.portfolio.PositionTracker.apply_fill"
+    },
+    {
+      "id": "tracker.constructor",
+      "name": "PositionTracker",
+      "kind": "constructor",
+      "signature": "PositionTracker(cash: float = 0.0) -> PositionTracker",
+      "returns": "PositionTracker",
+      "responsibility": "initialize cash, inventory, and fill accounting",
+      "qualified_name": "exchange.portfolio.PositionTracker"
+    },
+    {
+      "id": "tracker.position",
+      "name": "position",
+      "kind": "property",
+      "signature": "position -> float",
+      "returns": "float",
+      "responsibility": "read current signed inventory",
+      "qualified_name": "exchange.portfolio.PositionTracker.position"
+    },
+    {
+      "id": "tracker.equity",
+      "name": "equity",
+      "kind": "method",
+      "signature": "equity(mark_price: float) -> float",
+      "returns": "float",
+      "responsibility": "mark cash and inventory to market",
+      "qualified_name": "exchange.portfolio.PositionTracker.equity"
+    }
+  ],
+  "routes": {
+    "LIVE": [
+      "l05-challenge",
+      "l05-composition",
+      "l05-book-api",
+      "l05-tracker",
+      "l05-bridge"
+    ],
+    "REQUIRED": [
+      "l05-encapsulation",
+      "l05-quiz"
+    ],
+    "OPTIONAL": []
+  },
+  "objectives": [
+    {
+      "id": "l05-compose-book",
+      "route": "LIVE",
+      "concepts": [
+        "oop.composition",
+        "exchange.orderbook",
+        "oop.computed_property"
+      ],
+      "apis": [
+        "orderbook.constructor",
+        "level.constructor",
+        "orderbook.best_bid",
+        "orderbook.best_ask",
+        "orderbook.spread",
+        "orderbook.mid",
+        "orderbook.imbalance"
+      ],
+      "notation": []
+    },
+    {
+      "id": "l05-account-for-fills",
+      "route": "LIVE",
+      "concepts": [
+        "exchange.position_tracker"
+      ],
+      "apis": [
+        "tracker.constructor",
+        "tracker.position",
+        "tracker.apply_fill",
+        "tracker.equity"
+      ],
+      "notation": [
+        "notation.equity"
+      ]
+    },
+    {
+      "id": "l05-protect-invariants",
+      "route": "REQUIRED",
+      "concepts": [
+        "oop.encapsulation",
+        "microstructure.spread_cost"
+      ],
+      "apis": [],
+      "notation": []
+    }
+  ],
+  "load": {
+    "live_presentation_minutes": 20,
+    "guided_minutes": 20,
+    "required_autonomous_minutes": 34,
+    "optional_minutes": 15,
+    "overflow_policy": "explicit-route-plan"
+  },
+  "scenes": [
+    {
+      "id": "l05-challenge",
+      "dom_id": "s0",
+      "type": "hero-challenge",
+      "route": "LIVE",
+      "layout": "focus",
+      "concepts": [
+        "oop.composition"
+      ],
+      "duration_minutes": 2,
+      "stages": [
+        {
+          "id": "main",
+          "route": "LIVE"
+        }
+      ]
+    },
+    {
+      "id": "l05-composition",
+      "dom_id": "s1",
+      "type": "architecture-map",
+      "route": "LIVE",
+      "layout": "split-42-58",
+      "concepts": [
+        "oop.composition",
+        "exchange.orderbook"
+      ],
+      "duration_minutes": 9,
+      "stages": [
+        {
+          "id": "orphan-orders",
+          "route": "LIVE",
+          "dom_stage": 0
+        },
+        {
+          "id": "container",
+          "route": "LIVE",
+          "dom_stage": 1
+        },
+        {
+          "id": "properties",
+          "route": "LIVE",
+          "dom_stage": 2
+        },
+        {
+          "id": "signal",
+          "route": "LIVE",
+          "dom_stage": 3
+        },
+        {
+          "id": "tracker",
+          "route": "REQUIRED",
+          "dom_stage": 4
+        },
+        {
+          "id": "equity",
+          "route": "REQUIRED",
+          "dom_stage": 5
+        }
+      ]
+    },
+    {
+      "id": "l05-book-api",
+      "dom_id": "s2",
+      "type": "code-state",
+      "route": "LIVE",
+      "layout": "split-50-50",
+      "concepts": [
+        "oop.computed_property",
+        "exchange.orderbook"
+      ],
+      "duration_minutes": 4,
+      "stages": [
+        {
+          "id": "main",
+          "route": "LIVE"
+        }
+      ]
+    },
+    {
+      "id": "l05-tracker",
+      "dom_id": "s3",
+      "type": "concept-simulator",
+      "route": "LIVE",
+      "layout": "split-45-55",
+      "concepts": [
+        "exchange.position_tracker"
+      ],
+      "duration_minutes": 3,
+      "stages": [
+        {
+          "id": "main",
+          "route": "LIVE"
+        }
+      ]
+    },
+    {
+      "id": "l05-encapsulation",
+      "dom_id": "s4",
+      "type": "guided-exercise",
+      "route": "REQUIRED",
+      "layout": "focus",
+      "concepts": [
+        "oop.encapsulation",
+        "microstructure.spread_cost"
+      ],
+      "duration_minutes": 8,
+      "stages": [
+        {
+          "id": "main",
+          "route": "REQUIRED"
+        }
+      ]
+    },
+    {
+      "id": "l05-quiz",
+      "dom_id": "s5",
+      "type": "diagnostic-quiz",
+      "route": "REQUIRED",
+      "layout": "focus",
+      "concepts": [
+        "oop.composition",
+        "oop.encapsulation"
+      ],
+      "duration_minutes": 8,
+      "stages": [
+        {
+          "id": "main",
+          "route": "REQUIRED"
+        }
+      ]
+    },
+    {
+      "id": "l05-bridge",
+      "dom_id": "s6",
+      "type": "bridge",
+      "route": "LIVE",
+      "layout": "focus",
+      "concepts": [
+        "oop.composition"
+      ],
+      "duration_minutes": 2,
+      "stages": [
+        {
+          "id": "main",
+          "route": "LIVE"
+        }
+      ]
+    }
+  ],
+  "bridge": {
+    "target_lesson": 6,
+    "known": {
+      "concepts": [
+        "oop.classes",
+        "oop.composition"
+      ],
+      "apis": [
+        "orderbook.imbalance"
+      ],
+      "notation": [
+        "notation.equity"
+      ]
+    },
+    "limitation": "Duplicar una clase completa por estrategia repite estructura y ciclo de vida.",
+    "need": "La herencia y un contrato abstracto conservan el esqueleto mientras cambia la decisión."
+  },
+  "api_transitions": [],
   "package_checks": [
-    {"path": "05-oop-ii-book-portfolio/exercises/exchange/trades.py", "class": "Fill", "members": {
-      "cash_flow": {"api": "fill.cash_flow", "kind": "method", "parameters": [], "returns": "float"}
-    }},
-    {"path": "05-oop-ii-book-portfolio/exercises/exchange/book.py", "class": "OrderBook", "members": {
-      "best_bid": {"api": "orderbook.best_bid", "kind": "property", "parameters": [], "returns": "float | None"},
-      "best_ask": {"api": "orderbook.best_ask", "kind": "property", "parameters": [], "returns": "float | None"},
-      "spread": {"api": "orderbook.spread", "kind": "property", "parameters": [], "returns": "float | None"},
-      "mid": {"api": "orderbook.mid", "kind": "property", "parameters": [], "returns": "float | None"},
-      "imbalance": {"api": "orderbook.imbalance", "kind": "method", "parameters": [{"name": "levels", "kind": "positional_or_keyword", "annotation": "int", "default": "1"}], "returns": "float | None"}
-    }},
-    {"path": "05-oop-ii-book-portfolio/exercises/exchange/portfolio.py", "class": "PositionTracker", "members": {
-      "apply_fill": {"api": "tracker.apply_fill", "kind": "method", "parameters": [{"name": "fill", "kind": "positional_or_keyword", "annotation": "Fill"}], "returns": "None"},
-      "equity": {"api": "tracker.equity", "kind": "method", "parameters": [{"name": "mark_price", "kind": "positional_or_keyword", "annotation": "float"}], "returns": "float"}
-    }}
-  ]
+    {
+      "path": "05-oop-ii-book-portfolio/exercises/exchange/orders.py",
+      "class": "Order",
+      "members": {
+        "__init__": {
+          "api": "order.constructor",
+          "kind": "constructor",
+          "parameters": [
+            {
+              "name": "symbol",
+              "kind": "positional_or_keyword",
+              "annotation": "str"
+            },
+            {
+              "name": "side",
+              "kind": "positional_or_keyword",
+              "annotation": "Side"
+            },
+            {
+              "name": "size",
+              "kind": "positional_or_keyword",
+              "annotation": "float"
+            },
+            {
+              "name": "price",
+              "kind": "positional_or_keyword",
+              "annotation": "float | None",
+              "default": "None"
+            },
+            {
+              "name": "order_type",
+              "kind": "positional_or_keyword",
+              "annotation": "OrderType",
+              "default": "OrderType.LIMIT"
+            },
+            {
+              "name": "id",
+              "kind": "positional_or_keyword",
+              "annotation": "int",
+              "default": "None"
+            }
+          ],
+          "returns": "Order"
+        }
+      }
+    },
+    {
+      "path": "05-oop-ii-book-portfolio/exercises/exchange/trades.py",
+      "class": "Fill",
+      "members": {
+        "__init__": {
+          "api": "fill.constructor",
+          "kind": "constructor",
+          "parameters": [
+            {
+              "name": "order_id",
+              "kind": "positional_or_keyword",
+              "annotation": "int"
+            },
+            {
+              "name": "symbol",
+              "kind": "positional_or_keyword",
+              "annotation": "str"
+            },
+            {
+              "name": "side",
+              "kind": "positional_or_keyword",
+              "annotation": "Side"
+            },
+            {
+              "name": "price",
+              "kind": "positional_or_keyword",
+              "annotation": "float"
+            },
+            {
+              "name": "size",
+              "kind": "positional_or_keyword",
+              "annotation": "float"
+            },
+            {
+              "name": "timestamp",
+              "kind": "positional_or_keyword",
+              "annotation": "int | None",
+              "default": "None"
+            }
+          ],
+          "returns": "Fill"
+        },
+        "cash_flow": {
+          "api": "fill.cash_flow",
+          "kind": "method",
+          "parameters": [],
+          "returns": "float"
+        }
+      }
+    },
+    {
+      "path": "05-oop-ii-book-portfolio/exercises/exchange/book.py",
+      "class": "Level",
+      "members": {
+        "__init__": {
+          "api": "level.constructor",
+          "kind": "constructor",
+          "parameters": [
+            {
+              "name": "price",
+              "kind": "positional_or_keyword",
+              "annotation": "float"
+            },
+            {
+              "name": "size",
+              "kind": "positional_or_keyword",
+              "annotation": "float"
+            }
+          ],
+          "returns": "Level"
+        }
+      }
+    },
+    {
+      "path": "05-oop-ii-book-portfolio/exercises/exchange/book.py",
+      "class": "OrderBook",
+      "members": {
+        "__init__": {
+          "api": "orderbook.constructor",
+          "kind": "constructor",
+          "parameters": [
+            {
+              "name": "symbol",
+              "kind": "positional_or_keyword",
+              "annotation": "str"
+            },
+            {
+              "name": "bids",
+              "kind": "positional_or_keyword",
+              "annotation": "list[Level]"
+            },
+            {
+              "name": "asks",
+              "kind": "positional_or_keyword",
+              "annotation": "list[Level]"
+            }
+          ],
+          "returns": "OrderBook"
+        },
+        "best_bid": {
+          "api": "orderbook.best_bid",
+          "kind": "property",
+          "parameters": [],
+          "returns": "float | None"
+        },
+        "best_ask": {
+          "api": "orderbook.best_ask",
+          "kind": "property",
+          "parameters": [],
+          "returns": "float | None"
+        },
+        "spread": {
+          "api": "orderbook.spread",
+          "kind": "property",
+          "parameters": [],
+          "returns": "float | None"
+        },
+        "mid": {
+          "api": "orderbook.mid",
+          "kind": "property",
+          "parameters": [],
+          "returns": "float | None"
+        },
+        "imbalance": {
+          "api": "orderbook.imbalance",
+          "kind": "method",
+          "parameters": [
+            {
+              "name": "levels",
+              "kind": "positional_or_keyword",
+              "annotation": "int",
+              "default": "1"
+            }
+          ],
+          "returns": "float | None"
+        }
+      }
+    },
+    {
+      "path": "05-oop-ii-book-portfolio/exercises/exchange/portfolio.py",
+      "class": "PositionTracker",
+      "members": {
+        "__init__": {
+          "api": "tracker.constructor",
+          "kind": "constructor",
+          "parameters": [
+            {
+              "name": "cash",
+              "kind": "positional_or_keyword",
+              "annotation": "float",
+              "default": "0.0"
+            }
+          ],
+          "returns": "PositionTracker"
+        },
+        "position": {
+          "api": "tracker.position",
+          "kind": "property",
+          "parameters": [],
+          "returns": "float"
+        },
+        "apply_fill": {
+          "api": "tracker.apply_fill",
+          "kind": "method",
+          "parameters": [
+            {
+              "name": "fill",
+              "kind": "positional_or_keyword",
+              "annotation": "Fill"
+            }
+          ],
+          "returns": "None"
+        },
+        "equity": {
+          "api": "tracker.equity",
+          "kind": "method",
+          "parameters": [
+            {
+              "name": "mark_price",
+              "kind": "positional_or_keyword",
+              "annotation": "float"
+            }
+          ],
+          "returns": "float"
+        }
+      }
+    }
+  ],
+  "used_later": {
+    "concepts": [
+      "exchange.orderbook",
+      "microstructure.spread_cost",
+      "oop.composition",
+      "oop.computed_property"
+    ],
+    "apis": [
+      "level.constructor",
+      "orderbook.best_ask",
+      "orderbook.best_bid",
+      "orderbook.constructor",
+      "orderbook.imbalance",
+      "orderbook.mid",
+      "orderbook.spread",
+      "tracker.apply_fill",
+      "tracker.constructor",
+      "tracker.equity",
+      "tracker.position"
+    ],
+    "notation": [
+      "notation.equity"
+    ]
+  }
 }

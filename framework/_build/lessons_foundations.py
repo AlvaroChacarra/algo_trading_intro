@@ -1,4 +1,4 @@
-"""Specs de las lecciones de fundamentos (L1-L4).
+"""Specs de las lecciones de fundamentos (L1-L6).
 
 Cada ejercicio: statement, (given), starter, validator (assert), solution.
 Solo stdlib — cero dependencias, beginner-friendly.
@@ -148,8 +148,8 @@ LESSONS.append({
          "validator": "assert bid == 99950 and ask == 100000\nassert isinstance(bid, int), 'convierte con int(): el feed manda texto'\nprint('ok')",
          "solution": "parts = quote_str.split('/')\nbid = int(parts[0])\nask = int(parts[1])"},
         {"title": "A9. El ticket perfecto", "practice": "f-strings con formato",
-         "statement": "Construye `ticket` con una f-string: `'BUY 0.5 BTCUSDT @ 99950.00'` (lado en mayúsculas, precio con 2 decimales).",
-         "hint": "`f\"{side.upper()} ... {price:.2f}\"`.",
+         "statement": "Una f-string empieza por `f` y evalúa lo que pongas entre llaves: `{size}` inserta el valor y `{price:.2f}` lo formatea con 2 decimales. Construye `ticket = 'BUY 0.5 BTCUSDT @ 99950.00'`.",
+         "hint": "Patrón: `f\"{side.upper()} ... {price:.2f}\"`. Las llaves no se imprimen: se sustituyen por el resultado de cada expresión.",
          "given": "side = 'buy'\nsize = 0.5\nsymbol = 'BTCUSDT'\nprice = 99950\n",
          "starter": "ticket = None\n",
          "validator": "assert ticket == 'BUY 0.5 BTCUSDT @ 99950.00'\nprint('ok ->', ticket)",
@@ -214,7 +214,8 @@ LESSONS.append({
         {"section": "Gimnasio · Bloque 5 — Diccionarios a fondo",
          "blurb": "Posiciones, comisiones, órdenes: en trading casi todo es un dict."},
         {"title": "A18. Lee con red", "practice": "get con default",
-         "statement": "Guarda `btc_pos` y `eth_pos` usando `.get(clave, 0)` — ETH no existe todavía y no debe explotar.",
+         "statement": "`dict.get(clave, default)` devuelve el valor si la clave existe y, si falta, devuelve el default en vez de lanzar `KeyError`. Guarda `btc_pos` y `eth_pos` con default 0: ETH todavía no existe.",
+         "hint": "Compara mentalmente: `positions['ETHUSDT']` fallaría; `positions.get('ETHUSDT', 0)` devuelve 0 sin modificar el dict.",
          "given": "positions = {'BTCUSDT': 0.5}\n",
          "starter": "btc_pos = None\neth_pos = None\n",
          "validator": "assert btc_pos == 0.5\nassert eth_pos == 0, 'get con default evita el KeyError'\nprint('ok')",
@@ -274,7 +275,7 @@ LESSONS.append({
          "validator": "assert fee_bps == 5, 'con 250k caes en el tramo <1M'\nassert abs(fee - 125.0) < 1e-9\nprint('ok -> pagas', fee)",
          "solution": "if notional < 10000:\n    fee_bps = 10\nelif notional < 100000:\n    fee_bps = 8\nelif notional < 1000000:\n    fee_bps = 5\nelse:\n    fee_bps = 3\nfee = notional * fee_bps / 10000"},
 
-        {"section": "Para curiosos — internals y el puente a la clase 2",
+        {"section": "Para curiosos — internals y el puente a L2",
          "blurb": "Un vistazo a lo que viene (funciones) y a lo que hay debajo (1s, 0s y bytecode)."},
         {"title": "A27. Función nocional", "practice": "funciones",
          "statement": "Escribe `compute_notional(price, size)` que devuelva `price * size`.",
@@ -293,7 +294,7 @@ LESSONS.append({
          "hint": "2 variables (buy y sell) por cada activo.",
          "given": "activos = ['BTCUSDT', 'ETHUSDT']\n",
          "starter": "n_vars = None\n",
-         "validator": "assert n_vars == 4, '2 por activo x 2 activos = 4 (y con 10 activos, 20...)'\nprint('ok -> anadir activos duplica variables. En la clase 2-3 esto lo resuelven las CLASES.')",
+         "validator": "assert n_vars == 4, '2 por activo x 2 activos = 4 (y con 10 activos, 20...)'\nprint('ok -> L2 lo agrupa en estructuras; L4-L5 lo encapsulan en CLASES.')",
          "solution": "n_vars = len(activos) * 2"},
         {"title": "A30. El alfabeto de la máquina", "practice": "ord y bin (texto → 1s y 0s)",
          "statement": "Como viste en la presentación, cada carácter es un número y ese número son bits. Guarda `code_A = ord('A')` y `bits_A = bin(ord('A'))`.",
@@ -389,8 +390,11 @@ LESSONS.append({
          "Añadir y cancelar son funciones que reciben el libro y lo devuelven cambiado. Recorrer niveles te da spread, mid e imbalance.",
          "def add_order(book, order):\n    book.append(order)\n    return book"),
         ("El dolor que viene: estado compartido",
-         "add_order, cancel, imbalance... todas reciben `book` como primer argumento y lo manosean. Eso es la señal de que `book` quiere ser un objeto con métodos. Eso es la clase 3.",
-         "# book + book + book en cada función...\n# -> next class: book.add(order)"),
+         "add_order, cancel, imbalance... todas reciben `book` como primer argumento y lo manosean. Eso es la señal de que `book` quiere ser un objeto con métodos. L3 lo vuelve módulo; L4 introduce objetos y L5 convierte el libro en uno.",
+         "# book + book + book en cada función...\n# -> L5: book.imbalance(levels)"),
+        ("Bucles compactos: comprensión y expresión generadora",
+         "Una comprensión con corchetes construye una lista nueva. Una expresión generadora sin corchetes produce un valor cada vez para que max, min o sum lo consuman sin crear esa lista. En ambos casos se lee: expresión, por cada elemento, si cumple el filtro.",
+         "max(o['price'] for o in book if o['side'] == 'buy')"),
     ],
     "build": [
         {"title": "1. Tu fábrica de órdenes", "practice": "funciones que devuelven datos",
@@ -421,11 +425,11 @@ LESSONS.append({
          "solution": "def cancel_order(book, order_id):\n    return [o for o in book if o['id'] != order_id]",
          "tier": "nucleo", "min": 3},
         {"title": "5. Mejor bid y mejor ask", "practice": "max / min con filtro",
-         "statement": "Escribe `best_bid(book)` (precio de compra más **alto**) y `best_ask(book)` (precio de venta más **bajo**).",
+         "statement": "Escribe `best_bid(book)` (precio de compra más **alto**) y `best_ask(book)` (precio de venta más **bajo**). Alimenta `max`/`min` con una expresión generadora: produce un precio cada vez, sin construir una lista intermedia.",
          "given": "book = [{'side':'buy','price':99980},{'side':'sell','price':100010},{'side':'buy','price':99990}]\n",
          "starter": "def best_bid(book):\n    pass\n\ndef best_ask(book):\n    pass\n",
          "validator": "assert best_bid(book) == 99990\nassert best_ask(book) == 100010\nprint('ok')",
-         "pista": "Filtra dentro de la expresión generadora: `max(o['price'] for o in book if o['side']=='buy')`. Para el ask, cambia `max` por `min` y el lado.",
+         "pista": "Lee de izquierda a derecha: `o['price']` (qué produce), `for o in book` (de dónde sale), `if ...` (qué deja pasar). Para el ask, cambia `max` por `min` y el lado.",
          "solution": "def best_bid(book):\n    return max(o['price'] for o in book if o['side']=='buy')\n\ndef best_ask(book):\n    return min(o['price'] for o in book if o['side']=='sell')"},
         {"title": "6. Imbalance del libro", "practice": "presión compra/venta",
          "statement": "Escribe `imbalance(book)` = (vol_compra − vol_venta) / (vol_compra + vol_venta), en [−1, 1]. Cerca de +1 = empuja a comprar.",
@@ -473,7 +477,7 @@ LESSONS.append({
     ],
     "aux": [
         {"section": "Gimnasio · Calentamiento — repaso exprés de L1",
-         "blurb": "Tres reps de la clase anterior antes de entrenar lo nuevo. Si alguna se te resiste, vuelve al gimnasio de L1."},
+         "blurb": "Tres reps de L1 antes de entrenar lo nuevo. Si alguna se te resiste, vuelve al gimnasio de L1."},
         {"title": "C1. Spread, mid y ticket", "practice": "repaso: operaciones + f-string",
          "statement": "Calcula `mid` y construye `linea = f\"mid {mid:.1f}\"`.",
          "given": "bid = 99950\nask = 100000\n",
@@ -544,7 +548,7 @@ LESSONS.append({
          "solution": "def book_stats(bids, asks):\n    bb = max(bids)\n    ba = min(asks)\n    return bb, ba, ba - bb\n\nbest_bid, best_ask, spread = book_stats(bids, asks)"},
 
         {"section": "Gimnasio · Bloque 3 — Dicts anidados: tu primer portfolio",
-         "blurb": "Un dict de dicts lleva la cuenta de N símbolos sin duplicar variables — el embrión del PositionTracker de la clase 5."},
+         "blurb": "Un dict de dicts lleva la cuenta de N símbolos sin duplicar variables — el embrión del `PositionTracker` de L5."},
         {"title": "A9. Léelo", "practice": "acceso anidado",
          "statement": "Guarda `btc_position` y `eth_cash` leyendo el dict anidado (dos corchetes seguidos).",
          "given": "portfolio = {\n    'BTCUSDT': {'position': 0.5, 'cash': -49975.0},\n    'ETHUSDT': {'position': 2.0, 'cash': -7000.0},\n}\n",
@@ -618,7 +622,7 @@ LESSONS.append({
          "validator": "assert len(big_orders) == 2\nassert all(o['size'] >= 0.15 for o in big_orders)\nprint('ok')",
          "solution": "big_orders = [o for o in book if o['size'] >= 0.15]"},
         {"title": "A20. El VWAP de tus fills", "practice": "sum con generador",
-         "statement": "El precio medio ponderado por volumen: `vwap = Σ(p·s) / Σ(s)`. Calcúlalo — es el benchmark que perseguirás en la clase 12.",
+         "statement": "El precio medio ponderado por volumen: `vwap = Σ(p·s) / Σ(s)`. Calcúlalo — es el benchmark que perseguirás en L12.",
          "given": "fills = [\n    {'price': 100000, 'size': 0.5},\n    {'price': 99900, 'size': 1.0},\n    {'price': 99950, 'size': 0.5},\n]\n",
          "starter": "vwap = None\n",
          "validator": "assert abs(vwap - 99937.5) < 1e-9\nprint('ok ->', vwap)",
@@ -630,7 +634,7 @@ LESSONS.append({
          "validator": "s = book_summary(book)\nassert s['best_bid'] == 99990 and s['best_ask'] == 100005\nassert s['spread'] == 15 and s['n_orders'] == 4\nprint('ok ->', s)",
          "solution": "def book_summary(book):\n    bb = max(o['price'] for o in book if o['side'] == 'buy')\n    ba = min(o['price'] for o in book if o['side'] == 'sell')\n    return {'best_bid': bb, 'best_ask': ba, 'spread': ba - bb, 'n_orders': len(book)}"},
 
-        {"section": "Para terminar — el puente a la clase 3",
+        {"section": "Para terminar — el puente a L3 (y la deuda que salda L5)",
          "blurb": "Los auxiliares clásicos: acumular sobre el libro, proteger tus datos y contar el dolor que resuelve la POO."},
         {"title": "A22. Nocional total del libro", "practice": "acumular sobre el libro",
          "statement": "Escribe `total_notional(book)` = suma de `price * size` de todas las órdenes.",
@@ -646,7 +650,7 @@ LESSONS.append({
         {"title": "A24. Cuenta el problema", "practice": "reflexión → POO",
          "statement": "¿Cuántas de tus funciones reciben `book` como primer argumento (add, cancel, best_bid, best_ask, imbalance, spread, mid)? Guárdalo en `funcs_con_book`. En L4 nacen los objetos y en L5 estas funciones pasan a la API de `OrderBook`: métricas sin argumentos como properties; operaciones parametrizadas como métodos.",
          "starter": "funcs_con_book = None\n",
-         "validator": "assert funcs_con_book == 7\nprint('ok -> un dato + las funciones que lo manosean = un OBJETO (clases 4-5)')",
+         "validator": "assert funcs_con_book == 7\nprint('ok -> un dato + las funciones que lo manosean = un OBJETO (L4-L5)')",
          "solution": "funcs_con_book = 7"},
     ],
     "script_name": "order_book.py",
@@ -702,7 +706,7 @@ def main():                                  # ej. 8: construir y leer el libro
     print("spread:", spread(book))
     print("mid:", mid(book))
     print("imbalance:", round(imbalance(book), 4))
-    # Fijate: TODAS estas funciones reciben book. En la clase 3, book sera un objeto.
+    # Fíjate: todas reciben book. L3 lo vuelve módulo; en L5 será un objeto.
 
 
 if __name__ == "__main__":
@@ -969,13 +973,13 @@ if __name__ == "__main__":
 LESSONS.append({
     "n": 4, "slug": "04-oop-i-order-trade",
     "title": "OOP I — Order y Fill",
-    "piece": "clases Order y Fill (exchange/orders.py, trades.py)",
-    "objective": "Convertir el dict de orden en una clase Order con métodos, y modelar el resultado de un cruce con Fill. Primer módulo de verdad del paquete exchange.",
+    "piece": "OrderMini y FillMini como modelos didácticos; migración explícita a exchange.Order y exchange.Fill",
+    "objective": "Convertir el dict de orden en una clase didáctica con métodos, modelar el resultado de un cruce y migrar sin ambigüedad a las firmas estables de Order y Fill del paquete exchange.",
     "frase": "Un objeto empaqueta datos y comportamiento: la orden ya sabe calcular su nocional.",
     "concepts": [
         ("De dict a clase",
          "Una clase es una plantilla. `__init__` guarda los datos (lo que antes eran claves del dict) como atributos. Crear un objeto es rellenar la plantilla.",
-         "class Order:\n    def __init__(self, symbol, side, price, size):\n        self.symbol = symbol\n        self.side = side\n        self.price = price\n        self.size = size"),
+         "class OrderMini:\n    def __init__(self, symbol, side, price, size):\n        self.symbol = symbol\n        self.side = side\n        self.price = price\n        self.size = size"),
         ("Métodos: el dato sabe operar consigo mismo",
          "Antes tenías compute_notional(order). Ahora la orden lo sabe hacer sola: order.notional(). El comportamiento vive junto al dato.",
          "    def notional(self):\n        return self.price * self.size"),
@@ -985,43 +989,43 @@ LESSONS.append({
     ],
     "build": [
         {"title": "1. La clase Order", "practice": "class, __init__ y self",
-         "statement": "Convierte el dict de orden en una clase. Define `Order` con `__init__(self, symbol, side, price, size)` que guarde los 4 como atributos (`self.symbol = symbol`, etc.).",
+         "statement": "Convierte el dict de orden en una clase didáctica. Define `OrderMini` con `__init__(self, symbol, side, price, size)` que guarde los 4 atributos. El sufijo `Mini` avisa de que aún no es la API pública estable de `exchange`.",
          "hint": "`self` es el objeto que estás rellenando.",
-         "starter": "class Order:\n    def __init__(self, symbol, side, price, size):\n        pass\n",
-         "validator": "o = Order('BTCUSDT','buy',100,0.5)\nassert o.symbol=='BTCUSDT' and o.side=='buy' and o.price==100 and o.size==0.5\nprint('ok')",
-         "solution": "class Order:\n    def __init__(self, symbol, side, price, size):\n        self.symbol = symbol\n        self.side = side\n        self.price = price\n        self.size = size"},
+         "starter": "class OrderMini:\n    def __init__(self, symbol, side, price, size):\n        pass\n",
+         "validator": "o = OrderMini('BTCUSDT','buy',100,0.5)\nassert o.symbol=='BTCUSDT' and o.side=='buy' and o.price==100 and o.size==0.5\nprint('ok')",
+         "solution": "class OrderMini:\n    def __init__(self, symbol, side, price, size):\n        self.symbol = symbol\n        self.side = side\n        self.price = price\n        self.size = size"},
         {"title": "2. Un método: notional", "practice": "el dato opera consigo mismo",
          "statement": "Antes tenías `compute_notional(order)`. Ahora la orden lo hace sola: añade el método `notional(self)` que devuelva `price * size`.",
-         "starter": "class Order:\n    def __init__(self, symbol, side, price, size):\n        self.symbol = symbol; self.side = side\n        self.price = price; self.size = size\n    def notional(self):\n        pass\n",
-         "validator": "o = Order('X','buy',100,0.5)\nassert abs(o.notional() - 50) < 1e-9\nprint('ok')",
-         "solution": "class Order:\n    def __init__(self, symbol, side, price, size):\n        self.symbol = symbol; self.side = side\n        self.price = price; self.size = size\n    def notional(self):\n        return self.price * self.size"},
+         "starter": "class OrderMini:\n    def __init__(self, symbol, side, price, size):\n        self.symbol = symbol; self.side = side\n        self.price = price; self.size = size\n    def notional(self):\n        pass\n",
+         "validator": "o = OrderMini('X','buy',100,0.5)\nassert abs(o.notional() - 50) < 1e-9\nprint('ok')",
+         "solution": "class OrderMini:\n    def __init__(self, symbol, side, price, size):\n        self.symbol = symbol; self.side = side\n        self.price = price; self.size = size\n    def notional(self):\n        return self.price * self.size"},
         {"title": "3. __repr__: que sepa describirse", "practice": "dunder methods",
-         "statement": "Añade `__repr__(self)` que devuelva, p.ej., `'Order(buy 0.5 X @ 100)'`. Así el objeto se imprime legible.",
-         "starter": "class Order:\n    def __init__(self, symbol, side, price, size):\n        self.symbol=symbol; self.side=side; self.price=price; self.size=size\n    def __repr__(self):\n        pass\n",
-         "validator": "o = Order('X','buy',100,0.5)\nassert repr(o) == 'Order(buy 0.5 X @ 100)', repr(o)\nprint('ok')",
-         "pista": "Es un f-string que mezcla los cuatro atributos: `f'Order({self.side} {self.size} {self.symbol} @ {self.price})'`. `__repr__` debe *devolverlo*, no imprimirlo.",
-         "solution": "class Order:\n    def __init__(self, symbol, side, price, size):\n        self.symbol=symbol; self.side=side; self.price=price; self.size=size\n    def __repr__(self):\n        return f'Order({self.side} {self.size} {self.symbol} @ {self.price})'"},
+         "statement": "Añade `__repr__(self)` que devuelva, p.ej., `'OrderMini(buy 0.5 X @ 100)'`. Así el objeto se imprime legible.",
+         "starter": "class OrderMini:\n    def __init__(self, symbol, side, price, size):\n        self.symbol=symbol; self.side=side; self.price=price; self.size=size\n    def __repr__(self):\n        pass\n",
+         "validator": "o = OrderMini('X','buy',100,0.5)\nassert repr(o) == 'OrderMini(buy 0.5 X @ 100)', repr(o)\nprint('ok')",
+         "pista": "Es un f-string que mezcla los cuatro atributos: `f'OrderMini({self.side} {self.size} {self.symbol} @ {self.price})'`. `__repr__` debe *devolverlo*, no imprimirlo.",
+         "solution": "class OrderMini:\n    def __init__(self, symbol, side, price, size):\n        self.symbol=symbol; self.side=side; self.price=price; self.size=size\n    def __repr__(self):\n        return f'OrderMini({self.side} {self.size} {self.symbol} @ {self.price})'"},
         {"title": "4. La clase Fill y su cash_flow", "practice": "segunda clase + signo",
-         "statement": "Cuando una orden se ejecuta, genera un `Fill`. Define `Fill(symbol, side, price, size)` con `cash_flow()`: **negativo** si compras (sale caja), **positivo** si vendes.",
-         "starter": "class Fill:\n    def __init__(self, symbol, side, price, size):\n        pass\n    def cash_flow(self):\n        pass\n",
-         "validator": "assert abs(Fill('X','buy',100,0.5).cash_flow() + 50) < 1e-9, 'compra -> -50'\nassert abs(Fill('X','sell',100,0.5).cash_flow() - 50) < 1e-9, 'venta -> +50'\nprint('ok')",
+         "statement": "Cuando una orden se ejecuta, genera un fill. Define la versión didáctica `FillMini(symbol, side, price, size)` con `cash_flow()`: **negativo** si compras, **positivo** si vendes.",
+         "starter": "class FillMini:\n    def __init__(self, symbol, side, price, size):\n        pass\n    def cash_flow(self):\n        pass\n",
+         "validator": "assert abs(FillMini('X','buy',100,0.5).cash_flow() + 50) < 1e-9, 'compra -> -50'\nassert abs(FillMini('X','sell',100,0.5).cash_flow() - 50) < 1e-9, 'venta -> +50'\nprint('ok')",
          "pista": "En `__init__`, guarda los 4 argumentos en `self.<nombre>`. En `cash_flow`, calcula un `sign` (−1 si `self.side=='buy'`, +1 si no) y devuelve `sign * self.price * self.size`.",
-         "solution": "class Fill:\n    def __init__(self, symbol, side, price, size):\n        self.symbol=symbol; self.side=side; self.price=price; self.size=size\n    def cash_flow(self):\n        sign = -1 if self.side=='buy' else 1\n        return sign * self.price * self.size"},
+         "solution": "class FillMini:\n    def __init__(self, symbol, side, price, size):\n        self.symbol=symbol; self.side=side; self.price=price; self.size=size\n    def cash_flow(self):\n        sign = -1 if self.side=='buy' else 1\n        return sign * self.price * self.size"},
         {"title": "5. Instánciala y opérala", "practice": "crear objetos y llamar métodos",
-         "statement": "Crea una `Order` de compra (BTCUSDT, 100, 0.5). Guarda su `nocional` (`order.notional()`) y su `texto` (`repr(order)`).",
-         "given": "class Order:\n    def __init__(self, symbol, side, price, size):\n        self.symbol=symbol; self.side=side; self.price=price; self.size=size\n    def notional(self):\n        return self.price*self.size\n    def __repr__(self):\n        return f'Order({self.side} {self.size} {self.symbol} @ {self.price})'\n",
+         "statement": "Crea una `OrderMini` de compra (BTCUSDT, 100, 0.5). Guarda su `nocional` (`order.notional()`) y su `texto` (`repr(order)`).",
+         "given": "class OrderMini:\n    def __init__(self, symbol, side, price, size):\n        self.symbol=symbol; self.side=side; self.price=price; self.size=size\n    def notional(self):\n        return self.price*self.size\n    def __repr__(self):\n        return f'OrderMini({self.side} {self.size} {self.symbol} @ {self.price})'\n",
          "starter": "order = None\nnocional = None\ntexto = None\n",
-         "validator": "assert isinstance(order, Order)\nassert abs(nocional - 50) < 1e-9\nassert texto == 'Order(buy 0.5 BTCUSDT @ 100)', texto\nprint('ok ', texto)",
-         "pista": "Instanciar es llamar a la clase: `Order('BTCUSDT', 'buy', 100, 0.5)`. Los métodos se llaman con paréntesis (`order.notional()`); `repr(order)` usa tu `__repr__`.",
-         "solution": "order = Order('BTCUSDT','buy',100,0.5)\nnocional = order.notional()\ntexto = repr(order)"},
+         "validator": "assert isinstance(order, OrderMini)\nassert abs(nocional - 50) < 1e-9\nassert texto == 'OrderMini(buy 0.5 BTCUSDT @ 100)', texto\nprint('ok ', texto)",
+         "pista": "Instanciar es llamar a la clase: `OrderMini('BTCUSDT', 'buy', 100, 0.5)`. Los métodos se llaman con paréntesis (`order.notional()`); `repr(order)` usa tu `__repr__`.",
+         "solution": "order = OrderMini('BTCUSDT','buy',100,0.5)\nnocional = order.notional()\ntexto = repr(order)"},
         {"title": "6. De la orden al dinero", "practice": "juntar Order, Fill y cash_flow",
-         "statement": "Modela una vuelta completa: compras 0.5 @ 100 y luego vendes 0.5 @ 110. Crea los dos `Fill` y guarda `total_cash` = suma de sus `cash_flow()`.",
+         "statement": "Modela una vuelta completa: compras 0.5 @ 100 y luego vendes 0.5 @ 110. Crea los dos `FillMini` y guarda `total_cash` = suma de sus `cash_flow()`.",
          "hint": "Compra resta (-50), venta suma (+55) -> total +5.",
-         "given": "class Fill:\n    def __init__(self, symbol, side, price, size):\n        self.symbol=symbol; self.side=side; self.price=price; self.size=size\n    def cash_flow(self):\n        return (-1 if self.side=='buy' else 1)*self.price*self.size\n",
+         "given": "class FillMini:\n    def __init__(self, symbol, side, price, size):\n        self.symbol=symbol; self.side=side; self.price=price; self.size=size\n    def cash_flow(self):\n        return (-1 if self.side=='buy' else 1)*self.price*self.size\n",
          "starter": "buy = None\nsell = None\ntotal_cash = None\n",
          "validator": "assert abs(total_cash - 5.0) < 1e-9, 'compra -50, venta +55 -> +5'\nprint('ok  total_cash=%.1f' % total_cash)",
-         "pista": "Dos objetos: `Fill('BTCUSDT','buy',100,0.5)` y el de venta a 110. `total_cash` suma las dos llamadas a `cash_flow()` — deben dar −50 y +55.",
-         "solution": "buy = Fill('BTCUSDT','buy',100,0.5)\nsell = Fill('BTCUSDT','sell',110,0.5)\ntotal_cash = buy.cash_flow() + sell.cash_flow()"},
+         "pista": "Dos objetos: `FillMini('BTCUSDT','buy',100,0.5)` y el de venta a 110. `total_cash` suma las dos llamadas a `cash_flow()` — deben dar −50 y +55.",
+         "solution": "buy = FillMini('BTCUSDT','buy',100,0.5)\nsell = FillMini('BTCUSDT','sell',110,0.5)\ntotal_cash = buy.cash_flow() + sell.cash_flow()"},
     ],
     "aux": [
         {"section": "Gimnasio · Calentamiento — repaso exprés de L3",
@@ -1068,21 +1072,21 @@ LESSONS.append({
          "validator": "assert repr(q) == 'Quote(99950/100000)'\nprint('ok ->', q)",
          "solution": "class Quote:\n    def __init__(self, bid, ask):\n        self.bid = bid\n        self.ask = ask\n    def __repr__(self):\n        return f\"Quote({self.bid}/{self.ask})\"\n\nq = Quote(99950, 100000)"},
 
-        {"section": "Gimnasio · Bloque 2 — Order, Fill y el dinero",
-         "blurb": "Las dos clases de hoy, y el signo que separa apostar de cobrar."},
+        {"section": "Gimnasio · Bloque 2 — drills de clases y dinero",
+         "blurb": "Clases locales de práctica; `OrderMini` y `FillMini` conservan aparte su firma de cuatro campos hasta la tabla de migración."},
         {"title": "A5. Order.notional", "practice": "la clase de la lección",
-         "statement": "Escribe `Order` (side, price, size) con su método `notional()`.",
-         "starter": "class Order:\n    pass\n",
-         "validator": "o = Order('buy', 99950, 0.5)\nassert abs(o.notional() - 49975.0) < 1e-9\nprint('ok')",
-         "solution": "class Order:\n    def __init__(self, side, price, size):\n        self.side = side\n        self.price = price\n        self.size = size\n    def notional(self):\n        return self.price * self.size"},
+         "statement": "Escribe una clase local `OrderDrill` (side, price, size) con su método `notional()`.",
+         "starter": "class OrderDrill:\n    pass\n",
+         "validator": "o = OrderDrill('buy', 99950, 0.5)\nassert abs(o.notional() - 49975.0) < 1e-9\nprint('ok')",
+         "solution": "class OrderDrill:\n    def __init__(self, side, price, size):\n        self.side = side\n        self.price = price\n        self.size = size\n    def notional(self):\n        return self.price * self.size"},
         {"title": "A6. Fill.cash_flow con signo", "practice": "el signo del dinero",
-         "statement": "Escribe `Fill` (side, price, size) con `cash_flow()`: negativo si compras, positivo si vendes.",
-         "starter": "class Fill:\n    pass\n",
-         "validator": "assert abs(Fill('buy', 99950, 0.5).cash_flow() - (-49975.0)) < 1e-9\nassert abs(Fill('sell', 99950, 0.5).cash_flow() - 49975.0) < 1e-9\nprint('ok')",
-         "solution": "class Fill:\n    def __init__(self, side, price, size):\n        self.side = side\n        self.price = price\n        self.size = size\n    def cash_flow(self):\n        if self.side == 'buy':\n            return -self.price * self.size\n        return self.price * self.size"},
+         "statement": "Escribe una clase local `FillDrill` (side, price, size) con `cash_flow()`: negativo si compras, positivo si vendes.",
+         "starter": "class FillDrill:\n    pass\n",
+         "validator": "assert abs(FillDrill('buy', 99950, 0.5).cash_flow() - (-49975.0)) < 1e-9\nassert abs(FillDrill('sell', 99950, 0.5).cash_flow() - 49975.0) < 1e-9\nprint('ok')",
+         "solution": "class FillDrill:\n    def __init__(self, side, price, size):\n        self.side = side\n        self.price = price\n        self.size = size\n    def cash_flow(self):\n        if self.side == 'buy':\n            return -self.price * self.size\n        return self.price * self.size"},
         {"title": "A7. La caja tras la sesión", "practice": "objetos en una lista",
          "statement": "Con la lista `fills`, suma todos los `cash_flow()` en `total_cash`.",
-         "given": "class Fill:\n    def __init__(self, side, price, size):\n        self.side = side; self.price = price; self.size = size\n    def cash_flow(self):\n        return -self.price * self.size if self.side == 'buy' else self.price * self.size\n\nfills = [Fill('buy', 99950, 0.5), Fill('sell', 100050, 0.5)]\n",
+         "given": "class FillDrill:\n    def __init__(self, side, price, size):\n        self.side = side; self.price = price; self.size = size\n    def cash_flow(self):\n        return -self.price * self.size if self.side == 'buy' else self.price * self.size\n\nfills = [FillDrill('buy', 99950, 0.5), FillDrill('sell', 100050, 0.5)]\n",
          "starter": "total_cash = None\n",
          "validator": "assert abs(total_cash - 50.0) < 1e-9, 'compraste a 99950 y vendiste a 100050'\nprint('ok ->', total_cash)",
          "solution": "total_cash = 0\nfor f in fills:\n    total_cash = total_cash + f.cash_flow()"},
@@ -1090,28 +1094,28 @@ LESSONS.append({
         {"section": "Gimnasio · Bloque 3 — Objetos que se protegen",
          "blurb": "Validar al construir, describirse bien y decidir qué es dato y qué es cálculo."},
         {"title": "A8. Precio con guardia", "practice": "validar en __init__",
-         "statement": "Haz que `Order.__init__` lance `ValueError` si `price <= 0`.",
-         "starter": "class Order:\n    def __init__(self, side, price, size):\n        pass\n",
-         "validator": "try:\n    Order('buy', -5, 1); raise SystemExit('deberia fallar')\nexcept ValueError:\n    pass\nassert Order('buy', 100, 1).price == 100\nprint('ok')",
-         "solution": "class Order:\n    def __init__(self, side, price, size):\n        if price <= 0:\n            raise ValueError(f'price inválido: {price}')\n        self.side = side\n        self.price = price\n        self.size = size"},
+         "statement": "Haz que `OrderDrill.__init__` lance `ValueError` si `price <= 0`.",
+         "starter": "class OrderDrill:\n    def __init__(self, side, price, size):\n        pass\n",
+         "validator": "try:\n    OrderDrill('buy', -5, 1); raise SystemExit('deberia fallar')\nexcept ValueError:\n    pass\nassert OrderDrill('buy', 100, 1).price == 100\nprint('ok')",
+         "solution": "class OrderDrill:\n    def __init__(self, side, price, size):\n        if price <= 0:\n            raise ValueError(f'price inválido: {price}')\n        self.side = side\n        self.price = price\n        self.size = size"},
         {"title": "A9. describe()", "practice": "método + f-string",
          "statement": "Añade `describe()` que devuelva `'BUY 0.5 @ 99950'` (lado en mayúsculas).",
-         "starter": "class Order:\n    def __init__(self, side, price, size):\n        self.side = side; self.price = price; self.size = size\n    def describe(self):\n        pass\n\no = Order('buy', 99950, 0.5)\n",
+         "starter": "class OrderDrill:\n    def __init__(self, side, price, size):\n        self.side = side; self.price = price; self.size = size\n    def describe(self):\n        pass\n\no = OrderDrill('buy', 99950, 0.5)\n",
          "validator": "assert o.describe() == 'BUY 0.5 @ 99950'\nprint('ok')",
-         "solution": "class Order:\n    def __init__(self, side, price, size):\n        self.side = side; self.price = price; self.size = size\n    def describe(self):\n        return f\"{self.side.upper()} {self.size} @ {self.price}\"\n\no = Order('buy', 99950, 0.5)"},
+         "solution": "class OrderDrill:\n    def __init__(self, side, price, size):\n        self.side = side; self.price = price; self.size = size\n    def describe(self):\n        return f\"{self.side.upper()} {self.size} @ {self.price}\"\n\no = OrderDrill('buy', 99950, 0.5)"},
         {"title": "A10. ¿Dato o cálculo?", "practice": "atributo derivado",
          "statement": "Haz que `__init__` calcule y guarde `self.notional` como **atributo** (se lee sin paréntesis).",
-         "starter": "class Order:\n    def __init__(self, side, price, size):\n        pass\n\no = Order('buy', 99950, 0.5)\n",
+         "starter": "class OrderDrill:\n    def __init__(self, side, price, size):\n        pass\n\no = OrderDrill('buy', 99950, 0.5)\n",
          "validator": "assert abs(o.notional - 49975.0) < 1e-9, 'sin parentesis: es un atributo'\nassert not callable(o.notional)\nprint('ok')",
-         "solution": "class Order:\n    def __init__(self, side, price, size):\n        self.side = side\n        self.price = price\n        self.size = size\n        self.notional = price * size\n\no = Order('buy', 99950, 0.5)"},
+         "solution": "class OrderDrill:\n    def __init__(self, side, price, size):\n        self.side = side\n        self.price = price\n        self.size = size\n        self.notional = price * size\n\no = OrderDrill('buy', 99950, 0.5)"},
 
         {"section": "Para terminar — el paquete real",
          "blurb": "El Order pulido que arrastrarás todo el curso, y los enums que evitan un 'byu'."},
         {"title": "A11. Lados con seguridad", "practice": "validar en __init__",
-         "statement": "Haz que `Order.__init__` lance `ValueError` si `side` no es 'buy' ni 'sell'. Un objeto puede proteger sus propios datos.",
-         "starter": "class Order:\n    def __init__(self, symbol, side, price, size):\n        pass\n",
-         "validator": "try:\n    Order('X','byu',1,1); raise SystemExit('deberia fallar')\nexcept ValueError:\n    pass\nassert Order('X','buy',1,1).side == 'buy'\nprint('ok')",
-         "solution": "class Order:\n    def __init__(self, symbol, side, price, size):\n        if side not in ('buy','sell'):\n            raise ValueError('side debe ser buy o sell')\n        self.symbol=symbol; self.side=side; self.price=price; self.size=size"},
+         "statement": "Haz que `OrderMini.__init__` lance `ValueError` si `side` no es 'buy' ni 'sell'. Un objeto puede proteger sus propios datos.",
+         "starter": "class OrderMini:\n    def __init__(self, symbol, side, price, size):\n        pass\n",
+         "validator": "try:\n    OrderMini('X','byu',1,1); raise SystemExit('deberia fallar')\nexcept ValueError:\n    pass\nassert OrderMini('X','buy',1,1).side == 'buy'\nprint('ok')",
+         "solution": "class OrderMini:\n    def __init__(self, symbol, side, price, size):\n        if side not in ('buy','sell'):\n            raise ValueError('side debe ser buy o sell')\n        self.symbol=symbol; self.side=side; self.price=price; self.size=size"},
         {"title": "A12. El Order real del paquete", "practice": "usar exchange.orders",
          "statement": "Importa `Order` y `Side` de `exchange.orders` (la versión pulida que arrastrarás todo el curso) y crea una orden de compra. Comprueba `order.notional()`.",
          "starter": "from exchange.orders import Order, Side\norder = None\n",
@@ -1128,7 +1132,7 @@ LESSONS.append({
 # Datos + comportamiento juntos. Ejecuta:  python orders_demo.py
 
 
-class Order:
+class OrderMini:
     def __init__(self, symbol, side, price, size):   # ej. 1
         self.symbol = symbol
         self.side = side
@@ -1139,10 +1143,10 @@ class Order:
         return self.price * self.size
 
     def __repr__(self):                              # ej. 3
-        return f"Order({self.side} {self.size} {self.symbol} @ {self.price})"
+        return f"OrderMini({self.side} {self.size} {self.symbol} @ {self.price})"
 
 
-class Fill:
+class FillMini:
     def __init__(self, symbol, side, price, size):   # ej. 4
         self.symbol = symbol
         self.side = side
@@ -1155,12 +1159,12 @@ class Fill:
 
 
 def main():                                          # ej. 5 y 6
-    order = Order("BTCUSDT", "buy", 99950, 0.10)
+    order = OrderMini("BTCUSDT", "buy", 99950, 0.10)
     print(order)
     print("notional:", order.notional())
 
-    buy = Fill("BTCUSDT", "buy", 99950, 0.10)
-    sell = Fill("BTCUSDT", "sell", 100050, 0.10)
+    buy = FillMini("BTCUSDT", "buy", 99950, 0.10)
+    sell = FillMini("BTCUSDT", "sell", 100050, 0.10)
     print("cash compra:", buy.cash_flow())
     print("cash venta:", sell.cash_flow())
     print("total:", round(buy.cash_flow() + sell.cash_flow(), 2))
@@ -1178,13 +1182,13 @@ if __name__ == "__main__":
 LESSONS.append({
     "n": 5, "slug": "05-oop-ii-book-portfolio",
     "title": "OOP II — OrderBook y PositionTracker",
-    "piece": "clases OrderBook y PositionTracker (composición)",
-    "objective": "Construir el libro como objeto que contiene niveles, con métricas sin argumentos estabilizadas como propiedades. Y un PositionTracker que consume objetos Fill. Aquí ves cómo los objetos se entrelazan.",
+    "piece": "OrderBookMini + PositionTracker; migración explícita al OrderBook estable de exchange",
+    "objective": "Construir un libro didáctico que contiene niveles, estabilizar las métricas sin argumentos como propiedades y migrar después a la firma pública de OrderBook sin un cambio silencioso.",
     "frase": "Composición: un OrderBook contiene niveles; un PositionTracker consume Fills. Los objetos se hablan entre sí.",
     "concepts": [
         ("Un objeto que contiene objetos",
-         "El OrderBook guarda dos listas (bids y asks). Las funciones de L2 se mudan al objeto: las métricas sin argumentos son propiedades (`book.spread`, `book.mid`); `imbalance(levels)` sigue siendo método porque recibe una decisión de profundidad.",
-         "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = bids   # [(price, size), ...]\n        self.asks = asks"),
+         "OrderBookMini guarda dos listas de tuplas para aislar la idea de composición. Las funciones de L2 se mudan al objeto: las métricas sin argumentos son properties (`book.spread`, `book.mid`); `imbalance(levels)` sigue siendo método. Al final se migra al `OrderBook(symbol, bids: list[Level], asks: list[Level])` estable de exchange.",
+         "class OrderBookMini:\n    def __init__(self, bids, asks):\n        self.bids = bids   # [(price, size), ...]\n        self.asks = asks"),
         ("Estado interno y encapsulación",
          "El PositionTracker guarda _cash y _position con guión bajo: 'no me toques desde fuera, usa mis métodos'. apply_fill recibe un objeto Fill y actualiza el estado.",
          "class PositionTracker:\n    def __init__(self):\n        self._cash = 0.0\n        self._position = 0.0"),
@@ -1194,62 +1198,62 @@ LESSONS.append({
     ],
     "build": [
         {"title": "1. OrderBook: un objeto que contiene niveles", "practice": "composición",
-         "statement": "Define `OrderBook(bids, asks)` donde cada lado es una lista de tuplas `(price, size)`. El libro **contiene** sus niveles como atributos.",
-         "starter": "class OrderBook:\n    def __init__(self, bids, asks):\n        pass\n",
-         "validator": "b = OrderBook([(100,1)], [(101,2)])\nassert b.bids == [(100,1)] and b.asks == [(101,2)]\nprint('ok')",
-         "solution": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = bids\n        self.asks = asks"},
+         "statement": "Define `OrderBookMini(bids, asks)` donde cada lado es una lista de tuplas `(price, size)`. Es una versión didáctica deliberadamente distinta de la API pública de `exchange`.",
+         "starter": "class OrderBookMini:\n    def __init__(self, bids, asks):\n        pass\n",
+         "validator": "b = OrderBookMini([(100,1)], [(101,2)])\nassert b.bids == [(100,1)] and b.asks == [(101,2)]\nprint('ok')",
+         "solution": "class OrderBookMini:\n    def __init__(self, bids, asks):\n        self.bids = bids\n        self.asks = asks"},
         {"title": "2. best_bid / best_ask / spread / mid", "practice": "@property sobre el estado",
-         "statement": "Reescribe `OrderBook` con propiedades `best_bid`, `best_ask`, `spread` y `mid`. (Ordena bids desc y asks asc en `__init__`; el mejor es el primero.) Son métricas calculadas sin argumentos: se leen como atributos y no cambian de forma más adelante.",
+         "statement": "Reescribe `OrderBookMini` con propiedades `best_bid`, `best_ask`, `spread` y `mid`. Son métricas calculadas sin argumentos: se leen como atributos y esa parte de la API sí permanece estable.",
          "hint": "`self.bids = sorted(bids, key=lambda x: -x[0])`.",
-         "starter": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = sorted(bids, key=lambda x: -x[0])\n        self.asks = sorted(asks, key=lambda x: x[0])\n    @property\n    def best_bid(self):\n        pass\n    @property\n    def best_ask(self):\n        pass\n    @property\n    def spread(self):\n        pass\n    @property\n    def mid(self):\n        pass\n",
-         "validator": "b = OrderBook([(100,1),(99,1)], [(101,1),(102,1)])\nassert b.best_bid==100 and b.best_ask==101\nassert b.spread==1 and b.mid==100.5\nprint('ok')",
-         "solution": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = sorted(bids, key=lambda x: -x[0])\n        self.asks = sorted(asks, key=lambda x: x[0])\n    @property\n    def best_bid(self):\n        return self.bids[0][0]\n    @property\n    def best_ask(self):\n        return self.asks[0][0]\n    @property\n    def spread(self):\n        return self.best_ask - self.best_bid\n    @property\n    def mid(self):\n        return (self.best_bid + self.best_ask) / 2"},
+         "starter": "class OrderBookMini:\n    def __init__(self, bids, asks):\n        self.bids = sorted(bids, key=lambda x: -x[0])\n        self.asks = sorted(asks, key=lambda x: x[0])\n    @property\n    def best_bid(self):\n        pass\n    @property\n    def best_ask(self):\n        pass\n    @property\n    def spread(self):\n        pass\n    @property\n    def mid(self):\n        pass\n",
+         "validator": "b = OrderBookMini([(100,1),(99,1)], [(101,1),(102,1)])\nassert b.best_bid==100 and b.best_ask==101\nassert b.spread==1 and b.mid==100.5\nprint('ok')",
+         "solution": "class OrderBookMini:\n    def __init__(self, bids, asks):\n        self.bids = sorted(bids, key=lambda x: -x[0])\n        self.asks = sorted(asks, key=lambda x: x[0])\n    @property\n    def best_bid(self):\n        return self.bids[0][0]\n    @property\n    def best_ask(self):\n        return self.asks[0][0]\n    @property\n    def spread(self):\n        return self.best_ask - self.best_bid\n    @property\n    def mid(self):\n        return (self.best_bid + self.best_ask) / 2"},
         {"title": "3. imbalance() del nivel 1", "practice": "otro método",
-         "statement": "Añade a `OrderBook` el método `imbalance()` = (bid_size − ask_size)/(bid_size + ask_size) en el mejor nivel.",
-         "starter": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = sorted(bids, key=lambda x: -x[0])\n        self.asks = sorted(asks, key=lambda x: x[0])\n    def imbalance(self):\n        pass\n",
-         "validator": "b = OrderBook([(100,3)], [(101,1)])\nassert abs(b.imbalance() - 0.5) < 1e-9\nprint('ok')",
+         "statement": "Añade a `OrderBookMini` el método `imbalance()` = (bid_size − ask_size)/(bid_size + ask_size) en el mejor nivel.",
+         "starter": "class OrderBookMini:\n    def __init__(self, bids, asks):\n        self.bids = sorted(bids, key=lambda x: -x[0])\n        self.asks = sorted(asks, key=lambda x: x[0])\n    def imbalance(self):\n        pass\n",
+         "validator": "b = OrderBookMini([(100,3)], [(101,1)])\nassert abs(b.imbalance() - 0.5) < 1e-9\nprint('ok')",
          "pista": "El mejor nivel es el primero tras ordenar: `self.bids[0]` y `self.asks[0]` son tuplas `(precio, tamaño)`, así que el tamaño es el índice `[1]`.",
-         "solution": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = sorted(bids, key=lambda x: -x[0])\n        self.asks = sorted(asks, key=lambda x: x[0])\n    def imbalance(self):\n        bs = self.bids[0][1]; as_ = self.asks[0][1]\n        return (bs - as_) / (bs + as_)"},
+         "solution": "class OrderBookMini:\n    def __init__(self, bids, asks):\n        self.bids = sorted(bids, key=lambda x: -x[0])\n        self.asks = sorted(asks, key=lambda x: x[0])\n    def imbalance(self):\n        bs = self.bids[0][1]; as_ = self.asks[0][1]\n        return (bs - as_) / (bs + as_)"},
         {"title": "4. PositionTracker: estado interno", "practice": "encapsulación + apply_fill",
          "statement": "Define `PositionTracker` con `_cash=0` y `_position=0` (implementación interna) y `apply_fill(fill)` que sume `fill.cash_flow()` a la caja y `fill.size` (con signo) a la posición.",
          "hint": "El guión bajo dice 'tócalo con métodos, no a mano'.",
-         "given": "class Fill:\n    def __init__(self, side, price, size):\n        self.side=side; self.price=price; self.size=size\n    def cash_flow(self):\n        return (-1 if self.side=='buy' else 1)*self.price*self.size\n",
+         "given": "from exchange.trades import Fill\n",
          "starter": "class PositionTracker:\n    def __init__(self):\n        pass\n    def apply_fill(self, fill):\n        pass\n",
-         "validator": "t = PositionTracker()\nt.apply_fill(Fill('buy',100,0.5))\nassert abs(t._cash + 50) < 1e-9 and abs(t._position - 0.5) < 1e-9\nprint('ok')",
+         "validator": "t = PositionTracker()\nt.apply_fill(Fill(1,'BTCUSDT','buy',100,0.5))\nassert abs(t._cash + 50) < 1e-9 and abs(t._position - 0.5) < 1e-9\nprint('ok')",
          "pista": "En `__init__`, `self._cash = 0.0` y `self._position = 0.0`. En `apply_fill`, `self._cash += fill.cash_flow()`; y la posición suma `fill.size` si es compra, lo resta si es venta.",
          "solution": "class PositionTracker:\n    def __init__(self):\n        self._cash = 0.0\n        self._position = 0.0\n    def apply_fill(self, fill):\n        self._cash += fill.cash_flow()\n        self._position += fill.size if fill.side=='buy' else -fill.size"},
         {"title": "5. equity a mercado", "practice": "componer el estado",
          "statement": "Reescribe `PositionTracker` añadiendo `equity(mark_price)` = `_cash + _position * mark_price`.",
-         "given": "class Fill:\n    def __init__(self, side, price, size):\n        self.side=side; self.price=price; self.size=size\n    def cash_flow(self):\n        return (-1 if self.side=='buy' else 1)*self.price*self.size\n",
+         "given": "from exchange.trades import Fill\n",
          "starter": "class PositionTracker:\n    def __init__(self):\n        self._cash = 0.0\n        self._position = 0.0\n    def apply_fill(self, fill):\n        self._cash += fill.cash_flow()\n        self._position += fill.size if fill.side=='buy' else -fill.size\n    def equity(self, mark_price):\n        pass\n",
-         "validator": "t = PositionTracker()\nt.apply_fill(Fill('buy',100,1))\nassert abs(t.equity(110) - 10) < 1e-9, 'compra a 100, marca a 110 -> equity 10'\nprint('ok')",
+         "validator": "t = PositionTracker()\nt.apply_fill(Fill(1,'BTCUSDT','buy',100,1))\nassert abs(t.equity(110) - 10) < 1e-9, 'compra a 100, marca a 110 -> equity 10'\nprint('ok')",
          "pista": "Copia la clase del ejercicio anterior tal cual y añade un método más: `def equity(self, mark_price): return self._cash + self._position * mark_price`.",
          "solution": "class PositionTracker:\n    def __init__(self):\n        self._cash = 0.0\n        self._position = 0.0\n    def apply_fill(self, fill):\n        self._cash += fill.cash_flow()\n        self._position += fill.size if fill.side=='buy' else -fill.size\n    def equity(self, mark_price):\n        return self._cash + self._position * mark_price"},
         {"title": "6. Los dos objetos, juntos", "practice": "composición end-to-end",
-         "statement": "Junta las piezas: monta un `OrderBook`, lee su `mid`; crea un `PositionTracker`, aplícale una compra (0.5 @ 100000) y una venta (0.2 @ 100050), y guarda `eq = equity` marcado al `mid` del libro.",
+         "statement": "Junta las piezas: monta un `OrderBookMini`, lee su `mid`; crea un `PositionTracker`, aplícale una compra y una venta con el `Fill` estable de L4, y guarda `eq` marcado al `mid` del libro.",
          "hint": "El equity se marca al `book.mid` (propiedad, sin paréntesis).",
-         "given": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = sorted(bids, key=lambda x: -x[0]); self.asks = sorted(asks, key=lambda x: x[0])\n    @property\n    def best_bid(self): return self.bids[0][0]\n    @property\n    def best_ask(self): return self.asks[0][0]\n    @property\n    def mid(self): return (self.best_bid+self.best_ask)/2\nclass Fill:\n    def __init__(self, side, price, size):\n        self.side=side; self.price=price; self.size=size\n    def cash_flow(self):\n        return (-1 if self.side=='buy' else 1)*self.price*self.size\nclass PositionTracker:\n    def __init__(self):\n        self._cash=0.0; self._position=0.0\n    def apply_fill(self, fill):\n        self._cash += fill.cash_flow(); self._position += fill.size if fill.side=='buy' else -fill.size\n    def equity(self, mark):\n        return self._cash + self._position*mark\n",
-         "starter": "book = OrderBook([(99990,2.0),(99980,1.0)], [(100010,1.5)])\ntracker = PositionTracker()\n# aplica los dos fills y guarda eq = equity al mid del libro\neq = None\n",
+         "given": "from exchange.trades import Fill\nclass OrderBookMini:\n    def __init__(self, bids, asks):\n        self.bids = sorted(bids, key=lambda x: -x[0]); self.asks = sorted(asks, key=lambda x: x[0])\n    @property\n    def best_bid(self): return self.bids[0][0]\n    @property\n    def best_ask(self): return self.asks[0][0]\n    @property\n    def mid(self): return (self.best_bid+self.best_ask)/2\nclass PositionTracker:\n    def __init__(self):\n        self._cash=0.0; self._position=0.0\n    def apply_fill(self, fill):\n        self._cash += fill.cash_flow(); self._position += fill.size if fill.side=='buy' else -fill.size\n    def equity(self, mark):\n        return self._cash + self._position*mark\n",
+         "starter": "book = OrderBookMini([(99990,2.0),(99980,1.0)], [(100010,1.5)])\ntracker = PositionTracker()\n# aplica los dos fills y guarda eq = equity al mid del libro\neq = None\n",
          "validator": "assert abs(book.mid - 100000) < 1e-9\nassert abs(eq - 10.0) < 1e-9, 'equity al mid debe ser 10'\nprint('ok  eq=%.1f' % eq)",
-         "pista": "Tres pasos: `tracker.apply_fill(Fill('buy', 100000, 0.5))`, lo mismo con la venta, y `eq = tracker.equity(book.mid)`. Fíjate en la firma de `Fill` que te da el given.",
-         "solution": "book = OrderBook([(99990,2.0),(99980,1.0)], [(100010,1.5)])\ntracker = PositionTracker()\ntracker.apply_fill(Fill('buy', 100000, 0.5))\ntracker.apply_fill(Fill('sell', 100050, 0.2))\neq = tracker.equity(book.mid)"},
+         "pista": "Tres pasos: `tracker.apply_fill(Fill(1, 'BTCUSDT', 'buy', 100000, 0.5))`, lo mismo con la venta, y `eq = tracker.equity(book.mid)`. Aquí ya reutilizas la firma pública estable de L4.",
+         "solution": "book = OrderBookMini([(99990,2.0),(99980,1.0)], [(100010,1.5)])\ntracker = PositionTracker()\ntracker.apply_fill(Fill(1,'BTCUSDT','buy',100000,0.5))\ntracker.apply_fill(Fill(2,'BTCUSDT','sell',100050,0.2))\neq = tracker.equity(book.mid)"},
     ],
     "aux": [
         {"section": "Gimnasio · Calentamiento — repaso exprés de L4",
          "blurb": "Clases, __repr__ y el signo del dinero: tres reps con ETH."},
         {"title": "C1. Order exprés", "practice": "repaso: clase + método",
-         "statement": "Escribe `Order` (side, price, size) con `notional()`. Pruébala con ETH.",
-         "starter": "class Order:\n    pass\n",
-         "validator": "assert abs(Order('buy', 3400, 2.0).notional() - 6800.0) < 1e-9\nprint('ok')",
-         "solution": "class Order:\n    def __init__(self, side, price, size):\n        self.side = side; self.price = price; self.size = size\n    def notional(self):\n        return self.price * self.size"},
+         "statement": "Escribe una clase local `OrderDrill` (side, price, size) con `notional()`. Pruébala con ETH.",
+         "starter": "class OrderDrill:\n    pass\n",
+         "validator": "assert abs(OrderDrill('buy', 3400, 2.0).notional() - 6800.0) < 1e-9\nprint('ok')",
+         "solution": "class OrderDrill:\n    def __init__(self, side, price, size):\n        self.side = side; self.price = price; self.size = size\n    def notional(self):\n        return self.price * self.size"},
         {"title": "C2. __repr__ exprés", "practice": "repaso: __repr__",
-         "statement": "Dale a `Fill` un `__repr__` exacto: `'Fill(buy 2.0 @ 3400)'`.",
-         "starter": "class Fill:\n    def __init__(self, side, price, size):\n        self.side = side; self.price = price; self.size = size\n    def __repr__(self):\n        pass\n\nf = Fill('buy', 3400, 2.0)\n",
-         "validator": "assert repr(f) == 'Fill(buy 2.0 @ 3400)'\nprint('ok')",
-         "solution": "class Fill:\n    def __init__(self, side, price, size):\n        self.side = side; self.price = price; self.size = size\n    def __repr__(self):\n        return f\"Fill({self.side} {self.size} @ {self.price})\"\n\nf = Fill('buy', 3400, 2.0)"},
+         "statement": "Dale a una clase local `FillDrill` un `__repr__` exacto: `'FillDrill(buy 2.0 @ 3400)'`.",
+         "starter": "class FillDrill:\n    def __init__(self, side, price, size):\n        self.side = side; self.price = price; self.size = size\n    def __repr__(self):\n        pass\n\nf = FillDrill('buy', 3400, 2.0)\n",
+         "validator": "assert repr(f) == 'FillDrill(buy 2.0 @ 3400)'\nprint('ok')",
+         "solution": "class FillDrill:\n    def __init__(self, side, price, size):\n        self.side = side; self.price = price; self.size = size\n    def __repr__(self):\n        return f\"FillDrill({self.side} {self.size} @ {self.price})\"\n\nf = FillDrill('buy', 3400, 2.0)"},
         {"title": "C3. Caja exprés", "practice": "repaso: cash_flow",
          "statement": "Con los dos fills dados, calcula `total_cash` sumando sus `cash_flow()`.",
-         "given": "class Fill:\n    def __init__(self, side, price, size):\n        self.side = side; self.price = price; self.size = size\n    def cash_flow(self):\n        return -self.price * self.size if self.side == 'buy' else self.price * self.size\n\nfills = [Fill('buy', 3400, 2.0), Fill('sell', 3410, 2.0)]\n",
+         "given": "class FillDrill:\n    def __init__(self, side, price, size):\n        self.side = side; self.price = price; self.size = size\n    def cash_flow(self):\n        return -self.price * self.size if self.side == 'buy' else self.price * self.size\n\nfills = [FillDrill('buy', 3400, 2.0), FillDrill('sell', 3410, 2.0)]\n",
          "starter": "total_cash = None\n",
          "validator": "assert abs(total_cash - 20.0) < 1e-9\nprint('ok')",
          "solution": "total_cash = sum(f.cash_flow() for f in fills)"},
@@ -1262,21 +1266,21 @@ LESSONS.append({
          "validator": "b = Blotter()\nb.add('f1'); b.add('f2')\nassert b.count() == 2\nprint('ok')",
          "solution": "class Blotter:\n    def __init__(self):\n        self.fills = []\n    def add(self, fill):\n        self.fills.append(fill)\n    def count(self):\n        return len(self.fills)"},
         {"title": "A2. best_bid y best_ask como properties", "practice": "@property sobre el estado",
-         "statement": "Escribe `OrderBook` (bids y asks: listas de tuplas `(price, size)`) con las propiedades `best_bid` y `best_ask`.",
-         "starter": "class OrderBook:\n    pass\n",
-         "validator": "ob = OrderBook([(99950, 0.5), (99940, 0.2)], [(100000, 0.3), (100010, 0.1)])\nassert ob.best_bid == 99950 and ob.best_ask == 100000\nprint('ok')",
-         "solution": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = bids\n        self.asks = asks\n    @property\n    def best_bid(self):\n        return max(p for p, s in self.bids)\n    @property\n    def best_ask(self):\n        return min(p for p, s in self.asks)"},
+         "statement": "Escribe `OrderBookMini` (bids y asks: listas de tuplas `(price, size)`) con las propiedades `best_bid` y `best_ask`.",
+         "starter": "class OrderBookMini:\n    pass\n",
+         "validator": "ob = OrderBookMini([(99950, 0.5), (99940, 0.2)], [(100000, 0.3), (100010, 0.1)])\nassert ob.best_bid == 99950 and ob.best_ask == 100000\nprint('ok')",
+         "solution": "class OrderBookMini:\n    def __init__(self, bids, asks):\n        self.bids = bids\n        self.asks = asks\n    @property\n    def best_bid(self):\n        return max(p for p, s in self.bids)\n    @property\n    def best_ask(self):\n        return min(p for p, s in self.asks)"},
         {"title": "A3. Properties que se componen", "practice": "spread y mid",
          "statement": "Añade las propiedades `spread` y `mid` apoyándote en `best_bid` / `best_ask` (no repitas los max/min).",
-         "starter": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = bids; self.asks = asks\n    @property\n    def best_bid(self):\n        return max(p for p, s in self.bids)\n    @property\n    def best_ask(self):\n        return min(p for p, s in self.asks)\n    @property\n    def spread(self):\n        pass\n    @property\n    def mid(self):\n        pass\n\nob = OrderBook([(99950, 0.5)], [(100000, 0.3)])\n",
+         "starter": "class OrderBookMini:\n    def __init__(self, bids, asks):\n        self.bids = bids; self.asks = asks\n    @property\n    def best_bid(self):\n        return max(p for p, s in self.bids)\n    @property\n    def best_ask(self):\n        return min(p for p, s in self.asks)\n    @property\n    def spread(self):\n        pass\n    @property\n    def mid(self):\n        pass\n\nob = OrderBookMini([(99950, 0.5)], [(100000, 0.3)])\n",
          "validator": "assert ob.spread == 50\nassert ob.mid == 99975.0\nprint('ok')",
-         "solution": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = bids; self.asks = asks\n    @property\n    def best_bid(self):\n        return max(p for p, s in self.bids)\n    @property\n    def best_ask(self):\n        return min(p for p, s in self.asks)\n    @property\n    def spread(self):\n        return self.best_ask - self.best_bid\n    @property\n    def mid(self):\n        return (self.best_bid + self.best_ask) / 2\n\nob = OrderBook([(99950, 0.5)], [(100000, 0.3)])"},
+         "solution": "class OrderBookMini:\n    def __init__(self, bids, asks):\n        self.bids = bids; self.asks = asks\n    @property\n    def best_bid(self):\n        return max(p for p, s in self.bids)\n    @property\n    def best_ask(self):\n        return min(p for p, s in self.asks)\n    @property\n    def spread(self):\n        return self.best_ask - self.best_bid\n    @property\n    def mid(self):\n        return (self.best_bid + self.best_ask) / 2\n\nob = OrderBookMini([(99950, 0.5)], [(100000, 0.3)])"},
         {"title": "A4. El nivel más gordo", "practice": "recorrer el estado propio",
          "statement": "Añade `biggest_bid()`: el **precio** del bid con más tamaño (recorre `self.bids` con un for).",
-         "given": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = bids; self.asks = asks\n",
-         "starter": "class OrderBook(OrderBook):\n    def biggest_bid(self):\n        pass\n\nob = OrderBook([(99950, 0.5), (99940, 1.2), (99930, 0.8)], [])\n",
+         "given": "class OrderBookMini:\n    def __init__(self, bids, asks):\n        self.bids = bids; self.asks = asks\n",
+         "starter": "class ExtendedOrderBookMini(OrderBookMini):\n    def biggest_bid(self):\n        pass\n\nob = ExtendedOrderBookMini([(99950, 0.5), (99940, 1.2), (99930, 0.8)], [])\n",
          "validator": "assert ob.biggest_bid() == 99940, 'el de mas size, no el de mejor precio'\nprint('ok')",
-         "solution": "class OrderBook(OrderBook):\n    def biggest_bid(self):\n        best_price, best_size = self.bids[0]\n        for price, size in self.bids:\n            if size > best_size:\n                best_price, best_size = price, size\n        return best_price\n\nob = OrderBook([(99950, 0.5), (99940, 1.2), (99930, 0.8)], [])"},
+         "solution": "class ExtendedOrderBookMini(OrderBookMini):\n    def biggest_bid(self):\n        best_price, best_size = self.bids[0]\n        for price, size in self.bids:\n            if size > best_size:\n                best_price, best_size = price, size\n        return best_price\n\nob = ExtendedOrderBookMini([(99950, 0.5), (99940, 1.2), (99930, 0.8)], [])"},
 
         {"section": "Gimnasio · Bloque 2 — Encapsulación",
          "blurb": "Estado interno y la puerta única: la contabilidad que no se puede desincronizar."},
@@ -1305,7 +1309,7 @@ LESSONS.append({
          "solution": "class Position:\n    def __init__(self, qty, price):\n        self.qty = qty\n        self.price = price\n    @property\n    def notional(self):\n        return self.qty * self.price\n\np = Position(0.5, 99950)"},
         {"title": "A9. El gran reto: libro + contable", "practice": "los dos objetos juntos",
          "statement": "Compra 0.5 al `best_ask` del libro (vía `apply_fill`) y guarda `eq = t.equity(ob.mid)`. ¿Por qué sale negativo? Acabas de pagar el medio spread.",
-         "given": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = bids; self.asks = asks\n    @property\n    def best_bid(self):\n        return max(p for p, s in self.bids)\n    @property\n    def best_ask(self):\n        return min(p for p, s in self.asks)\n    @property\n    def mid(self):\n        return (self.best_bid + self.best_ask) / 2\n\nclass TrackerMini:\n    def __init__(self):\n        self._cash = 0.0; self._position = 0.0\n    def apply_fill(self, side, price, size):\n        if side == 'buy':\n            self._cash -= price * size; self._position += size\n        else:\n            self._cash += price * size; self._position -= size\n    def equity(self, mark):\n        return self._cash + self._position * mark\n\nob = OrderBook([(99950, 0.5)], [(100000, 0.3)])\nt = TrackerMini()\n",
+         "given": "class OrderBookMini:\n    def __init__(self, bids, asks):\n        self.bids = bids; self.asks = asks\n    @property\n    def best_bid(self):\n        return max(p for p, s in self.bids)\n    @property\n    def best_ask(self):\n        return min(p for p, s in self.asks)\n    @property\n    def mid(self):\n        return (self.best_bid + self.best_ask) / 2\n\nclass TrackerMini:\n    def __init__(self):\n        self._cash = 0.0; self._position = 0.0\n    def apply_fill(self, side, price, size):\n        if side == 'buy':\n            self._cash -= price * size; self._position += size\n        else:\n            self._cash += price * size; self._position -= size\n    def equity(self, mark):\n        return self._cash + self._position * mark\n\nob = OrderBookMini([(99950, 0.5)], [(100000, 0.3)])\nt = TrackerMini()\n",
          "starter": "# compra 0.5 al best_ask y calcula eq\neq = None\n",
          "validator": "assert abs(eq - (-12.5)) < 1e-9, 'pagaste el ask y te valoran al mid: medio spread x 0.5'\nprint('ok ->', eq)",
          "solution": "t.apply_fill('buy', ob.best_ask, 0.5)\neq = t.equity(ob.mid)"},
@@ -1313,27 +1317,28 @@ LESSONS.append({
         {"section": "Para terminar — profundización y el paquete real",
          "blurb": "Profundidad, @property sobre el libro y los objetos pulidos de exchange/."},
         {"title": "A10. Profundidad del libro", "practice": "sumar sobre niveles",
-         "statement": "Añade a `OrderBook` el método `depth_buy()` que sume los tamaños de TODOS los bids.",
-         "starter": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = bids; self.asks = asks\n    def depth_buy(self):\n        pass\n",
-         "validator": "b = OrderBook([(100,1),(99,2)], [(101,1)])\nassert abs(b.depth_buy() - 3) < 1e-9\nprint('ok')",
-         "solution": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = bids; self.asks = asks\n    def depth_buy(self):\n        return sum(size for price, size in self.bids)"},
+         "statement": "Añade a `OrderBookMini` el método `depth_buy()` que sume los tamaños de TODOS los bids.",
+         "starter": "class OrderBookMini:\n    def __init__(self, bids, asks):\n        self.bids = bids; self.asks = asks\n    def depth_buy(self):\n        pass\n",
+         "validator": "b = OrderBookMini([(100,1),(99,2)], [(101,1)])\nassert abs(b.depth_buy() - 3) < 1e-9\nprint('ok')",
+         "solution": "class OrderBookMini:\n    def __init__(self, bids, asks):\n        self.bids = bids; self.asks = asks\n    def depth_buy(self):\n        return sum(size for price, size in self.bids)"},
         {"title": "A11. mid como propiedad (@property)", "practice": "@property",
          "statement": "Convierte `mid` en una **propiedad** con `@property`, para llamarlo como `book.mid` (sin paréntesis), como un atributo calculado.",
-         "starter": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = sorted(bids, key=lambda x:-x[0]); self.asks = sorted(asks, key=lambda x:x[0])\n    @property\n    def mid(self):\n        pass\n",
-         "validator": "b = OrderBook([(100,1)], [(102,1)])\nassert b.mid == 101, 'se llama sin parentesis'\nprint('ok')",
-         "solution": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = sorted(bids, key=lambda x:-x[0]); self.asks = sorted(asks, key=lambda x:x[0])\n    @property\n    def mid(self):\n        return (self.bids[0][0] + self.asks[0][0]) / 2"},
-        {"title": "A12. Los objetos reales del paquete", "practice": "usar exchange",
-         "statement": "Usa los reales de `exchange`: crea un `OrderBook` (con `Level`), mira su `microprice`; crea un `PositionTracker`, aplícale un `Fill` de compra y comprueba que la posición sube.",
+         "starter": "class OrderBookMini:\n    def __init__(self, bids, asks):\n        self.bids = sorted(bids, key=lambda x:-x[0]); self.asks = sorted(asks, key=lambda x:x[0])\n    @property\n    def mid(self):\n        pass\n",
+         "validator": "b = OrderBookMini([(100,1)], [(102,1)])\nassert b.mid == 101, 'se llama sin parentesis'\nprint('ok')",
+         "solution": "class OrderBookMini:\n    def __init__(self, bids, asks):\n        self.bids = sorted(bids, key=lambda x:-x[0]); self.asks = sorted(asks, key=lambda x:x[0])\n    @property\n    def mid(self):\n        return (self.bids[0][0] + self.asks[0][0]) / 2"},
+        {"title": "A12. Los objetos reales del paquete", "practice": "usar la superficie estable de L5",
+         "statement": "Usa los reales de `exchange`: crea un `OrderBook` (con `Level`), lee su `mid` e `imbalance`; crea un `PositionTracker`, aplícale un `Fill` de compra y comprueba que la posición sube. `microprice` llegará con el snapshot real de L7.",
          "starter": "from exchange import OrderBook, Level, PositionTracker\nfrom exchange.trades import Fill\nbook = None\ntracker = None\n",
-         "validator": "from exchange import OrderBook, PositionTracker\nassert isinstance(book, OrderBook) and book.microprice is not None\nassert isinstance(tracker, PositionTracker) and tracker.position > 0\nprint('ok')",
+         "validator": "from exchange import OrderBook, PositionTracker\nassert isinstance(book, OrderBook) and book.mid == 100.5\nassert abs(book.imbalance(1) - 1/3) < 1e-9\nassert isinstance(tracker, PositionTracker) and tracker.position > 0\nprint('ok')",
          "solution": "from exchange import OrderBook, Level, PositionTracker\nfrom exchange.trades import Fill\nbook = OrderBook('BTCUSDT', [Level(100,2)], [Level(101,1)])\ntracker = PositionTracker()\ntracker.apply_fill(Fill(1, 'BTCUSDT', 'buy', 100, 0.5))"},
     ],
     "script_name": "book_demo.py",
-    "script": '''# book_demo.py - clase 5: composicion y encapsulacion.
-# OrderBook CONTIENE niveles; PositionTracker LLEVA LA CUENTA. Ejecuta: python book_demo.py
+"script": '''# book_demo.py - clase 5: composicion y encapsulacion.
+# OrderBookMini CONTIENE niveles; PositionTracker LLEVA LA CUENTA. Ejecuta: python book_demo.py
+from exchange.trades import Fill
 
 
-class OrderBook:
+class OrderBookMini:
     def __init__(self, bids, asks):                  # ej. 1: contiene niveles
         self.bids = sorted(bids, key=lambda x: -x[0])
         self.asks = sorted(asks, key=lambda x: x[0])
@@ -1351,14 +1356,6 @@ class OrderBook:
         return (self.best_bid + self.best_ask) / 2
 
 
-class Fill:
-    def __init__(self, side, price, size):
-        self.side = side; self.price = price; self.size = size
-
-    def cash_flow(self):
-        return (-1 if self.side == "buy" else 1) * self.price * self.size
-
-
 class PositionTracker:
     def __init__(self):                              # ej. 4: estado interno
         self._cash = 0.0
@@ -1373,15 +1370,15 @@ class PositionTracker:
 
 
 def main():                                          # ej. 6: los dos juntos
-    book = OrderBook([(99990, 2.0), (99980, 1.0)], [(100010, 1.5)])
+    book = OrderBookMini([(99990, 2.0), (99980, 1.0)], [(100010, 1.5)])
     print("mid:", book.mid)
 
     tracker = PositionTracker()
-    tracker.apply_fill(Fill("buy", 100000, 0.5))
-    tracker.apply_fill(Fill("sell", 100050, 0.2))
+    tracker.apply_fill(Fill(1, "BTCUSDT", "buy", 100000, 0.5))
+    tracker.apply_fill(Fill(2, "BTCUSDT", "sell", 100050, 0.2))
     print("cash:", round(tracker._cash, 2), "| position:", tracker._position)
     print("equity @ mid:", round(tracker.equity(book.mid), 2))
-    # OrderBook contiene; PositionTracker lleva la cuenta: los dos objetos del motor.
+    # La versión Mini fija la idea; A12 muestra la migración a exchange.OrderBook.
 
 
 if __name__ == "__main__":
@@ -1473,9 +1470,9 @@ LESSONS.append({
          "solution": "class Wallet:\n    def __init__(self):\n        self._cash = 0\n    def deposit(self, x):\n        self._cash += x\n    def balance(self):\n        return self._cash"},
         {"title": "C2. mid exprés", "practice": "repaso: properties compuestas",
          "statement": "Completa la propiedad `mid` apoyándote en las otras dos propiedades.",
-         "starter": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = bids; self.asks = asks\n    @property\n    def best_bid(self):\n        return max(p for p, s in self.bids)\n    @property\n    def best_ask(self):\n        return min(p for p, s in self.asks)\n    @property\n    def mid(self):\n        pass\n\nob = OrderBook([(99950, 0.5)], [(100000, 0.3)])\n",
+         "starter": "class OrderBookMini:\n    def __init__(self, bids, asks):\n        self.bids = bids; self.asks = asks\n    @property\n    def best_bid(self):\n        return max(p for p, s in self.bids)\n    @property\n    def best_ask(self):\n        return min(p for p, s in self.asks)\n    @property\n    def mid(self):\n        pass\n\nob = OrderBookMini([(99950, 0.5)], [(100000, 0.3)])\n",
          "validator": "assert ob.mid == 99975.0\nprint('ok')",
-         "solution": "class OrderBook:\n    def __init__(self, bids, asks):\n        self.bids = bids; self.asks = asks\n    @property\n    def best_bid(self):\n        return max(p for p, s in self.bids)\n    @property\n    def best_ask(self):\n        return min(p for p, s in self.asks)\n    @property\n    def mid(self):\n        return (self.best_bid + self.best_ask) / 2\n\nob = OrderBook([(99950, 0.5)], [(100000, 0.3)])"},
+         "solution": "class OrderBookMini:\n    def __init__(self, bids, asks):\n        self.bids = bids; self.asks = asks\n    @property\n    def best_bid(self):\n        return max(p for p, s in self.bids)\n    @property\n    def best_ask(self):\n        return min(p for p, s in self.asks)\n    @property\n    def mid(self):\n        return (self.best_bid + self.best_ask) / 2\n\nob = OrderBookMini([(99950, 0.5)], [(100000, 0.3)])"},
         {"title": "C3. equity exprés", "practice": "repaso: la fórmula",
          "statement": "Con `cash = -49975.0` y `position = 0.5`, calcula `eq` al mark 100000.",
          "given": "cash = -49975.0\nposition = 0.5\nmark = 100000\n",
@@ -1561,7 +1558,7 @@ LESSONS.append({
          "validator": "assert fallo is True\nprint('ok — la ABC te protege de subclases a medio hacer')",
          "solution": "try:\n    Incompleta()\n    fallo = False\nexcept TypeError:\n    fallo = True"},
         {"title": "A12. Una estrategia con umbral", "practice": "subclase con parámetro (anticipa L10)",
-         "statement": "Define `ImbalanceStrategy(Strategy)` con un umbral `thr` en `__init__`: `decide(imbalance)` devuelve `'buy'` si `imbalance > thr`, `'sell'` si `< -thr`, si no `'hold'`. Es justo la idea que en la clase 11 se enchufa al motor.",
+         "statement": "Define `ImbalanceStrategy(Strategy)` con un umbral `thr` en `__init__`: `decide(imbalance)` devuelve `'buy'` si `imbalance > thr`, `'sell'` si `< -thr`, si no `'hold'`. Es justo la idea que en L11 se enchufa al motor.",
          "given": "from abc import ABC, abstractmethod\nclass Strategy(ABC):\n    @abstractmethod\n    def decide(self, imbalance): ...\n",
          "starter": "class ImbalanceStrategy(Strategy):\n    def __init__(self, thr=0.3):\n        pass\n    def decide(self, imbalance):\n        pass\n",
          "validator": "s = ImbalanceStrategy(0.3)\nassert s.decide(0.5) == 'buy'\nassert s.decide(-0.5) == 'sell'\nassert s.decide(0.0) == 'hold'\nprint('ok')",
@@ -1570,7 +1567,7 @@ LESSONS.append({
         {"section": "Transferencia — la misma idea, otro dominio",
          "blurb": "La herencia y el polimorfismo no son de trading: son de programar. "
                   "Aquí es el mismo patrón `Strategy` → subclases, pero monitorizando servidores. "
-                  "Si te sale sin mirar la clase 6, es que la idea ya es tuya."},
+                  "Si te sale sin mirar L6, es que la idea ya es tuya."},
         {"title": "T1. Alertas de servidor (mismo patrón, otro mundo)",
          "practice": "ABC + polimorfismo fuera del trading",
          "statement": "Un sistema de monitorización tiene una `Alerta` abstracta con `revisar(valor) -> str`. "

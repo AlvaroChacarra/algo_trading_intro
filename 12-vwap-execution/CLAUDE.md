@@ -1,6 +1,6 @@
 # Clase 12 — VWAP — Ejecución (guía de implementación)
 
-Pieza del framework: **VWAPStrategy: repartir una orden por el perfil de volumen (estático y dinámico)**.
+Pieza del framework: **VWAPStrategy: slicing, TWAP y perfil de volumen estático**.
 
 ## Teoría que cubre
 
@@ -19,19 +19,23 @@ en cada tick emite una market order del tamaño del trozo (peso normalizado × t
 perfil → TWAP uniforme. Es una subclase de `Strategy`: se enchufa al `Backtest` exactamente
 igual que cualquier otra — primera demostración del valor del framework de L10.
 
+La predicción dinámica de volumen queda como profundización **OPTIONAL**: ningún contenido ni
+assessment posterior la presupone; LIVE + REQUIRED se sostienen con slicing, TWAP, el perfil
+VWAP estático y una comparación empírica honesta.
+
 ## Presentación (3 bloques)
 
 1. **Por qué trocear** — Una orden grande de golpe barre el libro y paga slippage. Repartirla en el tiempo reduce el impacto.
 2. **TWAP vs VWAP** — TWAP parte en trozos iguales; VWAP pondera por el perfil de volumen para acercarse al precio medio ponderado por volumen.
-3. **Volumen dinámico** — El perfil fijo asume que hoy es como la media. Predecir el volumen del próximo intervalo con los últimos k afina el schedule.
+3. **OPTIONAL · Volumen dinámico** — Profundización no evaluable: el perfil fijo asume que hoy es como la media. Puedes probar una predicción con los últimos k, pero el replay actual enseña que añadir un modelo no garantiza mejorar el baseline y ninguna lesson posterior lo presupone.
 
 ## Cuaderno de construcción
 
 Patrón por ejercicio: enunciado → starter (`pass`/`None`) → validador (`assert` con mensaje claro, tolerancia `1e-9`) → solución guiada embebida.
-Tiers: **Núcleo** = los primeros (en clase), **Si vamos bien** = el resto, **Auxiliares** = cuaderno `12_auxiliary.ipynb`.
+Clasificación: **LIVE / REQUIRED / OPTIONAL**, decidida en `pedagogy/exercise_routes.yml`. Auxiliares: `12_auxiliary.ipynb`.
 
 El contenido se genera desde `framework/_build/` — para editar esta clase, edita su spec y regenera con `build_course.py`. No edites a mano los notebooks.
 
 ## Continuidad
 
-El paquete `exchange/` llega con lo construido hasta la clase anterior; hoy se añade la pieza nueva, que se convierte en el starter de la siguiente.
+El snapshot de `exchange/` declara exactamente la superficie disponible en L12. La lección construye su pieza sobre esa superficie; el snapshot siguiente conserva el estado acumulado sin presuponer que cada clase añada un módulo nuevo.

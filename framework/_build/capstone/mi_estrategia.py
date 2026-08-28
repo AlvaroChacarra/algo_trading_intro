@@ -17,7 +17,7 @@ Ideas para empezar (todas legales, todas del curso):
 
 from __future__ import annotations
 
-from exchange.strategies.market_maker import MarketMaker  # , AvellanedaStoikov
+from exchange.strategies import MarketMaker  # , AvellanedaStoikov
 
 
 class MiEstrategia(MarketMaker):
@@ -36,7 +36,7 @@ class MiEstrategia(MarketMaker):
 
     # Opcional: sobrescribe el centro de tus cotizaciones.
     # def reservation_price(self, mid: float) -> float:
-    #     return mid - self.inventory_skew * self._inventory
+    #     return mid - self.inventory_skew * self.inventory
 
 
 if __name__ == "__main__":

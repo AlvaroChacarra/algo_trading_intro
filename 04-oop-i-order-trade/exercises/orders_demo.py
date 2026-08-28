@@ -2,7 +2,7 @@
 # Datos + comportamiento juntos. Ejecuta:  python orders_demo.py
 
 
-class Order:
+class OrderMini:
     def __init__(self, symbol, side, price, size):   # ej. 1
         self.symbol = symbol
         self.side = side
@@ -13,10 +13,10 @@ class Order:
         return self.price * self.size
 
     def __repr__(self):                              # ej. 3
-        return f"Order({self.side} {self.size} {self.symbol} @ {self.price})"
+        return f"OrderMini({self.side} {self.size} {self.symbol} @ {self.price})"
 
 
-class Fill:
+class FillMini:
     def __init__(self, symbol, side, price, size):   # ej. 4
         self.symbol = symbol
         self.side = side
@@ -29,12 +29,12 @@ class Fill:
 
 
 def main():                                          # ej. 5 y 6
-    order = Order("BTCUSDT", "buy", 99950, 0.10)
+    order = OrderMini("BTCUSDT", "buy", 99950, 0.10)
     print(order)
     print("notional:", order.notional())
 
-    buy = Fill("BTCUSDT", "buy", 99950, 0.10)
-    sell = Fill("BTCUSDT", "sell", 100050, 0.10)
+    buy = FillMini("BTCUSDT", "buy", 99950, 0.10)
+    sell = FillMini("BTCUSDT", "sell", 100050, 0.10)
     print("cash compra:", buy.cash_flow())
     print("cash venta:", sell.cash_flow())
     print("total:", round(buy.cash_flow() + sell.cash_flow(), 2))

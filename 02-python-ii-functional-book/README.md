@@ -45,7 +45,7 @@ POO). `order_book.py` consolida las funciones + un `main` 1:1 con el núcleo.
 ## Estructura de la carpeta
 
 - `presentation/` — documento interactivo (o deck) + guion del profesor
-- `exercises/02_build_exercises.ipynb` — construyes la pieza (núcleo 1-3, luego el resto)
+- `exercises/02_build_exercises.ipynb` — construyes la pieza (rutas LIVE / REQUIRED / OPTIONAL declaradas)
 - `exercises/02_auxiliary.ipynb` — el gimnasio: drills + profundización opcional
 
 ## Idea central

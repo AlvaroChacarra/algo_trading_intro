@@ -594,6 +594,177 @@
   .pkgmap .pk{border-color:#ccc}
   a{color:#0e7490;text-decoration:none}
 }
+/* Shared scene renderer for L1-L14. The manifest owns route, stage and layout. */
+.lr-sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;
+  margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;
+  border:0!important}
+.lr-has-contract [hidden]{display:none!important}
+
+#lr-nav{position:fixed;inset:0 auto 0 0;width:var(--lr-nav-w,230px);z-index:52;
+  display:flex;flex-direction:column;background:rgba(9,9,11,.97);border-right:1px solid var(--line);
+  padding:12px;overflow:hidden}
+.lr-course-home{display:flex;align-items:center;min-height:34px;margin:0 5px 8px;padding:5px 7px;
+  color:var(--muted);text-decoration:none;font:600 .65rem var(--mono)}
+.lr-course-home:hover{color:var(--accent)}
+.lr-brand{display:grid;gap:5px;padding:4px 8px 12px;border-bottom:1px solid var(--line)}
+.lr-brand b{font:600 .78rem var(--mono);color:var(--accent);letter-spacing:.12em}
+.lr-brand span{font-size:.8rem;line-height:1.25;color:var(--muted)}
+.lr-modes{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:10px 6px}
+.lr-modes a{display:flex;justify-content:center;align-items:center;min-height:36px;border:1px solid var(--line);
+  border-radius:8px;text-decoration:none;color:var(--muted);font:600 .68rem var(--mono);text-transform:uppercase}
+.lr-modes a.on{border-color:var(--accent);background:var(--accent-dim);color:var(--accent)}
+.lr-modes a:focus-visible,#lr-nav button:focus-visible,#lr-controls button:focus-visible,
+#lr-mobile-toolbar a:focus-visible,#lr-mobile-toolbar button:focus-visible{
+  outline:2px solid var(--accent);outline-offset:2px}
+.lr-fallback-note{margin:0 8px 10px;color:var(--warn);font-size:.72rem;line-height:1.4}
+.lr-study-optional{min-height:38px;margin:0 6px 9px;border:1px solid rgba(192,132,252,.42);
+  border-radius:8px;background:rgba(192,132,252,.08);color:var(--kw);font:600 .65rem var(--mono);cursor:pointer}
+.lr-study-optional[aria-pressed="true"]{border-color:var(--kw);background:rgba(192,132,252,.16)}
+.lr-scene-links{display:grid;gap:4px;overflow:auto;padding:2px 4px 18px}
+.lr-scene-links button{display:grid;grid-template-columns:56px minmax(0,1fr);gap:6px;align-items:center;width:100%;
+  min-height:41px;padding:7px 9px;border:1px solid transparent;border-radius:9px;background:transparent;
+  color:var(--muted);text-align:left;cursor:pointer}
+.lr-scene-links button span{font:600 .55rem var(--mono);letter-spacing:.08em}
+.lr-scene-links button b{font:500 .65rem var(--mono);overflow-wrap:anywhere}
+.lr-scene-links button.on{border-color:var(--line);background:var(--panel);color:var(--text)}
+.lr-scene-links button.lr-route-live span{color:var(--accent)}
+.lr-scene-links button.lr-route-required span{color:var(--kw)}
+.lr-scene-links button.lr-route-optional span{color:var(--faint)}
+
+#lr-teacher-toggle{margin:0 6px 9px;min-height:36px;border:1px solid rgba(34,211,238,.38);
+  border-radius:8px;background:var(--accent-dim);color:var(--accent);font:600 .68rem var(--mono);cursor:pointer}
+#lr-teacher-toggle:focus-visible,.lr-teacher-close:focus-visible,.lr-full-guide:focus-visible{
+  outline:2px solid var(--accent);outline-offset:2px}
+#lr-teacher-drawer{position:fixed;z-index:90;top:0;right:0;width:min(420px,92vw);height:100dvh;
+  display:grid;grid-template-rows:auto minmax(0,1fr);transform:translateX(105%);transition:transform .2s ease;
+  border-left:1px solid var(--line);background:rgba(9,9,11,.98);box-shadow:-18px 0 48px rgba(0,0,0,.38)}
+#lr-teacher-drawer.open{transform:translateX(0)}
+.lr-teacher-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line)}
+.lr-teacher-head b{font:600 .78rem var(--mono);color:var(--accent);text-transform:uppercase;letter-spacing:.08em}
+.lr-teacher-close{width:40px;height:40px;border:1px solid var(--line);border-radius:8px;background:var(--panel);
+  color:var(--text);font-size:1.25rem;cursor:pointer}
+.lr-teacher-body{overflow:auto;padding:18px;color:var(--muted);font-size:.86rem;line-height:1.5}
+.lr-teacher-body h2{margin:.2em 0 .7em;color:var(--text);font:600 1rem var(--mono)}
+.lr-teacher-body h3{margin:1.15em 0 .4em;color:var(--text);font-size:.76rem;text-transform:uppercase;letter-spacing:.06em}
+.lr-teacher-body ul{margin:.4em 0;padding-left:1.2em}.lr-teacher-body code{color:var(--kw)}
+.lr-teacher-kicker{margin:0;color:var(--accent);font:600 .68rem var(--mono);text-transform:uppercase}
+.lr-teacher-stage{font-size:.78rem}.lr-full-guide{min-height:40px;margin-top:16px;padding:7px 12px;
+  border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--accent);font:600 .7rem var(--mono);cursor:pointer}
+
+.lr-scene-badge{display:flex;gap:8px;align-items:center;margin:0 0 10px;font:600 .58rem var(--mono);
+  letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+.lr-scene-badge span{padding:3px 7px;border:1px solid var(--line);border-radius:99px}
+.lr-scene-badge.lr-route-live span:first-child{border-color:rgba(34,211,238,.42);color:var(--accent)}
+.lr-scene-badge.lr-route-required span:first-child{border-color:rgba(192,132,252,.45);color:var(--kw)}
+.lr-scene-badge.lr-route-optional span:first-child{border-color:var(--line);color:var(--faint)}
+
+#lr-controls{position:fixed;left:var(--lr-nav-w,230px);right:0;bottom:0;height:var(--lr-controls-h,58px);z-index:55;
+  display:grid;grid-template-columns:minmax(120px,1fr) auto auto minmax(120px,1fr);align-items:center;
+  gap:14px;padding:7px 18px;background:rgba(9,9,11,.96);border-top:1px solid var(--line);
+  backdrop-filter:blur(8px)}
+#lr-controls button{min-height:40px;border:1px solid var(--line);border-radius:9px;background:var(--panel);
+  color:var(--text);font:600 .72rem var(--mono);cursor:pointer}
+#lr-controls button:hover:not(:disabled){border-color:var(--accent)}
+#lr-controls button:disabled{opacity:.3;cursor:default}
+#lr-controls .lr-next{text-align:right;padding-right:14px}
+#lr-controls .lr-prev{text-align:left;padding-left:14px}
+.lr-progress{display:flex;gap:7px;align-items:center;justify-content:center;white-space:nowrap;
+  font:.66rem var(--mono);color:var(--faint)}
+.lr-progress b{color:var(--muted);font-weight:500}
+.lr-progress .lr-route-progress{color:var(--accent)}
+#lr-controls .lr-route-scope{padding:0 12px;color:var(--accent);border-color:rgba(34,211,238,.38)}
+#lr-controls.lr-fixed-scope{grid-template-columns:minmax(120px,1fr) auto minmax(120px,1fr)}
+#lr-mobile-toolbar{display:none}
+
+/* Layout names are operational: they control scene width and native two-panel ratios. */
+.lr-scene{--lr-scene-max:1180px;--lr-left:42fr;--lr-right:58fr}
+.lr-scene[data-scene-layout="focus"]{--lr-scene-max:1120px}
+.lr-scene[data-scene-layout="split-42-58"]{--lr-scene-max:1900px;--lr-left:42fr;--lr-right:58fr}
+.lr-scene[data-scene-layout="split-45-55"]{--lr-scene-max:1900px;--lr-left:45fr;--lr-right:55fr}
+.lr-scene[data-scene-layout="split-50-50"]{--lr-scene-max:1760px;--lr-left:50fr;--lr-right:50fr}
+
+@media(min-width:901px){
+  body.lr-has-contract{--lr-nav-w:clamp(190px,16vw,238px);--lr-controls-h:58px}
+  body.mode-estudio.lr-has-contract{padding-left:var(--lr-nav-w)}
+  body.mode-estudio.lr-has-contract .wrap{max-width:min(1040px,calc(100vw - var(--lr-nav-w) - 48px))}
+  body.mode-estudio.lr-has-contract .wrap>p{max-width:78ch}
+  body.mode-estudio.lr-has-contract .scrolly{max-width:min(1280px,calc(100vw - var(--lr-nav-w) - 30px))}
+  body.mode-estudio.lr-has-contract .lr-scene{scroll-margin-top:18px}
+  body.mode-estudio.lr-has-contract #rail,body.mode-estudio.lr-has-contract #lr-controls{display:none}
+
+  html.lr-mode-aula,html.lr-mode-aula body{height:100%;overflow:hidden}
+  body.mode-aula{height:100dvh;overflow:hidden;padding-left:var(--lr-nav-w);padding-bottom:var(--lr-controls-h)}
+  body.mode-aula #rail,body.mode-aula>footer,body.mode-aula>#gd-toggle{display:none!important}
+  body.mode-aula>.lr-scene{display:none!important}
+  body.mode-aula>.lr-scene.lr-scene-active{display:grid!important;width:auto;max-width:none;
+    height:calc(100dvh - var(--lr-controls-h));margin:0;padding:clamp(12px,1.8vh,24px) clamp(16px,2.2vw,38px);
+    border:0;overflow:hidden;align-content:stretch;background:var(--bg)}
+  body.mode-aula>header.lr-scene-active{align-content:center}
+  body.mode-aula>.lr-scene-active>.wrap,body.mode-aula>header.lr-scene-active.wrap{
+    width:100%;max-width:var(--lr-scene-max);min-height:0;max-height:100%;overflow:auto;padding:0 8px;margin:auto}
+  body.mode-aula>.lr-scene-active:has(.scrolly){grid-template-rows:auto minmax(0,1fr);gap:8px}
+  body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child{overflow:visible;max-width:var(--lr-scene-max);margin:0 auto}
+  body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child h2{font-size:clamp(1.08rem,2.15vh,1.72rem);margin:.05em 0 .2em}
+  body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child .lede{font-size:clamp(.74rem,1.4vh,.95rem);margin:.2em 0}
+  body.mode-aula>.lr-scene-active>.scrolly{width:100%;max-width:var(--lr-scene-max);height:100%;min-height:0;margin:0 auto;
+    padding:0;grid-template-columns:minmax(260px,var(--lr-left)) minmax(0,var(--lr-right));gap:clamp(14px,1.8vw,32px)}
+  body.mode-aula>.lr-scene-active>.scrolly~.wrap{display:none}
+  body.mode-aula .steps{min-width:0;min-height:0;height:100%;overflow:hidden}
+  body.mode-aula .steps .step{display:none;min-height:0;height:100%;align-items:center;overflow:hidden}
+  body.mode-aula .steps .step.lr-stage-active{display:flex}
+  body.mode-aula .steps .step-inner{width:100%;max-height:100%;padding:clamp(12px,1.7vh,22px);
+    opacity:1;border-color:#3a3a44;overflow:auto}
+  body.mode-aula .steps .step-inner h3{font-size:clamp(.86rem,1.6vh,1.04rem)}
+  body.mode-aula .steps .step-inner p{font-size:clamp(.72rem,1.35vh,.93rem);line-height:1.55}
+  body.mode-aula .figwrap{position:relative;height:100%;min-width:0;min-height:0;top:auto;order:initial}
+  body.mode-aula .fig{position:relative;top:0;height:100%;min-height:0;box-shadow:none}
+  body.mode-aula .fig-stage{overflow:auto}
+  body.mode-aula .full-code{display:none!important}
+  body.mode-aula .hero{padding:0}
+  body.mode-aula .hero h1{font-size:clamp(2rem,4.7vw,4.8rem)}
+  body.mode-aula .hero .lede{font-size:clamp(.92rem,1.45vw,1.3rem);max-width:72ch}
+  body.mode-aula .hero .challenge{margin-top:clamp(14px,2.5vh,28px)}
+  body.mode-aula .hero .meta{margin-top:clamp(12px,2.2vh,24px)}
+  body.mode-aula .lr-scene-badge{margin-bottom:7px}
+  body.mode-aula .lr-scene-active[data-scene-layout^="split-"] :is(.code-state,.state-inspector,.dictgrid,.build-grid,.vmgrid,.ownline .cols){
+    grid-template-columns:minmax(0,var(--lr-left)) minmax(0,var(--lr-right))}
+}
+
+@media(max-width:1180px) and (min-width:901px){
+  #lr-controls{grid-template-columns:105px minmax(0,1fr) auto 105px;gap:7px;padding-inline:9px}
+  #lr-controls.lr-fixed-scope{grid-template-columns:105px minmax(0,1fr) 105px}
+  #lr-controls button span,.lr-progress>span{display:none}
+  .lr-progress{gap:5px;font-size:.61rem}
+}
+
+@media(max-width:900px){
+  #lr-nav,#lr-controls,.lr-scene-badge{display:none!important}
+  body.lr-has-contract{padding-left:0;max-width:100%;overflow-x:hidden}
+  #lr-mobile-toolbar{position:sticky;top:0;z-index:58;display:flex;align-items:center;gap:8px;
+    min-height:52px;padding:6px max(10px,env(safe-area-inset-left));border-bottom:1px solid var(--line);
+    background:rgba(9,9,11,.96);backdrop-filter:blur(8px);font:600 .65rem var(--mono)}
+  #lr-mobile-toolbar>a{color:var(--accent);text-decoration:none;white-space:nowrap}
+  #lr-mobile-toolbar>span{min-width:0;flex:1;color:var(--muted);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #lr-mobile-toolbar button{min-height:44px;margin:0;padding:5px 9px;border:1px solid var(--line);border-radius:8px;
+    background:var(--panel);color:var(--kw);font:600 .59rem var(--mono)}
+  #lr-mobile-toolbar .lr-mobile-teacher{color:var(--accent)}
+  body.lr-has-contract .lr-scene{scroll-margin-top:58px}
+  #lr-teacher-drawer{width:min(420px,100vw)}
+}
+
+@media(max-width:520px){
+  #lr-mobile-toolbar>span{display:none}
+  #lr-mobile-toolbar .lr-study-optional{margin-left:auto}
+}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto!important}
+  #lr-teacher-drawer,.lr-scene *{transition:none!important;animation-duration:.001ms!important;animation-iteration-count:1!important}
+}
+@media print{
+  #lr-nav,#lr-controls,#lr-mobile-toolbar,.lr-scene-badge,#lr-teacher-drawer{display:none!important}
+  body.lr-has-contract{padding:0!important}
+}
 </style>
 </head>
 <body data-lesson="04">
@@ -601,9 +772,9 @@
 <nav id="rail" aria-label="Progreso">
   <a href="#s0" class="on"><span class="dot"></span><span class="lab">El reto</span></a>
   <a href="#s1"><span class="dot"></span><span class="lab">dict → clase</span></a>
-  <a href="#s2"><span class="dot"></span><span class="lab">Construye Order</span></a>
+  <a href="#s2"><span class="dot"></span><span class="lab">Construye OrderMini</span></a>
   <a href="#s3"><span class="dot"></span><span class="lab">El taller</span></a>
-  <a href="#s4"><span class="dot"></span><span class="lab">Fill y el dinero</span></a>
+  <a href="#s4"><span class="dot"></span><span class="lab">FillMini y el dinero</span></a>
   <a href="#s5"><span class="dot"></span><span class="lab">Quiz</span></a>
   <a href="#s6"><span class="dot"></span><span class="lab">El puente</span></a>
 </nav>
@@ -626,7 +797,8 @@
     <p>¿Y si la orden <strong>supiera calcular su propio nocional</strong>?
     <code>order.notional()</code> — el dato y su comportamiento, en la misma pieza.</p>
     <p>Eso es una <strong>clase</strong>. Hoy nacen los dos primeros objetos del proyecto:
-    <code>Order</code> y <code>Fill</code> — la intención y el hecho consumado.</p>
+    <code>OrderMini</code> y <code>FillMini</code> — nombres didácticos que no se confunden
+    con las firmas públicas estables del paquete.</p>
   </div>
 
   <div class="meta">
@@ -643,7 +815,7 @@
     <div class="eyebrow">§1 · <b>La idea central</b></div>
     <h2>La metamorfosis: de dict a clase</h2>
     <p class="lede">Sigue bajando: el panel transforma el dict de la portada en un objeto
-    <code>Order</code> completo, pieza a pieza.</p>
+    <code>OrderMini</code> completo, pieza a pieza.</p>
   </div>
 
   <div class="scrolly" data-scrolly>
@@ -655,7 +827,7 @@
         <strong>Nadie es responsable de nada.</strong></p>
       </div></div>
       <div class="step" data-stage="1" data-name="class + __init__"><div class="step-inner">
-        <h3><span class="n">1/5</span><code>class Order</code> y su <code>__init__</code></h3>
+        <h3><span class="n">1/5</span><code>class OrderMini</code> y su <code>__init__</code></h3>
         <p>La clase es el <strong>molde</strong>. <code>__init__</code> es lo que ocurre al
         fabricar cada pieza: recibe los campos y los guarda. ¿Te suena? Es tu
         <code>make_order</code> de L2, ascendida.</p>
@@ -674,20 +846,20 @@
       </div></div>
       <div class="step" data-stage="4" data-name="__repr__"><div class="step-inner">
         <h3><span class="n">4/5</span><code>__repr__</code>: que sepa presentarse</h3>
-        <p>Sin él, <code>print(order)</code> escupe <code>&lt;Order object at 0x7f…&gt;</code>.
+        <p>Sin él, <code>print(order)</code> escupe <code>&lt;OrderMini object at 0x7f…&gt;</code>.
         Con él, el objeto se describe como tú decidas. Cinco minutos que te ahorran horas
         de debugging.</p>
       </div></div>
-      <div class="step" data-stage="5" data-name="Fill"><div class="step-inner">
-        <h3><span class="n">5/5</span><code>Fill</code>: el hecho consumado</h3>
-        <p>Una <code>Order</code> es una <em>intención</em>; un <code>Fill</code> es una
+      <div class="step" data-stage="5" data-name="FillMini"><div class="step-inner">
+        <h3><span class="n">5/5</span><code>FillMini</code>: el hecho consumado</h3>
+        <p>Una <code>OrderMini</code> es una <em>intención</em>; un <code>FillMini</code> es una
         ejecución <em>real</em>: movió dinero. Su método <code>cash_flow()</code> lleva el
         signo: comprar <strong>drena</strong> caja, vender la <strong>llena</strong>.</p>
       </div></div>
     </div>
 
     <div class="figwrap"><div class="fig">
-      <div class="fig-head"><span>dict → objeto Order</span><span class="stage-name">separados</span></div>
+      <div class="fig-head"><span>dict → objeto OrderMini</span><span class="stage-name">separados</span></div>
       <div class="fig-stage on" data-stage="0">
         <pre style="font-family:var(--mono);font-size:.76rem;line-height:1.9;margin:6px 0 0">
 <span style="color:var(--muted)">order = {'side': 'buy', …}</span>      <span class="c">← estado</span>
@@ -701,24 +873,25 @@
       </div>
       <div class="fig-stage" data-stage="1">
         <pre style="font-family:var(--mono);font-size:.78rem;line-height:1.95;margin:6px 0 0">
-<span class="k">class</span> <span style="color:var(--num)">Order</span>:
-    <span class="k">def</span> <span class="fn">__init__</span>(self, side, price, size):
+<span class="k">class</span> <span style="color:var(--num)">OrderMini</span>:
+    <span class="k">def</span> <span class="fn">__init__</span>(self, symbol, side, price, size):
+        self.symbol = symbol
         self.side  = side
         self.price = price
         self.size  = size
 
-order = Order(<span class="s">'buy'</span>, <span class="num">99950</span>, <span class="num">0.5</span>)</pre>
+order = OrderMini(<span class="s">'BTCUSDT'</span>, <span class="s">'buy'</span>, <span class="num">99950</span>, <span class="num">0.5</span>)</pre>
         <div><span class="concept-chip">estado del objeto</span></div>
         <p style="color:var(--faint);font-size:.8rem;margin-top:14px">el molde + la
         fabricación de una pieza</p>
       </div>
       <div class="fig-stage" data-stage="2">
         <div class="dictgrid" style="grid-template-columns:1fr 1fr;gap:12px;margin:6px 0 0">
-          <div class="ordercard"><div class="oc-head">o1 = Order('buy', 99950, 0.5)</div>
+          <div class="ordercard"><div class="oc-head">o1 = OrderMini('BTCUSDT', 'buy', 99950, 0.5)</div>
             <div class="oc-row"><span class="kk">self.side</span><span class="vv" style="color:var(--bid)">buy</span></div>
             <div class="oc-row"><span class="kk">self.price</span><span class="vv">99950</span></div>
           </div>
-          <div class="ordercard"><div class="oc-head">o2 = Order('sell', 100010, 0.2)</div>
+          <div class="ordercard"><div class="oc-head">o2 = OrderMini('BTCUSDT', 'sell', 100010, 0.2)</div>
             <div class="oc-row"><span class="kk">self.side</span><span class="vv" style="color:var(--ask)">sell</span></div>
             <div class="oc-row"><span class="kk">self.price</span><span class="vv">100010</span></div>
           </div>
@@ -728,7 +901,7 @@ order = Order(<span class="s">'buy'</span>, <span class="num">99950</span>, <spa
       </div>
       <div class="fig-stage" data-stage="3">
         <pre style="font-family:var(--mono);font-size:.78rem;line-height:1.95;margin:6px 0 0">
-<span class="k">class</span> <span style="color:var(--num)">Order</span>:
+<span class="k">class</span> <span style="color:var(--num)">OrderMini</span>:
     …
     <span class="k">def</span> <span class="fn">notional</span>(self):
         <span class="k">return</span> self.price * self.size
@@ -740,17 +913,17 @@ order.notional()   <span class="c"># 49975.0</span></pre>
       <div class="fig-stage" data-stage="4">
         <pre style="font-family:var(--mono);font-size:.76rem;line-height:1.95;margin:6px 0 0">
 <span class="c"># sin __repr__:</span>
-<span style="color:var(--ask)">&lt;__main__.Order object at 0x7f3a…&gt;</span>
+<span style="color:var(--ask)">&lt;__main__.OrderMini object at 0x7f3a…&gt;</span>
 
 <span class="k">def</span> <span class="fn">__repr__</span>(self):
-    <span class="k">return</span> f<span class="s">"Order({self.side} {self.size} @ {self.price})"</span>
+    <span class="k">return</span> f<span class="s">"OrderMini({self.side} {self.size} @ {self.price})"</span>
 
 <span class="c"># con __repr__:</span>
-<span style="color:var(--bid)">Order(buy 0.5 @ 99950)</span></pre>
+<span style="color:var(--bid)">OrderMini(buy 0.5 @ 99950)</span></pre>
       </div>
       <div class="fig-stage" data-stage="5">
         <pre style="font-family:var(--mono);font-size:.78rem;line-height:1.95;margin:6px 0 0">
-<span class="k">class</span> <span style="color:var(--num)">Fill</span>:
+<span class="k">class</span> <span style="color:var(--num)">FillMini</span>:
     <span class="k">def</span> <span class="fn">cash_flow</span>(self):
         <span class="k">if</span> self.side == <span class="s">'buy'</span>:
             <span class="k">return</span> -self.price * self.size
@@ -772,7 +945,7 @@ order.notional()   <span class="c"># 49975.0</span></pre>
 
     <div class="code">
       <div class="code-head"><span>orders.py — la primera clase del paquete</span><span>python</span></div>
-      <pre><span class="ln"><span class="k">class</span> Order:</span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, side, price, size):</span><span class="ln">        self.side = side</span><span class="ln">        self.price = price</span><span class="ln">        self.size = size</span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">notional</span>(self):</span><span class="ln">        <span class="k">return</span> self.price * self.size</span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">__repr__</span>(self):</span><span class="ln">        <span class="k">return</span> f<span class="s">"Order({self.side} {self.size} @ {self.price})"</span></span><span class="ln"></span><span class="ln">order = Order(<span class="s">'buy'</span>, <span class="num">99950</span>, <span class="num">0.5</span>)</span><span class="ln"><span class="fn">print</span>(order.notional())</span></pre>
+      <pre><span class="ln"><span class="k">class</span> OrderMini:</span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, symbol, side, price, size):</span><span class="ln">        self.symbol = symbol</span><span class="ln">        self.side = side</span><span class="ln">        self.price = price</span><span class="ln">        self.size = size</span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">notional</span>(self):</span><span class="ln">        <span class="k">return</span> self.price * self.size</span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">__repr__</span>(self):</span><span class="ln">        <span class="k">return</span> f<span class="s">"OrderMini({self.side} {self.size} {self.symbol} @ {self.price})"</span></span><span class="ln"></span><span class="ln">order = OrderMini(<span class="s">'BTCUSDT'</span>, <span class="s">'buy'</span>, <span class="num">99950</span>, <span class="num">0.5</span>)</span><span class="ln"><span class="fn">print</span>(order.notional())</span></pre>
       <div class="predict predictgate" style="margin:0;border-radius:0;border-left:none;border-right:none;border-bottom:none">
         <div class="tag">Predice antes de ejecutar</div>
         <p style="margin:.2em 0 .8em;font-size:.94rem">¿Qué imprime exactamente la última
@@ -787,7 +960,7 @@ order.notional()   <span class="c"># 49975.0</span></pre>
     </div>
 
     <div class="note"><span class="tag">Traduce mentalmente</span>
-    <code>order.notional()</code> es azúcar para <code>Order.notional(order)</code>: Python
+    <code>order.notional()</code> es azúcar para <code>OrderMini.notional(order)</code>: Python
     mete el objeto como <code>self</code> por ti. No hay magia — hay un convenio.</div>
   </div>
 </section>
@@ -801,7 +974,7 @@ order.notional()   <span class="c"># 49975.0</span></pre>
     los métodos — y qué pasa con el dinero si esa orden se ejecutara ahora mismo.</p>
 
     <div class="simcard">
-      <h4>simulador · Order(side, price, size) → métodos</h4>
+      <h4>simulador · OrderMini(symbol, side, price, size) → métodos</h4>
       <div class="simrow">
         <div class="toggle" role="group" aria-label="side">
           <button class="on" id="ow-buy">buy</button>
@@ -813,7 +986,7 @@ order.notional()   <span class="c"># 49975.0</span></pre>
       <div class="statgrid">
         <div><span>repr(order)</span><b id="ow-repr" style="font-size:.85rem"></b></div>
         <div><span>order.notional()</span><b id="ow-not"></b></div>
-        <div><span>Fill equivalente · cash_flow()</span><b id="ow-cf"></b></div>
+        <div><span>FillMini equivalente · cash_flow()</span><b id="ow-cf"></b></div>
       </div>
       <div class="looplog" id="ow-log"></div>
     </div>
@@ -835,7 +1008,7 @@ order.notional()   <span class="c"># 49975.0</span></pre>
 
     <div class="code">
       <div class="code-head"><span>trades.py</span><span>python</span></div>
-      <pre><span class="ln"><span class="k">class</span> Fill:</span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, side, price, size):</span><span class="ln">        self.side = side</span><span class="ln">        self.price = price</span><span class="ln">        self.size = size</span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">cash_flow</span>(self):</span><span class="ln">        <span class="k">if</span> self.side == <span class="s">'buy'</span>:</span><span class="ln">            <span class="k">return</span> -self.price * self.size</span><span class="ln">        <span class="k">return</span> self.price * self.size</span><span class="ln"></span><span class="ln">fills = [Fill(<span class="s">'buy'</span>, <span class="num">99950</span>, <span class="num">0.5</span>), Fill(<span class="s">'sell'</span>, <span class="num">100050</span>, <span class="num">0.5</span>)]</span><span class="ln"><span class="fn">print</span>(<span class="fn">sum</span>(f.cash_flow() <span class="k">for</span> f <span class="k">in</span> fills))</span></pre>
+      <pre><span class="ln"><span class="k">class</span> FillMini:</span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, symbol, side, price, size):</span><span class="ln">        self.symbol = symbol</span><span class="ln">        self.side = side</span><span class="ln">        self.price = price</span><span class="ln">        self.size = size</span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">cash_flow</span>(self):</span><span class="ln">        <span class="k">if</span> self.side == <span class="s">'buy'</span>:</span><span class="ln">            <span class="k">return</span> -self.price * self.size</span><span class="ln">        <span class="k">return</span> self.price * self.size</span><span class="ln"></span><span class="ln">fills = [FillMini(<span class="s">'BTCUSDT'</span>, <span class="s">'buy'</span>, <span class="num">99950</span>, <span class="num">0.5</span>), FillMini(<span class="s">'BTCUSDT'</span>, <span class="s">'sell'</span>, <span class="num">100050</span>, <span class="num">0.5</span>)]</span><span class="ln"><span class="fn">print</span>(<span class="fn">sum</span>(f.cash_flow() <span class="k">for</span> f <span class="k">in</span> fills))</span></pre>
       <div class="out"><div class="btnrow" style="margin:0"><button class="btn runbtn" data-target="out-cf">▶ Ejecutar</button></div>
         <div id="out-cf" class="hidden" style="margin-top:10px"><div><span class="prompt">&gt;&gt;&gt; </span><span class="val">50.0</span><span style="color:var(--faint)">   # compraste a 99950, vendiste a 100050: +50 de PnL realizado</span></div></div>
       </div>
@@ -863,12 +1036,12 @@ order.notional()   <span class="c"># 49975.0</span></pre>
       <div class="q" data-ok="0">
         <div class="qt"><code>__init__</code> se ejecuta…</div>
         <div class="opts">
-          <button class="opt">A · Al crear cada objeto: Order(…)</button>
+          <button class="opt">A · Al crear cada objeto: OrderMini(…)</button>
           <button class="opt">B · Al definir la clase</button>
           <button class="opt">C · Al llamar a cualquier método</button>
         </div>
         <div class="why">Es el momento de fabricación: una vez por objeto, cuando escribes
-        <code>Order('buy', 99950, 0.5)</code>.</div>
+        <code>OrderMini('BTCUSDT', 'buy', 99950, 0.5)</code>.</div>
       </div>
       <div class="q" data-ok="1">
         <div class="qt">¿Atributo o método? <code>order.price</code> y <code>order.notional()</code>…</div>
@@ -888,11 +1061,11 @@ order.notional()   <span class="c"># 49975.0</span></pre>
           <button class="opt">C · Es obligatorio en toda clase</button>
         </div>
         <div class="why">Es puro quality-of-life: cuando tengas 50 órdenes en un backtest,
-        leer <code>Order(buy 0.5 @ 99950)</code> en vez de <code>0x7f3a…</code> no tiene
+        leer <code>OrderMini(buy 0.5 @ 99950)</code> en vez de <code>0x7f3a…</code> no tiene
         precio.</div>
       </div>
       <div class="q" data-ok="2">
-        <div class="qt"><code>Fill('sell', 100000, 0.5).cash_flow()</code> devuelve…</div>
+        <div class="qt"><code>FillMini('BTCUSDT', 'sell', 100000, 0.5).cash_flow()</code> devuelve…</div>
         <div class="opts">
           <button class="opt">A · −50000.0 — ejecutar siempre cuesta dinero</button>
           <button class="opt">B · 0.5 — el tamaño ejecutado</button>
@@ -911,6 +1084,18 @@ order.notional()   <span class="c"># 49975.0</span></pre>
   <div class="wrap">
     <div class="eyebrow">§6 · <b>El puente</b></div>
     <h2>Dónde estás en el proyecto</h2>
+    <div class="note"><span class="tag">Migración explícita a la API estable</span>
+      La versión didáctica separa la idea de clase de los detalles del motor:
+      el paquete añade id, enums y tipos de orden. La tabla evita un cambio silencioso:
+      <table style="width:100%;margin-top:12px;border-collapse:collapse;font-size:.82rem">
+        <thead><tr><th style="text-align:left;padding:6px">Maqueta de L4</th><th style="text-align:left;padding:6px">API estable de <code>exchange</code></th></tr></thead>
+        <tbody>
+          <tr><td style="padding:6px"><code>OrderMini(symbol, side, price, size)</code></td><td style="padding:6px"><code>Order(symbol, side, size, price=...)</code></td></tr>
+          <tr><td style="padding:6px"><code>FillMini(symbol, side, price, size)</code></td><td style="padding:6px"><code>Fill(order_id, symbol, side, price, size)</code></td></tr>
+        </tbody>
+      </table>
+      Desde este punto, las firmas de <code>exchange.Order</code> y
+      <code>exchange.Fill</code> permanecen estables.</div>
     <div class="pkgmap">
       <div class="pk done">L1 · el dato<span>variables, dicts, decisiones</span></div>
       <div class="pk done">L2 · book funcional<span>funciones sobre el libro</span></div>
@@ -918,26 +1103,25 @@ order.notional()   <span class="c"># 49975.0</span></pre>
       <div class="pk today">L4 · Order y Fill<span>exchange/orders.py · trades.py</span></div>
       <div class="pk future">L5 · OrderBook + Tracker<span>exchange/book.py</span></div>
       <div class="pk future">L6 · familia Strategy<span>herencia</span></div>
-      <div class="pk future">L7-9 · el motor<span>matching, market</span></div>
-      <div class="pk future">L10-11 · el framework<span>Strategy + Backtest</span></div>
-      <div class="pk future">L12-14 · estrategias<span>VWAP, market making</span></div>
+      <div class="pk future">L7-10 · motor y framework<span>matching, Market, Strategy, Backtest</span></div>
+      <div class="pk future">L11-14 · estrategias<span>métricas, VWAP, market making</span></div>
     </div>
 
     <div class="bridge">
       <div class="tag">El puente a L5</div>
       <p style="margin:.2em 0"><strong>Ya sabes fabricar órdenes. ¿Y ahora qué haces con ellas?</strong></p>
-      <p>Tienes <code>Order</code>s sueltas por la memoria, igual que en L2 tenías variables
+      <p>Tienes objetos <code>Order</code> sueltos por la memoria, igual que en L2 tenías variables
       sueltas. Falta el objeto que las <strong>contiene</strong> (un libro hecho de niveles)
-      y el que <strong>lleva la cuenta</strong> cuando los Fills empiezan a caer: caja,
+      y el que <strong>lleva la cuenta</strong> cuando los <code>Fill</code> empiezan a caer: caja,
       posición, equity.</p>
       <p style="margin-bottom:0">Composición y encapsulación: <code>OrderBook</code> y
-      <code>PositionTracker</code>. Próxima clase.</p>
+      <code>PositionTracker</code>. Esa limitación abre L5.</p>
     </div>
 
     <div class="cta">
       <div class="box"><span class="tag">Ahora te toca construir</span>
-      Abre <code>04_build_exercises.ipynb</code> y escribe <code>Order</code> y
-      <code>Fill</code> con sus validadores.</div>
+      Abre <code>04_build_exercises.ipynb</code> y escribe <code>OrderMini</code> y
+      <code>FillMini</code>; después compara sus firmas con las del paquete.</div>
       <div class="box"><span class="tag">Y después, al gimnasio</span>
       <code>04_auxiliary.ipynb</code> — drills de clases: moldes, self, __repr__ y el
       signo del dinero.</div>
@@ -984,7 +1168,7 @@ order.notional()   <span class="c"># 49975.0</span></pre>
 
 ## §6 · Puente + mapa (2 min)
 - Mapa: L1-L3 ✓, L4 iluminada — "primeras piezas DENTRO del paquete exchange/".
-- **Puente:** "sabéis fabricar órdenes… y las tenéis sueltas por la memoria, como en L2 teníais variables sueltas. Falta el objeto que las contiene y el que lleva la cuenta cuando los fills empiezan a caer. Composición: próxima clase."
+- **Puente:** "sabéis fabricar órdenes… y las tenéis sueltas por la memoria, como en L2 teníais variables sueltas. En L5 llega el objeto que las contiene y el que lleva la cuenta cuando los fills empiezan a caer: composición."
 - Notebook + gimnasio (16 drills: el molde, Order/Fill, validación en __init__).
 
 ## Checklist
@@ -995,6 +1179,7 @@ order.notional()   <span class="c"># 49975.0</span></pre>
 - [ ] __repr__ útil.
 - [ ] cash_flow con signo: buy −, sell +.
 </script>
+<script type="application/json" id="pedagogy-contract">{"lesson":4,"status":"contract-strict","title":"OOP I — Order y Fill","delivery":"lesson","source_path":"framework/_build/docs/04_body.html","requires":{"concepts":["python.variables","python.functions","python.modules","python.fstring","python.generator_expression"],"apis":[],"notation":[]},"requirement_routes":{"concepts":{"python.variables":"LIVE","python.functions":"LIVE","python.modules":"LIVE","python.fstring":"LIVE","python.generator_expression":"LIVE"},"apis":{},"notation":{}},"introduces":{"concepts":[{"id":"oop.classes","importance":"major","route":"LIVE"},{"id":"oop.self","importance":"major","route":"LIVE"},{"id":"oop.methods","importance":"major","route":"LIVE"},{"id":"python.type_hints","importance":"supporting","route":"REQUIRED"},{"id":"exchange.order","importance":"major","route":"LIVE"},{"id":"exchange.fill","importance":"major","route":"LIVE"}],"apis":["side.type","order_type.type","order.constructor","fill.constructor","order.notional","fill.cash_flow"],"notation":["notation.cash_flow"]},"introduction_routes":{"apis":{"side.type":"LIVE","order_type.type":"LIVE","order.constructor":"LIVE","fill.constructor":"LIVE","order.notional":"LIVE","fill.cash_flow":"LIVE"},"notation":{"notation.cash_flow":"LIVE"}},"recalls":[{"concept":"python.functions","introduced_in":2,"mapping":{"before":"Una función recibe un diccionario de orden.","now":"Un método lee el estado que ya contiene self."}}],"api_surface":[{"id":"side.type","name":"Side","kind":"type","signature":"Side: type","returns":"Side","responsibility":"represent the stable BUY/SELL side vocabulary","qualified_name":"exchange.orders.Side"},{"id":"order_type.type","name":"OrderType","kind":"type","signature":"OrderType: type","returns":"OrderType","responsibility":"represent the supported order-policy vocabulary","qualified_name":"exchange.orders.OrderType"},{"id":"order.constructor","name":"Order","kind":"constructor","signature":"Order(symbol: str, side: Side, size: float, price: float | None = None, order_type: OrderType = OrderType.LIMIT, id: int = None) -> Order","returns":"Order","responsibility":"construct the canonical order intent","qualified_name":"exchange.orders.Order"},{"id":"fill.constructor","name":"Fill","kind":"constructor","signature":"Fill(order_id: int, symbol: str, side: Side, price: float, size: float, timestamp: int | None = None) -> Fill","returns":"Fill","responsibility":"construct one canonical execution result","qualified_name":"exchange.trades.Fill"},{"id":"order.notional","name":"notional","kind":"method","signature":"notional() -> float","returns":"float","responsibility":"compute order price times size","qualified_name":"exchange.orders.Order.notional"},{"id":"fill.cash_flow","name":"cash_flow","kind":"method","signature":"cash_flow() -> float","returns":"float","responsibility":"compute signed fill cash flow","qualified_name":"exchange.trades.Fill.cash_flow"}],"routes":{"LIVE":["l04-challenge","l04-class-build","l04-order-workshop","l04-bridge"],"REQUIRED":["l04-function-recall","l04-fill-cash-flow","l04-quiz"],"OPTIONAL":[]},"objectives":[{"id":"l04-build-domain-objects","route":"LIVE","concepts":["oop.classes","oop.self","exchange.order","exchange.fill"],"apis":["order.notional","fill.cash_flow"],"notation":[]},{"id":"l04-read-canonical-constructors","route":"REQUIRED","concepts":["python.type_hints"],"apis":["side.type","order_type.type","order.constructor","fill.constructor"],"notation":[]},{"id":"l04-interpret-cash-flow","route":"LIVE","concepts":["exchange.fill"],"apis":["fill.cash_flow"],"notation":["notation.cash_flow"]}],"load":{"live_presentation_minutes":20,"guided_minutes":20,"required_autonomous_minutes":36,"optional_minutes":20,"overflow_policy":"explicit-route-plan"},"scenes":[{"id":"l04-challenge","dom_id":"s0","type":"hero-challenge","route":"LIVE","layout":"focus","concepts":["exchange.order"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l04-class-build","dom_id":"s1","type":"code-state","route":"LIVE","layout":"split-42-58","concepts":["oop.classes","oop.self","oop.methods"],"duration_minutes":10,"stages":[{"id":"dict-to-class","route":"LIVE","dom_stage":0},{"id":"init","route":"LIVE","dom_stage":1},{"id":"self","route":"LIVE","dom_stage":2},{"id":"method","route":"LIVE","dom_stage":3},{"id":"repr","route":"LIVE","dom_stage":4},{"id":"fill","route":"REQUIRED","dom_stage":5}]},{"id":"l04-function-recall","dom_id":"s2","type":"recall","route":"REQUIRED","layout":"focus","concepts":["python.functions","oop.methods"],"duration_minutes":4,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l04-order-workshop","dom_id":"s3","type":"concept-simulator","route":"LIVE","layout":"split-45-55","concepts":["exchange.order","oop.methods"],"duration_minutes":6,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l04-fill-cash-flow","dom_id":"s4","type":"guided-exercise","route":"REQUIRED","layout":"split-50-50","concepts":["exchange.fill"],"duration_minutes":8,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l04-quiz","dom_id":"s5","type":"diagnostic-quiz","route":"REQUIRED","layout":"focus","concepts":["oop.classes","exchange.order","exchange.fill"],"duration_minutes":8,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l04-bridge","dom_id":"s6","type":"bridge","route":"LIVE","layout":"focus","concepts":["exchange.order","exchange.fill"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]}],"bridge":{"target_lesson":5,"known":{"concepts":["oop.classes","exchange.order","exchange.fill"],"apis":["order.constructor","fill.constructor","fill.cash_flow"],"notation":["notation.cash_flow"]},"limitation":"Los objetos de dominio individuales no poseen todavía un estado coherente de libro o cartera.","need":"La composición crea fronteras controladas para el estado de mercado y la contabilidad."},"api_transitions":[{"from_api":"pedagogical.OrderMini.__init__","from_signature":"OrderMini(symbol, side, price, size)","to_api":"order.constructor","to_signature":"Order(symbol: str, side: Side, size: float, price: float | None = None, order_type: OrderType = OrderType.LIMIT, id: int = None) -> Order","kind":"pedagogical-to-canonical","reason":"La versión mínima hace visible self; la versión canónica estabiliza Side, OrderType, defaults e id antes de reutilizarse."},{"from_api":"pedagogical.FillMini.__init__","from_signature":"FillMini(symbol, side, price, size)","to_api":"fill.constructor","to_signature":"Fill(order_id: int, symbol: str, side: Side, price: float, size: float, timestamp: int | None = None) -> Fill","kind":"pedagogical-to-canonical","reason":"La versión canónica conserva la idea de ejecución e incorpora timestamp y tipos estables."}],"package_checks":[{"path":"04-oop-i-order-trade/exercises/exchange/orders.py","class":"Order","members":{"__init__":{"api":"order.constructor","kind":"constructor","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"side","kind":"positional_or_keyword","annotation":"Side"},{"name":"size","kind":"positional_or_keyword","annotation":"float"},{"name":"price","kind":"positional_or_keyword","annotation":"float | None","default":"None"},{"name":"order_type","kind":"positional_or_keyword","annotation":"OrderType","default":"OrderType.LIMIT"},{"name":"id","kind":"positional_or_keyword","annotation":"int","default":"None"}],"returns":"Order"},"notional":{"api":"order.notional","kind":"method","parameters":[],"returns":"float"}}},{"path":"04-oop-i-order-trade/exercises/exchange/trades.py","class":"Fill","members":{"__init__":{"api":"fill.constructor","kind":"constructor","parameters":[{"name":"order_id","kind":"positional_or_keyword","annotation":"int"},{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"side","kind":"positional_or_keyword","annotation":"Side"},{"name":"price","kind":"positional_or_keyword","annotation":"float"},{"name":"size","kind":"positional_or_keyword","annotation":"float"},{"name":"timestamp","kind":"positional_or_keyword","annotation":"int | None","default":"None"}],"returns":"Fill"},"cash_flow":{"api":"fill.cash_flow","kind":"method","parameters":[],"returns":"float"}}}],"symbol_checks":[{"path":"04-oop-i-order-trade/exercises/exchange/orders.py","symbol":"Side","api":"side.type","kind":"type","returns":"Side"},{"path":"04-oop-i-order-trade/exercises/exchange/orders.py","symbol":"OrderType","api":"order_type.type","kind":"type","returns":"OrderType"}],"used_later":{"concepts":["exchange.fill","exchange.order","oop.classes","python.type_hints"],"apis":["fill.cash_flow","fill.constructor","order.constructor","order_type.type","side.type"],"notation":["notation.cash_flow"]}}</script>
 <script>
 
 (function(){
@@ -1193,7 +1378,7 @@ $$('.scrolly[data-scrolly]').forEach(sc=>{
 });
 })();
 
-/* L4 — taller de órdenes: Order(side, price, size) en vivo */
+/* L4 — taller de órdenes: OrderMini(symbol, side, price, size) en vivo */
 (function(){
 "use strict";
 const $=s=>document.querySelector(s);
@@ -1204,18 +1389,545 @@ function update(){
   const size=parseFloat($('#ow-size').value)||0;
   const notional=price*size;
   const cf=side==='buy'?-notional:notional;
-  $('#ow-repr').textContent=`Order(${side} ${size} @ ${price})`;
+  $('#ow-repr').textContent=`OrderMini(${side} ${size} BTCUSDT @ ${price})`;
   $('#ow-not').textContent=fmtF(notional);
   const cfEl=$('#ow-cf');
   cfEl.textContent=(cf>0?'+':'')+fmtF(cf);
   cfEl.className=cf>0?'pos':cf<0?'neg':'';
-  $('#ow-log').textContent=`» order = Order('${side}', ${price}, ${size})  ·  order.notional() = ${fmtF(notional)}  ·  Fill('${side}', ${price}, ${size}).cash_flow() = ${fmtF(cf)}`;
+  $('#ow-log').textContent=`» order = OrderMini('BTCUSDT', '${side}', ${price}, ${size})  ·  order.notional() = ${fmtF(notional)}  ·  FillMini('BTCUSDT', '${side}', ${price}, ${size}).cash_flow() = ${fmtF(cf)}`;
 }
 $('#ow-buy').addEventListener('click',()=>{side='buy';$('#ow-buy').classList.add('on');$('#ow-sell').classList.remove('on');update();});
 $('#ow-sell').addEventListener('click',()=>{side='sell';$('#ow-sell').classList.add('on');$('#ow-buy').classList.remove('on');update();});
 $('#ow-price').addEventListener('input',update);
 $('#ow-size').addEventListener('input',update);
 update();
+})();
+
+(function(){
+'use strict';
+
+const RUNTIME_VERSION=2;
+const ROUTES=['LIVE','REQUIRED','OPTIONAL'];
+const contractNode=document.getElementById('pedagogy-contract');
+if(!contractNode)return;
+
+let contract;
+try{contract=JSON.parse(contractNode.textContent);}catch(error){
+  console.error('Invalid pedagogy contract',error);return;
+}
+if(!Array.isArray(contract.scenes)||!contract.scenes.length)return;
+
+const body=document.body;
+const params=new URLSearchParams(location.search);
+const mobileQuery=matchMedia('(max-width: 900px)');
+const requestedMode=params.get('mode')==='aula'?'aula':'estudio';
+const mode=requestedMode==='aula'&&!mobileQuery.matches?'aula':'estudio';
+const isProfessor=['1','true'].includes((params.get('profe')||'').toLowerCase());
+const routeScopes=mode==='aula'
+  ?(isProfessor?['LIVE','LIVE+REQUIRED','ALL']:['LIVE'])
+  :['LIVE+REQUIRED','ALL'];
+let routeScope=mode==='estudio'?'LIVE+REQUIRED':'LIVE';
+if(mode==='estudio'&&params.get('optional')==='1')routeScope='ALL';
+let currentScene=0,currentStage=0;
+
+const esc=value=>String(value??'').replace(/[&<>"']/g,ch=>({
+  '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+})[ch]);
+const slug=value=>String(value||'focus').toLowerCase().replace(/[^a-z0-9-]+/g,'-');
+const route=value=>ROUTES.includes(String(value||'').toUpperCase())
+  ?String(value).toUpperCase():'LIVE';
+const routeClass=value=>`lr-route-${route(value).toLowerCase()}`;
+const scopeRoutes=()=>routeScope==='ALL'?ROUTES:
+  routeScope==='LIVE+REQUIRED'?['LIVE','REQUIRED']:['LIVE'];
+const modeUrl=next=>{
+  const q=new URLSearchParams(location.search);q.set('mode',next);
+  return `${location.pathname}?${q.toString()}${location.hash}`;
+};
+const stateKey=(scene,stage)=>`${scene.id}::${stage.id}`;
+const reducedMotion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function elementForStage(nodes,value,index,total){
+  if(value!==undefined&&value!==null){
+    const wanted=String(value);
+    return nodes.find(node=>node.dataset.stage===wanted)||null;
+  }
+  return total===nodes.length?nodes[index]||null:(total===1&&nodes.length===1?nodes[0]:null);
+}
+
+const missingScenes=[];
+const models=contract.scenes.map(rawScene=>{
+  if(!rawScene||!rawScene.id||!rawScene.dom_id)return null;
+  const element=document.getElementById(rawScene.dom_id);
+  if(!element){missingScenes.push(rawScene.id);return null;}
+  const sceneRoute=route(rawScene.route);
+  const layout=slug(rawScene.layout);
+  element.classList.add('lr-scene',routeClass(sceneRoute),`lr-layout-${layout}`);
+  element.dataset.sceneId=rawScene.id;
+  element.dataset.sceneType=rawScene.type||'scene';
+  element.dataset.sceneLayout=layout;
+  element.dataset.layoutApplied='true';
+  element.dataset.route=sceneRoute;
+  const allSteps=[...element.querySelectorAll('.scrolly .step')];
+  const allFigures=[...element.querySelectorAll('.fig-stage')];
+  const declared=Array.isArray(rawScene.stages)&&rawScene.stages.length
+    ?rawScene.stages:[{id:'stage',route:sceneRoute}];
+  const stages=declared.map((rawStage,index)=>{
+    const stage={...rawStage};
+    stage.id=stage.id||`stage-${index+1}`;
+    stage.route=route(stage.route||sceneRoute);
+    stage.step=elementForStage(allSteps,stage.dom_stage,index,declared.length);
+    stage.figure=elementForStage(allFigures,stage.dom_stage,index,declared.length);
+    [stage.step,stage.figure].filter(Boolean).forEach(node=>{
+      node.dataset.route=stage.route;node.classList.add(routeClass(stage.route));
+    });
+    return stage;
+  });
+  const firstWrap=element.matches('.wrap')?element:element.querySelector(':scope > .wrap');
+  if(firstWrap){
+    const badge=document.createElement('div');
+    badge.className=`lr-scene-badge ${routeClass(sceneRoute)}`;
+    const minutes=Number.isFinite(Number(rawScene.duration_minutes))
+      ?`<span>${esc(rawScene.duration_minutes)} min</span>`:'';
+    badge.innerHTML=`<span>${esc(sceneRoute)}</span><span>${esc(rawScene.type||'scene')}</span>${minutes}`;
+    firstWrap.insertBefore(badge,firstWrap.firstChild);
+  }
+  return {...rawScene,route:sceneRoute,layout,element,stages,allSteps,allFigures};
+}).filter(Boolean);
+
+if(missingScenes.length){
+  body.dataset.runtimeContractError='missing-scene-dom';
+  console.error(`Pedagogy scenes without DOM nodes: ${missingScenes.join(', ')}`);
+}
+if(!models.length)return;
+
+body.classList.add('lr-has-contract',`mode-${mode}`);
+body.dataset.learningMode=mode;
+body.dataset.requestedMode=requestedMode;
+body.dataset.professorMode=String(isProfessor);
+body.dataset.runtimeVersion=String(RUNTIME_VERSION);
+document.documentElement.classList.toggle('lr-mode-aula',mode==='aula');
+if(requestedMode!==mode)body.classList.add('lr-mobile-fallback');
+
+const inventory=models.flatMap(scene=>scene.stages.map(stage=>({
+  key:stateKey(scene,stage),scene,stage,route:stage.route,
+})));
+const inventoryKeys=new Set(inventory.map(item=>item.key));
+const optionalCount=inventory.filter(item=>item.route==='OPTIONAL').length;
+
+function storageKey(){
+  if(window.DOC&&typeof DOC.key==='function')return DOC.key();
+  return `algoTrading.${body.dataset.lesson||String(contract.lesson||'x').padStart(2,'0')}`;
+}
+function readSaved(){
+  try{return JSON.parse(localStorage.getItem(storageKey())||'{}');}catch(_error){return {};}
+}
+const initialSaved=readSaved();
+const savedRuntime=initialSaved.runtime||{};
+if(params.get('optional')!=='1'&&routeScopes.includes(savedRuntime.routeScope)){
+  routeScope=savedRuntime.routeScope;
+}
+const visited=new Set((Array.isArray(savedRuntime.visited)?savedRuntime.visited:[])
+  .filter(key=>inventoryKeys.has(key)));
+if(savedRuntime.scene&&savedRuntime.stage){
+  const prior=inventory.find(item=>item.scene.id===savedRuntime.scene&&item.stage.id===savedRuntime.stage);
+  if(prior)visited.add(prior.key);
+}
+
+function progressSnapshot(){
+  const progress={};
+  ROUTES.forEach(routeName=>{
+    const states=inventory.filter(item=>item.route===routeName);
+    const seen=states.filter(item=>visited.has(item.key)).length;
+    progress[routeName]={
+      visited:seen,total:states.length,
+      percent:states.length?Math.round(100*seen/states.length):100,
+      complete:states.length===0||seen===states.length,
+    };
+  });
+  return progress;
+}
+function saveRuntime(scene=null,stage=null,mark=false){
+  if(scene&&stage&&mark)visited.add(stateKey(scene,stage));
+  const previous=readSaved().runtime||{};
+  const runtime={...previous,version:RUNTIME_VERSION,mode,routeScope,
+    visited:[...visited],progress:progressSnapshot(),ts:Date.now()};
+  if(scene)runtime.scene=scene.id;
+  if(stage)runtime.stage=stage.id;
+  if(window.DOC&&typeof DOC.save==='function')DOC.save({runtime});
+  else{
+    try{localStorage.setItem(storageKey(),JSON.stringify({...readSaved(),runtime}));}catch(_error){}
+  }
+  body.dataset.runtimeProgress=JSON.stringify(runtime.progress);
+}
+
+const nav=document.createElement('aside');
+nav.id='lr-nav';
+nav.setAttribute('aria-label','Navegación de la lección');
+nav.innerHTML=`
+  <a class="lr-course-home" href="../../index.html">← Mapa del curso</a>
+  <div class="lr-brand"><b>L${Number(contract.lesson)}</b><span>${esc(contract.title)}</span></div>
+  <div class="lr-modes" aria-label="Modo de lectura">
+    <a href="${modeUrl('aula')}" class="${mode==='aula'?'on':''}">Aula</a>
+    <a href="${modeUrl('estudio')}" class="${mode==='estudio'?'on':''}">Estudio</a>
+  </div>
+  ${requestedMode!==mode?'<p class="lr-fallback-note">Aula usa el recorrido vertical en esta pantalla.</p>':''}
+  <button type="button" class="lr-study-optional" aria-pressed="false">Incluir OPTIONAL</button>
+  <div class="lr-scene-links"></div>`;
+body.appendChild(nav);
+
+const navLinks=nav.querySelector('.lr-scene-links');
+models.forEach((scene,index)=>{
+  const button=document.createElement('button');
+  button.type='button';button.dataset.sceneIndex=String(index);
+  button.className=routeClass(scene.route);
+  button.innerHTML=`<span>${esc(scene.route)}</span><b>${esc(scene.id.replace(/^l\d+-/,''))}</b>`;
+  button.addEventListener('click',()=>{
+    if(mode==='aula')goTo(index,0,false);
+    else scene.element.scrollIntoView({behavior:reducedMotion()?'auto':'smooth',block:'start'});
+  });
+  navLinks.appendChild(button);
+});
+
+const controls=document.createElement('div');
+controls.id='lr-controls';
+controls.innerHTML=`
+  <button type="button" class="lr-prev" aria-label="Etapa anterior">← <span>Anterior</span></button>
+  <div class="lr-progress" aria-live="polite">
+    <b class="lr-scene-progress">Escena</b><span>·</span><b class="lr-stage-progress">Etapa</b>
+    <span>·</span><b class="lr-route-progress">0%</b>
+  </div>
+  <button type="button" class="lr-route-scope" aria-label="Cambiar alcance de ruta">LIVE</button>
+  <button type="button" class="lr-next" aria-label="Etapa siguiente"><span>Siguiente</span> →</button>`;
+body.appendChild(controls);
+
+const mobileToolbar=document.createElement('div');
+mobileToolbar.id='lr-mobile-toolbar';
+mobileToolbar.innerHTML=`<a href="../../index.html">← Curso</a>
+  <span>${requestedMode==='aula'?'Aula → estudio':'Modo estudio'}</span>
+  <button type="button" class="lr-study-optional" aria-pressed="false">+ OPTIONAL</button>
+  ${isProfessor?'<button type="button" class="lr-mobile-teacher" aria-expanded="false">Guía</button>':''}`;
+body.insertBefore(mobileToolbar,body.firstChild);
+
+const liveRegion=document.createElement('div');
+liveRegion.className='lr-sr-only';liveRegion.setAttribute('aria-live','polite');
+body.appendChild(liveRegion);
+
+let teacherToggle=null,teacherDrawer=null,teacherBody=null,mobileTeacherToggle=null;
+if(isProfessor){
+  teacherToggle=document.createElement('button');
+  teacherToggle.id='lr-teacher-toggle';teacherToggle.type='button';
+  teacherToggle.textContent='Guía docente';teacherToggle.setAttribute('aria-expanded','false');
+  teacherToggle.setAttribute('aria-controls','lr-teacher-drawer');
+  nav.insertBefore(teacherToggle,navLinks);
+  mobileTeacherToggle=mobileToolbar.querySelector('.lr-mobile-teacher');
+  mobileTeacherToggle?.setAttribute('aria-controls','lr-teacher-drawer');
+  teacherDrawer=document.createElement('aside');
+  teacherDrawer.id='lr-teacher-drawer';teacherDrawer.dataset.overlay='teacher';
+  teacherDrawer.setAttribute('aria-label','Guía docente de la escena');
+  teacherDrawer.setAttribute('aria-hidden','true');
+  teacherDrawer.innerHTML='<div class="lr-teacher-head"><b>Guía docente</b>'
+    +'<button type="button" class="lr-teacher-close" aria-label="Cerrar guía docente">×</button></div>'
+    +'<div class="lr-teacher-body"></div>';
+  body.appendChild(teacherDrawer);teacherBody=teacherDrawer.querySelector('.lr-teacher-body');
+  const toggleTeacher=force=>{
+    const open=force===undefined?!teacherDrawer.classList.contains('open'):force;
+    teacherDrawer.classList.toggle('open',open);
+    teacherDrawer.setAttribute('aria-hidden',String(!open));
+    [teacherToggle,mobileTeacherToggle].filter(Boolean)
+      .forEach(button=>button.setAttribute('aria-expanded',String(open)));
+    if(open)teacherDrawer.querySelector('.lr-teacher-close').focus();
+    else (mobileQuery.matches?mobileTeacherToggle:teacherToggle)?.focus();
+  };
+  teacherToggle.addEventListener('click',()=>toggleTeacher());
+  mobileTeacherToggle?.addEventListener('click',()=>toggleTeacher());
+  teacherDrawer.querySelector('.lr-teacher-close').addEventListener('click',()=>toggleTeacher(false));
+}
+
+function allowedStages(scene){
+  const allowedRoutes=scopeRoutes();
+  return scene.stages.filter(stage=>allowedRoutes.includes(stage.route));
+}
+function allowed(scene){
+  return scopeRoutes().includes(scene.route)&&allowedStages(scene).length>0;
+}
+function availableModels(){return models.filter(allowed);}
+
+function activateStage(scene,stage){
+  const hasMappedSteps=scene.stages.some(item=>item.step);
+  const hasMappedFigures=scene.stages.some(item=>item.figure);
+  scene.allSteps.forEach(step=>{
+    const model=scene.stages.find(item=>item.step===step);
+    const visibleRoute=!model||scopeRoutes().includes(model.route);
+    const active=!hasMappedSteps||stage.step===step;
+    step.hidden=!visibleRoute;
+    step.classList.toggle('lr-stage-active',active&&visibleRoute);
+    step.classList.toggle('on',active&&visibleRoute);
+    step.setAttribute('aria-hidden',String(!(active&&visibleRoute)));
+  });
+  scene.allFigures.forEach(figure=>{
+    const model=scene.stages.find(item=>item.figure===figure);
+    const visibleRoute=!model||scopeRoutes().includes(model.route);
+    const active=!hasMappedFigures||stage.figure===figure;
+    figure.hidden=!visibleRoute;
+    figure.classList.toggle('on',active&&visibleRoute);
+    figure.setAttribute('aria-hidden',String(!(active&&visibleRoute)));
+  });
+  const name=scene.element.querySelector('.stage-name');
+  if(name){
+    const source=stage.step&&stage.step.dataset.name;
+    name.textContent=source||stage.id;
+  }
+  const fig=scene.element.querySelector('.fig');
+  if(fig&&stage.dom_stage!==undefined){
+    fig.dispatchEvent(new CustomEvent('stagechange',{detail:{stage:stage.dom_stage}}));
+  }
+}
+function syncNav(scene=null){
+  [...navLinks.querySelectorAll('button')].forEach(button=>{
+    const index=Number(button.dataset.sceneIndex),model=models[index];
+    button.hidden=!allowed(model);
+    button.classList.toggle('on',model===scene);
+    button.setAttribute('aria-current',model===scene?'step':'false');
+  });
+}
+function notesHtml(value){
+  if(!value)return '';
+  const values=Array.isArray(value)?value:[value];
+  return `<ul>${values.map(item=>`<li>${esc(typeof item==='string'?item:JSON.stringify(item))}</li>`).join('')}</ul>`;
+}
+function syncTeacher(scene,stage){
+  if(!teacherBody||!scene||!stage)return;
+  const concepts=scene.concepts||[];
+  const objectives=(contract.objectives||[]).filter(objective=>
+    (objective.concepts||[]).some(concept=>concepts.includes(concept)));
+  const sceneNotes=scene.professor_notes||scene.teacher_notes||scene.teaching_notes;
+  const stageNotes=stage.professor_notes||stage.teacher_notes||stage.teaching_notes;
+  const fullGuide=document.getElementById('gd-toggle');
+  teacherBody.innerHTML=`<p class="lr-teacher-kicker">${esc(scene.route)} · ${esc(scene.type)} · ${esc(scene.duration_minutes)} min</p>`
+    +`<h2>${esc(scene.id)}</h2><p class="lr-teacher-stage">Etapa <code>${esc(stage.id)}</code> · layout <code>${esc(scene.layout)}</code></p>`
+    +`<h3>Conceptos</h3><ul>${concepts.length?concepts.map(concept=>`<li><code>${esc(concept)}</code></li>`).join(''):'<li>Ninguno declarado.</li>'}</ul>`
+    +`<h3>Objetivos relacionados</h3><ul>${objectives.length?objectives.map(objective=>
+      `<li><code>${esc(objective.id)}</code> · ${esc(objective.route)}</li>`).join(''):'<li>Ninguno declarado para esta escena.</li>'}</ul>`
+    +(sceneNotes?`<h3>Notas de escena</h3>${notesHtml(sceneNotes)}`:'')
+    +(stageNotes?`<h3>Notas de etapa</h3>${notesHtml(stageNotes)}`:'')
+    +(fullGuide?'<button type="button" class="lr-full-guide">Abrir guion completo</button>':'');
+  teacherBody.querySelector('.lr-full-guide')?.addEventListener('click',()=>{
+    teacherDrawer.classList.remove('open');teacherDrawer.setAttribute('aria-hidden','true');
+    [teacherToggle,mobileTeacherToggle].filter(Boolean)
+      .forEach(button=>button.setAttribute('aria-expanded','false'));
+    fullGuide.click();
+  });
+}
+function updateDeepLink(scene,stage){
+  if(!history.replaceState)return;
+  const next=`#${encodeURIComponent(scene.id)}/${encodeURIComponent(stage.id)}`;
+  if(location.hash!==next)history.replaceState(null,'',`${location.pathname}${location.search}${next}`);
+}
+function goTo(sceneIndex,stageIndex,focusHeading=true){
+  let scene=models[sceneIndex];
+  if(!scene||!allowed(scene)){
+    scene=availableModels()[0];sceneIndex=models.indexOf(scene);stageIndex=0;
+  }
+  if(!scene)return;
+  const stages=allowedStages(scene);
+  stageIndex=Math.max(0,Math.min(Number(stageIndex)||0,stages.length-1));
+  const stage=stages[stageIndex];
+  currentScene=sceneIndex;currentStage=stageIndex;
+  body.dataset.currentSceneId=scene.id;
+  body.dataset.currentStageId=stage.id;
+  body.dataset.currentStageRoute=stage.route;
+  body.dataset.currentLayout=scene.layout;
+  body.dataset.routeScope=routeScope;
+  scene.element.dataset.currentStageId=stage.id;
+  models.forEach(model=>{
+    const active=model===scene;
+    model.element.classList.toggle('lr-scene-active',active);
+    model.element.setAttribute('aria-hidden',String(!active));
+  });
+  activateStage(scene,stage);
+  const available=availableModels();
+  const scenePosition=available.indexOf(scene)+1;
+  const flatStates=available.flatMap(model=>allowedStages(model).map(item=>({scene:model,stage:item})));
+  const statePosition=flatStates.findIndex(item=>item.scene===scene&&item.stage===stage);
+  controls.querySelector('.lr-scene-progress').textContent=`Escena ${scenePosition}/${available.length}`;
+  controls.querySelector('.lr-stage-progress').textContent=`Etapa ${stageIndex+1}/${stages.length}`;
+  controls.querySelector('.lr-route-scope').textContent=routeScope;
+  controls.querySelector('.lr-prev').disabled=statePosition<=0;
+  controls.querySelector('.lr-next').disabled=statePosition===flatStates.length-1;
+  saveRuntime(scene,stage,true);
+  const scopeProgress=progressSnapshot(),enabledRoutes=scopeRoutes();
+  const routeProgress=Math.round(enabledRoutes.reduce((total,routeName)=>
+    total+scopeProgress[routeName].visited,0)/Math.max(1,enabledRoutes.reduce((total,routeName)=>
+    total+scopeProgress[routeName].total,0))*100);
+  controls.querySelector('.lr-route-progress').textContent=`${routeProgress}% visto`;
+  syncNav(scene);syncTeacher(scene,stage);updateDeepLink(scene,stage);
+  liveRegion.textContent=`${scene.id}, etapa ${stageIndex+1} de ${stages.length}`;
+  if(focusHeading){
+    const heading=scene.element.querySelector('h1,h2,h3');
+    if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}
+  }
+}
+function move(delta,focusHeading=true){
+  const scene=models[currentScene];
+  if(!scene)return;
+  const stages=allowedStages(scene);
+  if(delta>0&&currentStage<stages.length-1)return goTo(currentScene,currentStage+1,focusHeading);
+  if(delta<0&&currentStage>0)return goTo(currentScene,currentStage-1,focusHeading);
+  const available=availableModels(),position=available.indexOf(scene);
+  const next=available[position+delta];
+  if(!next)return;
+  const nextIndex=models.indexOf(next),nextStages=allowedStages(next);
+  goTo(nextIndex,delta>0?0:nextStages.length-1,focusHeading);
+}
+function closeOverlays(){
+  document.getElementById('guion-drawer')?.classList.remove('open');
+  teacherDrawer?.classList.remove('open');
+  teacherDrawer?.setAttribute('aria-hidden','true');
+  [teacherToggle,mobileTeacherToggle].filter(Boolean)
+    .forEach(button=>button.setAttribute('aria-expanded','false'));
+  document.querySelectorAll('dialog[open]').forEach(dialog=>dialog.close());
+  document.querySelectorAll('[data-overlay].open').forEach(node=>node.classList.remove('open'));
+}
+function cycleScope(){
+  if(routeScopes.length<2)return;
+  const scene=models[currentScene];
+  const stageId=body.dataset.currentStageId;
+  const index=routeScopes.indexOf(routeScope);
+  routeScope=routeScopes[(index+1)%routeScopes.length];
+  const stages=scene&&allowed(scene)?allowedStages(scene):[];
+  const stageIndex=stages.findIndex(stage=>stage.id===stageId);
+  goTo(currentScene,Math.max(0,stageIndex),false);
+}
+function syncOptionalControls(){
+  document.querySelectorAll('.lr-study-optional').forEach(button=>{
+    button.hidden=mode!=='estudio'||optionalCount===0;
+    button.setAttribute('aria-pressed',String(routeScope==='ALL'));
+    button.textContent=routeScope==='ALL'?'Ocultar OPTIONAL':
+      (button.closest('#lr-mobile-toolbar')?'+ OPTIONAL':'Incluir OPTIONAL');
+  });
+}
+function applyStudyScope(activeScene=null){
+  body.dataset.routeScope=routeScope;
+  models.forEach(scene=>{
+    const sceneVisible=allowed(scene);
+    scene.element.hidden=!sceneVisible;
+    scene.element.setAttribute('aria-hidden',String(!sceneVisible));
+    scene.stages.forEach(stage=>{
+      const stageVisible=scopeRoutes().includes(stage.route);
+      [stage.step,stage.figure].filter(Boolean).forEach(node=>{
+        node.hidden=!stageVisible;node.setAttribute('aria-hidden',String(!stageVisible));
+      });
+    });
+  });
+  syncNav(activeScene);syncOptionalControls();saveRuntime(null,null,false);
+}
+function toggleOptional(){
+  routeScope=routeScope==='ALL'?'LIVE+REQUIRED':'ALL';
+  applyStudyScope();
+  liveRegion.textContent=routeScope==='ALL'?'Contenido OPTIONAL incluido.':'Contenido OPTIONAL oculto.';
+}
+
+controls.querySelector('.lr-prev').addEventListener('click',()=>move(-1,false));
+controls.querySelector('.lr-next').addEventListener('click',()=>move(1,false));
+controls.querySelector('.lr-route-scope').addEventListener('click',cycleScope);
+controls.querySelector('.lr-route-scope').hidden=mode!=='aula'||routeScopes.length<2;
+controls.classList.toggle('lr-fixed-scope',controls.querySelector('.lr-route-scope').hidden);
+document.querySelectorAll('.lr-study-optional').forEach(button=>button.addEventListener('click',toggleOptional));
+
+document.addEventListener('keydown',event=>{
+  if(event.key==='Escape'){closeOverlays();return;}
+  if(mode!=='aula')return;
+  const active=document.activeElement;
+  if(active&&(/INPUT|TEXTAREA|SELECT/.test(active.tagName)||active.isContentEditable))return;
+  if(active&&active.tagName==='BUTTON'&&(event.key===' '||event.key==='Enter'))return;
+  if(['ArrowRight','PageDown',' '].includes(event.key)){
+    event.preventDefault();move(1,true);
+  }else if(['ArrowLeft','PageUp'].includes(event.key)){
+    event.preventDefault();move(-1,true);
+  }
+});
+
+function deepLink(){
+  let sceneId=params.get('scene'),stageId=params.get('stage');
+  if(location.hash){
+    const [rawScene,rawStage]=location.hash.slice(1).split('/');
+    try{sceneId=decodeURIComponent(rawScene)||sceneId;stageId=decodeURIComponent(rawStage||'')||stageId;}
+    catch(_error){sceneId=rawScene||sceneId;stageId=rawStage||stageId;}
+  }
+  if(!sceneId)return null;
+  const scene=models.find(item=>item.id===sceneId||item.dom_id===sceneId);
+  if(!scene)return null;
+  const stage=scene.stages.find(item=>item.id===stageId)||scene.stages[0];
+  return {scene,stage};
+}
+function restoredPosition(){
+  const linked=deepLink();
+  if(linked){
+    if(mode==='estudio'&&linked.stage.route==='OPTIONAL')routeScope='ALL';
+    return linked;
+  }
+  if(!savedRuntime.scene)return null;
+  const scene=models.find(item=>item.id===savedRuntime.scene);
+  const stage=scene?.stages.find(item=>item.id===savedRuntime.stage);
+  return scene&&stage?{scene,stage}:null;
+}
+
+if(mode==='aula'){
+  const restored=restoredPosition();
+  if(restored&&allowed(restored.scene)&&scopeRoutes().includes(restored.stage.route)){
+    currentScene=models.indexOf(restored.scene);
+    currentStage=allowedStages(restored.scene).indexOf(restored.stage);
+  }
+  goTo(currentScene,Math.max(0,currentStage),false);
+}else{
+  const restored=restoredPosition();
+  if(restored?.stage.route==='OPTIONAL')routeScope='ALL';
+  applyStudyScope(restored?.scene||null);
+  const sceneObserver=new IntersectionObserver(entries=>{
+    const visible=entries.filter(entry=>entry.isIntersecting&&!entry.target.hidden)
+      .sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
+    if(!visible)return;
+    const scene=models.find(item=>item.element===visible.target);
+    if(!scene)return;
+    syncNav(scene);
+    const stage=allowedStages(scene).find(item=>!item.step)||allowedStages(scene)[0];
+    if(stage){saveRuntime(scene,stage,true);updateDeepLink(scene,stage);}
+  },{rootMargin:'-20% 0px -55% 0px',threshold:[0,.15,.4]});
+  models.forEach(scene=>sceneObserver.observe(scene.element));
+  models.forEach(scene=>scene.stages.forEach(stage=>{
+    if(!stage.step)return;
+    const observer=new IntersectionObserver(entries=>{
+      if(entries.some(entry=>entry.isIntersecting)&&!stage.step.hidden){
+        saveRuntime(scene,stage,true);syncNav(scene);updateDeepLink(scene,stage);
+      }
+    },{rootMargin:'-35% 0px -45% 0px',threshold:.1});
+    observer.observe(stage.step);
+  }));
+  if(restored&&allowed(restored.scene))requestAnimationFrame(()=>{
+    (restored.stage.step||restored.scene.element).scrollIntoView({block:'center'});
+  });
+}
+
+syncOptionalControls();
+saveRuntime(null,null,false);
+window.LEARNING_RUNTIME={
+  version:RUNTIME_VERSION,contract,mode,isProfessor,
+  getState:()=>({routeScope,scene:models[currentScene]?.id,stage:body.dataset.currentStageId,
+    progress:progressSnapshot()}),
+  setOptional:enabled=>{if(mode==='estudio'&&(enabled!==(routeScope==='ALL')))toggleOptional();},
+  goTo:(sceneId,stageId)=>{
+    const scene=models.find(item=>item.id===sceneId);if(!scene)return false;
+    if(mode==='estudio'){
+      const stage=scene.stages.find(item=>item.id===stageId)||allowedStages(scene)[0];
+      if(!stage)return false;
+      (stage.step||scene.element).scrollIntoView({block:'center'});return true;
+    }
+    const stages=allowedStages(scene),index=stages.findIndex(item=>item.id===stageId);
+    goTo(models.indexOf(scene),Math.max(0,index),false);return true;
+  },
+};
+
+mobileQuery.addEventListener?.('change',()=>location.reload());
 })();
 
 </script>

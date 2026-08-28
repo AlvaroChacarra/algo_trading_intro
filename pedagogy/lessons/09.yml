@@ -1,19 +1,702 @@
 {
   "lesson": 9,
-  "status": "legacy-unmigrated",
-  "title": "Construir Market y su API",
+  "status": "contract-strict",
+  "title": "Market — Estado, dinámica y tiempo",
   "delivery": "lesson",
-  "requires": {"concepts": ["matching.plan_validate_commit", "exchange.orderbook"], "apis": ["matching.process"]},
-  "introduces": {"concepts": [{"id": "engine.market", "importance": "major"}, {"id": "engine.time_loop", "importance": "major"}, {"id": "engine.delegation", "importance": "major"}], "apis": ["market.step", "market.submit", "market.reset"]},
-  "recalls": [],
-  "api_surface": [
-    {"id": "market.step", "name": "step", "kind": "method", "signature": "step() -> OrderBook | None", "returns": "OrderBook | None", "responsibility": "advance replay time and replace the active book"},
-    {"id": "market.submit", "name": "submit", "kind": "method", "signature": "submit(order: Order) -> list[Fill]", "returns": "list[Fill]", "responsibility": "delegate matching against the active book"},
-    {"id": "market.reset", "name": "reset", "kind": "method", "signature": "reset() -> None", "returns": "None", "responsibility": "restore replay state"}
+  "source_path": "framework/_build/docs/09_body.html",
+  "requires": {
+    "concepts": [
+      "matching.plan_validate_commit",
+      "exchange.orderbook",
+      "oop.composition",
+      "market.external_boundary",
+      "python.fstring",
+      "python.dict_get",
+      "python.generator_expression"
+    ],
+    "apis": [
+      "matching.constructor",
+      "matching.process",
+      "orderbook.from_snapshot",
+      "tracker.constructor",
+      "tracker.position",
+      "tracker.apply_fill",
+      "tracker.equity"
+    ],
+    "notation": []
+  },
+  "requirement_routes": {
+    "concepts": {
+      "matching.plan_validate_commit": "LIVE",
+      "exchange.orderbook": "LIVE",
+      "oop.composition": "LIVE",
+      "market.external_boundary": "LIVE",
+      "python.fstring": "REQUIRED",
+      "python.dict_get": "LIVE",
+      "python.generator_expression": "REQUIRED"
+    },
+    "apis": {
+      "matching.constructor": "LIVE",
+      "matching.process": "LIVE",
+      "orderbook.from_snapshot": "LIVE",
+      "tracker.constructor": "REQUIRED",
+      "tracker.position": "REQUIRED",
+      "tracker.apply_fill": "REQUIRED",
+      "tracker.equity": "REQUIRED"
+    },
+    "notation": {}
+  },
+  "introduces": {
+    "concepts": [
+      {
+        "id": "engine.market",
+        "importance": "major",
+        "route": "LIVE"
+      },
+      {
+        "id": "engine.time_loop",
+        "importance": "major",
+        "route": "LIVE"
+      },
+      {
+        "id": "engine.delegation",
+        "importance": "major",
+        "route": "LIVE"
+      },
+      {
+        "id": "engine.lifecycle",
+        "importance": "major",
+        "route": "LIVE"
+      },
+      {
+        "id": "metrics.equity_curve",
+        "importance": "supporting",
+        "route": "REQUIRED"
+      }
+    ],
+    "apis": [
+      "market.constructor",
+      "market.sample",
+      "market.snapshots",
+      "market.book",
+      "market.step",
+      "market.submit",
+      "market.timestamp",
+      "market.reset"
+    ],
+    "notation": []
+  },
+  "introduction_routes": {
+    "apis": {
+      "market.constructor": "LIVE",
+      "market.sample": "REQUIRED",
+      "market.snapshots": "REQUIRED",
+      "market.book": "LIVE",
+      "market.step": "LIVE",
+      "market.submit": "LIVE",
+      "market.timestamp": "REQUIRED",
+      "market.reset": "REQUIRED"
+    },
+    "notation": {}
+  },
+  "recalls": [
+    {
+      "concept": "oop.composition",
+      "introduced_in": 5,
+      "mapping": {
+        "before": "OrderBook contiene una colección de niveles.",
+        "now": "Market contiene un MatchingEngine y un OrderBook activo."
+      }
+    }
   ],
-  "routes": {"LIVE": [], "REQUIRED": [], "OPTIONAL": []},
-  "objectives": [],
-  "load": {"live_presentation_minutes": 20, "guided_minutes": 20, "required_autonomous_minutes": 40, "optional_minutes": 10, "overflow_policy": "legacy-to-migrate"},
-  "scenes": [],
-  "package_checks": []
+  "api_surface": [
+    {
+      "id": "matching.constructor",
+      "name": "MatchingEngine",
+      "kind": "constructor",
+      "signature": "MatchingEngine() -> MatchingEngine",
+      "returns": "MatchingEngine",
+      "responsibility": "construct the stateless canonical matching engine",
+      "qualified_name": "exchange.matching.MatchingEngine"
+    },
+    {
+      "id": "matching.process",
+      "name": "process",
+      "kind": "method",
+      "signature": "process(order: Order, book: OrderBook, timestamp: int | None = None) -> list[Fill]",
+      "returns": "list[Fill]",
+      "responsibility": "plan, validate, and commit one order",
+      "qualified_name": "exchange.matching.MatchingEngine.process"
+    },
+    {
+      "id": "orderbook.from_snapshot",
+      "name": "from_snapshot",
+      "kind": "classmethod",
+      "signature": "from_snapshot(symbol: str, row: dict, depth: int = 10) -> OrderBook",
+      "returns": "OrderBook",
+      "responsibility": "translate one external snapshot into the canonical book",
+      "qualified_name": "exchange.book.OrderBook.from_snapshot"
+    },
+    {
+      "id": "market.constructor",
+      "name": "Market",
+      "kind": "constructor",
+      "signature": "Market(symbol: str, snapshots: list[dict], depth: int = 10) -> Market",
+      "returns": "Market",
+      "responsibility": "compose snapshots, matching, active book, and replay cursor",
+      "qualified_name": "exchange.market.Market"
+    },
+    {
+      "id": "market.sample",
+      "name": "sample",
+      "kind": "classmethod",
+      "signature": "sample(symbol: str = 'BTCUSDT', depth: int = 10) -> Market",
+      "returns": "Market",
+      "responsibility": "load the reproducible packaged market replay",
+      "qualified_name": "exchange.market.Market.sample"
+    },
+    {
+      "id": "market.snapshots",
+      "name": "snapshots",
+      "kind": "property",
+      "signature": "snapshots -> list[dict]",
+      "returns": "list[dict]",
+      "responsibility": "expose a defensive copy of the packaged replay rows",
+      "qualified_name": "exchange.market.Market.snapshots"
+    },
+    {
+      "id": "market.book",
+      "name": "book",
+      "kind": "attribute",
+      "signature": "book: OrderBook | None",
+      "returns": "OrderBook | None",
+      "responsibility": "expose the active replay book or None outside the lifecycle",
+      "qualified_name": "exchange.market.Market.book"
+    },
+    {
+      "id": "market.step",
+      "name": "step",
+      "kind": "method",
+      "signature": "step() -> OrderBook | None",
+      "returns": "OrderBook | None",
+      "responsibility": "advance replay time and replace the active book",
+      "qualified_name": "exchange.market.Market.step"
+    },
+    {
+      "id": "market.submit",
+      "name": "submit",
+      "kind": "method",
+      "signature": "submit(order: Order) -> list[Fill]",
+      "returns": "list[Fill]",
+      "responsibility": "delegate matching against the active book",
+      "qualified_name": "exchange.market.Market.submit"
+    },
+    {
+      "id": "market.timestamp",
+      "name": "timestamp",
+      "kind": "property",
+      "signature": "timestamp -> int | None",
+      "returns": "int | None",
+      "responsibility": "read the current replay timestamp",
+      "qualified_name": "exchange.market.Market.timestamp"
+    },
+    {
+      "id": "market.reset",
+      "name": "reset",
+      "kind": "method",
+      "signature": "reset() -> None",
+      "returns": "None",
+      "responsibility": "restore replay state",
+      "qualified_name": "exchange.market.Market.reset"
+    },
+    {
+      "id": "tracker.constructor",
+      "name": "PositionTracker",
+      "kind": "constructor",
+      "signature": "PositionTracker(cash: float = 0.0) -> PositionTracker",
+      "returns": "PositionTracker",
+      "responsibility": "initialize cash, inventory, and fill accounting",
+      "qualified_name": "exchange.portfolio.PositionTracker"
+    },
+    {
+      "id": "tracker.position",
+      "name": "position",
+      "kind": "property",
+      "signature": "position -> float",
+      "returns": "float",
+      "responsibility": "read current signed inventory",
+      "qualified_name": "exchange.portfolio.PositionTracker.position"
+    },
+    {
+      "id": "tracker.apply_fill",
+      "name": "apply_fill",
+      "kind": "method",
+      "signature": "apply_fill(fill: Fill) -> None",
+      "returns": "None",
+      "responsibility": "update cash and position atomically from a fill",
+      "qualified_name": "exchange.portfolio.PositionTracker.apply_fill"
+    },
+    {
+      "id": "tracker.equity",
+      "name": "equity",
+      "kind": "method",
+      "signature": "equity(mark_price: float) -> float",
+      "returns": "float",
+      "responsibility": "mark cash and inventory to market",
+      "qualified_name": "exchange.portfolio.PositionTracker.equity"
+    }
+  ],
+  "routes": {
+    "LIVE": [
+      "l09-challenge",
+      "l09-composition-recall",
+      "l09-market-api",
+      "l09-day-loop",
+      "l09-bridge"
+    ],
+    "REQUIRED": [
+      "l09-quiz"
+    ],
+    "OPTIONAL": []
+  },
+  "objectives": [
+    {
+      "id": "l09-compose-market",
+      "route": "LIVE",
+      "concepts": [
+        "engine.market",
+        "engine.delegation",
+        "oop.composition"
+      ],
+      "apis": [
+        "market.constructor",
+        "market.book",
+        "market.step",
+        "market.submit"
+      ],
+      "notation": []
+    },
+    {
+      "id": "l09-run-time-loop",
+      "route": "LIVE",
+      "concepts": [
+        "engine.time_loop"
+      ],
+      "apis": [
+        "market.step"
+      ],
+      "notation": []
+    },
+    {
+      "id": "l09-reset-lifecycle",
+      "route": "REQUIRED",
+      "concepts": [
+        "engine.lifecycle"
+      ],
+      "apis": [
+        "market.sample",
+        "market.snapshots",
+        "market.timestamp",
+        "market.reset"
+      ],
+      "notation": []
+    },
+    {
+      "id": "l09-track-equity-over-time",
+      "route": "REQUIRED",
+      "concepts": [
+        "metrics.equity_curve"
+      ],
+      "apis": [
+        "tracker.constructor",
+        "tracker.position",
+        "tracker.apply_fill",
+        "tracker.equity"
+      ],
+      "notation": []
+    }
+  ],
+  "load": {
+    "live_presentation_minutes": 20,
+    "guided_minutes": 20,
+    "required_autonomous_minutes": 34,
+    "optional_minutes": 10,
+    "overflow_policy": "explicit-route-plan"
+  },
+  "scenes": [
+    {
+      "id": "l09-challenge",
+      "dom_id": "s0",
+      "type": "hero-challenge",
+      "route": "LIVE",
+      "layout": "focus",
+      "concepts": [
+        "engine.market"
+      ],
+      "duration_minutes": 2,
+      "stages": [
+        {
+          "id": "main",
+          "route": "LIVE"
+        }
+      ]
+    },
+    {
+      "id": "l09-composition-recall",
+      "dom_id": "s1",
+      "type": "recall",
+      "route": "LIVE",
+      "layout": "split-50-50",
+      "concepts": [
+        "oop.composition",
+        "engine.market"
+      ],
+      "duration_minutes": 3,
+      "stages": [
+        {
+          "id": "main",
+          "route": "LIVE"
+        }
+      ]
+    },
+    {
+      "id": "l09-market-api",
+      "dom_id": "s2",
+      "type": "code-state",
+      "route": "LIVE",
+      "layout": "split-42-58",
+      "concepts": [
+        "engine.time_loop",
+        "engine.delegation",
+        "engine.lifecycle"
+      ],
+      "duration_minutes": 11,
+      "stages": [
+        {
+          "id": "cursor",
+          "route": "LIVE",
+          "dom_stage": 0
+        },
+        {
+          "id": "book",
+          "route": "LIVE",
+          "dom_stage": 1
+        },
+        {
+          "id": "end",
+          "route": "LIVE",
+          "dom_stage": 2
+        },
+        {
+          "id": "timestamp",
+          "route": "REQUIRED",
+          "dom_stage": 3
+        },
+        {
+          "id": "submit",
+          "route": "LIVE",
+          "dom_stage": 4
+        },
+        {
+          "id": "composition",
+          "route": "LIVE",
+          "dom_stage": 5
+        },
+        {
+          "id": "reset",
+          "route": "REQUIRED",
+          "dom_stage": 6
+        }
+      ]
+    },
+    {
+      "id": "l09-day-loop",
+      "dom_id": "s3",
+      "type": "concept-simulator",
+      "route": "LIVE",
+      "layout": "split-45-55",
+      "concepts": [
+        "engine.time_loop"
+      ],
+      "duration_minutes": 2,
+      "stages": [
+        {
+          "id": "main",
+          "route": "LIVE"
+        }
+      ]
+    },
+    {
+      "id": "l09-quiz",
+      "dom_id": "s4",
+      "type": "diagnostic-quiz",
+      "route": "REQUIRED",
+      "layout": "focus",
+      "concepts": [
+        "engine.market",
+        "engine.delegation"
+      ],
+      "duration_minutes": 8,
+      "stages": [
+        {
+          "id": "main",
+          "route": "REQUIRED"
+        }
+      ]
+    },
+    {
+      "id": "l09-bridge",
+      "dom_id": "s5",
+      "type": "bridge",
+      "route": "LIVE",
+      "layout": "focus",
+      "concepts": [
+        "engine.lifecycle"
+      ],
+      "duration_minutes": 2,
+      "stages": [
+        {
+          "id": "main",
+          "route": "LIVE"
+        }
+      ]
+    }
+  ],
+  "bridge": {
+    "target_lesson": 10,
+    "known": {
+      "concepts": [
+        "oop.polymorphism",
+        "engine.market",
+        "engine.time_loop"
+      ],
+      "apis": [
+        "market.step",
+        "market.submit"
+      ],
+      "notation": []
+    },
+    "limitation": "El loop incrusta una decisión y no puede intercambiar estrategias con seguridad.",
+    "need": "Un contrato Strategy de producción devuelve acciones y Backtest se responsabiliza de ejecutarlas."
+  },
+  "api_transitions": [],
+  "package_checks": [
+    {
+      "path": "09-market-simulation-loop/exercises/exchange/book.py",
+      "class": "OrderBook",
+      "members": {
+        "from_snapshot": {
+          "api": "orderbook.from_snapshot",
+          "kind": "classmethod",
+          "parameters": [
+            {
+              "name": "symbol",
+              "kind": "positional_or_keyword",
+              "annotation": "str"
+            },
+            {
+              "name": "row",
+              "kind": "positional_or_keyword",
+              "annotation": "dict"
+            },
+            {
+              "name": "depth",
+              "kind": "positional_or_keyword",
+              "annotation": "int",
+              "default": "10"
+            }
+          ],
+          "returns": "OrderBook"
+        }
+      }
+    },
+    {
+      "path": "09-market-simulation-loop/exercises/exchange/matching.py",
+      "class": "MatchingEngine",
+      "members": {
+        "__init__": {
+          "api": "matching.constructor",
+          "kind": "constructor",
+          "parameters": [],
+          "returns": "MatchingEngine"
+        },
+        "process": {
+          "api": "matching.process",
+          "kind": "method",
+          "parameters": [
+            {
+              "name": "order",
+              "kind": "positional_or_keyword",
+              "annotation": "Order"
+            },
+            {
+              "name": "book",
+              "kind": "positional_or_keyword",
+              "annotation": "OrderBook"
+            },
+            {
+              "name": "timestamp",
+              "kind": "positional_or_keyword",
+              "annotation": "int | None",
+              "default": "None"
+            }
+          ],
+          "returns": "list[Fill]"
+        }
+      }
+    },
+    {
+      "path": "09-market-simulation-loop/exercises/exchange/portfolio.py",
+      "class": "PositionTracker",
+      "members": {
+        "__init__": {
+          "api": "tracker.constructor",
+          "kind": "constructor",
+          "parameters": [
+            {
+              "name": "cash",
+              "kind": "positional_or_keyword",
+              "annotation": "float",
+              "default": "0.0"
+            }
+          ],
+          "returns": "PositionTracker"
+        },
+        "position": {
+          "api": "tracker.position",
+          "kind": "property",
+          "parameters": [],
+          "returns": "float"
+        },
+        "apply_fill": {
+          "api": "tracker.apply_fill",
+          "kind": "method",
+          "parameters": [
+            {
+              "name": "fill",
+              "kind": "positional_or_keyword",
+              "annotation": "Fill"
+            }
+          ],
+          "returns": "None"
+        },
+        "equity": {
+          "api": "tracker.equity",
+          "kind": "method",
+          "parameters": [
+            {
+              "name": "mark_price",
+              "kind": "positional_or_keyword",
+              "annotation": "float"
+            }
+          ],
+          "returns": "float"
+        }
+      }
+    },
+    {
+      "path": "09-market-simulation-loop/exercises/exchange/market.py",
+      "class": "Market",
+      "members": {
+        "__init__": {
+          "api": "market.constructor",
+          "kind": "constructor",
+          "parameters": [
+            {
+              "name": "symbol",
+              "kind": "positional_or_keyword",
+              "annotation": "str"
+            },
+            {
+              "name": "snapshots",
+              "kind": "positional_or_keyword",
+              "annotation": "list[dict]"
+            },
+            {
+              "name": "depth",
+              "kind": "positional_or_keyword",
+              "annotation": "int",
+              "default": "10"
+            }
+          ],
+          "returns": "Market"
+        },
+        "sample": {
+          "api": "market.sample",
+          "kind": "classmethod",
+          "parameters": [
+            {
+              "name": "symbol",
+              "kind": "positional_or_keyword",
+              "annotation": "str",
+              "default": "'BTCUSDT'"
+            },
+            {
+              "name": "depth",
+              "kind": "positional_or_keyword",
+              "annotation": "int",
+              "default": "10"
+            }
+          ],
+          "returns": "Market"
+        },
+        "snapshots": {
+          "api": "market.snapshots",
+          "kind": "property",
+          "parameters": [],
+          "returns": "list[dict]"
+        },
+        "book": {
+          "api": "market.book",
+          "kind": "attribute",
+          "parameters": [],
+          "returns": "OrderBook | None"
+        },
+        "timestamp": {
+          "api": "market.timestamp",
+          "kind": "property",
+          "parameters": [],
+          "returns": "int | None"
+        },
+        "step": {
+          "api": "market.step",
+          "kind": "method",
+          "parameters": [],
+          "returns": "OrderBook | None"
+        },
+        "submit": {
+          "api": "market.submit",
+          "kind": "method",
+          "parameters": [
+            {
+              "name": "order",
+              "kind": "positional_or_keyword",
+              "annotation": "Order"
+            }
+          ],
+          "returns": "list[Fill]"
+        },
+        "reset": {
+          "api": "market.reset",
+          "kind": "method",
+          "parameters": [],
+          "returns": "None"
+        }
+      }
+    }
+  ],
+  "used_later": {
+    "concepts": [
+      "engine.market",
+      "metrics.equity_curve"
+    ],
+    "apis": [
+      "market.reset",
+      "market.sample",
+      "market.snapshots",
+      "market.step",
+      "market.submit"
+    ],
+    "notation": []
+  }
 }

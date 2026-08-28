@@ -7,7 +7,7 @@
 Cuando tus funciones crecen, no pueden vivir sueltas en un notebook: las guardas en un
 archivo `.py` — un **módulo** — y lo **importas** desde donde lo necesites. `import order_book`
 trae el módulo entero; `from order_book import spread` trae solo una función. Así reutilizas
-código sin copiarlo, que es justo lo que harás con el paquete `exchange/` desde la clase 7
+código sin copiarlo, que es justo lo que harás con el paquete `exchange/` desde L4
 (`import exchange`).
 
 La segunda mitad de la clase son los **errores**: una función como `best_bid` revienta con un
@@ -40,7 +40,7 @@ datos y funciones siguen separados → juntarlos = objetos (L4).
 ## Estructura de la carpeta
 
 - `presentation/` — documento interactivo (o deck) + guion del profesor
-- `exercises/03_build_exercises.ipynb` — construyes la pieza (núcleo 1-3, luego el resto)
+- `exercises/03_build_exercises.ipynb` — construyes la pieza (rutas LIVE / REQUIRED / OPTIONAL declaradas)
 - `exercises/03_auxiliary.ipynb` — el gimnasio: drills + profundización opcional
 
 ## Idea central

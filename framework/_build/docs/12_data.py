@@ -1,5 +1,7 @@
 """Datos reales para el doc de L12: vender grande de golpe vs troceado
 (TWAP / VWAP), todo ejecutado por el motor de referencia."""
+from copy import deepcopy
+
 from exchange.backtest import Backtest
 from exchange.market import Market
 from exchange.matching import MatchingEngine
@@ -48,7 +50,7 @@ def build() -> dict:
 
     # de golpe: una market sell del total contra el primer snapshot
     fills = MatchingEngine().process(
-        Order("BTCUSDT", "sell", total, order_type=OrderType.MARKET), m.book.copy())
+        Order("BTCUSDT", "sell", total, order_type=OrderType.MARKET), deepcopy(m.book))
     sweep_avg = round(avg_price(fills), 2)
     sweep_filled = round(sum(f.size for f in fills), 3)
 
