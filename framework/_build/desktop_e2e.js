@@ -301,14 +301,14 @@ async function overflowFixture(browser) {
     mobilePage.on('pageerror', error => mobileErrors.push(error.message));
     await mobilePage.goto(fileUrl(relative, '?mode=aula'));
     const mobileResult = await mobilePage.evaluate(() => ({
-      mode: document.body.dataset.learningMode,
+      runtimeMode: document.body.dataset.learningMode,
       fallback: document.body.classList.contains('lr-mobile-fallback'),
       navHidden: getComputedStyle(document.querySelector('#lr-nav')).display === 'none',
       vertical: document.documentElement.scrollHeight > innerHeight,
       horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 2,
       reducedMotion: matchMedia('(prefers-reduced-motion: reduce)').matches,
     }));
-    mobileResult.passed = mobileResult.mode === 'estudio' && mobileResult.fallback
+    mobileResult.passed = mobileResult.runtimeMode === 'estudio' && mobileResult.fallback
       && mobileResult.navHidden && mobileResult.vertical && !mobileResult.horizontalOverflow
       && mobileResult.reducedMotion && !mobileErrors.length;
     if (!mobileResult.passed) failures++;
