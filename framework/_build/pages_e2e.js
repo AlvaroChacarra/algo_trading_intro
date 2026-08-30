@@ -490,7 +490,7 @@ async function installOfflineRouting(context, origin) {
 }
 
 async function waitForKernelIdle(page, { timeout, stableMs }) {
-  const selector = '.jp-NotebookPanel-toolbar .jp-Toolbar-kernelStatus';
+  const selector = '.jp-NotebookPanel-toolbar .jp-KernelStatus-widget';
   const handle = await page.waitForFunction(({ statusSelector, stableFor }) => {
     const status = document.querySelector(statusSelector);
     if (!status) {
@@ -933,7 +933,7 @@ async function runLabAttempt(context, origin, target, plan) {
         : 'cell unavailable';
       const diagnostic = await labPage.evaluate(() => {
         const status = document.querySelector(
-          '.jp-NotebookPanel-toolbar .jp-Toolbar-kernelStatus',
+          '.jp-NotebookPanel-toolbar .jp-KernelStatus-widget',
         );
         const notices = [...document.querySelectorAll(
           '.jp-Notification, .jp-Dialog-content, .jp-LogConsole-output',

@@ -23,6 +23,7 @@ const {
   resolveRunPlan,
   retryInFreshContexts,
   validatePagesEvidence,
+  waitForKernelIdle,
   writePagesEvidenceAtomic,
 } = require('./pages_e2e');
 
@@ -335,6 +336,27 @@ test('kernel diagnostics cover context routing, workers, and terminal DOM state'
   assert.match(source, /WORK2_WORKER_READY/);
   assert.match(source, /WORK2_UNHANDLED_REJECTION/);
   assert.match(source, /WORK2_KERNEL_DOM/);
+  assert.match(source, /\.jp-NotebookPanel-toolbar \.jp-KernelStatus-widget/);
+  assert.doesNotMatch(source, /\.jp-Toolbar-kernelStatus/);
+});
+
+test('kernel readiness observes the JupyterLite 0.8 status widget', async () => {
+  let observed = null;
+  const handle = {
+    jsonValue: async () => ({ state: 'idle' }),
+    dispose: async () => {},
+  };
+  const page = {
+    waitForFunction: async (_callback, argument, options) => {
+      observed = { argument, options };
+      return handle;
+    },
+    evaluate: async () => {},
+  };
+  await waitForKernelIdle(page, { timeout: 1200, stableMs: 75 });
+  assert.equal(observed.argument.statusSelector,
+    '.jp-NotebookPanel-toolbar .jp-KernelStatus-widget');
+  assert.deepEqual(observed.options, { timeout: 1200, polling: 100 });
 });
 
 test('WORK2_PAGES_LESSON selects exactly one lab shard and rejects bad input', () => {
