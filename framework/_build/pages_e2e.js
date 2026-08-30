@@ -425,13 +425,6 @@ function isRuntimeDiagnosticUrl(raw) {
 
 async function installWorkerDiagnostics(page) {
   await page.addInitScript(() => {
-    const NativePromiseReject = globalThis.Promise.reject;
-    globalThis.Promise.reject = function(value) {
-      if (arguments.length === 0 || typeof value === 'undefined') {
-        console.error(`WORK2_PROMISE_REJECT_UNDEFINED ${new Error().stack || 'stack unavailable'}`);
-      }
-      return NativePromiseReject.call(this, value);
-    };
     globalThis.addEventListener('unhandledrejection', event => {
       const reason = event.reason;
       const detail = {
@@ -813,7 +806,12 @@ async function runLabAttempt(context, origin, target, plan) {
       const message = browserErrorText(error);
       pageErrors.push(message);
       console.error(`JupyterLite pageerror: ${message}`);
-      runtimeFailure.fail(`JupyterLite pageerror: ${message}`);
+      // WebKit reports some promise rejections without a reason or stack.
+      // Preserve them as a hard evidence failure, but allow the page to keep
+      // running so diagnostics can reveal whether startup reaches the kernel.
+      if (message !== 'Unhandled Promise Rejection: undefined') {
+        runtimeFailure.fail(`JupyterLite pageerror: ${message}`);
+      }
     });
     labPage.on('console', message => {
       if (message.type() === 'error') {
