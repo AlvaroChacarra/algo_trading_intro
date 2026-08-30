@@ -454,6 +454,9 @@ async function installOfflineRouting(context, origin) {
   const siteOrigin = new URL(origin).origin;
   await context.route('**/*', async route => {
     const requestUrl = route.request().url();
+    if (isRuntimeDiagnosticUrl(requestUrl)) {
+      console.log(`JupyterLite runtime request: ${requestUrl}`);
+    }
     if (isAllowedOfflineRequest(requestUrl, siteOrigin)) {
       await route.continue();
     } else {
@@ -775,6 +778,17 @@ async function runLabAttempt(context, origin, target, plan) {
     const externalRequests = await installOfflineRouting(context, origin);
     const labPage = await context.newPage();
     const runtimeFailure = createRuntimeFailureMonitor();
+    labPage.on('worker', worker => {
+      console.log(`WORK2_WORKER_CREATED ${worker.url()}`);
+      worker.evaluate(() => ({
+        location: globalThis.location && globalThis.location.href,
+        crossOriginIsolated: globalThis.crossOriginIsolated,
+        sharedArrayBuffer: typeof globalThis.SharedArrayBuffer,
+      })).then(
+        detail => console.log(`WORK2_WORKER_READY ${JSON.stringify(detail)}`),
+        error => console.error(`WORK2_WORKER_EVALUATE_ERROR ${browserErrorText(error)}`),
+      );
+    });
     labPage.on('pageerror', error => {
       const message = browserErrorText(error);
       pageErrors.push(message);
@@ -904,6 +918,16 @@ async function runLabAttempt(context, origin, target, plan) {
       result.cellText = firstCodeCell
         ? await firstCodeCell.innerText().catch(() => 'cell unavailable')
         : 'cell unavailable';
+      const diagnostic = await labPage.evaluate(() => {
+        const status = document.querySelector(
+          '.jp-NotebookPanel-toolbar .jp-Toolbar-kernelStatus',
+        );
+        const notices = [...document.querySelectorAll(
+          '.jp-Notification, .jp-Dialog-content, .jp-LogConsole-output',
+        )].map(node => node.textContent && node.textContent.trim()).filter(Boolean).slice(0, 5);
+        return { status: status ? status.outerHTML : null, notices };
+      }).catch(diagnosticError => ({ diagnosticError: String(diagnosticError) }));
+      console.error(`WORK2_KERNEL_DOM ${JSON.stringify(diagnostic)}`);
     } finally {
       result.kernelReady = executionState.kernelReady;
       result.dispatchCount = executionState.dispatchCount;

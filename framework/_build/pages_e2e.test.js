@@ -328,6 +328,14 @@ test('worker diagnostics are installed before navigation', async () => {
   assert.equal(typeof installer, 'function');
 });
 
+test('kernel diagnostics cover context routing, workers, and terminal DOM state', () => {
+  const source = fs.readFileSync(path.resolve(__dirname, 'pages_e2e.js'), 'utf8');
+  assert.match(source, /JupyterLite runtime request:/);
+  assert.match(source, /WORK2_WORKER_CREATED/);
+  assert.match(source, /WORK2_WORKER_READY/);
+  assert.match(source, /WORK2_KERNEL_DOM/);
+});
+
 test('WORK2_PAGES_LESSON selects exactly one lab shard and rejects bad input', () => {
   const plan = resolveRunPlan(lessons, {
     WORK2_PAGES_SCOPE: 'lab',
