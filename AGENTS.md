@@ -1,8 +1,8 @@
 # AGENTS.md — Algorithmic Trading Course
 
 **Status:** Authoritative project entrypoint  
-**Version:** 1.0  
-**Date:** 2026-08-17  
+**Version:** 1.1
+**Date:** 2026-08-28
 **Owner:** Álvaro López Chacarra  
 **Course:** Introducción al Algorithmic Trading con Python — ICAI 2026
 
@@ -130,6 +130,16 @@ and the public distribution repository remains:
 `AlvaroChacarra/algo_trading_intro`
 
 Until that migration is complete, do not assume private/public separation has already been implemented merely because it appears in the architecture contract.
+
+Current implementation and release-gate status is recorded in
+`docs/work1-work2-reaudit.md`. `docs/work2-full-course-scaleout.md` is an
+implementation/historical record and does not confer current GO status.
+Historical Work 1/Work 2 screenshots or JSON without a matching source SHA are
+not valid evidence for a newer commit.
+
+Building a public projection is not publication authorization. Pages deployment
+must remain manual, restricted to `main`, and contingent on the privacy/content
+approval required by `ARCHITECTURE.md`.
 
 ---
 
@@ -412,6 +422,15 @@ Avoid building tests that can be passed only by memorizing wording.
 The final exam is cumulative and should test integration across the course, not merely reproduce continuous-test questions.
 
 Sensitive assessment assets remain private unless explicitly released.
+
+Operational rule after the Work 2 audit:
+
+- `15-final-exam/examen.html` and its committed bank are public **practice only**;
+- they must never be presented or reused as the official final exam;
+- `pedagogy/continuous_assessment_manifest.yml` records only the 10-question,
+  A/B/C/D, ≈10-minute contract and coverage; it contains no official stems or keys;
+- official continuous tests and final-exam banks fail closed until new private
+  sources exist under the private/public architecture.
 
 ---
 

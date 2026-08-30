@@ -76,6 +76,7 @@
     ],
     "apis": [
       "market.constructor",
+      "market.from_csv",
       "market.sample",
       "market.snapshots",
       "market.book",
@@ -89,6 +90,7 @@
   "introduction_routes": {
     "apis": {
       "market.constructor": "LIVE",
+      "market.from_csv": "REQUIRED",
       "market.sample": "REQUIRED",
       "market.snapshots": "REQUIRED",
       "market.book": "LIVE",
@@ -145,6 +147,15 @@
       "returns": "Market",
       "responsibility": "compose snapshots, matching, active book, and replay cursor",
       "qualified_name": "exchange.market.Market"
+    },
+    {
+      "id": "market.from_csv",
+      "name": "from_csv",
+      "kind": "classmethod",
+      "signature": "from_csv(path: str, symbol: str = 'BTCUSDT', depth: int = 10) -> Market",
+      "returns": "Market",
+      "responsibility": "construct a replay market from an external CSV file",
+      "qualified_name": "exchange.market.Market.from_csv"
     },
     {
       "id": "market.sample",
@@ -255,6 +266,8 @@
       "l09-bridge"
     ],
     "REQUIRED": [
+      "l09-market-api/timestamp",
+      "l09-market-api/reset",
       "l09-quiz"
     ],
     "OPTIONAL": []
@@ -294,6 +307,7 @@
         "engine.lifecycle"
       ],
       "apis": [
+        "market.from_csv",
         "market.sample",
         "market.snapshots",
         "market.timestamp",
@@ -319,9 +333,19 @@
   "load": {
     "live_presentation_minutes": 20,
     "guided_minutes": 20,
-    "required_autonomous_minutes": 34,
+    "required_autonomous_minutes": 44,
     "optional_minutes": 10,
-    "overflow_policy": "explicit-route-plan"
+    "overflow_policy": "explicit-route-plan",
+    "autonomous_components": {
+      "documents": [
+        {"id": "l09-market-api/timestamp", "route": "REQUIRED", "minutes": 1},
+        {"id": "l09-market-api/reset", "route": "REQUIRED", "minutes": 1}
+      ],
+      "quizzes": [
+        {"id": "l09-quiz", "route": "REQUIRED", "minutes": 8}
+      ],
+      "projects": []
+    }
   },
   "scenes": [
     {
@@ -390,6 +414,7 @@
         {
           "id": "timestamp",
           "route": "REQUIRED",
+          "duration_minutes": 1,
           "dom_stage": 3
         },
         {
@@ -405,6 +430,7 @@
         {
           "id": "reset",
           "route": "REQUIRED",
+          "duration_minutes": 1,
           "dom_stage": 6
         }
       ]
@@ -611,6 +637,30 @@
               "name": "snapshots",
               "kind": "positional_or_keyword",
               "annotation": "list[dict]"
+            },
+            {
+              "name": "depth",
+              "kind": "positional_or_keyword",
+              "annotation": "int",
+              "default": "10"
+            }
+          ],
+          "returns": "Market"
+        },
+        "from_csv": {
+          "api": "market.from_csv",
+          "kind": "classmethod",
+          "parameters": [
+            {
+              "name": "path",
+              "kind": "positional_or_keyword",
+              "annotation": "str"
+            },
+            {
+              "name": "symbol",
+              "kind": "positional_or_keyword",
+              "annotation": "str",
+              "default": "'BTCUSDT'"
             },
             {
               "name": "depth",

@@ -1,4 +1,4 @@
-/* L13 — el MM naive con y sin skew (MMSimulation real, misma semilla) */
+/* L13 — el MM naive con y sin skew (MMSimulation calculada, misma semilla) */
 (function(){
 "use strict";
 const $=s=>document.querySelector(s);
@@ -30,7 +30,7 @@ function show(on){
   $('#mm-stats').innerHTML=
     `<div><span>PnL final</span><b class="${d.finalPnl>=0?'pos':'neg'}">${d.finalPnl}</b></div>
      <div><span>máx |inventario|</span><b>${d.maxInv}</b></div>`;
-  $('#mm-log').textContent=`» MMSimulation(MarketMaker('SIM', quote_size=0.1, half_spread=0.6, inventory_skew=${on?'2.0':'0'}), seed=42).run()`;
+  $('#mm-log').textContent=`» MMSimulation(MarketMaker('SIM', quote_size=0.1, half_spread=0.6, inventory_skew=${on?'2.0':'0'}), A=${D.arrivalIntensity}, seed=42).run()`;
 }
 $('#mm-on').addEventListener('click',()=>show(true));
 $('#mm-off').addEventListener('click',()=>show(false));

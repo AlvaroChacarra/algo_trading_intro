@@ -7,7 +7,7 @@ la propia carpeta exercises/ (el paquete `exchange/` viaja al lado):
 """
 
 EXTRA_SCRIPTS = {
-    7: ("read_book.py", '''# Clase 7 - Snapshot real a OrderBook, en un archivo .py
+    7: ("read_book.py", '''# Clase 7 - Snapshot sintético a OrderBook, en un archivo .py
 # Ejecuta desde exercises/:  python read_book.py
 
 import csv
@@ -44,7 +44,7 @@ if __name__ == "__main__":
 import csv
 import os
 
-from exchange.book import OrderBook
+from exchange.book import Level, OrderBook
 from exchange.matching import MatchingEngine
 from exchange.orders import Order, OrderType
 
@@ -54,7 +54,15 @@ def fresh_book():
                         "btc_lob_snapshots.csv")
     with open(path, newline="") as f:
         row = {k: float(v) for k, v in next(csv.DictReader(f)).items()}
-    return OrderBook.from_snapshot("BTCUSDT", row, depth=10)
+    raw = OrderBook.from_snapshot("BTCUSDT", row, depth=10)
+    binary_sizes = (0.5, 1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0, 128.0, 256.0)
+    return OrderBook(
+        raw.symbol,
+        [Level(level.price, binary_sizes[i])
+         for i, level in enumerate(raw.bids)],
+        [Level(level.price, binary_sizes[i])
+         for i, level in enumerate(raw.asks)],
+    )
 
 
 def sweep(size):
@@ -73,8 +81,10 @@ def main():
     book = fresh_book()
     c1 = book.asks[0].size
     print(f"mid={book.mid:.2f}  mejor ask={book.asks[0].price} x {c1:.3f}")
+    print("precios del snapshot + tamanos binarios normalizados")
     print("la ley del dia: mas tamano, peor precio ->")
-    for size in (round(c1 * 0.5, 3), round(c1 * 2, 3), round(c1 * 5, 3)):
+    for size in (c1 / 2, c1 + book.asks[1].size / 2,
+                 sum(level.size for level in book.asks[:3])):
         sweep(size)
 
 
@@ -292,10 +302,15 @@ if __name__ == "__main__":
 from exchange.simulation import MMSimulation
 from exchange.strategies import MarketMaker
 
+SIGMA_HORIZON = 0.5
+HORIZON = 500
+ARRIVAL_INTENSITY = 520.0
+
 
 def run(skew):
     mm = MarketMaker("SIM", quote_size=0.1, half_spread=0.6, inventory_skew=skew)
-    res = MMSimulation(mm, s0=100.0, sigma=0.5, steps=500, seed=42).run()
+    res = MMSimulation(mm, s0=100.0, sigma=SIGMA_HORIZON,
+                       steps=HORIZON, A=ARRIVAL_INTENSITY, seed=42).run()
     print(f"  skew={skew:>3}: PnL={res.final_pnl:>6.2f}  "
           f"max|inventario|={res.max_inventory:.2f}")
 
@@ -317,10 +332,14 @@ if __name__ == "__main__":
 from exchange.simulation import MMSimulation
 from exchange.strategies import AvellanedaStoikov, MarketMaker
 
+SIGMA_HORIZON = 0.5
+HORIZON = 500
+ARRIVAL_INTENSITY = 520.0
+
 
 def run(strategy):
-    return MMSimulation(strategy, s0=100.0, sigma=0.5, steps=500,
-                        kappa=1.5, seed=42).run()
+    return MMSimulation(strategy, s0=100.0, sigma=SIGMA_HORIZON, steps=HORIZON,
+                        A=ARRIVAL_INTENSITY, kappa=1.5, seed=42).run()
 
 
 def main():
@@ -332,7 +351,7 @@ def main():
     print("gamma  PnL     max|inv|   <- la frontera riesgo/retorno")
     for gamma in (0.05, 0.2, 0.5, 1.0, 2.0):
         mm = AvellanedaStoikov("SIM", quote_size=0.1, gamma=gamma,
-                               sigma=0.5, kappa=1.5, horizon=500)
+                               sigma=SIGMA_HORIZON, kappa=1.5, horizon=HORIZON)
         res = run(mm)
         print(f"{gamma:<5}  {res.final_pnl:>6.2f}   {res.max_inventory:.2f}")
 

@@ -5,6 +5,7 @@ motor Python de referencia para evitar dos implementaciones numéricas divergent
 """
 from copy import deepcopy
 
+from exchange.book import Level, OrderBook
 from exchange.market import Market
 from exchange.matching import MatchingEngine
 from exchange.orders import Order, OrderType
@@ -13,7 +14,19 @@ from exchange.orders import Order, OrderType
 def build() -> dict:
     m = Market.sample(depth=5)
     m.step()
-    book0 = m.book
+    raw_book = m.book
+    # Preserve the first synthetic snapshot's prices, but use powers-of-two
+    # sizes for the interactive arithmetic.  Every residual is then exactly
+    # representable as a float, so the normal teaching scenarios do not trip
+    # the canonical engine's deliberate fail-closed precision guard.
+    binary_sizes = (0.5, 1.0, 2.0, 4.0, 8.0)
+    book0 = OrderBook(
+        raw_book.symbol,
+        [Level(level.price, binary_sizes[i])
+         for i, level in enumerate(raw_book.bids[:5])],
+        [Level(level.price, binary_sizes[i])
+         for i, level in enumerate(raw_book.asks[:5])],
+    )
     mid = book0.mid
     engine = MatchingEngine()
 
@@ -22,8 +35,7 @@ def build() -> dict:
     c1 = book0.asks[0].size
     c3 = sum(lv.size for lv in book0.asks[:3])
     c5 = sum(lv.size for lv in book0.asks[:5])
-    sizes = [round(c1 * 0.5, 3), round(c1 + book0.asks[1].size * 0.4, 3),
-             round(c3, 3), round(c5 * 1.15, 3)]
+    sizes = [c1 / 2, c1 + book0.asks[1].size / 2, c3, c5 * 1.25]
 
     sweeps = []
     for size in sizes:
@@ -42,7 +54,7 @@ def build() -> dict:
 
     # limit / IOC / FOK sobre el mismo libro, precio límite = 2º nivel ask
     lim_px = book0.asks[1].price
-    big = round(c3 * 1.4, 3)
+    big = c3 * 1.5
     variants = {}
     for name, otype in (("limit", OrderType.LIMIT), ("ioc", OrderType.IOC),
                         ("fok", OrderType.FOK)):
@@ -58,9 +70,9 @@ def build() -> dict:
                           "rest": round(rest, 3),
                           "nfills": len(fills)}
     size_options = [
-        round(c1 * 0.5, 6),
-        round(c1 + book0.asks[1].size * 0.6, 6),
-        round(c3 * 1.2, 6),
+        c1 / 2,
+        c1 + book0.asks[1].size / 2,
+        c3 + book0.asks[3].size / 2,
     ]
     scenarios = []
     for side in ("buy", "sell"):

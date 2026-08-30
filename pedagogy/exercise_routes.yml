@@ -3,7 +3,7 @@
   "policy": {
     "classification": "Each notebook exercise is explicitly routed; OPTIONAL work is never prerequisite or assessed.",
     "guided_live_target_minutes": "18-22",
-    "autonomous_load_accounting": "Manifest REQUIRED and OPTIONAL minutes are exact sums of their exercise routes.",
+    "autonomous_load_accounting": "Exercises are one load component. Lesson manifests add REQUIRED/OPTIONAL document, quiz, and project components; components are additive unless an explicit overlap_id joins equal-duration representations of the same activity.",
     "required_selection": "REQUIRED work closes the lesson's core objective and progression; redundant drills, cross-domain transfer, tooling internals, and enrichment refactors stay OPTIONAL."
   },
   "lessons": {
@@ -751,7 +751,7 @@
           "minutes": 5
         },
         {
-          "title": "A12. Los objetos reales del paquete",
+          "title": "A12. Los objetos canónicos del paquete",
           "route": "OPTIONAL",
           "minutes": 5
         }
@@ -921,7 +921,7 @@
           "minutes": 5
         },
         {
-          "title": "B8 · Snapshot real contra la referencia",
+          "title": "B8 · Snapshot sintético contra la referencia",
           "route": "REQUIRED",
           "minutes": 10
         }
@@ -1103,7 +1103,7 @@
           "minutes": 6
         },
         {
-          "title": "B7 · Ahora sí: loop completo",
+          "title": "B7 · Carga REQUIRED: from_csv, sample y snapshots",
           "route": "REQUIRED",
           "minutes": 6
         },

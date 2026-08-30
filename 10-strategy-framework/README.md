@@ -18,11 +18,14 @@ permite que el alumno enchufe la suya.
 **interfaz Strategy (ABC) y el runner Backtest**
 
 `exchange/strategy.py`: `Strategy(ABC)` con `on_book_update(book) -> list[Action]`
-(abstracto), `on_fill`, `on_start/on_end`; acciones `NewOrder` y `Cancel`.
-`exchange/backtest.py`: `Backtest(market, strategy)` recorre el mercado, pasa cada libro a la
-estrategia, ejecuta sus acciones contra el matching, actualiza el `PositionTracker` y registra
-`BacktestResult` (fills, equity_curve, final_equity/position). El **mismo** `run()` sirve para
-toda estrategia — el pico arquitectónico del curso.
+(abstracto), `on_fill`, `on_start/on_end`; acciones `NewOrder` y `Cancel`. Los hooks tienen una
+implementación no-op y son opcionales de **sobrescribir**, pero conocer el ciclo de vida es
+contenido LIVE/REQUIRED y evaluable; no son profundidad OPTIONAL.
+`exchange/backtest.py`: `Backtest(market, strategy)` recorre el mercado, mantiene por id solo
+el remanente resting de cada LIMIT, ejecuta `NewOrder`/`Cancel`, actualiza el
+`PositionTracker` y registra `BacktestResult` (fills, equity_curve, final_equity/position).
+Una cancelación resta exactamente la cantidad propia aún abierta. El **mismo** `run()` sirve
+para toda estrategia — el pico arquitectónico del curso.
 
 ## Ejercicios de construcción
 

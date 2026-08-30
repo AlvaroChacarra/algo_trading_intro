@@ -1,4 +1,4 @@
-"""Datos reales para L11: señal contra azar, parent arrival para la decisión
+"""Datos sintéticos para L11: señal contra azar, parent arrival para la decisión
 completa y decision mid por orden hija para medir su ejecución."""
 import random
 

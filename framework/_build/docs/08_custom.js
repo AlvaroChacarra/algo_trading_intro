@@ -1,4 +1,4 @@
-/* L8 — execution trace y simulador derivados del MatchingEngine canónico. */
+/* L8 — StudentMatchingEngine didáctico; escenarios calculados por el core canónico. */
 (function(){
 "use strict";
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],D=DOC_DATA;
@@ -7,74 +7,82 @@ function bookHTML(book,focus){return book.asks.slice().reverse().map(x=>`<div cl
 const base={bids:D.bids,asks:D.asks};
 
 const codeStages=[
-`class MatchingEngine:
+`import math
+
+class StudentMatchingEngine:
 <span class="active-line">    def process(self, order, book, timestamp=None):</span>
-        # Construiremos este contrato.
+        # Modelo didáctico; el core canónico usa un candidate separado.
         ...`,
-`class MatchingEngine:
+`class StudentMatchingEngine:
     def process(self, order, book, timestamp=None):
 <span class="active-line">        opposite = (book.asks</span>
 <span class="active-line">            if order.side is Side.BUY else book.bids)</span>`,
-`class MatchingEngine:
+`class StudentMatchingEngine:
     def process(self, order, book, timestamp=None):
         opposite = book.asks if order.side is Side.BUY else book.bids
 <span class="active-line">        remaining = order.size</span>`,
-`class MatchingEngine:
+`class StudentMatchingEngine:
     def process(self, order, book, timestamp=None):
         opposite = book.asks if order.side is Side.BUY else book.bids
         remaining = order.size
         for level in opposite:
-            if remaining &lt;= _EPS: break
+            if remaining == 0.0: break
 <span class="active-line">            take = min(remaining, level.size)</span>`,
 `# PROPUESTA INGENUA — incorrecta para FOK
-def process(self, order, book, timestamp=None):
-    opposite = book.asks if order.side is Side.BUY else book.bids
-    remaining = order.size
-    for level in opposite:
-        take = min(remaining, level.size)
-<span class="active-line">        consumed_side = Side.SELL if order.side is Side.BUY else Side.BUY</span>
-<span class="active-line">        book.reduce(consumed_side,</span>
-<span class="active-line">                    level.price, take)</span>
-        remaining -= take
-    if order.order_type is OrderType.FOK and remaining &gt; _EPS:
-<span class="active-line">        return []  # demasiado tarde</span>`,
-`def process(self, order, book, timestamp=None):
-    opposite = book.asks if order.side is Side.BUY else book.bids
-    remaining = order.size
-<span class="active-line">    planned = []</span>
-    for level in opposite:
-        if remaining &lt;= _EPS: break
-        take = min(remaining, level.size)
-<span class="active-line">        planned.append((level.price, take))</span>
-        remaining -= take
-    # book todavía intacto`,
-`def process(self, order, book, timestamp=None):
-    opposite = book.asks if order.side is Side.BUY else book.bids
-    remaining = order.size
-    planned = []
-    for level in opposite:
-        if remaining &lt;= _EPS: break
-        take = min(remaining, level.size)
-        planned.append((level.price, take))
-        remaining -= take
-<span class="active-line">    filled = order.size - remaining</span>
-<span class="active-line">    if (order.order_type is OrderType.FOK</span>
-<span class="active-line">            and filled &lt; order.size - _EPS):</span>
-<span class="active-line">        return []</span>`,
-`def process(self, order, book, timestamp=None):
-    ...  # SELECT + PLAN + VALIDATE
-<span class="active-line">    fills = []</span>
-<span class="active-line">    for price, take in planned:</span>
-<span class="active-line">        consumed_side = Side.SELL if order.side is Side.BUY else Side.BUY</span>
-<span class="active-line">        book.reduce(consumed_side, price, take)</span>
-<span class="active-line">        fills.append(Fill(order.id, order.symbol,</span>
-<span class="active-line">                          order.side, price, take, timestamp))</span>`,
-`def process(self, order, book, timestamp=None):
-    ...  # SELECT + PLAN + VALIDATE + COMMIT
-<span class="active-line">    if (remaining &gt; _EPS</span>
-<span class="active-line">            and order.order_type is OrderType.LIMIT):</span>
-<span class="active-line">        book.add_limit(order.side, order.price, remaining)</span>
-<span class="active-line">    return fills</span>`
+class StudentMatchingEngine:
+    def process(self, order, book, timestamp=None):
+        opposite = book.asks if order.side is Side.BUY else book.bids
+        remaining = order.size
+        consumed = []
+        for level in opposite:
+            if remaining == 0.0: break
+            take = min(remaining, level.size)
+<span class="active-line">            book.reduce(order.side.opposite, level.price, take)</span>
+            consumed.append(take)
+            filled = math.fsum(consumed)
+            remaining = 0.0 if filled &gt;= order.size else order.size - filled
+        if order.order_type is OrderType.FOK and remaining &gt; 0.0:
+<span class="active-line">            return []  # demasiado tarde: el book ya cambió</span>`,
+`class StudentMatchingEngine:
+    def process(self, order, book, timestamp=None):
+        opposite = book.asks if order.side is Side.BUY else book.bids
+        remaining = order.size
+<span class="active-line">        planned = []</span>
+        for level in opposite:
+            if remaining == 0.0: break
+            take = min(remaining, level.size)
+<span class="active-line">            planned.append((level.price, take))</span>
+            filled = math.fsum(size for _, size in planned)
+<span class="active-line">            remaining = (0.0 if filled &gt;= order.size</span>
+<span class="active-line">                         else order.size - filled)</span>
+        # book todavía intacto`,
+`class StudentMatchingEngine:
+    def process(self, order, book, timestamp=None):
+        ...  # SELECT + PLAN
+<span class="active-line">        if (order.order_type is OrderType.FOK</span>
+<span class="active-line">                and remaining &gt; 0.0):</span>
+<span class="active-line">            return []</span>
+        # La validación ocurre antes del primer reduce.`,
+`class StudentMatchingEngine:
+    def process(self, order, book, timestamp=None):
+        ...  # SELECT + PLAN + VALIDATE
+<span class="active-line">        fills = []</span>
+<span class="active-line">        for price, take in planned:</span>
+<span class="active-line">            consumed_side = (Side.SELL</span>
+<span class="active-line">                if order.side is Side.BUY else Side.BUY)</span>
+<span class="active-line">            book.reduce(consumed_side, price, take)</span>
+<span class="active-line">            fills.append(Fill(order.id, order.symbol,</span>
+<span class="active-line">                              order.side, price, take, timestamp))</span>`,
+`class StudentMatchingEngine:
+    def process(self, order, book, timestamp=None):
+        ...  # SELECT + PLAN + VALIDATE + COMMIT
+<span class="active-line">        if (remaining &gt; 0.0</span>
+<span class="active-line">                and order.order_type is OrderType.LIMIT):</span>
+            filled = math.fsum(fill.size for fill in fills)
+<span class="active-line">            if filled &gt; 0.0 and remaining == order.size:</span>
+<span class="active-line">                raise OverflowError("remainder not representable")</span>
+<span class="active-line">            book.add_limit(order.side, order.price, remaining)</span>
+<span class="active-line">        return fills</span>`
 ];
 function paintBuildCode(stage){$('#l8-build-code').innerHTML=codeStages[stage];}
 $('#l8-build-fig').addEventListener('stagechange',e=>paintBuildCode(e.detail.stage));paintBuildCode(0);
@@ -124,7 +132,7 @@ $$('#cross-side button').forEach(b=>b.addEventListener('click',()=>{$$('#cross-s
 let sim={type:'market',side:'buy',sizeI:1,priceI:1,phase:0};
 function scenario(){const pi=sim.type==='market'?-1:sim.priceI;return D.scenarios.find(x=>x.key===`${sim.side}:${sim.type}:${sim.sizeI}:${pi}`);}
 function resetPhase(){sim.phase=0;paintSim();}
-function paintSim(){const s=scenario();$('#sim-size-v').textContent=s.size;$('#sim-price-row').style.display=sim.type==='market'?'none':'flex';$('#sim-price-v').textContent=s.price??'MKT';
+function paintSim(){const s=scenario();$('#sim-size-v').textContent=s.size;$('#sim-price-row').classList.toggle('hidden',sim.type==='market');$('#sim-price-v').textContent=s.price??'MKT';
   const phases=[['1 · SELECT','lado contrario'],['2 · PLAN',`${s.planned.length} niveles`],['3 · VALIDATE',sim.type==='fok'?(s.fills.length?'FOK completa':'FOK aborta'):'ok'],['4 · COMMIT',`${s.fills.length} fills`]];
   $('#sim-phases').innerHTML=phases.map((x,i)=>`<div class="trace-step ${i<sim.phase?'ok':i===sim.phase?'active':''}"><span>${x[0]}</span><span class="trace-meta">${x[1]}</span></div>`).join('');
   const committed=sim.phase>=3;$('#sim-book-label').textContent=committed?'after':'before';$('#sim-book').innerHTML=bookHTML(committed?s.after:s.before,sim.phase===0?(sim.side==='buy'?'asks':'bids'):null);

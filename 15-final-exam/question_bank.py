@@ -1,15 +1,17 @@
 """question_bank.py — banco de preguntas del curso.
 
-Fuente única de verdad para el examen final (L15) y el checkpoint de mitad de
-curso (tras L6). Cada pregunta es una tupla:
+Fuente única de verdad para la práctica acumulativa pública de L15 y el
+checkpoint de mitad de curso (tras L6). Cada pregunta es una tupla:
 
     (enunciado, opción A, opción B, opción C, correcta, tema)
 
-`CANONICAL` son las 40 preguntas del examen oficial, en orden fijo: es lo que
-`generate_exam.py` emite por defecto (examen.html reproducible al byte).
+`CANONICAL` son las 40 preguntas de práctica, en orden fijo: es lo que
+`generate_exam.py` emite por defecto (`examen.html`, reproducible al byte).
 `EXTRA` amplía el pool para poder generar variantes equilibradas con
 `generate_exam.py --seed N` (mismo reparto por tema, preguntas distintas), útil
-para evitar copia entre convocatorias.
+para práctica adicional. Este banco y sus respuestas ya son públicos y **no
+son aptos para una convocatoria oficial**. El banco oficial debe crearse de
+nuevo y permanecer en la futura fuente privada.
 `CHECKPOINT` cubre solo L1-L6 (Python, módulos y POO): el autoexamen de mitad
 de curso.
 
@@ -27,59 +29,59 @@ from dataclasses import dataclass
 import random as _random
 
 # ---------------------------------------------------------------------------
-# 40 preguntas oficiales (orden fijo — no reordenar: examen.html depende de él)
+# 40 preguntas de práctica acumulativa (orden fijo)
 # ---------------------------------------------------------------------------
 CANONICAL = [
-    # --- Python / OOP / framework -----------------------------------------
-    ("En el framework, ¿qué hace que una estrategia sea 'enchufable' al Backtest sin tocar el runner?",
-     "Que herede de Strategy e implemente on_book_update devolviendo acciones",
-     "Que defina un método run() propio",
-     "Que importe el módulo backtest",
+    # --- Integración y lectura de código L1-L6/L9-L10 ---------------------
+    ("Un loop llama `market.step()` y después decide `if book.spread < limite: enviar()`. ¿Qué conecta esa secuencia?",
+     "El control de flujo de L1 con el reloj/estado de Market de L9",
+     "La herencia de L6 con la contabilidad de L5",
+     "El muestreo VWAP de L12 con la utilidad CARA",
      "A", "framework"),
-    ("`Side(str, Enum)` se usa en vez de un str pelado porque…",
-     "Es más rápido en tiempo de ejecución",
-     "Evita valores inválidos como 'byu' pero sigue comparándose con 'buy'",
-     "Permite ordenar las órdenes por precio",
+    ("Lee `spread = ask - bid; decision = 'buy' if spread <= 2 else 'wait'`. Con `bid=99` y `ask=101`, `decision` vale…",
+     "'wait'",
+     "'buy'",
+     "2",
+     "B", "python"),
+    ("Lee `best = max(o['price'] for o in book if o['side']=='buy')`. Para buys 99 y 101, `best` vale…",
+     "99",
+     "100",
+     "101",
+     "C", "python"),
+    ("BUG: importar `order_book` lanza inmediatamente el backtest de demo. ¿Qué falta?",
+     "Mover la ejecución bajo `if __name__ == '__main__':`",
+     "Cambiar todas las funciones a métodos estáticos",
+     "Capturar siempre `Exception` al importar",
+     "A", "modules"),
+    ("Lee `Fill(... side='buy', price=100, size=0.5).cash_flow()`. El resultado correcto es…",
+     "+50: comprar aumenta caja",
+     "−50: comprar consume caja",
+     "0: un fill no afecta a caja",
      "B", "oop"),
-    ("Una `Order` de tipo MARKET tiene `price = None`. ¿Por qué?",
-     "Porque el precio se decide al cruzar contra el libro, no se fija de antemano",
-     "Porque las market orders no se ejecutan nunca",
-     "Por un bug heredado del dict original",
+    ("BUG: `book.mid()` produce `TypeError: 'float' object is not callable`. La API canónica define `mid` como…",
+     "property; debe leerse `book.mid`",
+     "classmethod; debe llamarse `OrderBook.mid()`",
+     "función del módulo; debe llamarse sin book",
      "A", "oop"),
-    ("`PositionTracker` guarda `_cash` y `_position` con guión bajo. Esa convención significa…",
-     "Que son constantes y no cambian",
-     "Que son estado interno: se modifican vía métodos, no a mano desde fuera",
-     "Que Python las hace inaccesibles (privadas de verdad)",
-     "B", "oop"),
-    ("¿Qué devuelve `on_book_update`?",
-     "Una lista de acciones (NewOrder/Cancel), no ejecuta nada por sí misma",
-     "Los fills generados",
-     "El nuevo equity",
+    ("Lee `class Momentum(Strategy):\n    def on_book_update(self, book): return []`. La clase ya es instanciable porque…",
+     "Ha implementado el método abstracto del contrato Strategy",
+     "Toda subclase de Python es instanciable aunque omita abstractmethods",
+     "Devuelve una lista vacía",
      "A", "framework"),
-    ("En el Backtest de replay, una LIMIT que no se cruza en un snapshot…",
-     "Persiste para siempre en el libro",
-     "Solo descansa dentro de ese snapshot; el libro se reconstruye en el siguiente paso",
-     "Se convierte automáticamente en MARKET",
-     "B", "framework"),
-    ("`Fill.cash_flow()` de una compra de 0.5 @ 100 vale…",
-     "+50",
-     "-50",
-     "0",
-     "B", "oop"),
     ("La composición que ve el alumno en L5 es…",
      "OrderBook contiene niveles; PositionTracker consume objetos Fill",
      "Order hereda de OrderBook",
      "Market hereda de Strategy",
      "A", "oop"),
-    ("¿Por qué `on_book_update` devuelve acciones en vez de ejecutar órdenes directamente?",
-     "Para separar la decisión (estrategia) de la ejecución (motor)",
-     "Porque ejecutar dentro sería más rápido",
-     "Para evitar usar clases",
+    ("L2 calcula `best_bid(book)` sobre listas y L7 expone `book.best_bid` sobre `OrderBook`. ¿Qué debe conservar el puente?",
+     "El significado económico del mejor bid, aunque cambie la representación",
+     "La sintaxis exacta de función para siempre",
+     "La mutabilidad de la lista externa dentro del objeto",
      "A", "framework"),
-    ("Polimorfismo en el curso significa que…",
-     "VWAP y un market maker comparten el contrato Strategy, aunque usen Backtest y MMSimulation como runners especializados",
-     "Una orden puede ser buy y sell a la vez",
-     "El libro cambia de tipo en tiempo de ejecución",
+    ("¿Qué permite pasar del módulo reutilizable de L3 a una Strategy enchufable en L10?",
+     "Separar importación de ejecución y exponer un contrato estable",
+     "Ejecutar la demo cada vez que se importa el módulo",
+     "Acoplar la estrategia directamente al motor de matching",
      "A", "framework"),
 
     # --- Microestructura ---------------------------------------------------
@@ -88,16 +90,16 @@ CANONICAL = [
      "best_bid - best_ask",
      "(best_bid + best_ask)/2",
      "A", "microstructure"),
-    ("El microprice pondera el mid por…",
-     "El tamaño del lado contrario (más peso al lado con menos tamaño)",
-     "El número de niveles del libro",
-     "La volatilidad histórica",
-     "A", "microstructure"),
-    ("Un imbalance de nivel 1 cercano a +1 indica…",
-     "Mucho más tamaño en el bid que en el ask (presión compradora)",
-     "Mucho más tamaño en el ask",
-     "Spread muy ancho",
-     "A", "microstructure"),
+    ("Lee `microprice=(ask*bid_size + bid*ask_size)/(bid_size+ask_size)`. Con bid 99×3 y ask 101×1 vale…",
+     "99.5",
+     "100.0",
+     "100.5",
+     "C", "microstructure"),
+    ("BUG: una FOK de tamaño 2 consume 1 unidad del primer nivel y después descubre que no puede completarse. ¿Qué invariante se violó?",
+     "PLAN→VALIDATE→COMMIT: no debía mutar el libro antes de validar el total",
+     "Una FOK siempre puede llenarse parcialmente",
+     "El best bid debe ser un método, no una property",
+     "A", "matching"),
     ("La profundidad (depth) de un lado mide…",
      "El tamaño acumulado en los primeros niveles",
      "La distancia al mid",
@@ -120,21 +122,21 @@ CANONICAL = [
      "Se ejecuta toda al best ask",
      "Se cancela si no hay liquidez al best ask",
      "A", "matching"),
-    ("Una orden IOC…",
-     "Cruza lo que pueda y cancela el remanente (no descansa)",
-     "Se ejecuta entera o nada",
-     "Descansa en el libro indefinidamente",
-     "A", "matching"),
-    ("Una orden FOK…",
-     "O se llena entera o no se ejecuta nada",
-     "Llena parcialmente y deja el resto",
-     "Siempre cruza al mid",
-     "A", "matching"),
-    ("Una LIMIT buy al best_bid actual (por debajo del ask)…",
-     "No cruza: descansa en el libro",
-     "Cruza contra el ask inmediatamente",
-     "Se rechaza",
-     "A", "matching"),
+    ("BUG: `snap = market.snapshots; snap[0]['asks'][0][0] = 999` cambia después el replay. ¿Cuál es la corrección?",
+     "Devolver una copia profunda de los snapshots",
+     "Convertir `snapshots` en variable global",
+     "Reordenar asks de mayor a menor",
+     "A", "engine"),
+    ("BUG: una `Cancel(order_id=7)` del tick siguiente no hace nada porque el runner vació `resting`. ¿Qué contrato falta?",
+     "Persistir órdenes resting y su remanente por ID hasta fill/cancel/fin de vida",
+     "Convertir toda cancelación en MARKET",
+     "Cancelar siempre el nivel de precio completo",
+     "A", "framework"),
+    ("BUG: para una compra a 101 con decision mid 100 se calcula slippage `100-101=-1`. ¿Cuál es el signo correcto?",
+     "+1 para coste comprador: `fill_price - decision_mid`",
+     "−1, porque todo slippage comprador es beneficio",
+     "0, porque el benchmark no importa",
+     "A", "execution"),
     ("El precio efectivo de una market que barre niveles es…",
      "El nocional total dividido por el tamaño total ejecutado",
      "Siempre el best bid",
@@ -145,10 +147,10 @@ CANONICAL = [
      "Mejor precio efectivo",
      "El mismo precio efectivo",
      "A", "matching"),
-    ("La elección del tipo de orden afecta a…",
-     "Coste, probabilidad de ejecución y riesgo",
-     "Solo a la latencia",
-     "Solo al símbolo",
+    ("Un Fill atraviesa `MatchingEngine → PositionTracker → métricas`. ¿Qué debe conservarse para interpretar el resultado?",
+     "Lado, precio, tamaño y benchmark de la decisión que originó el fill",
+     "Solo el último precio del día",
+     "Solo el número total de órdenes enviadas",
      "A", "matching"),
     ("Cruzar ya (market) vs esperar barato (limit) es un trade-off entre…",
      "Certeza de ejecución vs precio",
@@ -157,40 +159,40 @@ CANONICAL = [
      "A", "matching"),
 
     # --- Ejecución / VWAP --------------------------------------------------
-    ("El objetivo de un algoritmo VWAP es…",
-     "Ejecutar cerca del precio medio ponderado por volumen, troceando la orden",
-     "Maximizar el número de fills",
-     "Comprar al best bid siempre",
+    ("¿Qué demuestra que VWAP puede reutilizar el framework de L6/L10 sin acoplarse al runner?",
+     "Implementa Strategy, propone acciones y actualiza ejecución al recibir fills",
+     "Llama directamente a internals de MatchingEngine",
+     "Sobrescribe el tipo de cada OrderBook",
      "A", "execution"),
     ("TWAP frente a VWAP:",
      "TWAP reparte en trozos iguales en el tiempo; VWAP pondera por volumen",
      "TWAP pondera por volumen; VWAP por tiempo",
      "Son idénticos",
      "A", "execution"),
-    ("Trocear una orden grande sirve para…",
-     "Reducir el impacto de mercado (slippage)",
-     "Aumentar el slippage a propósito",
-     "Evitar pagar comisiones",
+    ("Libro, matching y benchmark deben compartir estado temporal porque…",
+     "El slippage solo es interpretable contra el mid observado al decidir la orden",
+     "El precio final basta para explicar cualquier fill",
+     "Matching no depende del libro",
      "A", "execution"),
-    ("Un perfil VWAP [0.2, 0.5, 0.3] aplicado a 100 unidades programa…",
-     "20, 50 y 30 unidades",
-     "Tres trozos de 100 unidades",
-     "50, 30 y 20 unidades por orden alfabético",
+    ("Lee `sizes=[round(100*w) for w in (0.2,0.5,0.3)]`. El schedule es…",
+     "[20, 50, 30]",
+     "[20, 70, 100]",
+     "[33, 33, 34]",
      "A", "execution"),
-    ("Antes de usar un perfil de volumen como schedule VWAP hay que…",
-     "Normalizar sus pesos para que sumen 1",
-     "Ordenar sus pesos de mayor a menor",
-     "Sustituir todos los pesos por el máximo",
+    ("BUG: VWAP hace `_executed += child_size` al enviar, aunque solo se llena la mitad. ¿Qué debe contabilizar?",
+     "Solo tamaños confirmados en `on_fill`",
+     "Todo tamaño solicitado, aunque sea rechazado",
+     "El número de snapshots recorridos",
      "A", "execution"),
     ("Para medir el slippage de un fill individual, el benchmark natural es…",
      "El decision mid de la orden hija que originó ese fill",
      "El precio de cierre del año",
      "El best ask final",
      "A", "execution"),
-    ("Un equity positivo con un inventario enorme al final indica…",
-     "Riesgo escondido: no es necesariamente una buena estrategia",
-     "Una estrategia perfecta",
-     "Un error de cálculo seguro",
+    ("El loop de Market, el lifecycle de Strategy y el inventario del market maker deben coordinarse para que…",
+     "cada cancel/fill afecte al estado correcto antes del siguiente tick",
+     "el inventario se reinicie después de cada fill",
+     "las órdenes resting desaparezcan al cambiar el mid",
      "A", "execution"),
 
     # --- Market making / Avellaneda-Stoikov -------------------------------
@@ -214,21 +216,21 @@ CANONICAL = [
      "Está por encima del mid",
      "Coincide siempre con el mid",
      "A", "as"),
-    ("En r = s - q·γ·σ²·τ, con τ=(T-t)/T, al acercarse el cierre (t→T)…",
-     "El ajuste por inventario tiende a 0 y r vuelve al mid",
-     "El ajuste se hace máximo",
-     "r se vuelve infinito",
+    ("Lee `r=s-q*gamma*sigma**2*tau`. Con s=100, q=2, gamma=0.1, sigma=2 y tau=0.5, r vale…",
+     "99.6",
+     "100.4",
+     "96.0",
      "A", "as"),
-    ("Subir γ (aversión al riesgo) en A-S…",
-     "Inclina más el reservation price y reduce el inventario acumulado",
-     "Aumenta el inventario acumulado",
-     "No tiene ningún efecto",
+    ("BUG dimensional: la fórmula usa τ normalizado, pero el simulador interpreta σ como volatilidad por tick. ¿Qué corrección es coherente?",
+     "Expresar σ por horizonte o escalar el incremento por `1/sqrt(T)`",
+     "Eliminar σ de la fórmula",
+     "Multiplicar simultáneamente τ y σ por T",
      "A", "as"),
-    ("La utilidad CARA -exp(-γ·W)…",
-     "Es creciente en riqueza y más cóncava cuanto mayor es γ",
-     "Es decreciente en riqueza",
-     "Es lineal en riqueza",
-     "A", "as"),
+    ("Lee `lambda_delta=A*exp(-kappa*delta)`. Con A=1, kappa=1 y delta=0, la intensidad vale…",
+     "0",
+     "1",
+     "e",
+     "B", "as"),
     ("Adverse selection para un market maker significa…",
      "Acumular posición justo cuando el mercado se mueve en tu contra",
      "Cotizar el mismo precio que el competidor",
@@ -611,6 +613,9 @@ class QuestionMetadata:
     distribution_type: str
     cognitive_level: str
     difficulty: str
+    concept_ids: tuple[str, ...]
+    api_ids: tuple[str, ...]
+    notation_ids: tuple[str, ...]
     integration_rationale: str | None = None
 
 
@@ -663,12 +668,19 @@ _L14_CAPSTONE = (14, "l14-build-capstone")
 _L15_INTEGRATE = (15, "l15-integrate-course")
 
 
-def _build_metadata(prefix: str, questions: list, rows: tuple) -> tuple[QuestionMetadata, ...]:
+def _build_metadata(prefix: str, questions: list, rows: tuple,
+                    semantics: tuple | None = None) -> tuple[QuestionMetadata, ...]:
     """Materializa ids estables sin acoplar metadatos a la tupla histórica."""
     if len(rows) != len(questions):
         raise ValueError(f"{prefix}: {len(rows)} metadatos para {len(questions)} preguntas")
+    if semantics is None:
+        semantics = tuple(((), (), ()) for _ in questions)
+    if len(semantics) != len(questions):
+        raise ValueError(f"{prefix}: {len(semantics)} semánticas para {len(questions)} preguntas")
     result = []
-    for index, (links, distribution, level, difficulty, rationale) in enumerate(rows, 1):
+    for index, ((links, distribution, level, difficulty, rationale),
+                (concept_ids, api_ids, notation_ids)) in enumerate(
+                    zip(rows, semantics), 1):
         result.append(QuestionMetadata(
             item_id=f"{prefix}-{index:03d}",
             lessons=tuple(lesson for lesson, _ in links),
@@ -676,6 +688,9 @@ def _build_metadata(prefix: str, questions: list, rows: tuple) -> tuple[Question
             distribution_type=distribution,
             cognitive_level=level,
             difficulty=difficulty,
+            concept_ids=tuple(concept_ids),
+            api_ids=tuple(api_ids),
+            notation_ids=tuple(notation_ids),
             integration_rationale=rationale,
         ))
     return tuple(result)
@@ -685,57 +700,124 @@ def _build_metadata(prefix: str, questions: list, rows: tuple) -> tuple[Question
 # en 8 code_reading, 8 conceptual, 8 debugging y 8 financial_interpretation:
 # la distribución 8×5 declarada para L15 queda así comprobable al byte.
 _CANONICAL_TRACE = (
-    ((_L06_CONTRACT, _L10_MAP, _L15_INTEGRATE), "integration", "analyze", "hard",
-     "Conecta el contrato de Strategy de FOUNDATIONS con el runner de ENGINE."),
-    ((_L04_OBJECTS,), "code_reading", "understand", "medium", None),
-    ((_L04_CTORS,), "code_reading", "apply", "medium", None),
-    ((_L05_INVARIANTS,), "debugging", "analyze", "medium", None),
-    ((_L10_SEPARATE,), "code_reading", "understand", "medium", None),
-    ((_L10_LIFECYCLE,), "debugging", "analyze", "hard", None),
+    ((_L01_DECIDE, _L09_LOOP, _L15_INTEGRATE), "integration", "analyze", "hard",
+     "Conecta control de flujo de FOUNDATIONS con el reloj de Market en ENGINE."),
+    ((_L01_DECIDE,), "code_reading", "apply", "low", None),
+    ((_L02_FUNCS, _L02_BOOK, _L02_SORT), "code_reading", "apply", "medium", None),
+    ((_L03_REUSE, _L03_IMPORT), "debugging", "analyze", "medium", None),
     ((_L04_CASH,), "code_reading", "apply", "medium", None),
+    ((_L05_BOOK,), "debugging", "analyze", "medium", None),
+    ((_L06_CONTRACT, _L10_MAP), "code_reading", "analyze", "medium", None),
     ((_L05_BOOK,), "conceptual", "understand", "medium", None),
-    ((_L06_CONTRACT, _L10_SEPARATE, _L15_INTEGRATE), "integration", "analyze", "hard",
-     "Relaciona el contrato de decisión de FOUNDATIONS con la ejecución de ENGINE."),
-    ((_L06_POLY, _L10_MAP, _L12_RUN, _L13_LIQUIDITY, _L15_INTEGRATE),
-     "integration", "evaluate", "hard",
-     "Aplica polimorfismo de FOUNDATIONS al motor y a dos estrategias de STRATEGIES."),
+    ((_L02_FUNCS, _L02_BOOK, _L07_BOOK, _L07_METRICS, _L15_INTEGRATE),
+     "integration", "analyze", "hard",
+     "Conserva la semántica del book entre función de FOUNDATIONS y objeto de ENGINE."),
+    ((_L03_REUSE, _L10_MAP, _L15_INTEGRATE), "integration", "analyze", "hard",
+     "Conecta módulos reutilizables de FOUNDATIONS con el contrato Strategy de ENGINE."),
     ((_L07_METRICS,), "financial_interpretation", "understand", "medium", None),
-    ((_L07_METRICS,), "code_reading", "apply", "hard", None),
-    ((_L07_METRICS,), "debugging", "analyze", "medium", None),
-    ((_L07_METRICS,), "financial_interpretation", "apply", "medium", None),
-    ((_L07_METRICS,), "financial_interpretation", "analyze", "hard", None),
-    ((_L07_BOUNDARY,), "conceptual", "analyze", "medium", None),
-    ((_L08_IMPACT,), "financial_interpretation", "apply", "medium", None),
-    ((_L08_POLICIES,), "debugging", "analyze", "medium", None),
+    ((_L07_METRICS, _L07_BOUNDARY), "code_reading", "apply", "hard", None),
     ((_L08_ATOMIC,), "debugging", "analyze", "hard", None),
-    ((_L08_POLICIES,), "debugging", "analyze", "medium", None),
+    ((_L07_METRICS, _L07_BOUNDARY), "financial_interpretation", "apply", "medium", None),
+    ((_L07_METRICS, _L07_BOUNDARY), "financial_interpretation", "analyze", "hard", None),
+    ((_L07_BOOK, _L07_BOUNDARY), "conceptual", "analyze", "medium", None),
+    ((_L08_IMPACT,), "financial_interpretation", "apply", "medium", None),
+    ((_L09_MARKET, _L09_RESET), "debugging", "analyze", "hard", None),
+    ((_L10_SEPARATE, _L10_LIFECYCLE), "debugging", "analyze", "hard", None),
+    ((_L11_SLIPPAGE,), "debugging", "analyze", "hard", None),
     ((_L08_IMPACT,), "financial_interpretation", "apply", "medium", None),
     ((_L08_IMPACT,), "financial_interpretation", "analyze", "medium", None),
-    ((_L08_POLICIES, _L11_SLIPPAGE, _L15_INTEGRATE), "integration", "evaluate", "hard",
-     "Une políticas de órdenes de ENGINE con coste y riesgo de ejecución en STRATEGIES."),
-    ((_L08_POLICIES,), "conceptual", "analyze", "medium", None),
-    ((_L10_MAP, _L12_RUN, _L15_INTEGRATE), "integration", "analyze", "hard",
-     "Conecta el interfaz ejecutable de ENGINE con el objetivo de VWAP en STRATEGIES."),
-    ((_L12_COMPARE,), "conceptual", "understand", "medium", None),
-    ((_L08_IMPACT, _L12_COMPARE, _L15_INTEGRATE), "integration", "analyze", "hard",
-     "Relaciona impacto por tamaño de ENGINE con slicing de ejecución en STRATEGIES."),
-    ((_L12_COMPARE,), "code_reading", "apply", "medium", None),
-    ((_L12_COMPARE,), "debugging", "analyze", "medium", None),
-    ((_L11_BENCH,), "conceptual", "apply", "medium", None),
-    ((_L05_FILLS, _L11_RISK, _L13_INVENTORY, _L15_INTEGRATE),
+    ((_L04_CASH, _L05_FILLS, _L11_SLIPPAGE, _L15_INTEGRATE),
      "integration", "evaluate", "hard",
-     "Lleva contabilidad de fills de FOUNDATIONS hasta métricas y riesgo de STRATEGIES."),
+     "Sigue un Fill desde objetos/contabilidad de FOUNDATIONS hasta métricas de STRATEGIES."),
+    ((_L08_POLICIES,), "conceptual", "analyze", "medium", None),
+    ((_L06_POLY, _L10_MAP, _L12_RUN, _L15_INTEGRATE), "integration", "analyze", "hard",
+     "Aplica polimorfismo de FOUNDATIONS al contrato de ENGINE y a VWAP."),
+    ((_L12_COMPARE,), "conceptual", "understand", "medium", None),
+    ((_L07_METRICS, _L08_POLICIES, _L11_SLIPPAGE, _L15_INTEGRATE),
+     "integration", "analyze", "hard",
+     "Une estado del book y matching de ENGINE con el benchmark de STRATEGIES."),
+    ((_L12_COMPARE, _L12_RUN), "code_reading", "apply", "medium", None),
+    ((_L10_FEEDBACK, _L12_RUN), "debugging", "analyze", "hard", None),
+    ((_L11_BENCH, _L11_SLIPPAGE), "conceptual", "apply", "medium", None),
+    ((_L09_LOOP, _L10_SEPARATE, _L10_LIFECYCLE, _L13_INVENTORY, _L15_INTEGRATE),
+     "integration", "evaluate", "hard",
+     "Coordina reloj de ENGINE, lifecycle/cancel y riesgo de inventario en STRATEGIES."),
     ((_L13_LIQUIDITY,), "financial_interpretation", "understand", "medium", None),
     ((_L13_INVENTORY,), "financial_interpretation", "analyze", "medium", None),
     ((_L13_INVENTORY,), "conceptual", "apply", "medium", None),
     ((_L14_RESERVATION,), "conceptual", "apply", "hard", None),
     ((_L14_RESERVATION,), "code_reading", "analyze", "hard", None),
-    ((_L14_LAB,), "debugging", "analyze", "hard", None),
+    ((_L14_RESERVATION, _L14_LAB), "debugging", "analyze", "hard", None),
     ((_L13_RISK_FILLS,), "code_reading", "analyze", "hard", None),
     ((_L13_LIQUIDITY,), "conceptual", "analyze", "hard", None),
     ((_L08_POLICIES, _L13_RISK_FILLS, _L14_LAB, _L15_INTEGRATE),
      "integration", "evaluate", "hard",
      "Conecta ejecución de límites en ENGINE con intensidad de fills y el laboratorio A-S."),
+)
+
+
+# Referencias semánticas explícitas de cada stem canónico. A diferencia de una
+# blacklist de palabras, estos ids permiten probar cobertura y excluir cualquier
+# concepto/API/notación cuya única ruta sea OPTIONAL.
+_CANONICAL_SEMANTICS = (
+    (("python.control_flow", "engine.time_loop"), ("market.step",), ()),
+    (("python.control_flow", "microstructure.spread"), (), ()),
+    (("python.generator_expression",), ("functional.best_bid",), ()),
+    (("python.main_guard", "python.imports"), (), ()),
+    (("exchange.fill",), ("fill.cash_flow",), ("notation.cash_flow",)),
+    (("oop.computed_property",), ("orderbook.mid",), ()),
+    (("oop.abstract_base_class", "framework.strategy_contract"),
+     ("strategy.on_book_update",), ()),
+    (("oop.composition",), (), ()),
+    (("functional.order_book", "python.dataclass", "market.level"),
+     ("functional.best_bid", "orderbook.best_bid"), ()),
+    (("python.modules", "framework.strategy_contract"),
+     ("strategy.on_book_update",), ()),
+    (("market.book_metrics",), ("orderbook.best_bid", "orderbook.best_ask"), ()),
+    (("market.book_metrics",), ("orderbook.microprice",), ()),
+    (("matching.atomicity", "matching.plan_validate_commit"),
+     ("matching.process",), ()),
+    (("market.book_metrics",), ("orderbook.depth",), ()),
+    (("market.book_metrics",), ("orderbook.microprice",), ()),
+    (("market.external_boundary",), (), ()),
+    (("execution.market_impact",), (), ()),
+    (("engine.market", "engine.lifecycle"), ("market.snapshots",), ()),
+    (("framework.lifecycle", "architecture.actions"), ("cancel.constructor",), ()),
+    (("metrics.slippage",), ("backtest_result.fills",),
+     ("notation.slippage_signed",)),
+    (("execution.market_impact",), (), ()),
+    (("execution.market_impact",), (), ()),
+    (("exchange.fill", "exchange.position_tracker", "metrics.slippage"),
+     ("fill.cash_flow", "tracker.apply_fill", "backtest_result.fills"),
+     ("notation.cash_flow", "notation.slippage_signed")),
+    (("matching.order_policies",), (), ()),
+    (("oop.polymorphism", "framework.strategy_contract", "strategy.vwap"),
+     ("strategy.on_book_update", "backtest.run"), ()),
+    (("execution.twap", "execution.vwap"), (), ("notation.twap", "notation.vwap")),
+    (("market.book_metrics", "matching.order_policies", "metrics.slippage"),
+     ("matching.process", "backtest_result.fills"), ("notation.slippage_signed",)),
+    (("execution.vwap", "strategy.vwap"), ("vwap_strategy.constructor",),
+     ("notation.vwap",)),
+    (("strategy.vwap", "architecture.execution_feedback"),
+     ("strategy.on_fill", "backtest_result.fills"), ()),
+    (("metrics.arrival_price",), (), ("notation.slippage_signed",)),
+    (("engine.time_loop", "framework.lifecycle", "inventory.risk"),
+     ("market.step", "cancel.constructor", "market_maker.inventory"), ()),
+    (("market_making.liquidity_provision",), (), ()),
+    (("inventory.risk",), ("market_maker.inventory",), ("notation.inventory",)),
+    (("inventory.skew",), ("market_maker.reservation_price",),
+     ("notation.inventory",)),
+    (("as.reservation_price",), ("avellaneda_stoikov.reservation_price",),
+     ("notation.as_reservation_price",)),
+    (("as.reservation_price", "as.gamma", "as.sigma", "as.time_horizon"),
+     ("avellaneda_stoikov.reservation_price",), ("notation.as_reservation_price",)),
+    (("as.sigma", "as.time_horizon", "simulation.parameter_sweep"), (),
+     ("notation.as_reservation_price",)),
+    (("market_making.fill_intensity",), (), ("notation.fill_intensity",)),
+    (("market_making.adverse_selection",), (), ()),
+    (("matching.order_policies", "market_making.fill_intensity", "as.optimal_spread"),
+     ("matching.process", "mm_simulation.run"),
+     ("notation.fill_intensity", "notation.as_optimal_spread")),
 )
 
 
@@ -820,7 +902,9 @@ _CHECKPOINT_TRACE = (
 )
 
 
-CANONICAL_METADATA = _build_metadata("L15-CAN", CANONICAL, _CANONICAL_TRACE)
+CANONICAL_METADATA = _build_metadata(
+    "L15-CAN", CANONICAL, _CANONICAL_TRACE, _CANONICAL_SEMANTICS
+)
 EXTRA_METADATA = _build_metadata("L15-EXT", EXTRA, _EXTRA_TRACE)
 CHECKPOINT_METADATA = _build_metadata("CK6", CHECKPOINT, _CHECKPOINT_TRACE)
 
@@ -858,7 +942,7 @@ def sample_balanced(pool: list, targets: dict, seed: int) -> list:
     return chosen
 
 
-# Reparto oficial por tema (coincide con las 40 canónicas)
+# Reparto de la práctica pública por tema (coincide con las 40 canónicas)
 EXAM_TARGETS = {
     "framework": 5, "oop": 5, "microstructure": 6, "matching": 8,
     "execution": 7, "mm": 4, "as": 5,

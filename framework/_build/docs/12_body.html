@@ -18,7 +18,7 @@
 
   <div class="challenge">
     <div class="tag">El reto de hoy</div>
-    <p>Tres formas de hacerlo, las tres medidas por tu motor sobre el día real:
+    <p>Tres formas de hacerlo, las tres medidas por tu motor sobre el replay sintético:
     <strong>de golpe</strong> (barres el libro — L8 te enseñó la factura),
     <strong>TWAP</strong> (troceas uniforme en el tiempo) y <strong>VWAP</strong>
     (troceas siguiendo el perfil de volumen). Al final tendrás los tres precios medios,
@@ -27,7 +27,7 @@
 
   <div class="meta">
     <span><b>~40 min</b> lectura + práctica</span>
-    <span><b>3</b> ejecuciones reales</span>
+    <span><b>3</b> ejecuciones simuladas</span>
     <span><b>1</b> simulador</span>
     <span>lo <b style="color:var(--accent)">cian</b> se toca</span>
   </div>
@@ -79,7 +79,7 @@
       <div class="fig-head"><span>vender <span id="fig-total"></span> BTC, tres maneras</span><span class="stage-name">el hachazo</span></div>
       <div class="fig-stage on" data-stage="0">
         <div class="statgrid" style="border:none;padding-top:8px" id="v0"></div>
-        <p style="color:var(--faint);font-size:.78rem;margin-top:12px">MatchingEngine real: la venta barre los bids del snapshot #0</p>
+        <p style="color:var(--faint);font-size:.78rem;margin-top:12px">MatchingEngine canónico: la venta barre los bids del snapshot sintético #0</p>
       </div>
       <div class="fig-stage" data-stage="1">
         <pre style="font-family:var(--mono);font-size:.8rem;line-height:2.2;margin:10px 0 0" id="v1"></pre>
@@ -104,7 +104,7 @@
     <div class="eyebrow">§2 · <b>Simulador</b></div>
     <h2>El duelo de schedules</h2>
     <p class="lede">Alterna el perfil y compara el precio medio conseguido. Las dos
-    ejecuciones corrieron por tu <code>Backtest</code> completo — 500 pasos, fills reales.</p>
+    ejecuciones corrieron por tu <code>Backtest</code> completo — 500 pasos, fills simulados.</p>
 
     <div class="simcard">
       <h4>simulador · VWAPStrategy('BTCUSDT', 'sell', total, horizon, profile)</h4>
@@ -132,7 +132,34 @@
 
     <div class="code">
       <div class="code-head"><span>exchange/strategies/vwap.py — el corazón</span><span>python</span></div>
-      <pre><span class="ln"><span class="k">def</span> <span class="fn">on_book_update</span>(self, book):</span><span class="ln">    <span class="k">if</span> self._t &gt;= self.horizon <span class="k">or</span> self._executed &gt;= self.total_size:</span><span class="ln">        <span class="k">return</span> []</span><span class="ln">    weight = self.profile[self._t] / <span class="fn">sum</span>(self.profile)</span><span class="ln">    slice_size = <span class="fn">min</span>(self.total_size * weight,</span><span class="ln">                     self.total_size - self._executed)</span><span class="ln">    self._t += <span class="num">1</span></span><span class="ln">    self._executed += slice_size</span><span class="ln">    <span class="k">return</span> [NewOrder(Order(self.symbol, self.side, slice_size,</span><span class="ln">                           order_type=OrderType.MARKET))]</span></pre>
+      <pre><span class="ln"><span class="k">def</span> <span class="fn">on_book_update</span>(self, book):</span>
+<span class="ln">    <span class="k">if</span> self._executed &gt;= self.total_size:</span>
+<span class="ln">        <span class="k">return</span> []</span>
+<span class="ln">    <span class="k">if</span> self._t &lt; self.horizon:</span>
+<span class="ln">        target = (self.total_size <span class="k">if</span> self._t == self.horizon - <span class="num">1</span></span>
+<span class="ln">                  <span class="k">else</span> self.total_size * math.fsum(self.profile[:self._t + <span class="num">1</span>]))</span>
+<span class="ln">        self._t += <span class="num">1</span></span>
+<span class="ln">    <span class="k">else</span>:</span>
+<span class="ln">        target = self.total_size  <span class="c"># reintenta el residual final</span></span>
+<span class="ln">    slice_size = <span class="fn">min</span>(<span class="fn">max</span>(<span class="num">0.0</span>, target - self._executed),</span>
+<span class="ln">                     self.total_size - self._executed)</span>
+<span class="ln">    <span class="k">if</span> slice_size &lt;= <span class="num">0.0</span>:</span>
+<span class="ln">        <span class="k">return</span> []  <span class="c"># un peso 0 avanza sin crear Order(size=0)</span></span>
+<span class="ln">    <span class="k">return</span> [NewOrder(Order(self.symbol, self.side, slice_size,</span>
+<span class="ln">                           order_type=OrderType.MARKET))]</span>
+<span class="ln"></span>
+<span class="ln"><span class="k">def</span> <span class="fn">on_fill</span>(self, fill):</span>
+<span class="ln">    <span class="k">if</span> fill.symbol == self.symbol <span class="k">and</span> fill.side is self.side:</span>
+<span class="ln">        remaining = self.total_size - self._executed</span>
+<span class="ln">        <span class="k">if</span> fill.size &gt; remaining:</span>
+<span class="ln">            <span class="k">raise</span> ValueError(<span class="s">"fill exceeds remaining parent quantity"</span>)</span>
+<span class="ln">        next_executed = self._executed + fill.size</span>
+<span class="ln">        <span class="k">if</span> next_executed == self._executed:</span>
+<span class="ln">            <span class="k">raise</span> OverflowError(<span class="s">"fill progress is not representable"</span>)</span>
+<span class="ln">        next_remaining = self.total_size - next_executed</span>
+<span class="ln">        <span class="k">if</span> <span class="num">0</span> &lt; next_executed &lt; self.total_size <span class="k">and</span> next_remaining == self.total_size:</span>
+<span class="ln">            <span class="k">raise</span> OverflowError(<span class="s">"remaining parent is not representable"</span>)</span>
+<span class="ln">        self._executed = next_executed</span></pre>
       <div class="predict predictgate" style="margin:0;border-radius:0;border-left:none;border-right:none;border-bottom:none">
         <div class="tag">Predice antes de ejecutar</div>
         <p style="margin:.2em 0 .8em;font-size:.94rem">Si <code>profile=None</code>, el
@@ -149,7 +176,9 @@
 
     <div class="note"><span class="tag">Fíjate en el diseño</span>
     Es una <code>Strategy</code> más: hereda el contrato de L10 y el motor no sabe nada de
-    perfiles ni de volumen. La primera estrategia "profesional" del curso cuesta 20 líneas
+    perfiles ni de volumen. <code>on_fill</code> cierra el bucle: enviado no significa
+    ejecutado; si falta liquidez en el último tick, las actualizaciones posteriores
+    reintentan exactamente el residual del parent. La primera estrategia "profesional" del curso cuesta 20 líneas
     — <em>porque el framework carga con todo lo demás</em>.</div>
   </div>
 </section>
@@ -163,10 +192,10 @@
     <strong>predice</strong> la próxima barra con una <strong>media rolada</strong>. La
     <code>VWAPStrategy</code> canónica sigue consumiendo un perfil fijo: este prototipo no lo
     actualiza online ni promete una estrategia adaptativa completa. Es un primer puente hacia
-    machine learning y una prueba honesta con el volumen <strong>real</strong> del replay.</p>
+    machine learning y una prueba honesta con la actividad <strong>observada en el replay sintético</strong>.</p>
 
     <div class="simcard">
-      <h4>volumen real (gris) vs predicción (cian)</h4>
+      <h4>volumen sintético observado (gris) vs predicción (cian)</h4>
       <div class="toggle" style="margin-bottom:14px">
         <button id="pv-static" class="on">estático · media global</button>
         <button id="pv-roll">dinámico · media rolada (k=<span id="pv-k">3</span>)</button>
@@ -181,7 +210,7 @@
     <em>peor</em> que la media global (más error medio), y ni con <strong>previsión perfecta</strong>
     del volumen (el oráculo) se mejora la ejecución más que un pelo (<span id="pv-oracle"></span> bps).
     No hay señal que explotar. El modelo dinámico solo gana cuando el volumen <em>sí</em> tiene
-    estructura —la U intradía real, ráfagas correlacionadas—. <strong>Saber cuándo NO añadir un
+    estructura que este replay no contiene —por ejemplo, una U intradía o ráfagas correlacionadas observadas en mercado—. <strong>Saber cuándo NO añadir un
     modelo es media carrera de quant.</strong> En el gimnasio construyes auxiliares aislados
     (media rolada, normalización y factor de corrección); integrarlos en una estrategia que
     replanifique durante el replay queda deliberadamente fuera del alcance. Aquí ves por qué,

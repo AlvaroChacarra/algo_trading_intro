@@ -88,8 +88,11 @@
       15
     ],
     "typed_package_binding_lessons": [
+      2,
+      3,
       4,
       5,
+      6,
       7,
       8,
       9,
@@ -478,19 +481,19 @@
       },
       {
         "id": "as.gamma",
-        "label": "as gamma"
+        "label": "A-S inverse-price risk aversion gamma"
       },
       {
         "id": "as.sigma",
-        "label": "as sigma"
+        "label": "A-S full-horizon price volatility sigma_H"
       },
       {
         "id": "as.kappa",
-        "label": "as kappa"
+        "label": "A-S inverse-price fill decay kappa"
       },
       {
         "id": "as.time_horizon",
-        "label": "as time horizon"
+        "label": "A-S normalized remaining horizon tau"
       },
       {
         "id": "simulation.parameter_sweep",
@@ -498,6 +501,33 @@
       }
     ],
     "apis": [
+      {
+        "id": "functional.make_order",
+        "name": "make_order",
+        "kind": "function",
+        "signature": "make_order(symbol, side, price, size) -> dict",
+        "returns": "dict",
+        "responsibility": "construct one functional order record",
+        "qualified_name": "lesson02.order_book.make_order"
+      },
+      {
+        "id": "functional.add_order",
+        "name": "add_order",
+        "kind": "function",
+        "signature": "add_order(book, order) -> list",
+        "returns": "list",
+        "responsibility": "append an order to the shared functional book",
+        "qualified_name": "lesson02.order_book.add_order"
+      },
+      {
+        "id": "functional.cancel_order",
+        "name": "cancel_order",
+        "kind": "function",
+        "signature": "cancel_order(book, order_id) -> list",
+        "returns": "list",
+        "responsibility": "return a functional book without one order id",
+        "qualified_name": "lesson02.order_book.cancel_order"
+      },
       {
         "id": "functional.best_bid",
         "name": "best_bid",
@@ -787,6 +817,15 @@
         "qualified_name": "exchange.market.Market"
       },
       {
+        "id": "market.from_csv",
+        "name": "from_csv",
+        "kind": "classmethod",
+        "signature": "from_csv(path: str, symbol: str = 'BTCUSDT', depth: int = 10) -> Market",
+        "returns": "Market",
+        "responsibility": "construct a replay market from an external CSV file",
+        "qualified_name": "exchange.market.Market.from_csv"
+      },
+      {
         "id": "market.sample",
         "name": "sample",
         "kind": "classmethod",
@@ -1071,7 +1110,7 @@
         "kind": "constructor",
         "signature": "MMSimulation(strategy: MarketMaker, s0: float = 100.0, sigma: float = 0.5, steps: int = 500, A: float = 1.0, kappa: float = 1.5, seed: int = 42) -> MMSimulation",
         "returns": "MMSimulation",
-        "responsibility": "configure a reproducible fill-intensity simulation",
+        "responsibility": "configure a reproducible fill-intensity simulation whose sigma is full-horizon price volatility",
         "qualified_name": "exchange.simulation.MMSimulation"
       },
       {
@@ -1123,9 +1162,9 @@
         "id": "avellaneda_stoikov.constructor",
         "name": "AvellanedaStoikov",
         "kind": "constructor",
-        "signature": "AvellanedaStoikov(symbol: str, quote_size: float = 0.01, gamma: float = 0.1, sigma: float = 10.0, kappa: float = 1.5, horizon: int = 500) -> AvellanedaStoikov",
+        "signature": "AvellanedaStoikov(symbol: str, quote_size: float = 0.01, gamma: float = 0.1, sigma: float = 0.5, kappa: float = 1.5, horizon: int = 500) -> AvellanedaStoikov",
         "returns": "AvellanedaStoikov",
-        "responsibility": "configure the A-S risk, volatility, flow, and horizon parameters",
+        "responsibility": "configure A-S risk, full-horizon price volatility, flow, and normalized-time parameters",
         "qualified_name": "exchange.strategies.avellaneda_stoikov.AvellanedaStoikov"
       },
       {
@@ -1228,20 +1267,19 @@
       },
       {
         "id": "notation.as_reservation_price",
-        "symbol": "r = s - qγσ²τ",
-        "meaning": "A-S reservation price"
+        "symbol": "r = s - qγσ_H²τ",
+        "meaning": "A-S reservation price with dimensionless tau and full-horizon price volatility sigma_H"
       },
       {
         "id": "notation.as_optimal_spread",
-        "symbol": "δ = γσ²τ + (2/γ) ln(1 + γ/κ)",
-        "meaning": "A-S optimal full spread"
+        "symbol": "δ = γσ_H²τ + (2/γ) ln(1 + γ/κ)",
+        "meaning": "A-S optimal full spread in price units; gamma and kappa are inverse-price"
       }
     ]
   },
   "recall_policy": {
-    "gap_lessons": 3,
-    "importance": "major",
-    "assessment_delivery_exempt": true,
+    "mode": "explicit-required-edges",
+    "rationale": "Distant retrieval is selected by causal teaching value, not inferred from an unused numeric gap; every mandatory edge is enumerated and checked below.",
     "required_edges": [
       {
         "lesson": 9,
@@ -1292,6 +1330,22 @@
       "target": 20,
       "maximum": 22,
       "allowed_delta_from_declared": 2
+    },
+    "mixed_route_duration": {
+      "scene_duration_scope": "scene_route",
+      "override_duration_scope": "effective_stage_route",
+      "aggregation": "additive",
+      "autonomous_component_role": "exact_mirror"
+    },
+    "autonomous_components": {
+      "kinds": [
+        "document",
+        "exercise",
+        "quiz",
+        "project"
+      ],
+      "overlap_rule": "same overlap_id means the same timed activity; equal minutes count once",
+      "default": "additive"
     }
   },
   "text_audit": {
@@ -1324,6 +1378,7 @@
       "framework/_build/custom/07_guion.md",
       "framework/_build/custom/08_guion.md",
       "framework/_build/custom/09_guion.md",
+      "PLAN_MAESTRO_CURSO_TRADING_2026.md",
       "01-python-i-data-model/presentation/guion.md",
       "02-python-ii-functional-book/presentation/guion.md",
       "03-python-iii-modules/presentation/guion.md",
@@ -1373,6 +1428,11 @@
         "id": "schedule-previous-class",
         "pattern": "\\bclase anterior\\b",
         "message": "replace previous-class wording with a stable Lx reference"
+      },
+      {
+        "id": "stale-forty-minute-session",
+        "pattern": "\\b(?:clases?|sesiones?)\\s+de\\s+(?:aproximadamente\\s+|[≈~]\\s*)?40\\s*(?:min(?:utos?)?)\\b",
+        "message": "course sessions must use the authoritative approximately 50-minute duration"
       }
     ],
     "reference_patterns": [

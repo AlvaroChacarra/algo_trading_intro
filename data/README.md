@@ -13,6 +13,11 @@ tal cual: así **todo el curso es reproducible y funciona sin conexión**, y los
 números que aparecen en los documentos (que se calculan corriendo el motor sobre
 estos snapshots en tiempo de compilación) son estables.
 
+Todo snapshot y volumen del CSV es, por tanto, **sintético**. Los `Fill` que
+aparecen en las lecciones son **simulados** por la implementación canónica al
+ejecutarse contra ese replay; tampoco representan operaciones observadas en un
+exchange.
+
 Al ser sintético, no hay estructura oculta que explotar: la actividad del libro
 es esencialmente estacionaria (esto se usa a propósito en L12 para enseñar
 cuándo NO merece la pena añadir un modelo predictivo).

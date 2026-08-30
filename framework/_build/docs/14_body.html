@@ -12,7 +12,7 @@
   <h1>El skew <em>óptimo</em></h1>
   <p class="lede">En L13 domaste el inventario con un número a ojo. Ahora llega la versión con
   apellidos: <strong>Avellaneda &amp; Stoikov (2008)</strong> plantearon "¿dónde cotizo
-  para maximizar mi utilidad, con miedo γ, volatilidad σ y tiempo restante τ?" — y lo
+  para maximizar mi utilidad, con miedo γ, volatilidad de horizonte σ<sub>H</sub> y tiempo restante τ?" — y lo
   resolvieron. Dos fórmulas. Hoy entiendes qué dice cada letra… tocándolas.</p>
 
   <div class="challenge">
@@ -46,37 +46,41 @@
         <h3><span class="n">0/4</span>Del "a ojo" al óptimo</h3>
         <p>El naive tenía dos números mágicos: <code>half_spread</code> y <code>skew</code>.
         A-S los <em>deriva</em> de cosas que significan algo: tu aversión al riesgo (γ),
-        la volatilidad (σ), la prisa del reloj (τ) y la densidad del flujo (κ).</p>
+        la volatilidad del horizonte completo (σ<sub>H</sub>), la fracción de tiempo
+        restante (τ) y la densidad del flujo (κ).</p>
         <p>La matemática de fondo (utilidad CARA, HJB) existe y es seria — nosotros nos
         quedamos con su resultado y su intuición.</p>
       </div></div>
       <div class="step" data-stage="1" data-name="reservation"><div class="step-inner">
         <h3><span class="n">1/4</span>El centro: reservation price</h3>
-        <p><code>r = mid − q·γ·σ²·τ</code></p>
+        <p><code>r = mid − q·γ·σ<sub>H</sub>²·τ</code></p>
         <p>El skew de L13, con física dentro: te alejas del mid proporcional a tu
-        inventario (q), tu miedo (γ), lo que se mueve el mundo (σ²) y el tiempo que queda
-        para sufrirlo (τ). Cuatro sensores en lugar de un número mágico.</p>
+        inventario (q), tu miedo (γ) y la <strong>varianza restante</strong>
+        σ<sub>H</sub>²τ. Aquí τ=(H−t)/H no tiene unidades y σ<sub>H</sub> es la desviación
+        típica del cambio de precio durante todo H.</p>
       </div></div>
       <div class="step" data-stage="2" data-name="optimal spread"><div class="step-inner">
         <h3><span class="n">2/4</span>El ancho: optimal spread</h3>
-        <p><code>δ = γ·σ²·τ + (2/γ)·ln(1 + γ/κ)</code></p>
+        <p><code>δ = γ·σ<sub>H</sub>²·τ + (2/γ)·ln(1 + γ/κ)</code></p>
         <p>Dos sumandos con alma propia: el primero es <strong>seguro contra la
-        volatilidad</strong> (más σ o más τ → cotiza más ancho); el segundo negocia con el
+        volatilidad</strong> (más σ<sub>H</sub> o más τ → cotiza más ancho); el segundo negocia con el
         flujo — κ dice cuánta clientela pierdes por cada tick que te alejas.</p>
       </div></div>
       <div class="step" data-stage="3" data-name="tau"><div class="step-inner">
         <h3><span class="n">3/4</span>El reloj: τ → 0</h3>
-        <p>Al acercarse el cierre, τ se apaga y con él el término de inventario: el
-        centro vuelve al mid y las quotes quedan simétricas. <strong>Eso no liquida ni
+        <p>Al acercarse el cierre, τ se apaga y con él los términos de riesgo: el
+        centro vuelve al mid y el spread conserva el término de liquidez
+        <code>(2/γ)·ln(1+γ/κ)</code>. Las quotes quedan simétricas. <strong>Eso no liquida ni
         garantiza q=0</strong>: este simulador didáctico necesita una política terminal
         separada si quieres imponer quedar plano. Aquí τ apaga el ajuste; no vende el
         inventario por arte de magia.</p>
       </div></div>
       <div class="step" data-stage="4" data-name="A-S vs naive"><div class="step-inner">
         <h3><span class="n">4/4</span>El duelo, medido</h3>
-        <p>Misma semilla, mismo mercado que en L13: el A-S (γ=0.5) acaba con
-        <strong>más PnL</strong> que el naive y un inventario que respeta el reloj. No es
-        magia: es que sus dos números ya no son mágicos.</p>
+        <p>Misma semilla, horizonte e intensidad que en L13: el A-S (γ=0.5) acaba con
+        <strong>más PnL y también más inventario máximo</strong> que el naive en este
+        escenario. No domina: hace explícita la frontera mediante γ, κ y el reloj. Es una
+        comparación didáctica con una semilla, no una garantía universal.</p>
       </div></div>
     </div>
 
@@ -88,15 +92,15 @@ naive:  half_spread = 0.6   <span class="c"># ¿por qué?</span>
         skew        = 2.0   <span class="c"># ¿por qué?</span>
 
 A-S:    γ  tu miedo
-        σ  la volatilidad
-        τ  el tiempo restante
+        σ_H  volatilidad de precio del horizonte H
+        τ  fracción de tiempo restante, sin unidades
         κ  la densidad del flujo</pre>
       </div>
       <div class="fig-stage" data-stage="1">
         <pre style="font-family:var(--mono);font-size:.84rem;line-height:2.3;margin:10px 0 0">
-r = mid − q·γ·σ²·τ
+r = mid − q·γ·σ_H²·τ
 
-q = +1 (largo), γ=0.5, σ=0.5, τ=1
+q = +1 (largo), γ=0.5, σ_H=0.5, τ=1
 r = 100 − 1×0.5×0.25×1 = <span style="color:var(--accent)">99.875</span>
 
 q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
@@ -104,11 +108,11 @@ q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
       </div>
       <div class="fig-stage" data-stage="2">
         <pre style="font-family:var(--mono);font-size:.8rem;line-height:2.2;margin:8px 0 0">
-δ = γ·σ²·τ + (2/γ)·ln(1 + γ/κ)
+δ = γ·σ_H²·τ + (2/γ)·ln(1 + γ/κ)
     ───┬───   ─────┬──────────
    seguro de    negociación
    volatilidad  con el flujo</pre>
-        <p style="color:var(--faint);font-size:.78rem;margin-top:12px">σ o τ suben → más ancho. κ sube (flujo denso) → puedes cotizar más fino.</p>
+        <p style="color:var(--faint);font-size:.78rem;margin-top:12px">Unidades: γ y κ son 1/precio; σ_H, r y δ son precio; τ es adimensional. σ_H o τ suben → más ancho.</p>
       </div>
       <div class="fig-stage" data-stage="3">
         <canvas id="as3" style="width:100%;height:160px;margin-top:8px"></canvas>
@@ -127,7 +131,10 @@ q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
     <div class="eyebrow">§2 · <b>Simuladores</b></div>
     <h2>El laboratorio de γ</h2>
     <p class="lede">Arriba, las fórmulas en vivo — mueve los diales y ve r y δ responder.
-    Abajo, el barrido real: cinco gammas por el simulador completo, misma semilla.</p>
+    Fijamos σ<sub>H</sub>=0.5 para todo el horizonte. Abajo, el barrido calculado usa el
+    mismo valor en estrategia y simulador; cada paso mueve el mid con σ<sub>H</sub>/√H.
+    Las cinco corridas comparten <code>A=520</code> y la semilla 42 (*common random
+    numbers*) para aislar γ; la monotonía observada pertenece a este escenario.</p>
 
     <div class="simcard">
       <h4>laboratorio · las fórmulas con las manos</h4>
@@ -146,7 +153,7 @@ q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
     </div>
 
     <div class="simcard">
-      <h4>barrido real · MMSimulation × 5 gammas (misma semilla)</h4>
+      <h4>barrido calculado · MMSimulation × 5 gammas · σ_H/√H por paso</h4>
       <pre style="font-family:var(--mono);font-size:.82rem;line-height:2.2;margin:0" id="sw-tab"></pre>
       <div class="looplog">» la frontera: menos γ = más PnL con más susto; más γ = dormir tranquilo cobrando menos</div>
     </div>
@@ -162,7 +169,7 @@ q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
 
     <div class="code">
       <div class="code-head"><span>mi_estrategia.py — punto de partida del capstone autónomo</span><span>python</span></div>
-      <pre><span class="ln"><span class="k">from</span> exchange.simulation <span class="k">import</span> MMSimulation</span><span class="ln"><span class="k">from</span> exchange.strategies <span class="k">import</span> MarketMaker</span><span class="ln"></span><span class="ln"><span class="k">class</span> MiEstrategia(MarketMaker):</span><span class="ln">    <span class="s">"""El nombre y la interfaz que exige capstone_check.py."""</span></span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, symbol=<span class="s">'BTC'</span>):</span><span class="ln">        <span class="fn">super</span>().__init__(symbol, quote_size=<span class="num">0.01</span>,</span><span class="ln">                         half_spread=<span class="num">1.0</span>, inventory_skew=<span class="num">2.0</span>)</span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">quotes</span>(self, book):</span><span class="ln">        r = self.reservation_price(book.mid)</span><span class="ln">        half = self.half_spread</span><span class="ln">        <span class="k">if</span> <span class="fn">abs</span>(self.inventory) &gt; <span class="num">0.5</span>:   <span class="c"># tu regla, la que quieras</span></span><span class="ln">            half *= <span class="num">1.5</span>                    <span class="c"># p. ej.: cargado → más ancho</span></span><span class="ln">        <span class="k">return</span> r - half, r + half</span><span class="ln"></span><span class="ln">res = MMSimulation(MiEstrategia(), seed=<span class="num">42</span>).run()</span></pre>
+      <pre><span class="ln"><span class="k">from</span> exchange.simulation <span class="k">import</span> MMSimulation</span><span class="ln"><span class="k">from</span> exchange.strategies <span class="k">import</span> MarketMaker</span><span class="ln"></span><span class="ln"><span class="k">class</span> MiEstrategia(MarketMaker):</span><span class="ln">    <span class="s">"""El nombre y la interfaz que exige capstone_check.py."""</span></span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, symbol=<span class="s">'BTC'</span>):</span><span class="ln">        <span class="fn">super</span>().__init__(symbol, quote_size=<span class="num">0.01</span>,</span><span class="ln">                         half_spread=<span class="num">1.0</span>, inventory_skew=<span class="num">2.0</span>)</span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">quotes</span>(self, book):</span><span class="ln">        r = self.reservation_price(book.mid)</span><span class="ln">        half = self.half_spread</span><span class="ln">        <span class="k">if</span> <span class="fn">abs</span>(self.inventory) &gt; <span class="num">0.5</span>:   <span class="c"># tu regla, la que quieras</span></span><span class="ln">            half *= <span class="num">1.5</span>                    <span class="c"># p. ej.: cargado → más ancho</span></span><span class="ln">        <span class="k">return</span> r - half, r + half</span><span class="ln"></span><span class="ln">res = MMSimulation(MiEstrategia(), A=<span class="num">630</span>, seed=<span class="num">42</span>).run()</span></pre>
       <div class="out"><div class="btnrow" style="margin:0"><button class="btn runbtn" data-target="out-own">▶ La pregunta de verdad</button></div>
         <div id="out-own" class="hidden" style="margin-top:10px">
           <div><span class="prompt">&gt;&gt;&gt; </span><span class="val">¿cuántas líneas del motor tocaste? 0. ¿Del simulador? 0.</span></div>
@@ -188,14 +195,14 @@ q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
         <div class="qt">El reservation price de A-S es…</div>
         <div class="opts">
           <button class="opt">A · El mid del libro, siempre</button>
-          <button class="opt">B · El mid desplazado por q·γ·σ²·τ — el centro que huye de tu inventario</button>
+          <button class="opt">B · El mid desplazado por q·γ·σ_H²·τ — el centro que huye de tu inventario</button>
           <button class="opt">C · El precio al que resucitas órdenes canceladas</button>
         </div>
         <div class="why">Es el skew de L13 con unidades físicas: inventario, miedo,
         volatilidad y reloj.</div>
       </div>
       <div class="q" data-ok="2">
-        <div class="qt">Subir γ (más aversión), según el barrido real…</div>
+        <div class="qt">Subir γ (más aversión), según el barrido calculado…</div>
         <div class="opts">
           <button class="opt">A · Sube el PnL y el inventario</button>
           <button class="opt">B · No cambia nada</button>
@@ -262,18 +269,23 @@ q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
       Ya tienes el motor entero. El proyecto de cierre es abierto: diseña un market maker que
       capture el spread <strong>sin cargarte de inventario</strong>. Editas un solo archivo
       (<code>mi_estrategia.py</code>), te corriges con <code>python capstone_check.py</code>
-      (3 semillas oficiales, baremo público 30/40/30) y sacas un código para el leaderboard.
-      Un naive bien ajustado roza los 90 — ¿puedes con él?</a>
+      (3 semillas reproducibles, feedback formativo 30/40/30) y obtienes un autoinforme
+      de consistencia que no acredita autoría ni nota.
+      La plantilla inicial está deliberadamente incompleta: hasta que implementes
+      <code>reservation_price(mid)</code>, el checker no emite puntuación ni código.</a>
     </div>
 
     <div class="bridge">
-      <div class="tag">El puente a L15 — el examen</div>
+      <div class="tag">El puente a L15 — práctica acumulativa pública</div>
       <p style="margin:.2em 0"><strong>40 preguntas, 40 minutos, +1 / −0.5.</strong></p>
       <p>Cubre el arco completo: Python y OOP, el paquete <code>exchange</code>, leer el
       libro, matching, el framework, VWAP y market making. Es un artefacto independiente:
-      evalúa integración y lectura de código; el capstone se realiza y entrega por separado.</p>
+      permite practicar integración y lectura de código; no sustituye el examen final
+      oficial, cuyo banco y entrega deben permanecer privados. El capstone se realiza y
+      entrega por separado.</p>
       <p style="margin-bottom:0">La mejor preparación: los gimnasios (los drills son primos
-      hermanos de las preguntas) y los mini-tests de cada documento.</p>
+      hermanos de las preguntas), los mini-tests de cada documento y la práctica pública de
+      L15.</p>
     </div>
 
     <div class="cta">
@@ -282,7 +294,7 @@ q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
       después implementa TU estrategia en <code>mi_estrategia.py</code> y valídala con
       <code>capstone_check.py</code>.</div>
       <div class="box"><span class="tag">Y el gimnasio final</span>
-      <code>14_auxiliary.ipynb</code> — los últimos drills antes del examen.</div>
+      <code>14_auxiliary.ipynb</code> — los últimos drills antes de la práctica acumulativa.</div>
     </div>
   </div>
 </section>

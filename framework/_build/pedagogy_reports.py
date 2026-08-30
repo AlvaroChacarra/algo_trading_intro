@@ -145,6 +145,48 @@ def exercise_summary(route_contract, lesson_number, route, include_titles=False)
     return base
 
 
+def autonomous_load_summary(lesson, route_contract, route):
+    """Render the complete, overlap-aware autonomous load breakdown."""
+    components = []
+    for notebook_kind, exercise in exercise_stats(
+        route_contract, lesson["lesson"], route,
+    )[0]:
+        components.append({
+            "id": f"{notebook_kind}:{exercise['title']}",
+            "kind": "exercise",
+            **exercise,
+        })
+    contract = lesson.get("load", {}).get("autonomous_components", {})
+    for field, kind in (
+        ("documents", "document"),
+        ("quizzes", "quiz"),
+        ("projects", "project"),
+    ):
+        for item in contract.get(field, []):
+            components.append({"kind": kind, **item})
+    selected = [item for item in components if item.get("route") == route]
+    raw = {
+        kind: sum(item.get("minutes", 0) for item in selected if item["kind"] == kind)
+        for kind in ("document", "exercise", "quiz", "project")
+    }
+    groups = defaultdict(list)
+    for item in selected:
+        if item.get("overlap_id"):
+            groups[item["overlap_id"]].append(item)
+    overlap = sum(
+        (len(items) - 1) * items[0]["minutes"]
+        for items in groups.values()
+        if len(items) > 1
+    )
+    field = "required_autonomous_minutes" if route == "REQUIRED" else "optional_minutes"
+    total = lesson.get("load", {}).get(field, 0)
+    return (
+        f"carga total {total} min (documento {raw['document']} + "
+        f"ejercicios {raw['exercise']} + quiz {raw['quiz']} + "
+        f"proyecto {raw['project']} − solapamientos {overlap})"
+    )
+
+
 def introduced_by_route(lesson, route):
     values = []
     for kind in KINDS:
@@ -167,13 +209,8 @@ def requirement_with_origins(lesson, first):
 
 
 def scene_ids(lesson, route):
-    """Return top-level scenes plus nested stages that change route."""
-    values = list(lesson.get("routes", {}).get(route, []))
-    for scene in lesson.get("scenes", []):
-        for stage in scene.get("stages", []):
-            if stage.get("route", scene.get("route")) == route and scene.get("route") != route:
-                values.append(f"{scene['id']}/{stage['id']}")
-    return values
+    """Return the checker-verified effective route inventory."""
+    return list(lesson.get("routes", {}).get(route, []))
 
 
 def render_journey(graph, lessons, route_contract, blueprint):
@@ -189,7 +226,9 @@ def render_journey(graph, lessons, route_contract, blueprint):
         f"- Dependencias sin introducción previa: **{len(missing)}**.",
         f"- Dependencias obligatorias cuyo único origen es OPTIONAL: **{len(optional_leaks)}**.",
         f"- Lessons educativas con rutas explícitas: **{len(graph['coverage']['runtime_lessons'])}/14**.",
-        "- L15 conserva una experiencia lineal de assessment y no se fuerza al renderer de escenas.",
+        "- L15 conserva una práctica pública lineal y no se fuerza al renderer de escenas; "
+        "la evaluación oficial permanece bloqueada: sus bancos deberán crearse de nuevo y "
+        "entregarse exclusivamente desde la futura fuente privada autorizada.",
         "",
         "La entrada de cada lesson se calcula solo con introducciones LIVE + REQUIRED anteriores. Los nombres entre `backticks` son identificadores estables del contrato.",
         "",
@@ -212,7 +251,10 @@ def render_journey(graph, lessons, route_contract, blueprint):
             values = introduced_by_route(lesson, route)
             if values:
                 introductions.append(f"{route_label(route)}: {csv(values)}")
-        lines.append("- **Introduce:** " + ("; ".join(introductions) if introductions else "No añade conceptos: integra el curso en la evaluación final."))
+        no_introduction = ("No añade conceptos: practica la integración del curso sin sustituir "
+                           "la evaluación final oficial." if number == 15 else
+                           "No añade conceptos nuevos.")
+        lines.append("- **Introduce:** " + ("; ".join(introductions) if introductions else no_introduction))
 
         transitions = lesson.get("api_transitions", [])
         if transitions:
@@ -239,12 +281,14 @@ def render_journey(graph, lessons, route_contract, blueprint):
         required_intro = introduced_by_route(lesson, "REQUIRED")
         lines.append(
             f"- **REQUIRED:** escenas {csv(scene_ids(lesson, 'REQUIRED'))}; "
-            f"introducciones {csv(required_intro)}; {exercise_summary(route_contract, number, 'REQUIRED')}."
+            f"introducciones {csv(required_intro)}; {exercise_summary(route_contract, number, 'REQUIRED')}; "
+            f"{autonomous_load_summary(lesson, route_contract, 'REQUIRED')}."
         )
         optional_intro = introduced_by_route(lesson, "OPTIONAL")
         lines.append(
             f"- **OPTIONAL:** escenas {csv(scene_ids(lesson, 'OPTIONAL'))}; "
-            f"introducciones {csv(optional_intro)}; {exercise_summary(route_contract, number, 'OPTIONAL')}. "
+            f"introducciones {csv(optional_intro)}; {exercise_summary(route_contract, number, 'OPTIONAL')}; "
+            f"{autonomous_load_summary(lesson, route_contract, 'OPTIONAL')}. "
             "No entra en KNOWN ni en assessment."
         )
 
@@ -269,7 +313,7 @@ def render_journey(graph, lessons, route_contract, blueprint):
     lines += [
         "## Cierre",
         "",
-        "El cálculo machine-readable arroja cero dependencias pendientes y cero fugas OPTIONAL → REQUIRED. La revisión cualitativa y la evidencia visual se registran por separado en `docs/work2-full-course-scaleout.md`.",
+        "El cálculo machine-readable arroja cero dependencias pendientes y cero fugas OPTIONAL → REQUIRED. La revisión cualitativa, la evidencia vigente y sus límites se registran por separado en `docs/work1-work2-reaudit.md`.",
         "",
     ]
     return "\n".join(lines)

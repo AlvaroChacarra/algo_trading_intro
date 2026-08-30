@@ -1,4 +1,4 @@
-"""Datos reales para el doc de L12: vender grande de golpe vs troceado
+"""Datos sintéticos para el doc de L12: vender grande de golpe vs troceado
 (TWAP / VWAP), todo ejecutado por el motor de referencia."""
 from copy import deepcopy
 
@@ -26,7 +26,7 @@ def run_vwap(profile, total, horizon):
 
 
 def realized_activity(horizon: int) -> list[float]:
-    """Actividad real por snapshot: tamaño agregado en 5 niveles de ambos lados.
+    """Actividad sintética por snapshot: tamaño agregado en 5 niveles de ambos lados.
     Es el 'volumen visible' del que dispone un algoritmo para predecir."""
     m = Market.sample()
     acts = []
@@ -68,7 +68,7 @@ def build() -> dict:
     bars = [round(b / s, 4) for b in bars]
 
     # ── predecir el volumen: ¿merece la pena un modelo? ──────────────────
-    # actividad REAL agregada a 25 barras (media por barra)
+    # actividad sintética observada, agregada a 25 barras (media por barra)
     acts = realized_activity(horizon)
     vol = [0.0] * n_b
     cnt = [0] * n_b
@@ -88,7 +88,7 @@ def build() -> dict:
     mae_static = _mae(static_pred, vol[1:])
     mae_roll = _mae(roll_pred, vol[1:])
 
-    # ¿y si el perfil fuese el volumen REAL (previsión perfecta)?
+    # ¿y si el perfil fuese el volumen sintético observado (previsión perfecta)?
     _, oracle_avg = run_vwap(acts, total, horizon)
 
     return {"total": total, "mid0": round(mid0, 2),

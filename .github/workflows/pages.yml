@@ -2,66 +2,256 @@ name: pages
 
 on:
   push:
-    branches: [main, "v2/**"]
   pull_request:
   workflow_dispatch:
     inputs:
       publish:
-        description: Publicar el artefacto de esta rama en GitHub Pages
+        description: Publicar main tras autorizar privacidad y contenido público
         required: true
         default: false
         type: boolean
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
+  course-contract:
+    name: Validar curso antes de publicar
+    uses: ./.github/workflows/course.yml
+
   build:
-    runs-on: ubuntu-latest
+    name: Construir y validar Pages
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
-          python-version: "3.11"
+          python-version: "3.11.9"
           cache: pip
+          cache-dependency-path: requirements-pages-lock.txt
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "20.19.4"
+          cache: npm
+      - name: Probar los contratos del E2E y de su auditoría independiente
+        run: >-
+          node --test
+          framework/_build/pages_e2e.test.js
+          framework/_build/validate_pages_audit.test.js
       - name: Instalar conversor de notebooks
-        run: pip install -r requirements-pages.txt
-      - name: Construir el site estático
-        run: python framework/_build/build_pages.py --output _site
-      - name: Validar HTML, enlaces y base path
-        run: python framework/_build/check_pages.py _site --base-path /algo_trading_intro/
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-      - name: Validar la experiencia móvil en WebKit
+        run: "pip install --requirement requirements-pages-lock.txt --require-hashes --only-binary=:all:"
+      - name: Construir dos veces el site estático
         run: |
-          npm install playwright@1.62.1
-          npx playwright install --with-deps webkit
-          node framework/_build/pages_e2e.js _site
-      - if: github.event_name != 'pull_request'
-        uses: actions/configure-pages@v5
-      - if: github.event_name != 'pull_request'
-        uses: actions/upload-pages-artifact@v3
+          python framework/_build/build_pages.py --output _site
+          python framework/_build/build_pages.py --output _site-repro
+      - name: Validar ambos sites y su reproducibilidad exacta
+        run: |
+          python framework/_build/check_pages.py _site --base-path /algo_trading_intro/
+          python framework/_build/check_pages.py _site-repro --base-path /algo_trading_intro/
+          cmp --silent _site/.pages-integrity.json _site-repro/.pages-integrity.json || {
+            echo '::error::Dos builds Pages del mismo SHA produjeron manifests de integridad distintos.'
+            exit 1
+          }
+      - name: Compartir el site exacto con los gates WebKit
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
+          name: pages-site-${{ github.run_id }}
           path: _site
+          include-hidden-files: true
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 30
+
+  webkit-site:
+    name: WebKit móvil y navegación
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: pages-site-${{ github.run_id }}
+          path: _site
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "20.19.4"
+          cache: npm
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11.9"
+      - name: Instalar WebKit reproducible
+        run: |
+          npm ci
+          npx --no-install playwright install --with-deps webkit
+      - name: Validar Pages móvil sin ejecutar laboratorios
+        env:
+          WORK2_PAGES_SCOPE: site
+        run: >-
+          node framework/_build/pages_e2e.js _site
+          --evidence artifacts/pages-e2e/site.json
+      - name: Auditar de forma independiente el shard del site
+        run: >-
+          node framework/_build/validate_pages_audit.js
+          --site _site
+          --evidence artifacts/pages-e2e/site.json
+          --scope site
+      - name: Conservar evidencia WebKit del site
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: pages-e2e-site-${{ github.run_id }}
+          path: artifacts/pages-e2e/site.json
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 30
+
+  jupyterlite:
+    name: JupyterLite WebKit · L${{ matrix.lesson }}
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        lesson: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: pages-site-${{ github.run_id }}
+          path: _site
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "20.19.4"
+          cache: npm
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11.9"
+      - name: Instalar WebKit reproducible
+        run: |
+          npm ci
+          npx --no-install playwright install --with-deps webkit
+      - name: Ejecutar una lesson en un kernel limpio
+        env:
+          WORK2_PAGES_SCOPE: lab
+          WORK2_PAGES_LESSON: ${{ matrix.lesson }}
+        run: >-
+          node framework/_build/pages_e2e.js _site
+          --evidence artifacts/pages-e2e/lab-${{ matrix.lesson }}.json
+      - name: Auditar de forma independiente el shard de la lesson
+        run: >-
+          node framework/_build/validate_pages_audit.js
+          --site _site
+          --evidence artifacts/pages-e2e/lab-${{ matrix.lesson }}.json
+          --scope lab
+          --lesson ${{ matrix.lesson }}
+      - name: Conservar evidencia WebKit de la lesson
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: pages-e2e-lab-${{ matrix.lesson }}-${{ github.run_id }}
+          path: artifacts/pages-e2e/lab-${{ matrix.lesson }}.json
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 30
+
+  pages-audit:
+    name: Agregar evidencia Pages cerrada
+    needs: [build, webkit-site, jupyterlite]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: pages-site-${{ github.run_id }}
+          path: _site
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: pages-e2e-*-${{ github.run_id }}
+          path: artifacts/pages-e2e
+          merge-multiple: true
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "20.19.4"
+          cache: npm
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11.9"
+      - name: Validar el conjunto cerrado site y L1-L14
+        run: >-
+          node framework/_build/validate_pages_audit.js
+          --site _site
+          --aggregate artifacts/pages-e2e
+
+  package:
+    name: Preparar artefacto de GitHub Pages
+    needs: [course-contract, build, webkit-site, jupyterlite, pages-audit]
+    if: >-
+      ${{
+        github.event_name == 'workflow_dispatch' &&
+        github.ref == 'refs/heads/main' &&
+        inputs.publish &&
+        needs.course-contract.result == 'success' &&
+        needs.build.result == 'success' &&
+        needs.webkit-site.result == 'success' &&
+        needs.jupyterlite.result == 'success' &&
+        needs.pages-audit.result == 'success'
+      }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    outputs:
+      pages_artifact_name: ${{ steps.pages_artifact_name.outputs.name }}
+    steps:
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: pages-site-${{ github.run_id }}
+          path: _site
+      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+      - name: Fijar el nombre inmutable del artefacto Pages
+        id: pages_artifact_name
+        shell: bash
+        run: echo "name=github-pages-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          name: ${{ steps.pages_artifact_name.outputs.name }}
+          path: _site
+          retention-days: 30
+          include-hidden-files: true
 
   deploy:
+    name: Publicar GitHub Pages
+    needs: package
     if: >-
-      github.event_name != 'pull_request' &&
-      (github.ref == 'refs/heads/main' ||
-      (github.event_name == 'workflow_dispatch' && inputs.publish))
-    needs: build
-    runs-on: ubuntu-latest
+      ${{
+        github.event_name == 'workflow_dispatch' &&
+        github.ref == 'refs/heads/main' &&
+        inputs.publish &&
+        needs.package.result == 'success'
+      }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: pages-deploy
+      cancel-in-progress: false
     steps:
       - name: Publicar GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
+        with:
+          artifact_name: ${{ needs.package.outputs.pages_artifact_name }}

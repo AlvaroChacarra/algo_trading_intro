@@ -1,4 +1,4 @@
-/* L11 — señal vs monos, dos llegadas y autopsia del coste (datos reales) */
+/* L11 — señal vs monos, dos llegadas y autopsia del coste (datos sintéticos) */
 (function(){
 "use strict";
 const $=s=>document.querySelector(s);

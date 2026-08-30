@@ -158,6 +158,7 @@
       "l04-bridge"
     ],
     "REQUIRED": [
+      "l04-class-build/fill",
       "l04-function-recall",
       "l04-fill-cash-flow",
       "l04-quiz"
@@ -211,9 +212,20 @@
   "load": {
     "live_presentation_minutes": 20,
     "guided_minutes": 20,
-    "required_autonomous_minutes": 36,
+    "required_autonomous_minutes": 57,
     "optional_minutes": 20,
-    "overflow_policy": "explicit-route-plan"
+    "overflow_policy": "explicit-route-plan",
+    "autonomous_components": {
+      "documents": [
+        {"id": "l04-class-build/fill", "route": "REQUIRED", "minutes": 1},
+        {"id": "l04-function-recall", "route": "REQUIRED", "minutes": 4},
+        {"id": "l04-fill-cash-flow", "route": "REQUIRED", "minutes": 8}
+      ],
+      "quizzes": [
+        {"id": "l04-quiz", "route": "REQUIRED", "minutes": 8}
+      ],
+      "projects": []
+    }
   },
   "scenes": [
     {
@@ -274,6 +286,7 @@
         {
           "id": "fill",
           "route": "REQUIRED",
+          "duration_minutes": 1,
           "dom_stage": 5
         }
       ]

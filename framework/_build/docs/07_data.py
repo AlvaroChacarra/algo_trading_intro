@@ -1,4 +1,4 @@
-"""Datos reales para el doc de L7: los 500 snapshots, resumidos por el motor."""
+"""Datos sintéticos para el doc de L7: los 500 snapshots, resumidos por el motor."""
 from exchange.market import Market
 
 

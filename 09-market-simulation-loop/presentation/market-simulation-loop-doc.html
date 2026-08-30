@@ -599,6 +599,7 @@
   margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;
   border:0!important}
 .lr-has-contract [hidden]{display:none!important}
+[data-lr-scroller="true"]:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
 
 #lr-nav{position:fixed;inset:0 auto 0 0;width:var(--lr-nav-w,230px);z-index:52;
   display:flex;flex-direction:column;background:rgba(9,9,11,.97);border-right:1px solid var(--line);
@@ -630,6 +631,8 @@
 .lr-scene-links button.lr-route-live span{color:var(--accent)}
 .lr-scene-links button.lr-route-required span{color:var(--kw)}
 .lr-scene-links button.lr-route-optional span{color:var(--faint)}
+.lr-scene-links button.lr-route-mixed span{background:linear-gradient(90deg,var(--accent),var(--kw));
+  color:transparent;background-clip:text;-webkit-background-clip:text}
 
 #lr-teacher-toggle{margin:0 6px 9px;min-height:36px;border:1px solid rgba(34,211,238,.38);
   border-radius:8px;background:var(--accent-dim);color:var(--accent);font:600 .68rem var(--mono);cursor:pointer}
@@ -650,6 +653,8 @@
 .lr-teacher-kicker{margin:0;color:var(--accent);font:600 .68rem var(--mono);text-transform:uppercase}
 .lr-teacher-stage{font-size:.78rem}.lr-full-guide{min-height:40px;margin-top:16px;padding:7px 12px;
   border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--accent);font:600 .7rem var(--mono);cursor:pointer}
+.lr-teacher-override{padding:8px 10px;border-left:2px solid var(--kw);background:rgba(192,132,252,.08);
+  color:var(--muted);font-size:.76rem}
 
 .lr-scene-badge{display:flex;gap:8px;align-items:center;margin:0 0 10px;font:600 .58rem var(--mono);
   letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
@@ -657,6 +662,7 @@
 .lr-scene-badge.lr-route-live span:first-child{border-color:rgba(34,211,238,.42);color:var(--accent)}
 .lr-scene-badge.lr-route-required span:first-child{border-color:rgba(192,132,252,.45);color:var(--kw)}
 .lr-scene-badge.lr-route-optional span:first-child{border-color:var(--line);color:var(--faint)}
+.lr-scene-badge.lr-route-mixed span:first-child{border-color:rgba(192,132,252,.45);color:var(--kw)}
 
 #lr-controls{position:fixed;left:var(--lr-nav-w,230px);right:0;bottom:0;height:var(--lr-controls-h,58px);z-index:55;
   display:grid;grid-template-columns:minmax(120px,1fr) auto auto minmax(120px,1fr);align-items:center;
@@ -675,6 +681,8 @@
 #lr-controls .lr-route-scope{padding:0 12px;color:var(--accent);border-color:rgba(34,211,238,.38)}
 #lr-controls.lr-fixed-scope{grid-template-columns:minmax(120px,1fr) auto minmax(120px,1fr)}
 #lr-mobile-toolbar{display:none}
+html.lr-modal-open,body.lr-modal-open{overflow:hidden!important;overscroll-behavior:none}
+body.lr-modal-open::before{content:"";position:fixed;inset:0;z-index:69;background:rgba(0,0,0,.58);backdrop-filter:blur(2px);pointer-events:auto}
 
 /* Layout names are operational: they control scene width and native two-panel ratios. */
 .lr-scene{--lr-scene-max:1180px;--lr-left:42fr;--lr-right:58fr}
@@ -706,7 +714,7 @@
   body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child{overflow:visible;max-width:var(--lr-scene-max);margin:0 auto}
   body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child h2{font-size:clamp(1.08rem,2.15vh,1.72rem);margin:.05em 0 .2em}
   body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child .lede{font-size:clamp(.74rem,1.4vh,.95rem);margin:.2em 0}
-  body.mode-aula>.lr-scene-active>.scrolly{width:100%;max-width:var(--lr-scene-max);height:100%;min-height:0;margin:0 auto;
+  body.mode-aula>.lr-scene-active>.scrolly{display:grid;width:100%;max-width:var(--lr-scene-max);height:100%;min-height:0;margin:0 auto;
     padding:0;grid-template-columns:minmax(260px,var(--lr-left)) minmax(0,var(--lr-right));gap:clamp(14px,1.8vw,32px)}
   body.mode-aula>.lr-scene-active>.scrolly~.wrap{display:none}
   body.mode-aula .steps{min-width:0;min-height:0;height:100%;overflow:hidden}
@@ -721,6 +729,7 @@
   body.mode-aula .fig-stage{overflow:auto}
   body.mode-aula .full-code{display:none!important}
   body.mode-aula .hero{padding:0}
+  body.mode-aula>header.lr-scene-active .code{overflow-x:hidden;overflow-y:auto}
   body.mode-aula .hero h1{font-size:clamp(2rem,4.7vw,4.8rem)}
   body.mode-aula .hero .lede{font-size:clamp(.92rem,1.45vw,1.3rem);max-width:72ch}
   body.mode-aula .hero .challenge{margin-top:clamp(14px,2.5vh,28px)}
@@ -753,8 +762,8 @@
 }
 
 @media(max-width:520px){
-  #lr-mobile-toolbar>span{display:none}
-  #lr-mobile-toolbar .lr-study-optional{margin-left:auto}
+  #lr-mobile-toolbar>span{display:block;text-align:left;font-size:.55rem}
+  #lr-mobile-toolbar .lr-study-optional{flex:none}
 }
 
 @media(prefers-reduced-motion:reduce){
@@ -776,44 +785,49 @@
   <div class="simcard"><h4>Market.__init__ ↔ Market.__dict__</h4><div class="code-state"><pre><span class="ln">class Market:</span>
 <span class="ln">    def __init__(self, symbol, snapshots, depth=10):</span>
 <span class="ln">        self.symbol = symbol</span>
-<span class="ln">        self._snapshots = snapshots</span>
+<span class="ln">        self._snapshots = <span class="fn">tuple</span>(<span class="fn">deepcopy</span>(snapshots))</span>
 <span class="ln">        self._depth = depth</span>
 <span class="ln hl">        self._engine = MatchingEngine()</span>
 <span class="ln hl">        self._i = -1</span>
+<span class="ln hl">        self._timestamp = None</span>
 <span class="ln hl">        self.book = None</span></pre><div class="state-panel changed"><div class="state-title">inspector <span>estado vivo</span></div><div class="simrow"><label for="mk-i">_i</label><input id="mk-i" type="range" min="-1" max="3" value="-1" step="1"><span class="spread-val"><b id="mk-i-v">−1</b></span></div><div id="mk-state" class="state-list"></div></div></div><div class="state-panel" style="margin-top:12px"><div class="state-title">_snapshots <span>secuencia completa; vista de 4</span></div><div id="mk-snaps" class="execution-trace"></div></div></div>
-  <div class="note"><span class="tag">Estado inicial</span><code>_i = -1</code> significa “antes del primer snapshot”; por eso <code>book = None</code>.</div>
+  <div class="note"><span class="tag">Estado inicial</span><code>_i = -1</code> significa “antes del primer snapshot”; por eso <code>_timestamp = None</code> y <code>book = None</code>. Market se apropia de una copia profunda: ni el input ni <code>market.snapshots</code> pueden reescribir el replay.</div>
 </div></section>
 
 <section id="s2"><div class="wrap"><div class="eyebrow">§2 · <b>Construcción acumulativa de la API</b></div><h2>step, timestamp, submit y reset dejan de ser magia</h2><p class="lede">La clase completa permanece a la izquierda. A la derecha sigues la línea que cambia el estado o delega trabajo.</p></div>
   <div class="scrolly" data-scrolly><div class="steps">
-    <div class="step on" data-stage="0" data-name="step · cursor"><div class="step-inner"><span class="route-chip">núcleo presencial</span><h3><span class="n">0/6</span>step: avanzar el cursor</h3><p><code>_i</code> parte en −1. Incrementarlo antes de leer hace que el primer <code>step()</code> apunte al índice 0.</p></div></div>
-    <div class="step" data-stage="1" data-name="step · book"><div class="step-inner"><span class="route-chip">núcleo presencial</span><h3><span class="n">1/6</span>step: reconstruir el estado</h3><p>La fila actual sigue siendo un dict. <code>OrderBook.from_snapshot</code>, construido en L7, lo convierte en el book actual.</p></div></div>
-    <div class="step" data-stage="2" data-name="step · completo"><div class="step-inner"><span class="route-chip">núcleo presencial</span><h3><span class="n">2/6</span>step: definir el final</h3><p>Si el cursor sale de la secuencia, <code>book=None</code> y <code>return None</code>. Si no, devuelve el nuevo book. Ya puedes leer <code>step()</code> entero.</p></div></div>
-    <div class="step" data-stage="3" data-name="timestamp"><div class="step-inner"><span class="route-chip required">consolidación requerida</span><h3><span class="n">3/6</span>¿De dónde sale timestamp?</h3><p>Es una <code>property</code> derivada de la fila señalada por <code>_i</code>. No es estado duplicado: consulta el snapshot actual.</p></div></div>
+    <div class="step on" data-stage="0" data-name="step · cursor"><div class="step-inner"><span class="route-chip">núcleo presencial</span><h3><span class="n">0/6</span>step: proponer el siguiente cursor</h3><p><code>_i</code> parte en −1. <code>next_i = self._i + 1</code> apunta al índice 0 sin mutar todavía el estado observable.</p></div></div>
+    <div class="step" data-stage="1" data-name="step · book"><div class="step-inner"><span class="route-chip">núcleo presencial</span><h3><span class="n">1/6</span>step: construir antes de comprometer</h3><p><code>OrderBook.from_snapshot</code> fabrica <code>next_book</code> y la fila aporta <code>next_timestamp</code>. Si esa construcción falla, Market conserva íntegros cursor, timestamp y book anteriores.</p></div></div>
+    <div class="step" data-stage="2" data-name="step · completo"><div class="step-inner"><span class="route-chip">núcleo presencial</span><h3><span class="n">2/6</span>step: commit atómico o final</h3><p>Solo después de construir ambos candidatos asigna <code>_i</code>, <code>_timestamp</code> y <code>book</code>. Al agotarse la secuencia compromete el estado terminal con timestamp y book en <code>None</code>.</p></div></div>
+    <div class="step" data-stage="3" data-name="timestamp"><div class="step-inner"><span class="route-chip required">consolidación requerida</span><h3><span class="n">3/6</span>¿De dónde sale timestamp?</h3><p>La property devuelve <code>_timestamp</code>, comprometido junto con el book por el último <code>step()</code> válido. Así ambos describen siempre el mismo snapshot.</p></div></div>
     <div class="step" data-stage="4" data-name="submit"><div class="step-inner"><span class="route-chip">núcleo presencial</span><h3><span class="n">4/6</span>submit: fallar pronto y delegar</h3><p>Sin book, <code>RuntimeError</code>. Con book, Market pasa orden, book y timestamp al engine de L8 y devuelve sus fills.</p></div></div>
     <div class="step" data-stage="5" data-name="composición"><div class="step-inner"><span class="route-chip">núcleo presencial</span><h3><span class="n">5/6</span>Market HAS-A MatchingEngine</h3><p><code>Market</code> coordina; <code>MatchingEngine</code> cruza; <code>OrderBook</code> guarda estado. No existe una relación “Market es un engine”.</p></div></div>
-    <div class="step" data-stage="6" data-name="reset"><div class="step-inner"><span class="route-chip required">consolidación requerida</span><h3><span class="n">6/6</span>reset: volver al origen</h3><p>Solo restaura <code>_i=-1</code> y <code>book=None</code>. Los snapshots y el engine siguen existiendo.</p></div></div>
+    <div class="step" data-stage="6" data-name="reset"><div class="step-inner"><span class="route-chip required">consolidación requerida</span><h3><span class="n">6/6</span>reset: volver al origen</h3><p>Restaura <code>_i=-1</code>, <code>_timestamp=None</code> y <code>book=None</code>. Los snapshots y el engine siguen existiendo.</p></div></div>
   </div><div class="figwrap"><div class="fig accumulated-fig" id="l9-build-fig"><div class="fig-head"><span>Market · código ↔ estado</span><span class="stage-name">step · cursor</span></div><div class="build-grid"><div class="build-code"><div class="build-label">Clase que estás construyendo</div><pre id="l9-build-code"></pre></div><div class="build-state">
-    <div class="fig-stage on" data-stage="0"><div class="build-state-label">Una línea, un cambio</div><div class="state-inspector"><div class="state-panel"><div class="state-title">antes</div><div class="state-list"><div><span>_i</span><b>−1</b></div><div><span>book</span><b>None</b></div></div></div><div class="state-panel changed"><div class="state-title">después</div><div class="state-list"><div><span>_i</span><b>0</b></div><div><span>book</span><b>None</b></div></div></div></div></div>
-    <div class="fig-stage" data-stage="1"><div class="build-state-label">Reutiliza la factory de L7</div><div class="execution-trace"><div class="trace-step ok"><span>_snapshots[0]</span><span class="trace-meta">raw row</span></div><div class="trace-step active"><span>OrderBook.from_snapshot(...)</span><span class="trace-meta">L7</span></div><div class="trace-step ok"><span>self.book</span><span class="trace-meta">objeto actual</span></div></div><div id="mk-step-book" class="mini-book"></div></div>
-    <div class="fig-stage" data-stage="2"><div class="build-state-label">Traza completa de step()</div><div class="execution-trace"><div class="trace-step ok"><span>_i: −1 → 0</span></div><div class="trace-step ok"><span>0 &gt;= 500?</span><span class="trace-meta">False</span></div><div class="trace-step ok"><span>from_snapshot(row[0])</span></div><div class="trace-step active"><span>return self.book</span></div></div></div>
-    <div class="fig-stage" data-stage="3"><div class="build-state-label">Property derivada, no atributo nuevo</div><div class="execution-trace"><div class="trace-step ok"><span>_i = 0</span><span class="trace-meta">cursor</span></div><div class="trace-step active"><span>_snapshots[0]["timestamp"]</span><span class="trace-meta" id="mk-ts-value"></span></div><div class="trace-step ok"><span>self.timestamp</span><span class="trace-meta">int</span></div></div></div>
+    <div class="fig-stage on" data-stage="0"><div class="build-state-label">Propuesta, aún sin commit</div><div class="state-inspector"><div class="state-panel"><div class="state-title">estado actual</div><div class="state-list"><div><span>_i</span><b>−1</b></div><div><span>book</span><b>None</b></div></div></div><div class="state-panel changed"><div class="state-title">local</div><div class="state-list"><div><span>next_i</span><b>0</b></div><div><span>estado mutado</span><b>no</b></div></div></div></div></div>
+    <div class="fig-stage" data-stage="1"><div class="build-state-label">Construye candidatos antes del commit</div><div class="execution-trace"><div class="trace-step ok"><span>snapshot = _snapshots[next_i]</span></div><div class="trace-step active"><span>next_book = OrderBook.from_snapshot(...)</span><span class="trace-meta">puede fallar</span></div><div class="trace-step ok"><span>next_timestamp = _integer_timestamp(...)</span></div></div><div id="mk-step-book" class="mini-book"></div></div>
+    <div class="fig-stage" data-stage="2"><div class="build-state-label">Traza atómica de step()</div><div class="execution-trace"><div class="trace-step ok"><span>construir next_book + next_timestamp</span></div><div class="trace-step active"><span>commit _i + _timestamp + book</span></div><div class="trace-step ok"><span>return next_book</span></div></div></div>
+    <div class="fig-stage" data-stage="3"><div class="build-state-label">Timestamp comprometido con el book</div><div class="execution-trace"><div class="trace-step ok"><span>next_timestamp</span><span class="trace-meta" id="mk-ts-value"></span></div><div class="trace-step active"><span>self._timestamp = next_timestamp</span></div><div class="trace-step ok"><span>self.timestamp → self._timestamp</span></div></div></div>
     <div class="fig-stage" data-stage="4"><div class="build-state-label">Guard + delegación</div><div class="execution-trace"><div class="trace-step fail"><span>book is None?</span><span class="trace-meta">raise</span></div><div class="trace-step active"><span>_engine.process(order, book, timestamp)</span><span class="trace-meta">L8</span></div><div class="trace-step ok"><span>return Fill[]</span></div></div></div>
     <div class="fig-stage" data-stage="5"><div class="build-state-label">Composición frente a herencia</div><div class="state-list"><div><span>Market IS-A MatchingEngine</span><b style="color:var(--ask)">✗</b></div><div><span>Market HAS-A MatchingEngine</span><b style="color:var(--bid)">✓</b></div></div><div class="responsibility-grid"><div class="state-panel"><b>Market</b><span>coordina tiempo</span></div><div class="state-panel"><b>Engine</b><span>cruza órdenes</span></div><div class="state-panel"><b>Book</b><span>guarda niveles</span></div></div></div>
-    <div class="fig-stage" data-stage="6"><div class="build-state-label">Vuelve al estado previo al tick 0</div><div class="state-inspector"><div class="state-panel"><div class="state-title">antes</div><div class="state-list"><div><span>_i</span><b>217</b></div><div><span>book</span><b>OrderBook(...)</b></div></div></div><div class="state-panel changed"><div class="state-title">reset</div><div class="state-list"><div><span>_i</span><b>−1</b></div><div><span>book</span><b>None</b></div></div></div></div></div>
+    <div class="fig-stage" data-stage="6"><div class="build-state-label">Vuelve al estado previo al tick 0</div><div class="state-inspector"><div class="state-panel"><div class="state-title">antes</div><div class="state-list"><div><span>_i</span><b>217</b></div><div><span>_timestamp</span><b>1717213020</b></div><div><span>book</span><b>OrderBook(...)</b></div></div></div><div class="state-panel changed"><div class="state-title">reset</div><div class="state-list"><div><span>_i</span><b>−1</b></div><div><span>_timestamp</span><b>None</b></div><div><span>book</span><b>None</b></div></div></div></div></div>
   </div></div></div></div></div>
-  <div class="wrap"><details class="full-code"><summary>Consolidación requerida · Ver Market completo</summary><div class="body"><p>Esta es la clase core que acabas de recorrer. <code>from_csv()</code> y <code>sample()</code> son factories secundarias de I/O.</p><div class="code"><div class="code-head"><span>exchange/market.py · core L9</span><span>python</span></div><pre><span class="ln">class Market:</span><span class="ln">    def __init__(self, symbol, snapshots, depth=10):</span><span class="ln">        self.symbol = symbol</span><span class="ln">        self._snapshots = snapshots</span><span class="ln">        self._depth = depth</span><span class="ln">        self._engine = MatchingEngine()</span><span class="ln">        self._i = -1</span><span class="ln">        self.book = None</span><span class="ln"></span><span class="ln">    @property</span><span class="ln">    def timestamp(self):</span><span class="ln">        if 0 &lt;= self._i &lt; len(self._snapshots):</span><span class="ln">            row = self._snapshots[self._i]</span><span class="ln">            return int(row.get("timestamp", self._i))</span><span class="ln">        return None</span><span class="ln"></span><span class="ln">    def step(self):</span><span class="ln">        self._i += 1</span><span class="ln">        if self._i &gt;= len(self._snapshots):</span><span class="ln">            self.book = None</span><span class="ln">            return None</span><span class="ln">        self.book = OrderBook.from_snapshot(</span><span class="ln">            self.symbol, self._snapshots[self._i], self._depth)</span><span class="ln">        return self.book</span><span class="ln"></span><span class="ln">    def submit(self, order):</span><span class="ln">        if self.book is None:</span><span class="ln">            raise RuntimeError("llama a step() primero")</span><span class="ln">        return self._engine.process(</span><span class="ln">            order, self.book, self.timestamp)</span><span class="ln"></span><span class="ln">    def reset(self):</span><span class="ln">        self._i = -1</span><span class="ln">        self.book = None</span></pre></div></div></details></div>
+  <div class="wrap"><details class="full-code"><summary>Consolidación REQUIRED y evaluable · Ver Market completo</summary><div class="body">
+    <p><code>from_csv()</code>, <code>sample()</code> y <code>snapshots</code> son parte del contrato REQUIRED: se estudian autónomamente y pueden evaluarse aunque el I/O no consuma el núcleo presencial.</p>
+    <div class="code"><div class="code-head"><span>exchange/market.py · superficie REQUIRED L9</span><span>python</span></div><pre>
+<span class="ln">class Market:</span><span class="ln">    def __init__(self, symbol, snapshots, depth=10):</span><span class="ln">        self.symbol = symbol</span><span class="ln">        self._snapshots = tuple(deepcopy(snapshots))</span><span class="ln">        self._depth = depth</span><span class="ln">        self._engine = MatchingEngine()</span><span class="ln">        self._i = -1</span><span class="ln">        self._timestamp = None</span><span class="ln">        self.book = None</span><span class="ln"></span><span class="ln">    @classmethod</span><span class="ln">    def from_csv(cls, path, symbol="BTCUSDT", depth=10):</span><span class="ln">        with open(path, newline="") as f:</span><span class="ln">            rows = [{k: (_integer_timestamp(v) if k == "timestamp" else float(v))</span><span class="ln">                     for k, v in row.items()}</span><span class="ln">                    for row in csv.DictReader(f)]</span><span class="ln">        return cls(symbol, rows, depth)</span><span class="ln"></span><span class="ln">    @classmethod</span><span class="ln">    def sample(cls, symbol="BTCUSDT", depth=10):</span><span class="ln">        here = os.path.dirname(__file__)</span><span class="ln">        path = os.path.join(here, "_data", "btc_lob_snapshots.csv")</span><span class="ln">        return cls.from_csv(path, symbol, depth)</span><span class="ln"></span><span class="ln">    @property</span><span class="ln">    def snapshots(self):</span><span class="ln">        return deepcopy(list(self._snapshots))</span><span class="ln"></span><span class="ln">    @property</span><span class="ln">    def timestamp(self):</span><span class="ln">        return self._timestamp</span><span class="ln"></span><span class="ln">    def step(self):</span><span class="ln">        next_i = self._i + 1</span><span class="ln">        if next_i &gt;= len(self._snapshots):</span><span class="ln">            self._i = next_i</span><span class="ln">            self._timestamp = None</span><span class="ln">            self.book = None</span><span class="ln">            return None</span><span class="ln"></span><span class="ln">        snapshot = self._snapshots[next_i]</span><span class="ln">        next_book = OrderBook.from_snapshot(</span><span class="ln">            self.symbol, snapshot, self._depth)</span><span class="ln">        raw_timestamp = snapshot.get("timestamp", next_i)</span><span class="ln">        next_timestamp = _integer_timestamp(raw_timestamp)</span><span class="ln"></span><span class="ln">        self._i = next_i</span><span class="ln">        self._timestamp = next_timestamp</span><span class="ln">        self.book = next_book</span><span class="ln">        return next_book</span><span class="ln"></span><span class="ln">    def submit(self, order):</span><span class="ln">        if self.book is None:</span><span class="ln">            raise RuntimeError("llama a step() primero")</span><span class="ln">        return self._engine.process(</span><span class="ln">            order, self.book, self.timestamp)</span><span class="ln"></span><span class="ln">    def reset(self):</span><span class="ln">        self._i = -1</span><span class="ln">        self._timestamp = None</span><span class="ln">        self.book = None</span></pre></div>
+  </div></details></div>
 </section>
 
-<section id="s3"><div class="wrap"><div class="eyebrow">§3 · <b>Ahora sí, el loop</b></div><h2>El día deja de ser una caja negra</h2><p class="lede">Reproduce 500 pasos. Ahora puedes imaginar qué atributo consulta cada llamada, qué objeto trabaja y qué estado cambia.</p><div class="code"><div class="code-head"><span>simulation_loop.py</span><span>python</span></div><pre><span class="ln">while True:</span><span class="ln hl">    book = market.step()</span><span class="ln">    if book is None: break</span><span class="ln">    ... decide ...</span><span class="ln hl">    fills = market.submit(order)</span><span class="ln">    ... tracker.apply(fills) ...</span></pre></div>
-  <div class="simcard"><h4>500 snapshots reales · equity canónica</h4><div class="btnrow"><button class="btn" id="pl-play">▶ Reproducir</button><button class="btn ghost" id="pl-reset">↻</button></div><canvas id="pl-chart" style="width:100%;height:200px"></canvas><div class="looplog" id="pl-log">pulsa play</div><div id="pl-owner" class="execution-trace"></div></div>
-  <div class="note"><span class="tag">I/O queda fuera del núcleo</span><code>from_csv()</code> fabrica Market desde almacenamiento; <code>sample()</code> solo localiza el CSV del curso. El contrato obligatorio es <code>__init__ / step / timestamp / submit / reset</code>.</div>
+<section id="s3"><div class="wrap"><div class="eyebrow">§3 · <b>Ahora sí, el loop</b></div><h2>El día deja de ser una caja negra</h2><p class="lede">Reproduce 500 pasos. Ahora puedes imaginar qué atributo consulta cada llamada, qué objeto trabaja y qué estado cambia.</p><div class="code"><div class="code-head"><span>simulation_loop.py</span><span>python</span></div><pre><span class="ln">while True:</span><span class="ln hl">    book = market.step()</span><span class="ln">    if book is None: break</span><span class="ln">    ... decide ...</span><span class="ln hl">    fills = market.submit(order)</span><span class="ln">    for fill in fills:</span><span class="ln">        tracker.apply_fill(fill)</span></pre></div>
+  <div class="simcard"><h4>500 snapshots sintéticos · equity reproducible</h4><div class="btnrow"><button class="btn" id="pl-play">▶ Reproducir</button><button class="btn ghost" id="pl-reset">↻</button></div><canvas id="pl-chart" style="width:100%;height:200px"></canvas><div class="looplog" id="pl-log">pulsa play</div><div id="pl-owner" class="execution-trace"></div></div>
+  <div class="note"><span class="tag">REQUIRED · evaluable</span>El directo prioriza <code>__init__ / step / submit</code>; la consolidación obligatoria incluye <code>from_csv / sample / snapshots / timestamp / reset</code>. “Fuera del núcleo presencial” no significa OPTIONAL.</div>
 </div></section>
 
 <section id="s4"><div class="wrap"><div class="eyebrow">§4 · <b>Fija la composición</b></div><h2>5 preguntas</h2><div class="quiz" data-quiz>
   <div class="q" data-ok="0"><div class="qt">Estado correcto antes del primer tick:</div><div class="opts"><button class="opt">A · _i=-1 y book=None</button><button class="opt">B · _i=0 y primer book</button><button class="opt">C · _i=None</button></div><div class="why">El primer step incrementa de −1 a 0.</div></div>
   <div class="q" data-ok="2"><div class="qt"><code>step()</code> construye el libro mediante…</div><div class="opts"><button class="opt">A · MatchingEngine</button><button class="opt">B · sample()</button><button class="opt">C · OrderBook.from_snapshot</button></div><div class="why">Reutiliza la transformación de L7.</div></div>
-  <div class="q" data-ok="1"><div class="qt"><code>self.timestamp</code> procede de…</div><div class="opts"><button class="opt">A · MatchingEngine</button><button class="opt">B · el snapshot señalado por _i</button><button class="opt">C · book.mid</button></div><div class="why">Es una property derivada de la fila actual.</div></div>
+  <div class="q" data-ok="1"><div class="qt"><code>self.timestamp</code> procede de…</div><div class="opts"><button class="opt">A · MatchingEngine</button><button class="opt">B · _timestamp, comprometido con el book por el último step válido</button><button class="opt">C · book.mid</button></div><div class="why">La property devuelve el timestamp comprometido atómicamente junto al book actual.</div></div>
   <div class="q" data-ok="0"><div class="qt">¿Qué relación OOP describe <code>self._engine = MatchingEngine()</code>?</div><div class="opts"><button class="opt">A · composición: Market contiene un engine</button><button class="opt">B · herencia: Market es un engine</button><button class="opt">C · duplicación</button></div><div class="why">Market coordina y delega; no hereda el algoritmo.</div></div>
   <div class="q" data-ok="2"><div class="qt"><code>reset()</code> debe…</div><div class="opts"><button class="opt">A · borrar snapshots</button><button class="opt">B · crear otro engine</button><button class="opt">C · restaurar _i=-1 y book=None</button></div><div class="why">Vuelve al estado previo al primer tick.</div></div><div class="score"></div>
 </div></div></section>
@@ -832,13 +846,15 @@
 ### 1. Anatomía del objeto · 5 min
 - Lee primero el `__init__` literal y mapea cada asignación al inspector.
 - Después mueve `_i` con el slider.
-- Haz nombrar los cinco atributos: snapshots, depth, engine, índice y book actual.
-- Estado inicial obligatorio: `_i == -1`, `book is None`.
+- Haz nombrar los seis atributos: snapshots, depth, engine, índice, timestamp y book actual.
+- Estado inicial obligatorio: `_i == -1`, `_timestamp is None`, `book is None`.
 
 ### 2. Construir step() · 6 min
-- Ejecuta `self._i += 1` y muestra solo el cambio de cursor.
-- Después llama visualmente a `OrderBook.from_snapshot` de L7.
-- Explica el final como estado explícito: `book=None`, `return None`.
+- Calcula `next_i = self._i + 1`: todavía no se ha mutado el cursor.
+- Construye `next_book` con `OrderBook.from_snapshot` de L7 y valida `next_timestamp` con `_integer_timestamp(raw_timestamp)`, todo en variables locales.
+- Solo después haz el commit conjunto: `_i = next_i`, `_timestamp = next_timestamp`, `book = next_book`.
+- Haz fallar una fila: cursor, timestamp y book anteriores deben seguir intactos.
+- Explica el final como estado explícito: `_timestamp=None`, `book=None`, `return None`.
 - El panel acumulado debe terminar mostrando `step()` entero.
 
 ### 3. Construir submit() · 5 min
@@ -849,7 +865,7 @@
 - Deja `timestamp` para consolidación requerida, pero señala que procede del snapshot actual; no aparece por magia.
 
 ### 4. reset y loop · 4 min
-- Reset solo restaura `_i=-1` y `book=None`.
+- Reset restaura juntos `_i=-1`, `_timestamp=None` y `book=None`.
 - Ahora sí enseña el while completo: cada llamada ya tiene una implementación imaginable.
 
 ## Práctica guiada · ≈20 min
@@ -857,17 +873,17 @@
 - Consolidación requerida: B6–B8.
 - En B8, exige que el alumno atribuya cada mutación al objeto responsable.
 
-## Profundidad secundaria
-- `from_csv()` es una factory desde almacenamiento.
-- `sample()` es una comodidad del curso.
-- No consumir tiempo central en I/O.
+## Consolidación REQUIRED y evaluable
+- `from_csv()` es la factory desde almacenamiento y `sample()` localiza el CSV sintético del curso.
+- `snapshots` entrega una copia defensiva del replay; B7 ejercita directamente las tres APIs.
+- No consumir tiempo central en I/O no las convierte en OPTIONAL: pueden aparecer en evaluación.
 
 ## Cierre
 - “step cambia el estado; submit delega la dinámica; reset vuelve al origen.”
 - En el recorrido autónomo, el alumno abre la clase completa y atribuye cada línea a Market, MatchingEngine u OrderBook.
 </script>
 <script>const DOC_DATA={"anatomy":[{"i":0,"timestamp":1717200000,"bestBid":99978.2,"bestAsk":100021.8,"mid":100000.0},{"i":1,"timestamp":1717200060,"bestBid":99993.96,"bestAsk":100003.74,"mid":99998.85},{"i":2,"timestamp":1717200120,"bestBid":99992.04,"bestAsk":100002.9,"mid":99997.47},{"i":3,"timestamp":1717200180,"bestBid":99975.26,"bestAsk":100017.64,"mid":99996.45}],"equity":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,-3.67,-3.29,-3.77,-6.84,-7.57,-11.61,-9.85,-10.24,-5.54,-3.24,-5.7,-1.82,3.73,3.57,49.86,46.2,45.6,46.78,50.63,52.88,52.96,50.75,49.87,57.83,51.42,49.72,55.4,55.09,57.03,58.87,59.08,61.75,62.75,71.22,71.51,77.28,81.89,79.66,80.4,77.79,73.63,75.54,77.19,76.83,78.61,76.13,73.11,74.47,66.85,69.48,76.93,76.73,77.96,75.82,74.52,75.17,74.33,81.14,93.62,89.93,91.63,94.2,87.59,85.65,77.64,77.32,79.4,80.46,80.47,82.3,77.51,74.23,64.81,63.33,63.47,67.33,64.48,70.45,83.61,83.3,82.23,91.31,89.51,91.03,81.81,82.63,79.37,81.19,80.2,77.01,75.79,77.25,82.51,88.74,84.21,83.97,84.11,83.43,89.81,91.19,91.08,83.6,81.27,83.48,85.76,91.06,84.29,89.66,93.66,91.77,89.97,96.99,93.8,90.01,92.39,84.63,84.89,82.84,83.92,90.99,74.36,75.44,78.61,77.4,82.86,73.45,71.15,75.44,84.51,78.4,80.81,76.69,76.24,76.01,75.61,74.19,67.56,72.75,75.1,78.62,73.24,69.67,71.72,63.23,67.64,64.95,56.47,60.46,57.8,53.97,45.36,46.7,50.73,53.06,55.71,49.52,49.68,50.41,51.21,49.83,51.82,57.5,57.14,56.66,59.83,62.3,60.88,60.6,53.53,55.35,47.14,41.5,40.49,35.74,40.92,36.85,36.86,42.47,40.13,37.74,37.17,40.55,41.18,47.19,42.9,45.54,37.82,41.9,46.04,15.63,20.95,24.88,23.61,21.3,19.53,23.04,23.63,25.85,29.65,33.52,25.68,23.93,27.57,28.71,28.91,24.94,35.19,18.38,14.1,15.19,9.44,9.66,10.4,7.86,3.32,3.56,1.12,6.67,11.51,14.89,15.4,10.3,14.1,12.76,11.38,9.7,8.47,6.01,9.44,5.18,11.7,17.17,15.73,9.7,12.23,13.96,9.27,8.86,5.69,12.73,16.97,-1.68,-0.19,-2.25,-6.7,0.25,9.94,10.52,3.76,4.22,-2.89,-2.49,-3.73,-6.93,-11.07,-11.88,-12.8,-15.83,-15.11,-13.21,-12.09,-9.52,-4.7,-5.42,-4.44,-21.31,-21.96,-27.78,-29.77,-37.84,-37.31,-39.63,-38.64,-45.94,-44.83,-45.67,-46.56,-50.72,-38.58,-44.08,-48.39,-52.43,-51.02,-52.83,-47.51,-44.85,-45.66,-44.22,-74.04,-72.26,-71.41,-65.06,-68.43,-76.69,-81.49,-89.25,-94.34,-101.16,-99.25,-96.1,-96.42,-94.25,-89.67,-91.17,-86.88,-85.67,-76.93,-71.24,-56.11,-60.81,-54.2,-52.43,-50.15,-51.34,-53.0,-52.82,-56.53,-63.36,-65.55,-56.07,-59.31,-58.24,-62.1,-59.27,-63.15,-64.14,-63.8,-69.29,-77.9,-80.55,-72.63,-65.06,-62.19,-57.84,-48.92,-49.27,-46.87,-50.88,-51.91,-44.31,-47.97,-49.14,-43.25,-48.68,-56.63,-51.78,-52.38,-49.0,-51.18,-50.95,-55.61,-57.12,-54.69,-48.87,-48.6,-49.7,-48.13,-51.71,-46.98,-47.46,-54.2,-58.44,-62.7,-63.31,-64.51,-66.31,-69.44,-64.1,-59.24,-65.48,-66.68,-73.19,-67.92,-65.45,-65.42,-69.58,-66.44,-69.43,-62.47,-60.33,-57.23,-53.23,-52.36,-50.85,-50.25,-41.35,-22.17,-19.24,-27.33,-30.73,-29.36,-32.02,-30.58,-33.98,-30.89,-42.03,-47.64,-49.31,-51.92,-51.87,-53.05,-50.26,-52.03,-55.36,-50.71,-51.69,-57.37,-52.54,-55.74,-61.34,-64.35,-64.28,-66.66,-61.7,-62.47,-62.69,-55.12,-55.11,-58.65,-51.95,-43.8,-33.35,-34.61,-34.39,-34.99,-37.72,-42.95,-41.1,-17.77,-21.16,-20.88,-19.43,-20.73,-16.83,-18.37,-13.96,-11.06,-7.74,-3.81,-5.21,-6.79,-5.87,-4.89,-5.2,2.28,-0.14,-10.77,-13.81,-13.05,-11.14,-14.12],"fills":[{"i":49,"price":100016.63,"size":0.2961},{"i":49,"price":100018.48,"size":0.2039}],"filled":0.5,"steps":500,"nFills":2,"finalEquity":-14.12,"finalPos":0.5};</script>
-<script type="application/json" id="pedagogy-contract">{"lesson":9,"status":"contract-strict","title":"Market — Estado, dinámica y tiempo","delivery":"lesson","source_path":"framework/_build/docs/09_body.html","requires":{"concepts":["matching.plan_validate_commit","exchange.orderbook","oop.composition","market.external_boundary","python.fstring","python.dict_get","python.generator_expression"],"apis":["matching.constructor","matching.process","orderbook.from_snapshot","tracker.constructor","tracker.position","tracker.apply_fill","tracker.equity"],"notation":[]},"requirement_routes":{"concepts":{"matching.plan_validate_commit":"LIVE","exchange.orderbook":"LIVE","oop.composition":"LIVE","market.external_boundary":"LIVE","python.fstring":"REQUIRED","python.dict_get":"LIVE","python.generator_expression":"REQUIRED"},"apis":{"matching.constructor":"LIVE","matching.process":"LIVE","orderbook.from_snapshot":"LIVE","tracker.constructor":"REQUIRED","tracker.position":"REQUIRED","tracker.apply_fill":"REQUIRED","tracker.equity":"REQUIRED"},"notation":{}},"introduces":{"concepts":[{"id":"engine.market","importance":"major","route":"LIVE"},{"id":"engine.time_loop","importance":"major","route":"LIVE"},{"id":"engine.delegation","importance":"major","route":"LIVE"},{"id":"engine.lifecycle","importance":"major","route":"LIVE"},{"id":"metrics.equity_curve","importance":"supporting","route":"REQUIRED"}],"apis":["market.constructor","market.sample","market.snapshots","market.book","market.step","market.submit","market.timestamp","market.reset"],"notation":[]},"introduction_routes":{"apis":{"market.constructor":"LIVE","market.sample":"REQUIRED","market.snapshots":"REQUIRED","market.book":"LIVE","market.step":"LIVE","market.submit":"LIVE","market.timestamp":"REQUIRED","market.reset":"REQUIRED"},"notation":{}},"recalls":[{"concept":"oop.composition","introduced_in":5,"mapping":{"before":"OrderBook contiene una colección de niveles.","now":"Market contiene un MatchingEngine y un OrderBook activo."}}],"api_surface":[{"id":"matching.constructor","name":"MatchingEngine","kind":"constructor","signature":"MatchingEngine() -> MatchingEngine","returns":"MatchingEngine","responsibility":"construct the stateless canonical matching engine","qualified_name":"exchange.matching.MatchingEngine"},{"id":"matching.process","name":"process","kind":"method","signature":"process(order: Order, book: OrderBook, timestamp: int | None = None) -> list[Fill]","returns":"list[Fill]","responsibility":"plan, validate, and commit one order","qualified_name":"exchange.matching.MatchingEngine.process"},{"id":"orderbook.from_snapshot","name":"from_snapshot","kind":"classmethod","signature":"from_snapshot(symbol: str, row: dict, depth: int = 10) -> OrderBook","returns":"OrderBook","responsibility":"translate one external snapshot into the canonical book","qualified_name":"exchange.book.OrderBook.from_snapshot"},{"id":"market.constructor","name":"Market","kind":"constructor","signature":"Market(symbol: str, snapshots: list[dict], depth: int = 10) -> Market","returns":"Market","responsibility":"compose snapshots, matching, active book, and replay cursor","qualified_name":"exchange.market.Market"},{"id":"market.sample","name":"sample","kind":"classmethod","signature":"sample(symbol: str = 'BTCUSDT', depth: int = 10) -> Market","returns":"Market","responsibility":"load the reproducible packaged market replay","qualified_name":"exchange.market.Market.sample"},{"id":"market.snapshots","name":"snapshots","kind":"property","signature":"snapshots -> list[dict]","returns":"list[dict]","responsibility":"expose a defensive copy of the packaged replay rows","qualified_name":"exchange.market.Market.snapshots"},{"id":"market.book","name":"book","kind":"attribute","signature":"book: OrderBook | None","returns":"OrderBook | None","responsibility":"expose the active replay book or None outside the lifecycle","qualified_name":"exchange.market.Market.book"},{"id":"market.step","name":"step","kind":"method","signature":"step() -> OrderBook | None","returns":"OrderBook | None","responsibility":"advance replay time and replace the active book","qualified_name":"exchange.market.Market.step"},{"id":"market.submit","name":"submit","kind":"method","signature":"submit(order: Order) -> list[Fill]","returns":"list[Fill]","responsibility":"delegate matching against the active book","qualified_name":"exchange.market.Market.submit"},{"id":"market.timestamp","name":"timestamp","kind":"property","signature":"timestamp -> int | None","returns":"int | None","responsibility":"read the current replay timestamp","qualified_name":"exchange.market.Market.timestamp"},{"id":"market.reset","name":"reset","kind":"method","signature":"reset() -> None","returns":"None","responsibility":"restore replay state","qualified_name":"exchange.market.Market.reset"},{"id":"tracker.constructor","name":"PositionTracker","kind":"constructor","signature":"PositionTracker(cash: float = 0.0) -> PositionTracker","returns":"PositionTracker","responsibility":"initialize cash, inventory, and fill accounting","qualified_name":"exchange.portfolio.PositionTracker"},{"id":"tracker.position","name":"position","kind":"property","signature":"position -> float","returns":"float","responsibility":"read current signed inventory","qualified_name":"exchange.portfolio.PositionTracker.position"},{"id":"tracker.apply_fill","name":"apply_fill","kind":"method","signature":"apply_fill(fill: Fill) -> None","returns":"None","responsibility":"update cash and position atomically from a fill","qualified_name":"exchange.portfolio.PositionTracker.apply_fill"},{"id":"tracker.equity","name":"equity","kind":"method","signature":"equity(mark_price: float) -> float","returns":"float","responsibility":"mark cash and inventory to market","qualified_name":"exchange.portfolio.PositionTracker.equity"}],"routes":{"LIVE":["l09-challenge","l09-composition-recall","l09-market-api","l09-day-loop","l09-bridge"],"REQUIRED":["l09-quiz"],"OPTIONAL":[]},"objectives":[{"id":"l09-compose-market","route":"LIVE","concepts":["engine.market","engine.delegation","oop.composition"],"apis":["market.constructor","market.book","market.step","market.submit"],"notation":[]},{"id":"l09-run-time-loop","route":"LIVE","concepts":["engine.time_loop"],"apis":["market.step"],"notation":[]},{"id":"l09-reset-lifecycle","route":"REQUIRED","concepts":["engine.lifecycle"],"apis":["market.sample","market.snapshots","market.timestamp","market.reset"],"notation":[]},{"id":"l09-track-equity-over-time","route":"REQUIRED","concepts":["metrics.equity_curve"],"apis":["tracker.constructor","tracker.position","tracker.apply_fill","tracker.equity"],"notation":[]}],"load":{"live_presentation_minutes":20,"guided_minutes":20,"required_autonomous_minutes":34,"optional_minutes":10,"overflow_policy":"explicit-route-plan"},"scenes":[{"id":"l09-challenge","dom_id":"s0","type":"hero-challenge","route":"LIVE","layout":"focus","concepts":["engine.market"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l09-composition-recall","dom_id":"s1","type":"recall","route":"LIVE","layout":"split-50-50","concepts":["oop.composition","engine.market"],"duration_minutes":3,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l09-market-api","dom_id":"s2","type":"code-state","route":"LIVE","layout":"split-42-58","concepts":["engine.time_loop","engine.delegation","engine.lifecycle"],"duration_minutes":11,"stages":[{"id":"cursor","route":"LIVE","dom_stage":0},{"id":"book","route":"LIVE","dom_stage":1},{"id":"end","route":"LIVE","dom_stage":2},{"id":"timestamp","route":"REQUIRED","dom_stage":3},{"id":"submit","route":"LIVE","dom_stage":4},{"id":"composition","route":"LIVE","dom_stage":5},{"id":"reset","route":"REQUIRED","dom_stage":6}]},{"id":"l09-day-loop","dom_id":"s3","type":"concept-simulator","route":"LIVE","layout":"split-45-55","concepts":["engine.time_loop"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l09-quiz","dom_id":"s4","type":"diagnostic-quiz","route":"REQUIRED","layout":"focus","concepts":["engine.market","engine.delegation"],"duration_minutes":8,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l09-bridge","dom_id":"s5","type":"bridge","route":"LIVE","layout":"focus","concepts":["engine.lifecycle"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]}],"bridge":{"target_lesson":10,"known":{"concepts":["oop.polymorphism","engine.market","engine.time_loop"],"apis":["market.step","market.submit"],"notation":[]},"limitation":"El loop incrusta una decisión y no puede intercambiar estrategias con seguridad.","need":"Un contrato Strategy de producción devuelve acciones y Backtest se responsabiliza de ejecutarlas."},"api_transitions":[],"package_checks":[{"path":"09-market-simulation-loop/exercises/exchange/book.py","class":"OrderBook","members":{"from_snapshot":{"api":"orderbook.from_snapshot","kind":"classmethod","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"row","kind":"positional_or_keyword","annotation":"dict"},{"name":"depth","kind":"positional_or_keyword","annotation":"int","default":"10"}],"returns":"OrderBook"}}},{"path":"09-market-simulation-loop/exercises/exchange/matching.py","class":"MatchingEngine","members":{"__init__":{"api":"matching.constructor","kind":"constructor","parameters":[],"returns":"MatchingEngine"},"process":{"api":"matching.process","kind":"method","parameters":[{"name":"order","kind":"positional_or_keyword","annotation":"Order"},{"name":"book","kind":"positional_or_keyword","annotation":"OrderBook"},{"name":"timestamp","kind":"positional_or_keyword","annotation":"int | None","default":"None"}],"returns":"list[Fill]"}}},{"path":"09-market-simulation-loop/exercises/exchange/portfolio.py","class":"PositionTracker","members":{"__init__":{"api":"tracker.constructor","kind":"constructor","parameters":[{"name":"cash","kind":"positional_or_keyword","annotation":"float","default":"0.0"}],"returns":"PositionTracker"},"position":{"api":"tracker.position","kind":"property","parameters":[],"returns":"float"},"apply_fill":{"api":"tracker.apply_fill","kind":"method","parameters":[{"name":"fill","kind":"positional_or_keyword","annotation":"Fill"}],"returns":"None"},"equity":{"api":"tracker.equity","kind":"method","parameters":[{"name":"mark_price","kind":"positional_or_keyword","annotation":"float"}],"returns":"float"}}},{"path":"09-market-simulation-loop/exercises/exchange/market.py","class":"Market","members":{"__init__":{"api":"market.constructor","kind":"constructor","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"snapshots","kind":"positional_or_keyword","annotation":"list[dict]"},{"name":"depth","kind":"positional_or_keyword","annotation":"int","default":"10"}],"returns":"Market"},"sample":{"api":"market.sample","kind":"classmethod","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str","default":"'BTCUSDT'"},{"name":"depth","kind":"positional_or_keyword","annotation":"int","default":"10"}],"returns":"Market"},"snapshots":{"api":"market.snapshots","kind":"property","parameters":[],"returns":"list[dict]"},"book":{"api":"market.book","kind":"attribute","parameters":[],"returns":"OrderBook | None"},"timestamp":{"api":"market.timestamp","kind":"property","parameters":[],"returns":"int | None"},"step":{"api":"market.step","kind":"method","parameters":[],"returns":"OrderBook | None"},"submit":{"api":"market.submit","kind":"method","parameters":[{"name":"order","kind":"positional_or_keyword","annotation":"Order"}],"returns":"list[Fill]"},"reset":{"api":"market.reset","kind":"method","parameters":[],"returns":"None"}}}],"used_later":{"concepts":["engine.market","metrics.equity_curve"],"apis":["market.reset","market.sample","market.snapshots","market.step","market.submit"],"notation":[]}}</script>
+<script type="application/json" id="pedagogy-contract">{"lesson":9,"status":"contract-strict","title":"Market — Estado, dinámica y tiempo","delivery":"lesson","source_path":"framework/_build/docs/09_body.html","requires":{"concepts":["matching.plan_validate_commit","exchange.orderbook","oop.composition","market.external_boundary","python.fstring","python.dict_get","python.generator_expression"],"apis":["matching.constructor","matching.process","orderbook.from_snapshot","tracker.constructor","tracker.position","tracker.apply_fill","tracker.equity"],"notation":[]},"requirement_routes":{"concepts":{"matching.plan_validate_commit":"LIVE","exchange.orderbook":"LIVE","oop.composition":"LIVE","market.external_boundary":"LIVE","python.fstring":"REQUIRED","python.dict_get":"LIVE","python.generator_expression":"REQUIRED"},"apis":{"matching.constructor":"LIVE","matching.process":"LIVE","orderbook.from_snapshot":"LIVE","tracker.constructor":"REQUIRED","tracker.position":"REQUIRED","tracker.apply_fill":"REQUIRED","tracker.equity":"REQUIRED"},"notation":{}},"introduces":{"concepts":[{"id":"engine.market","importance":"major","route":"LIVE"},{"id":"engine.time_loop","importance":"major","route":"LIVE"},{"id":"engine.delegation","importance":"major","route":"LIVE"},{"id":"engine.lifecycle","importance":"major","route":"LIVE"},{"id":"metrics.equity_curve","importance":"supporting","route":"REQUIRED"}],"apis":["market.constructor","market.from_csv","market.sample","market.snapshots","market.book","market.step","market.submit","market.timestamp","market.reset"],"notation":[]},"introduction_routes":{"apis":{"market.constructor":"LIVE","market.from_csv":"REQUIRED","market.sample":"REQUIRED","market.snapshots":"REQUIRED","market.book":"LIVE","market.step":"LIVE","market.submit":"LIVE","market.timestamp":"REQUIRED","market.reset":"REQUIRED"},"notation":{}},"recalls":[{"concept":"oop.composition","introduced_in":5,"mapping":{"before":"OrderBook contiene una colección de niveles.","now":"Market contiene un MatchingEngine y un OrderBook activo."}}],"api_surface":[{"id":"matching.constructor","name":"MatchingEngine","kind":"constructor","signature":"MatchingEngine() -> MatchingEngine","returns":"MatchingEngine","responsibility":"construct the stateless canonical matching engine","qualified_name":"exchange.matching.MatchingEngine"},{"id":"matching.process","name":"process","kind":"method","signature":"process(order: Order, book: OrderBook, timestamp: int | None = None) -> list[Fill]","returns":"list[Fill]","responsibility":"plan, validate, and commit one order","qualified_name":"exchange.matching.MatchingEngine.process"},{"id":"orderbook.from_snapshot","name":"from_snapshot","kind":"classmethod","signature":"from_snapshot(symbol: str, row: dict, depth: int = 10) -> OrderBook","returns":"OrderBook","responsibility":"translate one external snapshot into the canonical book","qualified_name":"exchange.book.OrderBook.from_snapshot"},{"id":"market.constructor","name":"Market","kind":"constructor","signature":"Market(symbol: str, snapshots: list[dict], depth: int = 10) -> Market","returns":"Market","responsibility":"compose snapshots, matching, active book, and replay cursor","qualified_name":"exchange.market.Market"},{"id":"market.from_csv","name":"from_csv","kind":"classmethod","signature":"from_csv(path: str, symbol: str = 'BTCUSDT', depth: int = 10) -> Market","returns":"Market","responsibility":"construct a replay market from an external CSV file","qualified_name":"exchange.market.Market.from_csv"},{"id":"market.sample","name":"sample","kind":"classmethod","signature":"sample(symbol: str = 'BTCUSDT', depth: int = 10) -> Market","returns":"Market","responsibility":"load the reproducible packaged market replay","qualified_name":"exchange.market.Market.sample"},{"id":"market.snapshots","name":"snapshots","kind":"property","signature":"snapshots -> list[dict]","returns":"list[dict]","responsibility":"expose a defensive copy of the packaged replay rows","qualified_name":"exchange.market.Market.snapshots"},{"id":"market.book","name":"book","kind":"attribute","signature":"book: OrderBook | None","returns":"OrderBook | None","responsibility":"expose the active replay book or None outside the lifecycle","qualified_name":"exchange.market.Market.book"},{"id":"market.step","name":"step","kind":"method","signature":"step() -> OrderBook | None","returns":"OrderBook | None","responsibility":"advance replay time and replace the active book","qualified_name":"exchange.market.Market.step"},{"id":"market.submit","name":"submit","kind":"method","signature":"submit(order: Order) -> list[Fill]","returns":"list[Fill]","responsibility":"delegate matching against the active book","qualified_name":"exchange.market.Market.submit"},{"id":"market.timestamp","name":"timestamp","kind":"property","signature":"timestamp -> int | None","returns":"int | None","responsibility":"read the current replay timestamp","qualified_name":"exchange.market.Market.timestamp"},{"id":"market.reset","name":"reset","kind":"method","signature":"reset() -> None","returns":"None","responsibility":"restore replay state","qualified_name":"exchange.market.Market.reset"},{"id":"tracker.constructor","name":"PositionTracker","kind":"constructor","signature":"PositionTracker(cash: float = 0.0) -> PositionTracker","returns":"PositionTracker","responsibility":"initialize cash, inventory, and fill accounting","qualified_name":"exchange.portfolio.PositionTracker"},{"id":"tracker.position","name":"position","kind":"property","signature":"position -> float","returns":"float","responsibility":"read current signed inventory","qualified_name":"exchange.portfolio.PositionTracker.position"},{"id":"tracker.apply_fill","name":"apply_fill","kind":"method","signature":"apply_fill(fill: Fill) -> None","returns":"None","responsibility":"update cash and position atomically from a fill","qualified_name":"exchange.portfolio.PositionTracker.apply_fill"},{"id":"tracker.equity","name":"equity","kind":"method","signature":"equity(mark_price: float) -> float","returns":"float","responsibility":"mark cash and inventory to market","qualified_name":"exchange.portfolio.PositionTracker.equity"}],"routes":{"LIVE":["l09-challenge","l09-composition-recall","l09-market-api","l09-day-loop","l09-bridge"],"REQUIRED":["l09-market-api/timestamp","l09-market-api/reset","l09-quiz"],"OPTIONAL":[]},"objectives":[{"id":"l09-compose-market","route":"LIVE","concepts":["engine.market","engine.delegation","oop.composition"],"apis":["market.constructor","market.book","market.step","market.submit"],"notation":[]},{"id":"l09-run-time-loop","route":"LIVE","concepts":["engine.time_loop"],"apis":["market.step"],"notation":[]},{"id":"l09-reset-lifecycle","route":"REQUIRED","concepts":["engine.lifecycle"],"apis":["market.from_csv","market.sample","market.snapshots","market.timestamp","market.reset"],"notation":[]},{"id":"l09-track-equity-over-time","route":"REQUIRED","concepts":["metrics.equity_curve"],"apis":["tracker.constructor","tracker.position","tracker.apply_fill","tracker.equity"],"notation":[]}],"load":{"live_presentation_minutes":20,"guided_minutes":20,"required_autonomous_minutes":44,"optional_minutes":10,"overflow_policy":"explicit-route-plan","autonomous_components":{"documents":[{"id":"l09-market-api/timestamp","route":"REQUIRED","minutes":1},{"id":"l09-market-api/reset","route":"REQUIRED","minutes":1}],"quizzes":[{"id":"l09-quiz","route":"REQUIRED","minutes":8}],"projects":[]}},"scenes":[{"id":"l09-challenge","dom_id":"s0","type":"hero-challenge","route":"LIVE","layout":"focus","concepts":["engine.market"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l09-composition-recall","dom_id":"s1","type":"recall","route":"LIVE","layout":"split-50-50","concepts":["oop.composition","engine.market"],"duration_minutes":3,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l09-market-api","dom_id":"s2","type":"code-state","route":"LIVE","layout":"split-42-58","concepts":["engine.time_loop","engine.delegation","engine.lifecycle"],"duration_minutes":11,"stages":[{"id":"cursor","route":"LIVE","dom_stage":0},{"id":"book","route":"LIVE","dom_stage":1},{"id":"end","route":"LIVE","dom_stage":2},{"id":"timestamp","route":"REQUIRED","duration_minutes":1,"dom_stage":3},{"id":"submit","route":"LIVE","dom_stage":4},{"id":"composition","route":"LIVE","dom_stage":5},{"id":"reset","route":"REQUIRED","duration_minutes":1,"dom_stage":6}]},{"id":"l09-day-loop","dom_id":"s3","type":"concept-simulator","route":"LIVE","layout":"split-45-55","concepts":["engine.time_loop"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l09-quiz","dom_id":"s4","type":"diagnostic-quiz","route":"REQUIRED","layout":"focus","concepts":["engine.market","engine.delegation"],"duration_minutes":8,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l09-bridge","dom_id":"s5","type":"bridge","route":"LIVE","layout":"focus","concepts":["engine.lifecycle"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]}],"bridge":{"target_lesson":10,"known":{"concepts":["oop.polymorphism","engine.market","engine.time_loop"],"apis":["market.step","market.submit"],"notation":[]},"limitation":"El loop incrusta una decisión y no puede intercambiar estrategias con seguridad.","need":"Un contrato Strategy de producción devuelve acciones y Backtest se responsabiliza de ejecutarlas."},"api_transitions":[],"package_checks":[{"path":"09-market-simulation-loop/exercises/exchange/book.py","class":"OrderBook","members":{"from_snapshot":{"api":"orderbook.from_snapshot","kind":"classmethod","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"row","kind":"positional_or_keyword","annotation":"dict"},{"name":"depth","kind":"positional_or_keyword","annotation":"int","default":"10"}],"returns":"OrderBook"}}},{"path":"09-market-simulation-loop/exercises/exchange/matching.py","class":"MatchingEngine","members":{"__init__":{"api":"matching.constructor","kind":"constructor","parameters":[],"returns":"MatchingEngine"},"process":{"api":"matching.process","kind":"method","parameters":[{"name":"order","kind":"positional_or_keyword","annotation":"Order"},{"name":"book","kind":"positional_or_keyword","annotation":"OrderBook"},{"name":"timestamp","kind":"positional_or_keyword","annotation":"int | None","default":"None"}],"returns":"list[Fill]"}}},{"path":"09-market-simulation-loop/exercises/exchange/portfolio.py","class":"PositionTracker","members":{"__init__":{"api":"tracker.constructor","kind":"constructor","parameters":[{"name":"cash","kind":"positional_or_keyword","annotation":"float","default":"0.0"}],"returns":"PositionTracker"},"position":{"api":"tracker.position","kind":"property","parameters":[],"returns":"float"},"apply_fill":{"api":"tracker.apply_fill","kind":"method","parameters":[{"name":"fill","kind":"positional_or_keyword","annotation":"Fill"}],"returns":"None"},"equity":{"api":"tracker.equity","kind":"method","parameters":[{"name":"mark_price","kind":"positional_or_keyword","annotation":"float"}],"returns":"float"}}},{"path":"09-market-simulation-loop/exercises/exchange/market.py","class":"Market","members":{"__init__":{"api":"market.constructor","kind":"constructor","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"snapshots","kind":"positional_or_keyword","annotation":"list[dict]"},{"name":"depth","kind":"positional_or_keyword","annotation":"int","default":"10"}],"returns":"Market"},"from_csv":{"api":"market.from_csv","kind":"classmethod","parameters":[{"name":"path","kind":"positional_or_keyword","annotation":"str"},{"name":"symbol","kind":"positional_or_keyword","annotation":"str","default":"'BTCUSDT'"},{"name":"depth","kind":"positional_or_keyword","annotation":"int","default":"10"}],"returns":"Market"},"sample":{"api":"market.sample","kind":"classmethod","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str","default":"'BTCUSDT'"},{"name":"depth","kind":"positional_or_keyword","annotation":"int","default":"10"}],"returns":"Market"},"snapshots":{"api":"market.snapshots","kind":"property","parameters":[],"returns":"list[dict]"},"book":{"api":"market.book","kind":"attribute","parameters":[],"returns":"OrderBook | None"},"timestamp":{"api":"market.timestamp","kind":"property","parameters":[],"returns":"int | None"},"step":{"api":"market.step","kind":"method","parameters":[],"returns":"OrderBook | None"},"submit":{"api":"market.submit","kind":"method","parameters":[{"name":"order","kind":"positional_or_keyword","annotation":"Order"}],"returns":"list[Fill]"},"reset":{"api":"market.reset","kind":"method","parameters":[],"returns":"None"}}}],"used_later":{"concepts":["engine.market","metrics.equity_curve"],"apis":["market.reset","market.sample","market.snapshots","market.step","market.submit"],"notation":[]}}</script>
 <script>
 
 (function(){
@@ -875,7 +891,7 @@
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* ── mini-gráficas canvas (compartidas por los docs con datos reales) ── */
+/* ── mini-gráficas canvas (compartidas por los docs con datos reproducibles) ── */
 window.DOC=window.DOC||{};
 DOC.chart=function(canvas,seriesList,opts={}){
   const c=typeof canvas==='string'?document.querySelector(canvas):canvas;
@@ -1003,9 +1019,12 @@ DOC.save=function(patch){
   const steps=$$('.scrolly .step');
   if(!steps.length)return;
   document.addEventListener('keydown',e=>{
+    if(document.body.classList.contains('lr-modal-open'))return;
     if(document.body.classList.contains('mode-aula'))return;
     if(!['ArrowDown','ArrowUp','PageDown','PageUp'].includes(e.key))return;
     if(/INPUT|TEXTAREA|SELECT|BUTTON/.test(document.activeElement.tagName))return;
+    const scroller=document.activeElement?.closest('[data-lr-scroller="true"]');
+    if(scroller)return;
     const mid=innerHeight/2;
     let idx=0,best=1e12;
     steps.forEach((s,i)=>{const r=s.getBoundingClientRect();
@@ -1022,7 +1041,9 @@ DOC.save=function(patch){
 /* ── modo profesor: ?profe=1 abre el guion como cajón lateral ── */
 (function(){
   const srcEl=document.getElementById('guion-src');
-  if(!srcEl||!new URLSearchParams(location.search).has('profe'))return;
+  const professor=['1','true'].includes(
+    (new URLSearchParams(location.search).get('profe')||'').toLowerCase());
+  if(!srcEl||!professor)return;
   const mdlite=t=>t
     .replace(/&/g,'&amp;').replace(/</g,'&lt;')
     .replace(/^### (.*)$/gm,'<h4>$1</h4>')
@@ -1035,16 +1056,54 @@ DOC.save=function(patch){
     .replace(/\n{2,}/g,'</p><p>');
   const drawer=document.createElement('aside');
   drawer.id='guion-drawer';
+  drawer.dataset.overlay='guide';drawer.hidden=true;drawer.inert=true;drawer.setAttribute('inert','');
+  drawer.setAttribute('aria-hidden','true');drawer.setAttribute('aria-label','Guion completo del profesor');
+  drawer.setAttribute('role','dialog');drawer.setAttribute('aria-modal','true');
   drawer.innerHTML='<div class="gd-head">📋 Guion del profesor'
-    +'<button id="gd-close" aria-label="Cerrar">✕</button></div>'
-    +'<div class="gd-body"><p>'+mdlite(srcEl.textContent)+'</p></div>';
+    +'<button type="button" id="gd-close" aria-label="Cerrar guion">✕</button></div>'
+    +'<div class="gd-body" data-lr-scroller="true" data-lr-scroller-axis="vertical" tabindex="0"'
+    +' role="region" aria-label="Contenido desplazable del guion completo"><p>'
+    +mdlite(srcEl.textContent)+'</p></div>';
   document.body.appendChild(drawer);
   const btn=document.createElement('button');
-  btn.id='gd-toggle';btn.className='btn';btn.textContent='📋 Guion';
+  btn.id='gd-toggle';btn.className='btn';btn.type='button';btn.textContent='📋 Guion';
+  btn.setAttribute('aria-controls','guion-drawer');btn.setAttribute('aria-expanded','false');
   document.body.appendChild(btn);
-  const toggle=()=>drawer.classList.toggle('open');
-  btn.addEventListener('click',toggle);
-  drawer.querySelector('#gd-close').addEventListener('click',toggle);
+  let lastTrigger=btn;
+  const setOpen=(open,trigger=null,restore=true)=>{
+    const currentlyOpen=drawer.classList.contains('open');
+    if(open===currentlyOpen)return false;
+    if(open){
+      window.LEARNING_TEACHER_DRAWER?.close({restoreFocus:false});
+      lastTrigger=trigger||document.activeElement||btn;drawer.hidden=false;
+      drawer.inert=false;drawer.removeAttribute('inert');
+      window.LEARNING_MODAL_BACKGROUND?.(drawer,true);
+    }
+    drawer.classList.toggle('open',open);drawer.setAttribute('aria-hidden',String(!open));
+    btn.setAttribute('aria-expanded',String(open));
+    if(open)drawer.querySelector('#gd-close').focus();
+    else{
+      drawer.hidden=true;drawer.inert=true;drawer.setAttribute('inert','');
+      window.LEARNING_MODAL_BACKGROUND?.(drawer,false);
+      if(restore)window.LEARNING_RESTORE_FOCUS?.(lastTrigger,btn);
+    }
+    return true;
+  };
+  const focusable='a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),'
+    +'textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+  drawer.addEventListener('keydown',event=>{
+    if(event.key!=='Tab')return;
+    const items=[...drawer.querySelectorAll(focusable)].filter(node=>!node.hidden&&node.getClientRects().length);
+    if(!items.length)return;
+    const first=items[0],last=items[items.length-1];
+    if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+    else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+  });
+  btn.addEventListener('click',event=>setOpen(true,event.currentTarget));
+  drawer.querySelector('#gd-close').addEventListener('click',()=>setOpen(false));
+  window.GUIDE_DRAWER={open:trigger=>setOpen(true,trigger),
+    close:options=>setOpen(false,null,options?.restoreFocus!==false),
+    isOpen:()=>drawer.classList.contains('open')};
 })();
 
 /* ── scrollytelling genérico ──
@@ -1079,44 +1138,50 @@ const codeStages=[
         self._depth = depth
         self._engine = MatchingEngine()
         self._i = -1
+        self._timestamp = None
         self.book = None
 
     def step(self):
-<span class="active-line">        self._i += 1</span>`,
+<span class="active-line">        next_i = self._i + 1</span>
+        # El estado observable aun no cambia.`,
 `class Market:
-    def __init__(self, symbol, snapshots, depth=10):
-        ...
-        self._i = -1
-        self.book = None
+    ...
 
     def step(self):
-        self._i += 1
-<span class="active-line">        self.book = OrderBook.from_snapshot(</span>
-<span class="active-line">            self.symbol, self._snapshots[self._i], self._depth)</span>
-<span class="active-line">        return self.book</span>`,
+        next_i = self._i + 1
+        snapshot = self._snapshots[next_i]
+<span class="active-line">        next_book = OrderBook.from_snapshot(</span>
+<span class="active-line">            self.symbol, snapshot, self._depth)</span>
+        raw_timestamp = snapshot.get("timestamp", next_i)
+<span class="active-line">        next_timestamp = _integer_timestamp(raw_timestamp)</span>
+        # Si algo falla arriba, _i/_timestamp/book no cambian.`,
 `class Market:
-    def __init__(self, symbol, snapshots, depth=10):
-        ...
-        self._i = -1
-        self.book = None
+    ...
 
-<span class="active-line">    def step(self):</span>
-        self._i += 1
-<span class="active-line">        if self._i &gt;= len(self._snapshots):</span>
+    def step(self):
+        next_i = self._i + 1
+        if next_i &gt;= len(self._snapshots):
+<span class="active-line">            self._i = next_i</span>
+<span class="active-line">            self._timestamp = None</span>
 <span class="active-line">            self.book = None</span>
-<span class="active-line">            return None</span>
-        self.book = OrderBook.from_snapshot(
-            self.symbol, self._snapshots[self._i], self._depth)
-        return self.book`,
+            return None
+
+        snapshot = self._snapshots[next_i]
+        next_book = OrderBook.from_snapshot(
+            self.symbol, snapshot, self._depth)
+        raw_timestamp = snapshot.get("timestamp", next_i)
+        next_timestamp = _integer_timestamp(raw_timestamp)
+
+<span class="active-line">        self._i = next_i</span>
+<span class="active-line">        self._timestamp = next_timestamp</span>
+<span class="active-line">        self.book = next_book</span>
+<span class="active-line">        return next_book</span>`,
 `class Market:
     ...
 
     @property
 <span class="active-line">    def timestamp(self):</span>
-<span class="active-line">        if 0 &lt;= self._i &lt; len(self._snapshots):</span>
-            row = self._snapshots[self._i]
-<span class="active-line">            return int(row.get("timestamp", self._i))</span>
-        return None
+<span class="active-line">        return self._timestamp</span>
 
     def step(self):
         ...`,
@@ -1138,6 +1203,7 @@ const codeStages=[
         self._snapshots = snapshots
 <span class="active-line">        self._engine = MatchingEngine()</span>
         self._i = -1
+        self._timestamp = None
         self.book = None
     ...
     def submit(self, order):
@@ -1150,12 +1216,14 @@ const codeStages=[
         self._snapshots = snapshots
         self._engine = MatchingEngine()
         self._i = -1
+        self._timestamp = None
         self.book = None
     ...
     def submit(self, order): ...
 
 <span class="active-line">    def reset(self):</span>
 <span class="active-line">        self._i = -1</span>
+<span class="active-line">        self._timestamp = None</span>
 <span class="active-line">        self.book = None</span>`
 ];
 function paintBuildCode(stage){$('#l9-build-code').innerHTML=codeStages[stage];}
@@ -1210,12 +1278,84 @@ const route=value=>ROUTES.includes(String(value||'').toUpperCase())
 const routeClass=value=>`lr-route-${route(value).toLowerCase()}`;
 const scopeRoutes=()=>routeScope==='ALL'?ROUTES:
   routeScope==='LIVE+REQUIRED'?['LIVE','REQUIRED']:['LIVE'];
+const scopeForRoute=value=>route(value)==='OPTIONAL'?'ALL':
+  route(value)==='REQUIRED'?'LIVE+REQUIRED':'LIVE';
 const modeUrl=next=>{
   const q=new URLSearchParams(location.search);q.set('mode',next);
   return `${location.pathname}?${q.toString()}${location.hash}`;
 };
 const stateKey=(scene,stage)=>`${scene.id}::${stage.id}`;
 const reducedMotion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isExposed=node=>Boolean(node&&!node.hidden&&!node.closest('[hidden],[inert]'));
+
+function expose(node,visible){
+  if(!node)return;
+  node.hidden=!visible;
+  node.inert=!visible;
+  node.toggleAttribute('inert',!visible);
+  node.setAttribute('aria-hidden',String(!visible));
+}
+let modalBackgroundState=null,modalBackgroundOwner=null;
+function focusModalOwner(){
+  if(!modalBackgroundOwner)return;
+  const selector='a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),'
+    +'textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+  const target=[...modalBackgroundOwner.querySelectorAll(selector)]
+    .find(node=>!node.hidden&&!node.closest('[hidden],[inert]')&&node.getClientRects().length);
+  target?.focus({preventScroll:true});
+}
+function setModalBackground(dialog,open){
+  if(open){
+    if(modalBackgroundOwner===dialog)return;
+    if(modalBackgroundOwner)throw new Error('another learning modal is already open');
+    modalBackgroundState=[...body.children].filter(node=>node!==dialog).map(node=>({
+      node,inert:node.inert,attribute:node.hasAttribute('inert'),
+    }));
+    modalBackgroundOwner=dialog;
+    modalBackgroundState.forEach(({node})=>{node.inert=true;node.setAttribute('inert','');});
+    body.classList.add('lr-modal-open');
+    document.documentElement.classList.add('lr-modal-open');
+    return;
+  }
+  if(modalBackgroundOwner!==dialog)return;
+  (modalBackgroundState||[]).forEach(({node,inert,attribute})=>{
+    if(!node.isConnected)return;
+    node.inert=inert;node.toggleAttribute('inert',attribute);
+  });
+  modalBackgroundState=null;
+  modalBackgroundOwner=null;
+  body.classList.remove('lr-modal-open');
+  document.documentElement.classList.remove('lr-modal-open');
+}
+window.LEARNING_MODAL_BACKGROUND=setModalBackground;
+document.addEventListener('pointerdown',event=>{
+  if(!modalBackgroundOwner||modalBackgroundOwner.contains(event.target))return;
+  event.preventDefault();event.stopImmediatePropagation();focusModalOwner();
+},true);
+document.addEventListener('focusin',event=>{
+  if(modalBackgroundOwner&&!modalBackgroundOwner.contains(event.target))focusModalOwner();
+},true);
+function canRestoreFocus(node){
+  return Boolean(node?.isConnected&&!node.hidden&&!node.disabled
+    &&!node.closest('[hidden],[inert]')&&node.getClientRects().length);
+}
+function restoreFocus(...candidates){
+  const target=candidates.find(canRestoreFocus);
+  if(target)target.focus();
+}
+window.LEARNING_RESTORE_FOCUS=restoreFocus;
+function applyRouteClasses(node,routes){
+  if(!node)return;
+  ROUTES.forEach(name=>node.classList.remove(routeClass(name)));
+  const unique=[...new Set(routes.map(route))];
+  unique.forEach(name=>node.classList.add(routeClass(name)));
+  node.classList.toggle('lr-route-mixed',unique.length>1);
+}
+function expandScopeForRoute(value){
+  const target=scopeForRoute(value);
+  const targetIndex=routeScopes.indexOf(target),currentIndex=routeScopes.indexOf(routeScope);
+  if(targetIndex>=0&&targetIndex>currentIndex)routeScope=target;
+}
 
 function elementForStage(nodes,value,index,total){
   if(value!==undefined&&value!==null){
@@ -1238,6 +1378,7 @@ const models=contract.scenes.map(rawScene=>{
   element.dataset.sceneLayout=layout;
   element.dataset.layoutApplied='true';
   element.dataset.route=sceneRoute;
+  element.dataset.sceneRoute=sceneRoute;
   const allSteps=[...element.querySelectorAll('.scrolly .step')];
   const allFigures=[...element.querySelectorAll('.fig-stage')];
   const declared=Array.isArray(rawScene.stages)&&rawScene.stages.length
@@ -1246,6 +1387,8 @@ const models=contract.scenes.map(rawScene=>{
     const stage={...rawStage};
     stage.id=stage.id||`stage-${index+1}`;
     stage.route=route(stage.route||sceneRoute);
+    stage.duration_minutes=Number.isFinite(Number(rawStage.duration_minutes))
+      &&rawStage.duration_minutes!==null?Number(rawStage.duration_minutes):Number(rawScene.duration_minutes);
     stage.step=elementForStage(allSteps,stage.dom_stage,index,declared.length);
     stage.figure=elementForStage(allFigures,stage.dom_stage,index,declared.length);
     [stage.step,stage.figure].filter(Boolean).forEach(node=>{
@@ -1254,15 +1397,20 @@ const models=contract.scenes.map(rawScene=>{
     return stage;
   });
   const firstWrap=element.matches('.wrap')?element:element.querySelector(':scope > .wrap');
+  let badge=null;
   if(firstWrap){
-    const badge=document.createElement('div');
+    badge=document.createElement('div');
     badge.className=`lr-scene-badge ${routeClass(sceneRoute)}`;
     const minutes=Number.isFinite(Number(rawScene.duration_minutes))
-      ?`<span>${esc(rawScene.duration_minutes)} min</span>`:'';
-    badge.innerHTML=`<span>${esc(sceneRoute)}</span><span>${esc(rawScene.type||'scene')}</span>${minutes}`;
+      ?`<span class="lr-duration">${esc(rawScene.duration_minutes)} min</span>`:'';
+    badge.innerHTML=`<span class="lr-route-label">${esc(sceneRoute)}</span><span>${esc(rawScene.type||'scene')}</span>${minutes}`;
     firstWrap.insertBefore(badge,firstWrap.firstChild);
   }
-  return {...rawScene,route:sceneRoute,layout,element,stages,allSteps,allFigures};
+  const effectiveRoutes=[...new Set(stages.map(stage=>stage.route))];
+  element.dataset.effectiveRoutes=effectiveRoutes.join(',');
+  applyRouteClasses(element,effectiveRoutes);
+  return {...rawScene,route:sceneRoute,layout,element,stages,allSteps,allFigures,badge,
+    effectiveRoutes,navButton:null};
 }).filter(Boolean);
 
 if(missingScenes.length){
@@ -1347,16 +1495,22 @@ nav.innerHTML=`
 body.appendChild(nav);
 
 const navLinks=nav.querySelector('.lr-scene-links');
+navLinks.dataset.lrScroller='true';navLinks.dataset.lrScrollerAxis='vertical';navLinks.tabIndex=0;
+navLinks.setAttribute('role','region');navLinks.setAttribute('aria-label','Escenas desplazables de la lección');
 models.forEach((scene,index)=>{
   const button=document.createElement('button');
   button.type='button';button.dataset.sceneIndex=String(index);
-  button.className=routeClass(scene.route);
-  button.innerHTML=`<span>${esc(scene.route)}</span><b>${esc(scene.id.replace(/^l\d+-/,''))}</b>`;
+  applyRouteClasses(button,scene.effectiveRoutes);
+  button.innerHTML=`<span class="lr-route-label">${esc(scene.effectiveRoutes.join('+'))}</span><b>${esc(scene.id.replace(/^l\d+-/,''))}</b>`;
   button.addEventListener('click',()=>{
     if(mode==='aula')goTo(index,0,false);
-    else scene.element.scrollIntoView({behavior:reducedMotion()?'auto':'smooth',block:'start'});
+    else{
+      const stage=allowedStages(scene)[0];
+      if(stage)setStudyCurrent(scene,stage,false);
+      scene.element.scrollIntoView({behavior:reducedMotion()?'auto':'smooth',block:'start'});
+    }
   });
-  navLinks.appendChild(button);
+  navLinks.appendChild(button);scene.navButton=button;
 });
 
 const controls=document.createElement('div');
@@ -1384,6 +1538,7 @@ liveRegion.className='lr-sr-only';liveRegion.setAttribute('aria-live','polite');
 body.appendChild(liveRegion);
 
 let teacherToggle=null,teacherDrawer=null,teacherBody=null,mobileTeacherToggle=null;
+let lastTeacherTrigger=null;
 if(isProfessor){
   teacherToggle=document.createElement('button');
   teacherToggle.id='lr-teacher-toggle';teacherToggle.type='button';
@@ -1395,23 +1550,44 @@ if(isProfessor){
   teacherDrawer=document.createElement('aside');
   teacherDrawer.id='lr-teacher-drawer';teacherDrawer.dataset.overlay='teacher';
   teacherDrawer.setAttribute('aria-label','Guía docente de la escena');
-  teacherDrawer.setAttribute('aria-hidden','true');
+  teacherDrawer.setAttribute('role','dialog');teacherDrawer.setAttribute('aria-modal','true');
+  teacherDrawer.setAttribute('aria-hidden','true');teacherDrawer.hidden=true;teacherDrawer.inert=true;
+  teacherDrawer.setAttribute('inert','');
   teacherDrawer.innerHTML='<div class="lr-teacher-head"><b>Guía docente</b>'
     +'<button type="button" class="lr-teacher-close" aria-label="Cerrar guía docente">×</button></div>'
     +'<div class="lr-teacher-body"></div>';
   body.appendChild(teacherDrawer);teacherBody=teacherDrawer.querySelector('.lr-teacher-body');
-  const toggleTeacher=force=>{
+  teacherBody.dataset.lrScroller='true';teacherBody.dataset.lrScrollerAxis='vertical';
+  teacherBody.tabIndex=0;teacherBody.setAttribute('role','region');
+  teacherBody.setAttribute('aria-label','Contenido desplazable de la guía docente');
+  const toggleTeacher=(force,trigger=null,restore=true)=>{
     const open=force===undefined?!teacherDrawer.classList.contains('open'):force;
+    const currentlyOpen=teacherDrawer.classList.contains('open');
+    if(open===currentlyOpen)return false;
+    if(open){
+      window.GUIDE_DRAWER?.close({restoreFocus:false});
+      lastTeacherTrigger=trigger||document.activeElement||teacherToggle;
+      teacherDrawer.hidden=false;teacherDrawer.inert=false;teacherDrawer.removeAttribute('inert');
+      setModalBackground(teacherDrawer,true);
+    }
     teacherDrawer.classList.toggle('open',open);
     teacherDrawer.setAttribute('aria-hidden',String(!open));
     [teacherToggle,mobileTeacherToggle].filter(Boolean)
       .forEach(button=>button.setAttribute('aria-expanded',String(open)));
     if(open)teacherDrawer.querySelector('.lr-teacher-close').focus();
-    else (mobileQuery.matches?mobileTeacherToggle:teacherToggle)?.focus();
+    else{
+      teacherDrawer.hidden=true;teacherDrawer.inert=true;teacherDrawer.setAttribute('inert','');
+      setModalBackground(teacherDrawer,false);
+      if(restore)restoreFocus(lastTeacherTrigger,teacherToggle,mobileTeacherToggle);
+    }
+    return true;
   };
-  teacherToggle.addEventListener('click',()=>toggleTeacher());
-  mobileTeacherToggle?.addEventListener('click',()=>toggleTeacher());
+  teacherToggle.addEventListener('click',event=>toggleTeacher(undefined,event.currentTarget));
+  mobileTeacherToggle?.addEventListener('click',event=>toggleTeacher(undefined,event.currentTarget));
   teacherDrawer.querySelector('.lr-teacher-close').addEventListener('click',()=>toggleTeacher(false));
+  window.LEARNING_TEACHER_DRAWER={open:trigger=>toggleTeacher(true,trigger),
+    close:options=>toggleTeacher(false,null,options?.restoreFocus!==false),
+    isOpen:()=>teacherDrawer.classList.contains('open')};
 }
 
 function allowedStages(scene){
@@ -1419,9 +1595,74 @@ function allowedStages(scene){
   return scene.stages.filter(stage=>allowedRoutes.includes(stage.route));
 }
 function allowed(scene){
-  return scopeRoutes().includes(scene.route)&&allowedStages(scene).length>0;
+  return allowedStages(scene).length>0;
 }
 function availableModels(){return models.filter(allowed);}
+
+function visibleRoutes(scene){
+  return [...new Set(allowedStages(scene).map(stage=>stage.route))];
+}
+function routeLabel(routes){return routes.length?routes.join('+'):'—';}
+function syncRoutePresentation(scene,stage=null){
+  if(!scene)return;
+  const routes=stage?[stage.route]:visibleRoutes(scene);
+  const effective=routes.length?routes:scene.effectiveRoutes;
+  const label=routeLabel(effective);
+  scene.element.dataset.route=stage?stage.route:label;
+  scene.element.dataset.visibleRoutes=effective.join(',');
+  [scene.element,scene.badge,scene.navButton].filter(Boolean)
+    .forEach(node=>applyRouteClasses(node,effective));
+  scene.badge?.querySelector('.lr-route-label')?.replaceChildren(label);
+  const duration=stage?.duration_minutes??scene.duration_minutes;
+  scene.badge?.querySelector('.lr-duration')?.replaceChildren(`${duration} min`);
+  scene.navButton?.querySelector('.lr-route-label')?.replaceChildren(label);
+}
+
+let scrollerFrame=0;
+function clearRuntimeScroller(node){
+  delete node.dataset.lrScroller;
+  delete node.dataset.lrScrollerAxis;
+  if(node.dataset.lrRuntimeTabindex==='true')node.removeAttribute('tabindex');
+  if(node.dataset.lrRuntimeRole==='true')node.removeAttribute('role');
+  if(node.dataset.lrRuntimeLabel==='true')node.removeAttribute('aria-label');
+  delete node.dataset.lrRuntimeScroller;
+  delete node.dataset.lrRuntimeTabindex;
+  delete node.dataset.lrRuntimeRole;
+  delete node.dataset.lrRuntimeLabel;
+}
+function syncScrollers(){
+  document.querySelectorAll('[data-lr-runtime-scroller="true"]').forEach(clearRuntimeScroller);
+  const tolerance=2;
+  models.filter(scene=>isExposed(scene.element)).forEach(scene=>{
+    [scene.element,...scene.element.querySelectorAll('*')].forEach(node=>{
+      if(!isExposed(node)||!node.getClientRects().length)return;
+      const style=getComputedStyle(node);
+      const overflowX=['auto','scroll'].includes(style.overflowX)
+        &&node.scrollWidth>node.clientWidth+tolerance;
+      const overflowY=['auto','scroll'].includes(style.overflowY)
+        &&node.scrollHeight>node.clientHeight+tolerance;
+      if(!overflowX&&!overflowY)return;
+      node.dataset.lrRuntimeScroller='true';
+      node.dataset.lrScroller='true';
+      node.dataset.lrScrollerAxis=overflowX&&overflowY?'both':(overflowX?'horizontal':'vertical');
+      if(node.tabIndex<0){
+        node.tabIndex=0;node.dataset.lrRuntimeTabindex='true';
+      }
+      if(!node.hasAttribute('role')){
+        node.setAttribute('role','region');node.dataset.lrRuntimeRole='true';
+      }
+      if(!node.getAttribute('aria-label')&&!node.getAttribute('aria-labelledby')){
+        node.setAttribute('aria-label',`Contenido desplazable ${scene.id}`);
+        node.dataset.lrRuntimeLabel='true';
+      }
+    });
+  });
+}
+function queueScrollerSync(){
+  cancelAnimationFrame(scrollerFrame);
+  syncScrollers();
+  scrollerFrame=requestAnimationFrame(syncScrollers);
+}
 
 function activateStage(scene,stage){
   const hasMappedSteps=scene.stages.some(item=>item.step);
@@ -1430,18 +1671,16 @@ function activateStage(scene,stage){
     const model=scene.stages.find(item=>item.step===step);
     const visibleRoute=!model||scopeRoutes().includes(model.route);
     const active=!hasMappedSteps||stage.step===step;
-    step.hidden=!visibleRoute;
+    expose(step,visibleRoute&&(mode==='estudio'||active));
     step.classList.toggle('lr-stage-active',active&&visibleRoute);
     step.classList.toggle('on',active&&visibleRoute);
-    step.setAttribute('aria-hidden',String(!(active&&visibleRoute)));
   });
   scene.allFigures.forEach(figure=>{
     const model=scene.stages.find(item=>item.figure===figure);
     const visibleRoute=!model||scopeRoutes().includes(model.route);
     const active=!hasMappedFigures||stage.figure===figure;
-    figure.hidden=!visibleRoute;
+    expose(figure,active&&visibleRoute);
     figure.classList.toggle('on',active&&visibleRoute);
-    figure.setAttribute('aria-hidden',String(!(active&&visibleRoute)));
   });
   const name=scene.element.querySelector('.stage-name');
   if(name){
@@ -1452,11 +1691,14 @@ function activateStage(scene,stage){
   if(fig&&stage.dom_stage!==undefined){
     fig.dispatchEvent(new CustomEvent('stagechange',{detail:{stage:stage.dom_stage}}));
   }
+  queueScrollerSync();
 }
-function syncNav(scene=null){
+function syncNav(scene=null,stage=null){
   [...navLinks.querySelectorAll('button')].forEach(button=>{
     const index=Number(button.dataset.sceneIndex),model=models[index];
-    button.hidden=!allowed(model);
+    const visible=allowed(model);
+    expose(button,visible);
+    syncRoutePresentation(model,model===scene?stage:null);
     button.classList.toggle('on',model===scene);
     button.setAttribute('aria-current',model===scene?'step':'false');
   });
@@ -1474,8 +1716,9 @@ function syncTeacher(scene,stage){
   const sceneNotes=scene.professor_notes||scene.teacher_notes||scene.teaching_notes;
   const stageNotes=stage.professor_notes||stage.teacher_notes||stage.teaching_notes;
   const fullGuide=document.getElementById('gd-toggle');
-  teacherBody.innerHTML=`<p class="lr-teacher-kicker">${esc(scene.route)} · ${esc(scene.type)} · ${esc(scene.duration_minutes)} min</p>`
+  teacherBody.innerHTML=`<p class="lr-teacher-kicker">${esc(stage.route)} · ${esc(scene.type)} · ${esc(stage.duration_minutes)} min</p>`
     +`<h2>${esc(scene.id)}</h2><p class="lr-teacher-stage">Etapa <code>${esc(stage.id)}</code> · layout <code>${esc(scene.layout)}</code></p>`
+    +(stage.route!==scene.route?`<p class="lr-teacher-override">Ruta efectiva <code>${esc(stage.route)}</code>; la escena declara <code>${esc(scene.route)}</code>.</p>`:'')
     +`<h3>Conceptos</h3><ul>${concepts.length?concepts.map(concept=>`<li><code>${esc(concept)}</code></li>`).join(''):'<li>Ninguno declarado.</li>'}</ul>`
     +`<h3>Objetivos relacionados</h3><ul>${objectives.length?objectives.map(objective=>
       `<li><code>${esc(objective.id)}</code> · ${esc(objective.route)}</li>`).join(''):'<li>Ninguno declarado para esta escena.</li>'}</ul>`
@@ -1483,16 +1726,34 @@ function syncTeacher(scene,stage){
     +(stageNotes?`<h3>Notas de etapa</h3>${notesHtml(stageNotes)}`:'')
     +(fullGuide?'<button type="button" class="lr-full-guide">Abrir guion completo</button>':'');
   teacherBody.querySelector('.lr-full-guide')?.addEventListener('click',()=>{
-    teacherDrawer.classList.remove('open');teacherDrawer.setAttribute('aria-hidden','true');
-    [teacherToggle,mobileTeacherToggle].filter(Boolean)
-      .forEach(button=>button.setAttribute('aria-expanded','false'));
-    fullGuide.click();
+    const returnTrigger=lastTeacherTrigger||teacherToggle;
+    window.LEARNING_TEACHER_DRAWER?.close({restoreFocus:false});
+    if(window.GUIDE_DRAWER)window.GUIDE_DRAWER.open(returnTrigger);
+    else fullGuide.click();
   });
 }
 function updateDeepLink(scene,stage){
   if(!history.replaceState)return;
   const next=`#${encodeURIComponent(scene.id)}/${encodeURIComponent(stage.id)}`;
   if(location.hash!==next)history.replaceState(null,'',`${location.pathname}${location.search}${next}`);
+}
+function setCurrentState(scene,stage){
+  if(!scene||!stage)return;
+  currentScene=models.indexOf(scene);
+  currentStage=Math.max(0,allowedStages(scene).indexOf(stage));
+  body.dataset.currentSceneId=scene.id;
+  body.dataset.currentStageId=stage.id;
+  body.dataset.currentStageRoute=stage.route;
+  body.dataset.currentStageDuration=String(stage.duration_minutes);
+  body.dataset.currentLayout=scene.layout;
+  body.dataset.routeScope=routeScope;
+  scene.element.dataset.currentStageId=stage.id;
+  syncRoutePresentation(scene,stage);
+  const mobileLabel=mobileToolbar.querySelector(':scope > span');
+  if(mobileLabel){
+    const prefix=requestedMode!==mode?'Aula → estudio':'Estudio';
+    mobileLabel.textContent=`Ruta · ${stage.route} · ${stage.duration_minutes} min · ${prefix} · ${scene.id}`;
+  }
 }
 function goTo(sceneIndex,stageIndex,focusHeading=true){
   let scene=models[sceneIndex];
@@ -1503,17 +1764,11 @@ function goTo(sceneIndex,stageIndex,focusHeading=true){
   const stages=allowedStages(scene);
   stageIndex=Math.max(0,Math.min(Number(stageIndex)||0,stages.length-1));
   const stage=stages[stageIndex];
-  currentScene=sceneIndex;currentStage=stageIndex;
-  body.dataset.currentSceneId=scene.id;
-  body.dataset.currentStageId=stage.id;
-  body.dataset.currentStageRoute=stage.route;
-  body.dataset.currentLayout=scene.layout;
-  body.dataset.routeScope=routeScope;
-  scene.element.dataset.currentStageId=stage.id;
+  setCurrentState(scene,stage);
   models.forEach(model=>{
     const active=model===scene;
     model.element.classList.toggle('lr-scene-active',active);
-    model.element.setAttribute('aria-hidden',String(!active));
+    expose(model.element,active);
   });
   activateStage(scene,stage);
   const available=availableModels();
@@ -1531,8 +1786,8 @@ function goTo(sceneIndex,stageIndex,focusHeading=true){
     total+scopeProgress[routeName].visited,0)/Math.max(1,enabledRoutes.reduce((total,routeName)=>
     total+scopeProgress[routeName].total,0))*100);
   controls.querySelector('.lr-route-progress').textContent=`${routeProgress}% visto`;
-  syncNav(scene);syncTeacher(scene,stage);updateDeepLink(scene,stage);
-  liveRegion.textContent=`${scene.id}, etapa ${stageIndex+1} de ${stages.length}`;
+  syncNav(scene,stage);syncTeacher(scene,stage);updateDeepLink(scene,stage);
+  liveRegion.textContent=`${scene.id}, ruta ${stage.route}, ${stage.duration_minutes} minutos, etapa ${stageIndex+1} de ${stages.length}`;
   if(focusHeading){
     const heading=scene.element.querySelector('h1,h2,h3');
     if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}
@@ -1550,14 +1805,43 @@ function move(delta,focusHeading=true){
   const nextIndex=models.indexOf(next),nextStages=allowedStages(next);
   goTo(nextIndex,delta>0?0:nextStages.length-1,focusHeading);
 }
+const focusableSelector='a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),'
+  +'textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+function focusables(root){
+  return [...root.querySelectorAll(focusableSelector)].filter(node=>isExposed(node)
+    &&getComputedStyle(node).visibility!=='hidden'&&node.getClientRects().length);
+}
+function trapFocus(event,root){
+  if(event.key!=='Tab'||!root||root.hidden)return false;
+  const items=focusables(root);if(!items.length)return false;
+  const first=items[0],last=items[items.length-1];
+  if(event.shiftKey&&(document.activeElement===first||!root.contains(document.activeElement))){
+    event.preventDefault();last.focus();return true;
+  }
+  if(!event.shiftKey&&(document.activeElement===last||!root.contains(document.activeElement))){
+    event.preventDefault();first.focus();return true;
+  }
+  return false;
+}
 function closeOverlays(){
-  document.getElementById('guion-drawer')?.classList.remove('open');
-  teacherDrawer?.classList.remove('open');
-  teacherDrawer?.setAttribute('aria-hidden','true');
-  [teacherToggle,mobileTeacherToggle].filter(Boolean)
-    .forEach(button=>button.setAttribute('aria-expanded','false'));
-  document.querySelectorAll('dialog[open]').forEach(dialog=>dialog.close());
-  document.querySelectorAll('[data-overlay].open').forEach(node=>node.classList.remove('open'));
+  if(window.LEARNING_TEACHER_DRAWER?.isOpen()){
+    window.LEARNING_TEACHER_DRAWER.close();return true;
+  }
+  if(window.GUIDE_DRAWER?.isOpen()){
+    window.GUIDE_DRAWER.close();return true;
+  }
+  const dialog=document.querySelector('dialog[open]');
+  if(dialog){dialog.close();return true;}
+  const overlay=document.querySelector('[data-overlay].open');
+  if(overlay){
+    overlay.classList.remove('open');expose(overlay,false);return true;
+  }
+  return false;
+}
+function scrollerOwnsKey(active,key){
+  const scroller=active?.closest?.('[data-lr-scroller="true"]');
+  if(!scroller||!isExposed(scroller))return false;
+  return ['ArrowLeft','ArrowRight','PageUp','PageDown',' '].includes(key);
 }
 function cycleScope(){
   if(routeScopes.length<2)return;
@@ -1571,7 +1855,7 @@ function cycleScope(){
 }
 function syncOptionalControls(){
   document.querySelectorAll('.lr-study-optional').forEach(button=>{
-    button.hidden=mode!=='estudio'||optionalCount===0;
+    expose(button,mode==='estudio'&&optionalCount>0);
     button.setAttribute('aria-pressed',String(routeScope==='ALL'));
     button.textContent=routeScope==='ALL'?'Ocultar OPTIONAL':
       (button.closest('#lr-mobile-toolbar')?'+ OPTIONAL':'Incluir OPTIONAL');
@@ -1581,36 +1865,52 @@ function applyStudyScope(activeScene=null){
   body.dataset.routeScope=routeScope;
   models.forEach(scene=>{
     const sceneVisible=allowed(scene);
-    scene.element.hidden=!sceneVisible;
-    scene.element.setAttribute('aria-hidden',String(!sceneVisible));
+    expose(scene.element,sceneVisible);
     scene.stages.forEach(stage=>{
       const stageVisible=scopeRoutes().includes(stage.route);
-      [stage.step,stage.figure].filter(Boolean).forEach(node=>{
-        node.hidden=!stageVisible;node.setAttribute('aria-hidden',String(!stageVisible));
-      });
+      if(stage.step)expose(stage.step,sceneVisible&&stageVisible);
+      if(stage.figure)expose(stage.figure,false);
     });
+    const preferred=scene===activeScene
+      ?scene.stages.find(stage=>stage.id===body.dataset.currentStageId):allowedStages(scene)[0];
+    if(sceneVisible&&preferred)activateStage(scene,preferred);
   });
-  syncNav(activeScene);syncOptionalControls();saveRuntime(null,null,false);
+  syncNav(activeScene,activeScene?.stages.find(stage=>stage.id===body.dataset.currentStageId));
+  syncOptionalControls();saveRuntime(null,null,false);queueScrollerSync();
 }
 function toggleOptional(){
   routeScope=routeScope==='ALL'?'LIVE+REQUIRED':'ALL';
-  applyStudyScope();
+  let scene=models[currentScene],stage=scene?.stages.find(item=>item.id===body.dataset.currentStageId);
+  if(!scene||!allowed(scene)||!stage||!scopeRoutes().includes(stage.route)){
+    scene=availableModels()[0];stage=scene&&allowedStages(scene)[0];
+  }
+  if(scene&&stage)setCurrentState(scene,stage);
+  applyStudyScope(scene||null);
+  if(scene&&stage)setStudyCurrent(scene,stage,true,true);
   liveRegion.textContent=routeScope==='ALL'?'Contenido OPTIONAL incluido.':'Contenido OPTIONAL oculto.';
 }
 
 controls.querySelector('.lr-prev').addEventListener('click',()=>move(-1,false));
 controls.querySelector('.lr-next').addEventListener('click',()=>move(1,false));
 controls.querySelector('.lr-route-scope').addEventListener('click',cycleScope);
-controls.querySelector('.lr-route-scope').hidden=mode!=='aula'||routeScopes.length<2;
+expose(controls.querySelector('.lr-route-scope'),mode==='aula'&&routeScopes.length>1);
 controls.classList.toggle('lr-fixed-scope',controls.querySelector('.lr-route-scope').hidden);
 document.querySelectorAll('.lr-study-optional').forEach(button=>button.addEventListener('click',toggleOptional));
 
 document.addEventListener('keydown',event=>{
-  if(event.key==='Escape'){closeOverlays();return;}
+  const openDrawer=teacherDrawer?.classList.contains('open')?teacherDrawer:
+    (window.GUIDE_DRAWER?.isOpen()?document.getElementById('guion-drawer'):null);
+  if(openDrawer){
+    if(event.key==='Escape'){if(closeOverlays())event.preventDefault();return;}
+    if(event.key==='Tab')trapFocus(event,openDrawer);
+    return;
+  }
+  if(event.key==='Escape'){if(closeOverlays())event.preventDefault();return;}
   if(mode!=='aula')return;
   const active=document.activeElement;
   if(active&&(/INPUT|TEXTAREA|SELECT/.test(active.tagName)||active.isContentEditable))return;
   if(active&&active.tagName==='BUTTON'&&(event.key===' '||event.key==='Enter'))return;
+  if(scrollerOwnsKey(active,event.key))return;
   if(['ArrowRight','PageDown',' '].includes(event.key)){
     event.preventDefault();move(1,true);
   }else if(['ArrowLeft','PageUp'].includes(event.key)){
@@ -1634,13 +1934,41 @@ function deepLink(){
 function restoredPosition(){
   const linked=deepLink();
   if(linked){
-    if(mode==='estudio'&&linked.stage.route==='OPTIONAL')routeScope='ALL';
+    if(mode==='estudio'||(mode==='aula'&&isProfessor))expandScopeForRoute(linked.stage.route);
     return linked;
   }
   if(!savedRuntime.scene)return null;
   const scene=models.find(item=>item.id===savedRuntime.scene);
   const stage=scene?.stages.find(item=>item.id===savedRuntime.stage);
+  if(stage&&!scopeRoutes().includes(stage.route)&&(mode==='estudio'||isProfessor)){
+    expandScopeForRoute(stage.route);
+  }
   return scene&&stage?{scene,stage}:null;
+}
+
+function setStudyCurrent(scene,stage,mark=true,writeHash=true){
+  if(!scene||!stage||!allowed(scene)||!scopeRoutes().includes(stage.route))return false;
+  setCurrentState(scene,stage);activateStage(scene,stage);
+  syncNav(scene,stage);syncTeacher(scene,stage);saveRuntime(scene,stage,mark);
+  if(writeHash)updateDeepLink(scene,stage);
+  liveRegion.textContent=`${scene.id}, ruta ${stage.route}, ${stage.duration_minutes} minutos, etapa ${currentStage+1} de ${allowedStages(scene).length}`;
+  queueScrollerSync();return true;
+}
+function navigateTo(scene,stage,focusHeading=false){
+  if(!scene||!stage)return false;
+  if(!scopeRoutes().includes(stage.route)){
+    if(mode==='estudio'||isProfessor)expandScopeForRoute(stage.route);
+    else return false;
+  }
+  if(mode==='estudio'){
+    setCurrentState(scene,stage);applyStudyScope(scene);
+    if(!setStudyCurrent(scene,stage,true,true))return false;
+    (stage.step||scene.element).scrollIntoView({behavior:reducedMotion()?'auto':'smooth',block:'center'});
+    return true;
+  }
+  const stages=allowedStages(scene),index=stages.indexOf(stage);
+  if(index<0)return false;
+  goTo(models.indexOf(scene),index,focusHeading);return true;
 }
 
 if(mode==='aula'){
@@ -1652,30 +1980,35 @@ if(mode==='aula'){
   goTo(currentScene,Math.max(0,currentStage),false);
 }else{
   const restored=restoredPosition();
-  if(restored?.stage.route==='OPTIONAL')routeScope='ALL';
-  applyStudyScope(restored?.scene||null);
+  let initial=restored;
+  if(!initial||!allowed(initial.scene)||!scopeRoutes().includes(initial.stage.route)){
+    const scene=availableModels()[0];initial=scene?{scene,stage:allowedStages(scene)[0]}:null;
+  }
+  if(initial)setCurrentState(initial.scene,initial.stage);
+  applyStudyScope(initial?.scene||null);
+  if(initial)setStudyCurrent(initial.scene,initial.stage,true,true);
   const sceneObserver=new IntersectionObserver(entries=>{
     const visible=entries.filter(entry=>entry.isIntersecting&&!entry.target.hidden)
       .sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
     if(!visible)return;
     const scene=models.find(item=>item.element===visible.target);
     if(!scene)return;
-    syncNav(scene);
-    const stage=allowedStages(scene).find(item=>!item.step)||allowedStages(scene)[0];
-    if(stage){saveRuntime(scene,stage,true);updateDeepLink(scene,stage);}
+    if(scene.stages.some(item=>item.step))return;
+    const stage=allowedStages(scene)[0];
+    if(stage)setStudyCurrent(scene,stage,true,true);
   },{rootMargin:'-20% 0px -55% 0px',threshold:[0,.15,.4]});
   models.forEach(scene=>sceneObserver.observe(scene.element));
   models.forEach(scene=>scene.stages.forEach(stage=>{
     if(!stage.step)return;
     const observer=new IntersectionObserver(entries=>{
       if(entries.some(entry=>entry.isIntersecting)&&!stage.step.hidden){
-        saveRuntime(scene,stage,true);syncNav(scene);updateDeepLink(scene,stage);
+        setStudyCurrent(scene,stage,true,true);
       }
     },{rootMargin:'-35% 0px -45% 0px',threshold:.1});
     observer.observe(stage.step);
   }));
-  if(restored&&allowed(restored.scene))requestAnimationFrame(()=>{
-    (restored.stage.step||restored.scene.element).scrollIntoView({block:'center'});
+  if(initial&&restored)requestAnimationFrame(()=>{
+    (initial.stage.step||initial.scene.element).scrollIntoView({block:'center'});
   });
 }
 
@@ -1683,20 +2016,20 @@ syncOptionalControls();
 saveRuntime(null,null,false);
 window.LEARNING_RUNTIME={
   version:RUNTIME_VERSION,contract,mode,isProfessor,
-  getState:()=>({routeScope,scene:models[currentScene]?.id,stage:body.dataset.currentStageId,
-    progress:progressSnapshot()}),
+  getState:()=>({mode,requestedMode,routeScope,scene:body.dataset.currentSceneId||models[currentScene]?.id,
+    stage:body.dataset.currentStageId,route:body.dataset.currentStageRoute,
+    sceneRoute:models[currentScene]?.route,progress:progressSnapshot()}),
   setOptional:enabled=>{if(mode==='estudio'&&(enabled!==(routeScope==='ALL')))toggleOptional();},
   goTo:(sceneId,stageId)=>{
     const scene=models.find(item=>item.id===sceneId);if(!scene)return false;
-    if(mode==='estudio'){
-      const stage=scene.stages.find(item=>item.id===stageId)||allowedStages(scene)[0];
-      if(!stage)return false;
-      (stage.step||scene.element).scrollIntoView({block:'center'});return true;
-    }
-    const stages=allowedStages(scene),index=stages.findIndex(item=>item.id===stageId);
-    goTo(models.indexOf(scene),Math.max(0,index),false);return true;
+    const stage=scene.stages.find(item=>item.id===stageId)||scene.stages[0];
+    return navigateTo(scene,stage,false);
   },
 };
+
+addEventListener('hashchange',()=>{
+  const linked=deepLink();if(linked)navigateTo(linked.scene,linked.stage,false);
+});
 
 mobileQuery.addEventListener?.('change',()=>location.reload());
 })();

@@ -1,12 +1,12 @@
 """capstone_check.py — corrige TU market maker del capstone.
 
-Ejecuta `MiEstrategia` (de mi_estrategia.py) en las 3 semillas oficiales,
-aplica el baremo público (capstone_scoring.py) y te da la nota desglosada más
-un código de resultado copiable para el leaderboard / el profe.
+Ejecuta `MiEstrategia` en 3 semillas reproducibles de práctica, aplica el baremo
+público y devuelve feedback formativo con un código de consistencia copiable.
+No acredita una nota oficial ni autoriza un ranking.
 
     python capstone_check.py
 
-No edites este archivo ni capstone_scoring.py: son el contrato de la nota.
+No edites este archivo ni capstone_scoring.py: son el contrato de la práctica.
 Tu trabajo vive entero en mi_estrategia.py.
 """
 
@@ -35,13 +35,21 @@ def main() -> None:
 
     try:
         avg_pnl, avg_inv, rows = sc.run_metrics(MiEstrategia)
+    except NotImplementedError as e:
+        print(f"🛠️  Starter pendiente: {e}")
+        print("    Completa mi_estrategia.py; la plantilla no recibe puntuación.")
+        return
+    except sc.StrategyEligibilityError as e:
+        print(f"🛠️  Estrategia todavía no elegible: {e}")
+        print("    Haz que sus cotizaciones controlen el inventario antes de puntuar.")
+        return
     except Exception as e:  # noqa: BLE001
         print(f"❌ Tu estrategia reventó al simularse: {type(e).__name__}: {e}")
         sys.exit(2)
 
     d = sc.score(avg_pnl, avg_inv)
 
-    print("\n  CAPSTONE · tu market maker en 3 semillas oficiales")
+    print("\n  CAPSTONE · feedback formativo en 3 semillas reproducibles")
     print("  " + "─" * 52)
     for s, pnl, inv in rows:
         print(f"    seed {s:>4}   PnL {pnl:8.3f}   max|inv| {inv:6.3f}")
@@ -53,11 +61,11 @@ def main() -> None:
     print(f"    Riesgo-ajust.  {d['ra_pts']:5.1f} / 40   {_bar(d['ra_pts'], 40)}")
     print(f"    Inventario     {d['inv_pts']:5.1f} / 30   {_bar(d['inv_pts'], 30)}")
     print("  " + "─" * 52)
-    print(f"    NOTA           {d['total']:5.1f} / 100")
+    print(f"    PUNTUACIÓN     {d['total']:5.1f} / 100   (práctica, no nota oficial)")
     print()
     code = sc.result_code(d["total"], avg_pnl, avg_inv)
     print(f"    código de resultado:  {code}")
-    print("    (envíalo al profe / al leaderboard: certifica tu nota)\n")
+    print("    (autoinforme de transcripción; no firma ni acredita procedencia)\n")
 
 
 if __name__ == "__main__":

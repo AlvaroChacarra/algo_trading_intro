@@ -17,8 +17,9 @@ cuando el dato no tiene sentido. Una librería de verdad no se cae con un dato r
 ## Implementación técnica
 
 Pre-paquete: se trabaja con el módulo `order_book.py` (las funciones de L2) y un `main.py`
-que lo importa. El deck a medida (Pyodide) escribe el módulo en el sistema de archivos virtual y
-lo importa en vivo. Conceptos: `import` vs `from ... import`, alias, `try/except`, `raise`,
+que lo importa. El documento HTML autocontenido representa paso a paso la escritura y la
+importación del módulo; la ejecución real vive en el notebook y en los validadores del generador.
+Conceptos: `import` vs `from ... import`, alias, `try/except`, `raise`,
 excepciones propias, `if __name__ == "__main__"` y argumentos por defecto. El núcleo (6) culmina
 construyendo y leyendo un libro a través del módulo importado; el `.py` entregable es
 `order_book.py` (módulo) + `main.py` (lo importa). Puente: el código ya es una librería, pero

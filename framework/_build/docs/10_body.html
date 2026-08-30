@@ -13,7 +13,7 @@
   <p class="lede">Tu estrategia de L9 era un <code>if</code> incrustado en el loop. Hoy la
   sacas de ahí y firmas el contrato más importante del curso: <code>Strategy</code>.
   Desde hoy, <strong>cambiar de estrategia no toca ni una línea del motor</strong> — la
-  promesa que la familia de juguete de L6 te hizo, cumplida contra datos reales.</p>
+  promesa que la familia de juguete de L6 te hizo, cumplida contra un replay sintético reproducible.</p>
 
   <div class="challenge">
     <div class="tag">El reto de hoy</div>
@@ -25,7 +25,7 @@
   </div>
 
   <div class="meta">
-    <span><b>~40 min</b> lectura + práctica</span>
+    <span><b>≈38 min</b> recorrido REQUIRED</span>
     <span><b>2</b> estrategias reales</span>
     <span><b>1</b> simulador</span>
     <span>lo <b style="color:var(--accent)">cian</b> se toca</span>
@@ -51,8 +51,10 @@
       <div class="step" data-stage="1" data-name="Strategy(ABC)"><div class="step-inner">
         <h3><span class="n">1/5</span>El contrato</h3>
         <p><code>Strategy</code> es una ABC — la de L6, en producción. Un método
-        obligatorio: <code>on_book_update(book)</code>. Dos ganchos opcionales:
-        <code>on_fill</code> y <code>on_start/on_end</code>.</p>
+        obligatorio de sobrescribir: <code>on_book_update(book)</code>. Los hooks
+        <code>on_fill</code> y <code>on_start/on_end</code> tienen un no-op por defecto y son
+        opcionales de <em>sobrescribir</em>; pedagógicamente, conocer <code>on_fill</code> es
+        LIVE y el ciclo <code>on_start/on_end</code> es REQUIRED y evaluable, no OPTIONAL.</p>
         <div class="state-list" style="margin-top:12px">
           <div><span>se conserva</span><b>polimorfismo + contrato</b></div>
           <div><span>antes · L6</span><b>decide(imbalance) → str</b></div>
@@ -151,7 +153,7 @@
     <div class="eyebrow">§2 · <b>Simulador</b></div>
     <h2>El enchufe vivo</h2>
     <p class="lede">El mismo <code>Backtest.run()</code>, dos enchufes. Alterna y compara —
-    los resultados son los del motor real sobre los 500 snapshots.</p>
+    los resultados son los del motor canónico sobre los 500 snapshots sintéticos.</p>
 
     <div class="simcard">
       <h4>simulador · Backtest(Market.sample(), estrategia).run()</h4>
@@ -280,7 +282,7 @@
     <div class="cta">
       <div class="box"><span class="tag">Ahora te toca construir</span>
       Abre <code>10_build_exercises.ipynb</code>: subclases, run(), on_fill y el
-      polimorfismo contra el mercado real.</div>
+      polimorfismo contra el mismo replay sintético.</div>
       <div class="box"><span class="tag">Y después, al gimnasio</span>
       <code>10_auxiliary.ipynb</code> — drills del contrato Strategy.</div>
     </div>

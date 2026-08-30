@@ -14,7 +14,7 @@
 - **0/5 sueltas:** "cinco Orders en cinco variables. ¿Best bid? Nadie lo sabe: no hay libro."
 - **1/5 OrderBook:** "composición: un objeto cuyos atributos son OTROS objetos. No hereda, no copia — TIENE bids y asks dentro."
 - **2/5 properties:** "las funciones de L2 se mudan adentro. Las métricas sin argumentos se leen como atributos calculados: `best_bid`, `spread`, `mid`. `@property` fija desde hoy la misma API que usará L7" — cierra en voz alta el contador plantado en L2.
-- **3/5 imbalance:** "la señal viaja con el libro. En L7 le daremos 500 snapshots reales."
+- **3/5 imbalance:** "la señal viaja con el libro. En L7 le daremos 500 snapshots sintéticos y reproducibles."
 - **4/5 estado interno:** el guion bajo. "No bloquea nada: COMUNICA. Si cualquiera puede escribir tracker._cash = 999999, la contabilidad no vale nada."
 - **5/5 equity:** la puerta única apply_fill y la fórmula: caja + posición × mark.
 

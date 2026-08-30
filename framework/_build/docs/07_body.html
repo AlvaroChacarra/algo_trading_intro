@@ -9,11 +9,11 @@
 
 <header class="hero wrap" id="s0">
   <div class="eyebrow"><b>Algo Trading · ICAI 2026</b> · L7 · documento interactivo</div>
-  <h1>Del snapshot real al <em>OrderBook</em></h1>
+  <h1>Del snapshot sintético al <em>OrderBook</em></h1>
   <p class="lede">Ya sabes qué representa un libro. Hoy construyes la frontera que convierte columnas del exchange en objetos ordenados con una API estable.</p>
   <div class="engine-map" aria-label="Arquitectura acumulativa L7 a L9"><span class="unit">RAW SNAPSHOT</span><span class="arrow">→</span><span class="unit today">OrderBook · HOY</span><span class="arrow">→</span><span class="unit">MatchingEngine</span><span class="arrow">→</span><span class="unit">Market</span></div>
   <div class="challenge"><div class="tag">El reto de hoy</div><p><code>bid_price_1</code> y <code>bid_size_1</code> llegan como números sueltos. ¿Qué objeto los mantiene unidos y cómo acaba la fila completa dentro de <code>OrderBook</code>?</p></div>
-  <div class="meta"><span><b>≈20 min</b> núcleo presencial</span><span><b>30–35 min</b> recorrido autónomo</span><span><b>500</b> snapshots reales</span></div>
+  <div class="meta"><span><b>≈20 min</b> núcleo presencial</span><span><b>≈63 min</b> recorrido REQUIRED</span><span><b>500</b> snapshots sintéticos</span></div>
 </header>
 
 <section id="s1">
@@ -33,7 +33,7 @@
       <div class="build-grid">
         <div class="build-code"><div class="build-label">Código que estás construyendo</div><pre id="l7-build-code"></pre></div>
         <div class="build-state">
-          <div class="fig-stage on" data-stage="0"><div class="build-state-label">Dato real · snapshot #0</div><div id="l7-raw" class="state-list"></div></div>
+          <div class="fig-stage on" data-stage="0"><div class="build-state-label">Dato sintético · snapshot #0</div><div id="l7-raw" class="state-list"></div></div>
           <div class="fig-stage" data-stage="1"><div class="build-state-label">Dos números → un objeto</div><div class="state-list"><div><span>antes</span><b id="l7-before-level"></b></div><div><span>después</span><b id="l7-after-level"></b></div></div><div class="object-contrast"><div class="state-panel"><div class="state-title">Order <span>individual</span></div><div class="state-list"><div><span>representa</span><b>intención</b></div><div><span>tiene</span><b>side + tipo</b></div></div></div><div class="state-panel changed"><div class="state-title">Level <span>agregado</span></div><div class="state-list"><div><span>representa</span><b>liquidez</b></div><div><span>tiene</span><b>price + size</b></div></div></div></div></div>
           <div class="fig-stage" data-stage="2"><div class="build-state-label">Contenedores separados</div><div class="state-inspector"><div class="state-panel"><div class="state-title">bids <span>list[Level]</span></div><div id="l7-bids" class="state-list"></div></div><div class="state-panel"><div class="state-title">asks <span>list[Level]</span></div><div id="l7-asks" class="state-list"></div></div></div></div>
           <div class="fig-stage" data-stage="3"><div class="build-state-label">Índice 0 = mejor nivel</div><div id="l7-sorted" class="mini-book"></div></div>
@@ -67,4 +67,4 @@
 </div></div></section>
 
 <section id="s5"><div class="wrap"><div class="eyebrow">§5 · <b>El puente</b></div><h2>El estado ya está construido</h2><div class="engine-map"><span class="unit">RAW SNAPSHOT</span><span class="arrow">→</span><span class="unit today">OrderBook · HECHO</span><span class="arrow">→</span><span class="unit">MatchingEngine · L8</span><span class="arrow">→</span><span class="unit">Market</span></div><div class="bridge"><div class="tag">L8</div><p><strong>Un libro puede responder preguntas. Falta hacerlo cambiar.</strong></p><p>L8 construye el algoritmo que recibe Order + OrderBook, genera Fill[] y muta los niveles.</p></div><div class="cta"><div class="box"><span class="tag">Núcleo presencial</span><code>Level → __init__ → ordenación</code>.</div><div class="box"><span class="tag">Consolidación requerida</span><code>factory → API → clase completa → B5–B8</code>.</div></div></div></section>
-<footer>L7 · Del snapshot real al OrderBook — Algo Trading ICAI 2026</footer>
+<footer>L7 · Del snapshot sintético al OrderBook — Algo Trading ICAI 2026</footer>

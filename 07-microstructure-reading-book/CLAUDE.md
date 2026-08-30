@@ -1,4 +1,4 @@
-# Clase 7 — Del snapshot real al OrderBook (guía de implementación)
+# Clase 7 — Del snapshot sintético al OrderBook (guía de implementación)
 
 Pieza del framework: **OrderBook: transformar datos externos en estado ordenado y consultable**.
 
@@ -18,7 +18,7 @@ nivel. El conocimiento funcional de las métricas es previo; aquí importa progr
 `OrderBook.from_snapshot`, `depth(side, levels)`, `imbalance(levels)` y `microprice`.
 
 El notebook construye una versión del alumno desde un snapshot pequeño y termina aplicándola a
-la primera fila real del CSV. Solo al final compara comportamiento con el `OrderBook` canónico;
+la primera fila sintética del CSV reproducible. Solo al final compara comportamiento con el `OrderBook` canónico;
 no usa `Market` como caja negra.
 
 ## Presentación (3 bloques)

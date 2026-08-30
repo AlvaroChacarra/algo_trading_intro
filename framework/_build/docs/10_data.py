@@ -1,5 +1,5 @@
-"""Datos reales para el doc de L10: dos estrategias distintas por el MISMO
-Backtest.run() — el polimorfismo contra datos reales."""
+"""Datos sintéticos para el doc de L10: dos estrategias distintas por el MISMO
+Backtest.run() — el polimorfismo contra un replay reproducible."""
 from exchange.backtest import Backtest
 from exchange.market import Market
 from exchange.orders import Order, OrderType

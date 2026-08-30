@@ -5,13 +5,14 @@
 ## Contexto teórico
 
 Una simulación de mercado = **estado** (el libro) + **dinámica** (el matching) +
-**tiempo** (el loop). El **replay** reproduce snapshots históricos en orden; en cada instante
+**tiempo** (el loop). El **replay** reproduce snapshots sintéticos y reproducibles en orden; en cada instante
 puedes enviar órdenes contra el libro de ese momento.
 
 Llevar la cuenta en el tiempo es lo que distingue un cálculo puntual de una estrategia: se
 acumulan fills en un `PositionTracker` y se marca el equity a cada paso, obteniendo la curva
-de PnL. Modelo de simulación: el libro se reconstruye en cada snapshot, así que las órdenes
-límite no persisten entre pasos (las estrategias que quieren persistencia re-cotizan).
+de PnL. Cada snapshot reconstruye la liquidez externa. Desde L10, el runner conserva por id
+el remanente de las órdenes propias, lo cruza contra el tick siguiente y permite cancelarlo
+sin retirar liquidez ajena.
 
 ## Qué construyes hoy
 
@@ -30,7 +31,7 @@ y equity. Es el andamiaje sobre el que se monta el `Backtest` en L10.
 - **B4 · submit() sin book: fail fast** — raise RuntimeError
 - **B5 · Delega al MatchingEngine** — composición, no duplicación
 - **B6 · reset()** — restaurar invariantes
-- **B7 · Ahora sí: loop completo** — step hasta None
+- **B7 · Carga REQUIRED: from_csv, sample y snapshots** — I/O reproducible y copia defensiva
 - **B8 · Challenge de integración** — step → submit → fills → tracker → equity
 
 ## Estructura de la carpeta

@@ -28,10 +28,11 @@ Sin paquete todavía: tipos básicos (`int`, `float`, `str`), listas, diccionari
 `if` y funciones. Una orden es un `dict` con `symbol`, `side`, `price`, `size`; un libro es una
 lista de esos dicts.
 
-La presentación HTML (a medida, con **Pyodide** ejecutando Python real en el navegador) lleva 5
-simuladores: texto→bits (`ord`/`bin`), CPython vs compilación nativa, el viaje de una línea con
-**tokens/AST/bytecode reales** (`tokenize`/`ast`/`dis`), el editor en vivo, los retos de
-romper-código y el rule builder. El notebook refuerza con `ord`/`bin` y `dis` (auxiliares A4-A5).
+El documento HTML autocontenido lleva 5 simuladores interactivos: texto→bits (`ord`/`bin`),
+CPython vs compilación nativa, el viaje de una línea con **tokens/AST/bytecode reales**
+(`tokenize`/`ast`/`dis`), el editor guiado, los retos de romper-código y el rule builder. Las
+salidas de Python se calculan y validan durante la generación; el documento no ejecuta Python ni
+carga una CDN en el navegador. El notebook refuerza con `ord`/`bin` y `dis` (auxiliares A4-A5).
 
 Continuidad: el vocabulario (`symbol/side/price/size`) reaparece en `OrderMini` en L4 y, tras
 la migración explícita de firma, en el `Order` estable de `exchange`. Los dicts de L1 son el

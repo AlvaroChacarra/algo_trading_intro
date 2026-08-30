@@ -1,6 +1,6 @@
 # GitHub Infrastructure Contract --- Algorithmic Trading
 
-**Status:** Proposed baseline\
+**Status:** Authoritative target baseline — migration pending\
 **Version:** 1.1\
 **Date:** 2026-08-17\
 **Owner:** AlvaroChacarra\

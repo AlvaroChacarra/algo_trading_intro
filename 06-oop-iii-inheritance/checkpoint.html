@@ -775,7 +775,7 @@ function grade(){
     Object.entries(byTopic).map(([t,x])=>t+' '+x.r+'/'+x.n).join(' · ')+'</div>'+
     '<div class="codebox"><code id="rescode">'+code+'</code>'+
     '<button id="copybtn">📋 copiar código</button></div>'+
-    '<div class="codehint">Envíaselo al profe: certifica tu resultado sin capturas.</div>';
+    '<div class="codehint">Autoinforme de práctica: comprueba transcripción, no certifica autoría ni nota.</div>';
   const cb=$('#copybtn');
   cb.addEventListener('click',()=>{
     const t=$('#rescode').textContent;

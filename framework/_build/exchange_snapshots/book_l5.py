@@ -2,13 +2,21 @@
 
 from __future__ import annotations
 
+import math
+
 
 class Level:
     """One price level; L7 expresses the same constructor as a dataclass."""
 
     def __init__(self, price: float, size: float) -> None:
-        self.price = price
-        self.size = size
+        if isinstance(price, bool) or isinstance(size, bool):
+            raise ValueError("level price and size must be numeric, not boolean")
+        self.price = float(price)
+        self.size = float(size)
+        if not math.isfinite(self.price) or self.price <= 0:
+            raise ValueError("level price must be finite and positive")
+        if not math.isfinite(self.size) or self.size <= 0:
+            raise ValueError("level size must be finite and positive")
 
 
 class OrderBook:
@@ -35,13 +43,18 @@ class OrderBook:
     def mid(self) -> float | None:
         if self.best_bid is None or self.best_ask is None:
             return None
-        return (self.best_bid + self.best_ask) / 2
+        return self.best_bid + (self.best_ask - self.best_bid) / 2
 
     def imbalance(self, levels: int = 1) -> float | None:
-        bid_vol = sum(lv.size for lv in self.bids[:levels])
-        ask_vol = sum(lv.size for lv in self.asks[:levels])
-        total = bid_vol + ask_vol
-        return None if total == 0 else (bid_vol - ask_vol) / total
+        if isinstance(levels, bool) or not isinstance(levels, int) or levels <= 0:
+            raise ValueError("levels must be a positive integer")
+        bid_vol = math.fsum(lv.size for lv in self.bids[:levels])
+        ask_vol = math.fsum(lv.size for lv in self.asks[:levels])
+        scale = max(bid_vol, ask_vol)
+        if scale == 0:
+            return None
+        scaled_bid, scaled_ask = bid_vol / scale, ask_vol / scale
+        return (scaled_bid - scaled_ask) / (scaled_bid + scaled_ask)
 
     def __repr__(self) -> str:
         bb = f"{self.best_bid:g}" if self.best_bid is not None else "-"

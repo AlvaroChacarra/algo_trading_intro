@@ -9,13 +9,15 @@
 ### 1. Anatomía del objeto · 5 min
 - Lee primero el `__init__` literal y mapea cada asignación al inspector.
 - Después mueve `_i` con el slider.
-- Haz nombrar los cinco atributos: snapshots, depth, engine, índice y book actual.
-- Estado inicial obligatorio: `_i == -1`, `book is None`.
+- Haz nombrar los seis atributos: snapshots, depth, engine, índice, timestamp y book actual.
+- Estado inicial obligatorio: `_i == -1`, `_timestamp is None`, `book is None`.
 
 ### 2. Construir step() · 6 min
-- Ejecuta `self._i += 1` y muestra solo el cambio de cursor.
-- Después llama visualmente a `OrderBook.from_snapshot` de L7.
-- Explica el final como estado explícito: `book=None`, `return None`.
+- Calcula `next_i = self._i + 1`: todavía no se ha mutado el cursor.
+- Construye `next_book` con `OrderBook.from_snapshot` de L7 y valida `next_timestamp` con `_integer_timestamp(raw_timestamp)`, todo en variables locales.
+- Solo después haz el commit conjunto: `_i = next_i`, `_timestamp = next_timestamp`, `book = next_book`.
+- Haz fallar una fila: cursor, timestamp y book anteriores deben seguir intactos.
+- Explica el final como estado explícito: `_timestamp=None`, `book=None`, `return None`.
 - El panel acumulado debe terminar mostrando `step()` entero.
 
 ### 3. Construir submit() · 5 min
@@ -26,7 +28,7 @@
 - Deja `timestamp` para consolidación requerida, pero señala que procede del snapshot actual; no aparece por magia.
 
 ### 4. reset y loop · 4 min
-- Reset solo restaura `_i=-1` y `book=None`.
+- Reset restaura juntos `_i=-1`, `_timestamp=None` y `book=None`.
 - Ahora sí enseña el while completo: cada llamada ya tiene una implementación imaginable.
 
 ## Práctica guiada · ≈20 min
@@ -34,10 +36,10 @@
 - Consolidación requerida: B6–B8.
 - En B8, exige que el alumno atribuya cada mutación al objeto responsable.
 
-## Profundidad secundaria
-- `from_csv()` es una factory desde almacenamiento.
-- `sample()` es una comodidad del curso.
-- No consumir tiempo central en I/O.
+## Consolidación REQUIRED y evaluable
+- `from_csv()` es la factory desde almacenamiento y `sample()` localiza el CSV sintético del curso.
+- `snapshots` entrega una copia defensiva del replay; B7 ejercita directamente las tres APIs.
+- No consumir tiempo central en I/O no las convierte en OPTIONAL: pueden aparecer en evaluación.
 
 ## Cierre
 - “step cambia el estado; submit delega la dinámica; reset vuelve al origen.”

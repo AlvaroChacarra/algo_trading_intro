@@ -1,4 +1,4 @@
-/* L7 — raw snapshot → Level → OrderBook; el scrubber conserva los 500 reales. */
+/* L7 — raw snapshot → Level → OrderBook; el scrubber conserva los 500 sintéticos reproducibles. */
 (function(){
 "use strict";
 const $=s=>document.querySelector(s),D=DOC_DATA,S=D.snaps,R=D.raw;

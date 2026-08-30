@@ -1,4 +1,4 @@
-# Clase 7 - Snapshot real a OrderBook, en un archivo .py
+# Clase 7 - Snapshot sintético a OrderBook, en un archivo .py
 # Ejecuta desde exercises/:  python read_book.py
 
 import csv

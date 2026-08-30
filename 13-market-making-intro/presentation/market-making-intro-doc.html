@@ -599,6 +599,7 @@
   margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;
   border:0!important}
 .lr-has-contract [hidden]{display:none!important}
+[data-lr-scroller="true"]:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
 
 #lr-nav{position:fixed;inset:0 auto 0 0;width:var(--lr-nav-w,230px);z-index:52;
   display:flex;flex-direction:column;background:rgba(9,9,11,.97);border-right:1px solid var(--line);
@@ -630,6 +631,8 @@
 .lr-scene-links button.lr-route-live span{color:var(--accent)}
 .lr-scene-links button.lr-route-required span{color:var(--kw)}
 .lr-scene-links button.lr-route-optional span{color:var(--faint)}
+.lr-scene-links button.lr-route-mixed span{background:linear-gradient(90deg,var(--accent),var(--kw));
+  color:transparent;background-clip:text;-webkit-background-clip:text}
 
 #lr-teacher-toggle{margin:0 6px 9px;min-height:36px;border:1px solid rgba(34,211,238,.38);
   border-radius:8px;background:var(--accent-dim);color:var(--accent);font:600 .68rem var(--mono);cursor:pointer}
@@ -650,6 +653,8 @@
 .lr-teacher-kicker{margin:0;color:var(--accent);font:600 .68rem var(--mono);text-transform:uppercase}
 .lr-teacher-stage{font-size:.78rem}.lr-full-guide{min-height:40px;margin-top:16px;padding:7px 12px;
   border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--accent);font:600 .7rem var(--mono);cursor:pointer}
+.lr-teacher-override{padding:8px 10px;border-left:2px solid var(--kw);background:rgba(192,132,252,.08);
+  color:var(--muted);font-size:.76rem}
 
 .lr-scene-badge{display:flex;gap:8px;align-items:center;margin:0 0 10px;font:600 .58rem var(--mono);
   letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
@@ -657,6 +662,7 @@
 .lr-scene-badge.lr-route-live span:first-child{border-color:rgba(34,211,238,.42);color:var(--accent)}
 .lr-scene-badge.lr-route-required span:first-child{border-color:rgba(192,132,252,.45);color:var(--kw)}
 .lr-scene-badge.lr-route-optional span:first-child{border-color:var(--line);color:var(--faint)}
+.lr-scene-badge.lr-route-mixed span:first-child{border-color:rgba(192,132,252,.45);color:var(--kw)}
 
 #lr-controls{position:fixed;left:var(--lr-nav-w,230px);right:0;bottom:0;height:var(--lr-controls-h,58px);z-index:55;
   display:grid;grid-template-columns:minmax(120px,1fr) auto auto minmax(120px,1fr);align-items:center;
@@ -675,6 +681,8 @@
 #lr-controls .lr-route-scope{padding:0 12px;color:var(--accent);border-color:rgba(34,211,238,.38)}
 #lr-controls.lr-fixed-scope{grid-template-columns:minmax(120px,1fr) auto minmax(120px,1fr)}
 #lr-mobile-toolbar{display:none}
+html.lr-modal-open,body.lr-modal-open{overflow:hidden!important;overscroll-behavior:none}
+body.lr-modal-open::before{content:"";position:fixed;inset:0;z-index:69;background:rgba(0,0,0,.58);backdrop-filter:blur(2px);pointer-events:auto}
 
 /* Layout names are operational: they control scene width and native two-panel ratios. */
 .lr-scene{--lr-scene-max:1180px;--lr-left:42fr;--lr-right:58fr}
@@ -706,7 +714,7 @@
   body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child{overflow:visible;max-width:var(--lr-scene-max);margin:0 auto}
   body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child h2{font-size:clamp(1.08rem,2.15vh,1.72rem);margin:.05em 0 .2em}
   body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child .lede{font-size:clamp(.74rem,1.4vh,.95rem);margin:.2em 0}
-  body.mode-aula>.lr-scene-active>.scrolly{width:100%;max-width:var(--lr-scene-max);height:100%;min-height:0;margin:0 auto;
+  body.mode-aula>.lr-scene-active>.scrolly{display:grid;width:100%;max-width:var(--lr-scene-max);height:100%;min-height:0;margin:0 auto;
     padding:0;grid-template-columns:minmax(260px,var(--lr-left)) minmax(0,var(--lr-right));gap:clamp(14px,1.8vw,32px)}
   body.mode-aula>.lr-scene-active>.scrolly~.wrap{display:none}
   body.mode-aula .steps{min-width:0;min-height:0;height:100%;overflow:hidden}
@@ -721,6 +729,7 @@
   body.mode-aula .fig-stage{overflow:auto}
   body.mode-aula .full-code{display:none!important}
   body.mode-aula .hero{padding:0}
+  body.mode-aula>header.lr-scene-active .code{overflow-x:hidden;overflow-y:auto}
   body.mode-aula .hero h1{font-size:clamp(2rem,4.7vw,4.8rem)}
   body.mode-aula .hero .lede{font-size:clamp(.92rem,1.45vw,1.3rem);max-width:72ch}
   body.mode-aula .hero .challenge{margin-top:clamp(14px,2.5vh,28px)}
@@ -753,8 +762,8 @@
 }
 
 @media(max-width:520px){
-  #lr-mobile-toolbar>span{display:none}
-  #lr-mobile-toolbar .lr-study-optional{margin-left:auto}
+  #lr-mobile-toolbar>span{display:block;text-align:left;font-size:.55rem}
+  #lr-mobile-toolbar .lr-study-optional{flex:none}
 }
 
 @media(prefers-reduced-motion:reduce){
@@ -901,7 +910,7 @@ bid = 98.80   ask = 100.00
     historias opuestas.</p>
 
     <div class="simcard">
-      <h4>simulador · MMSimulation(MarketMaker(...), seed=42).run()</h4>
+      <h4>simulador · MMSimulation(MarketMaker(...), A=520, seed=42).run()</h4>
       <div class="toggle" role="group" aria-label="Skew">
         <button class="on" id="mm-off">inventory_skew = 0</button>
         <button id="mm-on">inventory_skew = 2.0</button>
@@ -956,8 +965,9 @@ bid = 98.80   ask = 100.00
       simulador, una quote a distancia δ recibe intensidad
       <code>λ(δ) = A·exp(−κδ)</code>. Con A=1 y κ=1.5, cerca (δ=0.2) da
       λ≈0.74; lejos (δ=1.0), λ≈0.22. Alejarte protege el precio, pero reduce la
-      probabilidad de ejecutar. Aquí solo fijamos estas dos intuiciones; las fórmulas y la
-      clase de L14 todavía no aparecen.</p>
+      probabilidad de ejecutar. λ es una intensidad por horizonte: en cada uno de H
+      intervalos el simulador usa <code>p = 1−exp(−λ/H)</code>. Aquí solo fijamos estas
+      dos intuiciones; las fórmulas y la clase de L14 todavía no aparecen.</p>
     </div>
   </div>
 </section>
@@ -1062,7 +1072,7 @@ bid = 98.80   ask = 100.00
       <div class="tag">El puente a L14</div>
       <p style="margin:.2em 0"><strong>Tu skew es un número a ojo. ¿Cuál es el óptimo?</strong></p>
       <p>Elegiste <code>skew=2.0</code> porque sonaba razonable. Avellaneda y Stoikov
-      (2008) resolvieron el problema de verdad: dado tu miedo (γ), la volatilidad (σ) y el
+      (2008) resolvieron el problema de verdad: dado tu miedo (γ), la volatilidad del horizonte (σ<sub>H</sub>) y el
       tiempo que queda (τ), <em>calcularon</em> dónde cotizar. En L14: la fórmula, qué
       significa cada letra, y tu propia estrategia enchufada al simulador. Última clase de
       construcción.</p>
@@ -1081,8 +1091,38 @@ bid = 98.80   ask = 100.00
 
 <footer>L13 · Market making — Algo Trading ICAI 2026 · documento interactivo</footer>
 
-<script>const DOC_DATA={"skew":{"mid":[99.944,100.295,100.187,100.245,99.876,99.368,99.634,98.907,99.096,99.22,97.91,97.606,98.03,97.529,97.848,98.023,97.788,98.038,98.422,99.133,98.421,98.155,97.998,98.359,98.079,97.663,97.301,97.154,97.751,97.742,97.879,97.373,98.35,98.17,98.095,98.806,99.084,98.809,98.595,99.276,99.386,98.781,99.464,98.813,99.308,99.604,98.98,99.077,98.293,98.095,97.536,97.765,97.809,98.159,98.281,98.133,98.731,98.475,98.91,99.214,99.44,99.418,99.618,100.125,99.194,99.542,100.662,100.441,100.3,100.401,99.898,100.044,100.28,100.627,101.247,101.48,101.761,101.915,102.205,101.966,100.81,100.644,100.444,100.072,101.737,101.721,102.474,101.774,100.647,99.693,99.081,98.07,97.974,98.649,97.566,97.644,98.503,98.522,98.459,98.49,98.825,98.255,98.539,97.587,97.783,96.763,97.665,96.637,96.066,97.071,97.127,96.894,96.481,96.586,96.114,96.995,97.611,97.538,97.92,97.828,97.358,96.987,98.127,98.139,98.014,98.157,98.078,97.663,98.027,98.401,98.203,98.801,98.486,98.024,98.111,97.819,98.166,97.408,97.426,97.994,98.258,98.983,98.989,98.131,97.972,97.954,97.218,95.928,95.814,95.232,94.85,94.911,94.631,94.344,94.08,94.012,93.489,93.832,93.166,92.778,92.278,92.95,92.298,92.104,91.716,92.362,92.278,92.196,92.563,92.982,93.016,92.529,93.147,93.223,92.738,92.055,92.577,93.107,93.444,94.039,94.128,94.199,94.156,93.962,94.361,93.814,93.381,93.59,94.593,95.376,95.244,93.954,93.209,93.528,93.803,93.55,93.738,93.483,93.361,92.978,92.138,92.198,92.493,92.688,92.172,92.07,92.068,92.322,92.46,92.781,92.733,92.958,92.567,92.482,92.876,92.448,92.513,92.662,93.292,93.608,93.859,93.849,93.307,93.23,92.733,92.261,92.105,91.857,91.513,91.282,90.847,89.799,89.24,89.524,89.74,90.11,89.819,89.1,89.615,89.747,90.084,89.522,90.336,90.546,89.936,89.573,89.098,88.233,88.478,87.896,87.401,87.741,87.922,88.36,87.269,86.92,86.633,86.4,87.503,87.449,87.325,86.742,86.275,86.12,85.975,86.846,86.76,87.172,86.725,86.615,86.906,87.622,87.596,86.815,87.395,87.325,87.704,87.321,87.158,86.919,86.344,85.554,85.389,84.561,86.079,85.256,85.633,85.245,85.114,85.581,85.679,85.857,86.202,86.638,87.25,86.812,86.475,86.072,85.706,85.745,86.47,86.369,87.02,87.227,86.862,86.572,86.056,85.253,84.64,84.879,84.999,85.237,85.423,85.086,84.955,85.165,84.94,83.56,84.178,84.232,84.754,83.687,82.658,82.24,82.075,82.56,83.416,84.015,84.506,84.333,83.822,83.856,84.792,84.492,84.174,84.565,84.191,83.58,84.033,84.492,84.797,84.471,84.633,84.841,85.721,85.803,85.771,85.161,85.619,85.994,85.446,85.371,85.144,84.61,84.977,85.138,84.598,84.494,83.994,83.299,83.008,83.474,83.271,83.476,84.149,84.616,84.493,84.717,84.48,83.187,82.99,82.693,81.882,81.475,81.403,81.313,81.187,80.776,80.552,80.713,80.313,80.534,80.675,80.759,80.456,79.965,79.596,79.77,79.235,79.649,79.633,80.079,79.91,79.346,79.439,79.465,79.334,78.831,78.135,77.496,76.98,76.657,76.951,77.471,77.34,76.425,75.749,75.242,75.266,74.422,73.713,73.009,72.878,73.257,74.141,74.471,73.915,73.89,74.156,73.481,74.333,74.982,74.989,75.526,75.42,75.922,76.126,76.216,77.061,76.497,77.255,77.099,76.467,77.086,76.845,76.283,76.43,76.745,77.598,78.048,78.488,78.595,79.015,78.266,78.101,77.772,77.351,77.26,78.624,78.153,79.054,78.86,79.307,78.855,78.888,78.49,78.586,79.125,79.269,80.877,80.356,79.64,80.143,80.742,81.063,80.52,80.47,80.619,81.176,80.798,80.175,80.472,80.656,80.627,80.191,80.549,80.66,80.213,80.139,80.269,79.517,79.687,79.285,79.395,77.898,77.753,77.211,77.892,78.526,77.998,76.863,76.88,76.137,75.579,75.343,75.98,76.299,75.959,76.594,76.917],"inv":[-0.1,-0.1,-0.2,-0.1,-0.1,0.0,-0.1,-0.1,-0.1,-0.1,-0.1,0.0,0.0,-0.1,-0.1,-0.1,-0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.1,0.1,0.0,0.1,0.0,0.1,0.1,0.0,0.0,-0.1,-0.1,0.0,0.1,0.0,0.0,0.1,0.0,0.1,0.0,0.0,0.0,0.0,0.1,0.2,0.2,0.1,0.1,0.1,0.0,0.0,0.0,0.0,-0.1,-0.1,0.0,-0.1,-0.1,-0.2,-0.2,-0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.1,0.1,0.1,0.1,0.1,0.2,0.1,0.1,0.1,0.1,0.2,0.1,0.1,0.0,-0.1,-0.1,0.0,-0.1,-0.2,-0.3,-0.2,-0.1,-0.1,-0.0,-0.0,-0.0,0.1,-0.0,-0.0,0.1,0.2,0.2,0.2,0.2,0.1,0.1,0.2,0.1,0.1,-0.0,-0.1,-0.2,-0.3,-0.2,-0.1,-0.0,0.1,0.1,0.1,-0.0,0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.1,-0.0,0.1,-0.0,-0.1,-0.1,-0.2,-0.1,-0.1,-0.2,-0.1,-0.0,0.1,0.1,0.1,0.1,-0.0,-0.0,0.1,-0.0,-0.0,-0.0,0.1,-0.0,-0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.1,-0.1,-0.1,-0.0,0.1,0.1,0.1,0.1,0.1,-0.0,-0.0,-0.1,-0.1,-0.2,-0.1,-0.2,-0.2,-0.1,-0.1,-0.1,-0.0,0.1,-0.0,-0.1,-0.1,-0.1,-0.1,-0.0,-0.0,0.1,-0.0,-0.0,-0.0,0.1,0.1,0.2,0.2,0.1,0.1,-0.0,-0.0,-0.1,-0.2,-0.2,-0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.1,-0.1,-0.0,-0.0,-0.1,-0.1,-0.1,-0.1,-0.2,-0.1,-0.1,-0.1,-0.1,-0.1,-0.0,0.1,-0.0,-0.0,-0.0,-0.0,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.0,-0.0,-0.1,-0.0,-0.1,-0.1,-0.0,0.1,0.2,0.1,0.1,0.1,-0.0,-0.0,-0.1,-0.0,0.1,0.2,0.1,-0.0,-0.0,0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.1,-0.1,-0.0,-0.1,-0.2,-0.2,-0.1,-0.0,-0.0,-0.0,-0.0,-0.0,0.1,0.1,-0.0,-0.1,-0.0,-0.0,0.1,0.1,0.2,0.2,0.2,0.1,0.2,0.1,0.2,0.2,0.1,0.2,0.2,0.1,-0.0,0.1,0.1,0.1,0.2,0.1,0.1,0.1,-0.0,-0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.1,-0.1,-0.1,-0.0,-0.0,-0.0,-0.0,0.1,0.1,0.1,0.2,0.1,0.1,0.1,-0.0,-0.1,-0.2,-0.1,-0.0,-0.0,-0.0,-0.0,-0.1,-0.2,-0.1,-0.1,-0.0,0.1,0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.1,-0.1,-0.2,-0.1,-0.2,-0.1,-0.1,-0.0,-0.1,-0.1,-0.2,-0.1,-0.1,-0.0,-0.1,-0.2,-0.2,-0.1,-0.0,-0.0,-0.1,-0.2,-0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.1,-0.2,-0.1,-0.1,-0.0,-0.1,-0.1,-0.2,-0.1,-0.2,-0.1,-0.1,-0.0,-0.0,-0.0,0.1,0.1,0.1,0.1,0.1,-0.0,-0.1,-0.0,-0.0,0.1,-0.0,-0.1,-0.1,-0.2,-0.2,-0.1,-0.1,-0.2,-0.1,-0.0,0.1,0.2,0.1,0.1,-0.0,0.1,0.1,0.1,-0.0,-0.0,-0.0,0.1,0.1,-0.0,-0.0,0.1,0.1,0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,0.1,0.1,-0.0,-0.0,-0.1,-0.0,-0.1,-0.1,-0.1,-0.1,-0.1,-0.0,-0.1,-0.0,0.1,-0.0,-0.1,-0.0,-0.0,0.1,-0.0,-0.0,-0.0,-0.0,-0.1,-0.1,-0.1,-0.1,-0.0,-0.1,-0.0,-0.0,0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,0.1,0.1,0.2,0.2,0.3,0.2,0.1,-0.0,-0.0,-0.1,-0.1,-0.0,-0.1,-0.0,0.1,0.1,-0.0,-0.1,-0.1,-0.0],"pnl":[0.066,0.03,0.132,0.146,0.303,0.343,0.377,0.569,0.551,0.538,0.669,0.709,0.709,0.819,0.907,1.01,1.033,1.073,1.073,1.193,1.193,1.193,1.313,1.41,1.45,1.45,1.57,1.57,1.69,1.81,1.883,1.953,1.993,2.035,2.075,2.206,2.234,2.274,2.274,2.266,2.255,2.295,2.423,2.463,2.463,2.552,2.592,2.662,2.702,2.822,2.822,2.942,3.007,3.157,3.181,3.186,3.366,3.34,3.38,3.38,3.38,3.5,3.54,3.61,3.65,3.675,3.563,3.687,3.835,3.845,3.885,3.885,3.885,3.885,3.885,3.885,3.973,3.989,4.138,4.114,3.998,4.045,4.045,4.008,4.294,4.412,4.643,4.593,4.48,4.52,4.642,4.863,4.903,4.895,5.192,5.268,5.097,5.115,5.121,5.161,5.161,5.281,5.369,5.409,5.529,5.487,5.748,5.542,5.548,5.749,5.775,5.751,5.749,5.779,5.852,5.892,5.891,5.985,5.971,5.989,6.056,6.096,6.27,6.271,6.259,6.299,6.351,6.391,6.511,6.511,6.511,6.631,6.631,6.737,6.777,6.808,6.848,6.983,7.102,7.068,7.062,7.109,7.188,7.294,7.334,7.392,7.318,7.189,7.178,7.218,7.218,7.284,7.324,7.444,7.564,7.617,7.657,7.683,7.723,7.723,7.843,7.843,7.843,7.963,8.062,8.117,8.246,8.286,8.382,8.544,8.668,8.619,8.801,8.841,8.841,8.969,9.037,9.011,8.997,8.958,8.94,8.953,8.958,8.977,9.017,9.022,9.062,9.101,9.001,8.923,8.936,8.976,8.976,9.068,9.108,9.108,9.228,9.262,9.25,9.253,9.205,9.231,9.261,9.301,9.301,9.371,9.452,9.521,9.527,9.567,9.567,9.687,9.807,9.807,9.828,9.87,9.91,9.91,9.907,9.996,9.971,9.972,10.16,10.188,10.237,10.285,10.42,10.565,10.605,10.642,10.682,10.682,10.682,10.682,10.72,10.683,10.832,10.904,10.973,11.08,11.12,11.12,11.098,11.138,11.259,11.416,11.456,11.429,11.558,11.52,11.47,11.504,11.544,11.544,11.714,11.754,11.785,11.818,11.949,11.989,11.989,11.99,12.03,12.03,12.03,12.03,12.03,12.03,12.135,12.146,12.186,12.174,12.259,12.416,12.378,12.418,12.418,12.418,12.418,12.418,12.42,12.341,12.381,12.524,12.564,12.564,12.662,12.623,12.677,12.89,12.91,12.947,13.097,13.16,13.362,13.395,13.381,13.381,13.428,13.451,13.491,13.541,13.606,13.627,13.634,13.625,13.574,13.493,13.533,13.569,13.609,13.609,13.609,13.609,13.609,13.648,13.671,13.809,13.849,13.849,13.849,13.969,13.926,14.004,13.988,14.165,14.27,14.45,14.499,14.539,14.65,14.723,14.65,14.69,14.69,14.81,14.81,14.931,14.92,14.894,14.984,15.024,15.1,15.241,15.281,15.401,15.521,15.521,15.521,15.544,15.598,15.693,15.736,15.923,15.906,15.89,15.93,16.0,16.05,16.269,16.319,16.392,16.432,16.472,16.417,16.324,16.356,16.396,16.396,16.585,16.704,16.754,16.794,16.794,16.794,16.794,16.914,17.034,17.034,17.078,17.238,17.236,17.222,17.262,17.352,17.521,17.675,17.678,17.865,17.843,17.965,18.005,18.125,18.125,18.194,18.197,18.184,18.253,18.184,18.224,18.335,18.375,18.495,18.607,18.647,18.799,18.986,19.168,19.163,19.268,19.338,19.559,19.592,19.632,19.781,19.927,19.891,19.889,19.929,19.921,20.126,20.191,20.231,20.231,20.351,20.461,20.482,20.522,20.522,20.525,20.721,20.706,20.746,20.746,20.746,20.746,20.866,20.866,20.986,21.091,21.135,21.175,21.295,21.429,21.469,21.562,21.604,21.614,21.477,21.644,21.684,21.764,21.804,21.818,21.858,21.958,21.998,22.118,22.193,22.233,22.233,22.353,22.353,22.353,22.441,22.495,22.62,22.66,22.664,22.704,22.824,22.914,22.954,22.954,22.954,22.954,23.074,23.074,23.074,23.074,23.059,23.076,23.075,23.217,22.868,22.839,22.805,22.845,22.965,23.078,23.191,23.231,23.366,23.406,23.442,23.506,23.546,23.64,23.576,23.616],"finalPnl":23.62,"maxInv":0.3},"noskew":{"mid":[99.944,100.295,100.187,100.245,99.876,99.368,99.634,98.907,99.096,99.22,97.91,97.606,98.03,97.529,97.848,98.023,97.788,98.038,98.422,99.133,98.421,98.155,97.998,98.359,98.079,97.663,97.301,97.154,97.751,97.742,97.879,97.373,98.35,98.17,98.095,98.806,99.084,98.809,98.595,99.276,99.386,98.781,99.464,98.813,99.308,99.604,98.98,99.077,98.293,98.095,97.536,97.765,97.809,98.159,98.281,98.133,98.731,98.475,98.91,99.214,99.44,99.418,99.618,100.125,99.194,99.542,100.662,100.441,100.3,100.401,99.898,100.044,100.28,100.627,101.247,101.48,101.761,101.915,102.205,101.966,100.81,100.644,100.444,100.072,101.737,101.721,102.474,101.774,100.647,99.693,99.081,98.07,97.974,98.649,97.566,97.644,98.503,98.522,98.459,98.49,98.825,98.255,98.539,97.587,97.783,96.763,97.665,96.637,96.066,97.071,97.127,96.894,96.481,96.586,96.114,96.995,97.611,97.538,97.92,97.828,97.358,96.987,98.127,98.139,98.014,98.157,98.078,97.663,98.027,98.401,98.203,98.801,98.486,98.024,98.111,97.819,98.166,97.408,97.426,97.994,98.258,98.983,98.989,98.131,97.972,97.954,97.218,95.928,95.814,95.232,94.85,94.911,94.631,94.344,94.08,94.012,93.489,93.832,93.166,92.778,92.278,92.95,92.298,92.104,91.716,92.362,92.278,92.196,92.563,92.982,93.016,92.529,93.147,93.223,92.738,92.055,92.577,93.107,93.444,94.039,94.128,94.199,94.156,93.962,94.361,93.814,93.381,93.59,94.593,95.376,95.244,93.954,93.209,93.528,93.803,93.55,93.738,93.483,93.361,92.978,92.138,92.198,92.493,92.688,92.172,92.07,92.068,92.322,92.46,92.781,92.733,92.958,92.567,92.482,92.876,92.448,92.513,92.662,93.292,93.608,93.859,93.849,93.307,93.23,92.733,92.261,92.105,91.857,91.513,91.282,90.847,89.799,89.24,89.524,89.74,90.11,89.819,89.1,89.615,89.747,90.084,89.522,90.336,90.546,89.936,89.573,89.098,88.233,88.478,87.896,87.401,87.741,87.922,88.36,87.269,86.92,86.633,86.4,87.503,87.449,87.325,86.742,86.275,86.12,85.975,86.846,86.76,87.172,86.725,86.615,86.906,87.622,87.596,86.815,87.395,87.325,87.704,87.321,87.158,86.919,86.344,85.554,85.389,84.561,86.079,85.256,85.633,85.245,85.114,85.581,85.679,85.857,86.202,86.638,87.25,86.812,86.475,86.072,85.706,85.745,86.47,86.369,87.02,87.227,86.862,86.572,86.056,85.253,84.64,84.879,84.999,85.237,85.423,85.086,84.955,85.165,84.94,83.56,84.178,84.232,84.754,83.687,82.658,82.24,82.075,82.56,83.416,84.015,84.506,84.333,83.822,83.856,84.792,84.492,84.174,84.565,84.191,83.58,84.033,84.492,84.797,84.471,84.633,84.841,85.721,85.803,85.771,85.161,85.619,85.994,85.446,85.371,85.144,84.61,84.977,85.138,84.598,84.494,83.994,83.299,83.008,83.474,83.271,83.476,84.149,84.616,84.493,84.717,84.48,83.187,82.99,82.693,81.882,81.475,81.403,81.313,81.187,80.776,80.552,80.713,80.313,80.534,80.675,80.759,80.456,79.965,79.596,79.77,79.235,79.649,79.633,80.079,79.91,79.346,79.439,79.465,79.334,78.831,78.135,77.496,76.98,76.657,76.951,77.471,77.34,76.425,75.749,75.242,75.266,74.422,73.713,73.009,72.878,73.257,74.141,74.471,73.915,73.89,74.156,73.481,74.333,74.982,74.989,75.526,75.42,75.922,76.126,76.216,77.061,76.497,77.255,77.099,76.467,77.086,76.845,76.283,76.43,76.745,77.598,78.048,78.488,78.595,79.015,78.266,78.101,77.772,77.351,77.26,78.624,78.153,79.054,78.86,79.307,78.855,78.888,78.49,78.586,79.125,79.269,80.877,80.356,79.64,80.143,80.742,81.063,80.52,80.47,80.619,81.176,80.798,80.175,80.472,80.656,80.627,80.191,80.549,80.66,80.213,80.139,80.269,79.517,79.687,79.285,79.395,77.898,77.753,77.211,77.892,78.526,77.998,76.863,76.88,76.137,75.579,75.343,75.98,76.299,75.959,76.594,76.917],"inv":[-0.1,-0.1,-0.2,-0.1,-0.1,0.0,-0.1,-0.1,-0.2,-0.2,-0.2,-0.1,-0.1,-0.2,-0.2,-0.2,-0.3,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.1,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.1,-0.1,-0.1,-0.0,-0.0,0.1,0.1,-0.0,-0.0,-0.1,-0.1,-0.1,-0.0,-0.0,-0.0,0.1,-0.0,0.1,-0.0,-0.0,-0.0,-0.0,0.1,0.2,0.3,0.4,0.4,0.4,0.3,0.3,0.3,0.3,0.2,0.1,0.2,0.1,0.1,0.0,-0.1,0.0,0.1,0.1,0.1,0.1,0.1,0.1,0.2,0.2,0.2,0.2,0.2,0.3,0.3,0.4,0.5,0.5,0.6,0.6,0.6,0.5,0.4,0.4,0.5,0.4,0.3,0.2,0.1,0.0,0.0,0.1,0.1,0.1,0.2,0.1,0.1,0.2,0.3,0.3,0.4,0.4,0.3,0.3,0.4,0.3,0.3,0.2,0.1,0.0,-0.1,0.0,-0.1,0.0,0.1,0.1,0.1,0.0,0.1,0.2,0.2,0.2,0.2,0.2,0.2,0.1,0.1,0.2,0.1,0.0,0.0,-0.1,-0.1,-0.2,-0.3,-0.2,-0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.1,0.1,0.1,0.1,0.2,0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.0,-0.1,-0.1,-0.2,-0.1,0.0,0.0,0.0,0.0,0.0,-0.1,-0.1,-0.2,-0.2,-0.3,-0.3,-0.4,-0.4,-0.3,-0.4,-0.4,-0.3,-0.2,-0.3,-0.4,-0.4,-0.4,-0.4,-0.3,-0.3,-0.2,-0.3,-0.3,-0.3,-0.2,-0.1,-0.0,0.1,0.1,0.1,-0.0,-0.0,-0.1,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.3,-0.3,-0.3,-0.3,-0.4,-0.4,-0.5,-0.5,-0.6,-0.6,-0.7,-0.7,-0.7,-0.7,-0.6,-0.5,-0.5,-0.5,-0.5,-0.5,-0.6,-0.6,-0.6,-0.6,-0.7,-0.7,-0.6,-0.6,-0.7,-0.7,-0.8,-0.9,-0.9,-0.8,-0.7,-0.8,-0.7,-0.7,-0.7,-0.7,-0.8,-0.8,-0.7,-0.6,-0.7,-0.8,-0.8,-0.7,-0.8,-0.8,-0.8,-0.8,-0.8,-0.8,-0.9,-0.9,-1.0,-1.1,-1.2,-1.3,-1.3,-1.2,-1.2,-1.2,-1.2,-1.2,-1.1,-1.1,-1.1,-1.2,-1.1,-1.1,-1.0,-1.0,-0.9,-0.8,-0.8,-0.8,-0.7,-0.7,-0.6,-0.5,-0.4,-0.3,-0.3,-0.3,-0.4,-0.3,-0.3,-0.3,-0.2,-0.2,-0.2,-0.2,-0.3,-0.4,-0.3,-0.3,-0.3,-0.3,-0.3,-0.4,-0.4,-0.4,-0.3,-0.3,-0.3,-0.3,-0.2,-0.2,-0.2,-0.1,-0.0,0.1,0.1,-0.0,-0.1,-0.2,-0.1,-0.0,-0.0,-0.0,-0.0,-0.1,-0.2,-0.1,-0.1,-0.0,0.1,0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.1,-0.1,-0.2,-0.3,-0.4,-0.3,-0.3,-0.2,-0.3,-0.3,-0.4,-0.5,-0.6,-0.6,-0.7,-0.8,-0.8,-0.8,-0.7,-0.7,-0.8,-0.9,-0.8,-0.7,-0.7,-0.7,-0.7,-0.7,-0.7,-0.7,-0.8,-0.9,-0.8,-0.8,-0.7,-0.8,-0.9,-1.0,-1.0,-1.1,-1.1,-1.1,-1.0,-1.0,-1.0,-0.9,-0.9,-0.9,-0.9,-0.8,-0.9,-1.0,-1.0,-1.0,-0.9,-1.0,-1.1,-1.1,-1.2,-1.2,-1.2,-1.2,-1.3,-1.2,-1.1,-1.0,-0.9,-0.9,-0.9,-0.9,-0.8,-0.8,-0.7,-0.8,-0.8,-0.8,-0.7,-0.7,-0.8,-0.8,-0.7,-0.7,-0.6,-0.7,-0.7,-0.7,-0.7,-0.7,-0.7,-0.7,-0.6,-0.6,-0.7,-0.7,-0.8,-0.8,-0.9,-0.9,-0.9,-1.0,-1.1,-1.0,-1.1,-1.0,-0.9,-1.0,-1.1,-1.1,-1.1,-1.0,-1.0,-1.0,-1.0,-1.0,-1.1,-1.1,-1.1,-1.1,-1.1,-1.2,-1.1,-1.1,-1.0,-1.1,-1.1,-1.1,-1.1,-1.1,-1.1,-1.1,-1.1,-1.0,-1.0,-0.9,-0.9,-0.8,-0.9,-1.0,-1.1,-1.1,-1.2,-1.2,-1.2,-1.3,-1.4,-1.3,-1.3,-1.3,-1.4,-1.4,-1.3],"pnl":[0.066,0.03,0.112,0.166,0.323,0.383,0.417,0.609,0.632,0.607,0.869,0.959,0.917,1.077,1.133,1.218,1.349,1.359,1.282,1.26,1.402,1.455,1.607,1.631,1.747,1.83,2.022,2.052,2.052,2.174,2.221,2.391,2.293,2.353,2.353,2.485,2.512,2.572,2.572,2.564,2.553,2.734,2.794,2.914,2.914,3.003,3.063,3.133,3.193,3.313,3.313,3.433,3.498,3.627,3.724,3.725,4.084,3.981,4.172,4.263,4.331,4.444,4.544,4.655,4.529,4.624,4.736,4.796,4.87,4.93,4.94,4.954,4.978,5.012,5.074,5.098,5.214,5.245,5.423,5.375,5.144,5.154,5.214,5.125,6.018,6.13,6.642,6.342,5.665,5.248,5.064,4.779,4.791,5.121,4.856,4.932,5.078,5.138,5.138,5.201,5.234,5.297,5.414,5.379,5.518,5.375,5.705,5.397,5.228,5.63,5.707,5.637,5.532,5.624,5.602,5.838,5.96,6.02,6.042,6.102,6.209,6.269,6.443,6.444,6.431,6.491,6.543,6.52,6.713,6.788,6.748,6.988,6.925,6.939,6.947,6.949,7.044,7.104,7.224,7.227,7.201,7.115,7.174,7.405,7.481,7.541,7.541,7.541,7.541,7.541,7.541,7.607,7.579,7.671,7.764,7.811,7.818,7.878,7.878,7.878,7.998,7.998,7.998,8.118,8.217,8.273,8.349,8.418,8.478,8.598,8.718,8.718,8.838,8.89,8.939,9.135,9.151,9.052,8.95,8.773,8.737,8.776,8.853,8.931,8.871,9.04,9.23,9.207,8.805,8.492,8.545,8.992,9.215,9.212,9.189,9.265,9.329,9.44,9.512,9.572,9.548,9.554,9.583,9.643,9.643,9.714,9.774,9.843,9.816,9.752,9.761,9.836,10.034,10.051,9.993,10.121,10.102,10.057,9.865,9.859,9.793,9.798,10.183,10.23,10.637,10.968,11.197,11.491,11.757,11.933,12.15,12.674,12.954,12.812,12.742,12.52,12.815,13.246,12.945,12.973,12.831,13.168,12.659,12.511,13.06,13.446,13.993,14.746,14.634,15.16,15.566,15.328,15.201,14.895,15.828,16.107,16.368,16.568,15.856,15.959,16.058,16.526,16.959,17.084,17.2,16.503,16.572,16.242,16.704,16.803,16.573,15.845,15.936,17.011,16.257,16.401,15.946,16.406,16.601,16.888,17.581,18.45,18.751,19.804,18.195,19.1,18.783,19.172,19.349,19.036,18.957,18.815,18.633,18.448,18.141,18.42,18.615,18.796,19.026,19.014,18.784,18.874,18.679,18.617,18.75,18.808,18.911,19.071,19.315,19.28,19.304,19.232,19.176,19.278,19.317,19.293,19.383,19.935,19.81,19.793,19.637,20.077,20.343,20.546,20.579,20.591,20.651,20.771,20.82,20.88,20.991,21.044,21.01,21.07,21.07,21.19,21.19,21.312,21.281,21.295,21.385,21.445,21.521,21.662,21.722,21.842,21.962,21.962,21.962,21.984,22.039,22.114,22.242,22.516,22.465,22.417,22.585,22.677,22.826,23.164,23.37,23.151,23.272,23.189,22.711,22.337,22.435,22.338,22.504,23.599,23.836,24.133,24.761,25.046,25.096,25.159,25.368,25.775,25.932,25.863,26.283,26.167,26.054,26.055,26.357,26.859,27.288,27.114,27.763,27.428,27.565,27.179,27.468,28.032,28.008,27.985,28.103,28.676,29.292,29.927,30.504,30.946,30.772,30.364,30.555,31.622,32.485,33.154,33.125,34.138,34.989,35.964,36.181,35.824,35.0,34.763,35.264,35.286,35.046,35.647,35.085,34.691,34.745,34.316,34.52,34.229,34.086,34.074,33.398,33.853,33.442,33.596,34.099,33.665,33.834,34.227,34.244,34.024,33.546,33.337,33.072,33.058,32.884,33.543,33.675,34.031,34.41,34.492,33.188,33.765,32.925,33.198,32.811,33.278,33.305,33.802,33.697,33.224,33.14,31.653,32.173,33.009,32.506,31.908,31.675,32.272,32.446,32.283,31.674,32.15,32.956,32.719,32.575,32.608,33.087,32.693,32.692,33.183,33.265,33.121,33.933,33.763,34.185,34.206,35.464,35.654,36.257,35.567,34.99,35.683,37.046,37.025,38.051,38.892,39.259,38.431,38.136,38.672,37.784,37.423],"finalPnl":37.42,"maxInv":1.4}};</script>
-<script type="application/json" id="pedagogy-contract">{"lesson":13,"status":"contract-strict","title":"Market making — Spread, inventario y skew","delivery":"lesson","source_path":"framework/_build/docs/13_body.html","requires":{"concepts":["framework.strategy_contract","microstructure.spread_cost","metrics.inventory_exposure","architecture.execution_feedback","python.fstring","python.generator_expression"],"apis":["level.constructor","orderbook.constructor","orderbook.mid","new_order.constructor","strategy.on_book_update","strategy.on_fill"],"notation":["notation.spread","notation.equity"]},"requirement_routes":{"concepts":{"framework.strategy_contract":"LIVE","microstructure.spread_cost":"LIVE","metrics.inventory_exposure":"LIVE","architecture.execution_feedback":"LIVE","python.fstring":"REQUIRED","python.generator_expression":"REQUIRED"},"apis":{"level.constructor":"LIVE","orderbook.constructor":"LIVE","orderbook.mid":"LIVE","new_order.constructor":"LIVE","strategy.on_book_update":"LIVE","strategy.on_fill":"LIVE"},"notation":{"notation.spread":"LIVE","notation.equity":"LIVE"}},"introduces":{"concepts":[{"id":"market_making.liquidity_provision","importance":"major","route":"LIVE"},{"id":"market_making.quotes","importance":"major","route":"LIVE"},{"id":"market_making.adverse_selection","importance":"major","route":"LIVE"},{"id":"inventory.risk","importance":"major","route":"LIVE"},{"id":"inventory.skew","importance":"major","route":"LIVE"},{"id":"market_making.heuristic_reservation_price","importance":"major","route":"LIVE"},{"id":"market_making.cara_utility","importance":"supporting","route":"LIVE"},{"id":"market_making.fill_intensity","importance":"supporting","route":"LIVE"}],"apis":["market_maker.constructor","market_maker.half_spread","market_maker.inventory","market_maker.inventory_skew","market_maker.reservation_price","market_maker.quotes","mm_simulation.constructor","mm_simulation.run","sim_result.type","sim_result.pnl","sim_result.final_pnl","sim_result.max_inventory"],"notation":["notation.inventory","notation.heuristic_reservation","notation.cara_utility","notation.fill_intensity"]},"introduction_routes":{"apis":{"market_maker.constructor":"LIVE","market_maker.half_spread":"LIVE","market_maker.inventory":"LIVE","market_maker.inventory_skew":"LIVE","market_maker.reservation_price":"LIVE","market_maker.quotes":"LIVE","mm_simulation.constructor":"LIVE","mm_simulation.run":"LIVE","sim_result.type":"LIVE","sim_result.pnl":"REQUIRED","sim_result.final_pnl":"LIVE","sim_result.max_inventory":"LIVE"},"notation":{"notation.inventory":"LIVE","notation.heuristic_reservation":"LIVE","notation.cara_utility":"LIVE","notation.fill_intensity":"LIVE"}},"recalls":[{"concept":"microstructure.spread_cost","introduced_in":5,"mapping":{"before":"Un taker pierde el spread en una ida y vuelta.","now":"Un provider intenta cobrar ese spread."}},{"concept":"architecture.execution_feedback","introduced_in":10,"mapping":{"before":"on_fill cierra el bucle de feedback.","now":"El mismo hook actualiza el inventario."}}],"api_surface":[{"id":"level.constructor","name":"Level","kind":"constructor","signature":"Level(price: float, size: float) -> Level","returns":"Level","responsibility":"construct one visible price level","qualified_name":"exchange.book.Level"},{"id":"orderbook.constructor","name":"OrderBook","kind":"constructor","signature":"OrderBook(symbol: str, bids: list[Level], asks: list[Level]) -> OrderBook","returns":"OrderBook","responsibility":"construct a sorted two-sided book","qualified_name":"exchange.book.OrderBook"},{"id":"orderbook.mid","name":"mid","kind":"property","signature":"mid -> float | None","returns":"float | None","responsibility":"compute the top-of-book midpoint","qualified_name":"exchange.book.OrderBook.mid"},{"id":"new_order.constructor","name":"NewOrder","kind":"constructor","signature":"NewOrder(order: Order) -> NewOrder","returns":"NewOrder","responsibility":"wrap an order as a typed strategy action","qualified_name":"exchange.strategy.NewOrder"},{"id":"strategy.on_book_update","name":"on_book_update","kind":"method","signature":"on_book_update(book: OrderBook) -> list[Action]","returns":"list[Action]","responsibility":"propose typed actions from market state","qualified_name":"exchange.strategy.Strategy.on_book_update"},{"id":"strategy.on_fill","name":"on_fill","kind":"method","signature":"on_fill(fill: Fill) -> None","returns":"None","responsibility":"receive execution feedback","qualified_name":"exchange.strategy.Strategy.on_fill"},{"id":"market_maker.constructor","name":"MarketMaker","kind":"constructor","signature":"MarketMaker(symbol: str, quote_size: float = 0.01, half_spread: float = 5.0, inventory_skew: float = 2.0) -> MarketMaker","returns":"MarketMaker","responsibility":"configure the heuristic market maker","qualified_name":"exchange.strategies.market_maker.MarketMaker"},{"id":"market_maker.inventory","name":"inventory","kind":"property","signature":"inventory -> float","returns":"float","responsibility":"read or set the strategy inventory through its public contract","qualified_name":"exchange.strategies.market_maker.MarketMaker.inventory"},{"id":"market_maker.half_spread","name":"half_spread","kind":"attribute","signature":"half_spread: float","returns":"float","responsibility":"configure half the quoted width around the reservation price","qualified_name":"exchange.strategies.market_maker.MarketMaker.half_spread"},{"id":"market_maker.inventory_skew","name":"inventory_skew","kind":"attribute","signature":"inventory_skew: float","returns":"float","responsibility":"configure the heuristic inventory correction strength","qualified_name":"exchange.strategies.market_maker.MarketMaker.inventory_skew"},{"id":"market_maker.reservation_price","name":"reservation_price","kind":"method","signature":"reservation_price(mid: float) -> float","returns":"float","responsibility":"shift the quote center using inventory","qualified_name":"exchange.strategies.market_maker.MarketMaker.reservation_price"},{"id":"market_maker.quotes","name":"quotes","kind":"method","signature":"quotes(book: OrderBook) -> tuple[float, float]","returns":"tuple[float, float]","responsibility":"produce bid and ask quotes","qualified_name":"exchange.strategies.market_maker.MarketMaker.quotes"},{"id":"mm_simulation.constructor","name":"MMSimulation","kind":"constructor","signature":"MMSimulation(strategy: MarketMaker, s0: float = 100.0, sigma: float = 0.5, steps: int = 500, A: float = 1.0, kappa: float = 1.5, seed: int = 42) -> MMSimulation","returns":"MMSimulation","responsibility":"configure a reproducible fill-intensity simulation","qualified_name":"exchange.simulation.MMSimulation"},{"id":"mm_simulation.run","name":"run","kind":"method","signature":"run() -> SimResult","returns":"SimResult","responsibility":"simulate quotes, fills, inventory, and marked PnL","qualified_name":"exchange.simulation.MMSimulation.run"},{"id":"sim_result.type","name":"SimResult","kind":"type","signature":"SimResult: type","returns":"SimResult","responsibility":"name the structured market-making simulation result","qualified_name":"exchange.simulation.SimResult"},{"id":"sim_result.pnl","name":"pnl","kind":"attribute","signature":"pnl: list[float]","returns":"list[float]","responsibility":"expose the marked-to-market PnL path","qualified_name":"exchange.simulation.SimResult.pnl"},{"id":"sim_result.final_pnl","name":"final_pnl","kind":"property","signature":"final_pnl -> float","returns":"float","responsibility":"read final marked-to-market PnL","qualified_name":"exchange.simulation.SimResult.final_pnl"},{"id":"sim_result.max_inventory","name":"max_inventory","kind":"property","signature":"max_inventory -> float","returns":"float","responsibility":"read maximum absolute simulated inventory","qualified_name":"exchange.simulation.SimResult.max_inventory"}],"routes":{"LIVE":["l13-challenge","l13-business-and-risk","l13-mm-simulator","l13-quotes","l13-bridge"],"REQUIRED":["l13-quiz"],"OPTIONAL":[]},"objectives":[{"id":"l13-explain-liquidity-provision","route":"LIVE","concepts":["market_making.liquidity_provision","market_making.quotes","market_making.adverse_selection"],"apis":["market_maker.constructor","market_maker.half_spread","market_maker.inventory","market_maker.inventory_skew","market_maker.quotes","mm_simulation.constructor","mm_simulation.run","sim_result.type","sim_result.final_pnl","sim_result.max_inventory"],"notation":[]},{"id":"l13-control-inventory","route":"LIVE","concepts":["inventory.risk","inventory.skew","market_making.heuristic_reservation_price"],"apis":["market_maker.inventory","market_maker.reservation_price"],"notation":["notation.inventory","notation.heuristic_reservation"]},{"id":"l13-prepare-risk-and-fills","route":"LIVE","concepts":["market_making.cara_utility","market_making.fill_intensity"],"apis":[],"notation":["notation.cara_utility","notation.fill_intensity"]},{"id":"l13-inspect-pnl-path","route":"REQUIRED","concepts":["market_making.quotes"],"apis":["sim_result.pnl"],"notation":["notation.equity"]}],"load":{"live_presentation_minutes":20,"guided_minutes":20,"required_autonomous_minutes":19,"optional_minutes":0,"overflow_policy":"explicit-route-plan"},"scenes":[{"id":"l13-challenge","dom_id":"s0","type":"hero-challenge","route":"LIVE","layout":"focus","concepts":["market_making.liquidity_provision"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l13-business-and-risk","dom_id":"s1","type":"code-state","route":"LIVE","layout":"split-42-58","concepts":["market_making.quotes","market_making.adverse_selection","inventory.risk","inventory.skew"],"duration_minutes":8,"stages":[{"id":"round-trip","route":"LIVE","dom_stage":0},{"id":"one-way-fills","route":"LIVE","dom_stage":1},{"id":"adverse-selection","route":"LIVE","dom_stage":2},{"id":"skew","route":"LIVE","dom_stage":3},{"id":"tradeoff","route":"LIVE","dom_stage":4}]},{"id":"l13-mm-simulator","dom_id":"s2","type":"concept-simulator","route":"LIVE","layout":"split-45-55","concepts":["inventory.risk","inventory.skew"],"duration_minutes":4,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l13-quotes","dom_id":"s3","type":"guided-exercise","route":"LIVE","layout":"split-50-50","concepts":["market_making.heuristic_reservation_price","market_making.quotes","market_making.cara_utility","market_making.fill_intensity"],"duration_minutes":4,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l13-quiz","dom_id":"s4","type":"diagnostic-quiz","route":"REQUIRED","layout":"focus","concepts":["inventory.risk","inventory.skew","market_making.adverse_selection","market_making.cara_utility","market_making.fill_intensity"],"duration_minutes":8,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l13-bridge","dom_id":"s5","type":"bridge","route":"LIVE","layout":"focus","concepts":["market_making.heuristic_reservation_price"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]}],"bridge":{"target_lesson":14,"known":{"concepts":["market_making.heuristic_reservation_price","inventory.risk","inventory.skew","market_making.cara_utility","market_making.fill_intensity"],"apis":["market_maker.reservation_price","market_maker.quotes"],"notation":["notation.heuristic_reservation"]},"limitation":"Un skew ajustado a mano no conecta de forma explícita volatilidad, horizonte e intensidad de fills.","need":"Avellaneda–Stoikov da parámetros interpretables al centro y a la anchura."},"api_transitions":[],"package_checks":[{"path":"13-market-making-intro/exercises/exchange/book.py","class":"Level","members":{"__init__":{"api":"level.constructor","kind":"constructor","parameters":[{"name":"price","kind":"positional_or_keyword","annotation":"float"},{"name":"size","kind":"positional_or_keyword","annotation":"float"}],"returns":"Level"}}},{"path":"13-market-making-intro/exercises/exchange/book.py","class":"OrderBook","members":{"__init__":{"api":"orderbook.constructor","kind":"constructor","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"bids","kind":"positional_or_keyword","annotation":"list[Level]"},{"name":"asks","kind":"positional_or_keyword","annotation":"list[Level]"}],"returns":"OrderBook"},"mid":{"api":"orderbook.mid","kind":"property","parameters":[],"returns":"float | None"}}},{"path":"13-market-making-intro/exercises/exchange/strategy.py","class":"NewOrder","members":{"__init__":{"api":"new_order.constructor","kind":"constructor","parameters":[{"name":"order","kind":"positional_or_keyword","annotation":"Order"}],"returns":"NewOrder"}}},{"path":"13-market-making-intro/exercises/exchange/strategy.py","class":"Strategy","members":{"on_book_update":{"api":"strategy.on_book_update","kind":"method","parameters":[{"name":"book","kind":"positional_or_keyword","annotation":"OrderBook"}],"returns":"list[Action]"},"on_fill":{"api":"strategy.on_fill","kind":"method","parameters":[{"name":"fill","kind":"positional_or_keyword","annotation":"Fill"}],"returns":"None"}}},{"path":"13-market-making-intro/exercises/exchange/strategies/market_maker.py","class":"MarketMaker","members":{"__init__":{"api":"market_maker.constructor","kind":"constructor","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"quote_size","kind":"positional_or_keyword","annotation":"float","default":"0.01"},{"name":"half_spread","kind":"positional_or_keyword","annotation":"float","default":"5.0"},{"name":"inventory_skew","kind":"positional_or_keyword","annotation":"float","default":"2.0"}],"returns":"MarketMaker"},"inventory":{"api":"market_maker.inventory","kind":"property","parameters":[],"returns":"float"},"half_spread":{"api":"market_maker.half_spread","kind":"attribute","parameters":[],"returns":"float"},"inventory_skew":{"api":"market_maker.inventory_skew","kind":"attribute","parameters":[],"returns":"float"},"reservation_price":{"api":"market_maker.reservation_price","kind":"method","parameters":[{"name":"mid","kind":"positional_or_keyword","annotation":"float"}],"returns":"float"},"quotes":{"api":"market_maker.quotes","kind":"method","parameters":[{"name":"book","kind":"positional_or_keyword","annotation":"OrderBook"}],"returns":"tuple[float, float]"}}},{"path":"13-market-making-intro/exercises/exchange/simulation.py","class":"MMSimulation","members":{"__init__":{"api":"mm_simulation.constructor","kind":"constructor","parameters":[{"name":"strategy","kind":"positional_or_keyword","annotation":"MarketMaker"},{"name":"s0","kind":"positional_or_keyword","annotation":"float","default":"100.0"},{"name":"sigma","kind":"positional_or_keyword","annotation":"float","default":"0.5"},{"name":"steps","kind":"positional_or_keyword","annotation":"int","default":"500"},{"name":"A","kind":"positional_or_keyword","annotation":"float","default":"1.0"},{"name":"kappa","kind":"positional_or_keyword","annotation":"float","default":"1.5"},{"name":"seed","kind":"positional_or_keyword","annotation":"int","default":"42"}],"returns":"MMSimulation"},"run":{"api":"mm_simulation.run","kind":"method","parameters":[],"returns":"SimResult"}}},{"path":"13-market-making-intro/exercises/exchange/simulation.py","class":"SimResult","members":{"pnl":{"api":"sim_result.pnl","kind":"attribute","parameters":[],"returns":"list[float]"},"final_pnl":{"api":"sim_result.final_pnl","kind":"property","parameters":[],"returns":"float"},"max_inventory":{"api":"sim_result.max_inventory","kind":"property","parameters":[],"returns":"float"}}}],"symbol_checks":[{"path":"13-market-making-intro/exercises/exchange/simulation.py","symbol":"SimResult","api":"sim_result.type","kind":"type","returns":"SimResult"}],"used_later":{"concepts":["inventory.risk","inventory.skew","market_making.cara_utility","market_making.fill_intensity","market_making.heuristic_reservation_price"],"apis":["market_maker.constructor","market_maker.half_spread","market_maker.inventory","market_maker.inventory_skew","market_maker.quotes","market_maker.reservation_price","mm_simulation.constructor","mm_simulation.run","sim_result.final_pnl","sim_result.max_inventory"],"notation":["notation.cara_utility","notation.fill_intensity","notation.heuristic_reservation","notation.inventory"]}}</script>
+<script type="text/plain" id="guion-src"># Guion — Clase 13: Market making — Intro
+
+**Idea central:** El market maker gana el spread, pero su enemigo es el inventario: cotiza para volver a plano.
+
+**Formato:** documento interactivo (`market-making-intro-doc.html`), autocontenido y sin internet. Tú haces scroll y narras. Regla de la casa: **"lo cian se toca"**.
+
+Estructura: hero/reto (2 min) → scrollytelling (~7 min, scroll lento: cada parada es una idea) → simulador estrella (cede el teclado) → secciones de construcción (con gates de predicción: exige la predicción antes del ▶) → quiz (diagnóstico) → mapa del paquete + puente.
+
+## Los bloques conceptuales
+
+
+### 1. De dónde sale el PnL
+
+- **Qué decir:** Compras en el bid, vendes en el ask, te quedas el spread. Si el flujo es equilibrado, ganas en cada vuelta.
+
+### 2. Riesgo de inventario y adverse selection
+
+- **Qué decir:** Si solo te compran o solo te venden, acumulas posición justo cuando el mercado va en tu contra. Eso es adverse selection.
+
+### 3. Skew por inventario
+
+- **Qué decir:** Cuando estás largo, baja tus dos cotizaciones para que te compren menos y te vendan más, y vuelvas a plano.
+
+### 4. Puente LIVE a L14: gamma y kappa
+
+- **Qué decir:** CARA da significado a gamma como aversión al riesgo. La intensidad lambda(delta)=A*exp(-kappa*delta) explica por qué alejar una quote reduce sus fills y qué controla kappa. L13 fija estas dos intuiciones sin exponer la clase ni las fórmulas de L14.
+
+## Cierre
+- Recoge la idea central sobre el mapa del paquete y manda al notebook de construcción; presenta el gimnasio (dosis mínima declarada).
+</script>
+<script>const DOC_DATA={"skew":{"mid":[99.998,100.013,100.008,100.011,99.994,99.972,99.984,99.951,99.96,99.965,99.907,99.893,99.912,99.889,99.904,99.912,99.901,99.912,99.929,99.961,99.929,99.918,99.91,99.927,99.914,99.895,99.879,99.873,99.899,99.899,99.905,99.883,99.926,99.918,99.915,99.947,99.959,99.947,99.937,99.968,99.973,99.946,99.976,99.947,99.969,99.982,99.954,99.959,99.924,99.915,99.89,99.9,99.902,99.918,99.923,99.917,99.943,99.932,99.951,99.965,99.975,99.974,99.983,100.006,99.964,99.98,100.03,100.02,100.013,100.018,99.995,100.002,100.013,100.028,100.056,100.066,100.079,100.086,100.099,100.088,100.036,100.029,100.02,100.003,100.078,100.077,100.111,100.079,100.029,99.986,99.959,99.914,99.909,99.94,99.891,99.895,99.933,99.934,99.931,99.932,99.947,99.922,99.935,99.892,99.901,99.855,99.896,99.85,99.824,99.869,99.872,99.861,99.843,99.847,99.826,99.866,99.893,99.89,99.907,99.903,99.882,99.865,99.916,99.917,99.911,99.918,99.914,99.895,99.912,99.928,99.92,99.946,99.932,99.912,99.916,99.902,99.918,99.884,99.885,99.91,99.922,99.955,99.955,99.916,99.909,99.908,99.876,99.818,99.813,99.787,99.77,99.772,99.76,99.747,99.735,99.732,99.709,99.724,99.694,99.677,99.655,99.685,99.656,99.647,99.63,99.658,99.655,99.651,99.667,99.686,99.688,99.666,99.694,99.697,99.675,99.645,99.668,99.692,99.707,99.733,99.737,99.741,99.739,99.73,99.748,99.723,99.704,99.713,99.758,99.793,99.787,99.73,99.696,99.711,99.723,99.712,99.72,99.709,99.703,99.686,99.648,99.651,99.664,99.673,99.65,99.645,99.645,99.657,99.663,99.677,99.675,99.685,99.668,99.664,99.681,99.662,99.665,99.672,99.7,99.714,99.725,99.725,99.701,99.697,99.675,99.654,99.647,99.636,99.62,99.61,99.591,99.544,99.519,99.531,99.541,99.558,99.545,99.513,99.536,99.541,99.557,99.531,99.568,99.577,99.55,99.534,99.512,99.474,99.485,99.459,99.437,99.452,99.46,99.479,99.431,99.415,99.402,99.392,99.441,99.439,99.433,99.407,99.386,99.379,99.373,99.412,99.408,99.426,99.406,99.401,99.414,99.446,99.445,99.41,99.436,99.433,99.45,99.433,99.426,99.415,99.389,99.354,99.347,99.31,99.377,99.341,99.358,99.34,99.334,99.355,99.36,99.367,99.383,99.402,99.43,99.41,99.395,99.377,99.361,99.362,99.395,99.39,99.42,99.429,99.412,99.399,99.376,99.341,99.313,99.324,99.329,99.34,99.348,99.333,99.327,99.337,99.326,99.265,99.292,99.295,99.318,99.27,99.224,99.206,99.198,99.22,99.258,99.285,99.307,99.299,99.276,99.278,99.32,99.306,99.292,99.31,99.293,99.266,99.286,99.306,99.32,99.306,99.313,99.322,99.361,99.365,99.364,99.336,99.357,99.374,99.349,99.346,99.336,99.312,99.328,99.335,99.311,99.307,99.284,99.253,99.24,99.261,99.252,99.261,99.291,99.312,99.307,99.317,99.306,99.248,99.239,99.226,99.19,99.172,99.168,99.164,99.159,99.14,99.13,99.137,99.12,99.129,99.136,99.14,99.126,99.104,99.088,99.095,99.071,99.09,99.089,99.109,99.102,99.076,99.081,99.082,99.076,99.053,99.022,98.994,98.971,98.956,98.969,98.992,98.987,98.946,98.915,98.893,98.894,98.856,98.824,98.793,98.787,98.804,98.844,98.858,98.833,98.832,98.844,98.814,98.852,98.881,98.881,98.905,98.901,98.923,98.932,98.936,98.974,98.949,98.983,98.976,98.948,98.975,98.964,98.939,98.946,98.96,98.998,99.018,99.038,99.043,99.062,99.028,99.021,99.006,98.987,98.983,99.044,99.023,99.063,99.055,99.075,99.054,99.056,99.038,99.042,99.066,99.073,99.145,99.121,99.089,99.112,99.139,99.153,99.129,99.127,99.133,99.158,99.141,99.113,99.127,99.135,99.134,99.114,99.13,99.135,99.115,99.112,99.118,99.084,99.092,99.074,99.079,99.012,99.005,98.981,99.011,99.04,99.016,98.965,98.966,98.933,98.908,98.897,98.926,98.94,98.925,98.953,98.968],"inv":[-0.1,-0.1,-0.2,-0.1,-0.1,0.0,-0.1,-0.1,-0.1,-0.1,-0.1,0.0,0.0,-0.1,0.0,0.0,0.0,0.1,0.1,0.1,0.1,0.1,0.1,0.2,0.1,0.1,0.1,0.1,0.0,0.0,0.1,0.1,0.1,0.2,0.1,0.1,0.1,0.0,0.0,-0.1,-0.1,0.0,0.1,0.0,0.0,0.1,0.0,0.1,0.0,0.0,0.0,0.0,0.1,0.2,0.2,0.2,0.1,0.1,0.0,0.0,0.0,-0.1,-0.2,-0.1,0.0,-0.1,-0.1,-0.2,-0.1,0.0,0.1,0.1,0.1,0.1,0.1,0.1,0.2,0.2,0.1,0.1,0.1,0.2,0.1,0.1,0.2,0.2,0.2,0.1,0.1,0.0,-0.1,-0.1,0.0,-0.1,-0.2,-0.3,-0.2,-0.2,-0.2,-0.1,-0.1,-0.1,0.0,-0.1,-0.1,0.0,0.1,0.1,0.2,0.2,0.1,0.1,0.2,0.1,0.1,0.0,0.0,-0.1,-0.2,-0.1,-0.1,0.0,0.1,0.1,0.1,0.0,0.1,0.0,-0.1,-0.1,-0.1,0.0,0.0,-0.1,-0.1,0.0,-0.1,-0.2,-0.2,-0.3,-0.2,-0.1,-0.2,-0.1,0.0,0.1,0.1,0.1,0.1,0.1,0.1,0.2,0.1,0.1,0.0,0.1,0.0,-0.1,0.0,0.0,-0.1,-0.1,0.0,0.0,-0.1,-0.1,-0.2,-0.1,0.0,0.1,0.1,0.1,0.1,0.0,0.0,-0.1,-0.1,-0.2,-0.2,-0.3,-0.3,-0.2,-0.2,-0.2,-0.1,0.0,0.0,-0.1,-0.1,-0.1,-0.1,0.0,0.0,0.1,0.0,0.0,-0.1,0.0,0.1,0.2,0.3,0.2,0.2,0.1,0.1,0.0,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.2,-0.2,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.2,-0.1,-0.1,-0.1,-0.1,-0.1,0.0,0.1,0.1,0.1,0.1,0.1,0.0,0.0,0.0,0.0,-0.1,-0.1,0.0,0.0,-0.1,-0.1,-0.2,-0.2,-0.1,0.0,0.1,0.0,0.1,0.1,0.0,0.0,-0.1,-0.1,0.0,0.1,0.0,-0.1,-0.1,0.0,-0.1,-0.1,-0.1,0.0,0.0,0.0,-0.1,-0.1,-0.1,-0.2,-0.3,-0.3,-0.3,-0.2,-0.2,-0.1,-0.1,-0.1,0.0,0.0,-0.1,-0.2,-0.1,-0.1,0.0,0.0,0.1,0.2,0.2,0.2,0.2,0.1,0.2,0.2,0.2,0.2,0.2,0.2,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.0,-0.1,0.0,0.0,0.0,0.0,0.0,-0.1,-0.1,-0.1,0.0,0.0,0.0,0.0,0.1,0.1,0.1,0.2,0.1,0.2,0.2,0.1,0.0,-0.1,0.0,0.1,0.1,0.1,0.1,0.0,-0.1,0.0,0.0,0.1,0.2,0.1,0.0,0.0,0.0,0.0,0.0,-0.1,-0.1,-0.2,-0.1,-0.2,-0.1,-0.1,0.0,-0.1,-0.1,-0.2,-0.1,-0.1,0.0,-0.1,-0.2,-0.2,-0.2,-0.1,-0.1,-0.1,-0.2,-0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.0,-0.1,-0.2,-0.1,-0.1,0.0,-0.1,-0.1,-0.2,-0.2,-0.3,-0.2,-0.2,-0.1,0.0,0.0,0.1,0.1,0.1,0.1,0.1,0.0,-0.1,0.0,0.0,0.1,0.0,-0.1,-0.1,-0.2,-0.2,-0.1,-0.1,-0.2,-0.1,0.0,0.1,0.2,0.2,0.2,0.1,0.1,0.1,0.1,0.0,0.0,0.1,0.1,0.1,0.0,0.0,0.1,0.1,0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.1,0.1,0.0,-0.1,-0.2,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,0.0,-0.1,0.0,0.1,0.0,-0.1,-0.1,-0.1,0.0,-0.1,-0.1,0.0,0.0,-0.1,-0.1,-0.1,0.0,0.0,-0.1,0.0,0.0,0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.1,0.1,0.2,0.2,0.3,0.2,0.1,0.0,0.1,0.0,0.0,0.0,-0.1,-0.1,0.0,0.0,-0.1,-0.1,-0.1,0.0],"pnl":[0.06,0.059,0.14,0.159,0.281,0.321,0.38,0.503,0.502,0.502,0.508,0.548,0.548,0.61,0.65,0.77,0.77,0.831,0.833,0.956,0.953,0.951,1.071,1.154,1.173,1.171,1.289,1.289,1.329,1.449,1.509,1.627,1.631,1.71,1.729,1.853,1.854,1.894,1.894,1.951,1.95,1.99,2.053,2.093,2.093,2.155,2.195,2.255,2.295,2.415,2.415,2.535,2.595,2.678,2.679,2.678,2.701,2.7,2.74,2.74,2.74,2.8,2.878,2.896,2.936,2.994,2.989,3.071,3.092,3.132,3.19,3.19,3.191,3.193,3.196,3.197,3.279,3.28,3.302,3.301,3.296,3.374,3.393,3.391,3.486,3.606,3.613,3.63,3.625,3.665,3.728,3.852,3.892,3.949,4.039,4.138,4.13,4.13,4.13,4.15,4.149,4.271,4.311,4.376,4.495,4.535,4.599,4.594,4.669,4.678,4.698,4.697,4.774,4.794,4.912,4.952,4.952,5.012,5.089,5.109,5.111,5.151,5.216,5.216,5.216,5.256,5.316,5.356,5.414,5.412,5.413,5.453,5.453,5.515,5.515,5.555,5.613,5.7,5.82,5.912,5.91,5.927,6.007,6.03,6.07,6.13,6.127,6.121,6.121,6.118,6.116,6.197,6.216,6.334,6.374,6.434,6.474,6.533,6.573,6.573,6.635,6.632,6.672,6.792,6.854,6.971,7.051,7.072,7.112,7.174,7.294,7.292,7.414,7.454,7.454,7.518,7.635,7.71,7.707,7.799,7.798,7.798,7.798,7.8,7.818,7.858,7.858,7.917,7.913,7.909,7.91,7.95,7.95,8.011,8.051,8.051,8.11,8.15,8.21,8.286,8.375,8.375,8.378,8.399,8.397,8.437,8.497,8.616,8.615,8.614,8.614,8.733,8.854,8.855,8.931,8.935,8.955,8.954,8.951,9.07,9.069,9.069,9.154,9.174,9.176,9.178,9.299,9.42,9.46,9.519,9.517,9.513,9.51,9.511,9.551,9.551,9.671,9.671,9.729,9.848,9.888,9.888,9.945,9.944,10.029,10.153,10.175,10.215,10.276,10.316,10.374,10.375,10.415,10.415,10.48,10.482,10.522,10.58,10.62,10.681,10.681,10.721,10.783,10.784,10.785,10.825,10.825,10.825,10.887,10.887,10.886,10.959,11.06,11.07,11.063,11.063,11.06,11.081,11.082,11.083,11.123,11.123,11.184,11.271,11.285,11.288,11.328,11.328,11.388,11.472,11.473,11.474,11.477,11.499,11.585,11.701,11.698,11.694,11.811,11.811,11.835,11.834,11.837,11.838,11.836,11.835,11.833,11.829,11.869,11.928,11.968,11.968,11.968,11.968,11.968,12.027,12.028,12.034,12.074,12.074,12.074,12.194,12.25,12.368,12.367,12.452,12.475,12.561,12.565,12.584,12.624,12.684,12.724,12.783,12.781,12.903,12.901,12.941,12.999,13.039,13.159,13.218,13.299,13.32,13.36,13.48,13.6,13.6,13.6,13.659,13.661,13.742,13.763,13.848,13.866,13.865,13.905,13.966,13.968,14.054,14.075,14.193,14.233,14.292,14.366,14.362,14.363,14.382,14.383,14.389,14.471,14.492,14.532,14.532,14.532,14.532,14.652,14.772,14.772,14.832,14.915,14.934,14.934,14.974,15.035,15.037,15.12,15.119,15.226,15.222,15.342,15.36,15.4,15.4,15.461,15.461,15.46,15.578,15.575,15.615,15.677,15.717,15.837,15.9,15.94,16.004,16.127,16.211,16.211,16.235,16.238,16.324,16.345,16.385,16.449,16.532,16.527,16.527,16.548,16.545,16.669,16.672,16.712,16.712,16.771,16.773,16.774,16.814,16.814,16.872,16.995,16.994,17.034,17.034,17.034,17.034,17.034,17.034,17.154,17.216,17.218,17.258,17.317,17.403,17.424,17.425,17.427,17.428,17.422,17.424,17.464,17.525,17.565,17.623,17.663,17.724,17.724,17.841,17.881,17.934,17.937,17.977,17.977,18.034,18.153,18.155,18.195,18.195,18.252,18.292,18.412,18.474,18.514,18.514,18.514,18.514,18.634,18.634,18.634,18.634,18.69,18.691,18.768,18.889,18.968,18.967,18.985,19.025,19.088,19.128,19.128,19.128,19.191,19.193,19.233,19.233,19.292,19.294,19.291,19.331],"nFills":364,"finalPnl":19.33,"maxInv":0.3},"noskew":{"mid":[99.998,100.013,100.008,100.011,99.994,99.972,99.984,99.951,99.96,99.965,99.907,99.893,99.912,99.889,99.904,99.912,99.901,99.912,99.929,99.961,99.929,99.918,99.91,99.927,99.914,99.895,99.879,99.873,99.899,99.899,99.905,99.883,99.926,99.918,99.915,99.947,99.959,99.947,99.937,99.968,99.973,99.946,99.976,99.947,99.969,99.982,99.954,99.959,99.924,99.915,99.89,99.9,99.902,99.918,99.923,99.917,99.943,99.932,99.951,99.965,99.975,99.974,99.983,100.006,99.964,99.98,100.03,100.02,100.013,100.018,99.995,100.002,100.013,100.028,100.056,100.066,100.079,100.086,100.099,100.088,100.036,100.029,100.02,100.003,100.078,100.077,100.111,100.079,100.029,99.986,99.959,99.914,99.909,99.94,99.891,99.895,99.933,99.934,99.931,99.932,99.947,99.922,99.935,99.892,99.901,99.855,99.896,99.85,99.824,99.869,99.872,99.861,99.843,99.847,99.826,99.866,99.893,99.89,99.907,99.903,99.882,99.865,99.916,99.917,99.911,99.918,99.914,99.895,99.912,99.928,99.92,99.946,99.932,99.912,99.916,99.902,99.918,99.884,99.885,99.91,99.922,99.955,99.955,99.916,99.909,99.908,99.876,99.818,99.813,99.787,99.77,99.772,99.76,99.747,99.735,99.732,99.709,99.724,99.694,99.677,99.655,99.685,99.656,99.647,99.63,99.658,99.655,99.651,99.667,99.686,99.688,99.666,99.694,99.697,99.675,99.645,99.668,99.692,99.707,99.733,99.737,99.741,99.739,99.73,99.748,99.723,99.704,99.713,99.758,99.793,99.787,99.73,99.696,99.711,99.723,99.712,99.72,99.709,99.703,99.686,99.648,99.651,99.664,99.673,99.65,99.645,99.645,99.657,99.663,99.677,99.675,99.685,99.668,99.664,99.681,99.662,99.665,99.672,99.7,99.714,99.725,99.725,99.701,99.697,99.675,99.654,99.647,99.636,99.62,99.61,99.591,99.544,99.519,99.531,99.541,99.558,99.545,99.513,99.536,99.541,99.557,99.531,99.568,99.577,99.55,99.534,99.512,99.474,99.485,99.459,99.437,99.452,99.46,99.479,99.431,99.415,99.402,99.392,99.441,99.439,99.433,99.407,99.386,99.379,99.373,99.412,99.408,99.426,99.406,99.401,99.414,99.446,99.445,99.41,99.436,99.433,99.45,99.433,99.426,99.415,99.389,99.354,99.347,99.31,99.377,99.341,99.358,99.34,99.334,99.355,99.36,99.367,99.383,99.402,99.43,99.41,99.395,99.377,99.361,99.362,99.395,99.39,99.42,99.429,99.412,99.399,99.376,99.341,99.313,99.324,99.329,99.34,99.348,99.333,99.327,99.337,99.326,99.265,99.292,99.295,99.318,99.27,99.224,99.206,99.198,99.22,99.258,99.285,99.307,99.299,99.276,99.278,99.32,99.306,99.292,99.31,99.293,99.266,99.286,99.306,99.32,99.306,99.313,99.322,99.361,99.365,99.364,99.336,99.357,99.374,99.349,99.346,99.336,99.312,99.328,99.335,99.311,99.307,99.284,99.253,99.24,99.261,99.252,99.261,99.291,99.312,99.307,99.317,99.306,99.248,99.239,99.226,99.19,99.172,99.168,99.164,99.159,99.14,99.13,99.137,99.12,99.129,99.136,99.14,99.126,99.104,99.088,99.095,99.071,99.09,99.089,99.109,99.102,99.076,99.081,99.082,99.076,99.053,99.022,98.994,98.971,98.956,98.969,98.992,98.987,98.946,98.915,98.893,98.894,98.856,98.824,98.793,98.787,98.804,98.844,98.858,98.833,98.832,98.844,98.814,98.852,98.881,98.881,98.905,98.901,98.923,98.932,98.936,98.974,98.949,98.983,98.976,98.948,98.975,98.964,98.939,98.946,98.96,98.998,99.018,99.038,99.043,99.062,99.028,99.021,99.006,98.987,98.983,99.044,99.023,99.063,99.055,99.075,99.054,99.056,99.038,99.042,99.066,99.073,99.145,99.121,99.089,99.112,99.139,99.153,99.129,99.127,99.133,99.158,99.141,99.113,99.127,99.135,99.134,99.114,99.13,99.135,99.115,99.112,99.118,99.084,99.092,99.074,99.079,99.012,99.005,98.981,99.011,99.04,99.016,98.965,98.966,98.933,98.908,98.897,98.926,98.94,98.925,98.953,98.968],"inv":[-0.1,-0.1,-0.2,-0.1,-0.1,0.0,-0.1,-0.1,-0.2,-0.2,-0.2,-0.2,-0.2,-0.3,-0.3,-0.3,-0.3,-0.2,-0.2,-0.1,-0.1,-0.1,-0.1,-0.0,-0.1,-0.1,-0.1,-0.1,-0.2,-0.2,-0.1,-0.0,-0.0,0.1,0.1,0.2,0.2,0.1,0.1,-0.0,-0.0,-0.0,0.1,0.1,0.1,0.2,0.1,0.2,0.1,0.1,0.1,0.1,0.2,0.3,0.4,0.5,0.5,0.5,0.4,0.4,0.4,0.3,0.2,0.1,0.2,0.1,0.1,0.0,-0.1,-0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.1,0.1,0.1,0.1,0.1,0.2,0.3,0.4,0.5,0.5,0.6,0.5,0.5,0.4,0.3,0.3,0.4,0.3,0.2,0.1,0.0,-0.1,-0.1,0.0,0.0,0.0,0.1,0.0,0.0,0.0,0.1,0.1,0.2,0.2,0.1,0.1,0.2,0.1,0.1,0.0,0.0,-0.1,-0.2,-0.1,-0.2,-0.2,-0.1,-0.1,-0.1,-0.2,-0.1,0.0,-0.1,-0.1,-0.1,-0.1,-0.1,-0.2,-0.2,-0.1,-0.2,-0.3,-0.3,-0.4,-0.4,-0.5,-0.6,-0.5,-0.4,-0.3,-0.3,-0.3,-0.3,-0.3,-0.3,-0.2,-0.2,-0.2,-0.2,-0.1,-0.2,-0.3,-0.3,-0.3,-0.4,-0.4,-0.4,-0.4,-0.5,-0.6,-0.7,-0.7,-0.6,-0.5,-0.5,-0.5,-0.5,-0.5,-0.5,-0.6,-0.6,-0.7,-0.7,-0.8,-0.8,-0.7,-0.7,-0.7,-0.6,-0.5,-0.5,-0.6,-0.6,-0.6,-0.6,-0.5,-0.5,-0.4,-0.5,-0.5,-0.6,-0.5,-0.4,-0.3,-0.2,-0.2,-0.2,-0.3,-0.3,-0.4,-0.5,-0.5,-0.5,-0.5,-0.5,-0.5,-0.5,-0.5,-0.6,-0.6,-0.6,-0.6,-0.6,-0.6,-0.7,-0.7,-0.8,-0.8,-0.9,-0.9,-0.9,-0.9,-0.8,-0.7,-0.7,-0.7,-0.7,-0.7,-0.8,-0.8,-0.8,-0.8,-0.9,-0.9,-0.8,-0.8,-0.9,-0.9,-1.0,-1.1,-1.2,-1.1,-1.0,-1.1,-1.0,-1.0,-1.0,-1.0,-1.1,-1.1,-1.0,-0.9,-1.0,-1.1,-1.1,-1.0,-1.1,-1.1,-1.1,-1.1,-1.1,-1.1,-1.2,-1.2,-1.3,-1.4,-1.5,-1.5,-1.5,-1.4,-1.4,-1.4,-1.4,-1.4,-1.3,-1.3,-1.4,-1.5,-1.4,-1.4,-1.3,-1.3,-1.2,-1.1,-1.1,-1.1,-1.0,-1.0,-0.9,-0.8,-0.8,-0.7,-0.6,-0.6,-0.7,-0.6,-0.6,-0.6,-0.5,-0.5,-0.5,-0.5,-0.6,-0.7,-0.6,-0.6,-0.6,-0.6,-0.6,-0.7,-0.7,-0.7,-0.7,-0.7,-0.7,-0.7,-0.6,-0.6,-0.6,-0.5,-0.4,-0.3,-0.3,-0.4,-0.5,-0.6,-0.6,-0.5,-0.5,-0.5,-0.5,-0.6,-0.7,-0.6,-0.6,-0.5,-0.4,-0.4,-0.5,-0.5,-0.5,-0.5,-0.5,-0.6,-0.6,-0.7,-0.7,-0.8,-0.7,-0.7,-0.6,-0.7,-0.7,-0.8,-0.9,-1.0,-1.0,-1.1,-1.2,-1.2,-1.2,-1.2,-1.2,-1.2,-1.3,-1.2,-1.2,-1.2,-1.2,-1.2,-1.2,-1.2,-1.2,-1.3,-1.4,-1.4,-1.4,-1.3,-1.4,-1.5,-1.6,-1.6,-1.7,-1.7,-1.7,-1.6,-1.5,-1.5,-1.4,-1.4,-1.4,-1.4,-1.3,-1.4,-1.5,-1.6,-1.6,-1.5,-1.5,-1.6,-1.6,-1.7,-1.7,-1.7,-1.7,-1.8,-1.7,-1.6,-1.5,-1.4,-1.4,-1.4,-1.4,-1.3,-1.3,-1.2,-1.3,-1.3,-1.2,-1.1,-1.1,-1.2,-1.2,-1.1,-1.0,-1.0,-1.1,-1.1,-1.1,-1.1,-1.1,-1.1,-1.1,-1.0,-1.0,-1.1,-1.2,-1.3,-1.3,-1.4,-1.4,-1.4,-1.4,-1.5,-1.5,-1.6,-1.5,-1.4,-1.5,-1.6,-1.6,-1.7,-1.6,-1.7,-1.7,-1.7,-1.7,-1.8,-1.8,-1.8,-1.8,-1.8,-1.9,-1.8,-1.8,-1.7,-1.8,-1.8,-1.8,-1.8,-1.8,-1.8,-1.8,-1.8,-1.7,-1.7,-1.6,-1.6,-1.5,-1.6,-1.7,-1.8,-1.7,-1.7,-1.7,-1.7,-1.8,-1.9,-1.8,-1.8,-1.9,-2.0,-2.0,-2.0],"pnl":[0.06,0.059,0.12,0.179,0.301,0.361,0.42,0.543,0.601,0.6,0.612,0.615,0.611,0.678,0.793,0.911,0.914,0.972,0.969,1.025,1.029,1.03,1.15,1.21,1.272,1.274,1.395,1.396,1.45,1.571,1.63,1.69,1.69,1.749,1.749,1.815,1.818,1.876,1.875,1.935,1.935,2.055,2.119,2.236,2.238,2.3,2.358,2.419,2.475,2.594,2.592,2.713,2.773,2.838,2.9,2.957,3.09,3.084,3.152,3.158,3.162,3.221,3.283,3.345,3.397,3.459,3.464,3.524,3.584,3.584,3.644,3.644,3.644,3.644,3.644,3.644,3.705,3.706,3.827,3.826,3.821,3.879,3.937,3.99,4.087,4.207,4.287,4.331,4.306,4.349,4.401,4.507,4.566,4.635,4.685,4.745,4.805,4.865,4.865,4.925,4.925,5.045,5.107,5.167,5.287,5.287,5.351,5.346,5.401,5.41,5.47,5.469,5.526,5.586,5.704,5.764,5.764,5.824,5.881,5.941,6.005,6.009,6.064,6.064,6.064,6.123,6.183,6.243,6.302,6.3,6.301,6.418,6.42,6.484,6.483,6.544,6.601,6.671,6.791,6.841,6.836,6.88,6.94,7.019,7.082,7.142,7.152,7.169,7.171,7.179,7.184,7.243,7.246,7.368,7.491,7.551,7.616,7.671,7.68,7.685,7.754,7.742,7.754,7.877,7.946,7.989,8.051,8.054,8.104,8.155,8.274,8.285,8.391,8.389,8.4,8.478,8.584,8.628,8.617,8.656,8.653,8.71,8.712,8.718,8.767,8.839,8.849,8.903,8.877,8.856,8.859,8.948,8.965,9.019,9.073,9.078,9.133,9.199,9.261,9.326,9.394,9.393,9.391,9.448,9.455,9.517,9.577,9.691,9.688,9.681,9.682,9.797,9.926,9.928,9.977,9.989,9.987,9.983,9.966,10.077,10.13,10.13,10.209,10.212,10.292,10.311,10.437,10.567,10.64,10.707,10.72,10.753,10.771,10.762,10.814,10.801,10.931,10.957,10.996,11.111,11.159,11.179,11.206,11.198,11.285,11.363,11.448,11.551,11.6,11.689,11.771,11.756,11.748,11.728,11.842,11.859,11.932,12.001,12.012,12.074,12.08,12.167,12.249,12.257,12.264,12.221,12.226,12.205,12.289,12.295,12.338,12.353,12.415,12.468,12.429,12.493,12.469,12.493,12.504,12.519,12.612,12.658,12.728,12.844,12.809,12.86,12.898,12.921,12.988,13.025,13.02,13.011,13.056,13.156,13.192,13.267,13.28,13.352,13.422,13.421,13.458,13.521,13.503,13.498,13.566,13.573,13.584,13.602,13.678,13.731,13.788,13.781,13.776,13.785,13.789,13.842,13.849,13.893,13.873,13.872,13.855,14.009,14.096,14.227,14.232,14.281,14.326,14.378,14.371,14.434,14.506,14.565,14.54,14.606,14.613,14.725,14.733,14.809,14.855,14.903,15.015,15.082,15.139,15.255,15.296,15.414,15.535,15.548,15.538,15.588,15.603,15.665,15.672,15.751,15.8,15.795,15.869,15.932,15.948,16.033,16.105,16.144,16.153,16.203,16.227,16.202,16.208,16.196,16.209,16.278,16.35,16.426,16.469,16.491,16.495,16.5,16.627,16.769,16.781,16.831,16.916,16.903,16.894,16.949,17.028,17.121,17.207,17.195,17.295,17.384,17.505,17.533,17.605,17.642,17.696,17.695,17.703,17.855,17.955,18.055,18.15,18.233,18.332,18.357,18.366,18.491,18.659,18.758,18.756,18.82,18.874,18.991,19.061,19.094,19.094,19.134,19.169,19.17,19.154,19.253,19.323,19.348,19.408,19.377,19.442,19.478,19.468,19.523,19.478,19.565,19.591,19.598,19.69,19.659,19.671,19.699,19.691,19.676,19.754,19.794,19.774,19.829,19.866,19.97,19.979,20.06,20.086,20.092,20.007,20.098,20.038,20.112,20.142,20.23,20.288,20.376,20.369,20.388,20.438,20.376,20.415,20.59,20.552,20.563,20.658,20.701,20.825,20.813,20.826,20.916,21.087,21.124,21.169,21.172,21.207,21.178,21.289,21.325,21.331,21.32,21.437,21.425,21.513,21.625,21.786,21.856,21.958,21.963,21.974,22.015,22.101,22.1,22.219,22.327,22.406,22.355,22.387,22.478,22.421,22.392],"nFills":358,"finalPnl":22.39,"maxInv":2.0},"arrivalIntensity":520.0};</script>
+<script type="application/json" id="pedagogy-contract">{"lesson":13,"status":"contract-strict","title":"Market making — Spread, inventario y skew","delivery":"lesson","source_path":"framework/_build/docs/13_body.html","requires":{"concepts":["framework.strategy_contract","microstructure.spread_cost","metrics.inventory_exposure","architecture.execution_feedback","python.fstring","python.generator_expression"],"apis":["level.constructor","orderbook.constructor","orderbook.mid","new_order.constructor","strategy.on_book_update","strategy.on_fill"],"notation":["notation.spread","notation.equity"]},"requirement_routes":{"concepts":{"framework.strategy_contract":"LIVE","microstructure.spread_cost":"LIVE","metrics.inventory_exposure":"LIVE","architecture.execution_feedback":"LIVE","python.fstring":"REQUIRED","python.generator_expression":"REQUIRED"},"apis":{"level.constructor":"LIVE","orderbook.constructor":"LIVE","orderbook.mid":"LIVE","new_order.constructor":"LIVE","strategy.on_book_update":"LIVE","strategy.on_fill":"LIVE"},"notation":{"notation.spread":"LIVE","notation.equity":"LIVE"}},"introduces":{"concepts":[{"id":"market_making.liquidity_provision","importance":"major","route":"LIVE"},{"id":"market_making.quotes","importance":"major","route":"LIVE"},{"id":"market_making.adverse_selection","importance":"major","route":"LIVE"},{"id":"inventory.risk","importance":"major","route":"LIVE"},{"id":"inventory.skew","importance":"major","route":"LIVE"},{"id":"market_making.heuristic_reservation_price","importance":"major","route":"LIVE"},{"id":"market_making.cara_utility","importance":"supporting","route":"LIVE"},{"id":"market_making.fill_intensity","importance":"supporting","route":"LIVE"}],"apis":["market_maker.constructor","market_maker.half_spread","market_maker.inventory","market_maker.inventory_skew","market_maker.reservation_price","market_maker.quotes","mm_simulation.constructor","mm_simulation.run","sim_result.type","sim_result.pnl","sim_result.final_pnl","sim_result.max_inventory"],"notation":["notation.inventory","notation.heuristic_reservation","notation.cara_utility","notation.fill_intensity"]},"introduction_routes":{"apis":{"market_maker.constructor":"LIVE","market_maker.half_spread":"LIVE","market_maker.inventory":"LIVE","market_maker.inventory_skew":"LIVE","market_maker.reservation_price":"LIVE","market_maker.quotes":"LIVE","mm_simulation.constructor":"LIVE","mm_simulation.run":"LIVE","sim_result.type":"LIVE","sim_result.pnl":"REQUIRED","sim_result.final_pnl":"LIVE","sim_result.max_inventory":"LIVE"},"notation":{"notation.inventory":"LIVE","notation.heuristic_reservation":"LIVE","notation.cara_utility":"LIVE","notation.fill_intensity":"LIVE"}},"recalls":[{"concept":"microstructure.spread_cost","introduced_in":5,"mapping":{"before":"Un taker pierde el spread en una ida y vuelta.","now":"Un provider intenta cobrar ese spread."}},{"concept":"architecture.execution_feedback","introduced_in":10,"mapping":{"before":"on_fill cierra el bucle de feedback.","now":"El mismo hook actualiza el inventario."}}],"api_surface":[{"id":"level.constructor","name":"Level","kind":"constructor","signature":"Level(price: float, size: float) -> Level","returns":"Level","responsibility":"construct one visible price level","qualified_name":"exchange.book.Level"},{"id":"orderbook.constructor","name":"OrderBook","kind":"constructor","signature":"OrderBook(symbol: str, bids: list[Level], asks: list[Level]) -> OrderBook","returns":"OrderBook","responsibility":"construct a sorted two-sided book","qualified_name":"exchange.book.OrderBook"},{"id":"orderbook.mid","name":"mid","kind":"property","signature":"mid -> float | None","returns":"float | None","responsibility":"compute the top-of-book midpoint","qualified_name":"exchange.book.OrderBook.mid"},{"id":"new_order.constructor","name":"NewOrder","kind":"constructor","signature":"NewOrder(order: Order) -> NewOrder","returns":"NewOrder","responsibility":"wrap an order as a typed strategy action","qualified_name":"exchange.strategy.NewOrder"},{"id":"strategy.on_book_update","name":"on_book_update","kind":"method","signature":"on_book_update(book: OrderBook) -> list[Action]","returns":"list[Action]","responsibility":"propose typed actions from market state","qualified_name":"exchange.strategy.Strategy.on_book_update"},{"id":"strategy.on_fill","name":"on_fill","kind":"method","signature":"on_fill(fill: Fill) -> None","returns":"None","responsibility":"receive execution feedback","qualified_name":"exchange.strategy.Strategy.on_fill"},{"id":"market_maker.constructor","name":"MarketMaker","kind":"constructor","signature":"MarketMaker(symbol: str, quote_size: float = 0.01, half_spread: float = 5.0, inventory_skew: float = 2.0) -> MarketMaker","returns":"MarketMaker","responsibility":"configure the heuristic market maker","qualified_name":"exchange.strategies.market_maker.MarketMaker"},{"id":"market_maker.inventory","name":"inventory","kind":"property","signature":"inventory -> float","returns":"float","responsibility":"read or set the strategy inventory through its public contract","qualified_name":"exchange.strategies.market_maker.MarketMaker.inventory"},{"id":"market_maker.half_spread","name":"half_spread","kind":"attribute","signature":"half_spread: float","returns":"float","responsibility":"configure half the quoted width around the reservation price","qualified_name":"exchange.strategies.market_maker.MarketMaker.half_spread"},{"id":"market_maker.inventory_skew","name":"inventory_skew","kind":"attribute","signature":"inventory_skew: float","returns":"float","responsibility":"configure the heuristic inventory correction strength","qualified_name":"exchange.strategies.market_maker.MarketMaker.inventory_skew"},{"id":"market_maker.reservation_price","name":"reservation_price","kind":"method","signature":"reservation_price(mid: float) -> float","returns":"float","responsibility":"shift the quote center using inventory","qualified_name":"exchange.strategies.market_maker.MarketMaker.reservation_price"},{"id":"market_maker.quotes","name":"quotes","kind":"method","signature":"quotes(book: OrderBook) -> tuple[float, float]","returns":"tuple[float, float]","responsibility":"produce bid and ask quotes","qualified_name":"exchange.strategies.market_maker.MarketMaker.quotes"},{"id":"mm_simulation.constructor","name":"MMSimulation","kind":"constructor","signature":"MMSimulation(strategy: MarketMaker, s0: float = 100.0, sigma: float = 0.5, steps: int = 500, A: float = 1.0, kappa: float = 1.5, seed: int = 42) -> MMSimulation","returns":"MMSimulation","responsibility":"configure a reproducible fill-intensity simulation whose sigma is full-horizon price volatility","qualified_name":"exchange.simulation.MMSimulation"},{"id":"mm_simulation.run","name":"run","kind":"method","signature":"run() -> SimResult","returns":"SimResult","responsibility":"simulate quotes, fills, inventory, and marked PnL","qualified_name":"exchange.simulation.MMSimulation.run"},{"id":"sim_result.type","name":"SimResult","kind":"type","signature":"SimResult: type","returns":"SimResult","responsibility":"name the structured market-making simulation result","qualified_name":"exchange.simulation.SimResult"},{"id":"sim_result.pnl","name":"pnl","kind":"attribute","signature":"pnl: list[float]","returns":"list[float]","responsibility":"expose the marked-to-market PnL path","qualified_name":"exchange.simulation.SimResult.pnl"},{"id":"sim_result.final_pnl","name":"final_pnl","kind":"property","signature":"final_pnl -> float","returns":"float","responsibility":"read final marked-to-market PnL","qualified_name":"exchange.simulation.SimResult.final_pnl"},{"id":"sim_result.max_inventory","name":"max_inventory","kind":"property","signature":"max_inventory -> float","returns":"float","responsibility":"read maximum absolute simulated inventory","qualified_name":"exchange.simulation.SimResult.max_inventory"}],"routes":{"LIVE":["l13-challenge","l13-business-and-risk","l13-mm-simulator","l13-quotes","l13-bridge"],"REQUIRED":["l13-quiz"],"OPTIONAL":[]},"objectives":[{"id":"l13-explain-liquidity-provision","route":"LIVE","concepts":["market_making.liquidity_provision","market_making.quotes","market_making.adverse_selection"],"apis":["market_maker.constructor","market_maker.half_spread","market_maker.inventory","market_maker.inventory_skew","market_maker.quotes","mm_simulation.constructor","mm_simulation.run","sim_result.type","sim_result.final_pnl","sim_result.max_inventory"],"notation":[]},{"id":"l13-control-inventory","route":"LIVE","concepts":["inventory.risk","inventory.skew","market_making.heuristic_reservation_price"],"apis":["market_maker.inventory","market_maker.reservation_price"],"notation":["notation.inventory","notation.heuristic_reservation"]},{"id":"l13-prepare-risk-and-fills","route":"LIVE","concepts":["market_making.cara_utility","market_making.fill_intensity"],"apis":[],"notation":["notation.cara_utility","notation.fill_intensity"]},{"id":"l13-inspect-pnl-path","route":"REQUIRED","concepts":["market_making.quotes"],"apis":["sim_result.pnl"],"notation":["notation.equity"]}],"load":{"live_presentation_minutes":20,"guided_minutes":20,"required_autonomous_minutes":27,"optional_minutes":0,"overflow_policy":"explicit-route-plan","autonomous_components":{"documents":[],"quizzes":[{"id":"l13-quiz","route":"REQUIRED","minutes":8}],"projects":[]}},"scenes":[{"id":"l13-challenge","dom_id":"s0","type":"hero-challenge","route":"LIVE","layout":"focus","concepts":["market_making.liquidity_provision"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l13-business-and-risk","dom_id":"s1","type":"code-state","route":"LIVE","layout":"split-42-58","concepts":["market_making.quotes","market_making.adverse_selection","inventory.risk","inventory.skew"],"duration_minutes":8,"stages":[{"id":"round-trip","route":"LIVE","dom_stage":0},{"id":"one-way-fills","route":"LIVE","dom_stage":1},{"id":"adverse-selection","route":"LIVE","dom_stage":2},{"id":"skew","route":"LIVE","dom_stage":3},{"id":"tradeoff","route":"LIVE","dom_stage":4}]},{"id":"l13-mm-simulator","dom_id":"s2","type":"concept-simulator","route":"LIVE","layout":"split-45-55","concepts":["inventory.risk","inventory.skew"],"duration_minutes":4,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l13-quotes","dom_id":"s3","type":"guided-exercise","route":"LIVE","layout":"split-50-50","concepts":["market_making.heuristic_reservation_price","market_making.quotes","market_making.cara_utility","market_making.fill_intensity"],"duration_minutes":4,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l13-quiz","dom_id":"s4","type":"diagnostic-quiz","route":"REQUIRED","layout":"focus","concepts":["inventory.risk","inventory.skew","market_making.adverse_selection","market_making.cara_utility","market_making.fill_intensity"],"duration_minutes":8,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l13-bridge","dom_id":"s5","type":"bridge","route":"LIVE","layout":"focus","concepts":["market_making.heuristic_reservation_price"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]}],"bridge":{"target_lesson":14,"known":{"concepts":["market_making.heuristic_reservation_price","inventory.risk","inventory.skew","market_making.cara_utility","market_making.fill_intensity"],"apis":["market_maker.reservation_price","market_maker.quotes"],"notation":["notation.heuristic_reservation"]},"limitation":"Un skew ajustado a mano no conecta de forma explícita volatilidad, horizonte e intensidad de fills.","need":"Avellaneda–Stoikov da parámetros interpretables al centro y a la anchura."},"api_transitions":[],"package_checks":[{"path":"13-market-making-intro/exercises/exchange/book.py","class":"Level","members":{"__init__":{"api":"level.constructor","kind":"constructor","parameters":[{"name":"price","kind":"positional_or_keyword","annotation":"float"},{"name":"size","kind":"positional_or_keyword","annotation":"float"}],"returns":"Level"}}},{"path":"13-market-making-intro/exercises/exchange/book.py","class":"OrderBook","members":{"__init__":{"api":"orderbook.constructor","kind":"constructor","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"bids","kind":"positional_or_keyword","annotation":"list[Level]"},{"name":"asks","kind":"positional_or_keyword","annotation":"list[Level]"}],"returns":"OrderBook"},"mid":{"api":"orderbook.mid","kind":"property","parameters":[],"returns":"float | None"}}},{"path":"13-market-making-intro/exercises/exchange/strategy.py","class":"NewOrder","members":{"__init__":{"api":"new_order.constructor","kind":"constructor","parameters":[{"name":"order","kind":"positional_or_keyword","annotation":"Order"}],"returns":"NewOrder"}}},{"path":"13-market-making-intro/exercises/exchange/strategy.py","class":"Strategy","members":{"on_book_update":{"api":"strategy.on_book_update","kind":"method","parameters":[{"name":"book","kind":"positional_or_keyword","annotation":"OrderBook"}],"returns":"list[Action]"},"on_fill":{"api":"strategy.on_fill","kind":"method","parameters":[{"name":"fill","kind":"positional_or_keyword","annotation":"Fill"}],"returns":"None"}}},{"path":"13-market-making-intro/exercises/exchange/strategies/market_maker.py","class":"MarketMaker","members":{"__init__":{"api":"market_maker.constructor","kind":"constructor","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"quote_size","kind":"positional_or_keyword","annotation":"float","default":"0.01"},{"name":"half_spread","kind":"positional_or_keyword","annotation":"float","default":"5.0"},{"name":"inventory_skew","kind":"positional_or_keyword","annotation":"float","default":"2.0"}],"returns":"MarketMaker"},"inventory":{"api":"market_maker.inventory","kind":"property","parameters":[],"returns":"float"},"half_spread":{"api":"market_maker.half_spread","kind":"attribute","parameters":[],"returns":"float"},"inventory_skew":{"api":"market_maker.inventory_skew","kind":"attribute","parameters":[],"returns":"float"},"reservation_price":{"api":"market_maker.reservation_price","kind":"method","parameters":[{"name":"mid","kind":"positional_or_keyword","annotation":"float"}],"returns":"float"},"quotes":{"api":"market_maker.quotes","kind":"method","parameters":[{"name":"book","kind":"positional_or_keyword","annotation":"OrderBook"}],"returns":"tuple[float, float]"}}},{"path":"13-market-making-intro/exercises/exchange/simulation.py","class":"MMSimulation","members":{"__init__":{"api":"mm_simulation.constructor","kind":"constructor","parameters":[{"name":"strategy","kind":"positional_or_keyword","annotation":"MarketMaker"},{"name":"s0","kind":"positional_or_keyword","annotation":"float","default":"100.0"},{"name":"sigma","kind":"positional_or_keyword","annotation":"float","default":"0.5"},{"name":"steps","kind":"positional_or_keyword","annotation":"int","default":"500"},{"name":"A","kind":"positional_or_keyword","annotation":"float","default":"1.0"},{"name":"kappa","kind":"positional_or_keyword","annotation":"float","default":"1.5"},{"name":"seed","kind":"positional_or_keyword","annotation":"int","default":"42"}],"returns":"MMSimulation"},"run":{"api":"mm_simulation.run","kind":"method","parameters":[],"returns":"SimResult"}}},{"path":"13-market-making-intro/exercises/exchange/simulation.py","class":"SimResult","members":{"pnl":{"api":"sim_result.pnl","kind":"attribute","parameters":[],"returns":"list[float]"},"final_pnl":{"api":"sim_result.final_pnl","kind":"property","parameters":[],"returns":"float"},"max_inventory":{"api":"sim_result.max_inventory","kind":"property","parameters":[],"returns":"float"}}}],"symbol_checks":[{"path":"13-market-making-intro/exercises/exchange/simulation.py","symbol":"SimResult","api":"sim_result.type","kind":"type","returns":"SimResult"}],"used_later":{"concepts":["inventory.risk","inventory.skew","market_making.cara_utility","market_making.fill_intensity","market_making.heuristic_reservation_price"],"apis":["market_maker.constructor","market_maker.half_spread","market_maker.inventory","market_maker.inventory_skew","market_maker.quotes","market_maker.reservation_price","mm_simulation.constructor","mm_simulation.run","sim_result.final_pnl","sim_result.max_inventory"],"notation":["notation.cara_utility","notation.fill_intensity","notation.heuristic_reservation","notation.inventory"]}}</script>
 <script>
 
 (function(){
@@ -1090,7 +1130,7 @@ bid = 98.80   ask = 100.00
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* ── mini-gráficas canvas (compartidas por los docs con datos reales) ── */
+/* ── mini-gráficas canvas (compartidas por los docs con datos reproducibles) ── */
 window.DOC=window.DOC||{};
 DOC.chart=function(canvas,seriesList,opts={}){
   const c=typeof canvas==='string'?document.querySelector(canvas):canvas;
@@ -1218,9 +1258,12 @@ DOC.save=function(patch){
   const steps=$$('.scrolly .step');
   if(!steps.length)return;
   document.addEventListener('keydown',e=>{
+    if(document.body.classList.contains('lr-modal-open'))return;
     if(document.body.classList.contains('mode-aula'))return;
     if(!['ArrowDown','ArrowUp','PageDown','PageUp'].includes(e.key))return;
     if(/INPUT|TEXTAREA|SELECT|BUTTON/.test(document.activeElement.tagName))return;
+    const scroller=document.activeElement?.closest('[data-lr-scroller="true"]');
+    if(scroller)return;
     const mid=innerHeight/2;
     let idx=0,best=1e12;
     steps.forEach((s,i)=>{const r=s.getBoundingClientRect();
@@ -1237,7 +1280,9 @@ DOC.save=function(patch){
 /* ── modo profesor: ?profe=1 abre el guion como cajón lateral ── */
 (function(){
   const srcEl=document.getElementById('guion-src');
-  if(!srcEl||!new URLSearchParams(location.search).has('profe'))return;
+  const professor=['1','true'].includes(
+    (new URLSearchParams(location.search).get('profe')||'').toLowerCase());
+  if(!srcEl||!professor)return;
   const mdlite=t=>t
     .replace(/&/g,'&amp;').replace(/</g,'&lt;')
     .replace(/^### (.*)$/gm,'<h4>$1</h4>')
@@ -1250,16 +1295,54 @@ DOC.save=function(patch){
     .replace(/\n{2,}/g,'</p><p>');
   const drawer=document.createElement('aside');
   drawer.id='guion-drawer';
+  drawer.dataset.overlay='guide';drawer.hidden=true;drawer.inert=true;drawer.setAttribute('inert','');
+  drawer.setAttribute('aria-hidden','true');drawer.setAttribute('aria-label','Guion completo del profesor');
+  drawer.setAttribute('role','dialog');drawer.setAttribute('aria-modal','true');
   drawer.innerHTML='<div class="gd-head">📋 Guion del profesor'
-    +'<button id="gd-close" aria-label="Cerrar">✕</button></div>'
-    +'<div class="gd-body"><p>'+mdlite(srcEl.textContent)+'</p></div>';
+    +'<button type="button" id="gd-close" aria-label="Cerrar guion">✕</button></div>'
+    +'<div class="gd-body" data-lr-scroller="true" data-lr-scroller-axis="vertical" tabindex="0"'
+    +' role="region" aria-label="Contenido desplazable del guion completo"><p>'
+    +mdlite(srcEl.textContent)+'</p></div>';
   document.body.appendChild(drawer);
   const btn=document.createElement('button');
-  btn.id='gd-toggle';btn.className='btn';btn.textContent='📋 Guion';
+  btn.id='gd-toggle';btn.className='btn';btn.type='button';btn.textContent='📋 Guion';
+  btn.setAttribute('aria-controls','guion-drawer');btn.setAttribute('aria-expanded','false');
   document.body.appendChild(btn);
-  const toggle=()=>drawer.classList.toggle('open');
-  btn.addEventListener('click',toggle);
-  drawer.querySelector('#gd-close').addEventListener('click',toggle);
+  let lastTrigger=btn;
+  const setOpen=(open,trigger=null,restore=true)=>{
+    const currentlyOpen=drawer.classList.contains('open');
+    if(open===currentlyOpen)return false;
+    if(open){
+      window.LEARNING_TEACHER_DRAWER?.close({restoreFocus:false});
+      lastTrigger=trigger||document.activeElement||btn;drawer.hidden=false;
+      drawer.inert=false;drawer.removeAttribute('inert');
+      window.LEARNING_MODAL_BACKGROUND?.(drawer,true);
+    }
+    drawer.classList.toggle('open',open);drawer.setAttribute('aria-hidden',String(!open));
+    btn.setAttribute('aria-expanded',String(open));
+    if(open)drawer.querySelector('#gd-close').focus();
+    else{
+      drawer.hidden=true;drawer.inert=true;drawer.setAttribute('inert','');
+      window.LEARNING_MODAL_BACKGROUND?.(drawer,false);
+      if(restore)window.LEARNING_RESTORE_FOCUS?.(lastTrigger,btn);
+    }
+    return true;
+  };
+  const focusable='a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),'
+    +'textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+  drawer.addEventListener('keydown',event=>{
+    if(event.key!=='Tab')return;
+    const items=[...drawer.querySelectorAll(focusable)].filter(node=>!node.hidden&&node.getClientRects().length);
+    if(!items.length)return;
+    const first=items[0],last=items[items.length-1];
+    if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+    else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+  });
+  btn.addEventListener('click',event=>setOpen(true,event.currentTarget));
+  drawer.querySelector('#gd-close').addEventListener('click',()=>setOpen(false));
+  window.GUIDE_DRAWER={open:trigger=>setOpen(true,trigger),
+    close:options=>setOpen(false,null,options?.restoreFocus!==false),
+    isOpen:()=>drawer.classList.contains('open')};
 })();
 
 /* ── scrollytelling genérico ──
@@ -1281,7 +1364,7 @@ $$('.scrolly[data-scrolly]').forEach(sc=>{
 });
 })();
 
-/* L13 — el MM naive con y sin skew (MMSimulation real, misma semilla) */
+/* L13 — el MM naive con y sin skew (MMSimulation calculada, misma semilla) */
 (function(){
 "use strict";
 const $=s=>document.querySelector(s);
@@ -1313,7 +1396,7 @@ function show(on){
   $('#mm-stats').innerHTML=
     `<div><span>PnL final</span><b class="${d.finalPnl>=0?'pos':'neg'}">${d.finalPnl}</b></div>
      <div><span>máx |inventario|</span><b>${d.maxInv}</b></div>`;
-  $('#mm-log').textContent=`» MMSimulation(MarketMaker('SIM', quote_size=0.1, half_spread=0.6, inventory_skew=${on?'2.0':'0'}), seed=42).run()`;
+  $('#mm-log').textContent=`» MMSimulation(MarketMaker('SIM', quote_size=0.1, half_spread=0.6, inventory_skew=${on?'2.0':'0'}), A=${D.arrivalIntensity}, seed=42).run()`;
 }
 $('#mm-on').addEventListener('click',()=>show(true));
 $('#mm-off').addEventListener('click',()=>show(false));
@@ -1367,12 +1450,84 @@ const route=value=>ROUTES.includes(String(value||'').toUpperCase())
 const routeClass=value=>`lr-route-${route(value).toLowerCase()}`;
 const scopeRoutes=()=>routeScope==='ALL'?ROUTES:
   routeScope==='LIVE+REQUIRED'?['LIVE','REQUIRED']:['LIVE'];
+const scopeForRoute=value=>route(value)==='OPTIONAL'?'ALL':
+  route(value)==='REQUIRED'?'LIVE+REQUIRED':'LIVE';
 const modeUrl=next=>{
   const q=new URLSearchParams(location.search);q.set('mode',next);
   return `${location.pathname}?${q.toString()}${location.hash}`;
 };
 const stateKey=(scene,stage)=>`${scene.id}::${stage.id}`;
 const reducedMotion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isExposed=node=>Boolean(node&&!node.hidden&&!node.closest('[hidden],[inert]'));
+
+function expose(node,visible){
+  if(!node)return;
+  node.hidden=!visible;
+  node.inert=!visible;
+  node.toggleAttribute('inert',!visible);
+  node.setAttribute('aria-hidden',String(!visible));
+}
+let modalBackgroundState=null,modalBackgroundOwner=null;
+function focusModalOwner(){
+  if(!modalBackgroundOwner)return;
+  const selector='a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),'
+    +'textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+  const target=[...modalBackgroundOwner.querySelectorAll(selector)]
+    .find(node=>!node.hidden&&!node.closest('[hidden],[inert]')&&node.getClientRects().length);
+  target?.focus({preventScroll:true});
+}
+function setModalBackground(dialog,open){
+  if(open){
+    if(modalBackgroundOwner===dialog)return;
+    if(modalBackgroundOwner)throw new Error('another learning modal is already open');
+    modalBackgroundState=[...body.children].filter(node=>node!==dialog).map(node=>({
+      node,inert:node.inert,attribute:node.hasAttribute('inert'),
+    }));
+    modalBackgroundOwner=dialog;
+    modalBackgroundState.forEach(({node})=>{node.inert=true;node.setAttribute('inert','');});
+    body.classList.add('lr-modal-open');
+    document.documentElement.classList.add('lr-modal-open');
+    return;
+  }
+  if(modalBackgroundOwner!==dialog)return;
+  (modalBackgroundState||[]).forEach(({node,inert,attribute})=>{
+    if(!node.isConnected)return;
+    node.inert=inert;node.toggleAttribute('inert',attribute);
+  });
+  modalBackgroundState=null;
+  modalBackgroundOwner=null;
+  body.classList.remove('lr-modal-open');
+  document.documentElement.classList.remove('lr-modal-open');
+}
+window.LEARNING_MODAL_BACKGROUND=setModalBackground;
+document.addEventListener('pointerdown',event=>{
+  if(!modalBackgroundOwner||modalBackgroundOwner.contains(event.target))return;
+  event.preventDefault();event.stopImmediatePropagation();focusModalOwner();
+},true);
+document.addEventListener('focusin',event=>{
+  if(modalBackgroundOwner&&!modalBackgroundOwner.contains(event.target))focusModalOwner();
+},true);
+function canRestoreFocus(node){
+  return Boolean(node?.isConnected&&!node.hidden&&!node.disabled
+    &&!node.closest('[hidden],[inert]')&&node.getClientRects().length);
+}
+function restoreFocus(...candidates){
+  const target=candidates.find(canRestoreFocus);
+  if(target)target.focus();
+}
+window.LEARNING_RESTORE_FOCUS=restoreFocus;
+function applyRouteClasses(node,routes){
+  if(!node)return;
+  ROUTES.forEach(name=>node.classList.remove(routeClass(name)));
+  const unique=[...new Set(routes.map(route))];
+  unique.forEach(name=>node.classList.add(routeClass(name)));
+  node.classList.toggle('lr-route-mixed',unique.length>1);
+}
+function expandScopeForRoute(value){
+  const target=scopeForRoute(value);
+  const targetIndex=routeScopes.indexOf(target),currentIndex=routeScopes.indexOf(routeScope);
+  if(targetIndex>=0&&targetIndex>currentIndex)routeScope=target;
+}
 
 function elementForStage(nodes,value,index,total){
   if(value!==undefined&&value!==null){
@@ -1395,6 +1550,7 @@ const models=contract.scenes.map(rawScene=>{
   element.dataset.sceneLayout=layout;
   element.dataset.layoutApplied='true';
   element.dataset.route=sceneRoute;
+  element.dataset.sceneRoute=sceneRoute;
   const allSteps=[...element.querySelectorAll('.scrolly .step')];
   const allFigures=[...element.querySelectorAll('.fig-stage')];
   const declared=Array.isArray(rawScene.stages)&&rawScene.stages.length
@@ -1403,6 +1559,8 @@ const models=contract.scenes.map(rawScene=>{
     const stage={...rawStage};
     stage.id=stage.id||`stage-${index+1}`;
     stage.route=route(stage.route||sceneRoute);
+    stage.duration_minutes=Number.isFinite(Number(rawStage.duration_minutes))
+      &&rawStage.duration_minutes!==null?Number(rawStage.duration_minutes):Number(rawScene.duration_minutes);
     stage.step=elementForStage(allSteps,stage.dom_stage,index,declared.length);
     stage.figure=elementForStage(allFigures,stage.dom_stage,index,declared.length);
     [stage.step,stage.figure].filter(Boolean).forEach(node=>{
@@ -1411,15 +1569,20 @@ const models=contract.scenes.map(rawScene=>{
     return stage;
   });
   const firstWrap=element.matches('.wrap')?element:element.querySelector(':scope > .wrap');
+  let badge=null;
   if(firstWrap){
-    const badge=document.createElement('div');
+    badge=document.createElement('div');
     badge.className=`lr-scene-badge ${routeClass(sceneRoute)}`;
     const minutes=Number.isFinite(Number(rawScene.duration_minutes))
-      ?`<span>${esc(rawScene.duration_minutes)} min</span>`:'';
-    badge.innerHTML=`<span>${esc(sceneRoute)}</span><span>${esc(rawScene.type||'scene')}</span>${minutes}`;
+      ?`<span class="lr-duration">${esc(rawScene.duration_minutes)} min</span>`:'';
+    badge.innerHTML=`<span class="lr-route-label">${esc(sceneRoute)}</span><span>${esc(rawScene.type||'scene')}</span>${minutes}`;
     firstWrap.insertBefore(badge,firstWrap.firstChild);
   }
-  return {...rawScene,route:sceneRoute,layout,element,stages,allSteps,allFigures};
+  const effectiveRoutes=[...new Set(stages.map(stage=>stage.route))];
+  element.dataset.effectiveRoutes=effectiveRoutes.join(',');
+  applyRouteClasses(element,effectiveRoutes);
+  return {...rawScene,route:sceneRoute,layout,element,stages,allSteps,allFigures,badge,
+    effectiveRoutes,navButton:null};
 }).filter(Boolean);
 
 if(missingScenes.length){
@@ -1504,16 +1667,22 @@ nav.innerHTML=`
 body.appendChild(nav);
 
 const navLinks=nav.querySelector('.lr-scene-links');
+navLinks.dataset.lrScroller='true';navLinks.dataset.lrScrollerAxis='vertical';navLinks.tabIndex=0;
+navLinks.setAttribute('role','region');navLinks.setAttribute('aria-label','Escenas desplazables de la lección');
 models.forEach((scene,index)=>{
   const button=document.createElement('button');
   button.type='button';button.dataset.sceneIndex=String(index);
-  button.className=routeClass(scene.route);
-  button.innerHTML=`<span>${esc(scene.route)}</span><b>${esc(scene.id.replace(/^l\d+-/,''))}</b>`;
+  applyRouteClasses(button,scene.effectiveRoutes);
+  button.innerHTML=`<span class="lr-route-label">${esc(scene.effectiveRoutes.join('+'))}</span><b>${esc(scene.id.replace(/^l\d+-/,''))}</b>`;
   button.addEventListener('click',()=>{
     if(mode==='aula')goTo(index,0,false);
-    else scene.element.scrollIntoView({behavior:reducedMotion()?'auto':'smooth',block:'start'});
+    else{
+      const stage=allowedStages(scene)[0];
+      if(stage)setStudyCurrent(scene,stage,false);
+      scene.element.scrollIntoView({behavior:reducedMotion()?'auto':'smooth',block:'start'});
+    }
   });
-  navLinks.appendChild(button);
+  navLinks.appendChild(button);scene.navButton=button;
 });
 
 const controls=document.createElement('div');
@@ -1541,6 +1710,7 @@ liveRegion.className='lr-sr-only';liveRegion.setAttribute('aria-live','polite');
 body.appendChild(liveRegion);
 
 let teacherToggle=null,teacherDrawer=null,teacherBody=null,mobileTeacherToggle=null;
+let lastTeacherTrigger=null;
 if(isProfessor){
   teacherToggle=document.createElement('button');
   teacherToggle.id='lr-teacher-toggle';teacherToggle.type='button';
@@ -1552,23 +1722,44 @@ if(isProfessor){
   teacherDrawer=document.createElement('aside');
   teacherDrawer.id='lr-teacher-drawer';teacherDrawer.dataset.overlay='teacher';
   teacherDrawer.setAttribute('aria-label','Guía docente de la escena');
-  teacherDrawer.setAttribute('aria-hidden','true');
+  teacherDrawer.setAttribute('role','dialog');teacherDrawer.setAttribute('aria-modal','true');
+  teacherDrawer.setAttribute('aria-hidden','true');teacherDrawer.hidden=true;teacherDrawer.inert=true;
+  teacherDrawer.setAttribute('inert','');
   teacherDrawer.innerHTML='<div class="lr-teacher-head"><b>Guía docente</b>'
     +'<button type="button" class="lr-teacher-close" aria-label="Cerrar guía docente">×</button></div>'
     +'<div class="lr-teacher-body"></div>';
   body.appendChild(teacherDrawer);teacherBody=teacherDrawer.querySelector('.lr-teacher-body');
-  const toggleTeacher=force=>{
+  teacherBody.dataset.lrScroller='true';teacherBody.dataset.lrScrollerAxis='vertical';
+  teacherBody.tabIndex=0;teacherBody.setAttribute('role','region');
+  teacherBody.setAttribute('aria-label','Contenido desplazable de la guía docente');
+  const toggleTeacher=(force,trigger=null,restore=true)=>{
     const open=force===undefined?!teacherDrawer.classList.contains('open'):force;
+    const currentlyOpen=teacherDrawer.classList.contains('open');
+    if(open===currentlyOpen)return false;
+    if(open){
+      window.GUIDE_DRAWER?.close({restoreFocus:false});
+      lastTeacherTrigger=trigger||document.activeElement||teacherToggle;
+      teacherDrawer.hidden=false;teacherDrawer.inert=false;teacherDrawer.removeAttribute('inert');
+      setModalBackground(teacherDrawer,true);
+    }
     teacherDrawer.classList.toggle('open',open);
     teacherDrawer.setAttribute('aria-hidden',String(!open));
     [teacherToggle,mobileTeacherToggle].filter(Boolean)
       .forEach(button=>button.setAttribute('aria-expanded',String(open)));
     if(open)teacherDrawer.querySelector('.lr-teacher-close').focus();
-    else (mobileQuery.matches?mobileTeacherToggle:teacherToggle)?.focus();
+    else{
+      teacherDrawer.hidden=true;teacherDrawer.inert=true;teacherDrawer.setAttribute('inert','');
+      setModalBackground(teacherDrawer,false);
+      if(restore)restoreFocus(lastTeacherTrigger,teacherToggle,mobileTeacherToggle);
+    }
+    return true;
   };
-  teacherToggle.addEventListener('click',()=>toggleTeacher());
-  mobileTeacherToggle?.addEventListener('click',()=>toggleTeacher());
+  teacherToggle.addEventListener('click',event=>toggleTeacher(undefined,event.currentTarget));
+  mobileTeacherToggle?.addEventListener('click',event=>toggleTeacher(undefined,event.currentTarget));
   teacherDrawer.querySelector('.lr-teacher-close').addEventListener('click',()=>toggleTeacher(false));
+  window.LEARNING_TEACHER_DRAWER={open:trigger=>toggleTeacher(true,trigger),
+    close:options=>toggleTeacher(false,null,options?.restoreFocus!==false),
+    isOpen:()=>teacherDrawer.classList.contains('open')};
 }
 
 function allowedStages(scene){
@@ -1576,9 +1767,74 @@ function allowedStages(scene){
   return scene.stages.filter(stage=>allowedRoutes.includes(stage.route));
 }
 function allowed(scene){
-  return scopeRoutes().includes(scene.route)&&allowedStages(scene).length>0;
+  return allowedStages(scene).length>0;
 }
 function availableModels(){return models.filter(allowed);}
+
+function visibleRoutes(scene){
+  return [...new Set(allowedStages(scene).map(stage=>stage.route))];
+}
+function routeLabel(routes){return routes.length?routes.join('+'):'—';}
+function syncRoutePresentation(scene,stage=null){
+  if(!scene)return;
+  const routes=stage?[stage.route]:visibleRoutes(scene);
+  const effective=routes.length?routes:scene.effectiveRoutes;
+  const label=routeLabel(effective);
+  scene.element.dataset.route=stage?stage.route:label;
+  scene.element.dataset.visibleRoutes=effective.join(',');
+  [scene.element,scene.badge,scene.navButton].filter(Boolean)
+    .forEach(node=>applyRouteClasses(node,effective));
+  scene.badge?.querySelector('.lr-route-label')?.replaceChildren(label);
+  const duration=stage?.duration_minutes??scene.duration_minutes;
+  scene.badge?.querySelector('.lr-duration')?.replaceChildren(`${duration} min`);
+  scene.navButton?.querySelector('.lr-route-label')?.replaceChildren(label);
+}
+
+let scrollerFrame=0;
+function clearRuntimeScroller(node){
+  delete node.dataset.lrScroller;
+  delete node.dataset.lrScrollerAxis;
+  if(node.dataset.lrRuntimeTabindex==='true')node.removeAttribute('tabindex');
+  if(node.dataset.lrRuntimeRole==='true')node.removeAttribute('role');
+  if(node.dataset.lrRuntimeLabel==='true')node.removeAttribute('aria-label');
+  delete node.dataset.lrRuntimeScroller;
+  delete node.dataset.lrRuntimeTabindex;
+  delete node.dataset.lrRuntimeRole;
+  delete node.dataset.lrRuntimeLabel;
+}
+function syncScrollers(){
+  document.querySelectorAll('[data-lr-runtime-scroller="true"]').forEach(clearRuntimeScroller);
+  const tolerance=2;
+  models.filter(scene=>isExposed(scene.element)).forEach(scene=>{
+    [scene.element,...scene.element.querySelectorAll('*')].forEach(node=>{
+      if(!isExposed(node)||!node.getClientRects().length)return;
+      const style=getComputedStyle(node);
+      const overflowX=['auto','scroll'].includes(style.overflowX)
+        &&node.scrollWidth>node.clientWidth+tolerance;
+      const overflowY=['auto','scroll'].includes(style.overflowY)
+        &&node.scrollHeight>node.clientHeight+tolerance;
+      if(!overflowX&&!overflowY)return;
+      node.dataset.lrRuntimeScroller='true';
+      node.dataset.lrScroller='true';
+      node.dataset.lrScrollerAxis=overflowX&&overflowY?'both':(overflowX?'horizontal':'vertical');
+      if(node.tabIndex<0){
+        node.tabIndex=0;node.dataset.lrRuntimeTabindex='true';
+      }
+      if(!node.hasAttribute('role')){
+        node.setAttribute('role','region');node.dataset.lrRuntimeRole='true';
+      }
+      if(!node.getAttribute('aria-label')&&!node.getAttribute('aria-labelledby')){
+        node.setAttribute('aria-label',`Contenido desplazable ${scene.id}`);
+        node.dataset.lrRuntimeLabel='true';
+      }
+    });
+  });
+}
+function queueScrollerSync(){
+  cancelAnimationFrame(scrollerFrame);
+  syncScrollers();
+  scrollerFrame=requestAnimationFrame(syncScrollers);
+}
 
 function activateStage(scene,stage){
   const hasMappedSteps=scene.stages.some(item=>item.step);
@@ -1587,18 +1843,16 @@ function activateStage(scene,stage){
     const model=scene.stages.find(item=>item.step===step);
     const visibleRoute=!model||scopeRoutes().includes(model.route);
     const active=!hasMappedSteps||stage.step===step;
-    step.hidden=!visibleRoute;
+    expose(step,visibleRoute&&(mode==='estudio'||active));
     step.classList.toggle('lr-stage-active',active&&visibleRoute);
     step.classList.toggle('on',active&&visibleRoute);
-    step.setAttribute('aria-hidden',String(!(active&&visibleRoute)));
   });
   scene.allFigures.forEach(figure=>{
     const model=scene.stages.find(item=>item.figure===figure);
     const visibleRoute=!model||scopeRoutes().includes(model.route);
     const active=!hasMappedFigures||stage.figure===figure;
-    figure.hidden=!visibleRoute;
+    expose(figure,active&&visibleRoute);
     figure.classList.toggle('on',active&&visibleRoute);
-    figure.setAttribute('aria-hidden',String(!(active&&visibleRoute)));
   });
   const name=scene.element.querySelector('.stage-name');
   if(name){
@@ -1609,11 +1863,14 @@ function activateStage(scene,stage){
   if(fig&&stage.dom_stage!==undefined){
     fig.dispatchEvent(new CustomEvent('stagechange',{detail:{stage:stage.dom_stage}}));
   }
+  queueScrollerSync();
 }
-function syncNav(scene=null){
+function syncNav(scene=null,stage=null){
   [...navLinks.querySelectorAll('button')].forEach(button=>{
     const index=Number(button.dataset.sceneIndex),model=models[index];
-    button.hidden=!allowed(model);
+    const visible=allowed(model);
+    expose(button,visible);
+    syncRoutePresentation(model,model===scene?stage:null);
     button.classList.toggle('on',model===scene);
     button.setAttribute('aria-current',model===scene?'step':'false');
   });
@@ -1631,8 +1888,9 @@ function syncTeacher(scene,stage){
   const sceneNotes=scene.professor_notes||scene.teacher_notes||scene.teaching_notes;
   const stageNotes=stage.professor_notes||stage.teacher_notes||stage.teaching_notes;
   const fullGuide=document.getElementById('gd-toggle');
-  teacherBody.innerHTML=`<p class="lr-teacher-kicker">${esc(scene.route)} · ${esc(scene.type)} · ${esc(scene.duration_minutes)} min</p>`
+  teacherBody.innerHTML=`<p class="lr-teacher-kicker">${esc(stage.route)} · ${esc(scene.type)} · ${esc(stage.duration_minutes)} min</p>`
     +`<h2>${esc(scene.id)}</h2><p class="lr-teacher-stage">Etapa <code>${esc(stage.id)}</code> · layout <code>${esc(scene.layout)}</code></p>`
+    +(stage.route!==scene.route?`<p class="lr-teacher-override">Ruta efectiva <code>${esc(stage.route)}</code>; la escena declara <code>${esc(scene.route)}</code>.</p>`:'')
     +`<h3>Conceptos</h3><ul>${concepts.length?concepts.map(concept=>`<li><code>${esc(concept)}</code></li>`).join(''):'<li>Ninguno declarado.</li>'}</ul>`
     +`<h3>Objetivos relacionados</h3><ul>${objectives.length?objectives.map(objective=>
       `<li><code>${esc(objective.id)}</code> · ${esc(objective.route)}</li>`).join(''):'<li>Ninguno declarado para esta escena.</li>'}</ul>`
@@ -1640,16 +1898,34 @@ function syncTeacher(scene,stage){
     +(stageNotes?`<h3>Notas de etapa</h3>${notesHtml(stageNotes)}`:'')
     +(fullGuide?'<button type="button" class="lr-full-guide">Abrir guion completo</button>':'');
   teacherBody.querySelector('.lr-full-guide')?.addEventListener('click',()=>{
-    teacherDrawer.classList.remove('open');teacherDrawer.setAttribute('aria-hidden','true');
-    [teacherToggle,mobileTeacherToggle].filter(Boolean)
-      .forEach(button=>button.setAttribute('aria-expanded','false'));
-    fullGuide.click();
+    const returnTrigger=lastTeacherTrigger||teacherToggle;
+    window.LEARNING_TEACHER_DRAWER?.close({restoreFocus:false});
+    if(window.GUIDE_DRAWER)window.GUIDE_DRAWER.open(returnTrigger);
+    else fullGuide.click();
   });
 }
 function updateDeepLink(scene,stage){
   if(!history.replaceState)return;
   const next=`#${encodeURIComponent(scene.id)}/${encodeURIComponent(stage.id)}`;
   if(location.hash!==next)history.replaceState(null,'',`${location.pathname}${location.search}${next}`);
+}
+function setCurrentState(scene,stage){
+  if(!scene||!stage)return;
+  currentScene=models.indexOf(scene);
+  currentStage=Math.max(0,allowedStages(scene).indexOf(stage));
+  body.dataset.currentSceneId=scene.id;
+  body.dataset.currentStageId=stage.id;
+  body.dataset.currentStageRoute=stage.route;
+  body.dataset.currentStageDuration=String(stage.duration_minutes);
+  body.dataset.currentLayout=scene.layout;
+  body.dataset.routeScope=routeScope;
+  scene.element.dataset.currentStageId=stage.id;
+  syncRoutePresentation(scene,stage);
+  const mobileLabel=mobileToolbar.querySelector(':scope > span');
+  if(mobileLabel){
+    const prefix=requestedMode!==mode?'Aula → estudio':'Estudio';
+    mobileLabel.textContent=`Ruta · ${stage.route} · ${stage.duration_minutes} min · ${prefix} · ${scene.id}`;
+  }
 }
 function goTo(sceneIndex,stageIndex,focusHeading=true){
   let scene=models[sceneIndex];
@@ -1660,17 +1936,11 @@ function goTo(sceneIndex,stageIndex,focusHeading=true){
   const stages=allowedStages(scene);
   stageIndex=Math.max(0,Math.min(Number(stageIndex)||0,stages.length-1));
   const stage=stages[stageIndex];
-  currentScene=sceneIndex;currentStage=stageIndex;
-  body.dataset.currentSceneId=scene.id;
-  body.dataset.currentStageId=stage.id;
-  body.dataset.currentStageRoute=stage.route;
-  body.dataset.currentLayout=scene.layout;
-  body.dataset.routeScope=routeScope;
-  scene.element.dataset.currentStageId=stage.id;
+  setCurrentState(scene,stage);
   models.forEach(model=>{
     const active=model===scene;
     model.element.classList.toggle('lr-scene-active',active);
-    model.element.setAttribute('aria-hidden',String(!active));
+    expose(model.element,active);
   });
   activateStage(scene,stage);
   const available=availableModels();
@@ -1688,8 +1958,8 @@ function goTo(sceneIndex,stageIndex,focusHeading=true){
     total+scopeProgress[routeName].visited,0)/Math.max(1,enabledRoutes.reduce((total,routeName)=>
     total+scopeProgress[routeName].total,0))*100);
   controls.querySelector('.lr-route-progress').textContent=`${routeProgress}% visto`;
-  syncNav(scene);syncTeacher(scene,stage);updateDeepLink(scene,stage);
-  liveRegion.textContent=`${scene.id}, etapa ${stageIndex+1} de ${stages.length}`;
+  syncNav(scene,stage);syncTeacher(scene,stage);updateDeepLink(scene,stage);
+  liveRegion.textContent=`${scene.id}, ruta ${stage.route}, ${stage.duration_minutes} minutos, etapa ${stageIndex+1} de ${stages.length}`;
   if(focusHeading){
     const heading=scene.element.querySelector('h1,h2,h3');
     if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}
@@ -1707,14 +1977,43 @@ function move(delta,focusHeading=true){
   const nextIndex=models.indexOf(next),nextStages=allowedStages(next);
   goTo(nextIndex,delta>0?0:nextStages.length-1,focusHeading);
 }
+const focusableSelector='a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),'
+  +'textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+function focusables(root){
+  return [...root.querySelectorAll(focusableSelector)].filter(node=>isExposed(node)
+    &&getComputedStyle(node).visibility!=='hidden'&&node.getClientRects().length);
+}
+function trapFocus(event,root){
+  if(event.key!=='Tab'||!root||root.hidden)return false;
+  const items=focusables(root);if(!items.length)return false;
+  const first=items[0],last=items[items.length-1];
+  if(event.shiftKey&&(document.activeElement===first||!root.contains(document.activeElement))){
+    event.preventDefault();last.focus();return true;
+  }
+  if(!event.shiftKey&&(document.activeElement===last||!root.contains(document.activeElement))){
+    event.preventDefault();first.focus();return true;
+  }
+  return false;
+}
 function closeOverlays(){
-  document.getElementById('guion-drawer')?.classList.remove('open');
-  teacherDrawer?.classList.remove('open');
-  teacherDrawer?.setAttribute('aria-hidden','true');
-  [teacherToggle,mobileTeacherToggle].filter(Boolean)
-    .forEach(button=>button.setAttribute('aria-expanded','false'));
-  document.querySelectorAll('dialog[open]').forEach(dialog=>dialog.close());
-  document.querySelectorAll('[data-overlay].open').forEach(node=>node.classList.remove('open'));
+  if(window.LEARNING_TEACHER_DRAWER?.isOpen()){
+    window.LEARNING_TEACHER_DRAWER.close();return true;
+  }
+  if(window.GUIDE_DRAWER?.isOpen()){
+    window.GUIDE_DRAWER.close();return true;
+  }
+  const dialog=document.querySelector('dialog[open]');
+  if(dialog){dialog.close();return true;}
+  const overlay=document.querySelector('[data-overlay].open');
+  if(overlay){
+    overlay.classList.remove('open');expose(overlay,false);return true;
+  }
+  return false;
+}
+function scrollerOwnsKey(active,key){
+  const scroller=active?.closest?.('[data-lr-scroller="true"]');
+  if(!scroller||!isExposed(scroller))return false;
+  return ['ArrowLeft','ArrowRight','PageUp','PageDown',' '].includes(key);
 }
 function cycleScope(){
   if(routeScopes.length<2)return;
@@ -1728,7 +2027,7 @@ function cycleScope(){
 }
 function syncOptionalControls(){
   document.querySelectorAll('.lr-study-optional').forEach(button=>{
-    button.hidden=mode!=='estudio'||optionalCount===0;
+    expose(button,mode==='estudio'&&optionalCount>0);
     button.setAttribute('aria-pressed',String(routeScope==='ALL'));
     button.textContent=routeScope==='ALL'?'Ocultar OPTIONAL':
       (button.closest('#lr-mobile-toolbar')?'+ OPTIONAL':'Incluir OPTIONAL');
@@ -1738,36 +2037,52 @@ function applyStudyScope(activeScene=null){
   body.dataset.routeScope=routeScope;
   models.forEach(scene=>{
     const sceneVisible=allowed(scene);
-    scene.element.hidden=!sceneVisible;
-    scene.element.setAttribute('aria-hidden',String(!sceneVisible));
+    expose(scene.element,sceneVisible);
     scene.stages.forEach(stage=>{
       const stageVisible=scopeRoutes().includes(stage.route);
-      [stage.step,stage.figure].filter(Boolean).forEach(node=>{
-        node.hidden=!stageVisible;node.setAttribute('aria-hidden',String(!stageVisible));
-      });
+      if(stage.step)expose(stage.step,sceneVisible&&stageVisible);
+      if(stage.figure)expose(stage.figure,false);
     });
+    const preferred=scene===activeScene
+      ?scene.stages.find(stage=>stage.id===body.dataset.currentStageId):allowedStages(scene)[0];
+    if(sceneVisible&&preferred)activateStage(scene,preferred);
   });
-  syncNav(activeScene);syncOptionalControls();saveRuntime(null,null,false);
+  syncNav(activeScene,activeScene?.stages.find(stage=>stage.id===body.dataset.currentStageId));
+  syncOptionalControls();saveRuntime(null,null,false);queueScrollerSync();
 }
 function toggleOptional(){
   routeScope=routeScope==='ALL'?'LIVE+REQUIRED':'ALL';
-  applyStudyScope();
+  let scene=models[currentScene],stage=scene?.stages.find(item=>item.id===body.dataset.currentStageId);
+  if(!scene||!allowed(scene)||!stage||!scopeRoutes().includes(stage.route)){
+    scene=availableModels()[0];stage=scene&&allowedStages(scene)[0];
+  }
+  if(scene&&stage)setCurrentState(scene,stage);
+  applyStudyScope(scene||null);
+  if(scene&&stage)setStudyCurrent(scene,stage,true,true);
   liveRegion.textContent=routeScope==='ALL'?'Contenido OPTIONAL incluido.':'Contenido OPTIONAL oculto.';
 }
 
 controls.querySelector('.lr-prev').addEventListener('click',()=>move(-1,false));
 controls.querySelector('.lr-next').addEventListener('click',()=>move(1,false));
 controls.querySelector('.lr-route-scope').addEventListener('click',cycleScope);
-controls.querySelector('.lr-route-scope').hidden=mode!=='aula'||routeScopes.length<2;
+expose(controls.querySelector('.lr-route-scope'),mode==='aula'&&routeScopes.length>1);
 controls.classList.toggle('lr-fixed-scope',controls.querySelector('.lr-route-scope').hidden);
 document.querySelectorAll('.lr-study-optional').forEach(button=>button.addEventListener('click',toggleOptional));
 
 document.addEventListener('keydown',event=>{
-  if(event.key==='Escape'){closeOverlays();return;}
+  const openDrawer=teacherDrawer?.classList.contains('open')?teacherDrawer:
+    (window.GUIDE_DRAWER?.isOpen()?document.getElementById('guion-drawer'):null);
+  if(openDrawer){
+    if(event.key==='Escape'){if(closeOverlays())event.preventDefault();return;}
+    if(event.key==='Tab')trapFocus(event,openDrawer);
+    return;
+  }
+  if(event.key==='Escape'){if(closeOverlays())event.preventDefault();return;}
   if(mode!=='aula')return;
   const active=document.activeElement;
   if(active&&(/INPUT|TEXTAREA|SELECT/.test(active.tagName)||active.isContentEditable))return;
   if(active&&active.tagName==='BUTTON'&&(event.key===' '||event.key==='Enter'))return;
+  if(scrollerOwnsKey(active,event.key))return;
   if(['ArrowRight','PageDown',' '].includes(event.key)){
     event.preventDefault();move(1,true);
   }else if(['ArrowLeft','PageUp'].includes(event.key)){
@@ -1791,13 +2106,41 @@ function deepLink(){
 function restoredPosition(){
   const linked=deepLink();
   if(linked){
-    if(mode==='estudio'&&linked.stage.route==='OPTIONAL')routeScope='ALL';
+    if(mode==='estudio'||(mode==='aula'&&isProfessor))expandScopeForRoute(linked.stage.route);
     return linked;
   }
   if(!savedRuntime.scene)return null;
   const scene=models.find(item=>item.id===savedRuntime.scene);
   const stage=scene?.stages.find(item=>item.id===savedRuntime.stage);
+  if(stage&&!scopeRoutes().includes(stage.route)&&(mode==='estudio'||isProfessor)){
+    expandScopeForRoute(stage.route);
+  }
   return scene&&stage?{scene,stage}:null;
+}
+
+function setStudyCurrent(scene,stage,mark=true,writeHash=true){
+  if(!scene||!stage||!allowed(scene)||!scopeRoutes().includes(stage.route))return false;
+  setCurrentState(scene,stage);activateStage(scene,stage);
+  syncNav(scene,stage);syncTeacher(scene,stage);saveRuntime(scene,stage,mark);
+  if(writeHash)updateDeepLink(scene,stage);
+  liveRegion.textContent=`${scene.id}, ruta ${stage.route}, ${stage.duration_minutes} minutos, etapa ${currentStage+1} de ${allowedStages(scene).length}`;
+  queueScrollerSync();return true;
+}
+function navigateTo(scene,stage,focusHeading=false){
+  if(!scene||!stage)return false;
+  if(!scopeRoutes().includes(stage.route)){
+    if(mode==='estudio'||isProfessor)expandScopeForRoute(stage.route);
+    else return false;
+  }
+  if(mode==='estudio'){
+    setCurrentState(scene,stage);applyStudyScope(scene);
+    if(!setStudyCurrent(scene,stage,true,true))return false;
+    (stage.step||scene.element).scrollIntoView({behavior:reducedMotion()?'auto':'smooth',block:'center'});
+    return true;
+  }
+  const stages=allowedStages(scene),index=stages.indexOf(stage);
+  if(index<0)return false;
+  goTo(models.indexOf(scene),index,focusHeading);return true;
 }
 
 if(mode==='aula'){
@@ -1809,30 +2152,35 @@ if(mode==='aula'){
   goTo(currentScene,Math.max(0,currentStage),false);
 }else{
   const restored=restoredPosition();
-  if(restored?.stage.route==='OPTIONAL')routeScope='ALL';
-  applyStudyScope(restored?.scene||null);
+  let initial=restored;
+  if(!initial||!allowed(initial.scene)||!scopeRoutes().includes(initial.stage.route)){
+    const scene=availableModels()[0];initial=scene?{scene,stage:allowedStages(scene)[0]}:null;
+  }
+  if(initial)setCurrentState(initial.scene,initial.stage);
+  applyStudyScope(initial?.scene||null);
+  if(initial)setStudyCurrent(initial.scene,initial.stage,true,true);
   const sceneObserver=new IntersectionObserver(entries=>{
     const visible=entries.filter(entry=>entry.isIntersecting&&!entry.target.hidden)
       .sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
     if(!visible)return;
     const scene=models.find(item=>item.element===visible.target);
     if(!scene)return;
-    syncNav(scene);
-    const stage=allowedStages(scene).find(item=>!item.step)||allowedStages(scene)[0];
-    if(stage){saveRuntime(scene,stage,true);updateDeepLink(scene,stage);}
+    if(scene.stages.some(item=>item.step))return;
+    const stage=allowedStages(scene)[0];
+    if(stage)setStudyCurrent(scene,stage,true,true);
   },{rootMargin:'-20% 0px -55% 0px',threshold:[0,.15,.4]});
   models.forEach(scene=>sceneObserver.observe(scene.element));
   models.forEach(scene=>scene.stages.forEach(stage=>{
     if(!stage.step)return;
     const observer=new IntersectionObserver(entries=>{
       if(entries.some(entry=>entry.isIntersecting)&&!stage.step.hidden){
-        saveRuntime(scene,stage,true);syncNav(scene);updateDeepLink(scene,stage);
+        setStudyCurrent(scene,stage,true,true);
       }
     },{rootMargin:'-35% 0px -45% 0px',threshold:.1});
     observer.observe(stage.step);
   }));
-  if(restored&&allowed(restored.scene))requestAnimationFrame(()=>{
-    (restored.stage.step||restored.scene.element).scrollIntoView({block:'center'});
+  if(initial&&restored)requestAnimationFrame(()=>{
+    (initial.stage.step||initial.scene.element).scrollIntoView({block:'center'});
   });
 }
 
@@ -1840,20 +2188,20 @@ syncOptionalControls();
 saveRuntime(null,null,false);
 window.LEARNING_RUNTIME={
   version:RUNTIME_VERSION,contract,mode,isProfessor,
-  getState:()=>({routeScope,scene:models[currentScene]?.id,stage:body.dataset.currentStageId,
-    progress:progressSnapshot()}),
+  getState:()=>({mode,requestedMode,routeScope,scene:body.dataset.currentSceneId||models[currentScene]?.id,
+    stage:body.dataset.currentStageId,route:body.dataset.currentStageRoute,
+    sceneRoute:models[currentScene]?.route,progress:progressSnapshot()}),
   setOptional:enabled=>{if(mode==='estudio'&&(enabled!==(routeScope==='ALL')))toggleOptional();},
   goTo:(sceneId,stageId)=>{
     const scene=models.find(item=>item.id===sceneId);if(!scene)return false;
-    if(mode==='estudio'){
-      const stage=scene.stages.find(item=>item.id===stageId)||allowedStages(scene)[0];
-      if(!stage)return false;
-      (stage.step||scene.element).scrollIntoView({block:'center'});return true;
-    }
-    const stages=allowedStages(scene),index=stages.findIndex(item=>item.id===stageId);
-    goTo(models.indexOf(scene),Math.max(0,index),false);return true;
+    const stage=scene.stages.find(item=>item.id===stageId)||scene.stages[0];
+    return navigateTo(scene,stage,false);
   },
 };
+
+addEventListener('hashchange',()=>{
+  const linked=deepLink();if(linked)navigateTo(linked.scene,linked.stage,false);
+});
 
 mobileQuery.addEventListener?.('change',()=>location.reload());
 })();

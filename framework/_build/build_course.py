@@ -360,15 +360,17 @@ def emit(lesson: dict) -> None:
     slugname = lesson["slug"].split("-", 1)[1]
 
     if os.path.exists(custom_guion):
-        shutil.copy(custom_guion, os.path.join(pres, "guion.md"))
+        with open(custom_guion, encoding="utf-8") as f:
+            guion_text = f.read()
     else:
-        with open(os.path.join(pres, "guion.md"), "w") as f:
-            f.write(guion_md(lesson))
+        guion_text = guion_md(lesson)
+    with open(os.path.join(pres, "guion.md"), "w", encoding="utf-8") as f:
+        f.write(guion_text)
 
     if docgen.has_doc(lesson["n"]):
         # documento interactivo ("html corrido"): sustituye al deck en esta lección
         with open(os.path.join(pres, f"{slugname}-doc.html"), "w") as f:
-            f.write(docgen.build_doc(lesson))
+            f.write(docgen.build_doc(lesson, guion_text))
         old_deck = os.path.join(pres, f"{slugname}-interactive.html")
         if os.path.exists(old_deck):
             os.remove(old_deck)

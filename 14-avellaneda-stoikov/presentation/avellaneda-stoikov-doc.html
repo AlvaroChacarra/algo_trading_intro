@@ -599,6 +599,7 @@
   margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;
   border:0!important}
 .lr-has-contract [hidden]{display:none!important}
+[data-lr-scroller="true"]:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
 
 #lr-nav{position:fixed;inset:0 auto 0 0;width:var(--lr-nav-w,230px);z-index:52;
   display:flex;flex-direction:column;background:rgba(9,9,11,.97);border-right:1px solid var(--line);
@@ -630,6 +631,8 @@
 .lr-scene-links button.lr-route-live span{color:var(--accent)}
 .lr-scene-links button.lr-route-required span{color:var(--kw)}
 .lr-scene-links button.lr-route-optional span{color:var(--faint)}
+.lr-scene-links button.lr-route-mixed span{background:linear-gradient(90deg,var(--accent),var(--kw));
+  color:transparent;background-clip:text;-webkit-background-clip:text}
 
 #lr-teacher-toggle{margin:0 6px 9px;min-height:36px;border:1px solid rgba(34,211,238,.38);
   border-radius:8px;background:var(--accent-dim);color:var(--accent);font:600 .68rem var(--mono);cursor:pointer}
@@ -650,6 +653,8 @@
 .lr-teacher-kicker{margin:0;color:var(--accent);font:600 .68rem var(--mono);text-transform:uppercase}
 .lr-teacher-stage{font-size:.78rem}.lr-full-guide{min-height:40px;margin-top:16px;padding:7px 12px;
   border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--accent);font:600 .7rem var(--mono);cursor:pointer}
+.lr-teacher-override{padding:8px 10px;border-left:2px solid var(--kw);background:rgba(192,132,252,.08);
+  color:var(--muted);font-size:.76rem}
 
 .lr-scene-badge{display:flex;gap:8px;align-items:center;margin:0 0 10px;font:600 .58rem var(--mono);
   letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
@@ -657,6 +662,7 @@
 .lr-scene-badge.lr-route-live span:first-child{border-color:rgba(34,211,238,.42);color:var(--accent)}
 .lr-scene-badge.lr-route-required span:first-child{border-color:rgba(192,132,252,.45);color:var(--kw)}
 .lr-scene-badge.lr-route-optional span:first-child{border-color:var(--line);color:var(--faint)}
+.lr-scene-badge.lr-route-mixed span:first-child{border-color:rgba(192,132,252,.45);color:var(--kw)}
 
 #lr-controls{position:fixed;left:var(--lr-nav-w,230px);right:0;bottom:0;height:var(--lr-controls-h,58px);z-index:55;
   display:grid;grid-template-columns:minmax(120px,1fr) auto auto minmax(120px,1fr);align-items:center;
@@ -675,6 +681,8 @@
 #lr-controls .lr-route-scope{padding:0 12px;color:var(--accent);border-color:rgba(34,211,238,.38)}
 #lr-controls.lr-fixed-scope{grid-template-columns:minmax(120px,1fr) auto minmax(120px,1fr)}
 #lr-mobile-toolbar{display:none}
+html.lr-modal-open,body.lr-modal-open{overflow:hidden!important;overscroll-behavior:none}
+body.lr-modal-open::before{content:"";position:fixed;inset:0;z-index:69;background:rgba(0,0,0,.58);backdrop-filter:blur(2px);pointer-events:auto}
 
 /* Layout names are operational: they control scene width and native two-panel ratios. */
 .lr-scene{--lr-scene-max:1180px;--lr-left:42fr;--lr-right:58fr}
@@ -706,7 +714,7 @@
   body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child{overflow:visible;max-width:var(--lr-scene-max);margin:0 auto}
   body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child h2{font-size:clamp(1.08rem,2.15vh,1.72rem);margin:.05em 0 .2em}
   body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child .lede{font-size:clamp(.74rem,1.4vh,.95rem);margin:.2em 0}
-  body.mode-aula>.lr-scene-active>.scrolly{width:100%;max-width:var(--lr-scene-max);height:100%;min-height:0;margin:0 auto;
+  body.mode-aula>.lr-scene-active>.scrolly{display:grid;width:100%;max-width:var(--lr-scene-max);height:100%;min-height:0;margin:0 auto;
     padding:0;grid-template-columns:minmax(260px,var(--lr-left)) minmax(0,var(--lr-right));gap:clamp(14px,1.8vw,32px)}
   body.mode-aula>.lr-scene-active>.scrolly~.wrap{display:none}
   body.mode-aula .steps{min-width:0;min-height:0;height:100%;overflow:hidden}
@@ -721,6 +729,7 @@
   body.mode-aula .fig-stage{overflow:auto}
   body.mode-aula .full-code{display:none!important}
   body.mode-aula .hero{padding:0}
+  body.mode-aula>header.lr-scene-active .code{overflow-x:hidden;overflow-y:auto}
   body.mode-aula .hero h1{font-size:clamp(2rem,4.7vw,4.8rem)}
   body.mode-aula .hero .lede{font-size:clamp(.92rem,1.45vw,1.3rem);max-width:72ch}
   body.mode-aula .hero .challenge{margin-top:clamp(14px,2.5vh,28px)}
@@ -753,8 +762,8 @@
 }
 
 @media(max-width:520px){
-  #lr-mobile-toolbar>span{display:none}
-  #lr-mobile-toolbar .lr-study-optional{margin-left:auto}
+  #lr-mobile-toolbar>span{display:block;text-align:left;font-size:.55rem}
+  #lr-mobile-toolbar .lr-study-optional{flex:none}
 }
 
 @media(prefers-reduced-motion:reduce){
@@ -782,7 +791,7 @@
   <h1>El skew <em>óptimo</em></h1>
   <p class="lede">En L13 domaste el inventario con un número a ojo. Ahora llega la versión con
   apellidos: <strong>Avellaneda &amp; Stoikov (2008)</strong> plantearon "¿dónde cotizo
-  para maximizar mi utilidad, con miedo γ, volatilidad σ y tiempo restante τ?" — y lo
+  para maximizar mi utilidad, con miedo γ, volatilidad de horizonte σ<sub>H</sub> y tiempo restante τ?" — y lo
   resolvieron. Dos fórmulas. Hoy entiendes qué dice cada letra… tocándolas.</p>
 
   <div class="challenge">
@@ -816,37 +825,41 @@
         <h3><span class="n">0/4</span>Del "a ojo" al óptimo</h3>
         <p>El naive tenía dos números mágicos: <code>half_spread</code> y <code>skew</code>.
         A-S los <em>deriva</em> de cosas que significan algo: tu aversión al riesgo (γ),
-        la volatilidad (σ), la prisa del reloj (τ) y la densidad del flujo (κ).</p>
+        la volatilidad del horizonte completo (σ<sub>H</sub>), la fracción de tiempo
+        restante (τ) y la densidad del flujo (κ).</p>
         <p>La matemática de fondo (utilidad CARA, HJB) existe y es seria — nosotros nos
         quedamos con su resultado y su intuición.</p>
       </div></div>
       <div class="step" data-stage="1" data-name="reservation"><div class="step-inner">
         <h3><span class="n">1/4</span>El centro: reservation price</h3>
-        <p><code>r = mid − q·γ·σ²·τ</code></p>
+        <p><code>r = mid − q·γ·σ<sub>H</sub>²·τ</code></p>
         <p>El skew de L13, con física dentro: te alejas del mid proporcional a tu
-        inventario (q), tu miedo (γ), lo que se mueve el mundo (σ²) y el tiempo que queda
-        para sufrirlo (τ). Cuatro sensores en lugar de un número mágico.</p>
+        inventario (q), tu miedo (γ) y la <strong>varianza restante</strong>
+        σ<sub>H</sub>²τ. Aquí τ=(H−t)/H no tiene unidades y σ<sub>H</sub> es la desviación
+        típica del cambio de precio durante todo H.</p>
       </div></div>
       <div class="step" data-stage="2" data-name="optimal spread"><div class="step-inner">
         <h3><span class="n">2/4</span>El ancho: optimal spread</h3>
-        <p><code>δ = γ·σ²·τ + (2/γ)·ln(1 + γ/κ)</code></p>
+        <p><code>δ = γ·σ<sub>H</sub>²·τ + (2/γ)·ln(1 + γ/κ)</code></p>
         <p>Dos sumandos con alma propia: el primero es <strong>seguro contra la
-        volatilidad</strong> (más σ o más τ → cotiza más ancho); el segundo negocia con el
+        volatilidad</strong> (más σ<sub>H</sub> o más τ → cotiza más ancho); el segundo negocia con el
         flujo — κ dice cuánta clientela pierdes por cada tick que te alejas.</p>
       </div></div>
       <div class="step" data-stage="3" data-name="tau"><div class="step-inner">
         <h3><span class="n">3/4</span>El reloj: τ → 0</h3>
-        <p>Al acercarse el cierre, τ se apaga y con él el término de inventario: el
-        centro vuelve al mid y las quotes quedan simétricas. <strong>Eso no liquida ni
+        <p>Al acercarse el cierre, τ se apaga y con él los términos de riesgo: el
+        centro vuelve al mid y el spread conserva el término de liquidez
+        <code>(2/γ)·ln(1+γ/κ)</code>. Las quotes quedan simétricas. <strong>Eso no liquida ni
         garantiza q=0</strong>: este simulador didáctico necesita una política terminal
         separada si quieres imponer quedar plano. Aquí τ apaga el ajuste; no vende el
         inventario por arte de magia.</p>
       </div></div>
       <div class="step" data-stage="4" data-name="A-S vs naive"><div class="step-inner">
         <h3><span class="n">4/4</span>El duelo, medido</h3>
-        <p>Misma semilla, mismo mercado que en L13: el A-S (γ=0.5) acaba con
-        <strong>más PnL</strong> que el naive y un inventario que respeta el reloj. No es
-        magia: es que sus dos números ya no son mágicos.</p>
+        <p>Misma semilla, horizonte e intensidad que en L13: el A-S (γ=0.5) acaba con
+        <strong>más PnL y también más inventario máximo</strong> que el naive en este
+        escenario. No domina: hace explícita la frontera mediante γ, κ y el reloj. Es una
+        comparación didáctica con una semilla, no una garantía universal.</p>
       </div></div>
     </div>
 
@@ -858,15 +871,15 @@ naive:  half_spread = 0.6   <span class="c"># ¿por qué?</span>
         skew        = 2.0   <span class="c"># ¿por qué?</span>
 
 A-S:    γ  tu miedo
-        σ  la volatilidad
-        τ  el tiempo restante
+        σ_H  volatilidad de precio del horizonte H
+        τ  fracción de tiempo restante, sin unidades
         κ  la densidad del flujo</pre>
       </div>
       <div class="fig-stage" data-stage="1">
         <pre style="font-family:var(--mono);font-size:.84rem;line-height:2.3;margin:10px 0 0">
-r = mid − q·γ·σ²·τ
+r = mid − q·γ·σ_H²·τ
 
-q = +1 (largo), γ=0.5, σ=0.5, τ=1
+q = +1 (largo), γ=0.5, σ_H=0.5, τ=1
 r = 100 − 1×0.5×0.25×1 = <span style="color:var(--accent)">99.875</span>
 
 q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
@@ -874,11 +887,11 @@ q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
       </div>
       <div class="fig-stage" data-stage="2">
         <pre style="font-family:var(--mono);font-size:.8rem;line-height:2.2;margin:8px 0 0">
-δ = γ·σ²·τ + (2/γ)·ln(1 + γ/κ)
+δ = γ·σ_H²·τ + (2/γ)·ln(1 + γ/κ)
     ───┬───   ─────┬──────────
    seguro de    negociación
    volatilidad  con el flujo</pre>
-        <p style="color:var(--faint);font-size:.78rem;margin-top:12px">σ o τ suben → más ancho. κ sube (flujo denso) → puedes cotizar más fino.</p>
+        <p style="color:var(--faint);font-size:.78rem;margin-top:12px">Unidades: γ y κ son 1/precio; σ_H, r y δ son precio; τ es adimensional. σ_H o τ suben → más ancho.</p>
       </div>
       <div class="fig-stage" data-stage="3">
         <canvas id="as3" style="width:100%;height:160px;margin-top:8px"></canvas>
@@ -897,7 +910,10 @@ q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
     <div class="eyebrow">§2 · <b>Simuladores</b></div>
     <h2>El laboratorio de γ</h2>
     <p class="lede">Arriba, las fórmulas en vivo — mueve los diales y ve r y δ responder.
-    Abajo, el barrido real: cinco gammas por el simulador completo, misma semilla.</p>
+    Fijamos σ<sub>H</sub>=0.5 para todo el horizonte. Abajo, el barrido calculado usa el
+    mismo valor en estrategia y simulador; cada paso mueve el mid con σ<sub>H</sub>/√H.
+    Las cinco corridas comparten <code>A=520</code> y la semilla 42 (*common random
+    numbers*) para aislar γ; la monotonía observada pertenece a este escenario.</p>
 
     <div class="simcard">
       <h4>laboratorio · las fórmulas con las manos</h4>
@@ -916,7 +932,7 @@ q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
     </div>
 
     <div class="simcard">
-      <h4>barrido real · MMSimulation × 5 gammas (misma semilla)</h4>
+      <h4>barrido calculado · MMSimulation × 5 gammas · σ_H/√H por paso</h4>
       <pre style="font-family:var(--mono);font-size:.82rem;line-height:2.2;margin:0" id="sw-tab"></pre>
       <div class="looplog">» la frontera: menos γ = más PnL con más susto; más γ = dormir tranquilo cobrando menos</div>
     </div>
@@ -932,7 +948,7 @@ q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
 
     <div class="code">
       <div class="code-head"><span>mi_estrategia.py — punto de partida del capstone autónomo</span><span>python</span></div>
-      <pre><span class="ln"><span class="k">from</span> exchange.simulation <span class="k">import</span> MMSimulation</span><span class="ln"><span class="k">from</span> exchange.strategies <span class="k">import</span> MarketMaker</span><span class="ln"></span><span class="ln"><span class="k">class</span> MiEstrategia(MarketMaker):</span><span class="ln">    <span class="s">"""El nombre y la interfaz que exige capstone_check.py."""</span></span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, symbol=<span class="s">'BTC'</span>):</span><span class="ln">        <span class="fn">super</span>().__init__(symbol, quote_size=<span class="num">0.01</span>,</span><span class="ln">                         half_spread=<span class="num">1.0</span>, inventory_skew=<span class="num">2.0</span>)</span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">quotes</span>(self, book):</span><span class="ln">        r = self.reservation_price(book.mid)</span><span class="ln">        half = self.half_spread</span><span class="ln">        <span class="k">if</span> <span class="fn">abs</span>(self.inventory) &gt; <span class="num">0.5</span>:   <span class="c"># tu regla, la que quieras</span></span><span class="ln">            half *= <span class="num">1.5</span>                    <span class="c"># p. ej.: cargado → más ancho</span></span><span class="ln">        <span class="k">return</span> r - half, r + half</span><span class="ln"></span><span class="ln">res = MMSimulation(MiEstrategia(), seed=<span class="num">42</span>).run()</span></pre>
+      <pre><span class="ln"><span class="k">from</span> exchange.simulation <span class="k">import</span> MMSimulation</span><span class="ln"><span class="k">from</span> exchange.strategies <span class="k">import</span> MarketMaker</span><span class="ln"></span><span class="ln"><span class="k">class</span> MiEstrategia(MarketMaker):</span><span class="ln">    <span class="s">"""El nombre y la interfaz que exige capstone_check.py."""</span></span><span class="ln">    <span class="k">def</span> <span class="fn">__init__</span>(self, symbol=<span class="s">'BTC'</span>):</span><span class="ln">        <span class="fn">super</span>().__init__(symbol, quote_size=<span class="num">0.01</span>,</span><span class="ln">                         half_spread=<span class="num">1.0</span>, inventory_skew=<span class="num">2.0</span>)</span><span class="ln"></span><span class="ln">    <span class="k">def</span> <span class="fn">quotes</span>(self, book):</span><span class="ln">        r = self.reservation_price(book.mid)</span><span class="ln">        half = self.half_spread</span><span class="ln">        <span class="k">if</span> <span class="fn">abs</span>(self.inventory) &gt; <span class="num">0.5</span>:   <span class="c"># tu regla, la que quieras</span></span><span class="ln">            half *= <span class="num">1.5</span>                    <span class="c"># p. ej.: cargado → más ancho</span></span><span class="ln">        <span class="k">return</span> r - half, r + half</span><span class="ln"></span><span class="ln">res = MMSimulation(MiEstrategia(), A=<span class="num">630</span>, seed=<span class="num">42</span>).run()</span></pre>
       <div class="out"><div class="btnrow" style="margin:0"><button class="btn runbtn" data-target="out-own">▶ La pregunta de verdad</button></div>
         <div id="out-own" class="hidden" style="margin-top:10px">
           <div><span class="prompt">&gt;&gt;&gt; </span><span class="val">¿cuántas líneas del motor tocaste? 0. ¿Del simulador? 0.</span></div>
@@ -958,14 +974,14 @@ q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
         <div class="qt">El reservation price de A-S es…</div>
         <div class="opts">
           <button class="opt">A · El mid del libro, siempre</button>
-          <button class="opt">B · El mid desplazado por q·γ·σ²·τ — el centro que huye de tu inventario</button>
+          <button class="opt">B · El mid desplazado por q·γ·σ_H²·τ — el centro que huye de tu inventario</button>
           <button class="opt">C · El precio al que resucitas órdenes canceladas</button>
         </div>
         <div class="why">Es el skew de L13 con unidades físicas: inventario, miedo,
         volatilidad y reloj.</div>
       </div>
       <div class="q" data-ok="2">
-        <div class="qt">Subir γ (más aversión), según el barrido real…</div>
+        <div class="qt">Subir γ (más aversión), según el barrido calculado…</div>
         <div class="opts">
           <button class="opt">A · Sube el PnL y el inventario</button>
           <button class="opt">B · No cambia nada</button>
@@ -1032,18 +1048,23 @@ q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
       Ya tienes el motor entero. El proyecto de cierre es abierto: diseña un market maker que
       capture el spread <strong>sin cargarte de inventario</strong>. Editas un solo archivo
       (<code>mi_estrategia.py</code>), te corriges con <code>python capstone_check.py</code>
-      (3 semillas oficiales, baremo público 30/40/30) y sacas un código para el leaderboard.
-      Un naive bien ajustado roza los 90 — ¿puedes con él?</a>
+      (3 semillas reproducibles, feedback formativo 30/40/30) y obtienes un autoinforme
+      de consistencia que no acredita autoría ni nota.
+      La plantilla inicial está deliberadamente incompleta: hasta que implementes
+      <code>reservation_price(mid)</code>, el checker no emite puntuación ni código.</a>
     </div>
 
     <div class="bridge">
-      <div class="tag">El puente a L15 — el examen</div>
+      <div class="tag">El puente a L15 — práctica acumulativa pública</div>
       <p style="margin:.2em 0"><strong>40 preguntas, 40 minutos, +1 / −0.5.</strong></p>
       <p>Cubre el arco completo: Python y OOP, el paquete <code>exchange</code>, leer el
       libro, matching, el framework, VWAP y market making. Es un artefacto independiente:
-      evalúa integración y lectura de código; el capstone se realiza y entrega por separado.</p>
+      permite practicar integración y lectura de código; no sustituye el examen final
+      oficial, cuyo banco y entrega deben permanecer privados. El capstone se realiza y
+      entrega por separado.</p>
       <p style="margin-bottom:0">La mejor preparación: los gimnasios (los drills son primos
-      hermanos de las preguntas) y los mini-tests de cada documento.</p>
+      hermanos de las preguntas), los mini-tests de cada documento y la práctica pública de
+      L15.</p>
     </div>
 
     <div class="cta">
@@ -1052,15 +1073,41 @@ q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
       después implementa TU estrategia en <code>mi_estrategia.py</code> y valídala con
       <code>capstone_check.py</code>.</div>
       <div class="box"><span class="tag">Y el gimnasio final</span>
-      <code>14_auxiliary.ipynb</code> — los últimos drills antes del examen.</div>
+      <code>14_auxiliary.ipynb</code> — los últimos drills antes de la práctica acumulativa.</div>
     </div>
   </div>
 </section>
 
 <footer>L14 · Avellaneda-Stoikov — Algo Trading ICAI 2026 · documento interactivo</footer>
 
-<script>const DOC_DATA={"naive":{"inv":[-0.1,-0.1,-0.2,-0.1,-0.1,0.0,-0.1,-0.1,-0.1,-0.1,-0.1,0.0,0.0,-0.1,-0.1,-0.1,-0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.1,0.1,0.0,0.1,0.0,0.1,0.1,0.0,0.0,-0.1,-0.1,0.0,0.1,0.0,0.0,0.1,0.0,0.1,0.0,0.0,0.0,0.0,0.1,0.2,0.2,0.1,0.1,0.1,0.0,0.0,0.0,0.0,-0.1,-0.1,0.0,-0.1,-0.1,-0.2,-0.2,-0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.1,0.1,0.1,0.1,0.1,0.2,0.1,0.1,0.1,0.1,0.2,0.1,0.1,0.0,-0.1,-0.1,0.0,-0.1,-0.2,-0.3,-0.2,-0.1,-0.1,-0.0,-0.0,-0.0,0.1,-0.0,-0.0,0.1,0.2,0.2,0.2,0.2,0.1,0.1,0.2,0.1,0.1,-0.0,-0.1,-0.2,-0.3,-0.2,-0.1,-0.0,0.1,0.1,0.1,-0.0,0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.1,-0.0,0.1,-0.0,-0.1,-0.1,-0.2,-0.1,-0.1,-0.2,-0.1,-0.0,0.1,0.1,0.1,0.1,-0.0,-0.0,0.1,-0.0,-0.0,-0.0,0.1,-0.0,-0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.1,-0.1,-0.1,-0.0,0.1,0.1,0.1,0.1,0.1,-0.0,-0.0,-0.1,-0.1,-0.2,-0.1,-0.2,-0.2,-0.1,-0.1,-0.1,-0.0,0.1,-0.0,-0.1,-0.1,-0.1,-0.1,-0.0,-0.0,0.1,-0.0,-0.0,-0.0,0.1,0.1,0.2,0.2,0.1,0.1,-0.0,-0.0,-0.1,-0.2,-0.2,-0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.1,-0.1,-0.0,-0.0,-0.1,-0.1,-0.1,-0.1,-0.2,-0.1,-0.1,-0.1,-0.1,-0.1,-0.0,0.1,-0.0,-0.0,-0.0,-0.0,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.0,-0.0,-0.1,-0.0,-0.1,-0.1,-0.0,0.1,0.2,0.1,0.1,0.1,-0.0,-0.0,-0.1,-0.0,0.1,0.2,0.1,-0.0,-0.0,0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.1,-0.1,-0.0,-0.1,-0.2,-0.2,-0.1,-0.0,-0.0,-0.0,-0.0,-0.0,0.1,0.1,-0.0,-0.1,-0.0,-0.0,0.1,0.1,0.2,0.2,0.2,0.1,0.2,0.1,0.2,0.2,0.1,0.2,0.2,0.1,-0.0,0.1,0.1,0.1,0.2,0.1,0.1,0.1,-0.0,-0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.1,-0.1,-0.1,-0.0,-0.0,-0.0,-0.0,0.1,0.1,0.1,0.2,0.1,0.1,0.1,-0.0,-0.1,-0.2,-0.1,-0.0,-0.0,-0.0,-0.0,-0.1,-0.2,-0.1,-0.1,-0.0,0.1,0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.1,-0.1,-0.2,-0.1,-0.2,-0.1,-0.1,-0.0,-0.1,-0.1,-0.2,-0.1,-0.1,-0.0,-0.1,-0.2,-0.2,-0.1,-0.0,-0.0,-0.1,-0.2,-0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.1,-0.2,-0.1,-0.1,-0.0,-0.1,-0.1,-0.2,-0.1,-0.2,-0.1,-0.1,-0.0,-0.0,-0.0,0.1,0.1,0.1,0.1,0.1,-0.0,-0.1,-0.0,-0.0,0.1,-0.0,-0.1,-0.1,-0.2,-0.2,-0.1,-0.1,-0.2,-0.1,-0.0,0.1,0.2,0.1,0.1,-0.0,0.1,0.1,0.1,-0.0,-0.0,-0.0,0.1,0.1,-0.0,-0.0,0.1,0.1,0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,0.1,0.1,-0.0,-0.0,-0.1,-0.0,-0.1,-0.1,-0.1,-0.1,-0.1,-0.0,-0.1,-0.0,0.1,-0.0,-0.1,-0.0,-0.0,0.1,-0.0,-0.0,-0.0,-0.0,-0.1,-0.1,-0.1,-0.1,-0.0,-0.1,-0.0,-0.0,0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,-0.0,0.1,0.1,0.2,0.2,0.3,0.2,0.1,-0.0,-0.0,-0.1,-0.1,-0.0,-0.1,-0.0,0.1,0.1,-0.0,-0.1,-0.1,-0.0],"pnl":[0.066,0.03,0.132,0.146,0.303,0.343,0.377,0.569,0.551,0.538,0.669,0.709,0.709,0.819,0.907,1.01,1.033,1.073,1.073,1.193,1.193,1.193,1.313,1.41,1.45,1.45,1.57,1.57,1.69,1.81,1.883,1.953,1.993,2.035,2.075,2.206,2.234,2.274,2.274,2.266,2.255,2.295,2.423,2.463,2.463,2.552,2.592,2.662,2.702,2.822,2.822,2.942,3.007,3.157,3.181,3.186,3.366,3.34,3.38,3.38,3.38,3.5,3.54,3.61,3.65,3.675,3.563,3.687,3.835,3.845,3.885,3.885,3.885,3.885,3.885,3.885,3.973,3.989,4.138,4.114,3.998,4.045,4.045,4.008,4.294,4.412,4.643,4.593,4.48,4.52,4.642,4.863,4.903,4.895,5.192,5.268,5.097,5.115,5.121,5.161,5.161,5.281,5.369,5.409,5.529,5.487,5.748,5.542,5.548,5.749,5.775,5.751,5.749,5.779,5.852,5.892,5.891,5.985,5.971,5.989,6.056,6.096,6.27,6.271,6.259,6.299,6.351,6.391,6.511,6.511,6.511,6.631,6.631,6.737,6.777,6.808,6.848,6.983,7.102,7.068,7.062,7.109,7.188,7.294,7.334,7.392,7.318,7.189,7.178,7.218,7.218,7.284,7.324,7.444,7.564,7.617,7.657,7.683,7.723,7.723,7.843,7.843,7.843,7.963,8.062,8.117,8.246,8.286,8.382,8.544,8.668,8.619,8.801,8.841,8.841,8.969,9.037,9.011,8.997,8.958,8.94,8.953,8.958,8.977,9.017,9.022,9.062,9.101,9.001,8.923,8.936,8.976,8.976,9.068,9.108,9.108,9.228,9.262,9.25,9.253,9.205,9.231,9.261,9.301,9.301,9.371,9.452,9.521,9.527,9.567,9.567,9.687,9.807,9.807,9.828,9.87,9.91,9.91,9.907,9.996,9.971,9.972,10.16,10.188,10.237,10.285,10.42,10.565,10.605,10.642,10.682,10.682,10.682,10.682,10.72,10.683,10.832,10.904,10.973,11.08,11.12,11.12,11.098,11.138,11.259,11.416,11.456,11.429,11.558,11.52,11.47,11.504,11.544,11.544,11.714,11.754,11.785,11.818,11.949,11.989,11.989,11.99,12.03,12.03,12.03,12.03,12.03,12.03,12.135,12.146,12.186,12.174,12.259,12.416,12.378,12.418,12.418,12.418,12.418,12.418,12.42,12.341,12.381,12.524,12.564,12.564,12.662,12.623,12.677,12.89,12.91,12.947,13.097,13.16,13.362,13.395,13.381,13.381,13.428,13.451,13.491,13.541,13.606,13.627,13.634,13.625,13.574,13.493,13.533,13.569,13.609,13.609,13.609,13.609,13.609,13.648,13.671,13.809,13.849,13.849,13.849,13.969,13.926,14.004,13.988,14.165,14.27,14.45,14.499,14.539,14.65,14.723,14.65,14.69,14.69,14.81,14.81,14.931,14.92,14.894,14.984,15.024,15.1,15.241,15.281,15.401,15.521,15.521,15.521,15.544,15.598,15.693,15.736,15.923,15.906,15.89,15.93,16.0,16.05,16.269,16.319,16.392,16.432,16.472,16.417,16.324,16.356,16.396,16.396,16.585,16.704,16.754,16.794,16.794,16.794,16.794,16.914,17.034,17.034,17.078,17.238,17.236,17.222,17.262,17.352,17.521,17.675,17.678,17.865,17.843,17.965,18.005,18.125,18.125,18.194,18.197,18.184,18.253,18.184,18.224,18.335,18.375,18.495,18.607,18.647,18.799,18.986,19.168,19.163,19.268,19.338,19.559,19.592,19.632,19.781,19.927,19.891,19.889,19.929,19.921,20.126,20.191,20.231,20.231,20.351,20.461,20.482,20.522,20.522,20.525,20.721,20.706,20.746,20.746,20.746,20.746,20.866,20.866,20.986,21.091,21.135,21.175,21.295,21.429,21.469,21.562,21.604,21.614,21.477,21.644,21.684,21.764,21.804,21.818,21.858,21.958,21.998,22.118,22.193,22.233,22.233,22.353,22.353,22.353,22.441,22.495,22.62,22.66,22.664,22.704,22.824,22.914,22.954,22.954,22.954,22.954,23.074,23.074,23.074,23.074,23.059,23.076,23.075,23.217,22.868,22.839,22.805,22.845,22.965,23.078,23.191,23.231,23.366,23.406,23.442,23.506,23.546,23.64,23.576,23.616],"finalPnl":23.62,"maxInv":0.3},"as":{"inv":[-0.1,-0.1,-0.2,-0.1,-0.1,0.0,-0.1,-0.1,-0.2,-0.2,-0.2,-0.1,-0.1,-0.2,-0.2,-0.2,-0.3,-0.2,-0.2,-0.1,-0.1,-0.1,-0.1,-0.0,-0.1,-0.1,-0.1,-0.1,-0.2,-0.2,-0.1,-0.0,-0.0,0.1,0.1,0.2,0.2,0.1,0.1,-0.0,-0.0,-0.0,0.1,0.1,0.1,0.2,0.1,0.2,0.1,0.1,0.1,0.1,0.2,0.3,0.4,0.5,0.5,0.5,0.4,0.4,0.4,0.3,0.2,0.1,0.2,0.1,0.1,0.0,-0.1,0.0,0.1,0.1,0.1,0.1,0.1,0.1,0.2,0.2,0.2,0.2,0.2,0.3,0.3,0.4,0.5,0.5,0.6,0.5,0.5,0.4,0.3,0.3,0.4,0.3,0.2,0.1,0.0,-0.1,-0.1,0.0,0.0,0.0,0.1,0.0,0.0,0.0,0.1,0.1,0.2,0.2,0.1,0.1,0.2,0.1,0.1,0.0,0.0,-0.1,-0.2,-0.1,-0.2,-0.1,0.0,0.0,0.0,-0.1,0.0,0.1,0.0,0.0,0.0,0.0,0.0,-0.1,-0.1,0.0,-0.1,-0.2,-0.2,-0.3,-0.3,-0.4,-0.5,-0.4,-0.3,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.1,-0.1,-0.1,-0.1,-0.0,-0.1,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.3,-0.3,-0.4,-0.3,-0.2,-0.2,-0.2,-0.2,-0.2,-0.3,-0.3,-0.4,-0.4,-0.5,-0.5,-0.6,-0.6,-0.5,-0.5,-0.5,-0.4,-0.3,-0.4,-0.5,-0.5,-0.5,-0.5,-0.4,-0.4,-0.3,-0.4,-0.4,-0.4,-0.3,-0.2,-0.1,-0.0,-0.0,-0.0,-0.1,-0.1,-0.2,-0.3,-0.3,-0.3,-0.3,-0.3,-0.3,-0.3,-0.3,-0.4,-0.4,-0.4,-0.4,-0.4,-0.4,-0.5,-0.5,-0.6,-0.6,-0.7,-0.7,-0.7,-0.7,-0.6,-0.5,-0.5,-0.5,-0.5,-0.5,-0.6,-0.6,-0.6,-0.6,-0.7,-0.7,-0.6,-0.6,-0.7,-0.7,-0.8,-0.9,-0.9,-0.8,-0.7,-0.8,-0.7,-0.7,-0.7,-0.7,-0.8,-0.8,-0.7,-0.6,-0.7,-0.8,-0.8,-0.7,-0.8,-0.8,-0.8,-0.7,-0.7,-0.7,-0.8,-0.8,-0.9,-1.0,-1.1,-1.1,-1.1,-1.0,-1.0,-1.0,-1.0,-1.0,-0.9,-0.9,-0.9,-1.0,-0.9,-0.9,-0.8,-0.8,-0.7,-0.6,-0.6,-0.6,-0.5,-0.5,-0.4,-0.3,-0.2,-0.1,-0.1,-0.1,-0.2,-0.1,-0.1,-0.1,-0.0,-0.0,-0.0,-0.0,-0.1,-0.2,-0.1,-0.1,-0.1,-0.1,-0.1,-0.2,-0.2,-0.2,-0.1,-0.1,-0.1,-0.1,-0.0,-0.0,-0.0,0.1,0.2,0.3,0.3,0.2,0.1,-0.0,0.1,0.2,0.2,0.2,0.2,0.1,-0.0,0.1,0.1,0.2,0.3,0.3,0.2,0.2,0.2,0.2,0.2,0.1,0.1,0.0,-0.1,-0.2,-0.1,-0.1,0.0,-0.1,-0.1,-0.2,-0.3,-0.3,-0.3,-0.4,-0.5,-0.5,-0.5,-0.4,-0.4,-0.5,-0.6,-0.5,-0.4,-0.4,-0.4,-0.4,-0.4,-0.4,-0.4,-0.5,-0.6,-0.5,-0.5,-0.4,-0.5,-0.6,-0.7,-0.7,-0.8,-0.8,-0.8,-0.7,-0.7,-0.7,-0.6,-0.6,-0.6,-0.6,-0.5,-0.6,-0.7,-0.7,-0.7,-0.6,-0.7,-0.8,-0.8,-0.9,-0.9,-0.9,-0.9,-1.0,-0.9,-0.8,-0.7,-0.6,-0.6,-0.6,-0.6,-0.5,-0.5,-0.4,-0.5,-0.5,-0.5,-0.4,-0.4,-0.5,-0.5,-0.4,-0.4,-0.3,-0.4,-0.4,-0.4,-0.4,-0.4,-0.4,-0.4,-0.3,-0.3,-0.4,-0.4,-0.5,-0.6,-0.7,-0.7,-0.7,-0.8,-0.9,-0.8,-0.9,-0.8,-0.7,-0.8,-0.9,-0.9,-0.9,-0.8,-0.8,-0.8,-0.8,-0.8,-0.9,-0.9,-0.9,-0.9,-0.8,-0.9,-0.8,-0.8,-0.7,-0.8,-0.8,-0.8,-0.8,-0.8,-0.8,-0.8,-0.8,-0.7,-0.7,-0.6,-0.6,-0.5,-0.6,-0.7,-0.8,-0.8,-0.9,-0.9,-0.9,-1.0,-1.1,-1.0,-1.0,-1.0,-1.1,-1.1,-1.0],"pnl":[0.069,0.034,0.121,0.176,0.341,0.403,0.44,0.64,0.668,0.643,0.905,0.996,0.954,1.119,1.183,1.275,1.411,1.421,1.344,1.334,1.406,1.432,1.575,1.637,1.729,1.771,1.934,1.948,1.894,2.022,2.07,2.132,2.132,2.177,2.17,2.377,2.432,2.466,2.444,2.506,2.506,2.633,2.765,2.826,2.875,2.999,2.997,3.081,3.064,3.17,3.114,3.264,3.337,3.507,3.622,3.616,4.041,3.913,4.144,4.266,4.357,4.408,4.508,4.62,4.498,4.593,4.705,4.767,4.844,4.906,4.919,4.933,4.957,4.991,5.053,5.077,5.197,5.228,5.411,5.364,5.132,5.147,5.213,5.13,6.029,6.147,6.667,6.373,5.809,5.486,5.36,5.182,5.21,5.471,5.314,5.382,5.444,5.504,5.511,5.572,5.572,5.697,5.788,5.85,5.975,5.975,6.127,6.025,5.974,6.175,6.241,6.218,6.198,6.269,6.347,6.408,6.408,6.478,6.465,6.534,6.691,6.789,6.85,6.85,6.85,6.898,6.959,6.98,7.041,7.041,7.041,7.166,7.166,7.274,7.265,7.326,7.354,7.568,7.689,7.582,7.503,7.278,7.341,7.741,7.847,7.91,8.057,8.316,8.338,8.455,8.531,8.585,8.613,8.766,8.916,8.977,9.091,9.085,9.218,9.296,9.519,9.385,9.515,9.678,9.858,9.787,9.885,9.968,9.954,9.993,10.11,10.207,10.207,10.247,10.393,10.73,10.644,10.444,10.275,9.984,9.931,9.952,9.974,10.071,9.969,10.191,10.428,10.388,9.887,9.495,9.561,10.135,10.433,10.395,10.349,10.45,10.498,10.632,10.716,10.814,10.874,10.874,10.874,10.916,10.968,11.05,11.113,11.16,11.118,11.022,11.036,11.091,11.331,11.356,11.262,11.433,11.407,11.347,11.096,11.091,11.03,11.034,11.424,11.47,11.883,12.214,12.445,12.74,13.003,13.175,13.393,13.917,14.197,14.054,13.989,13.767,14.063,14.495,14.199,14.228,14.082,14.419,13.914,13.767,14.32,14.713,15.261,16.009,15.893,16.424,16.826,16.588,16.461,16.154,17.093,17.372,17.628,17.824,17.116,17.224,17.323,17.787,18.225,18.35,18.466,17.912,17.972,17.684,18.105,18.194,17.997,17.346,17.441,18.3,17.661,17.786,17.407,17.79,17.953,18.192,18.764,19.475,19.744,20.637,19.326,20.066,19.82,20.131,20.278,20.055,19.996,19.89,19.774,19.676,19.489,19.678,19.804,19.904,20.06,20.056,19.972,20.041,19.976,19.955,20.015,20.015,20.015,20.015,20.136,20.149,20.196,20.172,20.153,20.187,20.2,20.218,20.263,20.539,20.536,20.531,20.479,20.705,20.764,20.884,20.884,20.992,21.223,21.464,21.611,21.635,21.642,21.702,21.855,21.855,21.791,21.989,21.914,21.912,21.971,22.076,22.226,22.22,22.329,22.511,22.745,22.881,22.993,22.871,22.963,23.059,23.004,23.063,23.145,23.312,23.334,23.318,23.376,23.446,23.496,23.695,23.842,23.821,23.882,23.86,23.584,23.351,23.412,23.38,23.475,24.182,24.361,24.567,24.948,25.111,25.14,25.176,25.345,25.627,25.717,25.697,25.997,25.944,25.873,25.897,26.109,26.464,26.783,26.661,27.15,26.937,27.067,26.812,27.048,27.443,27.444,27.428,27.507,27.926,28.332,28.775,29.197,29.54,29.452,29.197,29.349,30.141,30.799,31.316,31.295,32.055,32.693,33.458,33.632,33.385,32.823,32.682,33.016,33.031,32.871,33.266,32.957,32.755,32.811,32.542,32.712,32.569,32.487,32.502,32.079,32.362,32.176,32.28,32.592,32.344,32.441,32.665,32.723,32.598,32.373,32.296,32.163,32.18,32.128,32.561,32.719,33.009,33.303,33.367,32.335,32.818,32.154,32.388,32.087,32.461,32.493,32.91,32.824,32.455,32.397,31.227,31.644,32.332,31.93,31.45,31.277,31.766,31.926,31.865,31.421,31.781,32.396,32.245,32.156,32.179,32.528,32.241,32.269,32.626,32.686,32.581,33.165,33.046,33.344,33.394,34.2,34.345,34.783,34.295,33.904,34.436,35.459,35.443,36.244,36.916,37.209,36.572,36.368,36.8,36.101,35.835],"finalPnl":35.84,"maxInv":1.1},"sweep":[{"gamma":0.05,"pnl":46.3,"maxInv":1.9},{"gamma":0.2,"pnl":37.46,"maxInv":1.4},{"gamma":0.5,"pnl":35.84,"maxInv":1.1},{"gamma":1.0,"pnl":29.68,"maxInv":0.7},{"gamma":2.0,"pnl":28.8,"maxInv":0.7}],"sigma":0.5,"kappa":1.5,"horizon":500};</script>
-<script type="application/json" id="pedagogy-contract">{"lesson":14,"status":"contract-strict","title":"Avellaneda–Stoikov — Modelo y simulación","delivery":"lesson","source_path":"framework/_build/docs/14_body.html","requires":{"concepts":["framework.strategy_contract","inventory.risk","inventory.skew","market_making.heuristic_reservation_price","market_making.cara_utility","market_making.fill_intensity","python.fstring"],"apis":["level.constructor","orderbook.constructor","orderbook.mid","new_order.constructor","strategy.on_book_update","strategy.on_fill","market_maker.constructor","market_maker.half_spread","market_maker.inventory","market_maker.inventory_skew","market_maker.reservation_price","market_maker.quotes","mm_simulation.constructor","mm_simulation.run","sim_result.final_pnl","sim_result.max_inventory"],"notation":["notation.inventory","notation.heuristic_reservation","notation.cara_utility","notation.fill_intensity"]},"requirement_routes":{"concepts":{"framework.strategy_contract":"LIVE","inventory.risk":"LIVE","inventory.skew":"LIVE","market_making.heuristic_reservation_price":"LIVE","market_making.cara_utility":"LIVE","market_making.fill_intensity":"LIVE","python.fstring":"LIVE"},"apis":{"level.constructor":"LIVE","orderbook.constructor":"LIVE","orderbook.mid":"LIVE","new_order.constructor":"LIVE","strategy.on_book_update":"LIVE","strategy.on_fill":"LIVE","market_maker.constructor":"REQUIRED","market_maker.half_spread":"REQUIRED","market_maker.inventory":"LIVE","market_maker.inventory_skew":"REQUIRED","market_maker.reservation_price":"LIVE","market_maker.quotes":"REQUIRED","mm_simulation.constructor":"LIVE","mm_simulation.run":"LIVE","sim_result.final_pnl":"LIVE","sim_result.max_inventory":"LIVE"},"notation":{"notation.inventory":"LIVE","notation.heuristic_reservation":"LIVE","notation.cara_utility":"LIVE","notation.fill_intensity":"LIVE"}},"introduces":{"concepts":[{"id":"as.reservation_price","importance":"major","route":"LIVE"},{"id":"as.optimal_spread","importance":"major","route":"LIVE"},{"id":"as.gamma","importance":"major","route":"LIVE"},{"id":"as.sigma","importance":"major","route":"LIVE"},{"id":"as.kappa","importance":"major","route":"LIVE"},{"id":"as.time_horizon","importance":"major","route":"LIVE"},{"id":"simulation.parameter_sweep","importance":"major","route":"LIVE"}],"apis":["avellaneda_stoikov.constructor","avellaneda_stoikov.time","avellaneda_stoikov.reservation_price","avellaneda_stoikov.optimal_spread","avellaneda_stoikov.quotes"],"notation":["notation.as_reservation_price","notation.as_optimal_spread"]},"introduction_routes":{"apis":{"avellaneda_stoikov.constructor":"LIVE","avellaneda_stoikov.time":"LIVE","avellaneda_stoikov.reservation_price":"LIVE","avellaneda_stoikov.optimal_spread":"LIVE","avellaneda_stoikov.quotes":"LIVE"},"notation":{"notation.as_reservation_price":"LIVE","notation.as_optimal_spread":"LIVE"}},"recalls":[{"concept":"market_making.heuristic_reservation_price","introduced_in":13,"mapping":{"before":"r = mid - skew_heurístico × inventario","now":"r = s - q γ σ² τ expresa el mismo control con unidades."}},{"concept":"framework.strategy_contract","introduced_in":10,"mapping":{"before":"on_book_update devuelve acciones y on_fill actualiza el estado.","now":"A-S cambia las fórmulas dentro del mismo ciclo de vida."}},{"concept":"market_making.cara_utility","introduced_in":13,"mapping":{"before":"CARA dio a γ el significado de aversión al riesgo.","now":"γ controla cuánto desplazan riesgo e inventario el centro A-S."}},{"concept":"market_making.fill_intensity","introduced_in":13,"mapping":{"before":"λ(δ)=A·exp(−κδ) hizo visible la caída de fills con la distancia.","now":"κ entra en el ancho óptimo y cuantifica ese mismo trade-off."}}],"api_surface":[{"id":"level.constructor","name":"Level","kind":"constructor","signature":"Level(price: float, size: float) -> Level","returns":"Level","responsibility":"construct one visible price level","qualified_name":"exchange.book.Level"},{"id":"orderbook.constructor","name":"OrderBook","kind":"constructor","signature":"OrderBook(symbol: str, bids: list[Level], asks: list[Level]) -> OrderBook","returns":"OrderBook","responsibility":"construct a sorted two-sided book","qualified_name":"exchange.book.OrderBook"},{"id":"orderbook.mid","name":"mid","kind":"property","signature":"mid -> float | None","returns":"float | None","responsibility":"compute the top-of-book midpoint","qualified_name":"exchange.book.OrderBook.mid"},{"id":"new_order.constructor","name":"NewOrder","kind":"constructor","signature":"NewOrder(order: Order) -> NewOrder","returns":"NewOrder","responsibility":"wrap an order as a typed strategy action","qualified_name":"exchange.strategy.NewOrder"},{"id":"strategy.on_book_update","name":"on_book_update","kind":"method","signature":"on_book_update(book: OrderBook) -> list[Action]","returns":"list[Action]","responsibility":"propose typed actions from market state","qualified_name":"exchange.strategy.Strategy.on_book_update"},{"id":"strategy.on_fill","name":"on_fill","kind":"method","signature":"on_fill(fill: Fill) -> None","returns":"None","responsibility":"receive execution feedback","qualified_name":"exchange.strategy.Strategy.on_fill"},{"id":"market_maker.constructor","name":"MarketMaker","kind":"constructor","signature":"MarketMaker(symbol: str, quote_size: float = 0.01, half_spread: float = 5.0, inventory_skew: float = 2.0) -> MarketMaker","returns":"MarketMaker","responsibility":"configure the heuristic market maker","qualified_name":"exchange.strategies.market_maker.MarketMaker"},{"id":"market_maker.inventory","name":"inventory","kind":"property","signature":"inventory -> float","returns":"float","responsibility":"read or set the strategy inventory through its public contract","qualified_name":"exchange.strategies.market_maker.MarketMaker.inventory"},{"id":"market_maker.half_spread","name":"half_spread","kind":"attribute","signature":"half_spread: float","returns":"float","responsibility":"configure half the quoted width around the reservation price","qualified_name":"exchange.strategies.market_maker.MarketMaker.half_spread"},{"id":"market_maker.inventory_skew","name":"inventory_skew","kind":"attribute","signature":"inventory_skew: float","returns":"float","responsibility":"configure the heuristic inventory correction strength","qualified_name":"exchange.strategies.market_maker.MarketMaker.inventory_skew"},{"id":"market_maker.reservation_price","name":"reservation_price","kind":"method","signature":"reservation_price(mid: float) -> float","returns":"float","responsibility":"shift the quote center using inventory","qualified_name":"exchange.strategies.market_maker.MarketMaker.reservation_price"},{"id":"market_maker.quotes","name":"quotes","kind":"method","signature":"quotes(book: OrderBook) -> tuple[float, float]","returns":"tuple[float, float]","responsibility":"produce bid and ask quotes","qualified_name":"exchange.strategies.market_maker.MarketMaker.quotes"},{"id":"mm_simulation.constructor","name":"MMSimulation","kind":"constructor","signature":"MMSimulation(strategy: MarketMaker, s0: float = 100.0, sigma: float = 0.5, steps: int = 500, A: float = 1.0, kappa: float = 1.5, seed: int = 42) -> MMSimulation","returns":"MMSimulation","responsibility":"configure a reproducible fill-intensity simulation","qualified_name":"exchange.simulation.MMSimulation"},{"id":"mm_simulation.run","name":"run","kind":"method","signature":"run() -> SimResult","returns":"SimResult","responsibility":"simulate quotes, fills, inventory, and marked PnL","qualified_name":"exchange.simulation.MMSimulation.run"},{"id":"sim_result.final_pnl","name":"final_pnl","kind":"property","signature":"final_pnl -> float","returns":"float","responsibility":"read final marked-to-market PnL","qualified_name":"exchange.simulation.SimResult.final_pnl"},{"id":"sim_result.max_inventory","name":"max_inventory","kind":"property","signature":"max_inventory -> float","returns":"float","responsibility":"read maximum absolute simulated inventory","qualified_name":"exchange.simulation.SimResult.max_inventory"},{"id":"avellaneda_stoikov.constructor","name":"AvellanedaStoikov","kind":"constructor","signature":"AvellanedaStoikov(symbol: str, quote_size: float = 0.01, gamma: float = 0.1, sigma: float = 10.0, kappa: float = 1.5, horizon: int = 500) -> AvellanedaStoikov","returns":"AvellanedaStoikov","responsibility":"configure the A-S risk, volatility, flow, and horizon parameters","qualified_name":"exchange.strategies.avellaneda_stoikov.AvellanedaStoikov"},{"id":"avellaneda_stoikov.time","name":"time","kind":"property","signature":"time -> int","returns":"int","responsibility":"read or set the model clock through its public contract","qualified_name":"exchange.strategies.avellaneda_stoikov.AvellanedaStoikov.time"},{"id":"avellaneda_stoikov.reservation_price","name":"reservation_price","kind":"method","signature":"reservation_price(mid: float) -> float","returns":"float","responsibility":"compute the A-S inventory- and horizon-adjusted quote center","qualified_name":"exchange.strategies.avellaneda_stoikov.AvellanedaStoikov.reservation_price"},{"id":"avellaneda_stoikov.optimal_spread","name":"optimal_spread","kind":"method","signature":"optimal_spread() -> float","returns":"float","responsibility":"compute the model spread","qualified_name":"exchange.strategies.avellaneda_stoikov.AvellanedaStoikov.optimal_spread"},{"id":"avellaneda_stoikov.quotes","name":"quotes","kind":"method","signature":"quotes(book: OrderBook) -> tuple[float, float]","returns":"tuple[float, float]","responsibility":"center A-S quotes on the model reservation price with optimal width","qualified_name":"exchange.strategies.avellaneda_stoikov.AvellanedaStoikov.quotes"}],"routes":{"LIVE":["l14-challenge","l14-formulas","l14-lab","l14-recap"],"REQUIRED":["l14-capstone","l14-quiz"],"OPTIONAL":[]},"objectives":[{"id":"l14-interpret-reservation-price","route":"LIVE","concepts":["as.reservation_price","as.gamma","as.sigma","as.time_horizon"],"apis":["avellaneda_stoikov.constructor","avellaneda_stoikov.time","market_maker.inventory","avellaneda_stoikov.reservation_price"],"notation":["notation.cara_utility","notation.as_reservation_price"]},{"id":"l14-interpret-optimal-spread","route":"LIVE","concepts":["as.optimal_spread","as.kappa"],"apis":["avellaneda_stoikov.optimal_spread"],"notation":["notation.fill_intensity","notation.as_optimal_spread"]},{"id":"l14-run-parameter-lab","route":"LIVE","concepts":["simulation.parameter_sweep","as.gamma"],"apis":["avellaneda_stoikov.constructor","avellaneda_stoikov.quotes","mm_simulation.constructor","mm_simulation.run","sim_result.final_pnl","sim_result.max_inventory"],"notation":[]},{"id":"l14-build-capstone","route":"REQUIRED","concepts":["framework.strategy_contract","inventory.skew"],"apis":["market_maker.constructor","market_maker.half_spread","market_maker.inventory","market_maker.inventory_skew","market_maker.quotes","strategy.on_book_update","strategy.on_fill"],"notation":[]}],"load":{"live_presentation_minutes":22,"guided_minutes":20,"required_autonomous_minutes":125,"required_project_minutes":90,"optional_minutes":10,"overflow_policy":"explicit-route-plan"},"scenes":[{"id":"l14-challenge","dom_id":"s0","type":"hero-challenge","route":"LIVE","layout":"focus","concepts":["market_making.heuristic_reservation_price"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l14-formulas","dom_id":"s1","type":"mathematical-state","route":"LIVE","layout":"split-42-58","concepts":["as.reservation_price","as.optimal_spread","as.gamma","as.sigma","as.kappa","as.time_horizon"],"duration_minutes":12,"stages":[{"id":"question","route":"LIVE","dom_stage":0},{"id":"reservation","route":"LIVE","dom_stage":1},{"id":"spread","route":"LIVE","dom_stage":2},{"id":"tau","route":"LIVE","dom_stage":3},{"id":"duel","route":"LIVE","dom_stage":4}]},{"id":"l14-lab","dom_id":"s2","type":"concept-simulator","route":"LIVE","layout":"split-45-55","concepts":["as.gamma","simulation.parameter_sweep"],"duration_minutes":6,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l14-capstone","dom_id":"s3","type":"guided-exercise","route":"REQUIRED","layout":"focus","concepts":["framework.strategy_contract","inventory.skew"],"duration_minutes":90,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l14-quiz","dom_id":"s4","type":"diagnostic-quiz","route":"REQUIRED","layout":"focus","concepts":["as.reservation_price","as.optimal_spread","as.gamma","as.sigma","as.kappa","as.time_horizon"],"duration_minutes":8,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l14-recap","dom_id":"s5","type":"recap","route":"LIVE","layout":"focus","concepts":["as.reservation_price","as.optimal_spread"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]}],"bridge":{"target_lesson":15,"known":{"concepts":["matching.atomicity","framework.strategy_contract","metrics.slippage","execution.vwap","inventory.skew","as.reservation_price","as.optimal_spread"],"apis":["matching.process","strategy.on_book_update","backtest.run"],"notation":["notation.slippage_signed","notation.vwap","notation.as_reservation_price","notation.as_optimal_spread"]},"limitation":"El exchange completo aún no se ha demostrado bajo restricciones de evaluación.","need":"La evaluación final muestrea razonamiento acumulativo de todos los bloques."},"api_transitions":[{"from_api":"market_maker.constructor","from_signature":"MarketMaker(symbol: str, quote_size: float = 0.01, half_spread: float = 5.0, inventory_skew: float = 2.0) -> MarketMaker","to_api":"avellaneda_stoikov.constructor","to_signature":"AvellanedaStoikov(symbol: str, quote_size: float = 0.01, gamma: float = 0.1, sigma: float = 10.0, kappa: float = 1.5, horizon: int = 500) -> AvellanedaStoikov","kind":"explicit-specialization","reason":"La subclase conserva symbol y quote_size, y sustituye los parámetros heurísticos por γ, σ, κ y horizonte explícitos."},{"from_api":"market_maker.reservation_price","from_signature":"reservation_price(mid: float) -> float","to_api":"avellaneda_stoikov.reservation_price","to_signature":"reservation_price(mid: float) -> float","kind":"semantic-override","reason":"La firma permanece estable, pero el centro deja el skew fijo y pasa a qγσ²τ; el contrato separado impide ocultar ese cambio de responsabilidad."},{"from_api":"market_maker.quotes","from_signature":"quotes(book: OrderBook) -> tuple[float, float]","to_api":"avellaneda_stoikov.quotes","to_signature":"quotes(book: OrderBook) -> tuple[float, float]","kind":"semantic-override","reason":"El retorno sigue siendo bid/ask, pero ahora usa el reservation price y el ancho óptimo de A-S."}],"package_checks":[{"path":"14-avellaneda-stoikov/exercises/exchange/book.py","class":"Level","members":{"__init__":{"api":"level.constructor","kind":"constructor","parameters":[{"name":"price","kind":"positional_or_keyword","annotation":"float"},{"name":"size","kind":"positional_or_keyword","annotation":"float"}],"returns":"Level"}}},{"path":"14-avellaneda-stoikov/exercises/exchange/book.py","class":"OrderBook","members":{"__init__":{"api":"orderbook.constructor","kind":"constructor","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"bids","kind":"positional_or_keyword","annotation":"list[Level]"},{"name":"asks","kind":"positional_or_keyword","annotation":"list[Level]"}],"returns":"OrderBook"},"mid":{"api":"orderbook.mid","kind":"property","parameters":[],"returns":"float | None"}}},{"path":"14-avellaneda-stoikov/exercises/exchange/strategy.py","class":"NewOrder","members":{"__init__":{"api":"new_order.constructor","kind":"constructor","parameters":[{"name":"order","kind":"positional_or_keyword","annotation":"Order"}],"returns":"NewOrder"}}},{"path":"14-avellaneda-stoikov/exercises/exchange/strategy.py","class":"Strategy","members":{"on_book_update":{"api":"strategy.on_book_update","kind":"method","parameters":[{"name":"book","kind":"positional_or_keyword","annotation":"OrderBook"}],"returns":"list[Action]"},"on_fill":{"api":"strategy.on_fill","kind":"method","parameters":[{"name":"fill","kind":"positional_or_keyword","annotation":"Fill"}],"returns":"None"}}},{"path":"14-avellaneda-stoikov/exercises/exchange/strategies/market_maker.py","class":"MarketMaker","members":{"__init__":{"api":"market_maker.constructor","kind":"constructor","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"quote_size","kind":"positional_or_keyword","annotation":"float","default":"0.01"},{"name":"half_spread","kind":"positional_or_keyword","annotation":"float","default":"5.0"},{"name":"inventory_skew","kind":"positional_or_keyword","annotation":"float","default":"2.0"}],"returns":"MarketMaker"},"inventory":{"api":"market_maker.inventory","kind":"property","parameters":[],"returns":"float"},"half_spread":{"api":"market_maker.half_spread","kind":"attribute","parameters":[],"returns":"float"},"inventory_skew":{"api":"market_maker.inventory_skew","kind":"attribute","parameters":[],"returns":"float"},"reservation_price":{"api":"market_maker.reservation_price","kind":"method","parameters":[{"name":"mid","kind":"positional_or_keyword","annotation":"float"}],"returns":"float"},"quotes":{"api":"market_maker.quotes","kind":"method","parameters":[{"name":"book","kind":"positional_or_keyword","annotation":"OrderBook"}],"returns":"tuple[float, float]"}}},{"path":"14-avellaneda-stoikov/exercises/exchange/simulation.py","class":"MMSimulation","members":{"__init__":{"api":"mm_simulation.constructor","kind":"constructor","parameters":[{"name":"strategy","kind":"positional_or_keyword","annotation":"MarketMaker"},{"name":"s0","kind":"positional_or_keyword","annotation":"float","default":"100.0"},{"name":"sigma","kind":"positional_or_keyword","annotation":"float","default":"0.5"},{"name":"steps","kind":"positional_or_keyword","annotation":"int","default":"500"},{"name":"A","kind":"positional_or_keyword","annotation":"float","default":"1.0"},{"name":"kappa","kind":"positional_or_keyword","annotation":"float","default":"1.5"},{"name":"seed","kind":"positional_or_keyword","annotation":"int","default":"42"}],"returns":"MMSimulation"},"run":{"api":"mm_simulation.run","kind":"method","parameters":[],"returns":"SimResult"}}},{"path":"14-avellaneda-stoikov/exercises/exchange/simulation.py","class":"SimResult","members":{"final_pnl":{"api":"sim_result.final_pnl","kind":"property","parameters":[],"returns":"float"},"max_inventory":{"api":"sim_result.max_inventory","kind":"property","parameters":[],"returns":"float"}}},{"path":"14-avellaneda-stoikov/exercises/exchange/strategies/avellaneda_stoikov.py","class":"AvellanedaStoikov","members":{"__init__":{"api":"avellaneda_stoikov.constructor","kind":"constructor","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"quote_size","kind":"positional_or_keyword","annotation":"float","default":"0.01"},{"name":"gamma","kind":"positional_or_keyword","annotation":"float","default":"0.1"},{"name":"sigma","kind":"positional_or_keyword","annotation":"float","default":"10.0"},{"name":"kappa","kind":"positional_or_keyword","annotation":"float","default":"1.5"},{"name":"horizon","kind":"positional_or_keyword","annotation":"int","default":"500"}],"returns":"AvellanedaStoikov"},"time":{"api":"avellaneda_stoikov.time","kind":"property","parameters":[],"returns":"int"},"reservation_price":{"api":"avellaneda_stoikov.reservation_price","kind":"method","parameters":[{"name":"mid","kind":"positional_or_keyword","annotation":"float"}],"returns":"float"},"optimal_spread":{"api":"avellaneda_stoikov.optimal_spread","kind":"method","parameters":[],"returns":"float"},"quotes":{"api":"avellaneda_stoikov.quotes","kind":"method","parameters":[{"name":"book","kind":"positional_or_keyword","annotation":"OrderBook"}],"returns":"tuple[float, float]"}}}],"used_later":{"concepts":["as.optimal_spread","as.reservation_price"],"apis":[],"notation":["notation.as_optimal_spread","notation.as_reservation_price"]}}</script>
+<script type="text/plain" id="guion-src"># Guion — Clase 14: Avellaneda-Stoikov — modelo y simulación
+
+**Idea central:** El reservation price inclina según inventario y varianza restante; el optimal spread cobra por el riesgo. Más gamma = más defensivo, menos inventario, menos PnL.
+
+**Formato:** documento interactivo (`avellaneda-stoikov-doc.html`), autocontenido y sin internet. Tú haces scroll y narras. Regla de la casa: **"lo cian se toca"**.
+
+Estructura: hero/reto (2 min) → scrollytelling (~7 min, scroll lento: cada parada es una idea) → simulador estrella (cede el teclado) → secciones de construcción (con gates de predicción: exige la predicción antes del ▶) → quiz (diagnóstico) → mapa del paquete + puente.
+
+## Los bloques conceptuales
+
+
+### 1. De dónde sale el modelo
+
+- **Qué decir:** Maximizas utilidad CARA sobre tu riqueza final con inventario incierto. Usamos τ=(H−t)/H y σ_H como volatilidad de precio del horizonte completo; así σ_H²τ es la varianza restante.
+
+### 2. Reservation price y optimal spread
+
+- **Qué decir:** r es el mid ajustado por inventario y varianza restante; d es cuánto separas las cotizaciones. Al cierre, el término de riesgo se apaga pero permanece el término de liquidez.
+
+### 3. Simular y barrer gamma
+
+- **Qué decir:** MMSimulation mueve el mid con incrementos σ_H/√H y te ejecuta según la distancia. Más gamma controla mejor el inventario, pero captura menos spread. No hay free lunch.
+
+## Cierre
+- Recoge la idea central sobre el mapa del paquete y manda al notebook de construcción; presenta el gimnasio (dosis mínima declarada).
+</script>
+<script>const DOC_DATA={"naive":{"inv":[-0.1,-0.1,-0.2,-0.1,-0.1,0.0,-0.1,-0.1,-0.1,-0.1,-0.1,0.0,0.0,-0.1,0.0,0.0,0.0,0.1,0.1,0.1,0.1,0.1,0.1,0.2,0.1,0.1,0.1,0.1,0.0,0.0,0.1,0.1,0.1,0.2,0.1,0.1,0.1,0.0,0.0,-0.1,-0.1,0.0,0.1,0.0,0.0,0.1,0.0,0.1,0.0,0.0,0.0,0.0,0.1,0.2,0.2,0.2,0.1,0.1,0.0,0.0,0.0,-0.1,-0.2,-0.1,0.0,-0.1,-0.1,-0.2,-0.1,0.0,0.1,0.1,0.1,0.1,0.1,0.1,0.2,0.2,0.1,0.1,0.1,0.2,0.1,0.1,0.2,0.2,0.2,0.1,0.1,0.0,-0.1,-0.1,0.0,-0.1,-0.2,-0.3,-0.2,-0.2,-0.2,-0.1,-0.1,-0.1,0.0,-0.1,-0.1,0.0,0.1,0.1,0.2,0.2,0.1,0.1,0.2,0.1,0.1,0.0,0.0,-0.1,-0.2,-0.1,-0.1,0.0,0.1,0.1,0.1,0.0,0.1,0.0,-0.1,-0.1,-0.1,0.0,0.0,-0.1,-0.1,0.0,-0.1,-0.2,-0.2,-0.3,-0.2,-0.1,-0.2,-0.1,0.0,0.1,0.1,0.1,0.1,0.1,0.1,0.2,0.1,0.1,0.0,0.1,0.0,-0.1,0.0,0.0,-0.1,-0.1,0.0,0.0,-0.1,-0.1,-0.2,-0.1,0.0,0.1,0.1,0.1,0.1,0.0,0.0,-0.1,-0.1,-0.2,-0.2,-0.3,-0.3,-0.2,-0.2,-0.2,-0.1,0.0,0.0,-0.1,-0.1,-0.1,-0.1,0.0,0.0,0.1,0.0,0.0,-0.1,0.0,0.1,0.2,0.3,0.2,0.2,0.1,0.1,0.0,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.2,-0.2,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.2,-0.1,-0.1,-0.1,-0.1,-0.1,0.0,0.1,0.1,0.1,0.1,0.1,0.0,0.0,0.0,0.0,-0.1,-0.1,0.0,0.0,-0.1,-0.1,-0.2,-0.2,-0.1,0.0,0.1,0.0,0.1,0.1,0.0,0.0,-0.1,-0.1,0.0,0.1,0.0,-0.1,-0.1,0.0,-0.1,-0.1,-0.1,0.0,0.0,0.0,-0.1,-0.1,-0.1,-0.2,-0.3,-0.3,-0.3,-0.2,-0.2,-0.1,-0.1,-0.1,0.0,0.0,-0.1,-0.2,-0.1,-0.1,0.0,0.0,0.1,0.2,0.2,0.2,0.2,0.1,0.2,0.2,0.2,0.2,0.2,0.2,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.0,-0.1,0.0,0.0,0.0,0.0,0.0,-0.1,-0.1,-0.1,0.0,0.0,0.0,0.0,0.1,0.1,0.1,0.2,0.1,0.2,0.2,0.1,0.0,-0.1,0.0,0.1,0.1,0.1,0.1,0.0,-0.1,0.0,0.0,0.1,0.2,0.1,0.0,0.0,0.0,0.0,0.0,-0.1,-0.1,-0.2,-0.1,-0.2,-0.1,-0.1,0.0,-0.1,-0.1,-0.2,-0.1,-0.1,0.0,-0.1,-0.2,-0.2,-0.2,-0.1,-0.1,-0.1,-0.2,-0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.0,-0.1,-0.2,-0.1,-0.1,0.0,-0.1,-0.1,-0.2,-0.2,-0.3,-0.2,-0.2,-0.1,0.0,0.0,0.1,0.1,0.1,0.1,0.1,0.0,-0.1,0.0,0.0,0.1,0.0,-0.1,-0.1,-0.2,-0.2,-0.1,-0.1,-0.2,-0.1,0.0,0.1,0.2,0.2,0.2,0.1,0.1,0.1,0.1,0.0,0.0,0.1,0.1,0.1,0.0,0.0,0.1,0.1,0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.1,0.1,0.0,-0.1,-0.2,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,0.0,-0.1,0.0,0.1,0.0,-0.1,-0.1,-0.1,0.0,-0.1,-0.1,0.0,0.0,-0.1,-0.1,-0.1,0.0,0.0,-0.1,0.0,0.0,0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.1,0.1,0.2,0.2,0.3,0.2,0.1,0.0,0.1,0.0,0.0,0.0,-0.1,-0.1,0.0,0.0,-0.1,-0.1,-0.1,0.0],"pnl":[0.06,0.059,0.14,0.159,0.281,0.321,0.38,0.503,0.502,0.502,0.508,0.548,0.548,0.61,0.65,0.77,0.77,0.831,0.833,0.956,0.953,0.951,1.071,1.154,1.173,1.171,1.289,1.289,1.329,1.449,1.509,1.627,1.631,1.71,1.729,1.853,1.854,1.894,1.894,1.951,1.95,1.99,2.053,2.093,2.093,2.155,2.195,2.255,2.295,2.415,2.415,2.535,2.595,2.678,2.679,2.678,2.701,2.7,2.74,2.74,2.74,2.8,2.878,2.896,2.936,2.994,2.989,3.071,3.092,3.132,3.19,3.19,3.191,3.193,3.196,3.197,3.279,3.28,3.302,3.301,3.296,3.374,3.393,3.391,3.486,3.606,3.613,3.63,3.625,3.665,3.728,3.852,3.892,3.949,4.039,4.138,4.13,4.13,4.13,4.15,4.149,4.271,4.311,4.376,4.495,4.535,4.599,4.594,4.669,4.678,4.698,4.697,4.774,4.794,4.912,4.952,4.952,5.012,5.089,5.109,5.111,5.151,5.216,5.216,5.216,5.256,5.316,5.356,5.414,5.412,5.413,5.453,5.453,5.515,5.515,5.555,5.613,5.7,5.82,5.912,5.91,5.927,6.007,6.03,6.07,6.13,6.127,6.121,6.121,6.118,6.116,6.197,6.216,6.334,6.374,6.434,6.474,6.533,6.573,6.573,6.635,6.632,6.672,6.792,6.854,6.971,7.051,7.072,7.112,7.174,7.294,7.292,7.414,7.454,7.454,7.518,7.635,7.71,7.707,7.799,7.798,7.798,7.798,7.8,7.818,7.858,7.858,7.917,7.913,7.909,7.91,7.95,7.95,8.011,8.051,8.051,8.11,8.15,8.21,8.286,8.375,8.375,8.378,8.399,8.397,8.437,8.497,8.616,8.615,8.614,8.614,8.733,8.854,8.855,8.931,8.935,8.955,8.954,8.951,9.07,9.069,9.069,9.154,9.174,9.176,9.178,9.299,9.42,9.46,9.519,9.517,9.513,9.51,9.511,9.551,9.551,9.671,9.671,9.729,9.848,9.888,9.888,9.945,9.944,10.029,10.153,10.175,10.215,10.276,10.316,10.374,10.375,10.415,10.415,10.48,10.482,10.522,10.58,10.62,10.681,10.681,10.721,10.783,10.784,10.785,10.825,10.825,10.825,10.887,10.887,10.886,10.959,11.06,11.07,11.063,11.063,11.06,11.081,11.082,11.083,11.123,11.123,11.184,11.271,11.285,11.288,11.328,11.328,11.388,11.472,11.473,11.474,11.477,11.499,11.585,11.701,11.698,11.694,11.811,11.811,11.835,11.834,11.837,11.838,11.836,11.835,11.833,11.829,11.869,11.928,11.968,11.968,11.968,11.968,11.968,12.027,12.028,12.034,12.074,12.074,12.074,12.194,12.25,12.368,12.367,12.452,12.475,12.561,12.565,12.584,12.624,12.684,12.724,12.783,12.781,12.903,12.901,12.941,12.999,13.039,13.159,13.218,13.299,13.32,13.36,13.48,13.6,13.6,13.6,13.659,13.661,13.742,13.763,13.848,13.866,13.865,13.905,13.966,13.968,14.054,14.075,14.193,14.233,14.292,14.366,14.362,14.363,14.382,14.383,14.389,14.471,14.492,14.532,14.532,14.532,14.532,14.652,14.772,14.772,14.832,14.915,14.934,14.934,14.974,15.035,15.037,15.12,15.119,15.226,15.222,15.342,15.36,15.4,15.4,15.461,15.461,15.46,15.578,15.575,15.615,15.677,15.717,15.837,15.9,15.94,16.004,16.127,16.211,16.211,16.235,16.238,16.324,16.345,16.385,16.449,16.532,16.527,16.527,16.548,16.545,16.669,16.672,16.712,16.712,16.771,16.773,16.774,16.814,16.814,16.872,16.995,16.994,17.034,17.034,17.034,17.034,17.034,17.034,17.154,17.216,17.218,17.258,17.317,17.403,17.424,17.425,17.427,17.428,17.422,17.424,17.464,17.525,17.565,17.623,17.663,17.724,17.724,17.841,17.881,17.934,17.937,17.977,17.977,18.034,18.153,18.155,18.195,18.195,18.252,18.292,18.412,18.474,18.514,18.514,18.514,18.514,18.634,18.634,18.634,18.634,18.69,18.691,18.768,18.889,18.968,18.967,18.985,19.025,19.088,19.128,19.128,19.128,19.191,19.193,19.233,19.233,19.292,19.294,19.291,19.331],"nFills":364,"finalPnl":19.33,"maxInv":0.3},"as":{"inv":[-0.1,-0.1,-0.2,-0.1,-0.1,0.0,-0.1,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.3,-0.3,-0.3,-0.3,-0.2,-0.2,-0.1,-0.1,-0.1,-0.1,-0.0,-0.1,-0.1,-0.1,-0.1,-0.2,-0.2,-0.1,-0.0,-0.0,0.1,0.1,0.2,0.2,0.1,0.1,-0.0,-0.0,-0.0,0.1,0.1,0.1,0.2,0.1,0.2,0.1,0.1,0.1,0.1,0.1,0.2,0.3,0.4,0.4,0.4,0.3,0.3,0.3,0.2,0.1,0.0,0.1,0.0,0.0,-0.1,-0.2,-0.2,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,0.0,0.0,0.0,0.0,0.0,0.1,0.2,0.3,0.4,0.4,0.5,0.4,0.4,0.3,0.2,0.2,0.3,0.2,0.1,0.0,-0.1,-0.2,-0.2,-0.1,-0.1,-0.1,0.0,-0.1,-0.1,-0.1,0.0,0.0,0.1,0.1,0.0,0.0,0.1,0.0,0.0,-0.1,-0.1,-0.2,-0.3,-0.2,-0.3,-0.3,-0.2,-0.2,-0.2,-0.2,-0.1,0.0,-0.1,-0.1,-0.1,-0.1,-0.1,-0.2,-0.2,-0.1,-0.1,-0.2,-0.2,-0.3,-0.3,-0.4,-0.5,-0.4,-0.3,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.1,-0.1,-0.1,-0.1,-0.0,-0.1,-0.2,-0.2,-0.2,-0.3,-0.3,-0.3,-0.3,-0.4,-0.5,-0.6,-0.6,-0.5,-0.4,-0.3,-0.3,-0.3,-0.3,-0.3,-0.4,-0.4,-0.5,-0.5,-0.6,-0.6,-0.5,-0.5,-0.5,-0.4,-0.3,-0.3,-0.3,-0.3,-0.3,-0.3,-0.2,-0.2,-0.1,-0.2,-0.2,-0.3,-0.2,-0.1,-0.0,0.1,0.1,0.1,-0.0,-0.0,-0.1,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.2,-0.3,-0.3,-0.3,-0.3,-0.3,-0.3,-0.4,-0.4,-0.5,-0.5,-0.6,-0.6,-0.6,-0.6,-0.5,-0.4,-0.4,-0.4,-0.4,-0.4,-0.5,-0.5,-0.5,-0.5,-0.6,-0.6,-0.5,-0.5,-0.6,-0.6,-0.7,-0.8,-0.7,-0.6,-0.5,-0.6,-0.5,-0.5,-0.5,-0.5,-0.6,-0.6,-0.5,-0.4,-0.5,-0.6,-0.6,-0.5,-0.6,-0.6,-0.6,-0.6,-0.6,-0.6,-0.7,-0.7,-0.8,-0.9,-1.0,-1.0,-1.0,-0.9,-0.9,-0.9,-0.9,-0.9,-0.8,-0.8,-0.9,-1.0,-0.9,-0.9,-0.8,-0.8,-0.7,-0.6,-0.6,-0.6,-0.5,-0.5,-0.4,-0.3,-0.2,-0.1,-0.0,-0.0,-0.1,-0.0,-0.0,-0.0,0.1,0.1,0.1,0.1,-0.0,-0.1,-0.0,-0.0,-0.0,-0.0,-0.0,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.1,-0.0,-0.0,-0.0,0.1,0.2,0.3,0.3,0.2,0.1,-0.0,-0.0,0.1,0.1,0.1,0.1,-0.0,-0.1,-0.0,-0.0,0.1,0.2,0.2,0.1,0.1,0.1,0.1,0.1,-0.0,-0.0,-0.1,-0.1,-0.2,-0.1,-0.1,-0.0,-0.1,-0.1,-0.2,-0.3,-0.4,-0.4,-0.5,-0.6,-0.6,-0.6,-0.5,-0.5,-0.5,-0.6,-0.5,-0.5,-0.5,-0.5,-0.5,-0.5,-0.5,-0.5,-0.6,-0.7,-0.7,-0.7,-0.6,-0.7,-0.8,-0.9,-0.9,-1.0,-1.0,-1.0,-0.9,-0.8,-0.8,-0.7,-0.7,-0.7,-0.7,-0.6,-0.7,-0.8,-0.9,-0.9,-0.8,-0.8,-0.9,-0.9,-1.0,-1.0,-1.0,-1.0,-1.1,-1.0,-0.9,-0.8,-0.7,-0.7,-0.7,-0.7,-0.6,-0.6,-0.5,-0.6,-0.6,-0.5,-0.4,-0.4,-0.5,-0.5,-0.4,-0.3,-0.3,-0.4,-0.4,-0.4,-0.4,-0.4,-0.4,-0.4,-0.3,-0.3,-0.4,-0.5,-0.6,-0.6,-0.7,-0.7,-0.7,-0.7,-0.8,-0.8,-0.9,-0.8,-0.7,-0.8,-0.9,-0.9,-0.9,-0.8,-0.9,-0.9,-0.9,-0.9,-1.0,-1.0,-1.0,-1.0,-1.0,-1.1,-1.0,-1.0,-0.9,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-0.9,-0.9,-0.8,-0.8,-0.7,-0.8,-0.9,-1.0,-0.9,-0.9,-0.9,-0.9,-1.0,-1.1,-1.0,-1.0,-1.0,-1.1,-1.1,-1.1],"pnl":[0.064,0.062,0.128,0.189,0.319,0.381,0.444,0.515,0.513,0.512,0.524,0.527,0.523,0.596,0.719,0.843,0.847,0.904,0.901,0.959,0.962,0.963,1.091,1.153,1.218,1.22,1.348,1.349,1.408,1.535,1.596,1.658,1.658,1.72,1.72,1.791,1.794,1.853,1.852,1.914,1.914,2.041,2.107,2.231,2.233,2.3,2.358,2.424,2.481,2.606,2.604,2.731,2.731,2.799,2.866,2.93,3.066,3.062,3.126,3.13,3.133,3.193,3.255,3.317,3.375,3.437,3.437,3.501,3.567,3.566,3.629,3.628,3.627,3.625,3.623,3.622,3.683,3.683,3.809,3.809,3.809,3.871,3.933,3.993,4.088,4.214,4.297,4.342,4.322,4.368,4.422,4.538,4.602,4.667,4.723,4.785,4.843,4.907,4.907,4.968,4.966,5.094,5.155,5.222,5.346,5.351,5.412,5.412,5.472,5.477,5.538,5.538,5.599,5.66,5.785,5.843,5.84,5.904,5.963,6.024,6.094,6.099,6.148,6.148,6.149,6.148,6.209,6.27,6.331,6.329,6.33,6.451,6.453,6.52,6.519,6.581,6.579,6.649,6.773,6.829,6.826,6.877,6.943,7.016,7.076,7.136,7.142,7.154,7.155,7.16,7.164,7.223,7.225,7.35,7.475,7.536,7.6,7.659,7.665,7.669,7.739,7.73,7.739,7.865,7.936,7.987,8.055,8.057,8.106,8.156,8.214,8.22,8.335,8.334,8.341,8.417,8.531,8.584,8.576,8.626,8.623,8.678,8.679,8.684,8.734,8.8,8.806,8.803,8.789,8.779,8.781,8.851,8.858,8.916,8.976,8.978,9.039,9.1,9.16,9.221,9.278,9.279,9.28,9.34,9.34,9.402,9.464,9.584,9.583,9.58,9.58,9.701,9.827,9.827,9.885,9.89,9.889,9.887,9.879,9.997,10.055,10.056,10.132,10.133,10.211,10.224,10.35,10.478,10.543,10.605,10.612,10.631,10.641,10.636,10.695,10.686,10.815,10.831,10.881,10.999,11.048,11.061,11.103,11.097,11.181,11.259,11.33,11.409,11.461,11.54,11.608,11.601,11.596,11.587,11.68,11.689,11.752,11.814,11.852,11.917,11.921,11.991,12.067,12.071,12.075,12.051,12.054,12.043,12.121,12.124,12.178,12.214,12.281,12.316,12.29,12.347,12.332,12.348,12.354,12.364,12.44,12.468,12.539,12.641,12.635,12.668,12.71,12.724,12.784,12.828,12.825,12.821,12.87,12.98,13.027,13.091,13.152,13.213,13.273,13.273,13.33,13.389,13.389,13.389,13.448,13.446,13.444,13.44,13.5,13.559,13.618,13.618,13.618,13.618,13.618,13.677,13.678,13.684,13.681,13.681,13.679,13.803,13.862,13.982,13.982,14.044,14.112,14.18,14.187,14.244,14.3,14.359,14.359,14.418,14.416,14.537,14.536,14.595,14.652,14.711,14.831,14.889,14.95,15.071,15.133,15.253,15.372,15.369,15.371,15.43,15.43,15.49,15.491,15.555,15.612,15.611,15.67,15.73,15.732,15.798,15.862,15.914,15.918,15.974,16.017,16.004,16.007,16.06,16.065,16.094,16.16,16.224,16.242,16.251,16.253,16.255,16.376,16.503,16.508,16.564,16.638,16.631,16.626,16.681,16.751,16.83,16.906,16.899,16.984,17.084,17.202,17.24,17.303,17.323,17.377,17.376,17.38,17.514,17.589,17.67,17.749,17.822,17.928,17.966,17.971,18.068,18.213,18.296,18.295,18.333,18.365,18.46,18.522,18.563,18.588,18.635,18.652,18.653,18.645,18.72,18.814,18.857,18.916,18.902,18.962,19.01,19.007,19.064,19.045,19.112,19.16,19.162,19.232,19.221,19.226,19.236,19.233,19.227,19.329,19.38,19.374,19.431,19.481,19.56,19.564,19.634,19.647,19.65,19.607,19.683,19.651,19.717,19.759,19.83,19.888,19.963,19.959,20.053,20.105,20.099,20.12,20.265,20.245,20.277,20.379,20.403,20.521,20.514,20.546,20.62,20.763,20.809,20.859,20.86,20.88,20.864,20.974,20.994,20.998,20.992,21.079,21.073,21.144,21.256,21.36,21.423,21.503,21.531,21.563,21.584,21.629,21.629,21.72,21.805,21.873,21.845,21.946,22.02,21.989,21.973],"nFills":355,"finalPnl":21.97,"maxInv":1.1},"sweep":[{"gamma":0.05,"pnl":22.4,"maxInv":2.1,"nFills":331},{"gamma":0.2,"pnl":22.33,"maxInv":1.9,"nFills":341},{"gamma":0.5,"pnl":21.97,"maxInv":1.1,"nFills":355},{"gamma":1.0,"pnl":21.57,"maxInv":1.0,"nFills":371},{"gamma":2.0,"pnl":20.62,"maxInv":0.8,"nFills":377}],"sigmaHorizon":0.5,"kappa":1.5,"horizon":500,"arrivalIntensity":520.0};</script>
+<script type="application/json" id="pedagogy-contract">{"lesson":14,"status":"contract-strict","title":"Avellaneda–Stoikov — Modelo y simulación","delivery":"lesson","source_path":"framework/_build/docs/14_body.html","requires":{"concepts":["framework.strategy_contract","inventory.risk","inventory.skew","market_making.heuristic_reservation_price","market_making.cara_utility","market_making.fill_intensity","python.fstring"],"apis":["level.constructor","orderbook.constructor","orderbook.mid","new_order.constructor","strategy.on_book_update","strategy.on_fill","market_maker.constructor","market_maker.half_spread","market_maker.inventory","market_maker.inventory_skew","market_maker.reservation_price","market_maker.quotes","mm_simulation.constructor","mm_simulation.run","sim_result.final_pnl","sim_result.max_inventory"],"notation":["notation.inventory","notation.heuristic_reservation","notation.cara_utility","notation.fill_intensity"]},"requirement_routes":{"concepts":{"framework.strategy_contract":"LIVE","inventory.risk":"LIVE","inventory.skew":"LIVE","market_making.heuristic_reservation_price":"LIVE","market_making.cara_utility":"LIVE","market_making.fill_intensity":"LIVE","python.fstring":"LIVE"},"apis":{"level.constructor":"LIVE","orderbook.constructor":"LIVE","orderbook.mid":"LIVE","new_order.constructor":"LIVE","strategy.on_book_update":"LIVE","strategy.on_fill":"LIVE","market_maker.constructor":"REQUIRED","market_maker.half_spread":"REQUIRED","market_maker.inventory":"LIVE","market_maker.inventory_skew":"REQUIRED","market_maker.reservation_price":"LIVE","market_maker.quotes":"REQUIRED","mm_simulation.constructor":"LIVE","mm_simulation.run":"LIVE","sim_result.final_pnl":"LIVE","sim_result.max_inventory":"LIVE"},"notation":{"notation.inventory":"LIVE","notation.heuristic_reservation":"LIVE","notation.cara_utility":"LIVE","notation.fill_intensity":"LIVE"}},"introduces":{"concepts":[{"id":"as.reservation_price","importance":"major","route":"LIVE"},{"id":"as.optimal_spread","importance":"major","route":"LIVE"},{"id":"as.gamma","importance":"major","route":"LIVE"},{"id":"as.sigma","importance":"major","route":"LIVE"},{"id":"as.kappa","importance":"major","route":"LIVE"},{"id":"as.time_horizon","importance":"major","route":"LIVE"},{"id":"simulation.parameter_sweep","importance":"major","route":"LIVE"}],"apis":["avellaneda_stoikov.constructor","avellaneda_stoikov.time","avellaneda_stoikov.reservation_price","avellaneda_stoikov.optimal_spread","avellaneda_stoikov.quotes"],"notation":["notation.as_reservation_price","notation.as_optimal_spread"]},"introduction_routes":{"apis":{"avellaneda_stoikov.constructor":"LIVE","avellaneda_stoikov.time":"LIVE","avellaneda_stoikov.reservation_price":"LIVE","avellaneda_stoikov.optimal_spread":"LIVE","avellaneda_stoikov.quotes":"LIVE"},"notation":{"notation.as_reservation_price":"LIVE","notation.as_optimal_spread":"LIVE"}},"recalls":[{"concept":"market_making.heuristic_reservation_price","introduced_in":13,"mapping":{"before":"r = mid - skew_heurístico × inventario","now":"r = s - q γ σ_H² τ usa τ adimensional y σ_H como volatilidad de precio del horizonte completo."}},{"concept":"framework.strategy_contract","introduced_in":10,"mapping":{"before":"on_book_update devuelve acciones y on_fill actualiza el estado.","now":"A-S cambia las fórmulas dentro del mismo ciclo de vida."}},{"concept":"market_making.cara_utility","introduced_in":13,"mapping":{"before":"CARA dio a γ el significado de aversión al riesgo.","now":"γ controla cuánto desplazan riesgo e inventario el centro A-S."}},{"concept":"market_making.fill_intensity","introduced_in":13,"mapping":{"before":"λ(δ)=A·exp(−κδ) hizo visible la caída de fills con la distancia.","now":"κ entra en el ancho óptimo y cuantifica ese mismo trade-off."}}],"api_surface":[{"id":"level.constructor","name":"Level","kind":"constructor","signature":"Level(price: float, size: float) -> Level","returns":"Level","responsibility":"construct one visible price level","qualified_name":"exchange.book.Level"},{"id":"orderbook.constructor","name":"OrderBook","kind":"constructor","signature":"OrderBook(symbol: str, bids: list[Level], asks: list[Level]) -> OrderBook","returns":"OrderBook","responsibility":"construct a sorted two-sided book","qualified_name":"exchange.book.OrderBook"},{"id":"orderbook.mid","name":"mid","kind":"property","signature":"mid -> float | None","returns":"float | None","responsibility":"compute the top-of-book midpoint","qualified_name":"exchange.book.OrderBook.mid"},{"id":"new_order.constructor","name":"NewOrder","kind":"constructor","signature":"NewOrder(order: Order) -> NewOrder","returns":"NewOrder","responsibility":"wrap an order as a typed strategy action","qualified_name":"exchange.strategy.NewOrder"},{"id":"strategy.on_book_update","name":"on_book_update","kind":"method","signature":"on_book_update(book: OrderBook) -> list[Action]","returns":"list[Action]","responsibility":"propose typed actions from market state","qualified_name":"exchange.strategy.Strategy.on_book_update"},{"id":"strategy.on_fill","name":"on_fill","kind":"method","signature":"on_fill(fill: Fill) -> None","returns":"None","responsibility":"receive execution feedback","qualified_name":"exchange.strategy.Strategy.on_fill"},{"id":"market_maker.constructor","name":"MarketMaker","kind":"constructor","signature":"MarketMaker(symbol: str, quote_size: float = 0.01, half_spread: float = 5.0, inventory_skew: float = 2.0) -> MarketMaker","returns":"MarketMaker","responsibility":"configure the heuristic market maker","qualified_name":"exchange.strategies.market_maker.MarketMaker"},{"id":"market_maker.inventory","name":"inventory","kind":"property","signature":"inventory -> float","returns":"float","responsibility":"read or set the strategy inventory through its public contract","qualified_name":"exchange.strategies.market_maker.MarketMaker.inventory"},{"id":"market_maker.half_spread","name":"half_spread","kind":"attribute","signature":"half_spread: float","returns":"float","responsibility":"configure half the quoted width around the reservation price","qualified_name":"exchange.strategies.market_maker.MarketMaker.half_spread"},{"id":"market_maker.inventory_skew","name":"inventory_skew","kind":"attribute","signature":"inventory_skew: float","returns":"float","responsibility":"configure the heuristic inventory correction strength","qualified_name":"exchange.strategies.market_maker.MarketMaker.inventory_skew"},{"id":"market_maker.reservation_price","name":"reservation_price","kind":"method","signature":"reservation_price(mid: float) -> float","returns":"float","responsibility":"shift the quote center using inventory","qualified_name":"exchange.strategies.market_maker.MarketMaker.reservation_price"},{"id":"market_maker.quotes","name":"quotes","kind":"method","signature":"quotes(book: OrderBook) -> tuple[float, float]","returns":"tuple[float, float]","responsibility":"produce bid and ask quotes","qualified_name":"exchange.strategies.market_maker.MarketMaker.quotes"},{"id":"mm_simulation.constructor","name":"MMSimulation","kind":"constructor","signature":"MMSimulation(strategy: MarketMaker, s0: float = 100.0, sigma: float = 0.5, steps: int = 500, A: float = 1.0, kappa: float = 1.5, seed: int = 42) -> MMSimulation","returns":"MMSimulation","responsibility":"configure a reproducible fill-intensity simulation whose sigma is full-horizon price volatility","qualified_name":"exchange.simulation.MMSimulation"},{"id":"mm_simulation.run","name":"run","kind":"method","signature":"run() -> SimResult","returns":"SimResult","responsibility":"simulate quotes, fills, inventory, and marked PnL","qualified_name":"exchange.simulation.MMSimulation.run"},{"id":"sim_result.final_pnl","name":"final_pnl","kind":"property","signature":"final_pnl -> float","returns":"float","responsibility":"read final marked-to-market PnL","qualified_name":"exchange.simulation.SimResult.final_pnl"},{"id":"sim_result.max_inventory","name":"max_inventory","kind":"property","signature":"max_inventory -> float","returns":"float","responsibility":"read maximum absolute simulated inventory","qualified_name":"exchange.simulation.SimResult.max_inventory"},{"id":"avellaneda_stoikov.constructor","name":"AvellanedaStoikov","kind":"constructor","signature":"AvellanedaStoikov(symbol: str, quote_size: float = 0.01, gamma: float = 0.1, sigma: float = 0.5, kappa: float = 1.5, horizon: int = 500) -> AvellanedaStoikov","returns":"AvellanedaStoikov","responsibility":"configure A-S risk, full-horizon price volatility, flow, and normalized-time parameters","qualified_name":"exchange.strategies.avellaneda_stoikov.AvellanedaStoikov"},{"id":"avellaneda_stoikov.time","name":"time","kind":"property","signature":"time -> int","returns":"int","responsibility":"read or set the model clock through its public contract","qualified_name":"exchange.strategies.avellaneda_stoikov.AvellanedaStoikov.time"},{"id":"avellaneda_stoikov.reservation_price","name":"reservation_price","kind":"method","signature":"reservation_price(mid: float) -> float","returns":"float","responsibility":"compute the A-S inventory- and horizon-adjusted quote center","qualified_name":"exchange.strategies.avellaneda_stoikov.AvellanedaStoikov.reservation_price"},{"id":"avellaneda_stoikov.optimal_spread","name":"optimal_spread","kind":"method","signature":"optimal_spread() -> float","returns":"float","responsibility":"compute the model spread","qualified_name":"exchange.strategies.avellaneda_stoikov.AvellanedaStoikov.optimal_spread"},{"id":"avellaneda_stoikov.quotes","name":"quotes","kind":"method","signature":"quotes(book: OrderBook) -> tuple[float, float]","returns":"tuple[float, float]","responsibility":"center A-S quotes on the model reservation price with optimal width","qualified_name":"exchange.strategies.avellaneda_stoikov.AvellanedaStoikov.quotes"}],"routes":{"LIVE":["l14-challenge","l14-formulas","l14-lab","l14-recap"],"REQUIRED":["l14-capstone","l14-quiz"],"OPTIONAL":[]},"objectives":[{"id":"l14-interpret-reservation-price","route":"LIVE","concepts":["as.reservation_price","as.gamma","as.sigma","as.time_horizon"],"apis":["avellaneda_stoikov.constructor","avellaneda_stoikov.time","market_maker.inventory","avellaneda_stoikov.reservation_price"],"notation":["notation.cara_utility","notation.as_reservation_price"]},{"id":"l14-interpret-optimal-spread","route":"LIVE","concepts":["as.optimal_spread","as.kappa"],"apis":["avellaneda_stoikov.optimal_spread"],"notation":["notation.fill_intensity","notation.as_optimal_spread"]},{"id":"l14-run-parameter-lab","route":"LIVE","concepts":["simulation.parameter_sweep","as.gamma"],"apis":["avellaneda_stoikov.constructor","avellaneda_stoikov.quotes","mm_simulation.constructor","mm_simulation.run","sim_result.final_pnl","sim_result.max_inventory"],"notation":[]},{"id":"l14-build-capstone","route":"REQUIRED","concepts":["framework.strategy_contract","inventory.skew"],"apis":["market_maker.constructor","market_maker.half_spread","market_maker.inventory","market_maker.inventory_skew","market_maker.quotes","strategy.on_book_update","strategy.on_fill"],"notation":[]}],"load":{"live_presentation_minutes":22,"guided_minutes":20,"required_autonomous_minutes":133,"optional_minutes":10,"overflow_policy":"explicit-route-plan","autonomous_components":{"documents":[{"id":"l14-capstone","route":"REQUIRED","minutes":90,"overlap_id":"l14-capstone-project"}],"quizzes":[{"id":"l14-quiz","route":"REQUIRED","minutes":8}],"projects":[{"id":"l14-capstone-project","route":"REQUIRED","minutes":90,"overlap_id":"l14-capstone-project"}]}},"scenes":[{"id":"l14-challenge","dom_id":"s0","type":"hero-challenge","route":"LIVE","layout":"focus","concepts":["market_making.heuristic_reservation_price"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l14-formulas","dom_id":"s1","type":"mathematical-state","route":"LIVE","layout":"split-42-58","concepts":["as.reservation_price","as.optimal_spread","as.gamma","as.sigma","as.kappa","as.time_horizon"],"duration_minutes":12,"stages":[{"id":"question","route":"LIVE","dom_stage":0},{"id":"reservation","route":"LIVE","dom_stage":1},{"id":"spread","route":"LIVE","dom_stage":2},{"id":"tau","route":"LIVE","dom_stage":3},{"id":"duel","route":"LIVE","dom_stage":4}]},{"id":"l14-lab","dom_id":"s2","type":"concept-simulator","route":"LIVE","layout":"split-45-55","concepts":["as.gamma","simulation.parameter_sweep"],"duration_minutes":6,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l14-capstone","dom_id":"s3","type":"guided-exercise","route":"REQUIRED","layout":"focus","concepts":["framework.strategy_contract","inventory.skew"],"duration_minutes":90,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l14-quiz","dom_id":"s4","type":"diagnostic-quiz","route":"REQUIRED","layout":"focus","concepts":["as.reservation_price","as.optimal_spread","as.gamma","as.sigma","as.kappa","as.time_horizon"],"duration_minutes":8,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l14-recap","dom_id":"s5","type":"recap","route":"LIVE","layout":"focus","concepts":["as.reservation_price","as.optimal_spread"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]}],"bridge":{"target_lesson":15,"known":{"concepts":["matching.atomicity","framework.strategy_contract","metrics.slippage","execution.vwap","inventory.skew","as.reservation_price","as.optimal_spread"],"apis":["matching.process","strategy.on_book_update","backtest.run"],"notation":["notation.slippage_signed","notation.vwap","notation.as_reservation_price","notation.as_optimal_spread"]},"limitation":"El exchange completo aún no se ha demostrado bajo una práctica acumulativa.","need":"La práctica pública de L15 muestrea razonamiento acumulativo; la evaluación oficial permanece bloqueada: sus bancos deberán crearse de nuevo y entregarse exclusivamente desde la futura fuente privada autorizada."},"api_transitions":[{"from_api":"market_maker.constructor","from_signature":"MarketMaker(symbol: str, quote_size: float = 0.01, half_spread: float = 5.0, inventory_skew: float = 2.0) -> MarketMaker","to_api":"avellaneda_stoikov.constructor","to_signature":"AvellanedaStoikov(symbol: str, quote_size: float = 0.01, gamma: float = 0.1, sigma: float = 0.5, kappa: float = 1.5, horizon: int = 500) -> AvellanedaStoikov","kind":"explicit-specialization","reason":"La subclase conserva symbol y quote_size, y sustituye los parámetros heurísticos por γ y κ en 1/precio, σ_H por horizonte y τ normalizado."},{"from_api":"market_maker.reservation_price","from_signature":"reservation_price(mid: float) -> float","to_api":"avellaneda_stoikov.reservation_price","to_signature":"reservation_price(mid: float) -> float","kind":"semantic-override","reason":"La firma permanece estable, pero el centro deja el skew fijo y pasa a qγσ_H²τ con una varianza restante dimensionalmente explícita."},{"from_api":"market_maker.quotes","from_signature":"quotes(book: OrderBook) -> tuple[float, float]","to_api":"avellaneda_stoikov.quotes","to_signature":"quotes(book: OrderBook) -> tuple[float, float]","kind":"semantic-override","reason":"El retorno sigue siendo bid/ask, pero ahora usa el reservation price y el ancho óptimo de A-S."}],"package_checks":[{"path":"14-avellaneda-stoikov/exercises/exchange/book.py","class":"Level","members":{"__init__":{"api":"level.constructor","kind":"constructor","parameters":[{"name":"price","kind":"positional_or_keyword","annotation":"float"},{"name":"size","kind":"positional_or_keyword","annotation":"float"}],"returns":"Level"}}},{"path":"14-avellaneda-stoikov/exercises/exchange/book.py","class":"OrderBook","members":{"__init__":{"api":"orderbook.constructor","kind":"constructor","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"bids","kind":"positional_or_keyword","annotation":"list[Level]"},{"name":"asks","kind":"positional_or_keyword","annotation":"list[Level]"}],"returns":"OrderBook"},"mid":{"api":"orderbook.mid","kind":"property","parameters":[],"returns":"float | None"}}},{"path":"14-avellaneda-stoikov/exercises/exchange/strategy.py","class":"NewOrder","members":{"__init__":{"api":"new_order.constructor","kind":"constructor","parameters":[{"name":"order","kind":"positional_or_keyword","annotation":"Order"}],"returns":"NewOrder"}}},{"path":"14-avellaneda-stoikov/exercises/exchange/strategy.py","class":"Strategy","members":{"on_book_update":{"api":"strategy.on_book_update","kind":"method","parameters":[{"name":"book","kind":"positional_or_keyword","annotation":"OrderBook"}],"returns":"list[Action]"},"on_fill":{"api":"strategy.on_fill","kind":"method","parameters":[{"name":"fill","kind":"positional_or_keyword","annotation":"Fill"}],"returns":"None"}}},{"path":"14-avellaneda-stoikov/exercises/exchange/strategies/market_maker.py","class":"MarketMaker","members":{"__init__":{"api":"market_maker.constructor","kind":"constructor","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"quote_size","kind":"positional_or_keyword","annotation":"float","default":"0.01"},{"name":"half_spread","kind":"positional_or_keyword","annotation":"float","default":"5.0"},{"name":"inventory_skew","kind":"positional_or_keyword","annotation":"float","default":"2.0"}],"returns":"MarketMaker"},"inventory":{"api":"market_maker.inventory","kind":"property","parameters":[],"returns":"float"},"half_spread":{"api":"market_maker.half_spread","kind":"attribute","parameters":[],"returns":"float"},"inventory_skew":{"api":"market_maker.inventory_skew","kind":"attribute","parameters":[],"returns":"float"},"reservation_price":{"api":"market_maker.reservation_price","kind":"method","parameters":[{"name":"mid","kind":"positional_or_keyword","annotation":"float"}],"returns":"float"},"quotes":{"api":"market_maker.quotes","kind":"method","parameters":[{"name":"book","kind":"positional_or_keyword","annotation":"OrderBook"}],"returns":"tuple[float, float]"}}},{"path":"14-avellaneda-stoikov/exercises/exchange/simulation.py","class":"MMSimulation","members":{"__init__":{"api":"mm_simulation.constructor","kind":"constructor","parameters":[{"name":"strategy","kind":"positional_or_keyword","annotation":"MarketMaker"},{"name":"s0","kind":"positional_or_keyword","annotation":"float","default":"100.0"},{"name":"sigma","kind":"positional_or_keyword","annotation":"float","default":"0.5"},{"name":"steps","kind":"positional_or_keyword","annotation":"int","default":"500"},{"name":"A","kind":"positional_or_keyword","annotation":"float","default":"1.0"},{"name":"kappa","kind":"positional_or_keyword","annotation":"float","default":"1.5"},{"name":"seed","kind":"positional_or_keyword","annotation":"int","default":"42"}],"returns":"MMSimulation"},"run":{"api":"mm_simulation.run","kind":"method","parameters":[],"returns":"SimResult"}}},{"path":"14-avellaneda-stoikov/exercises/exchange/simulation.py","class":"SimResult","members":{"final_pnl":{"api":"sim_result.final_pnl","kind":"property","parameters":[],"returns":"float"},"max_inventory":{"api":"sim_result.max_inventory","kind":"property","parameters":[],"returns":"float"}}},{"path":"14-avellaneda-stoikov/exercises/exchange/strategies/avellaneda_stoikov.py","class":"AvellanedaStoikov","members":{"__init__":{"api":"avellaneda_stoikov.constructor","kind":"constructor","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"quote_size","kind":"positional_or_keyword","annotation":"float","default":"0.01"},{"name":"gamma","kind":"positional_or_keyword","annotation":"float","default":"0.1"},{"name":"sigma","kind":"positional_or_keyword","annotation":"float","default":"0.5"},{"name":"kappa","kind":"positional_or_keyword","annotation":"float","default":"1.5"},{"name":"horizon","kind":"positional_or_keyword","annotation":"int","default":"500"}],"returns":"AvellanedaStoikov"},"time":{"api":"avellaneda_stoikov.time","kind":"property","parameters":[],"returns":"int"},"reservation_price":{"api":"avellaneda_stoikov.reservation_price","kind":"method","parameters":[{"name":"mid","kind":"positional_or_keyword","annotation":"float"}],"returns":"float"},"optimal_spread":{"api":"avellaneda_stoikov.optimal_spread","kind":"method","parameters":[],"returns":"float"},"quotes":{"api":"avellaneda_stoikov.quotes","kind":"method","parameters":[{"name":"book","kind":"positional_or_keyword","annotation":"OrderBook"}],"returns":"tuple[float, float]"}}}],"used_later":{"concepts":["as.optimal_spread","as.reservation_price"],"apis":[],"notation":["notation.as_optimal_spread","notation.as_reservation_price"]}}</script>
 <script>
 
 (function(){
@@ -1068,7 +1115,7 @@ q = −1 (corto) → r = <span style="color:var(--accent)">100.125</span></pre>
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* ── mini-gráficas canvas (compartidas por los docs con datos reales) ── */
+/* ── mini-gráficas canvas (compartidas por los docs con datos reproducibles) ── */
 window.DOC=window.DOC||{};
 DOC.chart=function(canvas,seriesList,opts={}){
   const c=typeof canvas==='string'?document.querySelector(canvas):canvas;
@@ -1196,9 +1243,12 @@ DOC.save=function(patch){
   const steps=$$('.scrolly .step');
   if(!steps.length)return;
   document.addEventListener('keydown',e=>{
+    if(document.body.classList.contains('lr-modal-open'))return;
     if(document.body.classList.contains('mode-aula'))return;
     if(!['ArrowDown','ArrowUp','PageDown','PageUp'].includes(e.key))return;
     if(/INPUT|TEXTAREA|SELECT|BUTTON/.test(document.activeElement.tagName))return;
+    const scroller=document.activeElement?.closest('[data-lr-scroller="true"]');
+    if(scroller)return;
     const mid=innerHeight/2;
     let idx=0,best=1e12;
     steps.forEach((s,i)=>{const r=s.getBoundingClientRect();
@@ -1215,7 +1265,9 @@ DOC.save=function(patch){
 /* ── modo profesor: ?profe=1 abre el guion como cajón lateral ── */
 (function(){
   const srcEl=document.getElementById('guion-src');
-  if(!srcEl||!new URLSearchParams(location.search).has('profe'))return;
+  const professor=['1','true'].includes(
+    (new URLSearchParams(location.search).get('profe')||'').toLowerCase());
+  if(!srcEl||!professor)return;
   const mdlite=t=>t
     .replace(/&/g,'&amp;').replace(/</g,'&lt;')
     .replace(/^### (.*)$/gm,'<h4>$1</h4>')
@@ -1228,16 +1280,54 @@ DOC.save=function(patch){
     .replace(/\n{2,}/g,'</p><p>');
   const drawer=document.createElement('aside');
   drawer.id='guion-drawer';
+  drawer.dataset.overlay='guide';drawer.hidden=true;drawer.inert=true;drawer.setAttribute('inert','');
+  drawer.setAttribute('aria-hidden','true');drawer.setAttribute('aria-label','Guion completo del profesor');
+  drawer.setAttribute('role','dialog');drawer.setAttribute('aria-modal','true');
   drawer.innerHTML='<div class="gd-head">📋 Guion del profesor'
-    +'<button id="gd-close" aria-label="Cerrar">✕</button></div>'
-    +'<div class="gd-body"><p>'+mdlite(srcEl.textContent)+'</p></div>';
+    +'<button type="button" id="gd-close" aria-label="Cerrar guion">✕</button></div>'
+    +'<div class="gd-body" data-lr-scroller="true" data-lr-scroller-axis="vertical" tabindex="0"'
+    +' role="region" aria-label="Contenido desplazable del guion completo"><p>'
+    +mdlite(srcEl.textContent)+'</p></div>';
   document.body.appendChild(drawer);
   const btn=document.createElement('button');
-  btn.id='gd-toggle';btn.className='btn';btn.textContent='📋 Guion';
+  btn.id='gd-toggle';btn.className='btn';btn.type='button';btn.textContent='📋 Guion';
+  btn.setAttribute('aria-controls','guion-drawer');btn.setAttribute('aria-expanded','false');
   document.body.appendChild(btn);
-  const toggle=()=>drawer.classList.toggle('open');
-  btn.addEventListener('click',toggle);
-  drawer.querySelector('#gd-close').addEventListener('click',toggle);
+  let lastTrigger=btn;
+  const setOpen=(open,trigger=null,restore=true)=>{
+    const currentlyOpen=drawer.classList.contains('open');
+    if(open===currentlyOpen)return false;
+    if(open){
+      window.LEARNING_TEACHER_DRAWER?.close({restoreFocus:false});
+      lastTrigger=trigger||document.activeElement||btn;drawer.hidden=false;
+      drawer.inert=false;drawer.removeAttribute('inert');
+      window.LEARNING_MODAL_BACKGROUND?.(drawer,true);
+    }
+    drawer.classList.toggle('open',open);drawer.setAttribute('aria-hidden',String(!open));
+    btn.setAttribute('aria-expanded',String(open));
+    if(open)drawer.querySelector('#gd-close').focus();
+    else{
+      drawer.hidden=true;drawer.inert=true;drawer.setAttribute('inert','');
+      window.LEARNING_MODAL_BACKGROUND?.(drawer,false);
+      if(restore)window.LEARNING_RESTORE_FOCUS?.(lastTrigger,btn);
+    }
+    return true;
+  };
+  const focusable='a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),'
+    +'textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+  drawer.addEventListener('keydown',event=>{
+    if(event.key!=='Tab')return;
+    const items=[...drawer.querySelectorAll(focusable)].filter(node=>!node.hidden&&node.getClientRects().length);
+    if(!items.length)return;
+    const first=items[0],last=items[items.length-1];
+    if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+    else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+  });
+  btn.addEventListener('click',event=>setOpen(true,event.currentTarget));
+  drawer.querySelector('#gd-close').addEventListener('click',()=>setOpen(false));
+  window.GUIDE_DRAWER={open:trigger=>setOpen(true,trigger),
+    close:options=>setOpen(false,null,options?.restoreFocus!==false),
+    isOpen:()=>drawer.classList.contains('open')};
 })();
 
 /* ── scrollytelling genérico ──
@@ -1259,15 +1349,15 @@ $$('.scrolly[data-scrolly]').forEach(sc=>{
 });
 })();
 
-/* L14 — A-S: fórmulas con sliders + barrido real de gamma */
+/* L14 — A-S: fórmulas con sliders + barrido calculado de gamma */
 (function(){
 "use strict";
 const $=s=>document.querySelector(s);
-const D=DOC_DATA, SIG=D.sigma, KAP=D.kappa;
+const D=DOC_DATA, SIG_H=D.sigmaHorizon, KAP=D.kappa;
 
 /* figura: decaimiento del término de inventario y duelo final */
 const decay=[];
-for(let t=0;t<=100;t++){const tau=1-t/100;decay.push(1*0.5*SIG*SIG*tau);}
+for(let t=0;t<=100;t++){const tau=1-t/100;decay.push(1*0.5*SIG_H*SIG_H*tau);}
 const fig=document.querySelector('.scrolly .fig');
 fig.addEventListener('stagechange',e=>{
   if(e.detail.stage===3)DOC.chart('#as3',[{data:decay,color:'#fbbf24'}],{zero:true});
@@ -1289,17 +1379,17 @@ function lab(){
   $('#lb-qv').textContent=q.toFixed(1);
   $('#lb-tv').textContent=tau.toFixed(2);
   const mid=100;
-  const r=mid-q*g*SIG*SIG*tau;
-  const d=g*SIG*SIG*tau+(2/g)*Math.log(1+g/KAP);
+  const r=mid-q*g*SIG_H*SIG_H*tau;
+  const d=g*SIG_H*SIG_H*tau+(2/g)*Math.log1p(g/KAP);
   $('#lb-r').textContent=r.toFixed(3);
   $('#lb-d').textContent=d.toFixed(3);
   $('#lb-bq').textContent=`${(r-d/2).toFixed(2)} / ${(r+d/2).toFixed(2)}`;
-  $('#lb-log').textContent=`» r = 100 − ${q.toFixed(1)}×${g.toFixed(2)}×${(SIG*SIG).toFixed(2)}×${tau.toFixed(2)}   ·   δ = ${ (g*SIG*SIG*tau).toFixed(3)} + ${((2/g)*Math.log(1+g/KAP)).toFixed(3)}`;
+  $('#lb-log').textContent=`» σ_H=${SIG_H.toFixed(2)} por horizonte · r = 100 − ${q.toFixed(1)}×${g.toFixed(2)}×${(SIG_H*SIG_H).toFixed(2)}×${tau.toFixed(2)}   ·   δ = ${(g*SIG_H*SIG_H*tau).toFixed(3)} + ${((2/g)*Math.log1p(g/KAP)).toFixed(3)}`;
 }
 ['lb-g','lb-q','lb-t'].forEach(id=>$('#'+id).addEventListener('input',lab));
 lab();
 
-/* barrido real */
+/* barrido calculado */
 $('#sw-tab').textContent='γ        PnL final    máx |inv|\n'
   +D.sweep.map(s=>`${String(s.gamma).padEnd(7)}  ${String(s.pnl).padEnd(11)}  ${s.maxInv}`).join('\n');
 })();
@@ -1348,12 +1438,84 @@ const route=value=>ROUTES.includes(String(value||'').toUpperCase())
 const routeClass=value=>`lr-route-${route(value).toLowerCase()}`;
 const scopeRoutes=()=>routeScope==='ALL'?ROUTES:
   routeScope==='LIVE+REQUIRED'?['LIVE','REQUIRED']:['LIVE'];
+const scopeForRoute=value=>route(value)==='OPTIONAL'?'ALL':
+  route(value)==='REQUIRED'?'LIVE+REQUIRED':'LIVE';
 const modeUrl=next=>{
   const q=new URLSearchParams(location.search);q.set('mode',next);
   return `${location.pathname}?${q.toString()}${location.hash}`;
 };
 const stateKey=(scene,stage)=>`${scene.id}::${stage.id}`;
 const reducedMotion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isExposed=node=>Boolean(node&&!node.hidden&&!node.closest('[hidden],[inert]'));
+
+function expose(node,visible){
+  if(!node)return;
+  node.hidden=!visible;
+  node.inert=!visible;
+  node.toggleAttribute('inert',!visible);
+  node.setAttribute('aria-hidden',String(!visible));
+}
+let modalBackgroundState=null,modalBackgroundOwner=null;
+function focusModalOwner(){
+  if(!modalBackgroundOwner)return;
+  const selector='a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),'
+    +'textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+  const target=[...modalBackgroundOwner.querySelectorAll(selector)]
+    .find(node=>!node.hidden&&!node.closest('[hidden],[inert]')&&node.getClientRects().length);
+  target?.focus({preventScroll:true});
+}
+function setModalBackground(dialog,open){
+  if(open){
+    if(modalBackgroundOwner===dialog)return;
+    if(modalBackgroundOwner)throw new Error('another learning modal is already open');
+    modalBackgroundState=[...body.children].filter(node=>node!==dialog).map(node=>({
+      node,inert:node.inert,attribute:node.hasAttribute('inert'),
+    }));
+    modalBackgroundOwner=dialog;
+    modalBackgroundState.forEach(({node})=>{node.inert=true;node.setAttribute('inert','');});
+    body.classList.add('lr-modal-open');
+    document.documentElement.classList.add('lr-modal-open');
+    return;
+  }
+  if(modalBackgroundOwner!==dialog)return;
+  (modalBackgroundState||[]).forEach(({node,inert,attribute})=>{
+    if(!node.isConnected)return;
+    node.inert=inert;node.toggleAttribute('inert',attribute);
+  });
+  modalBackgroundState=null;
+  modalBackgroundOwner=null;
+  body.classList.remove('lr-modal-open');
+  document.documentElement.classList.remove('lr-modal-open');
+}
+window.LEARNING_MODAL_BACKGROUND=setModalBackground;
+document.addEventListener('pointerdown',event=>{
+  if(!modalBackgroundOwner||modalBackgroundOwner.contains(event.target))return;
+  event.preventDefault();event.stopImmediatePropagation();focusModalOwner();
+},true);
+document.addEventListener('focusin',event=>{
+  if(modalBackgroundOwner&&!modalBackgroundOwner.contains(event.target))focusModalOwner();
+},true);
+function canRestoreFocus(node){
+  return Boolean(node?.isConnected&&!node.hidden&&!node.disabled
+    &&!node.closest('[hidden],[inert]')&&node.getClientRects().length);
+}
+function restoreFocus(...candidates){
+  const target=candidates.find(canRestoreFocus);
+  if(target)target.focus();
+}
+window.LEARNING_RESTORE_FOCUS=restoreFocus;
+function applyRouteClasses(node,routes){
+  if(!node)return;
+  ROUTES.forEach(name=>node.classList.remove(routeClass(name)));
+  const unique=[...new Set(routes.map(route))];
+  unique.forEach(name=>node.classList.add(routeClass(name)));
+  node.classList.toggle('lr-route-mixed',unique.length>1);
+}
+function expandScopeForRoute(value){
+  const target=scopeForRoute(value);
+  const targetIndex=routeScopes.indexOf(target),currentIndex=routeScopes.indexOf(routeScope);
+  if(targetIndex>=0&&targetIndex>currentIndex)routeScope=target;
+}
 
 function elementForStage(nodes,value,index,total){
   if(value!==undefined&&value!==null){
@@ -1376,6 +1538,7 @@ const models=contract.scenes.map(rawScene=>{
   element.dataset.sceneLayout=layout;
   element.dataset.layoutApplied='true';
   element.dataset.route=sceneRoute;
+  element.dataset.sceneRoute=sceneRoute;
   const allSteps=[...element.querySelectorAll('.scrolly .step')];
   const allFigures=[...element.querySelectorAll('.fig-stage')];
   const declared=Array.isArray(rawScene.stages)&&rawScene.stages.length
@@ -1384,6 +1547,8 @@ const models=contract.scenes.map(rawScene=>{
     const stage={...rawStage};
     stage.id=stage.id||`stage-${index+1}`;
     stage.route=route(stage.route||sceneRoute);
+    stage.duration_minutes=Number.isFinite(Number(rawStage.duration_minutes))
+      &&rawStage.duration_minutes!==null?Number(rawStage.duration_minutes):Number(rawScene.duration_minutes);
     stage.step=elementForStage(allSteps,stage.dom_stage,index,declared.length);
     stage.figure=elementForStage(allFigures,stage.dom_stage,index,declared.length);
     [stage.step,stage.figure].filter(Boolean).forEach(node=>{
@@ -1392,15 +1557,20 @@ const models=contract.scenes.map(rawScene=>{
     return stage;
   });
   const firstWrap=element.matches('.wrap')?element:element.querySelector(':scope > .wrap');
+  let badge=null;
   if(firstWrap){
-    const badge=document.createElement('div');
+    badge=document.createElement('div');
     badge.className=`lr-scene-badge ${routeClass(sceneRoute)}`;
     const minutes=Number.isFinite(Number(rawScene.duration_minutes))
-      ?`<span>${esc(rawScene.duration_minutes)} min</span>`:'';
-    badge.innerHTML=`<span>${esc(sceneRoute)}</span><span>${esc(rawScene.type||'scene')}</span>${minutes}`;
+      ?`<span class="lr-duration">${esc(rawScene.duration_minutes)} min</span>`:'';
+    badge.innerHTML=`<span class="lr-route-label">${esc(sceneRoute)}</span><span>${esc(rawScene.type||'scene')}</span>${minutes}`;
     firstWrap.insertBefore(badge,firstWrap.firstChild);
   }
-  return {...rawScene,route:sceneRoute,layout,element,stages,allSteps,allFigures};
+  const effectiveRoutes=[...new Set(stages.map(stage=>stage.route))];
+  element.dataset.effectiveRoutes=effectiveRoutes.join(',');
+  applyRouteClasses(element,effectiveRoutes);
+  return {...rawScene,route:sceneRoute,layout,element,stages,allSteps,allFigures,badge,
+    effectiveRoutes,navButton:null};
 }).filter(Boolean);
 
 if(missingScenes.length){
@@ -1485,16 +1655,22 @@ nav.innerHTML=`
 body.appendChild(nav);
 
 const navLinks=nav.querySelector('.lr-scene-links');
+navLinks.dataset.lrScroller='true';navLinks.dataset.lrScrollerAxis='vertical';navLinks.tabIndex=0;
+navLinks.setAttribute('role','region');navLinks.setAttribute('aria-label','Escenas desplazables de la lección');
 models.forEach((scene,index)=>{
   const button=document.createElement('button');
   button.type='button';button.dataset.sceneIndex=String(index);
-  button.className=routeClass(scene.route);
-  button.innerHTML=`<span>${esc(scene.route)}</span><b>${esc(scene.id.replace(/^l\d+-/,''))}</b>`;
+  applyRouteClasses(button,scene.effectiveRoutes);
+  button.innerHTML=`<span class="lr-route-label">${esc(scene.effectiveRoutes.join('+'))}</span><b>${esc(scene.id.replace(/^l\d+-/,''))}</b>`;
   button.addEventListener('click',()=>{
     if(mode==='aula')goTo(index,0,false);
-    else scene.element.scrollIntoView({behavior:reducedMotion()?'auto':'smooth',block:'start'});
+    else{
+      const stage=allowedStages(scene)[0];
+      if(stage)setStudyCurrent(scene,stage,false);
+      scene.element.scrollIntoView({behavior:reducedMotion()?'auto':'smooth',block:'start'});
+    }
   });
-  navLinks.appendChild(button);
+  navLinks.appendChild(button);scene.navButton=button;
 });
 
 const controls=document.createElement('div');
@@ -1522,6 +1698,7 @@ liveRegion.className='lr-sr-only';liveRegion.setAttribute('aria-live','polite');
 body.appendChild(liveRegion);
 
 let teacherToggle=null,teacherDrawer=null,teacherBody=null,mobileTeacherToggle=null;
+let lastTeacherTrigger=null;
 if(isProfessor){
   teacherToggle=document.createElement('button');
   teacherToggle.id='lr-teacher-toggle';teacherToggle.type='button';
@@ -1533,23 +1710,44 @@ if(isProfessor){
   teacherDrawer=document.createElement('aside');
   teacherDrawer.id='lr-teacher-drawer';teacherDrawer.dataset.overlay='teacher';
   teacherDrawer.setAttribute('aria-label','Guía docente de la escena');
-  teacherDrawer.setAttribute('aria-hidden','true');
+  teacherDrawer.setAttribute('role','dialog');teacherDrawer.setAttribute('aria-modal','true');
+  teacherDrawer.setAttribute('aria-hidden','true');teacherDrawer.hidden=true;teacherDrawer.inert=true;
+  teacherDrawer.setAttribute('inert','');
   teacherDrawer.innerHTML='<div class="lr-teacher-head"><b>Guía docente</b>'
     +'<button type="button" class="lr-teacher-close" aria-label="Cerrar guía docente">×</button></div>'
     +'<div class="lr-teacher-body"></div>';
   body.appendChild(teacherDrawer);teacherBody=teacherDrawer.querySelector('.lr-teacher-body');
-  const toggleTeacher=force=>{
+  teacherBody.dataset.lrScroller='true';teacherBody.dataset.lrScrollerAxis='vertical';
+  teacherBody.tabIndex=0;teacherBody.setAttribute('role','region');
+  teacherBody.setAttribute('aria-label','Contenido desplazable de la guía docente');
+  const toggleTeacher=(force,trigger=null,restore=true)=>{
     const open=force===undefined?!teacherDrawer.classList.contains('open'):force;
+    const currentlyOpen=teacherDrawer.classList.contains('open');
+    if(open===currentlyOpen)return false;
+    if(open){
+      window.GUIDE_DRAWER?.close({restoreFocus:false});
+      lastTeacherTrigger=trigger||document.activeElement||teacherToggle;
+      teacherDrawer.hidden=false;teacherDrawer.inert=false;teacherDrawer.removeAttribute('inert');
+      setModalBackground(teacherDrawer,true);
+    }
     teacherDrawer.classList.toggle('open',open);
     teacherDrawer.setAttribute('aria-hidden',String(!open));
     [teacherToggle,mobileTeacherToggle].filter(Boolean)
       .forEach(button=>button.setAttribute('aria-expanded',String(open)));
     if(open)teacherDrawer.querySelector('.lr-teacher-close').focus();
-    else (mobileQuery.matches?mobileTeacherToggle:teacherToggle)?.focus();
+    else{
+      teacherDrawer.hidden=true;teacherDrawer.inert=true;teacherDrawer.setAttribute('inert','');
+      setModalBackground(teacherDrawer,false);
+      if(restore)restoreFocus(lastTeacherTrigger,teacherToggle,mobileTeacherToggle);
+    }
+    return true;
   };
-  teacherToggle.addEventListener('click',()=>toggleTeacher());
-  mobileTeacherToggle?.addEventListener('click',()=>toggleTeacher());
+  teacherToggle.addEventListener('click',event=>toggleTeacher(undefined,event.currentTarget));
+  mobileTeacherToggle?.addEventListener('click',event=>toggleTeacher(undefined,event.currentTarget));
   teacherDrawer.querySelector('.lr-teacher-close').addEventListener('click',()=>toggleTeacher(false));
+  window.LEARNING_TEACHER_DRAWER={open:trigger=>toggleTeacher(true,trigger),
+    close:options=>toggleTeacher(false,null,options?.restoreFocus!==false),
+    isOpen:()=>teacherDrawer.classList.contains('open')};
 }
 
 function allowedStages(scene){
@@ -1557,9 +1755,74 @@ function allowedStages(scene){
   return scene.stages.filter(stage=>allowedRoutes.includes(stage.route));
 }
 function allowed(scene){
-  return scopeRoutes().includes(scene.route)&&allowedStages(scene).length>0;
+  return allowedStages(scene).length>0;
 }
 function availableModels(){return models.filter(allowed);}
+
+function visibleRoutes(scene){
+  return [...new Set(allowedStages(scene).map(stage=>stage.route))];
+}
+function routeLabel(routes){return routes.length?routes.join('+'):'—';}
+function syncRoutePresentation(scene,stage=null){
+  if(!scene)return;
+  const routes=stage?[stage.route]:visibleRoutes(scene);
+  const effective=routes.length?routes:scene.effectiveRoutes;
+  const label=routeLabel(effective);
+  scene.element.dataset.route=stage?stage.route:label;
+  scene.element.dataset.visibleRoutes=effective.join(',');
+  [scene.element,scene.badge,scene.navButton].filter(Boolean)
+    .forEach(node=>applyRouteClasses(node,effective));
+  scene.badge?.querySelector('.lr-route-label')?.replaceChildren(label);
+  const duration=stage?.duration_minutes??scene.duration_minutes;
+  scene.badge?.querySelector('.lr-duration')?.replaceChildren(`${duration} min`);
+  scene.navButton?.querySelector('.lr-route-label')?.replaceChildren(label);
+}
+
+let scrollerFrame=0;
+function clearRuntimeScroller(node){
+  delete node.dataset.lrScroller;
+  delete node.dataset.lrScrollerAxis;
+  if(node.dataset.lrRuntimeTabindex==='true')node.removeAttribute('tabindex');
+  if(node.dataset.lrRuntimeRole==='true')node.removeAttribute('role');
+  if(node.dataset.lrRuntimeLabel==='true')node.removeAttribute('aria-label');
+  delete node.dataset.lrRuntimeScroller;
+  delete node.dataset.lrRuntimeTabindex;
+  delete node.dataset.lrRuntimeRole;
+  delete node.dataset.lrRuntimeLabel;
+}
+function syncScrollers(){
+  document.querySelectorAll('[data-lr-runtime-scroller="true"]').forEach(clearRuntimeScroller);
+  const tolerance=2;
+  models.filter(scene=>isExposed(scene.element)).forEach(scene=>{
+    [scene.element,...scene.element.querySelectorAll('*')].forEach(node=>{
+      if(!isExposed(node)||!node.getClientRects().length)return;
+      const style=getComputedStyle(node);
+      const overflowX=['auto','scroll'].includes(style.overflowX)
+        &&node.scrollWidth>node.clientWidth+tolerance;
+      const overflowY=['auto','scroll'].includes(style.overflowY)
+        &&node.scrollHeight>node.clientHeight+tolerance;
+      if(!overflowX&&!overflowY)return;
+      node.dataset.lrRuntimeScroller='true';
+      node.dataset.lrScroller='true';
+      node.dataset.lrScrollerAxis=overflowX&&overflowY?'both':(overflowX?'horizontal':'vertical');
+      if(node.tabIndex<0){
+        node.tabIndex=0;node.dataset.lrRuntimeTabindex='true';
+      }
+      if(!node.hasAttribute('role')){
+        node.setAttribute('role','region');node.dataset.lrRuntimeRole='true';
+      }
+      if(!node.getAttribute('aria-label')&&!node.getAttribute('aria-labelledby')){
+        node.setAttribute('aria-label',`Contenido desplazable ${scene.id}`);
+        node.dataset.lrRuntimeLabel='true';
+      }
+    });
+  });
+}
+function queueScrollerSync(){
+  cancelAnimationFrame(scrollerFrame);
+  syncScrollers();
+  scrollerFrame=requestAnimationFrame(syncScrollers);
+}
 
 function activateStage(scene,stage){
   const hasMappedSteps=scene.stages.some(item=>item.step);
@@ -1568,18 +1831,16 @@ function activateStage(scene,stage){
     const model=scene.stages.find(item=>item.step===step);
     const visibleRoute=!model||scopeRoutes().includes(model.route);
     const active=!hasMappedSteps||stage.step===step;
-    step.hidden=!visibleRoute;
+    expose(step,visibleRoute&&(mode==='estudio'||active));
     step.classList.toggle('lr-stage-active',active&&visibleRoute);
     step.classList.toggle('on',active&&visibleRoute);
-    step.setAttribute('aria-hidden',String(!(active&&visibleRoute)));
   });
   scene.allFigures.forEach(figure=>{
     const model=scene.stages.find(item=>item.figure===figure);
     const visibleRoute=!model||scopeRoutes().includes(model.route);
     const active=!hasMappedFigures||stage.figure===figure;
-    figure.hidden=!visibleRoute;
+    expose(figure,active&&visibleRoute);
     figure.classList.toggle('on',active&&visibleRoute);
-    figure.setAttribute('aria-hidden',String(!(active&&visibleRoute)));
   });
   const name=scene.element.querySelector('.stage-name');
   if(name){
@@ -1590,11 +1851,14 @@ function activateStage(scene,stage){
   if(fig&&stage.dom_stage!==undefined){
     fig.dispatchEvent(new CustomEvent('stagechange',{detail:{stage:stage.dom_stage}}));
   }
+  queueScrollerSync();
 }
-function syncNav(scene=null){
+function syncNav(scene=null,stage=null){
   [...navLinks.querySelectorAll('button')].forEach(button=>{
     const index=Number(button.dataset.sceneIndex),model=models[index];
-    button.hidden=!allowed(model);
+    const visible=allowed(model);
+    expose(button,visible);
+    syncRoutePresentation(model,model===scene?stage:null);
     button.classList.toggle('on',model===scene);
     button.setAttribute('aria-current',model===scene?'step':'false');
   });
@@ -1612,8 +1876,9 @@ function syncTeacher(scene,stage){
   const sceneNotes=scene.professor_notes||scene.teacher_notes||scene.teaching_notes;
   const stageNotes=stage.professor_notes||stage.teacher_notes||stage.teaching_notes;
   const fullGuide=document.getElementById('gd-toggle');
-  teacherBody.innerHTML=`<p class="lr-teacher-kicker">${esc(scene.route)} · ${esc(scene.type)} · ${esc(scene.duration_minutes)} min</p>`
+  teacherBody.innerHTML=`<p class="lr-teacher-kicker">${esc(stage.route)} · ${esc(scene.type)} · ${esc(stage.duration_minutes)} min</p>`
     +`<h2>${esc(scene.id)}</h2><p class="lr-teacher-stage">Etapa <code>${esc(stage.id)}</code> · layout <code>${esc(scene.layout)}</code></p>`
+    +(stage.route!==scene.route?`<p class="lr-teacher-override">Ruta efectiva <code>${esc(stage.route)}</code>; la escena declara <code>${esc(scene.route)}</code>.</p>`:'')
     +`<h3>Conceptos</h3><ul>${concepts.length?concepts.map(concept=>`<li><code>${esc(concept)}</code></li>`).join(''):'<li>Ninguno declarado.</li>'}</ul>`
     +`<h3>Objetivos relacionados</h3><ul>${objectives.length?objectives.map(objective=>
       `<li><code>${esc(objective.id)}</code> · ${esc(objective.route)}</li>`).join(''):'<li>Ninguno declarado para esta escena.</li>'}</ul>`
@@ -1621,16 +1886,34 @@ function syncTeacher(scene,stage){
     +(stageNotes?`<h3>Notas de etapa</h3>${notesHtml(stageNotes)}`:'')
     +(fullGuide?'<button type="button" class="lr-full-guide">Abrir guion completo</button>':'');
   teacherBody.querySelector('.lr-full-guide')?.addEventListener('click',()=>{
-    teacherDrawer.classList.remove('open');teacherDrawer.setAttribute('aria-hidden','true');
-    [teacherToggle,mobileTeacherToggle].filter(Boolean)
-      .forEach(button=>button.setAttribute('aria-expanded','false'));
-    fullGuide.click();
+    const returnTrigger=lastTeacherTrigger||teacherToggle;
+    window.LEARNING_TEACHER_DRAWER?.close({restoreFocus:false});
+    if(window.GUIDE_DRAWER)window.GUIDE_DRAWER.open(returnTrigger);
+    else fullGuide.click();
   });
 }
 function updateDeepLink(scene,stage){
   if(!history.replaceState)return;
   const next=`#${encodeURIComponent(scene.id)}/${encodeURIComponent(stage.id)}`;
   if(location.hash!==next)history.replaceState(null,'',`${location.pathname}${location.search}${next}`);
+}
+function setCurrentState(scene,stage){
+  if(!scene||!stage)return;
+  currentScene=models.indexOf(scene);
+  currentStage=Math.max(0,allowedStages(scene).indexOf(stage));
+  body.dataset.currentSceneId=scene.id;
+  body.dataset.currentStageId=stage.id;
+  body.dataset.currentStageRoute=stage.route;
+  body.dataset.currentStageDuration=String(stage.duration_minutes);
+  body.dataset.currentLayout=scene.layout;
+  body.dataset.routeScope=routeScope;
+  scene.element.dataset.currentStageId=stage.id;
+  syncRoutePresentation(scene,stage);
+  const mobileLabel=mobileToolbar.querySelector(':scope > span');
+  if(mobileLabel){
+    const prefix=requestedMode!==mode?'Aula → estudio':'Estudio';
+    mobileLabel.textContent=`Ruta · ${stage.route} · ${stage.duration_minutes} min · ${prefix} · ${scene.id}`;
+  }
 }
 function goTo(sceneIndex,stageIndex,focusHeading=true){
   let scene=models[sceneIndex];
@@ -1641,17 +1924,11 @@ function goTo(sceneIndex,stageIndex,focusHeading=true){
   const stages=allowedStages(scene);
   stageIndex=Math.max(0,Math.min(Number(stageIndex)||0,stages.length-1));
   const stage=stages[stageIndex];
-  currentScene=sceneIndex;currentStage=stageIndex;
-  body.dataset.currentSceneId=scene.id;
-  body.dataset.currentStageId=stage.id;
-  body.dataset.currentStageRoute=stage.route;
-  body.dataset.currentLayout=scene.layout;
-  body.dataset.routeScope=routeScope;
-  scene.element.dataset.currentStageId=stage.id;
+  setCurrentState(scene,stage);
   models.forEach(model=>{
     const active=model===scene;
     model.element.classList.toggle('lr-scene-active',active);
-    model.element.setAttribute('aria-hidden',String(!active));
+    expose(model.element,active);
   });
   activateStage(scene,stage);
   const available=availableModels();
@@ -1669,8 +1946,8 @@ function goTo(sceneIndex,stageIndex,focusHeading=true){
     total+scopeProgress[routeName].visited,0)/Math.max(1,enabledRoutes.reduce((total,routeName)=>
     total+scopeProgress[routeName].total,0))*100);
   controls.querySelector('.lr-route-progress').textContent=`${routeProgress}% visto`;
-  syncNav(scene);syncTeacher(scene,stage);updateDeepLink(scene,stage);
-  liveRegion.textContent=`${scene.id}, etapa ${stageIndex+1} de ${stages.length}`;
+  syncNav(scene,stage);syncTeacher(scene,stage);updateDeepLink(scene,stage);
+  liveRegion.textContent=`${scene.id}, ruta ${stage.route}, ${stage.duration_minutes} minutos, etapa ${stageIndex+1} de ${stages.length}`;
   if(focusHeading){
     const heading=scene.element.querySelector('h1,h2,h3');
     if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}
@@ -1688,14 +1965,43 @@ function move(delta,focusHeading=true){
   const nextIndex=models.indexOf(next),nextStages=allowedStages(next);
   goTo(nextIndex,delta>0?0:nextStages.length-1,focusHeading);
 }
+const focusableSelector='a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),'
+  +'textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+function focusables(root){
+  return [...root.querySelectorAll(focusableSelector)].filter(node=>isExposed(node)
+    &&getComputedStyle(node).visibility!=='hidden'&&node.getClientRects().length);
+}
+function trapFocus(event,root){
+  if(event.key!=='Tab'||!root||root.hidden)return false;
+  const items=focusables(root);if(!items.length)return false;
+  const first=items[0],last=items[items.length-1];
+  if(event.shiftKey&&(document.activeElement===first||!root.contains(document.activeElement))){
+    event.preventDefault();last.focus();return true;
+  }
+  if(!event.shiftKey&&(document.activeElement===last||!root.contains(document.activeElement))){
+    event.preventDefault();first.focus();return true;
+  }
+  return false;
+}
 function closeOverlays(){
-  document.getElementById('guion-drawer')?.classList.remove('open');
-  teacherDrawer?.classList.remove('open');
-  teacherDrawer?.setAttribute('aria-hidden','true');
-  [teacherToggle,mobileTeacherToggle].filter(Boolean)
-    .forEach(button=>button.setAttribute('aria-expanded','false'));
-  document.querySelectorAll('dialog[open]').forEach(dialog=>dialog.close());
-  document.querySelectorAll('[data-overlay].open').forEach(node=>node.classList.remove('open'));
+  if(window.LEARNING_TEACHER_DRAWER?.isOpen()){
+    window.LEARNING_TEACHER_DRAWER.close();return true;
+  }
+  if(window.GUIDE_DRAWER?.isOpen()){
+    window.GUIDE_DRAWER.close();return true;
+  }
+  const dialog=document.querySelector('dialog[open]');
+  if(dialog){dialog.close();return true;}
+  const overlay=document.querySelector('[data-overlay].open');
+  if(overlay){
+    overlay.classList.remove('open');expose(overlay,false);return true;
+  }
+  return false;
+}
+function scrollerOwnsKey(active,key){
+  const scroller=active?.closest?.('[data-lr-scroller="true"]');
+  if(!scroller||!isExposed(scroller))return false;
+  return ['ArrowLeft','ArrowRight','PageUp','PageDown',' '].includes(key);
 }
 function cycleScope(){
   if(routeScopes.length<2)return;
@@ -1709,7 +2015,7 @@ function cycleScope(){
 }
 function syncOptionalControls(){
   document.querySelectorAll('.lr-study-optional').forEach(button=>{
-    button.hidden=mode!=='estudio'||optionalCount===0;
+    expose(button,mode==='estudio'&&optionalCount>0);
     button.setAttribute('aria-pressed',String(routeScope==='ALL'));
     button.textContent=routeScope==='ALL'?'Ocultar OPTIONAL':
       (button.closest('#lr-mobile-toolbar')?'+ OPTIONAL':'Incluir OPTIONAL');
@@ -1719,36 +2025,52 @@ function applyStudyScope(activeScene=null){
   body.dataset.routeScope=routeScope;
   models.forEach(scene=>{
     const sceneVisible=allowed(scene);
-    scene.element.hidden=!sceneVisible;
-    scene.element.setAttribute('aria-hidden',String(!sceneVisible));
+    expose(scene.element,sceneVisible);
     scene.stages.forEach(stage=>{
       const stageVisible=scopeRoutes().includes(stage.route);
-      [stage.step,stage.figure].filter(Boolean).forEach(node=>{
-        node.hidden=!stageVisible;node.setAttribute('aria-hidden',String(!stageVisible));
-      });
+      if(stage.step)expose(stage.step,sceneVisible&&stageVisible);
+      if(stage.figure)expose(stage.figure,false);
     });
+    const preferred=scene===activeScene
+      ?scene.stages.find(stage=>stage.id===body.dataset.currentStageId):allowedStages(scene)[0];
+    if(sceneVisible&&preferred)activateStage(scene,preferred);
   });
-  syncNav(activeScene);syncOptionalControls();saveRuntime(null,null,false);
+  syncNav(activeScene,activeScene?.stages.find(stage=>stage.id===body.dataset.currentStageId));
+  syncOptionalControls();saveRuntime(null,null,false);queueScrollerSync();
 }
 function toggleOptional(){
   routeScope=routeScope==='ALL'?'LIVE+REQUIRED':'ALL';
-  applyStudyScope();
+  let scene=models[currentScene],stage=scene?.stages.find(item=>item.id===body.dataset.currentStageId);
+  if(!scene||!allowed(scene)||!stage||!scopeRoutes().includes(stage.route)){
+    scene=availableModels()[0];stage=scene&&allowedStages(scene)[0];
+  }
+  if(scene&&stage)setCurrentState(scene,stage);
+  applyStudyScope(scene||null);
+  if(scene&&stage)setStudyCurrent(scene,stage,true,true);
   liveRegion.textContent=routeScope==='ALL'?'Contenido OPTIONAL incluido.':'Contenido OPTIONAL oculto.';
 }
 
 controls.querySelector('.lr-prev').addEventListener('click',()=>move(-1,false));
 controls.querySelector('.lr-next').addEventListener('click',()=>move(1,false));
 controls.querySelector('.lr-route-scope').addEventListener('click',cycleScope);
-controls.querySelector('.lr-route-scope').hidden=mode!=='aula'||routeScopes.length<2;
+expose(controls.querySelector('.lr-route-scope'),mode==='aula'&&routeScopes.length>1);
 controls.classList.toggle('lr-fixed-scope',controls.querySelector('.lr-route-scope').hidden);
 document.querySelectorAll('.lr-study-optional').forEach(button=>button.addEventListener('click',toggleOptional));
 
 document.addEventListener('keydown',event=>{
-  if(event.key==='Escape'){closeOverlays();return;}
+  const openDrawer=teacherDrawer?.classList.contains('open')?teacherDrawer:
+    (window.GUIDE_DRAWER?.isOpen()?document.getElementById('guion-drawer'):null);
+  if(openDrawer){
+    if(event.key==='Escape'){if(closeOverlays())event.preventDefault();return;}
+    if(event.key==='Tab')trapFocus(event,openDrawer);
+    return;
+  }
+  if(event.key==='Escape'){if(closeOverlays())event.preventDefault();return;}
   if(mode!=='aula')return;
   const active=document.activeElement;
   if(active&&(/INPUT|TEXTAREA|SELECT/.test(active.tagName)||active.isContentEditable))return;
   if(active&&active.tagName==='BUTTON'&&(event.key===' '||event.key==='Enter'))return;
+  if(scrollerOwnsKey(active,event.key))return;
   if(['ArrowRight','PageDown',' '].includes(event.key)){
     event.preventDefault();move(1,true);
   }else if(['ArrowLeft','PageUp'].includes(event.key)){
@@ -1772,13 +2094,41 @@ function deepLink(){
 function restoredPosition(){
   const linked=deepLink();
   if(linked){
-    if(mode==='estudio'&&linked.stage.route==='OPTIONAL')routeScope='ALL';
+    if(mode==='estudio'||(mode==='aula'&&isProfessor))expandScopeForRoute(linked.stage.route);
     return linked;
   }
   if(!savedRuntime.scene)return null;
   const scene=models.find(item=>item.id===savedRuntime.scene);
   const stage=scene?.stages.find(item=>item.id===savedRuntime.stage);
+  if(stage&&!scopeRoutes().includes(stage.route)&&(mode==='estudio'||isProfessor)){
+    expandScopeForRoute(stage.route);
+  }
   return scene&&stage?{scene,stage}:null;
+}
+
+function setStudyCurrent(scene,stage,mark=true,writeHash=true){
+  if(!scene||!stage||!allowed(scene)||!scopeRoutes().includes(stage.route))return false;
+  setCurrentState(scene,stage);activateStage(scene,stage);
+  syncNav(scene,stage);syncTeacher(scene,stage);saveRuntime(scene,stage,mark);
+  if(writeHash)updateDeepLink(scene,stage);
+  liveRegion.textContent=`${scene.id}, ruta ${stage.route}, ${stage.duration_minutes} minutos, etapa ${currentStage+1} de ${allowedStages(scene).length}`;
+  queueScrollerSync();return true;
+}
+function navigateTo(scene,stage,focusHeading=false){
+  if(!scene||!stage)return false;
+  if(!scopeRoutes().includes(stage.route)){
+    if(mode==='estudio'||isProfessor)expandScopeForRoute(stage.route);
+    else return false;
+  }
+  if(mode==='estudio'){
+    setCurrentState(scene,stage);applyStudyScope(scene);
+    if(!setStudyCurrent(scene,stage,true,true))return false;
+    (stage.step||scene.element).scrollIntoView({behavior:reducedMotion()?'auto':'smooth',block:'center'});
+    return true;
+  }
+  const stages=allowedStages(scene),index=stages.indexOf(stage);
+  if(index<0)return false;
+  goTo(models.indexOf(scene),index,focusHeading);return true;
 }
 
 if(mode==='aula'){
@@ -1790,30 +2140,35 @@ if(mode==='aula'){
   goTo(currentScene,Math.max(0,currentStage),false);
 }else{
   const restored=restoredPosition();
-  if(restored?.stage.route==='OPTIONAL')routeScope='ALL';
-  applyStudyScope(restored?.scene||null);
+  let initial=restored;
+  if(!initial||!allowed(initial.scene)||!scopeRoutes().includes(initial.stage.route)){
+    const scene=availableModels()[0];initial=scene?{scene,stage:allowedStages(scene)[0]}:null;
+  }
+  if(initial)setCurrentState(initial.scene,initial.stage);
+  applyStudyScope(initial?.scene||null);
+  if(initial)setStudyCurrent(initial.scene,initial.stage,true,true);
   const sceneObserver=new IntersectionObserver(entries=>{
     const visible=entries.filter(entry=>entry.isIntersecting&&!entry.target.hidden)
       .sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
     if(!visible)return;
     const scene=models.find(item=>item.element===visible.target);
     if(!scene)return;
-    syncNav(scene);
-    const stage=allowedStages(scene).find(item=>!item.step)||allowedStages(scene)[0];
-    if(stage){saveRuntime(scene,stage,true);updateDeepLink(scene,stage);}
+    if(scene.stages.some(item=>item.step))return;
+    const stage=allowedStages(scene)[0];
+    if(stage)setStudyCurrent(scene,stage,true,true);
   },{rootMargin:'-20% 0px -55% 0px',threshold:[0,.15,.4]});
   models.forEach(scene=>sceneObserver.observe(scene.element));
   models.forEach(scene=>scene.stages.forEach(stage=>{
     if(!stage.step)return;
     const observer=new IntersectionObserver(entries=>{
       if(entries.some(entry=>entry.isIntersecting)&&!stage.step.hidden){
-        saveRuntime(scene,stage,true);syncNav(scene);updateDeepLink(scene,stage);
+        setStudyCurrent(scene,stage,true,true);
       }
     },{rootMargin:'-35% 0px -45% 0px',threshold:.1});
     observer.observe(stage.step);
   }));
-  if(restored&&allowed(restored.scene))requestAnimationFrame(()=>{
-    (restored.stage.step||restored.scene.element).scrollIntoView({block:'center'});
+  if(initial&&restored)requestAnimationFrame(()=>{
+    (initial.stage.step||initial.scene.element).scrollIntoView({block:'center'});
   });
 }
 
@@ -1821,20 +2176,20 @@ syncOptionalControls();
 saveRuntime(null,null,false);
 window.LEARNING_RUNTIME={
   version:RUNTIME_VERSION,contract,mode,isProfessor,
-  getState:()=>({routeScope,scene:models[currentScene]?.id,stage:body.dataset.currentStageId,
-    progress:progressSnapshot()}),
+  getState:()=>({mode,requestedMode,routeScope,scene:body.dataset.currentSceneId||models[currentScene]?.id,
+    stage:body.dataset.currentStageId,route:body.dataset.currentStageRoute,
+    sceneRoute:models[currentScene]?.route,progress:progressSnapshot()}),
   setOptional:enabled=>{if(mode==='estudio'&&(enabled!==(routeScope==='ALL')))toggleOptional();},
   goTo:(sceneId,stageId)=>{
     const scene=models.find(item=>item.id===sceneId);if(!scene)return false;
-    if(mode==='estudio'){
-      const stage=scene.stages.find(item=>item.id===stageId)||allowedStages(scene)[0];
-      if(!stage)return false;
-      (stage.step||scene.element).scrollIntoView({block:'center'});return true;
-    }
-    const stages=allowedStages(scene),index=stages.findIndex(item=>item.id===stageId);
-    goTo(models.indexOf(scene),Math.max(0,index),false);return true;
+    const stage=scene.stages.find(item=>item.id===stageId)||scene.stages[0];
+    return navigateTo(scene,stage,false);
   },
 };
+
+addEventListener('hashchange',()=>{
+  const linked=deepLink();if(linked)navigateTo(linked.scene,linked.stage,false);
+});
 
 mobileQuery.addEventListener?.('change',()=>location.reload());
 })();

@@ -1,4 +1,4 @@
-/* L10 — dos estrategias por el mismo runner (resultados del Backtest real) */
+/* L10 — dos estrategias por el mismo runner (resultados del Backtest canónico) */
 (function(){
 "use strict";
 const $=s=>document.querySelector(s);

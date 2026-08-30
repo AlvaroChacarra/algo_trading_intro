@@ -1,0 +1,19 @@
+{
+  "name": "algo-trading-course-ci",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Reproducible Node tooling for the course browser gates.",
+  "engines": {
+    "node": "20.19.4"
+  },
+  "packageManager": "npm@10.8.2",
+  "scripts": {
+    "test:desktop-contract": "node --test framework/_build/desktop_evidence_contract.test.js",
+    "test:e2e-docs": "node framework/_build/e2e_check.js",
+    "test:e2e-desktop": "node framework/_build/desktop_e2e.js --audit-dir artifacts/work2-full-course-scaleout",
+    "validate:e2e-desktop": "node framework/_build/validate_desktop_audit.js --verify-browser artifacts/work2-full-course-scaleout"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
+}

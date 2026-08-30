@@ -25,7 +25,7 @@ asks: list[Level])`. Las lecturas `best_bid`, `best_ask`, `spread`, `mid` siguen
 e `imbalance(levels)` sigue siendo método. `PositionTracker.apply_fill` consume el `Fill` estable
 introducido en L4.
 
-El deck a medida (Pyodide) trae un inspector del `OrderBook` (métricas como properties) y un widget
+El documento HTML autocontenido trae un inspector del `OrderBook` (métricas como properties) y un widget
 del `PositionTracker` (pulsas fills y ves cash/posición/equity, con slider de mark). El núcleo
 son 6 ejercicios que culminan en "los dos objetos, juntos"; el `.py` entregable es `book_demo.py`.
 Puente: ya creas (L4) y compones (L5) objetos; falta la última pieza de OOP — compartir un

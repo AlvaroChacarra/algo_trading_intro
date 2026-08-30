@@ -1,7 +1,7 @@
 {
   "lesson": 15,
   "status": "contract-strict",
-  "title": "Assessment final acumulativo",
+  "title": "Práctica acumulativa pública (no examen oficial)",
   "delivery": "assessment-linear",
   "requires": {
     "concepts": [
@@ -95,7 +95,7 @@
   "routes": {
     "LIVE": [],
     "REQUIRED": [
-      "l15-official-assessment"
+      "l15-public-practice"
     ],
     "OPTIONAL": []
   },
@@ -133,12 +133,14 @@
     "guided_minutes": 0,
     "required_autonomous_minutes": 0,
     "optional_minutes": 0,
-    "overflow_policy": "official-assessment-is-not-a-scene-deck"
+    "overflow_policy": "public-practice-is-not-a-scene-deck"
   },
   "scenes": [],
   "bridge": null,
   "api_transitions": [],
   "assessment_artifact": "15-final-exam/examen.html",
+  "assessment_artifact_status": "PRACTICE_ONLY",
+  "official_assessment_status": "BLOCKED_UNTIL_PRIVATE_BANK",
   "package_checks": [
     {
       "path": "14-avellaneda-stoikov/exercises/exchange/matching.py",

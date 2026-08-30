@@ -1,6 +1,6 @@
 # Clase 11 — Primera estrategia + métricas
 
-> Someter el motor completo de L1–L10 a una estrategia con señal real y métricas honestas — PnL, posición, parent arrival para la decisión y decision mid para la ejecución de cada orden hija. Checkpoint integrador que depende directamente del contrato y el runner de L10.
+> Someter el motor completo de L1–L10 a una estrategia con señal operativa y métricas honestas — PnL, posición, parent arrival para la decisión y decision mid para la ejecución de cada orden hija. Checkpoint integrador que depende directamente del contrato y el runner de L10.
 
 ## Contexto teórico
 

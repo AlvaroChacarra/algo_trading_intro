@@ -922,6 +922,10 @@ def spread(book):
     return best_ask(book) - best_bid(book)
 
 
+def mid(book):
+    return (best_bid(book) + best_ask(book)) / 2
+
+
 def imbalance(book):
     buy = sum(o["size"] for o in book if o["side"] == "buy")
     sell = sum(o["size"] for o in book if o["side"] == "sell")
@@ -1326,8 +1330,8 @@ LESSONS.append({
          "starter": "class OrderBookMini:\n    def __init__(self, bids, asks):\n        self.bids = sorted(bids, key=lambda x:-x[0]); self.asks = sorted(asks, key=lambda x:x[0])\n    @property\n    def mid(self):\n        pass\n",
          "validator": "b = OrderBookMini([(100,1)], [(102,1)])\nassert b.mid == 101, 'se llama sin parentesis'\nprint('ok')",
          "solution": "class OrderBookMini:\n    def __init__(self, bids, asks):\n        self.bids = sorted(bids, key=lambda x:-x[0]); self.asks = sorted(asks, key=lambda x:x[0])\n    @property\n    def mid(self):\n        return (self.bids[0][0] + self.asks[0][0]) / 2"},
-        {"title": "A12. Los objetos reales del paquete", "practice": "usar la superficie estable de L5",
-         "statement": "Usa los reales de `exchange`: crea un `OrderBook` (con `Level`), lee su `mid` e `imbalance`; crea un `PositionTracker`, aplícale un `Fill` de compra y comprueba que la posición sube. `microprice` llegará con el snapshot real de L7.",
+        {"title": "A12. Los objetos canónicos del paquete", "practice": "usar la superficie estable de L5",
+         "statement": "Usa las implementaciones canónicas de `exchange`: crea un `OrderBook` (con `Level`), lee su `mid` e `imbalance`; crea un `PositionTracker`, aplícale un `Fill` simulado de compra y comprueba que la posición sube. `microprice` llegará con el snapshot sintético de L7.",
          "starter": "from exchange import OrderBook, Level, PositionTracker\nfrom exchange.trades import Fill\nbook = None\ntracker = None\n",
          "validator": "from exchange import OrderBook, PositionTracker\nassert isinstance(book, OrderBook) and book.mid == 100.5\nassert abs(book.imbalance(1) - 1/3) < 1e-9\nassert isinstance(tracker, PositionTracker) and tracker.position > 0\nprint('ok')",
          "solution": "from exchange import OrderBook, Level, PositionTracker\nfrom exchange.trades import Fill\nbook = OrderBook('BTCUSDT', [Level(100,2)], [Level(101,1)])\ntracker = PositionTracker()\ntracker.apply_fill(Fill(1, 'BTCUSDT', 'buy', 100, 0.5))"},

@@ -599,6 +599,7 @@
   margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;
   border:0!important}
 .lr-has-contract [hidden]{display:none!important}
+[data-lr-scroller="true"]:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
 
 #lr-nav{position:fixed;inset:0 auto 0 0;width:var(--lr-nav-w,230px);z-index:52;
   display:flex;flex-direction:column;background:rgba(9,9,11,.97);border-right:1px solid var(--line);
@@ -630,6 +631,8 @@
 .lr-scene-links button.lr-route-live span{color:var(--accent)}
 .lr-scene-links button.lr-route-required span{color:var(--kw)}
 .lr-scene-links button.lr-route-optional span{color:var(--faint)}
+.lr-scene-links button.lr-route-mixed span{background:linear-gradient(90deg,var(--accent),var(--kw));
+  color:transparent;background-clip:text;-webkit-background-clip:text}
 
 #lr-teacher-toggle{margin:0 6px 9px;min-height:36px;border:1px solid rgba(34,211,238,.38);
   border-radius:8px;background:var(--accent-dim);color:var(--accent);font:600 .68rem var(--mono);cursor:pointer}
@@ -650,6 +653,8 @@
 .lr-teacher-kicker{margin:0;color:var(--accent);font:600 .68rem var(--mono);text-transform:uppercase}
 .lr-teacher-stage{font-size:.78rem}.lr-full-guide{min-height:40px;margin-top:16px;padding:7px 12px;
   border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--accent);font:600 .7rem var(--mono);cursor:pointer}
+.lr-teacher-override{padding:8px 10px;border-left:2px solid var(--kw);background:rgba(192,132,252,.08);
+  color:var(--muted);font-size:.76rem}
 
 .lr-scene-badge{display:flex;gap:8px;align-items:center;margin:0 0 10px;font:600 .58rem var(--mono);
   letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
@@ -657,6 +662,7 @@
 .lr-scene-badge.lr-route-live span:first-child{border-color:rgba(34,211,238,.42);color:var(--accent)}
 .lr-scene-badge.lr-route-required span:first-child{border-color:rgba(192,132,252,.45);color:var(--kw)}
 .lr-scene-badge.lr-route-optional span:first-child{border-color:var(--line);color:var(--faint)}
+.lr-scene-badge.lr-route-mixed span:first-child{border-color:rgba(192,132,252,.45);color:var(--kw)}
 
 #lr-controls{position:fixed;left:var(--lr-nav-w,230px);right:0;bottom:0;height:var(--lr-controls-h,58px);z-index:55;
   display:grid;grid-template-columns:minmax(120px,1fr) auto auto minmax(120px,1fr);align-items:center;
@@ -675,6 +681,8 @@
 #lr-controls .lr-route-scope{padding:0 12px;color:var(--accent);border-color:rgba(34,211,238,.38)}
 #lr-controls.lr-fixed-scope{grid-template-columns:minmax(120px,1fr) auto minmax(120px,1fr)}
 #lr-mobile-toolbar{display:none}
+html.lr-modal-open,body.lr-modal-open{overflow:hidden!important;overscroll-behavior:none}
+body.lr-modal-open::before{content:"";position:fixed;inset:0;z-index:69;background:rgba(0,0,0,.58);backdrop-filter:blur(2px);pointer-events:auto}
 
 /* Layout names are operational: they control scene width and native two-panel ratios. */
 .lr-scene{--lr-scene-max:1180px;--lr-left:42fr;--lr-right:58fr}
@@ -706,7 +714,7 @@
   body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child{overflow:visible;max-width:var(--lr-scene-max);margin:0 auto}
   body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child h2{font-size:clamp(1.08rem,2.15vh,1.72rem);margin:.05em 0 .2em}
   body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child .lede{font-size:clamp(.74rem,1.4vh,.95rem);margin:.2em 0}
-  body.mode-aula>.lr-scene-active>.scrolly{width:100%;max-width:var(--lr-scene-max);height:100%;min-height:0;margin:0 auto;
+  body.mode-aula>.lr-scene-active>.scrolly{display:grid;width:100%;max-width:var(--lr-scene-max);height:100%;min-height:0;margin:0 auto;
     padding:0;grid-template-columns:minmax(260px,var(--lr-left)) minmax(0,var(--lr-right));gap:clamp(14px,1.8vw,32px)}
   body.mode-aula>.lr-scene-active>.scrolly~.wrap{display:none}
   body.mode-aula .steps{min-width:0;min-height:0;height:100%;overflow:hidden}
@@ -721,6 +729,7 @@
   body.mode-aula .fig-stage{overflow:auto}
   body.mode-aula .full-code{display:none!important}
   body.mode-aula .hero{padding:0}
+  body.mode-aula>header.lr-scene-active .code{overflow-x:hidden;overflow-y:auto}
   body.mode-aula .hero h1{font-size:clamp(2rem,4.7vw,4.8rem)}
   body.mode-aula .hero .lede{font-size:clamp(.92rem,1.45vw,1.3rem);max-width:72ch}
   body.mode-aula .hero .challenge{margin-top:clamp(14px,2.5vh,28px)}
@@ -753,8 +762,8 @@
 }
 
 @media(max-width:520px){
-  #lr-mobile-toolbar>span{display:none}
-  #lr-mobile-toolbar .lr-study-optional{margin-left:auto}
+  #lr-mobile-toolbar>span{display:block;text-align:left;font-size:.55rem}
+  #lr-mobile-toolbar .lr-study-optional{flex:none}
 }
 
 @media(prefers-reduced-motion:reduce){
@@ -806,7 +815,7 @@
     <div class="eyebrow">§1 · <b>La idea central</b></div>
     <h2>Las tres varas de medir</h2>
     <p class="lede">Sigue bajando: el panel somete la estrategia de L10 a cada juez, con
-    los números reales del backtest.</p>
+    los resultados reproducibles del backtest sobre el replay sintético.</p>
   </div>
 
   <div class="scrolly" data-scrolly>
@@ -1018,8 +1027,34 @@ coste ≈ slip_medio × n_fills × clip</pre>
 
 <footer>L11 · Medir con criterio — Algo Trading ICAI 2026 · documento interactivo</footer>
 
+<script type="text/plain" id="guion-src"># Guion — Clase 11: Primera estrategia + métricas
+
+**Idea central:** Sin benchmark no hay estrategia: parent arrival juzga la decisión; cada decision mid juzga su ejecución.
+
+**Formato:** documento interactivo (`first-strategy-metrics-doc.html`), autocontenido y sin internet. Tú haces scroll y narras. Regla de la casa: **"lo cian se toca"**.
+
+Estructura: hero/reto (2 min) → scrollytelling (~7 min, scroll lento: cada parada es una idea) → simulador estrella (cede el teclado) → secciones de construcción (con gates de predicción: exige la predicción antes del ▶) → quiz (diagnóstico) → mapa del paquete + puente.
+
+## Los bloques conceptuales
+
+
+### 1. Una estrategia con criterio
+
+- **Qué decir:** Compra cuando el libro empuja arriba (imbalance positivo), vende cuando empuja abajo. Simple, pero ya es una decisión basada en microestructura.
+
+### 2. Dos llegadas, dos preguntas
+
+- **Qué decir:** El parent arrival es el primer mid y evalúa la decisión completa. Cada orden hija tiene su propio decision mid y mide solo su ejecución. No se mezclan.
+
+### 3. Leer el resultado con honestidad
+
+- **Qué decir:** final_equity, posición final, número de fills. Un equity positivo con inventario enorme no es una buena estrategia: es riesgo escondido.
+
+## Cierre
+- Recoge la idea central sobre el mapa del paquete y manda al notebook de construcción; presenta el gimnasio (dosis mínima declarada).
+</script>
 <script>const DOC_DATA={"signal":{"equity":[-1.09,-1.03,-0.96,-0.91,-0.31,-0.23,-0.53,-1.06,-1.15,-1.35,-5.06,-4.19,-5.87,-8.36,-10.26,-11.57,-11.36,-9.87,-7.89,-7.4,-6.29,-5.7,-5.97,-6.59,-6.19,-8.42,-8.72,-10.25,-9.28,-8.49,-4.08,-8.23,-6.67,-3.46,-4.83,-5.1,-8.15,-6.99,-4.17,-6.53,-6.55,-8.09,-9.05,-8.62,-8.17,-8.1,-5.98,-3.94,-0.01,-3.62,-4.0,-3.94,-2.09,-1.66,0.76,-0.29,-0.05,-2.87,-4.56,-3.12,-6.53,-11.52,-11.37,-53.04,-49.74,-49.43,-50.62,-54.47,-56.71,-56.8,-54.59,-53.98,-62.74,-56.48,-54.97,-60.08,-59.8,-61.55,-63.2,-63.39,-65.98,-66.78,-73.72,-74.15,-79.92,-84.53,-82.3,-83.2,-80.33,-76.01,-77.92,-79.57,-79.21,-80.99,-78.51,-75.49,-76.85,-69.23,-71.86,-79.31,-79.11,-80.34,-78.2,-76.9,-77.86,-76.94,-84.43,-98.38,-94.7,-96.39,-98.97,-92.35,-90.42,-82.4,-82.09,-84.16,-85.22,-85.23,-87.07,-82.28,-78.99,-69.58,-68.27,-68.39,-71.87,-69.3,-74.67,-86.52,-86.24,-85.62,-92.89,-91.45,-92.66,-85.28,-85.94,-83.33,-84.79,-84.0,-81.45,-80.47,-81.64,-85.85,-90.83,-87.2,-87.01,-87.13,-86.58,-91.93,-93.18,-93.08,-86.35,-85.04,-86.81,-89.28,-94.38,-88.96,-93.26,-96.73,-95.41,-94.33,-98.7,-97.11,-95.21,-96.58,-93.47,-93.58,-92.76,-93.19,-96.02,-89.67,-90.21,-91.8,-91.42,-95.02,-90.32,-89.17,-91.31,-95.85,-92.79,-93.99,-91.94,-91.71,-91.59,-91.4,-91.04,-87.06,-90.34,-91.51,-93.42,-90.19,-88.35,-90.05,-84.96,-87.89,-86.01,-80.07,-82.86,-81.0,-78.32,-72.29,-73.23,-76.05,-77.68,-79.54,-75.38,-75.51,-76.1,-76.73,-75.63,-77.52,-81.81,-81.59,-81.3,-83.35,-84.58,-83.87,-83.73,-80.41,-81.37,-78.91,-77.22,-76.91,-75.49,-77.2,-75.58,-75.58,-77.99,-77.14,-76.18,-75.95,-77.47,-77.78,-80.79,-78.99,-80.87,-77.01,-79.05,-81.29,-63.05,-66.24,-68.6,-68.13,-66.72,-65.66,-68.11,-68.68,-70.46,-73.67,-76.38,-71.15,-69.75,-72.67,-73.58,-73.74,-70.56,-79.07,-63.95,-60.32,-61.4,-55.66,-55.88,-56.61,-54.08,-49.54,-49.95,-47.27,-53.37,-58.7,-62.42,-62.98,-57.37,-61.55,-60.07,-58.56,-56.71,-55.35,-52.65,-56.43,-51.74,-58.91,-64.92,-63.7,-58.04,-60.32,-61.88,-57.66,-57.49,-54.46,-62.21,-66.87,-46.36,-48.0,-45.73,-40.84,-48.48,-59.14,-59.78,-52.53,-52.99,-45.88,-46.43,-45.07,-41.54,-36.99,-36.1,-35.09,-31.75,-32.55,-34.64,-35.87,-38.69,-44.0,-43.21,-44.29,-25.73,-25.01,-18.82,-17.12,-9.86,-10.33,-8.24,-9.14,-2.93,-3.96,-3.21,-2.4,1.34,-9.58,-4.82,-1.69,1.81,0.68,1.82,-1.91,-3.77,-3.49,-4.63,19.22,17.63,17.03,12.59,14.94,20.73,24.09,29.28,32.99,37.77,36.43,34.23,34.31,32.43,28.86,30.06,26.28,25.43,18.94,15.53,6.45,9.27,5.3,4.1,2.36,3.13,4.03,3.75,7.09,13.23,15.2,6.67,9.59,8.62,11.85,8.73,12.22,13.11,12.8,17.18,24.06,26.18,19.71,14.27,11.66,7.75,-0.46,-0.18,-2.1,1.11,1.93,-4.14,-1.21,-0.47,-5.77,-1.19,6.76,1.91,2.51,-0.87,1.31,0.81,5.93,7.59,4.73,-1.1,-1.37,-0.27,-1.84,1.74,-2.99,-2.5,4.23,8.48,12.6,13.27,14.42,16.22,19.35,14.01,9.15,14.23,15.32,21.17,16.43,14.21,14.18,17.92,15.1,17.79,11.53,9.6,5.81,2.61,1.58,0.52,0.11,-6.13,-19.55,-21.6,-15.94,-13.56,-14.52,-12.66,-13.66,-11.28,-13.77,-7.26,-3.33,-2.31,-0.23,-0.26,0.48,-2.04,-0.44,2.55,-2.27,-1.29,4.4,-0.56,2.96,9.12,12.43,12.36,14.69,9.42,10.11,10.31,3.5,3.49,6.46,1.09,-5.43,-13.92,-13.56,-13.7,-13.34,-11.7,-8.56,-9.67,-23.67,-22.0,-22.2,-23.35,-22.57,-24.91,-23.98,-26.63,-28.37,-30.36,-32.72,-32.18,-31.07,-31.72,-32.69,-32.44,-38.78,-37.08,-29.64,-27.51,-28.05,-29.38,-27.3],"nFills":129,"finalEquity":-27.3,"finalPos":-0.35},"monos":[[0.0,0.0,0.0,0.0,0.0,0.0,-0.25,-0.2,-0.2,-0.2,-0.2,-0.51,0.05,0.88,1.51,1.95,1.88,1.11,-0.5,-1.24,-2.91,-3.79,-3.92,-3.45,-3.75,-2.08,-1.85,-0.94,-1.52,-2.0,-5.01,-1.69,-2.93,-5.76,-4.4,-4.13,-1.08,-2.24,-5.06,-2.9,-2.87,-0.83,0.46,-0.53,-1.24,-1.29,-3.28,-5.33,-9.25,-5.64,-5.49,-5.68,-6.91,-7.2,-8.81,-8.11,-8.27,-6.39,-5.47,-6.45,-4.9,-2.68,-2.74,15.77,14.31,14.07,14.54,16.08,16.98,17.01,16.13,15.78,18.96,16.4,15.72,17.99,17.87,18.64,19.38,19.46,20.53,20.93,24.32,24.44,26.74,28.59,27.69,27.99,26.95,25.28,26.05,26.71,26.56,27.28,26.28,25.07,25.62,22.57,23.32,27.05,26.78,27.27,26.41,25.89,26.15,25.82,28.54,33.53,32.06,32.74,33.77,31.12,30.35,27.14,27.01,27.84,28.27,28.27,29.01,27.09,25.78,22.01,21.42,21.47,23.02,21.88,24.26,29.53,29.4,28.98,32.61,31.89,32.5,28.81,29.14,27.83,28.56,28.17,26.89,26.4,26.99,29.09,31.58,29.77,29.67,29.73,29.46,32.01,32.56,32.52,29.53,28.59,29.48,30.39,32.51,29.8,31.95,33.55,32.79,32.07,34.88,33.6,32.09,33.04,29.94,30.04,29.22,29.65,32.48,25.83,26.26,27.53,27.04,29.23,25.47,24.55,26.26,29.89,27.45,28.41,26.76,26.58,26.49,26.33,25.76,23.11,25.19,26.13,27.53,25.38,23.64,24.26,21.71,23.03,22.23,19.68,20.88,20.08,18.93,16.35,16.75,17.96,18.66,19.45,17.6,17.65,17.86,18.1,17.69,18.29,19.99,19.88,19.74,20.69,21.43,21.01,20.92,18.8,19.35,16.68,14.42,14.02,12.12,14.19,12.56,12.56,14.81,13.87,12.91,12.69,14.04,14.29,16.7,14.98,16.03,12.95,14.58,16.23,4.07,6.2,7.77,7.26,6.34,5.3,6.35,6.53,7.2,8.34,9.5,7.15,6.62,7.71,8.06,8.12,6.92,10.0,4.96,3.45,3.89,1.59,1.67,1.97,0.96,-0.86,-0.77,-1.74,0.48,2.42,3.76,3.97,1.93,3.45,2.91,2.36,1.69,1.2,0.21,1.59,-0.12,2.49,4.68,4.1,1.69,2.7,3.4,1.52,1.35,0.09,2.9,4.6,-2.86,-2.27,-3.09,-4.87,-2.09,1.79,2.02,-0.68,-0.5,-3.35,-3.19,-3.68,-4.96,-6.62,-6.94,-7.31,-8.52,-8.23,-7.84,-7.51,-7.04,-6.08,-6.22,-6.03,-9.4,-9.53,-10.69,-11.09,-12.71,-12.6,-13.07,-12.87,-14.33,-14.1,-14.27,-14.45,-15.28,-12.86,-13.95,-14.82,-15.62,-15.34,-15.71,-14.64,-14.11,-14.27,-13.98,-21.09,-20.56,-20.31,-18.4,-19.41,-21.89,-23.33,-25.66,-27.18,-29.23,-28.66,-27.71,-27.81,-27.16,-25.78,-26.23,-25.3,-24.82,-21.32,-19.05,-12.99,-14.87,-12.23,-11.52,-10.61,-11.09,-12.01,-11.93,-13.78,-17.19,-18.29,-13.55,-15.17,-14.63,-16.57,-15.15,-17.09,-17.58,-17.41,-20.16,-24.46,-25.79,-21.83,-18.05,-16.61,-14.43,-9.97,-10.42,-9.23,-11.24,-11.89,-8.85,-10.32,-10.78,-8.43,-10.6,-13.78,-11.84,-12.08,-10.73,-11.6,-11.51,-13.37,-13.97,-13.0,-10.67,-10.57,-11.18,-10.71,-11.78,-10.36,-10.51,-12.53,-13.8,-15.08,-15.26,-15.62,-16.16,-17.1,-15.5,-14.04,-15.91,-16.27,-18.23,-16.65,-15.9,-15.9,-17.14,-16.2,-17.1,-15.01,-14.37,-13.44,-12.24,-11.98,-11.52,-11.34,-8.67,-2.92,-2.04,-4.47,-5.49,-5.08,-6.14,-5.56,-7.22,-6.3,-9.64,-11.32,-11.98,-13.02,-13.0,-13.47,-12.67,-13.55,-15.22,-12.89,-13.38,-16.22,-13.81,-15.41,-18.21,-19.71,-19.68,-20.87,-18.39,-18.77,-18.88,-15.1,-15.09,-16.86,-13.51,-9.44,-4.21,-4.84,-4.73,-5.03,-6.4,-9.01,-8.09,3.21,1.17,1.35,2.21,1.43,3.78,2.85,5.49,7.24,9.23,11.58,10.74,9.8,10.35,10.94,10.75,15.24,13.79,7.41,5.58,6.04,7.19,5.4],[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,-0.32,0.27,-0.29,-1.12,-1.76,-2.19,-2.12,-1.62,-0.91,-0.66,-0.11,0.19,0.23,0.07,0.18,-0.38,-0.46,-1.07,-1.07,-1.07,-1.07,-1.07,-1.07,-1.07,-1.07,-1.27,-0.51,-0.8,-1.51,-0.97,-0.96,-0.45,-0.13,-0.37,-0.55,-0.56,-1.06,-1.57,-2.55,-1.65,-1.61,-1.66,-1.97,-2.04,-2.44,-2.27,-2.31,-1.84,-1.61,-1.85,-1.46,-1.18,-1.21,8.05,7.32,7.19,7.43,8.2,8.65,8.67,8.23,8.05,9.64,8.36,8.02,9.15,9.09,9.48,9.85,9.89,10.43,10.63,12.32,12.38,13.53,14.45,14.01,14.15,13.63,12.8,13.18,13.51,13.44,13.8,13.3,12.7,12.97,11.45,11.97,13.17,13.15,12.93,12.51,12.25,12.37,12.21,13.57,16.06,15.33,15.67,16.18,14.86,14.47,12.72,12.63,13.25,13.57,13.57,14.12,12.69,11.7,8.88,8.43,8.47,9.63,8.78,10.57,14.52,14.42,14.1,16.83,16.29,16.74,13.97,14.22,13.24,13.79,13.49,12.54,12.17,12.61,14.19,16.05,14.69,14.62,14.67,14.46,16.37,16.79,16.76,14.51,13.81,14.48,15.16,16.75,14.72,16.33,17.53,16.96,16.24,19.05,17.77,16.26,17.21,14.11,14.21,13.39,13.82,16.65,10.0,10.43,11.7,11.21,13.4,9.64,8.72,10.43,14.06,11.62,12.58,10.93,10.75,10.66,10.5,9.93,7.28,9.36,10.3,11.7,9.55,8.12,8.94,5.55,7.31,6.24,2.84,4.44,3.38,1.84,-1.6,-1.07,0.55,1.48,2.54,0.06,-0.14,-0.1,0.06,-0.21,0.19,1.32,1.25,1.15,1.79,2.28,2.0,1.94,0.53,0.89,-0.75,-1.88,-2.08,-3.03,-1.99,-2.81,-2.81,-1.68,-2.15,-2.63,-2.75,-2.07,-1.94,-0.74,-1.6,-1.07,-3.74,-3.33,-2.92,-5.96,-5.43,-5.03,-5.16,-5.39,-5.57,-5.22,-5.16,-4.94,-4.56,-4.17,-4.95,-5.13,-4.77,-4.65,-4.63,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.2,-5.5,-5.07,-6.94,-6.79,-6.99,-7.79,-6.4,-4.46,-4.35,-5.7,-5.61,-7.03,-6.95,-7.2,-7.84,-8.67,-8.83,-9.01,-9.62,-9.47,-9.09,-8.87,-8.36,-7.39,-7.54,-7.34,-10.71,-10.84,-12.01,-12.41,-14.02,-14.21,-14.9,-14.6,-16.79,-16.46,-16.71,-16.98,-18.23,-14.59,-16.24,-17.53,-18.74,-18.64,-19.37,-17.24,-16.17,-16.5,-15.92,-27.85,-27.14,-26.8,-24.26,-25.82,-28.3,-29.74,-32.07,-33.95,-35.31,-34.93,-34.3,-34.37,-33.93,-33.01,-33.31,-32.46,-32.22,-30.47,-29.33,-26.3,-27.24,-25.92,-25.57,-25.11,-25.53,-25.69,-25.68,-26.26,-26.26,-26.26,-26.26,-26.26,-26.26,-26.26,-26.26,-26.26,-26.26,-26.26,-26.26,-26.26,-26.26,-26.26,-26.26,-26.26,-26.26,-26.26,-26.26,-26.51,-26.11,-26.01,-26.77,-26.4,-26.29,-26.88,-26.33,-25.54,-26.02,-25.96,-26.3,-26.08,-26.11,-25.64,-25.49,-25.73,-26.31,-26.34,-26.23,-26.39,-26.03,-26.78,-26.68,-25.33,-24.48,-23.63,-23.51,-23.27,-22.91,-22.29,-23.35,-24.58,-22.71,-22.34,-20.39,-21.97,-22.72,-22.72,-21.48,-22.68,-21.48,-24.26,-25.12,-26.36,-27.96,-28.31,-28.91,-29.15,-32.71,-40.39,-41.56,-38.32,-36.96,-37.51,-36.45,-37.02,-35.66,-36.9,-32.44,-30.2,-29.53,-28.49,-28.5,-28.03,-29.15,-28.44,-27.11,-28.97,-28.58,-26.3,-28.36,-26.76,-23.96,-22.76,-22.79,-21.84,-23.82,-23.51,-23.43,-26.45,-26.46,-25.04,-27.72,-30.98,-35.16,-34.66,-34.74,-34.51,-33.64,-31.02,-31.95,-43.61,-41.92,-42.06,-42.78,-42.13,-44.08,-43.31,-45.52,-46.97,-48.63,-50.59,-49.89,-49.1,-49.56,-50.34,-50.15,-54.64,-53.19,-47.45,-45.93,-46.45,-47.21,-46.02],[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,-0.31,-0.46,-1.35,-0.52,-0.83,-1.53,-1.19,-1.32,0.2,-0.38,-1.79,-0.71,-0.69,0.33,0.97,0.48,-0.14,-0.18,-1.67,-3.2,-6.15,-3.44,-3.33,-3.47,-4.39,-4.61,-5.82,-5.29,-5.41,-4.0,-3.31,-4.05,-2.88,-1.22,-1.27,12.62,11.34,11.1,11.57,13.11,14.01,14.05,13.16,12.81,15.99,13.43,12.75,15.02,14.9,15.67,16.41,16.49,17.56,17.96,21.35,21.3,24.18,26.49,25.37,25.74,24.43,22.35,23.31,24.0,23.86,24.57,23.58,22.37,22.91,19.87,20.92,23.9,23.82,24.31,23.45,22.93,23.19,22.86,25.58,30.57,29.1,29.78,30.81,28.16,27.39,24.18,24.05,24.88,25.31,25.31,26.05,24.13,22.82,19.05,18.46,18.51,20.06,18.92,21.3,26.57,26.44,26.02,29.65,28.93,29.54,25.85,26.18,24.87,25.6,25.21,23.93,23.44,24.03,26.13,28.62,26.81,26.71,26.77,26.5,28.8,29.21,29.18,26.93,26.23,26.9,27.58,29.17,27.14,28.75,29.95,29.38,28.84,30.95,29.99,28.86,29.57,27.24,27.32,26.7,26.82,29.65,22.99,23.43,24.7,24.21,26.39,22.63,21.71,23.43,27.06,24.61,25.57,23.93,23.75,23.65,23.5,22.93,20.27,22.35,23.29,24.7,22.55,21.12,21.94,18.54,20.31,19.23,15.84,17.44,16.37,14.84,11.4,11.93,13.54,14.47,15.32,13.46,13.51,13.73,13.77,13.49,13.89,15.03,14.95,14.86,15.35,15.79,15.22,15.11,12.28,12.77,10.31,8.62,8.32,6.89,8.44,7.22,7.23,8.91,8.21,7.49,7.32,8.33,8.52,10.33,9.04,9.83,7.51,8.47,9.3,3.21,4.28,5.07,4.81,4.35,4.0,4.35,4.41,4.63,5.01,5.4,4.61,4.44,4.8,4.92,4.94,4.54,5.56,3.88,3.45,3.56,2.99,3.01,3.08,2.83,2.38,2.4,2.16,2.71,3.2,3.53,3.58,2.74,3.5,3.03,2.9,2.73,2.61,2.36,2.7,2.28,2.93,3.48,3.33,2.73,2.98,2.95,2.95,2.95,2.95,2.65,2.23,4.09,3.94,4.15,4.6,3.9,2.71,2.71,2.71,2.71,2.71,2.71,2.38,2.06,1.65,1.57,1.48,1.17,1.24,1.43,1.55,1.8,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,2.01,1.87,2.09,2.55,2.4,2.83,2.95,3.82,4.39,5.57,5.57,5.57,5.57,5.57,5.57,5.57,5.57,5.35,4.67,4.45,5.4,5.08,4.95,4.95,4.95,4.95,4.95,4.71,4.17,3.3,3.04,3.83,4.44,5.02,5.89,7.67,7.6,8.08,7.28,7.07,8.59,7.86,7.63,8.8,7.72,6.13,7.1,6.8,7.14,6.92,6.94,6.47,6.32,6.57,7.15,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.91,6.58,6.79,7.1,7.5,7.59,7.74,7.8,8.0,8.0,8.0,8.0,7.75,7.62,7.88,7.74,8.08,7.77,8.88,9.44,9.61,9.87,9.87,9.98,9.71,9.88,10.22,9.75,9.85,10.42,9.93,10.25,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.66,10.29,10.62,11.02,10.58,10.26,10.44,10.64,10.58,12.07,11.59,9.46,8.86,9.01,9.39,8.57]],"monoFinals":[5.4,-46.02,8.57],"arrivalMid":100000.0,"avgSlip":5.587,"nSlips":129};</script>
-<script type="application/json" id="pedagogy-contract">{"lesson":11,"status":"contract-strict","title":"Primera estrategia + métricas","delivery":"lesson","source_path":"framework/_build/docs/11_body.html","requires":{"concepts":["framework.strategy_contract","backtest.runner","microstructure.spread_cost","metrics.equity_curve","python.fstring"],"apis":["market.sample","market.step","new_order.constructor","order.constructor","orderbook.imbalance","orderbook.mid","strategy.on_book_update","strategy.on_fill","backtest.constructor","backtest.run","backtest_result.fills","backtest_result.equity_curve","backtest_result.final_position","backtest_result.final_equity","backtest_result.n_steps","backtest_result.n_fills","tracker.equity"],"notation":["notation.equity","notation.spread"]},"requirement_routes":{"concepts":{"framework.strategy_contract":"LIVE","backtest.runner":"LIVE","microstructure.spread_cost":"LIVE","metrics.equity_curve":"LIVE","python.fstring":"REQUIRED"},"apis":{"market.sample":"LIVE","market.step":"LIVE","new_order.constructor":"LIVE","order.constructor":"LIVE","orderbook.imbalance":"LIVE","orderbook.mid":"LIVE","strategy.on_book_update":"LIVE","strategy.on_fill":"LIVE","backtest.constructor":"LIVE","backtest.run":"LIVE","backtest_result.fills":"LIVE","backtest_result.equity_curve":"OPTIONAL","backtest_result.final_position":"LIVE","backtest_result.final_equity":"LIVE","backtest_result.n_steps":"LIVE","backtest_result.n_fills":"LIVE","tracker.equity":"LIVE"},"notation":{"notation.equity":"LIVE","notation.spread":"LIVE"}},"introduces":{"concepts":[{"id":"metrics.arrival_price","importance":"major","route":"LIVE"},{"id":"metrics.slippage","importance":"major","route":"LIVE"},{"id":"metrics.random_benchmark","importance":"major","route":"LIVE"},{"id":"metrics.pnl_execution_separation","importance":"major","route":"LIVE"},{"id":"metrics.inventory_exposure","importance":"major","route":"LIVE"}],"apis":[],"notation":["notation.slippage_signed"]},"introduction_routes":{"apis":{},"notation":{"notation.slippage_signed":"LIVE"}},"recalls":[{"concept":"microstructure.spread_cost","introduced_in":5,"mapping":{"before":"Cruzar el spread crea un coste inmediato de ida y vuelta.","now":"El slippage con signo aísla la calidad de ejecución del PnL."}}],"api_surface":[{"id":"market.sample","name":"sample","kind":"classmethod","signature":"sample(symbol: str = 'BTCUSDT', depth: int = 10) -> Market","returns":"Market","responsibility":"load the reproducible packaged market replay","qualified_name":"exchange.market.Market.sample"},{"id":"market.step","name":"step","kind":"method","signature":"step() -> OrderBook | None","returns":"OrderBook | None","responsibility":"advance replay time and replace the active book","qualified_name":"exchange.market.Market.step"},{"id":"new_order.constructor","name":"NewOrder","kind":"constructor","signature":"NewOrder(order: Order) -> NewOrder","returns":"NewOrder","responsibility":"wrap an order as a typed strategy action","qualified_name":"exchange.strategy.NewOrder"},{"id":"order.constructor","name":"Order","kind":"constructor","signature":"Order(symbol: str, side: Side, size: float, price: float | None = None, order_type: OrderType = OrderType.LIMIT, id: int = None) -> Order","returns":"Order","responsibility":"construct the canonical order intent","qualified_name":"exchange.orders.Order"},{"id":"orderbook.imbalance","name":"imbalance","kind":"method","signature":"imbalance(levels: int = 1) -> float | None","returns":"float | None","responsibility":"compute depth imbalance for selected levels","qualified_name":"exchange.book.OrderBook.imbalance"},{"id":"orderbook.mid","name":"mid","kind":"property","signature":"mid -> float | None","returns":"float | None","responsibility":"compute the top-of-book midpoint","qualified_name":"exchange.book.OrderBook.mid"},{"id":"strategy.on_book_update","name":"on_book_update","kind":"method","signature":"on_book_update(book: OrderBook) -> list[Action]","returns":"list[Action]","responsibility":"propose typed actions from market state","qualified_name":"exchange.strategy.Strategy.on_book_update"},{"id":"strategy.on_fill","name":"on_fill","kind":"method","signature":"on_fill(fill: Fill) -> None","returns":"None","responsibility":"receive execution feedback","qualified_name":"exchange.strategy.Strategy.on_fill"},{"id":"backtest.constructor","name":"Backtest","kind":"constructor","signature":"Backtest(market: Market, strategy: Strategy, cash: float = 0.0) -> Backtest","returns":"Backtest","responsibility":"wire one market, strategy, and portfolio runner","qualified_name":"exchange.backtest.Backtest"},{"id":"backtest.run","name":"run","kind":"method","signature":"run() -> BacktestResult","returns":"BacktestResult","responsibility":"orchestrate market, strategy, matching, and accounting","qualified_name":"exchange.backtest.Backtest.run"},{"id":"backtest_result.fills","name":"fills","kind":"attribute","signature":"fills: list[Fill]","returns":"list[Fill]","responsibility":"expose executions produced by the run","qualified_name":"exchange.backtest.BacktestResult.fills"},{"id":"backtest_result.equity_curve","name":"equity_curve","kind":"attribute","signature":"equity_curve: list[float]","returns":"list[float]","responsibility":"expose marked-to-market equity at each backtest step","qualified_name":"exchange.backtest.BacktestResult.equity_curve"},{"id":"backtest_result.final_position","name":"final_position","kind":"attribute","signature":"final_position: float","returns":"float","responsibility":"expose final signed inventory","qualified_name":"exchange.backtest.BacktestResult.final_position"},{"id":"backtest_result.final_equity","name":"final_equity","kind":"attribute","signature":"final_equity: float","returns":"float","responsibility":"expose final marked-to-market equity","qualified_name":"exchange.backtest.BacktestResult.final_equity"},{"id":"backtest_result.n_steps","name":"n_steps","kind":"attribute","signature":"n_steps: int","returns":"int","responsibility":"expose the number of processed snapshots","qualified_name":"exchange.backtest.BacktestResult.n_steps"},{"id":"backtest_result.n_fills","name":"n_fills","kind":"property","signature":"n_fills -> int","returns":"int","responsibility":"count executions produced by the run","qualified_name":"exchange.backtest.BacktestResult.n_fills"},{"id":"tracker.equity","name":"equity","kind":"method","signature":"equity(mark_price: float) -> float","returns":"float","responsibility":"mark cash and inventory to market","qualified_name":"exchange.portfolio.PositionTracker.equity"}],"routes":{"LIVE":["l11-challenge","l11-three-judges","l11-random-benchmark","l11-bridge"],"REQUIRED":["l11-cost-autopsy","l11-quiz"],"OPTIONAL":[]},"objectives":[{"id":"l11-benchmark-strategy","route":"LIVE","concepts":["metrics.random_benchmark","metrics.arrival_price","metrics.equity_curve"],"apis":["market.sample","new_order.constructor","backtest.constructor","backtest.run","backtest_result.final_equity","backtest_result.n_steps"],"notation":[]},{"id":"l11-interpret-slippage","route":"LIVE","concepts":["metrics.slippage","metrics.pnl_execution_separation"],"apis":["backtest_result.fills","backtest_result.n_fills"],"notation":["notation.slippage_signed"]},{"id":"l11-track-inventory-risk","route":"LIVE","concepts":["metrics.inventory_exposure"],"apis":["backtest_result.final_position"],"notation":[]}],"load":{"live_presentation_minutes":20,"guided_minutes":20,"required_autonomous_minutes":14,"optional_minutes":10,"overflow_policy":"explicit-route-plan"},"scenes":[{"id":"l11-challenge","dom_id":"s0","type":"hero-challenge","route":"LIVE","layout":"focus","concepts":["metrics.random_benchmark"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l11-three-judges","dom_id":"s1","type":"code-state","route":"LIVE","layout":"split-42-58","concepts":["metrics.arrival_price","metrics.slippage","metrics.inventory_exposure","metrics.pnl_execution_separation","metrics.equity_curve"],"duration_minutes":10,"stages":[{"id":"equity-alone","route":"LIVE","dom_stage":0},{"id":"random","route":"LIVE","dom_stage":1},{"id":"arrival","route":"LIVE","dom_stage":2},{"id":"inventory","route":"LIVE","dom_stage":3},{"id":"verdict","route":"REQUIRED","dom_stage":4}]},{"id":"l11-random-benchmark","dom_id":"s2","type":"concept-simulator","route":"LIVE","layout":"split-45-55","concepts":["metrics.random_benchmark"],"duration_minutes":6,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l11-cost-autopsy","dom_id":"s3","type":"guided-exercise","route":"REQUIRED","layout":"focus","concepts":["metrics.slippage","metrics.pnl_execution_separation"],"duration_minutes":10,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l11-quiz","dom_id":"s4","type":"diagnostic-quiz","route":"REQUIRED","layout":"focus","concepts":["metrics.arrival_price","metrics.slippage"],"duration_minutes":8,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l11-bridge","dom_id":"s5","type":"bridge","route":"LIVE","layout":"focus","concepts":["metrics.slippage"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]}],"bridge":{"target_lesson":12,"known":{"concepts":["metrics.slippage","execution.market_impact","framework.strategy_contract"],"apis":["strategy.on_book_update","backtest.run"],"notation":["notation.slippage_signed"]},"limitation":"Una única orden de mercado grande concentra el impacto.","need":"El slicing reparte el objetivo en el tiempo con TWAP y VWAP."},"api_transitions":[],"package_checks":[],"used_later":{"concepts":["metrics.arrival_price","metrics.inventory_exposure","metrics.slippage"],"apis":[],"notation":["notation.slippage_signed"]}}</script>
+<script type="application/json" id="pedagogy-contract">{"lesson":11,"status":"contract-strict","title":"Primera estrategia + métricas","delivery":"lesson","source_path":"framework/_build/docs/11_body.html","requires":{"concepts":["framework.strategy_contract","backtest.runner","microstructure.spread_cost","metrics.equity_curve","python.fstring"],"apis":["market.sample","market.step","new_order.constructor","order.constructor","orderbook.imbalance","orderbook.mid","strategy.on_book_update","strategy.on_fill","backtest.constructor","backtest.run","backtest_result.fills","backtest_result.equity_curve","backtest_result.final_position","backtest_result.final_equity","backtest_result.n_steps","backtest_result.n_fills","tracker.equity"],"notation":["notation.equity","notation.spread"]},"requirement_routes":{"concepts":{"framework.strategy_contract":"LIVE","backtest.runner":"LIVE","microstructure.spread_cost":"LIVE","metrics.equity_curve":"LIVE","python.fstring":"REQUIRED"},"apis":{"market.sample":"LIVE","market.step":"LIVE","new_order.constructor":"LIVE","order.constructor":"LIVE","orderbook.imbalance":"LIVE","orderbook.mid":"LIVE","strategy.on_book_update":"LIVE","strategy.on_fill":"LIVE","backtest.constructor":"LIVE","backtest.run":"LIVE","backtest_result.fills":"LIVE","backtest_result.equity_curve":"OPTIONAL","backtest_result.final_position":"LIVE","backtest_result.final_equity":"LIVE","backtest_result.n_steps":"LIVE","backtest_result.n_fills":"LIVE","tracker.equity":"LIVE"},"notation":{"notation.equity":"LIVE","notation.spread":"LIVE"}},"introduces":{"concepts":[{"id":"metrics.arrival_price","importance":"major","route":"LIVE"},{"id":"metrics.slippage","importance":"major","route":"LIVE"},{"id":"metrics.random_benchmark","importance":"major","route":"LIVE"},{"id":"metrics.pnl_execution_separation","importance":"major","route":"LIVE"},{"id":"metrics.inventory_exposure","importance":"major","route":"LIVE"}],"apis":[],"notation":["notation.slippage_signed"]},"introduction_routes":{"apis":{},"notation":{"notation.slippage_signed":"LIVE"}},"recalls":[{"concept":"microstructure.spread_cost","introduced_in":5,"mapping":{"before":"Cruzar el spread crea un coste inmediato de ida y vuelta.","now":"El slippage con signo aísla la calidad de ejecución del PnL."}}],"api_surface":[{"id":"market.sample","name":"sample","kind":"classmethod","signature":"sample(symbol: str = 'BTCUSDT', depth: int = 10) -> Market","returns":"Market","responsibility":"load the reproducible packaged market replay","qualified_name":"exchange.market.Market.sample"},{"id":"market.step","name":"step","kind":"method","signature":"step() -> OrderBook | None","returns":"OrderBook | None","responsibility":"advance replay time and replace the active book","qualified_name":"exchange.market.Market.step"},{"id":"new_order.constructor","name":"NewOrder","kind":"constructor","signature":"NewOrder(order: Order) -> NewOrder","returns":"NewOrder","responsibility":"wrap an order as a typed strategy action","qualified_name":"exchange.strategy.NewOrder"},{"id":"order.constructor","name":"Order","kind":"constructor","signature":"Order(symbol: str, side: Side, size: float, price: float | None = None, order_type: OrderType = OrderType.LIMIT, id: int = None) -> Order","returns":"Order","responsibility":"construct the canonical order intent","qualified_name":"exchange.orders.Order"},{"id":"orderbook.imbalance","name":"imbalance","kind":"method","signature":"imbalance(levels: int = 1) -> float | None","returns":"float | None","responsibility":"compute depth imbalance for selected levels","qualified_name":"exchange.book.OrderBook.imbalance"},{"id":"orderbook.mid","name":"mid","kind":"property","signature":"mid -> float | None","returns":"float | None","responsibility":"compute the top-of-book midpoint","qualified_name":"exchange.book.OrderBook.mid"},{"id":"strategy.on_book_update","name":"on_book_update","kind":"method","signature":"on_book_update(book: OrderBook) -> list[Action]","returns":"list[Action]","responsibility":"propose typed actions from market state","qualified_name":"exchange.strategy.Strategy.on_book_update"},{"id":"strategy.on_fill","name":"on_fill","kind":"method","signature":"on_fill(fill: Fill) -> None","returns":"None","responsibility":"receive execution feedback","qualified_name":"exchange.strategy.Strategy.on_fill"},{"id":"backtest.constructor","name":"Backtest","kind":"constructor","signature":"Backtest(market: Market, strategy: Strategy, cash: float = 0.0) -> Backtest","returns":"Backtest","responsibility":"wire one market, strategy, and portfolio runner","qualified_name":"exchange.backtest.Backtest"},{"id":"backtest.run","name":"run","kind":"method","signature":"run() -> BacktestResult","returns":"BacktestResult","responsibility":"orchestrate market, strategy, matching, and accounting","qualified_name":"exchange.backtest.Backtest.run"},{"id":"backtest_result.fills","name":"fills","kind":"attribute","signature":"fills: list[Fill]","returns":"list[Fill]","responsibility":"expose executions produced by the run","qualified_name":"exchange.backtest.BacktestResult.fills"},{"id":"backtest_result.equity_curve","name":"equity_curve","kind":"attribute","signature":"equity_curve: list[float]","returns":"list[float]","responsibility":"expose marked-to-market equity at each backtest step","qualified_name":"exchange.backtest.BacktestResult.equity_curve"},{"id":"backtest_result.final_position","name":"final_position","kind":"attribute","signature":"final_position: float","returns":"float","responsibility":"expose final signed inventory","qualified_name":"exchange.backtest.BacktestResult.final_position"},{"id":"backtest_result.final_equity","name":"final_equity","kind":"attribute","signature":"final_equity: float","returns":"float","responsibility":"expose final marked-to-market equity","qualified_name":"exchange.backtest.BacktestResult.final_equity"},{"id":"backtest_result.n_steps","name":"n_steps","kind":"attribute","signature":"n_steps: int","returns":"int","responsibility":"expose the number of processed snapshots","qualified_name":"exchange.backtest.BacktestResult.n_steps"},{"id":"backtest_result.n_fills","name":"n_fills","kind":"property","signature":"n_fills -> int","returns":"int","responsibility":"count executions produced by the run","qualified_name":"exchange.backtest.BacktestResult.n_fills"},{"id":"tracker.equity","name":"equity","kind":"method","signature":"equity(mark_price: float) -> float","returns":"float","responsibility":"mark cash and inventory to market","qualified_name":"exchange.portfolio.PositionTracker.equity"}],"routes":{"LIVE":["l11-challenge","l11-three-judges","l11-random-benchmark","l11-bridge"],"REQUIRED":["l11-three-judges/verdict","l11-cost-autopsy","l11-quiz"],"OPTIONAL":[]},"objectives":[{"id":"l11-benchmark-strategy","route":"LIVE","concepts":["metrics.random_benchmark","metrics.arrival_price","metrics.equity_curve"],"apis":["market.sample","new_order.constructor","backtest.constructor","backtest.run","backtest_result.final_equity","backtest_result.n_steps"],"notation":[]},{"id":"l11-interpret-slippage","route":"LIVE","concepts":["metrics.slippage","metrics.pnl_execution_separation"],"apis":["backtest_result.fills","backtest_result.n_fills"],"notation":["notation.slippage_signed"]},{"id":"l11-track-inventory-risk","route":"LIVE","concepts":["metrics.inventory_exposure"],"apis":["backtest_result.final_position"],"notation":[]}],"load":{"live_presentation_minutes":20,"guided_minutes":20,"required_autonomous_minutes":33,"optional_minutes":10,"overflow_policy":"explicit-route-plan","autonomous_components":{"documents":[{"id":"l11-three-judges/verdict","route":"REQUIRED","minutes":1},{"id":"l11-cost-autopsy","route":"REQUIRED","minutes":10}],"quizzes":[{"id":"l11-quiz","route":"REQUIRED","minutes":8}],"projects":[]}},"scenes":[{"id":"l11-challenge","dom_id":"s0","type":"hero-challenge","route":"LIVE","layout":"focus","concepts":["metrics.random_benchmark"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l11-three-judges","dom_id":"s1","type":"code-state","route":"LIVE","layout":"split-42-58","concepts":["metrics.arrival_price","metrics.slippage","metrics.inventory_exposure","metrics.pnl_execution_separation","metrics.equity_curve"],"duration_minutes":10,"stages":[{"id":"equity-alone","route":"LIVE","dom_stage":0},{"id":"random","route":"LIVE","dom_stage":1},{"id":"arrival","route":"LIVE","dom_stage":2},{"id":"inventory","route":"LIVE","dom_stage":3},{"id":"verdict","route":"REQUIRED","duration_minutes":1,"dom_stage":4}]},{"id":"l11-random-benchmark","dom_id":"s2","type":"concept-simulator","route":"LIVE","layout":"split-45-55","concepts":["metrics.random_benchmark"],"duration_minutes":6,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l11-cost-autopsy","dom_id":"s3","type":"guided-exercise","route":"REQUIRED","layout":"focus","concepts":["metrics.slippage","metrics.pnl_execution_separation"],"duration_minutes":10,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l11-quiz","dom_id":"s4","type":"diagnostic-quiz","route":"REQUIRED","layout":"focus","concepts":["metrics.arrival_price","metrics.slippage"],"duration_minutes":8,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l11-bridge","dom_id":"s5","type":"bridge","route":"LIVE","layout":"focus","concepts":["metrics.slippage"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]}],"bridge":{"target_lesson":12,"known":{"concepts":["metrics.slippage","execution.market_impact","framework.strategy_contract"],"apis":["strategy.on_book_update","backtest.run"],"notation":["notation.slippage_signed"]},"limitation":"Una única orden de mercado grande concentra el impacto.","need":"El slicing reparte el objetivo en el tiempo con TWAP y VWAP."},"api_transitions":[],"package_checks":[],"used_later":{"concepts":["metrics.arrival_price","metrics.inventory_exposure","metrics.slippage"],"apis":[],"notation":["notation.slippage_signed"]}}</script>
 <script>
 
 (function(){
@@ -1027,7 +1062,7 @@ coste ≈ slip_medio × n_fills × clip</pre>
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* ── mini-gráficas canvas (compartidas por los docs con datos reales) ── */
+/* ── mini-gráficas canvas (compartidas por los docs con datos reproducibles) ── */
 window.DOC=window.DOC||{};
 DOC.chart=function(canvas,seriesList,opts={}){
   const c=typeof canvas==='string'?document.querySelector(canvas):canvas;
@@ -1155,9 +1190,12 @@ DOC.save=function(patch){
   const steps=$$('.scrolly .step');
   if(!steps.length)return;
   document.addEventListener('keydown',e=>{
+    if(document.body.classList.contains('lr-modal-open'))return;
     if(document.body.classList.contains('mode-aula'))return;
     if(!['ArrowDown','ArrowUp','PageDown','PageUp'].includes(e.key))return;
     if(/INPUT|TEXTAREA|SELECT|BUTTON/.test(document.activeElement.tagName))return;
+    const scroller=document.activeElement?.closest('[data-lr-scroller="true"]');
+    if(scroller)return;
     const mid=innerHeight/2;
     let idx=0,best=1e12;
     steps.forEach((s,i)=>{const r=s.getBoundingClientRect();
@@ -1174,7 +1212,9 @@ DOC.save=function(patch){
 /* ── modo profesor: ?profe=1 abre el guion como cajón lateral ── */
 (function(){
   const srcEl=document.getElementById('guion-src');
-  if(!srcEl||!new URLSearchParams(location.search).has('profe'))return;
+  const professor=['1','true'].includes(
+    (new URLSearchParams(location.search).get('profe')||'').toLowerCase());
+  if(!srcEl||!professor)return;
   const mdlite=t=>t
     .replace(/&/g,'&amp;').replace(/</g,'&lt;')
     .replace(/^### (.*)$/gm,'<h4>$1</h4>')
@@ -1187,16 +1227,54 @@ DOC.save=function(patch){
     .replace(/\n{2,}/g,'</p><p>');
   const drawer=document.createElement('aside');
   drawer.id='guion-drawer';
+  drawer.dataset.overlay='guide';drawer.hidden=true;drawer.inert=true;drawer.setAttribute('inert','');
+  drawer.setAttribute('aria-hidden','true');drawer.setAttribute('aria-label','Guion completo del profesor');
+  drawer.setAttribute('role','dialog');drawer.setAttribute('aria-modal','true');
   drawer.innerHTML='<div class="gd-head">📋 Guion del profesor'
-    +'<button id="gd-close" aria-label="Cerrar">✕</button></div>'
-    +'<div class="gd-body"><p>'+mdlite(srcEl.textContent)+'</p></div>';
+    +'<button type="button" id="gd-close" aria-label="Cerrar guion">✕</button></div>'
+    +'<div class="gd-body" data-lr-scroller="true" data-lr-scroller-axis="vertical" tabindex="0"'
+    +' role="region" aria-label="Contenido desplazable del guion completo"><p>'
+    +mdlite(srcEl.textContent)+'</p></div>';
   document.body.appendChild(drawer);
   const btn=document.createElement('button');
-  btn.id='gd-toggle';btn.className='btn';btn.textContent='📋 Guion';
+  btn.id='gd-toggle';btn.className='btn';btn.type='button';btn.textContent='📋 Guion';
+  btn.setAttribute('aria-controls','guion-drawer');btn.setAttribute('aria-expanded','false');
   document.body.appendChild(btn);
-  const toggle=()=>drawer.classList.toggle('open');
-  btn.addEventListener('click',toggle);
-  drawer.querySelector('#gd-close').addEventListener('click',toggle);
+  let lastTrigger=btn;
+  const setOpen=(open,trigger=null,restore=true)=>{
+    const currentlyOpen=drawer.classList.contains('open');
+    if(open===currentlyOpen)return false;
+    if(open){
+      window.LEARNING_TEACHER_DRAWER?.close({restoreFocus:false});
+      lastTrigger=trigger||document.activeElement||btn;drawer.hidden=false;
+      drawer.inert=false;drawer.removeAttribute('inert');
+      window.LEARNING_MODAL_BACKGROUND?.(drawer,true);
+    }
+    drawer.classList.toggle('open',open);drawer.setAttribute('aria-hidden',String(!open));
+    btn.setAttribute('aria-expanded',String(open));
+    if(open)drawer.querySelector('#gd-close').focus();
+    else{
+      drawer.hidden=true;drawer.inert=true;drawer.setAttribute('inert','');
+      window.LEARNING_MODAL_BACKGROUND?.(drawer,false);
+      if(restore)window.LEARNING_RESTORE_FOCUS?.(lastTrigger,btn);
+    }
+    return true;
+  };
+  const focusable='a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),'
+    +'textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+  drawer.addEventListener('keydown',event=>{
+    if(event.key!=='Tab')return;
+    const items=[...drawer.querySelectorAll(focusable)].filter(node=>!node.hidden&&node.getClientRects().length);
+    if(!items.length)return;
+    const first=items[0],last=items[items.length-1];
+    if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+    else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+  });
+  btn.addEventListener('click',event=>setOpen(true,event.currentTarget));
+  drawer.querySelector('#gd-close').addEventListener('click',()=>setOpen(false));
+  window.GUIDE_DRAWER={open:trigger=>setOpen(true,trigger),
+    close:options=>setOpen(false,null,options?.restoreFocus!==false),
+    isOpen:()=>drawer.classList.contains('open')};
 })();
 
 /* ── scrollytelling genérico ──
@@ -1218,7 +1296,7 @@ $$('.scrolly[data-scrolly]').forEach(sc=>{
 });
 })();
 
-/* L11 — señal vs monos, dos llegadas y autopsia del coste (datos reales) */
+/* L11 — señal vs monos, dos llegadas y autopsia del coste (datos sintéticos) */
 (function(){
 "use strict";
 const $=s=>document.querySelector(s);
@@ -1330,12 +1408,84 @@ const route=value=>ROUTES.includes(String(value||'').toUpperCase())
 const routeClass=value=>`lr-route-${route(value).toLowerCase()}`;
 const scopeRoutes=()=>routeScope==='ALL'?ROUTES:
   routeScope==='LIVE+REQUIRED'?['LIVE','REQUIRED']:['LIVE'];
+const scopeForRoute=value=>route(value)==='OPTIONAL'?'ALL':
+  route(value)==='REQUIRED'?'LIVE+REQUIRED':'LIVE';
 const modeUrl=next=>{
   const q=new URLSearchParams(location.search);q.set('mode',next);
   return `${location.pathname}?${q.toString()}${location.hash}`;
 };
 const stateKey=(scene,stage)=>`${scene.id}::${stage.id}`;
 const reducedMotion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isExposed=node=>Boolean(node&&!node.hidden&&!node.closest('[hidden],[inert]'));
+
+function expose(node,visible){
+  if(!node)return;
+  node.hidden=!visible;
+  node.inert=!visible;
+  node.toggleAttribute('inert',!visible);
+  node.setAttribute('aria-hidden',String(!visible));
+}
+let modalBackgroundState=null,modalBackgroundOwner=null;
+function focusModalOwner(){
+  if(!modalBackgroundOwner)return;
+  const selector='a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),'
+    +'textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+  const target=[...modalBackgroundOwner.querySelectorAll(selector)]
+    .find(node=>!node.hidden&&!node.closest('[hidden],[inert]')&&node.getClientRects().length);
+  target?.focus({preventScroll:true});
+}
+function setModalBackground(dialog,open){
+  if(open){
+    if(modalBackgroundOwner===dialog)return;
+    if(modalBackgroundOwner)throw new Error('another learning modal is already open');
+    modalBackgroundState=[...body.children].filter(node=>node!==dialog).map(node=>({
+      node,inert:node.inert,attribute:node.hasAttribute('inert'),
+    }));
+    modalBackgroundOwner=dialog;
+    modalBackgroundState.forEach(({node})=>{node.inert=true;node.setAttribute('inert','');});
+    body.classList.add('lr-modal-open');
+    document.documentElement.classList.add('lr-modal-open');
+    return;
+  }
+  if(modalBackgroundOwner!==dialog)return;
+  (modalBackgroundState||[]).forEach(({node,inert,attribute})=>{
+    if(!node.isConnected)return;
+    node.inert=inert;node.toggleAttribute('inert',attribute);
+  });
+  modalBackgroundState=null;
+  modalBackgroundOwner=null;
+  body.classList.remove('lr-modal-open');
+  document.documentElement.classList.remove('lr-modal-open');
+}
+window.LEARNING_MODAL_BACKGROUND=setModalBackground;
+document.addEventListener('pointerdown',event=>{
+  if(!modalBackgroundOwner||modalBackgroundOwner.contains(event.target))return;
+  event.preventDefault();event.stopImmediatePropagation();focusModalOwner();
+},true);
+document.addEventListener('focusin',event=>{
+  if(modalBackgroundOwner&&!modalBackgroundOwner.contains(event.target))focusModalOwner();
+},true);
+function canRestoreFocus(node){
+  return Boolean(node?.isConnected&&!node.hidden&&!node.disabled
+    &&!node.closest('[hidden],[inert]')&&node.getClientRects().length);
+}
+function restoreFocus(...candidates){
+  const target=candidates.find(canRestoreFocus);
+  if(target)target.focus();
+}
+window.LEARNING_RESTORE_FOCUS=restoreFocus;
+function applyRouteClasses(node,routes){
+  if(!node)return;
+  ROUTES.forEach(name=>node.classList.remove(routeClass(name)));
+  const unique=[...new Set(routes.map(route))];
+  unique.forEach(name=>node.classList.add(routeClass(name)));
+  node.classList.toggle('lr-route-mixed',unique.length>1);
+}
+function expandScopeForRoute(value){
+  const target=scopeForRoute(value);
+  const targetIndex=routeScopes.indexOf(target),currentIndex=routeScopes.indexOf(routeScope);
+  if(targetIndex>=0&&targetIndex>currentIndex)routeScope=target;
+}
 
 function elementForStage(nodes,value,index,total){
   if(value!==undefined&&value!==null){
@@ -1358,6 +1508,7 @@ const models=contract.scenes.map(rawScene=>{
   element.dataset.sceneLayout=layout;
   element.dataset.layoutApplied='true';
   element.dataset.route=sceneRoute;
+  element.dataset.sceneRoute=sceneRoute;
   const allSteps=[...element.querySelectorAll('.scrolly .step')];
   const allFigures=[...element.querySelectorAll('.fig-stage')];
   const declared=Array.isArray(rawScene.stages)&&rawScene.stages.length
@@ -1366,6 +1517,8 @@ const models=contract.scenes.map(rawScene=>{
     const stage={...rawStage};
     stage.id=stage.id||`stage-${index+1}`;
     stage.route=route(stage.route||sceneRoute);
+    stage.duration_minutes=Number.isFinite(Number(rawStage.duration_minutes))
+      &&rawStage.duration_minutes!==null?Number(rawStage.duration_minutes):Number(rawScene.duration_minutes);
     stage.step=elementForStage(allSteps,stage.dom_stage,index,declared.length);
     stage.figure=elementForStage(allFigures,stage.dom_stage,index,declared.length);
     [stage.step,stage.figure].filter(Boolean).forEach(node=>{
@@ -1374,15 +1527,20 @@ const models=contract.scenes.map(rawScene=>{
     return stage;
   });
   const firstWrap=element.matches('.wrap')?element:element.querySelector(':scope > .wrap');
+  let badge=null;
   if(firstWrap){
-    const badge=document.createElement('div');
+    badge=document.createElement('div');
     badge.className=`lr-scene-badge ${routeClass(sceneRoute)}`;
     const minutes=Number.isFinite(Number(rawScene.duration_minutes))
-      ?`<span>${esc(rawScene.duration_minutes)} min</span>`:'';
-    badge.innerHTML=`<span>${esc(sceneRoute)}</span><span>${esc(rawScene.type||'scene')}</span>${minutes}`;
+      ?`<span class="lr-duration">${esc(rawScene.duration_minutes)} min</span>`:'';
+    badge.innerHTML=`<span class="lr-route-label">${esc(sceneRoute)}</span><span>${esc(rawScene.type||'scene')}</span>${minutes}`;
     firstWrap.insertBefore(badge,firstWrap.firstChild);
   }
-  return {...rawScene,route:sceneRoute,layout,element,stages,allSteps,allFigures};
+  const effectiveRoutes=[...new Set(stages.map(stage=>stage.route))];
+  element.dataset.effectiveRoutes=effectiveRoutes.join(',');
+  applyRouteClasses(element,effectiveRoutes);
+  return {...rawScene,route:sceneRoute,layout,element,stages,allSteps,allFigures,badge,
+    effectiveRoutes,navButton:null};
 }).filter(Boolean);
 
 if(missingScenes.length){
@@ -1467,16 +1625,22 @@ nav.innerHTML=`
 body.appendChild(nav);
 
 const navLinks=nav.querySelector('.lr-scene-links');
+navLinks.dataset.lrScroller='true';navLinks.dataset.lrScrollerAxis='vertical';navLinks.tabIndex=0;
+navLinks.setAttribute('role','region');navLinks.setAttribute('aria-label','Escenas desplazables de la lección');
 models.forEach((scene,index)=>{
   const button=document.createElement('button');
   button.type='button';button.dataset.sceneIndex=String(index);
-  button.className=routeClass(scene.route);
-  button.innerHTML=`<span>${esc(scene.route)}</span><b>${esc(scene.id.replace(/^l\d+-/,''))}</b>`;
+  applyRouteClasses(button,scene.effectiveRoutes);
+  button.innerHTML=`<span class="lr-route-label">${esc(scene.effectiveRoutes.join('+'))}</span><b>${esc(scene.id.replace(/^l\d+-/,''))}</b>`;
   button.addEventListener('click',()=>{
     if(mode==='aula')goTo(index,0,false);
-    else scene.element.scrollIntoView({behavior:reducedMotion()?'auto':'smooth',block:'start'});
+    else{
+      const stage=allowedStages(scene)[0];
+      if(stage)setStudyCurrent(scene,stage,false);
+      scene.element.scrollIntoView({behavior:reducedMotion()?'auto':'smooth',block:'start'});
+    }
   });
-  navLinks.appendChild(button);
+  navLinks.appendChild(button);scene.navButton=button;
 });
 
 const controls=document.createElement('div');
@@ -1504,6 +1668,7 @@ liveRegion.className='lr-sr-only';liveRegion.setAttribute('aria-live','polite');
 body.appendChild(liveRegion);
 
 let teacherToggle=null,teacherDrawer=null,teacherBody=null,mobileTeacherToggle=null;
+let lastTeacherTrigger=null;
 if(isProfessor){
   teacherToggle=document.createElement('button');
   teacherToggle.id='lr-teacher-toggle';teacherToggle.type='button';
@@ -1515,23 +1680,44 @@ if(isProfessor){
   teacherDrawer=document.createElement('aside');
   teacherDrawer.id='lr-teacher-drawer';teacherDrawer.dataset.overlay='teacher';
   teacherDrawer.setAttribute('aria-label','Guía docente de la escena');
-  teacherDrawer.setAttribute('aria-hidden','true');
+  teacherDrawer.setAttribute('role','dialog');teacherDrawer.setAttribute('aria-modal','true');
+  teacherDrawer.setAttribute('aria-hidden','true');teacherDrawer.hidden=true;teacherDrawer.inert=true;
+  teacherDrawer.setAttribute('inert','');
   teacherDrawer.innerHTML='<div class="lr-teacher-head"><b>Guía docente</b>'
     +'<button type="button" class="lr-teacher-close" aria-label="Cerrar guía docente">×</button></div>'
     +'<div class="lr-teacher-body"></div>';
   body.appendChild(teacherDrawer);teacherBody=teacherDrawer.querySelector('.lr-teacher-body');
-  const toggleTeacher=force=>{
+  teacherBody.dataset.lrScroller='true';teacherBody.dataset.lrScrollerAxis='vertical';
+  teacherBody.tabIndex=0;teacherBody.setAttribute('role','region');
+  teacherBody.setAttribute('aria-label','Contenido desplazable de la guía docente');
+  const toggleTeacher=(force,trigger=null,restore=true)=>{
     const open=force===undefined?!teacherDrawer.classList.contains('open'):force;
+    const currentlyOpen=teacherDrawer.classList.contains('open');
+    if(open===currentlyOpen)return false;
+    if(open){
+      window.GUIDE_DRAWER?.close({restoreFocus:false});
+      lastTeacherTrigger=trigger||document.activeElement||teacherToggle;
+      teacherDrawer.hidden=false;teacherDrawer.inert=false;teacherDrawer.removeAttribute('inert');
+      setModalBackground(teacherDrawer,true);
+    }
     teacherDrawer.classList.toggle('open',open);
     teacherDrawer.setAttribute('aria-hidden',String(!open));
     [teacherToggle,mobileTeacherToggle].filter(Boolean)
       .forEach(button=>button.setAttribute('aria-expanded',String(open)));
     if(open)teacherDrawer.querySelector('.lr-teacher-close').focus();
-    else (mobileQuery.matches?mobileTeacherToggle:teacherToggle)?.focus();
+    else{
+      teacherDrawer.hidden=true;teacherDrawer.inert=true;teacherDrawer.setAttribute('inert','');
+      setModalBackground(teacherDrawer,false);
+      if(restore)restoreFocus(lastTeacherTrigger,teacherToggle,mobileTeacherToggle);
+    }
+    return true;
   };
-  teacherToggle.addEventListener('click',()=>toggleTeacher());
-  mobileTeacherToggle?.addEventListener('click',()=>toggleTeacher());
+  teacherToggle.addEventListener('click',event=>toggleTeacher(undefined,event.currentTarget));
+  mobileTeacherToggle?.addEventListener('click',event=>toggleTeacher(undefined,event.currentTarget));
   teacherDrawer.querySelector('.lr-teacher-close').addEventListener('click',()=>toggleTeacher(false));
+  window.LEARNING_TEACHER_DRAWER={open:trigger=>toggleTeacher(true,trigger),
+    close:options=>toggleTeacher(false,null,options?.restoreFocus!==false),
+    isOpen:()=>teacherDrawer.classList.contains('open')};
 }
 
 function allowedStages(scene){
@@ -1539,9 +1725,74 @@ function allowedStages(scene){
   return scene.stages.filter(stage=>allowedRoutes.includes(stage.route));
 }
 function allowed(scene){
-  return scopeRoutes().includes(scene.route)&&allowedStages(scene).length>0;
+  return allowedStages(scene).length>0;
 }
 function availableModels(){return models.filter(allowed);}
+
+function visibleRoutes(scene){
+  return [...new Set(allowedStages(scene).map(stage=>stage.route))];
+}
+function routeLabel(routes){return routes.length?routes.join('+'):'—';}
+function syncRoutePresentation(scene,stage=null){
+  if(!scene)return;
+  const routes=stage?[stage.route]:visibleRoutes(scene);
+  const effective=routes.length?routes:scene.effectiveRoutes;
+  const label=routeLabel(effective);
+  scene.element.dataset.route=stage?stage.route:label;
+  scene.element.dataset.visibleRoutes=effective.join(',');
+  [scene.element,scene.badge,scene.navButton].filter(Boolean)
+    .forEach(node=>applyRouteClasses(node,effective));
+  scene.badge?.querySelector('.lr-route-label')?.replaceChildren(label);
+  const duration=stage?.duration_minutes??scene.duration_minutes;
+  scene.badge?.querySelector('.lr-duration')?.replaceChildren(`${duration} min`);
+  scene.navButton?.querySelector('.lr-route-label')?.replaceChildren(label);
+}
+
+let scrollerFrame=0;
+function clearRuntimeScroller(node){
+  delete node.dataset.lrScroller;
+  delete node.dataset.lrScrollerAxis;
+  if(node.dataset.lrRuntimeTabindex==='true')node.removeAttribute('tabindex');
+  if(node.dataset.lrRuntimeRole==='true')node.removeAttribute('role');
+  if(node.dataset.lrRuntimeLabel==='true')node.removeAttribute('aria-label');
+  delete node.dataset.lrRuntimeScroller;
+  delete node.dataset.lrRuntimeTabindex;
+  delete node.dataset.lrRuntimeRole;
+  delete node.dataset.lrRuntimeLabel;
+}
+function syncScrollers(){
+  document.querySelectorAll('[data-lr-runtime-scroller="true"]').forEach(clearRuntimeScroller);
+  const tolerance=2;
+  models.filter(scene=>isExposed(scene.element)).forEach(scene=>{
+    [scene.element,...scene.element.querySelectorAll('*')].forEach(node=>{
+      if(!isExposed(node)||!node.getClientRects().length)return;
+      const style=getComputedStyle(node);
+      const overflowX=['auto','scroll'].includes(style.overflowX)
+        &&node.scrollWidth>node.clientWidth+tolerance;
+      const overflowY=['auto','scroll'].includes(style.overflowY)
+        &&node.scrollHeight>node.clientHeight+tolerance;
+      if(!overflowX&&!overflowY)return;
+      node.dataset.lrRuntimeScroller='true';
+      node.dataset.lrScroller='true';
+      node.dataset.lrScrollerAxis=overflowX&&overflowY?'both':(overflowX?'horizontal':'vertical');
+      if(node.tabIndex<0){
+        node.tabIndex=0;node.dataset.lrRuntimeTabindex='true';
+      }
+      if(!node.hasAttribute('role')){
+        node.setAttribute('role','region');node.dataset.lrRuntimeRole='true';
+      }
+      if(!node.getAttribute('aria-label')&&!node.getAttribute('aria-labelledby')){
+        node.setAttribute('aria-label',`Contenido desplazable ${scene.id}`);
+        node.dataset.lrRuntimeLabel='true';
+      }
+    });
+  });
+}
+function queueScrollerSync(){
+  cancelAnimationFrame(scrollerFrame);
+  syncScrollers();
+  scrollerFrame=requestAnimationFrame(syncScrollers);
+}
 
 function activateStage(scene,stage){
   const hasMappedSteps=scene.stages.some(item=>item.step);
@@ -1550,18 +1801,16 @@ function activateStage(scene,stage){
     const model=scene.stages.find(item=>item.step===step);
     const visibleRoute=!model||scopeRoutes().includes(model.route);
     const active=!hasMappedSteps||stage.step===step;
-    step.hidden=!visibleRoute;
+    expose(step,visibleRoute&&(mode==='estudio'||active));
     step.classList.toggle('lr-stage-active',active&&visibleRoute);
     step.classList.toggle('on',active&&visibleRoute);
-    step.setAttribute('aria-hidden',String(!(active&&visibleRoute)));
   });
   scene.allFigures.forEach(figure=>{
     const model=scene.stages.find(item=>item.figure===figure);
     const visibleRoute=!model||scopeRoutes().includes(model.route);
     const active=!hasMappedFigures||stage.figure===figure;
-    figure.hidden=!visibleRoute;
+    expose(figure,active&&visibleRoute);
     figure.classList.toggle('on',active&&visibleRoute);
-    figure.setAttribute('aria-hidden',String(!(active&&visibleRoute)));
   });
   const name=scene.element.querySelector('.stage-name');
   if(name){
@@ -1572,11 +1821,14 @@ function activateStage(scene,stage){
   if(fig&&stage.dom_stage!==undefined){
     fig.dispatchEvent(new CustomEvent('stagechange',{detail:{stage:stage.dom_stage}}));
   }
+  queueScrollerSync();
 }
-function syncNav(scene=null){
+function syncNav(scene=null,stage=null){
   [...navLinks.querySelectorAll('button')].forEach(button=>{
     const index=Number(button.dataset.sceneIndex),model=models[index];
-    button.hidden=!allowed(model);
+    const visible=allowed(model);
+    expose(button,visible);
+    syncRoutePresentation(model,model===scene?stage:null);
     button.classList.toggle('on',model===scene);
     button.setAttribute('aria-current',model===scene?'step':'false');
   });
@@ -1594,8 +1846,9 @@ function syncTeacher(scene,stage){
   const sceneNotes=scene.professor_notes||scene.teacher_notes||scene.teaching_notes;
   const stageNotes=stage.professor_notes||stage.teacher_notes||stage.teaching_notes;
   const fullGuide=document.getElementById('gd-toggle');
-  teacherBody.innerHTML=`<p class="lr-teacher-kicker">${esc(scene.route)} · ${esc(scene.type)} · ${esc(scene.duration_minutes)} min</p>`
+  teacherBody.innerHTML=`<p class="lr-teacher-kicker">${esc(stage.route)} · ${esc(scene.type)} · ${esc(stage.duration_minutes)} min</p>`
     +`<h2>${esc(scene.id)}</h2><p class="lr-teacher-stage">Etapa <code>${esc(stage.id)}</code> · layout <code>${esc(scene.layout)}</code></p>`
+    +(stage.route!==scene.route?`<p class="lr-teacher-override">Ruta efectiva <code>${esc(stage.route)}</code>; la escena declara <code>${esc(scene.route)}</code>.</p>`:'')
     +`<h3>Conceptos</h3><ul>${concepts.length?concepts.map(concept=>`<li><code>${esc(concept)}</code></li>`).join(''):'<li>Ninguno declarado.</li>'}</ul>`
     +`<h3>Objetivos relacionados</h3><ul>${objectives.length?objectives.map(objective=>
       `<li><code>${esc(objective.id)}</code> · ${esc(objective.route)}</li>`).join(''):'<li>Ninguno declarado para esta escena.</li>'}</ul>`
@@ -1603,16 +1856,34 @@ function syncTeacher(scene,stage){
     +(stageNotes?`<h3>Notas de etapa</h3>${notesHtml(stageNotes)}`:'')
     +(fullGuide?'<button type="button" class="lr-full-guide">Abrir guion completo</button>':'');
   teacherBody.querySelector('.lr-full-guide')?.addEventListener('click',()=>{
-    teacherDrawer.classList.remove('open');teacherDrawer.setAttribute('aria-hidden','true');
-    [teacherToggle,mobileTeacherToggle].filter(Boolean)
-      .forEach(button=>button.setAttribute('aria-expanded','false'));
-    fullGuide.click();
+    const returnTrigger=lastTeacherTrigger||teacherToggle;
+    window.LEARNING_TEACHER_DRAWER?.close({restoreFocus:false});
+    if(window.GUIDE_DRAWER)window.GUIDE_DRAWER.open(returnTrigger);
+    else fullGuide.click();
   });
 }
 function updateDeepLink(scene,stage){
   if(!history.replaceState)return;
   const next=`#${encodeURIComponent(scene.id)}/${encodeURIComponent(stage.id)}`;
   if(location.hash!==next)history.replaceState(null,'',`${location.pathname}${location.search}${next}`);
+}
+function setCurrentState(scene,stage){
+  if(!scene||!stage)return;
+  currentScene=models.indexOf(scene);
+  currentStage=Math.max(0,allowedStages(scene).indexOf(stage));
+  body.dataset.currentSceneId=scene.id;
+  body.dataset.currentStageId=stage.id;
+  body.dataset.currentStageRoute=stage.route;
+  body.dataset.currentStageDuration=String(stage.duration_minutes);
+  body.dataset.currentLayout=scene.layout;
+  body.dataset.routeScope=routeScope;
+  scene.element.dataset.currentStageId=stage.id;
+  syncRoutePresentation(scene,stage);
+  const mobileLabel=mobileToolbar.querySelector(':scope > span');
+  if(mobileLabel){
+    const prefix=requestedMode!==mode?'Aula → estudio':'Estudio';
+    mobileLabel.textContent=`Ruta · ${stage.route} · ${stage.duration_minutes} min · ${prefix} · ${scene.id}`;
+  }
 }
 function goTo(sceneIndex,stageIndex,focusHeading=true){
   let scene=models[sceneIndex];
@@ -1623,17 +1894,11 @@ function goTo(sceneIndex,stageIndex,focusHeading=true){
   const stages=allowedStages(scene);
   stageIndex=Math.max(0,Math.min(Number(stageIndex)||0,stages.length-1));
   const stage=stages[stageIndex];
-  currentScene=sceneIndex;currentStage=stageIndex;
-  body.dataset.currentSceneId=scene.id;
-  body.dataset.currentStageId=stage.id;
-  body.dataset.currentStageRoute=stage.route;
-  body.dataset.currentLayout=scene.layout;
-  body.dataset.routeScope=routeScope;
-  scene.element.dataset.currentStageId=stage.id;
+  setCurrentState(scene,stage);
   models.forEach(model=>{
     const active=model===scene;
     model.element.classList.toggle('lr-scene-active',active);
-    model.element.setAttribute('aria-hidden',String(!active));
+    expose(model.element,active);
   });
   activateStage(scene,stage);
   const available=availableModels();
@@ -1651,8 +1916,8 @@ function goTo(sceneIndex,stageIndex,focusHeading=true){
     total+scopeProgress[routeName].visited,0)/Math.max(1,enabledRoutes.reduce((total,routeName)=>
     total+scopeProgress[routeName].total,0))*100);
   controls.querySelector('.lr-route-progress').textContent=`${routeProgress}% visto`;
-  syncNav(scene);syncTeacher(scene,stage);updateDeepLink(scene,stage);
-  liveRegion.textContent=`${scene.id}, etapa ${stageIndex+1} de ${stages.length}`;
+  syncNav(scene,stage);syncTeacher(scene,stage);updateDeepLink(scene,stage);
+  liveRegion.textContent=`${scene.id}, ruta ${stage.route}, ${stage.duration_minutes} minutos, etapa ${stageIndex+1} de ${stages.length}`;
   if(focusHeading){
     const heading=scene.element.querySelector('h1,h2,h3');
     if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}
@@ -1670,14 +1935,43 @@ function move(delta,focusHeading=true){
   const nextIndex=models.indexOf(next),nextStages=allowedStages(next);
   goTo(nextIndex,delta>0?0:nextStages.length-1,focusHeading);
 }
+const focusableSelector='a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),'
+  +'textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+function focusables(root){
+  return [...root.querySelectorAll(focusableSelector)].filter(node=>isExposed(node)
+    &&getComputedStyle(node).visibility!=='hidden'&&node.getClientRects().length);
+}
+function trapFocus(event,root){
+  if(event.key!=='Tab'||!root||root.hidden)return false;
+  const items=focusables(root);if(!items.length)return false;
+  const first=items[0],last=items[items.length-1];
+  if(event.shiftKey&&(document.activeElement===first||!root.contains(document.activeElement))){
+    event.preventDefault();last.focus();return true;
+  }
+  if(!event.shiftKey&&(document.activeElement===last||!root.contains(document.activeElement))){
+    event.preventDefault();first.focus();return true;
+  }
+  return false;
+}
 function closeOverlays(){
-  document.getElementById('guion-drawer')?.classList.remove('open');
-  teacherDrawer?.classList.remove('open');
-  teacherDrawer?.setAttribute('aria-hidden','true');
-  [teacherToggle,mobileTeacherToggle].filter(Boolean)
-    .forEach(button=>button.setAttribute('aria-expanded','false'));
-  document.querySelectorAll('dialog[open]').forEach(dialog=>dialog.close());
-  document.querySelectorAll('[data-overlay].open').forEach(node=>node.classList.remove('open'));
+  if(window.LEARNING_TEACHER_DRAWER?.isOpen()){
+    window.LEARNING_TEACHER_DRAWER.close();return true;
+  }
+  if(window.GUIDE_DRAWER?.isOpen()){
+    window.GUIDE_DRAWER.close();return true;
+  }
+  const dialog=document.querySelector('dialog[open]');
+  if(dialog){dialog.close();return true;}
+  const overlay=document.querySelector('[data-overlay].open');
+  if(overlay){
+    overlay.classList.remove('open');expose(overlay,false);return true;
+  }
+  return false;
+}
+function scrollerOwnsKey(active,key){
+  const scroller=active?.closest?.('[data-lr-scroller="true"]');
+  if(!scroller||!isExposed(scroller))return false;
+  return ['ArrowLeft','ArrowRight','PageUp','PageDown',' '].includes(key);
 }
 function cycleScope(){
   if(routeScopes.length<2)return;
@@ -1691,7 +1985,7 @@ function cycleScope(){
 }
 function syncOptionalControls(){
   document.querySelectorAll('.lr-study-optional').forEach(button=>{
-    button.hidden=mode!=='estudio'||optionalCount===0;
+    expose(button,mode==='estudio'&&optionalCount>0);
     button.setAttribute('aria-pressed',String(routeScope==='ALL'));
     button.textContent=routeScope==='ALL'?'Ocultar OPTIONAL':
       (button.closest('#lr-mobile-toolbar')?'+ OPTIONAL':'Incluir OPTIONAL');
@@ -1701,36 +1995,52 @@ function applyStudyScope(activeScene=null){
   body.dataset.routeScope=routeScope;
   models.forEach(scene=>{
     const sceneVisible=allowed(scene);
-    scene.element.hidden=!sceneVisible;
-    scene.element.setAttribute('aria-hidden',String(!sceneVisible));
+    expose(scene.element,sceneVisible);
     scene.stages.forEach(stage=>{
       const stageVisible=scopeRoutes().includes(stage.route);
-      [stage.step,stage.figure].filter(Boolean).forEach(node=>{
-        node.hidden=!stageVisible;node.setAttribute('aria-hidden',String(!stageVisible));
-      });
+      if(stage.step)expose(stage.step,sceneVisible&&stageVisible);
+      if(stage.figure)expose(stage.figure,false);
     });
+    const preferred=scene===activeScene
+      ?scene.stages.find(stage=>stage.id===body.dataset.currentStageId):allowedStages(scene)[0];
+    if(sceneVisible&&preferred)activateStage(scene,preferred);
   });
-  syncNav(activeScene);syncOptionalControls();saveRuntime(null,null,false);
+  syncNav(activeScene,activeScene?.stages.find(stage=>stage.id===body.dataset.currentStageId));
+  syncOptionalControls();saveRuntime(null,null,false);queueScrollerSync();
 }
 function toggleOptional(){
   routeScope=routeScope==='ALL'?'LIVE+REQUIRED':'ALL';
-  applyStudyScope();
+  let scene=models[currentScene],stage=scene?.stages.find(item=>item.id===body.dataset.currentStageId);
+  if(!scene||!allowed(scene)||!stage||!scopeRoutes().includes(stage.route)){
+    scene=availableModels()[0];stage=scene&&allowedStages(scene)[0];
+  }
+  if(scene&&stage)setCurrentState(scene,stage);
+  applyStudyScope(scene||null);
+  if(scene&&stage)setStudyCurrent(scene,stage,true,true);
   liveRegion.textContent=routeScope==='ALL'?'Contenido OPTIONAL incluido.':'Contenido OPTIONAL oculto.';
 }
 
 controls.querySelector('.lr-prev').addEventListener('click',()=>move(-1,false));
 controls.querySelector('.lr-next').addEventListener('click',()=>move(1,false));
 controls.querySelector('.lr-route-scope').addEventListener('click',cycleScope);
-controls.querySelector('.lr-route-scope').hidden=mode!=='aula'||routeScopes.length<2;
+expose(controls.querySelector('.lr-route-scope'),mode==='aula'&&routeScopes.length>1);
 controls.classList.toggle('lr-fixed-scope',controls.querySelector('.lr-route-scope').hidden);
 document.querySelectorAll('.lr-study-optional').forEach(button=>button.addEventListener('click',toggleOptional));
 
 document.addEventListener('keydown',event=>{
-  if(event.key==='Escape'){closeOverlays();return;}
+  const openDrawer=teacherDrawer?.classList.contains('open')?teacherDrawer:
+    (window.GUIDE_DRAWER?.isOpen()?document.getElementById('guion-drawer'):null);
+  if(openDrawer){
+    if(event.key==='Escape'){if(closeOverlays())event.preventDefault();return;}
+    if(event.key==='Tab')trapFocus(event,openDrawer);
+    return;
+  }
+  if(event.key==='Escape'){if(closeOverlays())event.preventDefault();return;}
   if(mode!=='aula')return;
   const active=document.activeElement;
   if(active&&(/INPUT|TEXTAREA|SELECT/.test(active.tagName)||active.isContentEditable))return;
   if(active&&active.tagName==='BUTTON'&&(event.key===' '||event.key==='Enter'))return;
+  if(scrollerOwnsKey(active,event.key))return;
   if(['ArrowRight','PageDown',' '].includes(event.key)){
     event.preventDefault();move(1,true);
   }else if(['ArrowLeft','PageUp'].includes(event.key)){
@@ -1754,13 +2064,41 @@ function deepLink(){
 function restoredPosition(){
   const linked=deepLink();
   if(linked){
-    if(mode==='estudio'&&linked.stage.route==='OPTIONAL')routeScope='ALL';
+    if(mode==='estudio'||(mode==='aula'&&isProfessor))expandScopeForRoute(linked.stage.route);
     return linked;
   }
   if(!savedRuntime.scene)return null;
   const scene=models.find(item=>item.id===savedRuntime.scene);
   const stage=scene?.stages.find(item=>item.id===savedRuntime.stage);
+  if(stage&&!scopeRoutes().includes(stage.route)&&(mode==='estudio'||isProfessor)){
+    expandScopeForRoute(stage.route);
+  }
   return scene&&stage?{scene,stage}:null;
+}
+
+function setStudyCurrent(scene,stage,mark=true,writeHash=true){
+  if(!scene||!stage||!allowed(scene)||!scopeRoutes().includes(stage.route))return false;
+  setCurrentState(scene,stage);activateStage(scene,stage);
+  syncNav(scene,stage);syncTeacher(scene,stage);saveRuntime(scene,stage,mark);
+  if(writeHash)updateDeepLink(scene,stage);
+  liveRegion.textContent=`${scene.id}, ruta ${stage.route}, ${stage.duration_minutes} minutos, etapa ${currentStage+1} de ${allowedStages(scene).length}`;
+  queueScrollerSync();return true;
+}
+function navigateTo(scene,stage,focusHeading=false){
+  if(!scene||!stage)return false;
+  if(!scopeRoutes().includes(stage.route)){
+    if(mode==='estudio'||isProfessor)expandScopeForRoute(stage.route);
+    else return false;
+  }
+  if(mode==='estudio'){
+    setCurrentState(scene,stage);applyStudyScope(scene);
+    if(!setStudyCurrent(scene,stage,true,true))return false;
+    (stage.step||scene.element).scrollIntoView({behavior:reducedMotion()?'auto':'smooth',block:'center'});
+    return true;
+  }
+  const stages=allowedStages(scene),index=stages.indexOf(stage);
+  if(index<0)return false;
+  goTo(models.indexOf(scene),index,focusHeading);return true;
 }
 
 if(mode==='aula'){
@@ -1772,30 +2110,35 @@ if(mode==='aula'){
   goTo(currentScene,Math.max(0,currentStage),false);
 }else{
   const restored=restoredPosition();
-  if(restored?.stage.route==='OPTIONAL')routeScope='ALL';
-  applyStudyScope(restored?.scene||null);
+  let initial=restored;
+  if(!initial||!allowed(initial.scene)||!scopeRoutes().includes(initial.stage.route)){
+    const scene=availableModels()[0];initial=scene?{scene,stage:allowedStages(scene)[0]}:null;
+  }
+  if(initial)setCurrentState(initial.scene,initial.stage);
+  applyStudyScope(initial?.scene||null);
+  if(initial)setStudyCurrent(initial.scene,initial.stage,true,true);
   const sceneObserver=new IntersectionObserver(entries=>{
     const visible=entries.filter(entry=>entry.isIntersecting&&!entry.target.hidden)
       .sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
     if(!visible)return;
     const scene=models.find(item=>item.element===visible.target);
     if(!scene)return;
-    syncNav(scene);
-    const stage=allowedStages(scene).find(item=>!item.step)||allowedStages(scene)[0];
-    if(stage){saveRuntime(scene,stage,true);updateDeepLink(scene,stage);}
+    if(scene.stages.some(item=>item.step))return;
+    const stage=allowedStages(scene)[0];
+    if(stage)setStudyCurrent(scene,stage,true,true);
   },{rootMargin:'-20% 0px -55% 0px',threshold:[0,.15,.4]});
   models.forEach(scene=>sceneObserver.observe(scene.element));
   models.forEach(scene=>scene.stages.forEach(stage=>{
     if(!stage.step)return;
     const observer=new IntersectionObserver(entries=>{
       if(entries.some(entry=>entry.isIntersecting)&&!stage.step.hidden){
-        saveRuntime(scene,stage,true);syncNav(scene);updateDeepLink(scene,stage);
+        setStudyCurrent(scene,stage,true,true);
       }
     },{rootMargin:'-35% 0px -45% 0px',threshold:.1});
     observer.observe(stage.step);
   }));
-  if(restored&&allowed(restored.scene))requestAnimationFrame(()=>{
-    (restored.stage.step||restored.scene.element).scrollIntoView({block:'center'});
+  if(initial&&restored)requestAnimationFrame(()=>{
+    (initial.stage.step||initial.scene.element).scrollIntoView({block:'center'});
   });
 }
 
@@ -1803,20 +2146,20 @@ syncOptionalControls();
 saveRuntime(null,null,false);
 window.LEARNING_RUNTIME={
   version:RUNTIME_VERSION,contract,mode,isProfessor,
-  getState:()=>({routeScope,scene:models[currentScene]?.id,stage:body.dataset.currentStageId,
-    progress:progressSnapshot()}),
+  getState:()=>({mode,requestedMode,routeScope,scene:body.dataset.currentSceneId||models[currentScene]?.id,
+    stage:body.dataset.currentStageId,route:body.dataset.currentStageRoute,
+    sceneRoute:models[currentScene]?.route,progress:progressSnapshot()}),
   setOptional:enabled=>{if(mode==='estudio'&&(enabled!==(routeScope==='ALL')))toggleOptional();},
   goTo:(sceneId,stageId)=>{
     const scene=models.find(item=>item.id===sceneId);if(!scene)return false;
-    if(mode==='estudio'){
-      const stage=scene.stages.find(item=>item.id===stageId)||allowedStages(scene)[0];
-      if(!stage)return false;
-      (stage.step||scene.element).scrollIntoView({block:'center'});return true;
-    }
-    const stages=allowedStages(scene),index=stages.findIndex(item=>item.id===stageId);
-    goTo(models.indexOf(scene),Math.max(0,index),false);return true;
+    const stage=scene.stages.find(item=>item.id===stageId)||scene.stages[0];
+    return navigateTo(scene,stage,false);
   },
 };
+
+addEventListener('hashchange',()=>{
+  const linked=deepLink();if(linked)navigateTo(linked.scene,linked.stage,false);
+});
 
 mobileQuery.addEventListener?.('change',()=>location.reload());
 })();

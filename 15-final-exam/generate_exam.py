@@ -1,4 +1,4 @@
-"""generate_exam.py — examen final del curso (Clase 15).
+"""generate_exam.py — práctica acumulativa pública del curso (Clase 15).
 
 Formato: test de 40 min, 40 preguntas, 3 opciones (A/B/C).
 Baremo: acierto +1, fallo -0.5, en blanco 0.
@@ -6,7 +6,8 @@ Cubre todo el curso: Python/OOP, framework exchange, microestructura, tipos de
 orden y matching, ejecución VWAP, market making y Avellaneda-Stoikov.
 
 Uso:  python generate_exam.py
-Genera:  examen.html  y  examen_con_respuestas.html
+Genera: `examen.html` como práctica autocorregible pública. No genera ni
+pretende sustituir el examen oficial, cuyo banco debe permanecer privado.
 """
 
 from __future__ import annotations
@@ -15,7 +16,7 @@ import html
 import os
 
 # El banco de preguntas vive en question_bank.py (fuente única de verdad).
-# CANONICAL = las 40 oficiales, en orden fijo -> examen.html reproducible.
+# CANONICAL = 40 preguntas públicas de práctica -> examen.html reproducible.
 from question_bank import (  # noqa: E402
     CANONICAL as QUESTIONS, EXAM_POOL, EXAM_TARGETS,
     CHECKPOINT, CHECKPOINT_TARGETS, sample_balanced)
@@ -149,7 +150,7 @@ function grade(){
     Object.entries(byTopic).map(([t,x])=>t+' '+x.r+'/'+x.n).join(' · ')+'</div>'+
     '<div class="codebox"><code id="rescode">'+code+'</code>'+
     '<button id="copybtn">📋 copiar código</button></div>'+
-    '<div class="codehint">Envíaselo al profe: certifica tu resultado sin capturas.</div>';
+    '<div class="codehint">Autoinforme de práctica: comprueba transcripción, no certifica autoría ni nota.</div>';
   const cb=$('#copybtn');
   cb.addEventListener('click',()=>{
     const t=$('#rescode').textContent;
@@ -233,27 +234,28 @@ def render_page(prepared, *, title, eyebrow, h1, lede, head_left, footer,
 
 
 def render_interactive(seed: int = 0) -> str:
-    """Examen final. seed=0 -> las 40 canónicas en orden fijo (examen oficial);
-    seed>0 -> variante equilibrada muestreada del banco ampliado."""
+    """Práctica L15. seed=0 -> 40 canónicas; seed>0 -> variante pública."""
     if seed == 0:
         prepared = _shuffled(QUESTIONS, opt_seed=2026)
     else:
         sampled = sample_balanced(EXAM_POOL, EXAM_TARGETS, seed)
         prepared = _shuffled(sampled, opt_seed=2026 + seed)
-    tag = "examen final" if seed == 0 else f"variante s{seed}"
+    tag = "práctica canónica" if seed == 0 else f"práctica variante s{seed}"
     return render_page(
         prepared,
-        title="L15 · Examen final — Algo Trading ICAI 2026",
+        title="L15 · Práctica acumulativa — Algo Trading ICAI 2026",
         eyebrow=f"<b>Algo Trading · ICAI 2026</b> · L15 · {tag}",
         h1=f"{len(prepared)} preguntas · 40 minutos",
         lede='Baremo: acierto <b style="color:var(--bid)">+1</b> · fallo '
              '<b style="color:var(--ask)">−0.5</b> · en blanco 0. Pulsa una opción para '
              'marcarla; vuelve a pulsarla para dejarla en blanco. Al final (o cuando el '
-             'reloj llegue a cero), <strong>Corregir</strong>. Este assessment conserva una '
-             'experiencia lineal; el capstone de L14 es una entrega autónoma separada.',
-        head_left="<b>Examen final</b> · Algo Trading ICAI 2026",
-        footer="L15 · Examen final — el curso entero, preguntado",
-        exam_id="L15", lesson=15, minutes=40, seed=seed, grade_label="Corregir examen")
+             'reloj llegue a cero), <strong>Corregir</strong>. Banco público de práctica: '
+             '<strong>no es el examen oficial</strong> y su resultado no acredita nota. '
+             'El capstone de L14 es una entrega autónoma separada.',
+        head_left="<b>Práctica L15 · NO OFICIAL</b> · Algo Trading ICAI 2026",
+        footer="L15 · Práctica acumulativa pública — no usar como convocatoria oficial",
+        exam_id="L15P", lesson=15, minutes=40, seed=seed,
+        grade_label="Corregir práctica")
 
 
 def render_checkpoint(seed: int = 0) -> str:
@@ -293,16 +295,16 @@ def render_key() -> str:
 
 def main() -> None:
     import argparse
-    ap = argparse.ArgumentParser(description="Genera el examen final y el checkpoint.")
+    ap = argparse.ArgumentParser(description="Genera la práctica L15 y el checkpoint.")
     ap.add_argument("--seed", type=int, default=0,
-                    help="0 = examen oficial (40 canónicas); N>0 = variante equilibrada.")
+                    help="0 = práctica canónica; N>0 = variante pública equilibrada.")
     args = ap.parse_args()
 
     here = os.path.dirname(os.path.abspath(__file__))
     assert len(QUESTIONS) == 40, f"el examen debe tener 40 preguntas, tiene {len(QUESTIONS)}"
 
     if args.seed == 0:
-        # forma oficial + hoja del profe + checkpoint (todo versionado y determinista)
+        # práctica pública + clave local de práctica + checkpoint
         with open(os.path.join(here, "examen.html"), "w") as f:
             f.write(render_interactive(0))
         with open(os.path.join(here, "examen_con_respuestas.html"), "w") as f:
@@ -310,14 +312,14 @@ def main() -> None:
         ck = os.path.abspath(os.path.join(here, "..", "06-oop-iii-inheritance", "checkpoint.html"))
         with open(ck, "w") as f:
             f.write(render_checkpoint(0))
-        print(f"OK — {len(QUESTIONS)} preguntas. examen.html (+1/-0.5, 40:00), "
+        print(f"OK — práctica pública de {len(QUESTIONS)} preguntas. examen.html (+1/-0.5, 40:00), "
               f"examen_con_respuestas.html y checkpoint.html (L1-L6, 20:00) generados.")
     else:
         out = os.path.join(here, f"examen_s{args.seed}.html")
         with open(out, "w") as f:
             f.write(render_interactive(args.seed))
         print(f"OK — variante s{args.seed} equilibrada generada en {os.path.basename(out)} "
-              f"(no versionada; para convocatorias alternativas).")
+              f"(no versionada; solo práctica, nunca convocatoria oficial).")
 
 
 if __name__ == "__main__":

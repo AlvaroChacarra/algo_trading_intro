@@ -267,7 +267,7 @@
       "kind": "constructor",
       "signature": "MMSimulation(strategy: MarketMaker, s0: float = 100.0, sigma: float = 0.5, steps: int = 500, A: float = 1.0, kappa: float = 1.5, seed: int = 42) -> MMSimulation",
       "returns": "MMSimulation",
-      "responsibility": "configure a reproducible fill-intensity simulation",
+      "responsibility": "configure a reproducible fill-intensity simulation whose sigma is full-horizon price volatility",
       "qualified_name": "exchange.simulation.MMSimulation"
     },
     {
@@ -399,9 +399,16 @@
   "load": {
     "live_presentation_minutes": 20,
     "guided_minutes": 20,
-    "required_autonomous_minutes": 19,
+    "required_autonomous_minutes": 27,
     "optional_minutes": 0,
-    "overflow_policy": "explicit-route-plan"
+    "overflow_policy": "explicit-route-plan",
+    "autonomous_components": {
+      "documents": [],
+      "quizzes": [
+        {"id": "l13-quiz", "route": "REQUIRED", "minutes": 8}
+      ],
+      "projects": []
+    }
   },
   "scenes": [
     {

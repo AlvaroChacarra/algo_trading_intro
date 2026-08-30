@@ -5,7 +5,7 @@
 ## Resumen verificable
 
 - Registry de conceptos: **93**.
-- Registry de APIs: **74**.
+- Registry de APIs: **78**.
 - Registry de notación: **14**.
 - Requisitos sin origen anterior: **0**.
 - Requisitos procedentes solo de OPTIONAL: **0**.
@@ -16,7 +16,7 @@
 |---|---|---|---|---|---|
 | L1 | — | — | — | — | L2: Las funciones y un único book compartido convierten la repetición en recetas reutilizables. |
 | L2 | `python.variables`, `python.collections`, `python.control_flow`, `python.fstring`, `python.dict_get`, `microstructure.spread`, `microstructure.mid` | — | `notation.spread`, `notation.mid` | `python.control_flow`, `python.fstring`, `python.dict_get` | L3: Los módulos, imports y errores de dominio hacen reutilizable el libro funcional. |
-| L3 | `python.functions`, `functional.order_book`, `python.fstring`, `python.generator_expression` | `functional.best_bid`, `functional.spread` | — | `python.functions` | L4: Order y Fill vinculan los datos de mercado con comportamiento e invariantes. |
+| L3 | `python.functions`, `functional.order_book`, `python.fstring`, `python.generator_expression` | `functional.make_order`, `functional.add_order`, `functional.cancel_order`, `functional.best_bid`, `functional.best_ask`, `functional.spread`, `functional.mid`, `functional.imbalance` | — | `python.functions` | L4: Order y Fill vinculan los datos de mercado con comportamiento e invariantes. |
 | L4 | `python.variables`, `python.functions`, `python.modules`, `python.fstring`, `python.generator_expression` | — | — | `python.functions` | L5: La composición crea fronteras controladas para el estado de mercado y la contabilidad. |
 | L5 | `oop.classes`, `exchange.order`, `exchange.fill`, `python.lambda`, `python.sorted_key`, `python.fstring`, `python.generator_expression` | `order.constructor`, `fill.constructor`, `fill.cash_flow` | `notation.spread`, `notation.mid`, `notation.cash_flow` | `oop.classes` | L6: La herencia y un contrato abstracto conservan el esqueleto mientras cambia la decisión. |
 | L6 | `oop.classes`, `oop.composition`, `python.generator_expression` | `orderbook.imbalance` | `notation.imbalance` | `oop.composition` | L7: Level y OrderBook convierten snapshots externos en una frontera de dominio estable. |
@@ -27,7 +27,7 @@
 | L11 | `framework.strategy_contract`, `backtest.runner`, `microstructure.spread_cost`, `metrics.equity_curve`, `python.fstring` | `market.sample`, `market.step`, `new_order.constructor`, `order.constructor`, `orderbook.imbalance`, `orderbook.mid`, `strategy.on_book_update`, `strategy.on_fill`, `backtest.constructor`, `backtest.run`, `backtest_result.fills`, `backtest_result.equity_curve`, `backtest_result.final_position`, `backtest_result.final_equity`, `backtest_result.n_steps`, `backtest_result.n_fills`, `tracker.equity` | `notation.equity`, `notation.spread` | `microstructure.spread_cost` | L12: El slicing reparte el objetivo en el tiempo con TWAP y VWAP. |
 | L12 | `framework.strategy_contract`, `metrics.arrival_price`, `metrics.slippage`, `execution.market_impact`, `python.fstring`, `python.generator_expression` | `market.sample`, `new_order.constructor`, `order.constructor`, `strategy.on_book_update`, `backtest.constructor`, `backtest.run`, `backtest_result.fills` | `notation.slippage_signed` | `execution.market_impact` | L13: Un market maker ofrece quotes, cobra el spread y controla el inventario. |
 | L13 | `framework.strategy_contract`, `microstructure.spread_cost`, `metrics.inventory_exposure`, `architecture.execution_feedback`, `python.fstring`, `python.generator_expression` | `level.constructor`, `orderbook.constructor`, `orderbook.mid`, `new_order.constructor`, `strategy.on_book_update`, `strategy.on_fill` | `notation.spread`, `notation.equity` | `microstructure.spread_cost`, `architecture.execution_feedback` | L14: Avellaneda–Stoikov da parámetros interpretables al centro y a la anchura. |
-| L14 | `framework.strategy_contract`, `inventory.risk`, `inventory.skew`, `market_making.heuristic_reservation_price`, `market_making.cara_utility`, `market_making.fill_intensity`, `python.fstring` | `level.constructor`, `orderbook.constructor`, `orderbook.mid`, `new_order.constructor`, `strategy.on_book_update`, `strategy.on_fill`, `market_maker.constructor`, `market_maker.half_spread`, `market_maker.inventory`, `market_maker.inventory_skew`, `market_maker.reservation_price`, `market_maker.quotes`, `mm_simulation.constructor`, `mm_simulation.run`, `sim_result.final_pnl`, `sim_result.max_inventory` | `notation.inventory`, `notation.heuristic_reservation`, `notation.cara_utility`, `notation.fill_intensity` | `market_making.heuristic_reservation_price`, `framework.strategy_contract`, `market_making.cara_utility`, `market_making.fill_intensity` | L15: La evaluación final muestrea razonamiento acumulativo de todos los bloques. |
+| L14 | `framework.strategy_contract`, `inventory.risk`, `inventory.skew`, `market_making.heuristic_reservation_price`, `market_making.cara_utility`, `market_making.fill_intensity`, `python.fstring` | `level.constructor`, `orderbook.constructor`, `orderbook.mid`, `new_order.constructor`, `strategy.on_book_update`, `strategy.on_fill`, `market_maker.constructor`, `market_maker.half_spread`, `market_maker.inventory`, `market_maker.inventory_skew`, `market_maker.reservation_price`, `market_maker.quotes`, `mm_simulation.constructor`, `mm_simulation.run`, `sim_result.final_pnl`, `sim_result.max_inventory` | `notation.inventory`, `notation.heuristic_reservation`, `notation.cara_utility`, `notation.fill_intensity` | `market_making.heuristic_reservation_price`, `framework.strategy_contract`, `market_making.cara_utility`, `market_making.fill_intensity` | L15: La práctica pública de L15 muestrea razonamiento acumulativo; la evaluación oficial permanece bloqueada: sus bancos deberán crearse de nuevo y entregarse exclusivamente desde la futura fuente privada autorizada. |
 | L15 | `python.control_flow`, `python.generator_expression`, `oop.polymorphism`, `matching.atomicity`, `framework.strategy_contract`, `metrics.slippage`, `execution.vwap`, `inventory.skew`, `as.reservation_price`, `as.optimal_spread` | `matching.process`, `strategy.on_book_update`, `backtest.run` | `notation.slippage_signed`, `notation.vwap`, `notation.as_reservation_price`, `notation.as_optimal_spread` | — | — |
 
 ## Conceptos
@@ -105,7 +105,7 @@
 | `metrics.random_benchmark` | L11 · LIVE | — | — | `l11-benchmark-strategy` |
 | `metrics.pnl_execution_separation` | L11 · LIVE | — | — | `l11-interpret-slippage` |
 | `metrics.inventory_exposure` | L11 · LIVE | L13 | — | `l11-track-inventory-risk` |
-| `metrics.equity_curve` | L9 · REQUIRED | L10, L11 | — | `l10-separate-decision-execution`, `l11-benchmark-strategy` |
+| `metrics.equity_curve` | L9 · REQUIRED | L10, L11 | — | `l09-track-equity-over-time`, `l10-separate-decision-execution`, `l11-benchmark-strategy` |
 | `execution.slicing` | L12 · LIVE | — | — | `l12-compare-schedules` |
 | `execution.twap` | L12 · LIVE | — | — | `l12-compare-schedules` |
 | `execution.vwap` | L12 · LIVE | L15 | — | `l12-compare-schedules`, `l15-integrate-course` |
@@ -113,7 +113,7 @@
 | `strategy.vwap` | L12 · LIVE | — | — | `l12-run-vwap-strategy` |
 | `execution.dynamic_volume_prediction` | L12 · OPTIONAL | — | — | — |
 | `market_making.liquidity_provision` | L13 · LIVE | — | — | `l13-explain-liquidity-provision` |
-| `market_making.quotes` | L13 · LIVE | — | — | `l13-explain-liquidity-provision` |
+| `market_making.quotes` | L13 · LIVE | — | — | `l13-explain-liquidity-provision`, `l13-inspect-pnl-path` |
 | `market_making.adverse_selection` | L13 · LIVE | — | — | `l13-explain-liquidity-provision` |
 | `inventory.risk` | L13 · LIVE | L14 | — | `l13-control-inventory` |
 | `inventory.skew` | L13 · LIVE | L14, L15 | — | `l13-control-inventory`, `l14-build-capstone`, `l15-integrate-course` |
@@ -132,11 +132,14 @@
 
 | API estable | Primera introducción | Reutilización | Assessment | Nombre público |
 |---|---|---|---|---|
+| `functional.make_order` | L2 · LIVE | L3 | `l02-extract-functions`, `l03-reuse-module` | `lesson02.order_book.make_order` |
+| `functional.add_order` | L2 · LIVE | L3 | `l02-extract-functions`, `l03-reuse-module` | `lesson02.order_book.add_order` |
+| `functional.cancel_order` | L2 · LIVE | L3 | `l02-extract-functions`, `l03-reuse-module` | `lesson02.order_book.cancel_order` |
 | `functional.best_bid` | L2 · LIVE | L3 | `l02-extract-functions`, `l03-reuse-module` | `lesson02.order_book.best_bid` |
-| `functional.best_ask` | L2 · LIVE | — | `l02-extract-functions` | `lesson02.order_book.best_ask` |
+| `functional.best_ask` | L2 · LIVE | L3 | `l02-extract-functions`, `l03-reuse-module` | `lesson02.order_book.best_ask` |
 | `functional.spread` | L2 · LIVE | L3 | `l02-read-functional-book`, `l03-reuse-module` | `lesson02.order_book.spread` |
-| `functional.mid` | L2 · LIVE | — | `l02-read-functional-book` | `lesson02.order_book.mid` |
-| `functional.imbalance` | L2 · LIVE | — | `l02-read-functional-book` | `lesson02.order_book.imbalance` |
+| `functional.mid` | L2 · LIVE | L3 | `l02-read-functional-book`, `l03-reuse-module` | `lesson02.order_book.mid` |
+| `functional.imbalance` | L2 · LIVE | L3 | `l02-read-functional-book`, `l03-reuse-module` | `lesson02.order_book.imbalance` |
 | `side.type` | L4 · LIVE | L8 | `l04-read-canonical-constructors` | `exchange.orders.Side` |
 | `order_type.type` | L4 · LIVE | L8 | `l04-read-canonical-constructors` | `exchange.orders.OrderType` |
 | `order.constructor` | L4 · LIVE | L5, L8, L11, L12 | `l04-read-canonical-constructors` | `exchange.orders.Order` |
@@ -150,10 +153,10 @@
 | `orderbook.spread` | L5 · LIVE | L7 | `l05-compose-book` | `exchange.book.OrderBook.spread` |
 | `orderbook.mid` | L5 · LIVE | L7, L8, L11, L13, L14 | `l05-compose-book`, `l07-read-metrics` | `exchange.book.OrderBook.mid` |
 | `orderbook.imbalance` | L5 · LIVE | L6, L7, L11 | `l05-compose-book` | `exchange.book.OrderBook.imbalance` |
-| `tracker.apply_fill` | L5 · LIVE | L9, L10 | `l05-account-for-fills` | `exchange.portfolio.PositionTracker.apply_fill` |
-| `tracker.constructor` | L5 · LIVE | L9 | `l05-account-for-fills` | `exchange.portfolio.PositionTracker` |
-| `tracker.position` | L5 · LIVE | L9 | `l05-account-for-fills` | `exchange.portfolio.PositionTracker.position` |
-| `tracker.equity` | L5 · LIVE | L9, L10, L11 | `l05-account-for-fills` | `exchange.portfolio.PositionTracker.equity` |
+| `tracker.apply_fill` | L5 · LIVE | L9, L10 | `l05-account-for-fills`, `l09-track-equity-over-time` | `exchange.portfolio.PositionTracker.apply_fill` |
+| `tracker.constructor` | L5 · LIVE | L9 | `l05-account-for-fills`, `l09-track-equity-over-time` | `exchange.portfolio.PositionTracker` |
+| `tracker.position` | L5 · LIVE | L9 | `l05-account-for-fills`, `l09-track-equity-over-time` | `exchange.portfolio.PositionTracker.position` |
+| `tracker.equity` | L5 · LIVE | L9, L10, L11 | `l05-account-for-fills`, `l09-track-equity-over-time` | `exchange.portfolio.PositionTracker.equity` |
 | `toy_strategy.decide` | L6 · LIVE | L10 | `l06-build-strategy-family`, `l10-map-toy-to-production` | `strategies_toy.Strategy.decide` |
 | `orderbook.from_snapshot` | L7 · LIVE | L9 | `l07-build-stable-boundary` | `exchange.book.OrderBook.from_snapshot` |
 | `orderbook.depth` | L7 · REQUIRED | — | `l07-build-stable-boundary` | `exchange.book.OrderBook.depth` |
@@ -164,6 +167,7 @@
 | `matching.process` | L8 · LIVE | L9, L15 | `l08-explain-atomicity`, `l15-integrate-course` | `exchange.matching.MatchingEngine.process` |
 | `matching.constructor` | L8 · LIVE | L9 | `l08-explain-atomicity` | `exchange.matching.MatchingEngine` |
 | `market.constructor` | L9 · LIVE | — | `l09-compose-market` | `exchange.market.Market` |
+| `market.from_csv` | L9 · REQUIRED | — | `l09-reset-lifecycle` | `exchange.market.Market.from_csv` |
 | `market.sample` | L9 · REQUIRED | L10, L11, L12 | `l09-reset-lifecycle`, `l11-benchmark-strategy`, `l12-run-vwap-strategy` | `exchange.market.Market.sample` |
 | `market.snapshots` | L9 · REQUIRED | L10 | `l09-reset-lifecycle` | `exchange.market.Market.snapshots` |
 | `market.book` | L9 · LIVE | — | `l09-compose-market` | `exchange.market.Market.book` |
@@ -199,7 +203,7 @@
 | `mm_simulation.run` | L13 · LIVE | L14 | `l13-explain-liquidity-provision`, `l14-run-parameter-lab` | `exchange.simulation.MMSimulation.run` |
 | `sim_result.type` | L13 · LIVE | — | `l13-explain-liquidity-provision` | `exchange.simulation.SimResult` |
 | `sim_result.final_pnl` | L13 · LIVE | L14 | `l13-explain-liquidity-provision`, `l14-run-parameter-lab` | `exchange.simulation.SimResult.final_pnl` |
-| `sim_result.pnl` | L13 · REQUIRED | — | — | `exchange.simulation.SimResult.pnl` |
+| `sim_result.pnl` | L13 · REQUIRED | — | `l13-inspect-pnl-path` | `exchange.simulation.SimResult.pnl` |
 | `sim_result.max_inventory` | L13 · LIVE | L14 | `l13-explain-liquidity-provision`, `l14-run-parameter-lab` | `exchange.simulation.SimResult.max_inventory` |
 | `avellaneda_stoikov.constructor` | L14 · LIVE | — | `l14-interpret-reservation-price`, `l14-run-parameter-lab` | `exchange.strategies.avellaneda_stoikov.AvellanedaStoikov` |
 | `avellaneda_stoikov.time` | L14 · LIVE | — | `l14-interpret-reservation-price` | `exchange.strategies.avellaneda_stoikov.AvellanedaStoikov.time` |
@@ -215,7 +219,7 @@
 | `notation.mid` | L1 · LIVE | L2, L5, L7, L8 | `l01-model-market-data` |
 | `notation.imbalance` | L2 · LIVE | L6, L7 | `l02-read-functional-book` |
 | `notation.cash_flow` | L4 · LIVE | L5 | `l04-interpret-cash-flow` |
-| `notation.equity` | L5 · LIVE | L11, L13 | `l05-account-for-fills` |
+| `notation.equity` | L5 · LIVE | L11, L13 | `l05-account-for-fills`, `l13-inspect-pnl-path` |
 | `notation.slippage_signed` | L11 · LIVE | L12, L15 | `l11-interpret-slippage`, `l15-integrate-course` |
 | `notation.twap` | L12 · LIVE | — | `l12-compare-schedules` |
 | `notation.vwap` | L12 · LIVE | L15 | `l12-compare-schedules`, `l15-integrate-course` |
@@ -260,6 +264,7 @@ El blueprint conserva únicamente trazabilidad y distribución; no contiene enun
 | L9 | `l09-compose-market` | LIVE | sí | code_reading=3, conceptual=2, debugging=2, financial_interpretation=2, integration=1 |
 | L9 | `l09-run-time-loop` | LIVE | sí | code_reading=3, conceptual=2, debugging=2, financial_interpretation=2, integration=1 |
 | L9 | `l09-reset-lifecycle` | REQUIRED | sí | code_reading=3, conceptual=2, debugging=2, financial_interpretation=2, integration=1 |
+| L9 | `l09-track-equity-over-time` | REQUIRED | sí | code_reading=3, conceptual=2, debugging=2, financial_interpretation=2, integration=1 |
 | L10 | `l10-map-toy-to-production` | LIVE | sí | code_reading=3, conceptual=2, debugging=2, financial_interpretation=2, integration=1 |
 | L10 | `l10-separate-decision-execution` | LIVE | sí | code_reading=3, conceptual=2, debugging=2, financial_interpretation=2, integration=1 |
 | L10 | `l10-close-feedback-loop` | LIVE | sí | code_reading=3, conceptual=2, debugging=2, financial_interpretation=2, integration=1 |
@@ -272,6 +277,7 @@ El blueprint conserva únicamente trazabilidad y distribución; no contiene enun
 | L13 | `l13-explain-liquidity-provision` | LIVE | sí | code_reading=3, conceptual=2, debugging=2, financial_interpretation=2, integration=1 |
 | L13 | `l13-control-inventory` | LIVE | sí | code_reading=3, conceptual=2, debugging=2, financial_interpretation=2, integration=1 |
 | L13 | `l13-prepare-risk-and-fills` | LIVE | sí | code_reading=3, conceptual=2, debugging=2, financial_interpretation=2, integration=1 |
+| L13 | `l13-inspect-pnl-path` | REQUIRED | sí | code_reading=3, conceptual=2, debugging=2, financial_interpretation=2, integration=1 |
 | L14 | `l14-interpret-reservation-price` | LIVE | sí | code_reading=3, conceptual=2, debugging=2, financial_interpretation=2, integration=1 |
 | L14 | `l14-interpret-optimal-spread` | LIVE | sí | code_reading=3, conceptual=2, debugging=2, financial_interpretation=2, integration=1 |
 | L14 | `l14-run-parameter-lab` | LIVE | sí | code_reading=3, conceptual=2, debugging=2, financial_interpretation=2, integration=1 |

@@ -1,7 +1,7 @@
 {
   "lesson": 7,
   "status": "contract-strict",
-  "title": "Del snapshot real al OrderBook",
+  "title": "Del snapshot sintético al OrderBook",
   "delivery": "lesson",
   "source_path": "framework/_build/docs/07_body.html",
   "requires": {
@@ -212,6 +212,9 @@
       "l07-bridge"
     ],
     "REQUIRED": [
+      "l07-build/constructors",
+      "l07-build/factory",
+      "l07-build/api",
       "l07-signal",
       "l07-quiz"
     ],
@@ -261,9 +264,21 @@
   "load": {
     "live_presentation_minutes": 20,
     "guided_minutes": 20,
-    "required_autonomous_minutes": 42,
+    "required_autonomous_minutes": 63,
     "optional_minutes": 10,
-    "overflow_policy": "explicit-route-plan"
+    "overflow_policy": "explicit-route-plan",
+    "autonomous_components": {
+      "documents": [
+        {"id": "l07-build/constructors", "route": "REQUIRED", "minutes": 1},
+        {"id": "l07-build/factory", "route": "REQUIRED", "minutes": 1},
+        {"id": "l07-build/api", "route": "REQUIRED", "minutes": 1},
+        {"id": "l07-signal", "route": "REQUIRED", "minutes": 10}
+      ],
+      "quizzes": [
+        {"id": "l07-quiz", "route": "REQUIRED", "minutes": 8}
+      ],
+      "projects": []
+    }
   },
   "scenes": [
     {
@@ -319,16 +334,19 @@
         {
           "id": "constructors",
           "route": "REQUIRED",
+          "duration_minutes": 1,
           "dom_stage": 4
         },
         {
           "id": "factory",
           "route": "REQUIRED",
+          "duration_minutes": 1,
           "dom_stage": 5
         },
         {
           "id": "api",
           "route": "REQUIRED",
+          "duration_minutes": 1,
           "dom_stage": 6
         }
       ]

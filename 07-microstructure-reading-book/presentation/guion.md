@@ -1,4 +1,4 @@
-# Guion — Clase 7: Del snapshot real al OrderBook
+# Guion — Clase 7: Del snapshot sintético al OrderBook
 
 **Idea central:** el CSV termina en la frontera del sistema; desde ahí, todo el motor habla con `OrderBook`.
 
@@ -7,7 +7,7 @@
 ## Núcleo presencial · ≈20 min
 
 ### 1. El problema · 2 min
-- Enseña una fila real: `bid_price_1`, `bid_size_1`, `ask_price_1`, `ask_size_1`.
+- Enseña una fila sintética y reproducible: `bid_price_1`, `bid_size_1`, `ask_price_1`, `ask_size_1`.
 - Pregunta qué objetos y contenedores deberían existir al otro lado de la transformación.
 
 ### 2. Scrolly fila → objeto · 10 min
@@ -31,7 +31,7 @@
 ## Práctica guiada · ≈20 min
 - En clase: B1–B4.
 - Si sobra tiempo: iniciar B5.
-- Consolidación requerida: B5–B8, incluida la comparación contra la referencia real.
+- Consolidación requerida: B5–B8, incluida la comparación contra la implementación canónica.
 
 ## Puente
 - “Ya tenemos estado ordenado y consultable. En L8 programamos qué ocurre cuando una orden intenta cambiarlo.”

@@ -5,10 +5,12 @@ Comprueba que:
   2. El matching cruza market/limit/IOC/FOK correctamente.
   3. El Backtest corre con cualquier Strategy (polimorfismo).
   4. VWAP y un market maker son intercambiables en el mismo runner.
+  5. El simulador de market making produce fills y métricas coherentes.
 
 Ejecutar:  python smoke_test.py
 """
 
+import math
 import os
 import sys
 
@@ -18,6 +20,7 @@ from exchange import (
     Backtest, Market, MatchingEngine, Order, OrderBook, OrderType, Side,
 )
 from exchange.strategies import AvellanedaStoikov, MarketMaker, VWAPStrategy
+from exchange.simulation import MMSimulation
 
 CSV = os.path.join(
     os.path.dirname(__file__), "..", "data", "btc_lob_snapshots.csv",
@@ -107,8 +110,24 @@ def test_backtest_polymorphism():
     check("VWAP acumula posición larga", vwap_res.final_position > 0)
 
 
+def test_market_making_metrics():
+    print("4) Market making + fills + métricas")
+    mm = MarketMaker("SIM", quote_size=0.1, half_spread=0.3,
+                     inventory_skew=2.0)
+    res = MMSimulation(mm, s0=100.0, sigma=0.5, steps=200, seed=42).run()
+    check("market maker recibe fills simulados", res.n_fills > 0)
+    check("PnL completo y finito",
+          len(res.pnl) == 200 and math.isfinite(res.final_pnl))
+    check("inventario máximo finito y no trivial",
+          math.isfinite(res.max_inventory) and res.max_inventory > 0)
+    check("on_fill mantiene inventario coherente",
+          bool(res.inventory)
+          and math.isclose(mm.inventory, res.inventory[-1], abs_tol=1e-12))
+
+
 if __name__ == "__main__":
     test_book_metrics()
     test_matching()
     test_backtest_polymorphism()
+    test_market_making_metrics()
     print("\nTODO OK ✅  — el paquete de referencia funciona end-to-end.")

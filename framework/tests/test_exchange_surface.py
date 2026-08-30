@@ -189,11 +189,98 @@ assert hasattr(OrderType, 'LIMIT') and hasattr(OrderType, 'MARKET')
     assert proc.returncode == 0, proc.stdout + proc.stderr
 
 
+@pytest.mark.parametrize("lesson", range(4, 8))
+def test_early_snapshots_reject_nonfinite_or_nonpositive_numbers(
+    tmp_path: Path, lesson: int
+) -> None:
+    exercises = tmp_path / "exercises"
+    exercises.mkdir()
+    stage_package(lesson, str(exercises))
+    level_checks = """
+from exchange import Level
+for bad in bad_values:
+    for args in ((bad, 1.0), (100.0, bad)):
+        try:
+            Level(*args)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError(f"Level accepted {args!r}")
+""" if lesson >= 5 else ""
+    script = f"""
+from exchange import Order
+bad_values = [0.0, -1.0, float('nan'), float('inf'), -float('inf'), True, False]
+for bad in bad_values:
+    try:
+        Order('X', 'buy', bad, price=100.0)
+    except ValueError:
+        pass
+    else:
+        raise AssertionError(f'Order accepted size {{bad!r}}')
+    try:
+        Order('X', 'buy', 1.0, price=bad)
+    except ValueError:
+        pass
+    else:
+        raise AssertionError(f'Order accepted price {{bad!r}}')
+{level_checks}
+
+from exchange import Fill
+for bad in (True, False):
+    for args in ((1, 'X', 'buy', bad, 1.0), (1, 'X', 'buy', 100.0, bad)):
+        try:
+            Fill(*args)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError(f'Fill accepted {{args!r}}')
+"""
+    env = os.environ.copy()
+    env["PYTHONPATH"] = str(exercises)
+    proc = subprocess.run(
+        [sys.executable, "-c", script], cwd=exercises, env=env,
+        text=True, capture_output=True,
+    )
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+
+
+@pytest.mark.parametrize("lesson", range(4, 8))
+def test_early_snapshots_share_the_canonical_notional_fidelity_guard(
+    tmp_path: Path, lesson: int
+) -> None:
+    exercises = tmp_path / "exercises"
+    exercises.mkdir()
+    stage_package(lesson, str(exercises))
+    script = """
+from exchange import Fill, Order
+
+# Smallest positive float times 1.5 rounds to a non-zero subnormal with a
+# material relative error. Both public notional paths must reject that value.
+for product in (
+    lambda: Order('X', 'buy', 5e-324, price=1.5).notional(),
+    lambda: Fill(1, 'X', 'buy', 1.5, 5e-324).notional,
+):
+    try:
+        product()
+    except OverflowError:
+        pass
+    else:
+        raise AssertionError('unfaithful notional product was accepted')
+"""
+    env = os.environ.copy()
+    env["PYTHONPATH"] = str(exercises)
+    proc = subprocess.run(
+        [sys.executable, "-c", script], cwd=exercises, env=env,
+        text=True, capture_output=True,
+    )
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+
+
 def test_self_test_executes_against_each_lesson_snapshot(monkeypatch) -> None:
     lesson = copy.deepcopy(next(item for item in build_course.LESSONS if item["n"] == 5))
     exercise = next(
         item for item in lesson["aux"]
-        if item.get("title") == "A12. Los objetos reales del paquete"
+        if item.get("title") == "A12. Los objetos canónicos del paquete"
     )
     exercise["given"] = ""
     exercise["solution"] = (

@@ -1,16 +1,22 @@
-# Work 2 — Full-Course Desktop Scale-Out + Pedagogical Continuity Closure
+# Work 2 — Full-Course Scale-Out (informe histórico)
+
+> **Evidencia sustituida.** Este documento conserva las decisiones y resultados
+> del scale-out original, pero sus PASS, cifras y veredicto no son vigentes. La
+> reauditoría posterior, las correcciones, la integración con `origin/main` y el
+> backlog actual están en [`work1-work2-reaudit.md`](work1-work2-reaudit.md).
 
 ## Veredicto ejecutivo
 
-**GO técnico local y GO para PR/revisión; merge condicionado a CI remota green;
-NO-GO para declarar esta rama baseline docente V2.**
+**GO técnico local para push/PR; merge condicionado a CI remota green;
+NO-GO para declarar baseline docente V2 o evaluación oficial desplegable.**
 
-El curso completo pasa los gates automáticos de continuidad, API, generación,
-motor, desktop, mobile/WebKit, Pages y JupyterLite. La única condición que impide
-el GO docente es externa al código: no existe una dry-run humana cronometrada con
-el equipo real de aula. Las estimaciones contractuales y las pruebas geométricas
-no sustituyen esa evidencia. El protocolo y la deuda están registrados en
-[`work2-teaching-dry-run.md`](work2-teaching-dry-run.md).
+La remediación local pasa continuidad, API, generación, motor, assessment público,
+build estático y contratos de CI. La matriz Chromium/WebKit/JupyterLite debe volver a
+ejecutarse en GitHub Actions sobre el SHA integrado: la evidencia visual anterior
+se invalidó porque correspondía al Work 2 pre-remediación. El GO docente exige
+además una dry-run humana cronometrada con el equipo real de aula. La evaluación
+oficial sigue fail-closed hasta disponer de bancos nuevos en la futura fuente
+privada; el banco público solo sirve como práctica.
 
 ## Baseline y alcance
 
@@ -29,9 +35,20 @@ contrato pedagógico, la arquitectura, el runtime, los manifests, el checker y l
 artefactos de auditoría. `main` no había avanzado y no fue necesario reconciliar
 commits ni resetear. La suite heredada pasó antes del scale-out.
 
-El alcance conserva la arquitectura pública actual: no implementa la futura
-separación private/public, no cambia JupyterLite ni la publicación, y no añade un
-nuevo banco privado de evaluación.
+El alcance conserva el repositorio público actual y no implementa la futura
+separación private/public ni añade un banco privado de evaluación. La remediación
+sí endurece JupyterLite y hace que Pages dependa del workflow reusable de curso;
+eso no sustituye la topología de dos repositorios exigida por `ARCHITECTURE.md`.
+
+La auditoría posterior congeló Work 2 en
+`ee7df0863af141b7a43be44d2db5c269d68c12ab` y ejecutó la corrección en
+`fix/work2-audit-remediation`. Esa rama no reescribe Work 1/Work 2 ni habilita la
+topología privada sin autorización y repositorio destino disponibles.
+
+La reauditoría no acepta como evidencia los PASS históricos de Work 1 ni Work 2:
+cada gate se vuelve a derivar del checkout remediado. Los commits de motor y
+capstone hasta `c9666508` preceden al cierre de runtime, tiempos, desktop y Pages;
+el SHA final se registra en el handoff/PR una vez comprometido el informe.
 
 ## Checkpoints
 
@@ -45,8 +62,13 @@ nuevo banco privado de evaluación.
 | Hardening | `56e98f11` | CI, desktop, mobile, Pages, JupyterLite y artefactos visuales. |
 | Documentación | `1c43d140` | Autoría futura, mapa, README y gate de dry-run. |
 
-La validación final se ejecutó sobre el conjunto completo de estos checkpoints y
-la regeneración posterior produjo diff cero.
+Los checkpoints anteriores describen el Work 2 original, no la evidencia vigente.
+La remediación añade commits separados para assessment/capstone, motor, unidades
+A-S, CI/Pages, runtime y contrato pedagógico; el SHA integrado se fija en el PR.
+
+La validación original se ejecutó sobre el conjunto completo de estos checkpoints;
+sus conclusiones fueron después reabiertas por la auditoría y no se heredan como
+prueba de la rama remediada.
 
 ## Arquitectura final
 
@@ -56,7 +78,7 @@ la regeneración posterior produjo diff cero.
 siguen siendo JSON compatible, por lo que CI no necesita un parser adicional.
 
 - 93 conceptos estables.
-- 74 APIs visibles registradas.
+- 78 APIs visibles registradas.
 - 14 identificadores de notación.
 - 15 manifests completos.
 - 293 ejercicios clasificados deliberadamente.
@@ -96,9 +118,10 @@ assessment se generan o validan contra el mismo contrato. Los snapshots de L4,
 L5 y L7 impiden filtrar APIs futuras antes de L8. Desde L8, cada starter expone
 solo la superficie que el alumno ya ha construido.
 
-L15 conserva su UX lineal de examen. Pages construye HTML estático, notebooks y
-un JupyterLite offline con los archivos de cada lesson; no existe una segunda
-versión manual de los notebooks.
+L15 conserva una UX lineal de **práctica acumulativa pública**. No es el examen
+oficial y no acredita nota. Pages construye HTML estático, notebooks y un
+JupyterLite offline con los archivos de cada lesson; no existe una segunda versión
+manual de los notebooks.
 
 ## Decisiones pedagógicas y gaps cerrados
 
@@ -112,9 +135,27 @@ versión manual de los notebooks.
 | L11 mezclaba PnL y ejecución | Parent arrival mide la decisión completa; cada child decision mid mide sus fills; inventario se juzga aparte. |
 | L12 podía sobredimensionar la predicción | TWAP/VWAP y slicing son core; predicción dinámica es OPTIONAL, no evaluable y no requerida después. |
 | L13 no preparaba toda la notación de L14 | CARA e intensidad de fills quedan como preparación LIVE breve; L14 las recupera sin derivar HJB. |
-| `tau` y horizonte inconsistentes | El helper privado `_time_left()` calcula `tau = max(0, (horizon - time) / horizon)` en `[0, 1]`; `time` conserva una semántica pública estable y al vencimiento desaparece el skew temporal sin fingir liquidación. |
+| `tau` y horizonte inconsistentes | El helper privado `_time_left()` calcula `tau = clip((horizon - time) / horizon, 0, 1)`; `time` conserva una semántica pública estable y al vencimiento desaparece el skew temporal sin fingir liquidación. |
 | Capstone competía con la clase | Se separa como proyecto REQUIRED autónomo de 90 min, usando `mi_estrategia.py`; no ocupa el núcleo presencial. |
-| Assessment sin trazabilidad completa | Cada objetivo evaluable apunta a conocimiento LIVE/REQUIRED; OPTIONAL queda excluido. |
+| Capstone trivialmente puntuable | El starter queda deliberadamente incompleto; `capstone_check.py` no emite feedback ni código hasta implementar la estrategia. |
+| Capstone aún puntuable con `reservation_price(mid) = mid` | Una sonda conductual exige quotes finitas, ordenadas y un centro que responda al inventario en ambos sentidos. |
+| Código público tratado como acreditación | Se etiqueta como autoinforme no autenticado y el leaderboard no rankea nada sin verificación externa; el score queda como feedback formativo fuera del 10/20/40/30. |
+| Assessment sin trazabilidad completa | La práctica pública cubre L1–L14 y cinco tipos de pregunta con IDs semánticos; OPTIONAL queda excluido. Los bancos oficiales permanecen privados/fail-closed. |
+| Motor con fills/restos incoherentes | Las LIMIT propias no entran en el libro externo del backtest y no pueden autocruzarse; cancelación, fills parciales, VWAP, snapshots defensivos, símbolo y feedback de market making tienen invariantes y regresiones ejecutables. |
+| Inputs no finitos y perfiles VWAP inválidos | Órdenes, niveles, fills, books, portfolio, scoring, quotes y parámetros rechazan NaN/infinito; VWAP exige horizonte entero positivo, perfil exacto, no negativo y normalizado. |
+| Ciclos de vida y estados contaminados | `Backtest` y `MMSimulation` son single-use; exigen market/strategy frescos, bloquean acciones desconocidas y comprueban sincronía dinámica del inventario. |
+| Modelo A-S contradictorio | Seed entero reproducible y un único contrato `sigma/horizon/kappa` entre estrategia y simulador, sin filtrar la clase L14 al snapshot L13. |
+| Tiempos de ruta mixta daban falsos verdes | `scene.duration_minutes` presupuesta la ruta base y cada override declara `stage.duration_minutes` aditivo; 14 identidades quedan ligadas exactamente a su espejo autónomo. |
+| Runtime validaba una ruta distinta de la visible | `stage.route` prevalece, deep links frescos amplían alcance, ruta/minutos/estado/UI/progreso se sincronizan y foco/scroll/clipping fallan cerrado. |
+| Teclado y modales filtraban acciones al fondo | Un coordinador único conserva/restaura el `inert` previo, impide dos cajones abiertos, bloquea fondo/shortcuts, respeta scroll nativo y prueba ambos handoffs, foco y modal mobile/estudio. |
+| Breakpoint 901–960 heredaba layout flex | Aula restablece explícitamente `display:grid`; la matriz prueba 900, 901, 920, 960 y 961 px. |
+| Evidencia desktop podía pasar incompleta | Plan cerrado de 132 registros/661 identidades, 32 hashes, SHA contra `HEAD`, 9 capturas mínimas y validador que recalcula IDs, secuencias, errores y browser. |
+| `Market.from_csv` se enseñaba sin contrato | Queda registrada como classmethod REQUIRED de L9, incluida en superficie, objetivo, binding de paquete y reporte derivado. |
+| Playwright se instalaba fuera de lockfile | Node 20.19.4, npm 10.8.2 y Playwright 1.62.1 quedan declarados; `npm ci` gobierna los workflows de curso y Pages. |
+| JupyterLite podía publicarse sin kernel Python u offline falso | Extensión exacta más Pyodide 314.0.1 empaquetado same-origin con SHA-256; el E2E aborta cualquier request externa. |
+| Pages copiaba configuración raíz accidental | Proyección cerrada excluye `.vscode`, `package*.json`, guiones y `CLAUDE.md`; el checker falla si reaparecen. |
+| Datos sintéticos descritos como reales | Plan, guiones, docs y HTML dicen “sintéticos/reproducibles”; una regresión impide recuperar el claim falso. |
+| Deploy desacoplado de la suite fuente | `pages/package` necesita éxito del workflow reusable `curso` del mismo evento/SHA. |
 | Referencias históricas y nombres antiguos | Regeneración y checker de referencias/anchors sobre L1–L15; no quedan referencias obsoletas conocidas. |
 
 ## APIs normalizadas
@@ -125,7 +166,7 @@ versión manual de los notebooks.
 | L5 | `Level`, `OrderBook`, properties de precio, `imbalance(levels)`, `PositionTracker`. |
 | L7 | `OrderBook.from_snapshot`, `depth`, `microprice`; frontera de datos externos. |
 | L8 | `MatchingEngine.process(order, book, timestamp=None) -> list[Fill]`, atomicidad y políticas. |
-| L9 | `Market.book`, `step`, `submit`, `reset`, `timestamp`, `sample` y property defensiva `snapshots`. |
+| L9 | `Market.book`, `step`, `submit`, `reset`, `timestamp`, classmethods `from_csv`/`sample` y property defensiva `snapshots`. |
 | L10 | Tipos públicos `Strategy`, `NewOrder`, `Cancel`, `Action`, `Backtest`, `BacktestResult` y lifecycle. |
 | L12 | `VWAPStrategy` con tamaño, horizonte y perfil normalizado. |
 | L13 | `MarketMaker`, inventario público, `MMSimulation` y `SimResult`. |
@@ -139,28 +180,32 @@ conocido.
 
 | Lesson | Construcción cerrada | LIVE presentación | Práctica guiada | REQUIRED autónomo | OPTIONAL |
 |---|---|---:|---:|---:|---:|
-| L1 | dato → cálculo → decisión | 20 | 20 | 58 | 44 |
-| L2 | duplicación → funciones → book compartido | 20 | 20 | 58 | 41 |
-| L3 | notebook → módulo y errores de dominio | 20 | 20 | 52 | 5 |
-| L4 | dict/resultado → `Order` y `Fill` | 20 | 20 | 36 | 20 |
-| L5 | composición, `OrderBook` y contabilidad | 20 | 20 | 34 | 15 |
-| L6 | herencia, ABC y contrato polimórfico | 20 | 20 | 52 | 10 |
-| L7 | snapshot real → frontera de dominio | 20 | 20 | 42 | 10 |
-| L8 | PLAN → VALIDATE → COMMIT y atomicidad | 20 | 20 | 56 | 15 |
-| L9 | estado + dinámica + tiempo en `Market` | 20 | 20 | 34 | 10 |
-| L10 | decisión/ejecución y runner intercambiable | 20 | 20 | 12 | 5 |
-| L11 | señal, benchmarks, slippage e inventario | 20 | 20 | 14 | 10 |
-| L12 | impacto → slicing → TWAP/VWAP | 20 | 20 | 14 | 35 |
-| L13 | spread, adverse selection, inventario y skew | 20 | 20 | 19 | 0 |
-| L14 | heurística → reservation price/optimal spread | 22 | 20 | 125 | 10 |
+| L1 | dato → cálculo → decisión | 20 | 19 | 78 | 45 |
+| L2 | duplicación → funciones → book compartido | 20 | 18 | 80 | 41 |
+| L3 | notebook → módulo y errores de dominio | 20 | 18 | 75 | 5 |
+| L4 | dict/resultado → `Order` y `Fill` | 20 | 20 | 57 | 20 |
+| L5 | composición, `OrderBook` y contabilidad | 20 | 20 | 52 | 15 |
+| L6 | herencia, ABC y contrato polimórfico | 20 | 20 | 74 | 10 |
+| L7 | snapshot sintético → frontera de dominio | 20 | 19 | 63 | 10 |
+| L8 | PLAN → VALIDATE → COMMIT y atomicidad | 20 | 19 | 77 | 15 |
+| L9 | estado + dinámica + tiempo en `Market` | 20 | 20 | 44 | 10 |
+| L10 | decisión/ejecución y runner intercambiable | 20 | 21 | 38 | 5 |
+| L11 | señal, benchmarks, slippage e inventario | 20 | 20 | 33 | 10 |
+| L12 | impacto → slicing → TWAP/VWAP | 20 | 20 | 22 | 47 |
+| L13 | spread, adverse selection, inventario y skew | 20 | 20 | 27 | 0 |
+| L14 | heurística → reservation price/optimal spread | 22 | 21 | 133 | 10 |
 | L15 | assessment acumulativo lineal, 40 min | — | — | — | — |
 
-Todos los valores son minutos. L14 contiene 35 min de ejercicios REQUIRED y un
-proyecto REQUIRED separado de 90 min. La carga extraordinaria es visible y no se
-presenta como trabajo doméstico incidental. L12 reserva sus 35 min OPTIONAL para
-predicción dinámica de volumen.
+Todos los valores son minutos; la práctica guiada conserva la suma exacta
+18–22 de `exercise_routes.yml`, sin redondearla a 20. Las demás cargas suman
+documentos, ejercicios, quiz y proyecto.
+L14 contiene 35 min de ejercicios REQUIRED, un quiz de 8 min y una única
+actividad de capstone de 90 min, representada como documento y proyecto con el
+mismo `overlap_id` para no contarla dos veces. La carga extraordinaria es visible
+y no se presenta como trabajo doméstico incidental. L12 suma 35 min de ejercicios
+OPTIONAL y 12 min de documento OPTIONAL para predicción dinámica de volumen.
 
-## Validación ejecutada
+## Validación ejecutada en el Work 2 original (sustituida)
 
 | Gate | Resultado final |
 |---|---|
@@ -168,21 +213,21 @@ predicción dinámica de volumen.
 | Fixtures positivos/negativos | Futuro, ruptura de API, REQUIRED→OPTIONAL, referencia inexistente, assessment OPTIONAL y eliminación de introducción detectados; recall válido y curso real pasan. |
 | Reportes generados | `pedagogy_reports.py --check`: diff cero. |
 | Ejercicios | 293 ejercicios en 14 lessons autovalidados. |
-| Tests Python | 117 passed. |
+| Tests Python | 242 passed en la suite integrada. |
 | Motor | Smoke end-to-end: green. |
-| Scripts consolidados | 16/16, L1–L14: green; capstone 90.2/100. |
-| Regeneración | Curso + examen (40 preguntas) regenerados; `git diff --exit-code`: green. |
-| E2E documental | L1–L14 estudio/aula/mobile, simuladores y L15 lineal: green. |
-| Desktop | 115 checks, 0 fallos, cada lesson L1–L14 y cada estado LIVE. |
-| Pages estático | 54 HTML, 29 notebooks y base path: green. |
-| JupyterLite offline | L1–L14 abren y ejecutan un smoke Python específico de la lesson en WebKit. |
+| Scripts consolidados | 16/16, L1–L14: green; el starter termina sin puntuación e indica qué implementar. |
+| Regeneración | Curso, reportes y práctica pública de 40 preguntas regenerados sin drift. |
+| Contratos Node | 17/17 tests: 7 de Pages y 10 del contrato desktop/evidencia. |
+| E2E documental | Harness y runtime parsean; la ejecución Chromium integrada queda pendiente de Actions. |
+| Desktop | Plan local validado: 132 IDs únicos, 661 estados, 14 overrides y 32 inputs; ejecución Chromium integrada pendiente de Actions. |
+| Pages estático | Build/link/base-path local green: 54 HTML/29 notebooks; configuración raíz excluida. |
+| JupyterLite offline | Pyodide 314.0.1 same-origin (13 archivos) con archive SHA-256; matriz WebKit L1–L14 pendiente de Actions. |
 | Higiene | `git diff --check`: green. |
 
-El test de Pages usa contextos limpios por notebook y espera la señal accesible
-`Python (Pyodide) | Idle` antes de ejecutar. Si aun así una celda no produce el
-resultado esperado, la repite de forma acotada; si Pyodide emite un error
-asíncrono, repite el notebook completo en otro contexto y solo acepta una segunda
-ejecución sin errores. No se filtra ni se ignora el error persistente.
+El harness vigente espera una señal estable de kernel ready/idle y envía
+exactamente un dispatch por contexto. Un timeout o error descarta el contexto
+completo y reintenta el notebook en uno nuevo; nunca envía una segunda ejecución
+al mismo worker. La evidencia exacta y vigente se describe en la reauditoría.
 
 ## Matriz de viewports
 
@@ -201,46 +246,40 @@ demuestra que el detector falla cuando debe.
 
 ## Artefactos visuales
 
-El audit completo está en
-[`desktop-audit.json`](../artifacts/work2-full-course-scaleout/desktop-audit.json)
-y registra los 115 checks con lesson, viewport, modo, escena y etapa.
-
-Muestra visual deliberadamente amplia:
-
-- [Hero L1](../artifacts/work2-full-course-scaleout/visual-hero-l1-l01-challenge.png)
-- [Recall L2](../artifacts/work2-full-course-scaleout/visual-recall-l2-l02-recall.png)
-- [Code-state L7](../artifacts/work2-full-course-scaleout/visual-code-state-l7-l07-build.png)
-- [Simulador L8](../artifacts/work2-full-course-scaleout/visual-simulator-l8-l08-simulator.png)
-- [Arquitectura L10](../artifacts/work2-full-course-scaleout/visual-architecture-l10-l10-contract.png)
-- [Quiz L11](../artifacts/work2-full-course-scaleout/visual-quiz-l11-l11-quiz.png)
-- [Bridge L13](../artifacts/work2-full-course-scaleout/visual-bridge-l13-l13-bridge.png)
-- [Escena matemática L14](../artifacts/work2-full-course-scaleout/visual-mathematical-l14-l14-formulas.png)
-- [Fixture negativa de overflow](../artifacts/work2-full-course-scaleout/fixture-intermediate-overflow-detected.png)
-
-La revisión cualitativa recorrió la narrativa L1→L15 y revisó las ocho formas
-visuales. Además se operaron en navegador el simulador real de L8 y el notebook
-JupyterLite de L14. No se observan clipping sistemático, controles perdidos ni un
-salto conceptual pendiente conocido.
+Los diez artefactos versionados del Work 2 original se eliminaron porque no
+contenían SHA, versión de navegador ni hashes de inputs y ya no representaban el
+código remediado. `desktop_e2e.js` limpia su directorio antes de cada ejecución:
+solo crea `desktop-audit.json` con `completed:true` y un campo `passed` explícito
+si termina los 132 registros/661 estados exactos; un fallo temprano deja
+únicamente `desktop-audit-incomplete.json` con fase, check activo, resultados
+parciales, SHA y hashes. Un segundo proceso, independiente de Playwright,
+recalcula `HEAD`, cada `check_id`, las 661 identidades ordenadas, errores, browser,
+9 capturas y los 32 inputs antes del upload. La
+evidencia válida de esta rama será el artefacto inmutable de Actions asociado al
+SHA del PR.
 
 ## Deuda, riesgos y discrepancias con Work 1
 
 ### Deuda técnica
 
-- El repositorio sigue siendo único y el generador sigue cubriendo muchos
-  artefactos, decisión deliberada para no introducir la topología futura en este
-  Work.
+- El repositorio sigue siendo único y público. La fuente privada autoritativa,
+  manifest de publicación, allowlist, leakage gate e historial saneado de
+  `ARCHITECTURE.md` no pueden implementarse hasta crear/autorizar
+  `algo_trading_intro_source` y rotar material de assessment ya divulgado.
 - El arranque frío de Pyodide puede ser lento o emitir un error transitorio; el
-  gate exige una ejecución limpia y mantiene el fallo si se reproduce.
-- La ejecución remota de GitHub Actions queda pendiente de push/PR; su equivalente
-  local completo está verde.
+  gate espera kernel ready/idle, reintenta la lesson completa en contexto nuevo y
+  mantiene el fallo si se reproduce.
+- La ejecución remota de GitHub Actions y la configuración administrativa de
+  checks requeridos/branch protection quedan pendientes del push/PR.
 
 ### Deuda pedagógica
 
 - **Bloqueante:** falta dry-run docente humana, cronometrada y con proyector real.
 - L1–L9 tienen cargas REQUIRED autónomas apreciables; están explicitadas, pero la
   dry-run debe confirmar ritmo, fatiga y expectativa real del alumnado.
-- L14 tiene 125 min REQUIRED por diseño (35 min de ejercicios + capstone de 90);
-  debe comunicarse como proyecto separado y validarse con alumnos reales.
+- L14 tiene 133 min REQUIRED por diseño (35 min de ejercicios + capstone de 90 +
+  quiz de 8); debe comunicarse como proyecto separado y validarse con alumnos
+  reales.
 
 ### Discrepancias con Work 1
 
@@ -251,16 +290,22 @@ salto conceptual pendiente conocido.
 - La deuda de cronometraje que Work 1 aceptó temporalmente no se ha podido cerrar
   sin participación humana. En lugar de ocultarla, este informe convierte el
   veredicto docente en NO-GO.
-- No hay discrepancia arquitectónica material: se conservan source of truth,
-  modos, fallback, progreso, layouts, JupyterLite y Pages.
+- Sí queda una discrepancia arquitectónica externa y bloqueante: la topología
+  private→allowlist→public aún no existe y el material históricamente público se
+  considera divulgado. Este Work no puede cerrarla sin repositorio/credenciales
+  autorizados y bancos nuevos.
 
 ## Recomendación final
 
-**GO técnico local / GO para PR:** la rama cumple los criterios automatizables de
-Work 2 y está lista para revisión y CI remota. **NO-GO de merge** hasta que GitHub
-Actions confirme la misma matriz en remoto.
+**GO técnico local / GO para push y PR:** la rama cumple los gates locales
+ejecutables. **NO-GO de merge** hasta que los workflows `curso` y `pages`
+confirmen la matriz integrada en remoto y el PR exija esos checks.
 
 **NO-GO docente:** no debe etiquetarse todavía como baseline docente V2. Para
 cambiar el veredicto a GO, el owner debe ejecutar y registrar el protocolo de
 [`work2-teaching-dry-run.md`](work2-teaching-dry-run.md), empezando por L1, L8,
 L10 y L14, corregir cualquier desviación y repetir la lesson afectada.
+
+**NO-GO de evaluación oficial/publicación segura:** el examen final obligatorio y
+los tests continuos requieren bancos privados nuevos. La práctica pública no puede
+reutilizarse como oficial; la migración private→public queda como Work separado.

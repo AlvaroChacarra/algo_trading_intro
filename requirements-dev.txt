@@ -1,4 +1,3 @@
 # Herramientas del profesor / CI (no necesarias para cursar).
 -r requirements.txt
-pytest>=8.0.0        # tests del motor:        cd framework && pytest tests/
-playwright>=1.40.0   # verificación e2e de los documentos (CI)
+pytest==8.4.2        # tests del motor/Pages:  cd framework && pytest tests/

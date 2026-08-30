@@ -303,20 +303,37 @@ async function studySmoke(page, item, errors) {
       const element = document.querySelector(selector);
       return !element || needles.every(needle => element.textContent.includes(needle));
     });
-    const optionalScenes = contract.scenes.filter(scene => scene.route === 'OPTIONAL');
+    const states = contract.scenes.flatMap(scene => {
+      const stages = scene.stages?.length ? scene.stages : [{ id: 'stage', route: scene.route }];
+      return stages.map(stage => ({ scene, stage, route: stage.route || scene.route }));
+    });
+    const stateHidden = state => {
+      const scene = document.getElementById(state.scene.dom_id);
+      if (!scene || scene.hidden) return true;
+      if (state.stage.dom_stage === undefined) return false;
+      const wanted = String(state.stage.dom_stage);
+      const nodes = [...scene.querySelectorAll('.step,.fig-stage')]
+        .filter(node => node.dataset.stage === wanted);
+      return nodes.length > 0 && nodes.every(node => node.hidden || node.inert
+        || node.getAttribute('aria-hidden') === 'true');
+    };
+    const runtimeState = window.LEARNING_RUNTIME.getState();
     return {
       runtime: document.body.dataset.runtimeVersion === '2',
       contractError: document.body.dataset.runtimeContractError || null,
       scenes: contract.scenes.length,
       officialScope: document.body.dataset.routeScope === 'LIVE+REQUIRED',
-      optionalHidden: optionalScenes.every(scene => document.getElementById(scene.dom_id)?.hidden),
+      optionalHidden: states.filter(state => state.route === 'OPTIONAL').every(stateHidden),
+      stateSynchronized: runtimeState.scene === document.body.dataset.currentSceneId
+        && runtimeState.stage === document.body.dataset.currentStageId
+        && runtimeState.route === document.body.dataset.currentStageRoute,
       cumulative,
       horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 2,
     };
   });
   return { ...result, simulator, quiz, errors: [...errors],
     passed: result.runtime && !result.contractError && result.scenes > 0 && result.officialScope
-      && result.optionalHidden && result.cumulative && !result.horizontalOverflow
+      && result.optionalHidden && result.stateSynchronized && result.cumulative && !result.horizontalOverflow
       && simulator.passed && quiz.passed && !errors.length };
 }
 
@@ -325,10 +342,16 @@ async function aulaSmoke(page, item, errors) {
   await page.waitForFunction(() => window.LEARNING_RUNTIME?.mode === 'aula');
   const count = await page.evaluate(() => {
     const contract = JSON.parse(document.querySelector('#pedagogy-contract').textContent);
-    return contract.scenes.filter(scene => scene.route === 'LIVE').reduce((total, scene) =>
-      total + (scene.stages?.filter(stage => (stage.route || scene.route) === 'LIVE').length || 1), 0);
+    return contract.scenes.reduce((total, scene) => {
+      const stages = scene.stages?.length ? scene.stages : [{ route: scene.route }];
+      return total + stages.filter(stage => (stage.route || scene.route) === 'LIVE').length;
+    }, 0);
   });
-  for (let index = 1; index < count; index++) await page.keyboard.press('ArrowRight');
+  // The lesson simulators are allowed to own arrow keys. Full keyboard arbitration is
+  // covered by desktop_e2e.js; this smoke traverses the runtime through its visible
+  // classroom control so lesson-specific handlers cannot turn coverage into a false red.
+  const next = page.locator('#lr-controls .lr-next');
+  for (let index = 1; index < count; index++) await next.click();
   const result = await page.evaluate(expected => ({
     expected,
     activeScenes: [...document.querySelectorAll('body > .lr-scene')]
@@ -387,7 +410,9 @@ async function mobileSmoke(browser, item) {
     });
   }
   await page.waitForTimeout(25);
-  const result = await page.evaluate(() => ({
+  const result = await page.evaluate(() => {
+    const state = window.LEARNING_RUNTIME.getState();
+    return {
     requested: document.body.dataset.requestedMode,
     mode: document.body.dataset.learningMode,
     fallback: document.body.classList.contains('lr-mobile-fallback'),
@@ -395,9 +420,14 @@ async function mobileSmoke(browser, item) {
     toolbar: getComputedStyle(document.querySelector('#lr-mobile-toolbar')).display !== 'none',
     reducedMotion: matchMedia('(prefers-reduced-motion: reduce)').matches,
     horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 2,
-  }));
+    stateSynchronized: state.mode === 'estudio' && state.requestedMode === 'aula'
+      && state.scene === document.body.dataset.currentSceneId
+      && state.stage === document.body.dataset.currentStageId
+      && state.route === document.body.dataset.currentStageRoute,
+  };});
   result.passed = result.requested === 'aula' && result.mode === 'estudio' && result.fallback
-    && result.navHidden && result.toolbar && result.reducedMotion && !result.horizontalOverflow
+    && result.navHidden && result.toolbar && result.reducedMotion && result.stateSynchronized
+    && !result.horizontalOverflow
     && simulator.passed && orderWorkshop.passed && !errors.length;
   await context.close();
   return { ...result, simulator, orderWorkshop, errors };
@@ -405,11 +435,15 @@ async function mobileSmoke(browser, item) {
 
 (async () => {
   const browser = await chromium.launch(BROWSER_OPTIONS);
-  const desktop = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  // Study mode persists the last visible state by design. Keep classroom smoke in a
+  // separate storage partition so it always exercises a fresh LIVE route instead of
+  // inheriting an arbitrary study position from the preceding page.
+  const studyDesktop = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  const aulaDesktop = await browser.newContext({ viewport: { width: 1440, height: 900 } });
   let failures = 0;
 
   for (const item of docs) {
-    const studyPage = await desktop.newPage();
+    const studyPage = await studyDesktop.newPage();
     const studyErrors = listen(studyPage);
     const study = await studySmoke(studyPage, item, studyErrors);
     console.log(`${study.passed ? '✓' : '✗'} L${item.number} estudio`);
@@ -419,7 +453,7 @@ async function mobileSmoke(browser, item) {
     }
     await studyPage.close();
 
-    const aulaPage = await desktop.newPage();
+    const aulaPage = await aulaDesktop.newPage();
     const aulaErrors = listen(aulaPage);
     const aula = await aulaSmoke(aulaPage, item, aulaErrors);
     console.log(`${aula.passed ? '✓' : '✗'} L${item.number} aula LIVE states=${aula.expected}`);
@@ -437,7 +471,7 @@ async function mobileSmoke(browser, item) {
     }
   }
 
-  const indexPage = await desktop.newPage();
+  const indexPage = await studyDesktop.newPage();
   const indexErrors = listen(indexPage);
   await indexPage.goto(url(path.join(ROOT, 'index.html')));
   const index = await indexPage.evaluate(() => ({
@@ -451,7 +485,7 @@ async function mobileSmoke(browser, item) {
   if (!index.passed) failures++;
   await indexPage.close();
 
-  const examPage = await desktop.newPage();
+  const examPage = await studyDesktop.newPage();
   const examErrors = listen(examPage);
   await examPage.goto(url(path.join(ROOT, '15-final-exam', 'examen.html'), '?mode=aula'));
   const exam = await examPage.evaluate(() => ({
@@ -466,7 +500,8 @@ async function mobileSmoke(browser, item) {
   if (!exam.passed) failures++;
   await examPage.close();
 
-  await desktop.close();
+  await studyDesktop.close();
+  await aulaDesktop.close();
   await browser.close();
   process.exit(failures ? 1 : 0);
 })().catch(error => { console.error(error); process.exit(1); });
