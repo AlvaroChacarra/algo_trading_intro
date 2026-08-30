@@ -6,6 +6,7 @@ const test = require('node:test');
 const evidenceContract = require('./desktop_evidence_contract');
 
 const {
+  browserErrorText,
   countMarkerOccurrences,
   evidenceTargetIdentity,
   executeSmokeOnce,
@@ -286,6 +287,12 @@ test('offline routing permits local/data/blob/about and blocks every remote orig
   assert.deepEqual(events.filter(event => event.startsWith('close:1008:')), [
     'close:1008:wss://stream.example/quotes',
   ]);
+});
+
+test('browser error diagnostics never collapse to undefined', () => {
+  assert.equal(browserErrorText(new Error('worker failed')), 'worker failed');
+  assert.equal(browserErrorText({ stack: 'worker stack' }), 'worker stack');
+  assert.equal(browserErrorText(undefined), 'unknown browser error');
 });
 
 test('WORK2_PAGES_LESSON selects exactly one lab shard and rejects bad input', () => {

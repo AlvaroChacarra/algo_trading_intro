@@ -390,6 +390,12 @@ function isAllowedOfflineRequest(requestUrl, siteOrigin) {
   return false;
 }
 
+function browserErrorText(error) {
+  const candidates = [error && error.message, error && error.stack, String(error)];
+  return candidates.find(value => typeof value === 'string' && value.trim() &&
+    value !== 'undefined' && value !== '[object Object]') || 'unknown browser error';
+}
+
 async function installOfflineRouting(context, origin) {
   const externalRequests = [];
   const siteOrigin = new URL(origin).origin;
@@ -715,7 +721,25 @@ async function runLabAttempt(context, origin, target, plan) {
     const pageErrors = [];
     const externalRequests = await installOfflineRouting(context, origin);
     const labPage = await context.newPage();
-    labPage.on('pageerror', error => pageErrors.push(error.message));
+    labPage.on('pageerror', error => {
+      const message = browserErrorText(error);
+      pageErrors.push(message);
+      console.error(`JupyterLite pageerror: ${message}`);
+    });
+    labPage.on('console', message => {
+      if (message.type() === 'error') {
+        console.error(`JupyterLite console.error: ${message.text() || 'empty console message'}`);
+      }
+    });
+    labPage.on('requestfailed', request => {
+      console.error(`JupyterLite request failed: ${request.url()} ` +
+        `${request.failure() && request.failure().errorText || 'unknown failure'}`);
+    });
+    labPage.on('response', response => {
+      if (response.status() >= 400) {
+        console.error(`JupyterLite HTTP ${response.status()}: ${response.url()}`);
+      }
+    });
     const result = {
       reason: '',
       staticOk: false,
@@ -1064,6 +1088,7 @@ async function main() {
 }
 
 module.exports = {
+  browserErrorText,
   countMarkerOccurrences,
   evidenceTargetIdentity,
   executeSmokeOnce,
