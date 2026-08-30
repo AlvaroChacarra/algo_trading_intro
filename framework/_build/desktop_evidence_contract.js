@@ -957,7 +957,7 @@ function flowStatePassed(state, expected, index, total) {
   return state?.evidenceSchema === 'desktop-flow-state/v3'
     && Number.isInteger(state.viewport?.width) && state.viewport.width > 0
     && Number.isInteger(state.viewport?.height) && state.viewport.height > 0
-    && state.activeSceneCount === 1 && visibilityEvidencePassed(state.sceneVisibility)
+    && state.activeSceneCount === 0 && visibilityEvidencePassed(state.sceneVisibility)
     && positiveBox(state.sceneBox) && essentialEvidencePassed(state)
     && stageOverflowEvidencePassed(state) && rawPersistence
     && state.scene === expected.scene && state.stage === expected.stage

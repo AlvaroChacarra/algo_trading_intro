@@ -132,7 +132,7 @@ $$('#cross-side button').forEach(b=>b.addEventListener('click',()=>{$$('#cross-s
 let sim={type:'market',side:'buy',sizeI:1,priceI:1,phase:0};
 function scenario(){const pi=sim.type==='market'?-1:sim.priceI;return D.scenarios.find(x=>x.key===`${sim.side}:${sim.type}:${sim.sizeI}:${pi}`);}
 function resetPhase(){sim.phase=0;paintSim();}
-function paintSim(){const s=scenario();$('#sim-size-v').textContent=s.size;$('#sim-price-row').style.display=sim.type==='market'?'none':'flex';$('#sim-price-v').textContent=s.price??'MKT';
+function paintSim(){const s=scenario();$('#sim-size-v').textContent=s.size;$('#sim-price-row').classList.toggle('hidden',sim.type==='market');$('#sim-price-v').textContent=s.price??'MKT';
   const phases=[['1 · SELECT','lado contrario'],['2 · PLAN',`${s.planned.length} niveles`],['3 · VALIDATE',sim.type==='fok'?(s.fills.length?'FOK completa':'FOK aborta'):'ok'],['4 · COMMIT',`${s.fills.length} fills`]];
   $('#sim-phases').innerHTML=phases.map((x,i)=>`<div class="trace-step ${i<sim.phase?'ok':i===sim.phase?'active':''}"><span>${x[0]}</span><span class="trace-meta">${x[1]}</span></div>`).join('');
   const committed=sim.phase>=3;$('#sim-book-label').textContent=committed?'after':'before';$('#sim-book').innerHTML=bookHTML(committed?s.after:s.before,sim.phase===0?(sim.side==='buy'?'asks':'bids'):null);

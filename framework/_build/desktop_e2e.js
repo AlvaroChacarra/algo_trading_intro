@@ -1160,7 +1160,16 @@ async function inspectFlowState(page, expected, position, total) {
       const overflowY = scrolling.scrollHeight > scrolling.clientHeight + tolerance;
       const toolbar = document.getElementById('lr-mobile-toolbar');
       const toolbarBox = toolbar && rendered(toolbar) ? toolbar.getBoundingClientRect() : null;
-      const safeTop = Math.max(0, toolbarBox?.bottom || 0);
+      const stickyBottoms = [...document.querySelectorAll('.figwrap')].filter(item => {
+        if (item.contains(node) || !rendered(item) || !targetBox) return false;
+        const style = getComputedStyle(item);
+        const box = item.getBoundingClientRect();
+        return ['sticky', 'fixed'].includes(style.position) && Number(style.zIndex || 0) > 0
+          && box.bottom > 0 && box.top < innerHeight
+          && box.right > targetBox.left + tolerance && box.left < targetBox.right - tolerance
+          && box.bottom > targetBox.top + tolerance && box.top < targetBox.bottom - tolerance;
+      }).map(item => item.getBoundingClientRect().bottom);
+      const safeTop = Math.max(0, toolbarBox?.bottom || 0, ...stickyBottoms);
       const originallyClipped = Boolean(targetBox
         && (targetBox.top < safeTop - tolerance || targetBox.bottom > innerHeight + tolerance));
       const absoluteTop = targetBox ? targetBox.top + scrollY : 0;

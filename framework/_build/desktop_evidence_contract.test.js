@@ -101,7 +101,7 @@ function flowStateFixture() {
   const progress = rawProgress();
   return { expected, state: { expected,
     evidenceSchema: 'desktop-flow-state/v3', viewport: { width: 1440, height: 900 },
-    activeSceneCount: 1, sceneVisibility: rawVisibility(), sceneBox: rawBox(),
+    activeSceneCount: 0, sceneVisibility: rawVisibility(), sceneBox: rawBox(),
     scene: expected.scene, stage: expected.stage, sceneRoute: expected.sceneRoute,
     stageRoute: expected.route, scope: 'LIVE', position: 1, total: 1,
     targetMatches: true, rendered: true, sceneHorizontalInside: true, horizontalOverflow: false,
@@ -307,6 +307,9 @@ test('desktop and flow semantics require complete raw visibility, opacity, and o
   const hiddenSceneFlow = structuredClone(flow.state);
   hiddenSceneFlow.sceneVisibility.effectiveOpacity = 0;
   assert.equal(contract.flowStatePassed(hiddenSceneFlow, flow.expected, 0, 1), false);
+  const classroomSceneInLinearFlow = structuredClone(flow.state);
+  classroomSceneInLinearFlow.activeSceneCount = 1;
+  assert.equal(contract.flowStatePassed(classroomSceneInLinearFlow, flow.expected, 0, 1), false);
 });
 
 test('declared keyboard-accessible scrollers prove reachability without hiding real clipping', () => {
@@ -929,4 +932,5 @@ test('runner and independent replay retain clean navigation, full plans, determi
   assert.match(runner, /current\.matches\('details:not\(\[open\]\)'\)/);
   assert.match(replay, /current\.matches\('details:not\(\[open\]\)'\)/);
   assert.match(runner, /documentScrollerEvidence[\s\S]*targetReachable/);
+  assert.match(runner, /querySelectorAll\('\.figwrap'\)[\s\S]*\['sticky', 'fixed'\]/);
 });

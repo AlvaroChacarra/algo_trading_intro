@@ -831,7 +831,7 @@ body.lr-modal-open::before{content:"";position:fixed;inset:0;z-index:69;backgrou
     <div class="mode-switch" id="sim-type"><button class="on" data-type="market">MARKET</button><button data-type="limit">LIMIT</button><button data-type="ioc">IOC</button><button data-type="fok">FOK</button></div>
     <div class="simrow"><label>side</label><div class="toggle" id="sim-side"><button class="on" data-side="buy">BUY</button><button data-side="sell">SELL</button></div></div>
     <div class="simrow"><label for="sim-size">size</label><input type="range" id="sim-size" min="0" max="2" value="1" step="1"><span class="spread-val"><b id="sim-size-v"></b> BTC</span></div>
-    <div class="simrow" id="sim-price-row"><label for="sim-price">limit price</label><input type="range" id="sim-price" min="0" max="2" value="1" step="1"><span class="spread-val"><b id="sim-price-v"></b></span></div>
+    <div class="simrow hidden" id="sim-price-row"><label for="sim-price">limit price</label><input type="range" id="sim-price" min="0" max="2" value="1" step="1"><span class="spread-val"><b id="sim-price-v"></b></span></div>
     <div class="btnrow"><button class="btn" id="sim-next">▶ Siguiente transición</button><button class="btn ghost" id="sim-reset">↻</button></div>
     <div id="sim-phases" class="execution-trace"></div>
     <div class="state-inspector"><div class="state-panel"><div class="state-title">book <span id="sim-book-label">before</span></div><div id="sim-book" class="mini-book"></div></div><div class="state-panel"><div class="state-title">plan / fills <span>estado</span></div><div id="sim-detail" class="state-list"></div></div></div>
@@ -1268,7 +1268,7 @@ $$('#cross-side button').forEach(b=>b.addEventListener('click',()=>{$$('#cross-s
 let sim={type:'market',side:'buy',sizeI:1,priceI:1,phase:0};
 function scenario(){const pi=sim.type==='market'?-1:sim.priceI;return D.scenarios.find(x=>x.key===`${sim.side}:${sim.type}:${sim.sizeI}:${pi}`);}
 function resetPhase(){sim.phase=0;paintSim();}
-function paintSim(){const s=scenario();$('#sim-size-v').textContent=s.size;$('#sim-price-row').style.display=sim.type==='market'?'none':'flex';$('#sim-price-v').textContent=s.price??'MKT';
+function paintSim(){const s=scenario();$('#sim-size-v').textContent=s.size;$('#sim-price-row').classList.toggle('hidden',sim.type==='market');$('#sim-price-v').textContent=s.price??'MKT';
   const phases=[['1 · SELECT','lado contrario'],['2 · PLAN',`${s.planned.length} niveles`],['3 · VALIDATE',sim.type==='fok'?(s.fills.length?'FOK completa':'FOK aborta'):'ok'],['4 · COMMIT',`${s.fills.length} fills`]];
   $('#sim-phases').innerHTML=phases.map((x,i)=>`<div class="trace-step ${i<sim.phase?'ok':i===sim.phase?'active':''}"><span>${x[0]}</span><span class="trace-meta">${x[1]}</span></div>`).join('');
   const committed=sim.phase>=3;$('#sim-book-label').textContent=committed?'after':'before';$('#sim-book').innerHTML=bookHTML(committed?s.after:s.before,sim.phase===0?(sim.side==='buy'?'asks':'bids'):null);
