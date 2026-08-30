@@ -8,6 +8,7 @@ const evidenceContract = require('./desktop_evidence_contract');
 const {
   browserErrorText,
   countMarkerOccurrences,
+  createRuntimeFailureMonitor,
   evidenceTargetIdentity,
   executeSmokeOnce,
   installOfflineRouting,
@@ -293,6 +294,13 @@ test('browser error diagnostics never collapse to undefined', () => {
   assert.equal(browserErrorText(new Error('worker failed')), 'worker failed');
   assert.equal(browserErrorText({ stack: 'worker stack' }), 'worker stack');
   assert.equal(browserErrorText(undefined), 'unknown browser error');
+});
+
+test('runtime startup errors fail fast and preserve the first cause', async () => {
+  const monitor = createRuntimeFailureMonitor();
+  monitor.fail('first startup failure');
+  monitor.fail('later noise');
+  await assert.rejects(monitor.promise, /first startup failure/);
 });
 
 test('WORK2_PAGES_LESSON selects exactly one lab shard and rejects bad input', () => {

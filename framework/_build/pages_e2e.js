@@ -396,6 +396,23 @@ function browserErrorText(error) {
     value !== 'undefined' && value !== '[object Object]') || 'unknown browser error';
 }
 
+function createRuntimeFailureMonitor() {
+  let rejectFailure;
+  let failed = false;
+  const promise = new Promise((_resolve, reject) => { rejectFailure = reject; });
+  // An error may arrive during navigation, before the kernel wait attaches its
+  // race handler. Keep the rejection observed without changing its outcome.
+  promise.catch(() => {});
+  return {
+    promise,
+    fail(message) {
+      if (failed) return;
+      failed = true;
+      rejectFailure(new Error(message));
+    },
+  };
+}
+
 async function installOfflineRouting(context, origin) {
   const externalRequests = [];
   const siteOrigin = new URL(origin).origin;
@@ -721,23 +738,28 @@ async function runLabAttempt(context, origin, target, plan) {
     const pageErrors = [];
     const externalRequests = await installOfflineRouting(context, origin);
     const labPage = await context.newPage();
+    const runtimeFailure = createRuntimeFailureMonitor();
     labPage.on('pageerror', error => {
       const message = browserErrorText(error);
       pageErrors.push(message);
       console.error(`JupyterLite pageerror: ${message}`);
+      runtimeFailure.fail(`JupyterLite pageerror: ${message}`);
     });
     labPage.on('console', message => {
       if (message.type() === 'error') {
-        console.error(`JupyterLite console.error: ${message.text() || 'empty console message'}`);
+        const detail = message.text() || 'empty console message';
+        console.error(`JupyterLite console.error: ${detail}`);
       }
     });
     labPage.on('requestfailed', request => {
-      console.error(`JupyterLite request failed: ${request.url()} ` +
-        `${request.failure() && request.failure().errorText || 'unknown failure'}`);
+      const detail = `JupyterLite request failed: ${request.url()} ` +
+        `${request.failure() && request.failure().errorText || 'unknown failure'}`;
+      console.error(detail);
     });
     labPage.on('response', response => {
       if (response.status() >= 400) {
-        console.error(`JupyterLite HTTP ${response.status()}: ${response.url()}`);
+        const detail = `JupyterLite HTTP ${response.status()}: ${response.url()}`;
+        console.error(detail);
       }
     });
     const result = {
@@ -823,6 +845,9 @@ async function runLabAttempt(context, origin, target, plan) {
         outputTimeout: plan.outputTimeout,
         readyStableMs: plan.readyStableMs,
         idleStableMs: plan.idleStableMs,
+        waitForIdle: (page, options) => Promise.race([
+          waitForKernelIdle(page, options), runtimeFailure.promise,
+        ]),
       });
       const outputTexts = await firstCodeCell.locator('.jp-OutputArea-output').allTextContents();
       result.markerOccurrences = countMarkerOccurrences(outputTexts, executionMarker);
@@ -1090,6 +1115,7 @@ async function main() {
 module.exports = {
   browserErrorText,
   countMarkerOccurrences,
+  createRuntimeFailureMonitor,
   evidenceTargetIdentity,
   executeSmokeOnce,
   installOfflineRouting,
