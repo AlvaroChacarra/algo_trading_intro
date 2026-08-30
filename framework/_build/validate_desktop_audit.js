@@ -242,6 +242,45 @@ async function verifyBrowserEvidence(auditDirectory, root = ROOT) {
           return { rendered: Boolean(structurallyVisible && effectiveOpacity > 0.01
               && node.getClientRects().length), positiveArea, effectiveOpacity, unoccluded };
         };
+        const diagnostic = node => node?.id ? `#${CSS.escape(node.id)}`
+          : `${node?.tagName?.toLowerCase() || 'unknown'}.${String(node?.className || '')
+            .trim().split(/\s+/).filter(Boolean).slice(0, 2).map(CSS.escape).join('.')}`;
+        const scrollerEvidence = (scroller, targetBox = null) => {
+          const style = getComputedStyle(scroller);
+          const overflowX = ['auto', 'scroll'].includes(style.overflowX)
+            && scroller.scrollWidth > scroller.clientWidth + 2;
+          const overflowY = ['auto', 'scroll'].includes(style.overflowY)
+            && scroller.scrollHeight > scroller.clientHeight + 2;
+          const declaredAxis = scroller.dataset.lrScrollerAxis || '';
+          const actualAxis = overflowX && overflowY ? 'both'
+            : (overflowX ? 'horizontal' : (overflowY ? 'vertical' : ''));
+          const before = { left: scroller.scrollLeft, top: scroller.scrollTop };
+          if (overflowX) scroller.scrollLeft = scroller.scrollWidth;
+          if (overflowY) scroller.scrollTop = scroller.scrollHeight;
+          const reachedEnd = (!overflowX
+            || scroller.scrollLeft >= scroller.scrollWidth - scroller.clientWidth - 2)
+            && (!overflowY
+              || scroller.scrollTop >= scroller.scrollHeight - scroller.clientHeight - 2);
+          scroller.scrollLeft = before.left; scroller.scrollTop = before.top;
+          const box = scroller.getBoundingClientRect();
+          return { selector: diagnostic(scroller), declared: scroller.dataset.lrScroller === 'true',
+            declaredAxis, overflowX, overflowY, real: overflowX || overflowY,
+            focusable: scroller.tabIndex >= 0, axisMatches: declaredAxis === actualAxis, reachedEnd,
+            clipsTargetX: Boolean(targetBox && overflowX
+              && (targetBox.left < box.left - 2 || targetBox.right > box.right + 2)),
+            clipsTargetY: Boolean(targetBox && overflowY
+              && (targetBox.top < box.top - 2 || targetBox.bottom > box.bottom + 2)) };
+        };
+        const validScroller = evidence => evidence.declared && evidence.real && evidence.focusable
+          && evidence.axisMatches && evidence.reachedEnd;
+        const scrollReachabilityFor = (node, box) => {
+          const entries = [];
+          for (let ancestor = node; ancestor && ancestor !== document.body;
+            ancestor = ancestor.parentElement) {
+            if (ancestor.dataset.lrScroller === 'true') entries.push(scrollerEvidence(ancestor, box));
+          }
+          return entries;
+        };
         const runtime = window.LEARNING_RUNTIME?.getState?.();
         const scopeRoutes = document.body.dataset.routeScope === 'ALL'
           ? ['LIVE', 'REQUIRED', 'OPTIONAL']
@@ -294,11 +333,49 @@ async function verifyBrowserEvidence(auditDirectory, root = ROOT) {
           add([...(active?.querySelectorAll('canvas,svg,img,video,pre,table,[role="img"],'
             + 'button,input,select,textarea') || [])]);
         }
-        const essentialVisibility = [...new Set(essentialNodes)].map(node => visibilityEvidence(node));
-        const stageVisibility = stageNodes.map(node => ({
-          kind: node.classList.contains('fig-stage') ? 'figure' : 'step',
-          ...visibilityEvidence(node),
-        }));
+        const essentialVisibility = [...new Set(essentialNodes)].map(node => {
+          const visibility = visibilityEvidence(node);
+          const box = node.getBoundingClientRect();
+          const scrollReachability = scrollReachabilityFor(node, box);
+          const scrollReachable = scrollReachability.some(item => validScroller(item)
+            && (item.clipsTargetX || item.clipsTargetY));
+          let blockingClip = false;
+          for (let ancestor = node.parentElement; ancestor && ancestor !== document.body;
+            ancestor = ancestor.parentElement) {
+            const style = getComputedStyle(ancestor);
+            const clipsX = ['auto', 'scroll', 'hidden', 'clip'].includes(style.overflowX);
+            const clipsY = ['auto', 'scroll', 'hidden', 'clip'].includes(style.overflowY);
+            if (!clipsX && !clipsY) continue;
+            const ancestorBox = ancestor.getBoundingClientRect();
+            const clippedX = clipsX && (box.left < ancestorBox.left + ancestor.clientLeft - 2
+              || box.right > ancestorBox.left + ancestor.clientLeft + ancestor.clientWidth + 2);
+            const clippedY = clipsY && (box.top < ancestorBox.top + ancestor.clientTop - 2
+              || box.bottom > ancestorBox.top + ancestor.clientTop + ancestor.clientHeight + 2);
+            const canExposeX = scrollReachability.some(item => validScroller(item)
+              && item.overflowX && item.clipsTargetX);
+            const canExposeY = scrollReachability.some(item => validScroller(item)
+              && item.overflowY && item.clipsTargetY);
+            if ((clippedX && !canExposeX) || (clippedY && !canExposeY)) blockingClip = true;
+          }
+          return { ...visibility, scrollReachable, scrollReachability, blockingClip,
+            accessible: visibility.rendered && visibility.positiveArea
+              && visibility.effectiveOpacity > 0.01 && (visibility.unoccluded || scrollReachable)
+              && !blockingClip };
+        });
+        const stageVisibility = stageNodes.map(node => {
+          const overflowX = node.scrollWidth > node.clientWidth + 2;
+          const overflowY = node.scrollHeight > node.clientHeight + 2;
+          const scrollReachability = [node,
+            ...node.querySelectorAll('[data-lr-scroller="true"]')]
+            .map(scroller => scrollerEvidence(scroller));
+          const overflowAccessible = (!overflowX || scrollReachability.some(item =>
+            validScroller(item) && item.overflowX))
+            && (!overflowY || scrollReachability.some(item =>
+              validScroller(item) && item.overflowY));
+          return { kind: node.classList.contains('fig-stage') ? 'figure' : 'step',
+            ...visibilityEvidence(node), overflowX, overflowY, overflowAccessible,
+            scrollReachability };
+        });
         return { requestedMode: document.body.dataset.requestedMode,
           effectiveMode: document.body.dataset.learningMode,
           auditMode: window.__DESKTOP_VISUAL_AUDIT__ || null,
@@ -319,8 +396,9 @@ async function verifyBrowserEvidence(auditDirectory, root = ROOT) {
           stageContractMatches: stageContract?.id === expected.stage
             && stageContract.route === expected.route
             && stageContract.duration_minutes === expected.durationMinutes,
-          stageNoOverflow: stageNodes.every(node => node.scrollWidth <= node.clientWidth + 2
-            && node.scrollHeight <= node.clientHeight + 2),
+          stageAccessible: stageVisibility.every(item => item.overflowAccessible),
+          essentialAccessible: essentialVisibility.length > 0
+            && essentialVisibility.every(item => item.accessible),
           badgeRoute, badgeDuration, navRoute, live, expectedLive, progress, expectedProgress };
       }, target);
       const screenshot = await page.screenshot({ animations: 'disabled', caret: 'hide' });
@@ -357,13 +435,12 @@ async function verifyBrowserEvidence(auditDirectory, root = ROOT) {
         && state.auditMode === 'visual-v1'
         && state.route === target.route && state.sceneRoute === target.sceneRoute
         && state.oneActive && state.noBodyOverflow && state.noHorizontalOverflow
-        && state.sceneInside && state.controlsInside && state.navInside && state.stageNoOverflow
+        && state.sceneInside && state.controlsInside && state.navInside && state.stageAccessible
         && state.activeVisibility.rendered && state.activeVisibility.positiveArea
         && state.activeVisibility.effectiveOpacity > 0.01 && state.activeVisibility.unoccluded
         && state.stageVisibility.every(item => item.rendered
           && item.positiveArea && item.effectiveOpacity > 0.01 && item.unoccluded)
-        && state.essentialVisibility.length > 0 && state.essentialVisibility.every(item => item.rendered
-          && item.positiveArea && item.effectiveOpacity > 0.01 && item.unoccluded)
+        && state.essentialAccessible
         && state.stageContractMatches
         && state.badgeRoute === target.route && state.navRoute === target.route
         && state.badgeDuration === `${target.durationMinutes} min`

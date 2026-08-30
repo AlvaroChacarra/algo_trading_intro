@@ -723,26 +723,54 @@ function visibilityEvidencePassed(visibility) {
     && visibility.effectiveOpacity > 0.01 && visibility.effectiveOpacity <= 1.000001;
 }
 
+function scrollReachabilityEvidencePassed(item) {
+  return Boolean(item) && typeof item.selector === 'string' && item.selector.length > 0
+    && item.declared === true && ['horizontal', 'vertical', 'both'].includes(item.declaredAxis)
+    && allTrue(item, ['real', 'focusable', 'axisMatches', 'reachedEnd'])
+    && typeof item.overflowX === 'boolean' && typeof item.overflowY === 'boolean'
+    && typeof item.clipsTargetX === 'boolean' && typeof item.clipsTargetY === 'boolean'
+    && (item.overflowX || item.overflowY);
+}
+
 function stageOverflowEvidencePassed(state) {
-  return state?.stageOverflow === false && Array.isArray(state.stageOverflowChecks)
+  return typeof state?.stageOverflow === 'boolean' && state.stageOverflowAccessible === true
+    && Array.isArray(state.stageOverflowChecks)
     && state.stageOverflowChecks.every(item => ['step', 'figure'].includes(item.kind)
       && ['scrollWidth', 'clientWidth', 'scrollHeight', 'clientHeight']
         .every(field => finiteNumber(item[field]) && item[field] >= 0)
-      && item.overflow === false);
+      && typeof item.overflowX === 'boolean' && typeof item.overflowY === 'boolean'
+      && item.overflowX === (item.scrollWidth > item.clientWidth + 2)
+      && item.overflowY === (item.scrollHeight > item.clientHeight + 2)
+      && item.overflow === (item.overflowX || item.overflowY) && item.accessible === true
+      && Array.isArray(item.scrollReachability)
+      && (!item.overflowX || item.scrollReachability.some(evidence =>
+        scrollReachabilityEvidencePassed(evidence) && evidence.overflowX))
+      && (!item.overflowY || item.scrollReachability.some(evidence =>
+        scrollReachabilityEvidencePassed(evidence) && evidence.overflowY)))
+    && state.stageOverflow === state.stageOverflowChecks.some(item => item.overflow);
 }
 
 function essentialEvidencePassed(state) {
   const checks = Array.isArray(state?.essentialChecks) ? state.essentialChecks : [];
+  const rawInside = typeof state?.essentialInsideViewport === 'boolean'
+    ? state.essentialInsideViewport : state?.essentialInside;
   return Number.isInteger(state?.essentialCount) && state.essentialCount > 0
     && checks.length === state.essentialCount
+    && typeof rawInside === 'boolean' && state.essentialAccessible === true
     && emptyArray(state.unresolvedEssentialSelectors) && emptyArray(state.essentialFailures)
     && checks.every(item => typeof item.selector === 'string' && item.selector.length > 0
       && typeof item.label === 'string' && item.label.length > 0
       && positiveBox(item.box) && item.effectiveVisible === true
-      && visibilityEvidencePassed({ rendered: item.effectiveVisible,
-        positiveArea: item.positiveArea, effectiveOpacity: item.effectiveOpacity,
-        unoccluded: item.unoccluded })
-      && emptyArray(item.failures));
+      && item.positiveArea === true && finiteNumber(item.effectiveOpacity)
+      && item.effectiveOpacity > 0.01 && item.effectiveOpacity <= 1.000001
+      && typeof item.unoccluded === 'boolean' && item.accessible === true
+      && typeof item.scrollReachable === 'boolean'
+      && Array.isArray(item.scrollReachability) && Array.isArray(item.diagnosticFailures)
+      && emptyArray(item.failures)
+      && (item.unoccluded === true || item.scrollReachable === true)
+      && (!item.scrollReachable || item.scrollReachability.some(evidence =>
+        scrollReachabilityEvidencePassed(evidence)
+          && (evidence.clipsTargetX || evidence.clipsTargetY))));
 }
 
 function runtimeStateMatches(state, expected) {
@@ -788,7 +816,7 @@ function desktopStatePassed(state) {
     && state.position >= 1 && state.position <= state.total
     && state.controlEvidence?.previousDisabled === (state.position === 1)
     && state.controlEvidence?.nextDisabled === (state.position === state.total);
-  return state?.evidenceSchema === 'desktop-state/v2'
+  return state?.evidenceSchema === 'desktop-state/v3'
     && Number.isInteger(state.viewport?.width) && state.viewport.width > 0
     && Number.isInteger(state.viewport?.height) && state.viewport.height > 0
     && state.activeSceneCount === 1 && visibilityEvidencePassed(state.activeVisibility)
@@ -799,11 +827,11 @@ function desktopStatePassed(state) {
     && state.layout === expected?.layout && state.type === expected?.type
     && state.layoutApplied === true && rawControls && rawPresentation
     && allTrue(state, ['stateMatches', 'controlState', 'oneSceneActive', 'sceneInsideViewport',
-    'controlsInsideViewport', 'navInsideViewport', 'essentialInsideViewport', 'layoutMatches',
+    'controlsInsideViewport', 'navInsideViewport', 'essentialAccessible',
+    'stageOverflowAccessible', 'layoutMatches',
     'routeProgressMatches', 'savedProgressMatches', 'scrollAuditPassed',
     'routePresentationMatches', 'liveRegionMatches', 'getStateConsistent'])
     && isFalse(state.bodyOverflow) && isFalse(state.horizontalOverflow)
-    && isFalse(state.stageOverflow)
     && state.bodyScrollPosition?.x === 0 && state.bodyScrollPosition?.y === 0
     && emptyArray(state.undeclaredScrollers) && emptyArray(state.hiddenFocusable)
     && Array.isArray(state.scrollerChecks) && state.scrollerChecks.every(item =>
@@ -914,7 +942,7 @@ function flowStatePassed(state, expected, index, total) {
         && current.visited === stored.visited && current.percent === stored.percent
         && current.complete === stored.complete;
     });
-  return state?.evidenceSchema === 'desktop-flow-state/v2'
+  return state?.evidenceSchema === 'desktop-flow-state/v3'
     && Number.isInteger(state.viewport?.width) && state.viewport.width > 0
     && Number.isInteger(state.viewport?.height) && state.viewport.height > 0
     && state.activeSceneCount === 1 && visibilityEvidencePassed(state.sceneVisibility)
@@ -926,8 +954,9 @@ function flowStatePassed(state, expected, index, total) {
     && state.position === index + 1 && state.total === total
     && state.navigated === true && state.targetMatches === true && state.rendered === true
     && state.sceneHorizontalInside === true && state.horizontalOverflow === false
-    && state.essentialInside === true && emptyArray(state.essentialFailures)
-    && emptyArray(state.unresolvedEssentialSelectors) && state.stageOverflow === false
+    && typeof state.essentialInside === 'boolean' && state.essentialAccessible === true
+    && emptyArray(state.essentialFailures)
+    && emptyArray(state.unresolvedEssentialSelectors) && state.stageOverflowAccessible === true
     && state.scrollAuditPassed === true && emptyArray(state.undeclaredScrollers)
     && emptyArray(state.hiddenFocusable) && Array.isArray(state.scrollerChecks)
     && state.scrollerChecks.every(item => allTrue(item,

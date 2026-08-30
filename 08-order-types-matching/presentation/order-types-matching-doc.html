@@ -1341,6 +1341,14 @@ function expose(node,visible){
   node.setAttribute('aria-hidden',String(!visible));
 }
 let modalBackgroundState=null,modalBackgroundOwner=null;
+function focusModalOwner(){
+  if(!modalBackgroundOwner)return;
+  const selector='a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),'
+    +'textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+  const target=[...modalBackgroundOwner.querySelectorAll(selector)]
+    .find(node=>!node.hidden&&!node.closest('[hidden],[inert]')&&node.getClientRects().length);
+  target?.focus({preventScroll:true});
+}
 function setModalBackground(dialog,open){
   if(open){
     if(modalBackgroundOwner===dialog)return;
@@ -1365,6 +1373,13 @@ function setModalBackground(dialog,open){
   document.documentElement.classList.remove('lr-modal-open');
 }
 window.LEARNING_MODAL_BACKGROUND=setModalBackground;
+document.addEventListener('pointerdown',event=>{
+  if(!modalBackgroundOwner||modalBackgroundOwner.contains(event.target))return;
+  event.preventDefault();event.stopImmediatePropagation();focusModalOwner();
+},true);
+document.addEventListener('focusin',event=>{
+  if(modalBackgroundOwner&&!modalBackgroundOwner.contains(event.target))focusModalOwner();
+},true);
 function canRestoreFocus(node){
   return Boolean(node?.isConnected&&!node.hidden&&!node.disabled
     &&!node.closest('[hidden],[inert]')&&node.getClientRects().length);

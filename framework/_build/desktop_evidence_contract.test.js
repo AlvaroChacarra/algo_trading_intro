@@ -61,7 +61,7 @@ function desktopStateFixture() {
   const expectedLive = 'scene-a, ruta LIVE, 2 minutos, etapa 1 de 1';
   const expectedMobile = 'Ruta · LIVE · 2 min · Estudio · scene-a';
   return {
-    evidenceSchema: 'desktop-state/v2', viewport: { width: 1280, height: 720 },
+    evidenceSchema: 'desktop-state/v3', viewport: { width: 1280, height: 720 },
     activeVisibility: rawVisibility(), activeSceneCount: 1,
     sceneBox: rawBox(), controlsBox: rawBox(), navBox: rawBox(),
     expected, scene: expected.scene, stage: expected.stage, sceneRoute: expected.sceneRoute,
@@ -72,17 +72,20 @@ function desktopStateFixture() {
       sceneRoute: expected.sceneRoute, routeScope: 'LIVE' },
     stateMatches: true, controlState: true, oneSceneActive: true,
     sceneInsideViewport: true, controlsInsideViewport: true, navInsideViewport: true,
-    essentialInsideViewport: true, layoutMatches: true, routeProgressMatches: true,
+    essentialInsideViewport: true, essentialAccessible: true,
+    stageOverflowAccessible: true, layoutMatches: true, routeProgressMatches: true,
     savedProgressMatches: true, scrollAuditPassed: true, routePresentationMatches: true,
     liveRegionMatches: true, getStateConsistent: true,
     bodyOverflow: false, horizontalOverflow: false, stageOverflow: false,
     bodyScrollPosition: { x: 0, y: 0 },
     essentialCount: 1, essentialChecks: [{ selector: '#essential', label: '#essential',
       box: rawBox(), effectiveVisible: true, positiveArea: true, effectiveOpacity: 1,
-      unoccluded: true, failures: [] }],
+      unoccluded: true, accessible: true, scrollReachable: false,
+      scrollReachability: [], diagnosticFailures: [], failures: [] }],
     unresolvedEssentialSelectors: [], essentialFailures: [],
     stageOverflowChecks: [{ kind: 'step', scrollWidth: 100, clientWidth: 100,
-      scrollHeight: 50, clientHeight: 50, overflow: false }],
+      scrollHeight: 50, clientHeight: 50, overflowX: false, overflowY: false,
+      overflow: false, accessible: true, scrollReachability: [] }],
     undeclaredScrollers: [], hiddenFocusable: [], scrollerChecks: [],
     routePresentation: { badgeRoute: 'LIVE', badgeDuration: '2 min', navRoute: 'LIVE',
       teacherRoute: null, teacherKicker: null, mobileText: expectedMobile,
@@ -97,18 +100,21 @@ function flowStateFixture() {
   const expectedLive = 'scene-a, ruta LIVE, 2 minutos, etapa 1 de 1';
   const progress = rawProgress();
   return { expected, state: { expected,
-    evidenceSchema: 'desktop-flow-state/v2', viewport: { width: 1440, height: 900 },
+    evidenceSchema: 'desktop-flow-state/v3', viewport: { width: 1440, height: 900 },
     activeSceneCount: 1, sceneVisibility: rawVisibility(), sceneBox: rawBox(),
     scene: expected.scene, stage: expected.stage, sceneRoute: expected.sceneRoute,
     stageRoute: expected.route, scope: 'LIVE', position: 1, total: 1,
     targetMatches: true, rendered: true, sceneHorizontalInside: true, horizontalOverflow: false,
-    essentialCount: 1, essentialInside: true,
+    essentialCount: 1, essentialInside: true, essentialAccessible: true,
     essentialChecks: [{ selector: '#essential', label: '#essential', box: rawBox(),
       effectiveVisible: true, positiveArea: true, effectiveOpacity: 1,
-      unoccluded: true, failures: [] }],
+      unoccluded: true, accessible: true, scrollReachable: false,
+      scrollReachability: [], diagnosticFailures: [], failures: [] }],
     essentialFailures: [], unresolvedEssentialSelectors: [], stageOverflow: false,
+    stageOverflowAccessible: true,
     stageOverflowChecks: [{ kind: 'figure', scrollWidth: 100, clientWidth: 100,
-      scrollHeight: 50, clientHeight: 50, overflow: false }],
+      scrollHeight: 50, clientHeight: 50, overflowX: false, overflowY: false,
+      overflow: false, accessible: true, scrollReachability: [] }],
     scrollAuditPassed: true, scrollerChecks: [], undeclaredScrollers: [], hiddenFocusable: [],
     routePresentation: { badgeRoute: 'LIVE', badgeDuration: '2 min',
       mobileText: null, mobileVisible: false }, routePresentationMatches: true,
@@ -301,6 +307,35 @@ test('desktop and flow semantics require complete raw visibility, opacity, and o
   const hiddenSceneFlow = structuredClone(flow.state);
   hiddenSceneFlow.sceneVisibility.effectiveOpacity = 0;
   assert.equal(contract.flowStatePassed(hiddenSceneFlow, flow.expected, 0, 1), false);
+});
+
+test('declared keyboard-accessible scrollers prove reachability without hiding real clipping', () => {
+  const state = desktopStateFixture();
+  const reachability = { selector: '#scroll-region', declared: true, declaredAxis: 'vertical',
+    overflowX: false, overflowY: true, real: true, focusable: true, axisMatches: true,
+    reachedEnd: true, clipsTargetX: false, clipsTargetY: true };
+  state.essentialInsideViewport = false;
+  state.essentialChecks[0] = { ...state.essentialChecks[0], unoccluded: false,
+    accessible: true, scrollReachable: true, scrollReachability: [reachability],
+    diagnosticFailures: [{ kind: 'occluded' }], failures: [] };
+  state.stageOverflow = true;
+  state.stageOverflowChecks[0] = { kind: 'step', scrollWidth: 100, clientWidth: 100,
+    scrollHeight: 100, clientHeight: 50, overflowX: false, overflowY: true,
+    overflow: true, accessible: true, scrollReachability: [reachability] };
+  assert.equal(contract.desktopStatePassed(state), true);
+
+  const forged = structuredClone(state);
+  forged.essentialChecks[0].scrollReachability[0].focusable = false;
+  assert.equal(contract.desktopStatePassed(forged), false);
+
+  const clipped = structuredClone(state);
+  clipped.essentialChecks[0].scrollReachable = false;
+  clipped.essentialChecks[0].scrollReachability = [];
+  clipped.essentialChecks[0].accessible = false;
+  clipped.essentialChecks[0].failures = [{ kind: 'clipping-ancestor' }];
+  clipped.essentialFailures = [clipped.essentialChecks[0]];
+  clipped.essentialAccessible = false;
+  assert.equal(contract.desktopStatePassed(clipped), false);
 });
 
 test('navigation semantics reject aggregate booleans without exact hash and storage provenance', () => {
@@ -796,6 +831,8 @@ test('runtime assets retain modal, scroller, and breakpoint arbitration', () => 
   assert.match(styles, /body\.lr-modal-open::before\{[^}]*z-index:69/);
   assert.match(styles, /body\.mode-aula>\.lr-scene-active>\.scrolly\{display:grid/);
   assert.match(runtime, /window\.LEARNING_MODAL_BACKGROUND=setModalBackground/);
+  assert.match(runtime, /document\.addEventListener\('pointerdown'[\s\S]*focusModalOwner\(\)/);
+  assert.match(runtime, /document\.addEventListener\('focusin'[\s\S]*focusModalOwner\(\)/);
   assert.match(runtime, /window\.GUIDE_DRAWER\?\.close\(\{restoreFocus:false\}\)/);
   assert.ok(runtime.indexOf('if(openDrawer){') < runtime.indexOf("move(1,true)"));
   assert.ok(runtime.indexOf('if(scrollerOwnsKey(active,event.key))return;')
@@ -839,6 +876,14 @@ test('runner and independent replay retain clean navigation, full plans, determi
     /\{ present: false, applicable: false, passed: false \}/);
   assert.match(runner,
     /drawers\.guide\.present && drawers\.guide\.passed/);
+  const navigationStart = runner.indexOf('async function testNavigationAndPersistence(');
+  const navigationEnd = runner.indexOf('async function breakpointSeamAudit(', navigationStart);
+  const navigation = runner.slice(navigationStart, navigationEnd);
+  assert.ok(navigation.indexOf("#lr-controls .lr-prev').focus()")
+    < navigation.indexOf("keyboard.press('PageUp')"));
+  assert.ok(navigation.indexOf("#lr-controls .lr-next').focus()")
+    < navigation.indexOf("keyboard.press('PageDown')"));
+  assert.doesNotMatch(navigation, /addInitScript/);
 
   const visualStart = runner.indexOf('async function visualAudit(');
   const visualEnd = runner.indexOf('async function indexAudit(', visualStart);

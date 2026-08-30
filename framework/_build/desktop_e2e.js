@@ -174,6 +174,44 @@ async function inspectState(page, expected, position, total, progressOracle = nu
         .map(value => `.${CSS.escape(value)}`).join('');
       return `${node.tagName.toLowerCase()}${name}`;
     };
+    const scrollerEvidence = (scroller, targetBox = null) => {
+      const style = getComputedStyle(scroller);
+      const overflowX = ['auto', 'scroll'].includes(style.overflowX)
+        && scroller.scrollWidth > scroller.clientWidth + tolerance;
+      const overflowY = ['auto', 'scroll'].includes(style.overflowY)
+        && scroller.scrollHeight > scroller.clientHeight + tolerance;
+      const declaredAxis = scroller.dataset.lrScrollerAxis || '';
+      const actualAxis = overflowX && overflowY ? 'both'
+        : (overflowX ? 'horizontal' : (overflowY ? 'vertical' : ''));
+      const before = { left: scroller.scrollLeft, top: scroller.scrollTop };
+      if (overflowX) scroller.scrollLeft = scroller.scrollWidth;
+      if (overflowY) scroller.scrollTop = scroller.scrollHeight;
+      const reachedEnd = (!overflowX
+        || scroller.scrollLeft >= scroller.scrollWidth - scroller.clientWidth - tolerance)
+        && (!overflowY
+          || scroller.scrollTop >= scroller.scrollHeight - scroller.clientHeight - tolerance);
+      scroller.scrollLeft = before.left; scroller.scrollTop = before.top;
+      const scrollerBox = scroller.getBoundingClientRect();
+      return { selector: diagnosticSelector(scroller), declared: scroller.dataset.lrScroller === 'true',
+        declaredAxis, overflowX, overflowY, real: overflowX || overflowY,
+        focusable: scroller.tabIndex >= 0, axisMatches: declaredAxis === actualAxis, reachedEnd,
+        clipsTargetX: Boolean(targetBox && overflowX
+          && (targetBox.left < scrollerBox.left - tolerance
+            || targetBox.right > scrollerBox.right + tolerance)),
+        clipsTargetY: Boolean(targetBox && overflowY
+          && (targetBox.top < scrollerBox.top - tolerance
+            || targetBox.bottom > scrollerBox.bottom + tolerance)) };
+    };
+    const validScroller = evidence => evidence.declared && evidence.real && evidence.focusable
+      && evidence.axisMatches && evidence.reachedEnd;
+    const scrollReachabilityFor = (node, box) => {
+      const entries = [];
+      for (let ancestor = node; ancestor && ancestor !== document.body;
+        ancestor = ancestor.parentElement) {
+        if (ancestor.dataset.lrScroller === 'true') entries.push(scrollerEvidence(ancestor, box));
+      }
+      return entries;
+    };
     const navRect = rect(nav), controlsRect = rect(controls), sceneRect = rect(active);
     const bounds = {
       left: navRect?.right || 0, top: 0, right: innerWidth,
@@ -201,11 +239,11 @@ async function inspectState(page, expected, position, total, progressOracle = nu
     const essentialChecks = essentialNodes.map(entry => {
       const box = rect(entry.node);
       const visibility = visibilityEvidence(entry.node);
-      const failures = [];
-      if (!visibility.rendered) failures.push({ kind: 'not-effectively-visible' });
-      if (!visibility.positiveArea) failures.push({ kind: 'zero-area' });
-      if (!visibility.unoccluded) failures.push({ kind: 'occluded' });
-      if (!inside(box, bounds)) failures.push({ kind: 'content-viewport', bounds });
+      const diagnosticFailures = [];
+      if (!visibility.rendered) diagnosticFailures.push({ kind: 'not-effectively-visible' });
+      if (!visibility.positiveArea) diagnosticFailures.push({ kind: 'zero-area' });
+      if (!visibility.unoccluded) diagnosticFailures.push({ kind: 'occluded' });
+      if (!inside(box, bounds)) diagnosticFailures.push({ kind: 'content-viewport', bounds });
       for (let ancestor = entry.node.parentElement; ancestor && ancestor !== document.body;
         ancestor = ancestor.parentElement) {
         const style = getComputedStyle(ancestor);
@@ -223,26 +261,65 @@ async function inspectState(page, expected, position, total, progressOracle = nu
           || box.right > clippingBox.right + tolerance);
         const clippedY = clipsY && (box.top < clippingBox.top - tolerance
           || box.bottom > clippingBox.bottom + tolerance);
-        if (clippedX || clippedY) failures.push({
+        if (clippedX || clippedY) diagnosticFailures.push({
           kind: 'clipping-ancestor', ancestor: diagnosticSelector(ancestor),
           axes: `${clippedX ? 'x' : ''}${clippedY ? 'y' : ''}`, bounds: clippingBox,
         });
       }
+      const scrollReachability = scrollReachabilityFor(entry.node, box);
+      const canExposeX = scrollReachability.some(item => validScroller(item)
+        && item.overflowX && item.clipsTargetX);
+      const canExposeY = scrollReachability.some(item => validScroller(item)
+        && item.overflowY && item.clipsTargetY);
+      const scrollReachable = canExposeX || canExposeY;
+      const outsideX = box && (box.left < bounds.left - tolerance
+        || box.right > bounds.right + tolerance);
+      const outsideY = box && (box.top < bounds.top - tolerance
+        || box.bottom > bounds.bottom + tolerance);
+      const failures = diagnosticFailures.filter(failure => {
+        if (failure.kind === 'occluded') return !scrollReachable;
+        if (failure.kind === 'content-viewport') {
+          return (outsideX && !canExposeX) || (outsideY && !canExposeY);
+        }
+        if (failure.kind === 'clipping-ancestor') {
+          return (failure.axes.includes('x') && !canExposeX)
+            || (failure.axes.includes('y') && !canExposeY);
+        }
+        return true;
+      });
+      const accessible = visibility.rendered && visibility.positiveArea
+        && visibility.effectiveOpacity > 0.01 && (visibility.unoccluded || scrollReachable)
+        && failures.length === 0;
       const result = { selector: entry.selector,
         label: entry.node.dataset.lrEssential || diagnosticSelector(entry.node), box,
         effectiveVisible: visibility.rendered, positiveArea: visibility.positiveArea,
-        effectiveOpacity: visibility.effectiveOpacity, unoccluded: visibility.unoccluded, failures };
+        effectiveOpacity: visibility.effectiveOpacity, unoccluded: visibility.unoccluded,
+        accessible, scrollReachable, scrollReachability,
+        diagnosticFailures, failures };
       if (failures.length) essentialFailures.push(result);
       return result;
     });
     const stageOverflowChecks = [activeStep, activeFigure].filter(Boolean).map(node => ({
-      kind: node.classList.contains('fig-stage') ? 'figure' : 'step',
+      node, kind: node.classList.contains('fig-stage') ? 'figure' : 'step',
       scrollWidth: node.scrollWidth, clientWidth: node.clientWidth,
       scrollHeight: node.scrollHeight, clientHeight: node.clientHeight,
-      overflow: node.scrollWidth > node.clientWidth + tolerance
-        || node.scrollHeight > node.clientHeight + tolerance,
-    }));
+      overflowX: node.scrollWidth > node.clientWidth + tolerance,
+      overflowY: node.scrollHeight > node.clientHeight + tolerance,
+    })).map(item => {
+      const scrollReachability = [item.node,
+        ...item.node.querySelectorAll('[data-lr-scroller="true"]')]
+        .filter(isRendered).map(node => scrollerEvidence(node));
+      const accessible = (!item.overflowX || scrollReachability.some(evidence =>
+        validScroller(evidence) && evidence.overflowX))
+        && (!item.overflowY || scrollReachability.some(evidence =>
+          validScroller(evidence) && evidence.overflowY));
+      return { kind: item.kind, scrollWidth: item.scrollWidth, clientWidth: item.clientWidth,
+        scrollHeight: item.scrollHeight, clientHeight: item.clientHeight,
+        overflowX: item.overflowX, overflowY: item.overflowY,
+        overflow: item.overflowX || item.overflowY, accessible, scrollReachability };
+    });
     const stageOverflow = stageOverflowChecks.some(item => item.overflow);
+    const stageOverflowAccessible = stageOverflowChecks.every(item => item.accessible);
     const current = {
       scene: document.body.dataset.currentSceneId,
       stage: document.body.dataset.currentStageId,
@@ -353,7 +430,7 @@ async function inspectState(page, expected, position, total, progressOracle = nu
       && runtimeState.stage === current.stage && runtimeState.route === current.stageRoute
       && runtimeState.sceneRoute === current.sceneRoute;
     const geometry = {
-      evidenceSchema: 'desktop-state/v2',
+      evidenceSchema: 'desktop-state/v3',
       viewport: { width: innerWidth, height: innerHeight },
       activeVisibility: visibilityEvidence(active),
       activeSceneCount: activeScenes.length,
@@ -365,13 +442,17 @@ async function inspectState(page, expected, position, total, progressOracle = nu
       controlsInsideViewport: inside(controlsRect,
         { left: bounds.left, top: 0, right: innerWidth, bottom: innerHeight }),
       navInsideViewport: inside(navRect, { left: 0, top: 0, right: innerWidth, bottom: innerHeight }),
-      essentialInsideViewport: essentialNodes.length > 0 && essentialFailures.length === 0
+      essentialInsideViewport: essentialNodes.length > 0
+        && essentialChecks.every(item => item.diagnosticFailures.length === 0)
+        && unresolvedEssentialSelectors.length === 0,
+      essentialAccessible: essentialNodes.length > 0 && essentialFailures.length === 0
         && unresolvedEssentialSelectors.length === 0,
       essentialCount: essentialNodes.length,
       essentialSelectors: expectedState.essentialSelectors || [],
       unresolvedEssentialSelectors,
       essentialChecks,
       stageOverflow,
+      stageOverflowAccessible,
       stageOverflowChecks,
       layoutMatches,
       layoutApplied: active?.dataset.layoutApplied === 'true',
@@ -412,8 +493,8 @@ async function inspectState(page, expected, position, total, progressOracle = nu
       passed: stateMatches && controlState && !bodyOverflow && !horizontalOverflow
         && scrollX === 0 && scrollY === 0 && geometry.oneSceneActive
         && geometry.sceneInsideViewport && geometry.controlsInsideViewport
-        && geometry.navInsideViewport && geometry.essentialInsideViewport
-        && !stageOverflow && layoutMatches && routeProgressMatches && scrollAuditPassed
+        && geometry.navInsideViewport && geometry.essentialAccessible
+        && stageOverflowAccessible && layoutMatches && routeProgressMatches && scrollAuditPassed
         && hiddenFocusable.length === 0 && routePresentationMatches && liveRegionMatches
         && getStateConsistent,
     };
@@ -762,9 +843,13 @@ async function documentTabAudit(page) {
 async function testNavigationAndPersistence(page, expectTeacher = false) {
   const endState = await page.evaluate(() =>
     `${document.body.dataset.currentSceneId}/${document.body.dataset.currentStageId}`);
+  // Exercise global classroom navigation from neutral controls. A focused simulator or
+  // declared scroller owns its axis keys and is audited independently by overflowFixture().
+  await page.locator('#lr-controls .lr-prev').focus();
   await page.keyboard.press('PageUp');
   const afterBack = await page.evaluate(() =>
     `${document.body.dataset.currentSceneId}/${document.body.dataset.currentStageId}`);
+  await page.locator('#lr-controls .lr-next').focus();
   await page.keyboard.press('PageDown');
   const afterForward = await page.evaluate(() =>
     `${document.body.dataset.currentSceneId}/${document.body.dataset.currentStageId}`);
@@ -809,20 +894,18 @@ async function testNavigationAndPersistence(page, expectTeacher = false) {
     };
   });
   const targetPath = `${persistence.target.scene}/${persistence.target.stage}`;
-  await page.evaluate(() => sessionStorage.setItem('__lr_desktop_hash_restore', 'pending'));
-  await page.addInitScript(() => {
-    if (sessionStorage.getItem('__lr_desktop_hash_restore') !== 'pending') return;
+  // Fresh-context hash precedence is sealed separately by persistenceIsolationAudit(). Here
+  // we prove the same page can clear storage and restore the exact hash deterministically.
+  const storageClearedForHashRestore = await page.evaluate(() => {
     localStorage.clear();
-    sessionStorage.setItem('__lr_desktop_hash_restore', localStorage.length === 0 ? 'cleared' : 'failed');
+    return localStorage.length === 0;
   });
   await page.reload();
   await page.waitForFunction(() => window.LEARNING_RUNTIME && document.body.classList.contains('mode-aula'));
   const restored = await page.evaluate(() => ({
     scene: document.body.dataset.currentSceneId,
     stage: document.body.dataset.currentStageId,
-    storageWasEmptyAtInit: sessionStorage.getItem('__lr_desktop_hash_restore') === 'cleared',
   }));
-  await page.evaluate(() => sessionStorage.removeItem('__lr_desktop_hash_restore'));
   const home = await page.locator('#lr-nav .lr-course-home').getAttribute('href');
   const restoredPath = `${restored.scene}/${restored.stage}`;
   return {
@@ -838,7 +921,7 @@ async function testNavigationAndPersistence(page, expectTeacher = false) {
     hashTargetMatches: persistence.hashTarget === targetPath,
     storageTargetMatches: persistence.storageTarget?.scene === persistence.target.scene
       && persistence.storageTarget?.stage === persistence.target.stage,
-    storageClearedForHashRestore: restored.storageWasEmptyAtInit,
+    storageClearedForHashRestore,
     persistence: { ...persistence, restored: { scene: restored.scene, stage: restored.stage } },
     progress: persistence.progressValid,
     courseHome: home === '../../index.html',
@@ -1061,6 +1144,44 @@ async function inspectFlowState(page, expected, position, total) {
     const diagnostic = node => node?.id ? `#${CSS.escape(node.id)}`
       : `${node?.tagName?.toLowerCase() || 'unknown'}.${String(node?.className || '')
         .trim().split(/\s+/).filter(Boolean).slice(0, 2).map(CSS.escape).join('.')}`;
+    const scrollerEvidence = (scroller, targetBox = null) => {
+      const style = getComputedStyle(scroller);
+      const overflowX = ['auto', 'scroll'].includes(style.overflowX)
+        && scroller.scrollWidth > scroller.clientWidth + tolerance;
+      const overflowY = ['auto', 'scroll'].includes(style.overflowY)
+        && scroller.scrollHeight > scroller.clientHeight + tolerance;
+      const declaredAxis = scroller.dataset.lrScrollerAxis || '';
+      const actualAxis = overflowX && overflowY ? 'both'
+        : (overflowX ? 'horizontal' : (overflowY ? 'vertical' : ''));
+      const before = { left: scroller.scrollLeft, top: scroller.scrollTop };
+      if (overflowX) scroller.scrollLeft = scroller.scrollWidth;
+      if (overflowY) scroller.scrollTop = scroller.scrollHeight;
+      const reachedEnd = (!overflowX
+        || scroller.scrollLeft >= scroller.scrollWidth - scroller.clientWidth - tolerance)
+        && (!overflowY
+          || scroller.scrollTop >= scroller.scrollHeight - scroller.clientHeight - tolerance);
+      scroller.scrollLeft = before.left; scroller.scrollTop = before.top;
+      const scrollerBox = scroller.getBoundingClientRect();
+      return { selector: diagnostic(scroller), declared: scroller.dataset.lrScroller === 'true',
+        declaredAxis, overflowX, overflowY, real: overflowX || overflowY,
+        focusable: scroller.tabIndex >= 0, axisMatches: declaredAxis === actualAxis, reachedEnd,
+        clipsTargetX: Boolean(targetBox && overflowX
+          && (targetBox.left < scrollerBox.left - tolerance
+            || targetBox.right > scrollerBox.right + tolerance)),
+        clipsTargetY: Boolean(targetBox && overflowY
+          && (targetBox.top < scrollerBox.top - tolerance
+            || targetBox.bottom > scrollerBox.bottom + tolerance)) };
+    };
+    const validScroller = evidence => evidence.declared && evidence.real && evidence.focusable
+      && evidence.axisMatches && evidence.reachedEnd;
+    const scrollReachabilityFor = (node, box) => {
+      const entries = [];
+      for (let ancestor = node; ancestor && ancestor !== document.body;
+        ancestor = ancestor.parentElement) {
+        if (ancestor.dataset.lrScroller === 'true') entries.push(scrollerEvidence(ancestor, box));
+      }
+      return entries;
+    };
     const scene = document.getElementById(target.domId);
     const selectorEntries = [...new Set(target.essentialSelectors || [])].map(selector => {
       try { return { selector, nodes: [...document.querySelectorAll(selector)].filter(rendered) }; }
@@ -1075,12 +1196,12 @@ async function inspectFlowState(page, expected, position, total) {
     const essentialChecks = essentialNodes.map(entry => {
       const box = entry.node.getBoundingClientRect().toJSON();
       const visibility = visibilityEvidence(entry.node);
-      const failures = [];
-      if (!visibility.rendered) failures.push({ kind: 'not-effectively-visible' });
-      if (!visibility.positiveArea) failures.push({ kind: 'zero-area' });
-      if (!visibility.unoccluded) failures.push({ kind: 'occluded' });
+      const diagnosticFailures = [];
+      if (!visibility.rendered) diagnosticFailures.push({ kind: 'not-effectively-visible' });
+      if (!visibility.positiveArea) diagnosticFailures.push({ kind: 'zero-area' });
+      if (!visibility.unoccluded) diagnosticFailures.push({ kind: 'occluded' });
       if (box.left < -tolerance || box.right > innerWidth + tolerance) {
-        failures.push({ kind: 'horizontal-viewport', bounds: { left: 0, right: innerWidth } });
+        diagnosticFailures.push({ kind: 'horizontal-viewport', bounds: { left: 0, right: innerWidth } });
       }
       for (let ancestor = entry.node.parentElement; ancestor && ancestor !== document.body;
         ancestor = ancestor.parentElement) {
@@ -1097,26 +1218,59 @@ async function inspectFlowState(page, expected, position, total) {
           || box.right > bounds.right + tolerance);
         const clippedY = clipsY && (box.top < bounds.top - tolerance
           || box.bottom > bounds.bottom + tolerance);
-        if (clippedX || clippedY) failures.push({ kind: 'clipping-ancestor',
+        if (clippedX || clippedY) diagnosticFailures.push({ kind: 'clipping-ancestor',
           ancestor: diagnostic(ancestor), axes: `${clippedX ? 'x' : ''}${clippedY ? 'y' : ''}`,
           bounds });
       }
+      const scrollReachability = scrollReachabilityFor(entry.node, box);
+      const canExposeX = scrollReachability.some(item => validScroller(item)
+        && item.overflowX && item.clipsTargetX);
+      const canExposeY = scrollReachability.some(item => validScroller(item)
+        && item.overflowY && item.clipsTargetY);
+      const scrollReachable = canExposeX || canExposeY;
+      const failures = diagnosticFailures.filter(failure => {
+        if (failure.kind === 'occluded') return !scrollReachable;
+        if (failure.kind === 'horizontal-viewport') return !canExposeX;
+        if (failure.kind === 'clipping-ancestor') {
+          return (failure.axes.includes('x') && !canExposeX)
+            || (failure.axes.includes('y') && !canExposeY);
+        }
+        return true;
+      });
+      const accessible = visibility.rendered && visibility.positiveArea
+        && visibility.effectiveOpacity > 0.01 && (visibility.unoccluded || scrollReachable)
+        && failures.length === 0;
       const result = { selector: entry.selector, label: diagnostic(entry.node), box,
         effectiveVisible: visibility.rendered, positiveArea: visibility.positiveArea,
-        effectiveOpacity: visibility.effectiveOpacity, unoccluded: visibility.unoccluded, failures };
+        effectiveOpacity: visibility.effectiveOpacity, unoccluded: visibility.unoccluded,
+        accessible, scrollReachable, scrollReachability,
+        diagnosticFailures, failures };
       if (failures.length) essentialFailures.push(result);
       return result;
     });
     const activeStep = scene?.querySelector('.step.lr-stage-active:not([hidden])');
     const activeFigure = scene?.querySelector('.fig-stage.on:not([hidden])');
     const stageOverflowChecks = [activeStep, activeFigure].filter(Boolean).map(node => ({
-      kind: node.classList.contains('fig-stage') ? 'figure' : 'step',
+      node, kind: node.classList.contains('fig-stage') ? 'figure' : 'step',
       scrollWidth: node.scrollWidth, clientWidth: node.clientWidth,
       scrollHeight: node.scrollHeight, clientHeight: node.clientHeight,
-      overflow: node.scrollWidth > node.clientWidth + tolerance
-        || node.scrollHeight > node.clientHeight + tolerance,
-    }));
+      overflowX: node.scrollWidth > node.clientWidth + tolerance,
+      overflowY: node.scrollHeight > node.clientHeight + tolerance,
+    })).map(item => {
+      const scrollReachability = [item.node,
+        ...item.node.querySelectorAll('[data-lr-scroller="true"]')]
+        .filter(rendered).map(node => scrollerEvidence(node));
+      const accessible = (!item.overflowX || scrollReachability.some(evidence =>
+        validScroller(evidence) && evidence.overflowX))
+        && (!item.overflowY || scrollReachability.some(evidence =>
+          validScroller(evidence) && evidence.overflowY));
+      return { kind: item.kind, scrollWidth: item.scrollWidth, clientWidth: item.clientWidth,
+        scrollHeight: item.scrollHeight, clientHeight: item.clientHeight,
+        overflowX: item.overflowX, overflowY: item.overflowY,
+        overflow: item.overflowX || item.overflowY, accessible, scrollReachability };
+    });
     const stageOverflow = stageOverflowChecks.some(item => item.overflow);
+    const stageOverflowAccessible = stageOverflowChecks.every(item => item.accessible);
     const visibleNodes = scene ? [scene, ...scene.querySelectorAll('*')].filter(rendered) : [];
     const actualScrollers = visibleNodes.filter(node => {
       const style = getComputedStyle(node);
@@ -1171,7 +1325,10 @@ async function inspectFlowState(page, expected, position, total) {
       && runtimeState?.route === target.stageRoute && runtimeState?.sceneRoute === target.sceneRoute
       && document.body.dataset.currentSceneId === target.scene
       && document.body.dataset.currentStageId === target.stage;
-    const essentialInside = essentialNodes.length > 0 && essentialFailures.length === 0
+    const essentialInside = essentialNodes.length > 0
+      && essentialChecks.every(item => item.diagnosticFailures.length === 0)
+      && unresolvedEssentialSelectors.length === 0;
+    const essentialAccessible = essentialNodes.length > 0 && essentialFailures.length === 0
       && unresolvedEssentialSelectors.length === 0;
     const scrollAuditPassed = undeclaredScrollers.length === 0 && scrollerChecks.every(item =>
       item.real && item.focusable && item.axisMatches && item.reachedEnd);
@@ -1185,7 +1342,7 @@ async function inspectFlowState(page, expected, position, total) {
       stageRoute: document.body.dataset.currentStageRoute,
       scope: document.body.dataset.routeScope,
       expected: target, position: index + 1, total: count,
-      evidenceSchema: 'desktop-flow-state/v2',
+      evidenceSchema: 'desktop-flow-state/v3',
       viewport: { width: innerWidth, height: innerHeight },
       activeSceneCount: document.querySelectorAll('body > .lr-scene-active').length,
       targetMatches, rendered: rendered(scene),
@@ -1194,8 +1351,9 @@ async function inspectFlowState(page, expected, position, total) {
         && sceneBox.right <= innerWidth + tolerance),
       horizontalOverflow: document.documentElement.scrollWidth
         > document.documentElement.clientWidth + tolerance,
-      essentialCount: essentialNodes.length, essentialInside, essentialChecks,
-      essentialFailures, unresolvedEssentialSelectors, stageOverflow, stageOverflowChecks,
+      essentialCount: essentialNodes.length, essentialInside, essentialAccessible, essentialChecks,
+      essentialFailures, unresolvedEssentialSelectors, stageOverflow, stageOverflowAccessible,
+      stageOverflowChecks,
       scrollAuditPassed, scrollerChecks, undeclaredScrollers, hiddenFocusable,
       routePresentation: { badgeRoute, badgeDuration, mobileText, mobileVisible },
       routePresentationMatches, liveRegion: { text: liveText, expected: expectedLive },
@@ -1204,7 +1362,8 @@ async function inspectFlowState(page, expected, position, total) {
       passed: targetMatches && rendered(scene) && sceneVisibility.unoccluded && Boolean(sceneBox)
         && sceneBox.left >= -tolerance && sceneBox.right <= innerWidth + tolerance
         && document.documentElement.scrollWidth <= document.documentElement.clientWidth + tolerance
-        && essentialInside && !stageOverflow && scrollAuditPassed && hiddenFocusable.length === 0
+        && essentialAccessible && stageOverflowAccessible && scrollAuditPassed
+        && hiddenFocusable.length === 0
         && routePresentationMatches && liveText === expectedLive && progressConsistent };
   }, { target: expected, index: position, count: total });
 }
