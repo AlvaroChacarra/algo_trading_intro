@@ -431,11 +431,15 @@ async function mobileSmoke(browser, item) {
 
 (async () => {
   const browser = await chromium.launch(BROWSER_OPTIONS);
-  const desktop = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  // Study mode persists the last visible state by design. Keep classroom smoke in a
+  // separate storage partition so it always exercises a fresh LIVE route instead of
+  // inheriting an arbitrary study position from the preceding page.
+  const studyDesktop = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  const aulaDesktop = await browser.newContext({ viewport: { width: 1440, height: 900 } });
   let failures = 0;
 
   for (const item of docs) {
-    const studyPage = await desktop.newPage();
+    const studyPage = await studyDesktop.newPage();
     const studyErrors = listen(studyPage);
     const study = await studySmoke(studyPage, item, studyErrors);
     console.log(`${study.passed ? '✓' : '✗'} L${item.number} estudio`);
@@ -445,7 +449,7 @@ async function mobileSmoke(browser, item) {
     }
     await studyPage.close();
 
-    const aulaPage = await desktop.newPage();
+    const aulaPage = await aulaDesktop.newPage();
     const aulaErrors = listen(aulaPage);
     const aula = await aulaSmoke(aulaPage, item, aulaErrors);
     console.log(`${aula.passed ? '✓' : '✗'} L${item.number} aula LIVE states=${aula.expected}`);
@@ -463,7 +467,7 @@ async function mobileSmoke(browser, item) {
     }
   }
 
-  const indexPage = await desktop.newPage();
+  const indexPage = await studyDesktop.newPage();
   const indexErrors = listen(indexPage);
   await indexPage.goto(url(path.join(ROOT, 'index.html')));
   const index = await indexPage.evaluate(() => ({
@@ -477,7 +481,7 @@ async function mobileSmoke(browser, item) {
   if (!index.passed) failures++;
   await indexPage.close();
 
-  const examPage = await desktop.newPage();
+  const examPage = await studyDesktop.newPage();
   const examErrors = listen(examPage);
   await examPage.goto(url(path.join(ROOT, '15-final-exam', 'examen.html'), '?mode=aula'));
   const exam = await examPage.evaluate(() => ({
@@ -492,7 +496,8 @@ async function mobileSmoke(browser, item) {
   if (!exam.passed) failures++;
   await examPage.close();
 
-  await desktop.close();
+  await studyDesktop.close();
+  await aulaDesktop.close();
   await browser.close();
   process.exit(failures ? 1 : 0);
 })().catch(error => { console.error(error); process.exit(1); });

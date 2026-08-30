@@ -808,6 +808,15 @@ test('runtime assets retain modal, scroller, and breakpoint arbitration', () => 
   assert.doesNotMatch(docgen, /event\.key==='Escape'/);
 });
 
+test('smoke isolates persisted study state from fresh classroom traversal', () => {
+  const smoke = fs.readFileSync(path.join(ROOT, 'framework/_build/e2e_check.js'), 'utf8');
+  assert.match(smoke, /const studyDesktop = await browser\.newContext/);
+  assert.match(smoke, /const aulaDesktop = await browser\.newContext/);
+  assert.match(smoke, /const studyPage = await studyDesktop\.newPage\(\)/);
+  assert.match(smoke, /const aulaPage = await aulaDesktop\.newPage\(\)/);
+  assert.doesNotMatch(smoke, /const desktop = await browser\.newContext/);
+});
+
 test('runner and independent replay retain clean navigation, full plans, deterministic visuals, and both stage surfaces', () => {
   const runner = fs.readFileSync(path.join(ROOT, 'framework/_build/desktop_e2e.js'), 'utf8');
   const replay = fs.readFileSync(
