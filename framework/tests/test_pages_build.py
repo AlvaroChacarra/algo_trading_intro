@@ -157,6 +157,23 @@ def test_offline_kernel_bootstrap_requires_comm_and_every_runtime_dependency() -
             pages_module._validate_kernel_bootstrap_packages(piplite - {"comm"}, pyodide)
 
 
+def test_published_notebooks_require_the_registered_pyodide_kernelspec() -> None:
+    relative = Path("lesson/exercise.ipynb")
+    source = {
+        "metadata": {"kernelspec": {
+            "display_name": "Python 3", "language": "python", "name": "python3",
+        }},
+    }
+    BUILD_PAGES._canonicalize_jupyterlite_kernelspec(source, relative)
+    assert source["metadata"]["kernelspec"] == BUILD_PAGES.JUPYTERLITE_KERNELSPEC
+    for pages_module in (BUILD_PAGES, CHECK_PAGES):
+        pages_module._validate_jupyterlite_kernelspec(source, relative)
+        tampered = json.loads(json.dumps(source))
+        tampered["metadata"]["kernelspec"]["name"] = "python3"
+        with pytest.raises(RuntimeError, match="incompatible JupyterLite kernelspec"):
+            pages_module._validate_jupyterlite_kernelspec(tampered, relative)
+
+
 def _pyodide_bootstrap_fixture() -> dict[str, object]:
     dependencies = {
         "micropip": [],
@@ -657,6 +674,9 @@ def test_lab_staging_uses_only_declared_files_and_rejects_source_symlinks(
     assert (count, converted) == (1, 0)
     assert (contents / declared).is_file()
     assert not (contents / rogue.relative_to(tmp_path)).exists()
+    published = json.loads((contents / declared).read_text(encoding="utf-8"))
+    assert published["metadata"]["kernelspec"] == BUILD_PAGES.JUPYTERLITE_KERNELSPEC
+    assert json.loads(source.read_text(encoding="utf-8")).get("metadata") is None
 
     linked = Path("lesson/linked.ipynb")
     (tmp_path / linked).symlink_to(source.name)

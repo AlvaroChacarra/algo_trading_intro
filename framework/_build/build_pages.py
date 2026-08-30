@@ -68,6 +68,9 @@ COMM_WHEEL_URL = (
 COMM_WHEEL_SHA256 = "c615d91d75f7f04f095b30d1c1711babd43bdc6419c1be9886a85f2f4e489417"
 PYODIDE_PACKAGE_BASE_URL = f"https://cdn.jsdelivr.net/pyodide/v{PYODIDE_VERSION}/full/"
 PYODIDE_BOOTSTRAP_ROOTS = frozenset({"ipython", "jedi", "micropip"})
+JUPYTERLITE_KERNELSPEC = {
+    "display_name": "Python (Pyodide)", "language": "python", "name": "python",
+}
 JUPYTERLITE_BOOTSTRAP_PACKAGES = frozenset({
     "comm", "ipykernel", "ipython", "jedi", "micropip", "piplite", "pyodide-kernel",
 })
@@ -649,6 +652,26 @@ def _notebook_sources(manifest: dict[str, object] | None = None) -> list[Path]:
     return [_source_file(relative) for relative in notebooks]
 
 
+def _canonicalize_jupyterlite_kernelspec(
+    notebook: dict[str, object], relative: Path,
+) -> None:
+    metadata = notebook.setdefault("metadata", {})
+    if not isinstance(metadata, dict):
+        raise RuntimeError(f"notebook metadata is malformed: {relative.as_posix()}")
+    metadata["kernelspec"] = dict(JUPYTERLITE_KERNELSPEC)
+
+
+def _validate_jupyterlite_kernelspec(
+    notebook: object, relative: Path,
+) -> None:
+    metadata = notebook.get("metadata") if isinstance(notebook, dict) else None
+    kernelspec = metadata.get("kernelspec") if isinstance(metadata, dict) else None
+    if kernelspec != JUPYTERLITE_KERNELSPEC:
+        raise RuntimeError(
+            f"published notebook has incompatible JupyterLite kernelspec: {relative.as_posix()}"
+        )
+
+
 def _stage_lab_contents(contents: Path, manifest: dict[str, object]) -> tuple[int, int]:
     """Stage notebooks plus the local modules/data they need at runtime."""
     lab_files = manifest["lab_files"]
@@ -666,7 +689,10 @@ def _stage_lab_contents(contents: Path, manifest: dict[str, object]) -> tuple[in
         # JupyterLite has no OS subprocess. `%run file.py` preserves the
         # pedagogical intent while keeping repository notebooks untouched.
         notebook = json.loads(source.read_text(encoding="utf-8"))
+        if not isinstance(notebook, dict):
+            raise RuntimeError(f"notebook is not a JSON object: {relative.as_posix()}")
         _assign_deterministic_cell_ids(notebook, relative)
+        _canonicalize_jupyterlite_kernelspec(notebook, relative)
         for cell in notebook.get("cells", []):
             if cell.get("cell_type") != "code":
                 continue
@@ -1007,6 +1033,17 @@ def _validate_offline_runtime(output: Path, manifest: dict[str, object]) -> None
         raise RuntimeError("Pyodide lock contains no packages")
     _validate_kernel_bootstrap_packages(piplite_packages, set(packages))
     _validate_prefetched_pyodide_packages(pyodide_dir, packages)
+    notebooks = manifest["notebooks"]
+    assert isinstance(notebooks, list)
+    for relative in notebooks:
+        published = output / "jupyter" / "files" / relative
+        try:
+            notebook = json.loads(published.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise RuntimeError(
+                f"published notebook is missing or malformed: {relative.as_posix()}"
+            ) from exc
+        _validate_jupyterlite_kernelspec(notebook, relative)
     declared_files: set[str] = set()
     for package, metadata in packages.items():
         declared_name = metadata.get("name") if isinstance(metadata, dict) else None

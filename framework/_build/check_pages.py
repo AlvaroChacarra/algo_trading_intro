@@ -37,6 +37,9 @@ JUPYTERLITE_BOOTSTRAP_PACKAGES = frozenset({
     "comm", "ipykernel", "ipython", "jedi", "micropip", "piplite", "pyodide-kernel",
 })
 PYODIDE_BOOTSTRAP_ROOTS = frozenset({"ipython", "jedi", "micropip"})
+JUPYTERLITE_KERNELSPEC = {
+    "display_name": "Python (Pyodide)", "language": "python", "name": "python",
+}
 BUILD_INPUT_PATHS = (
     Path("framework/_build/build_pages.py"),
     Path("framework/_build/pages_offline_policy.py"),
@@ -377,6 +380,17 @@ def _validate_kernel_bootstrap_packages(
     if missing:
         raise RuntimeError(
             f"JupyterLite offline kernel bootstrap packages are missing: {missing}"
+        )
+
+
+def _validate_jupyterlite_kernelspec(
+    notebook: object, relative: Path,
+) -> None:
+    metadata = notebook.get("metadata") if isinstance(notebook, dict) else None
+    kernelspec = metadata.get("kernelspec") if isinstance(metadata, dict) else None
+    if kernelspec != JUPYTERLITE_KERNELSPEC:
+        raise RuntimeError(
+            f"published notebook has incompatible JupyterLite kernelspec: {relative.as_posix()}"
         )
 
 
@@ -819,6 +833,10 @@ def check_site(site_arg: Path, base_path: str) -> tuple[list[str], int, int]:
         except RuntimeError as exc:
             failures.append(str(exc))
             continue
+        try:
+            _validate_jupyterlite_kernelspec(notebook_data, relative)
+        except RuntimeError as exc:
+            failures.append(str(exc))
         cells = notebook_data.get("cells", []) if isinstance(notebook_data, dict) else []
         source = "\n".join(
             cell.get("source", "") if isinstance(cell.get("source", ""), str)
