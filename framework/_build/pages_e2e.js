@@ -425,6 +425,19 @@ function isRuntimeDiagnosticUrl(raw) {
 
 async function installWorkerDiagnostics(page) {
   await page.addInitScript(() => {
+    globalThis.addEventListener('unhandledrejection', event => {
+      const reason = event.reason;
+      const detail = {
+        type: typeof reason,
+        name: reason && reason.name || null,
+        message: reason && reason.message || null,
+        stack: reason && reason.stack || null,
+        string: String(reason),
+        properties: reason && (typeof reason === 'object' || typeof reason === 'function')
+          ? Object.getOwnPropertyNames(reason) : [],
+      };
+      console.error(`WORK2_UNHANDLED_REJECTION ${JSON.stringify(detail)}`);
+    });
     const NativeWorker = globalThis.Worker;
     if (typeof NativeWorker !== 'function') return;
     globalThis.Worker = new Proxy(NativeWorker, {
