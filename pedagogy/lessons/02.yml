@@ -90,6 +90,9 @@
       }
     ],
     "apis": [
+      "functional.make_order",
+      "functional.add_order",
+      "functional.cancel_order",
       "functional.best_bid",
       "functional.best_ask",
       "functional.spread",
@@ -102,6 +105,9 @@
   },
   "introduction_routes": {
     "apis": {
+      "functional.make_order": "LIVE",
+      "functional.add_order": "LIVE",
+      "functional.cancel_order": "LIVE",
       "functional.best_bid": "LIVE",
       "functional.best_ask": "LIVE",
       "functional.spread": "LIVE",
@@ -139,6 +145,33 @@
     }
   ],
   "api_surface": [
+    {
+      "id": "functional.make_order",
+      "name": "make_order",
+      "kind": "function",
+      "signature": "make_order(symbol, side, price, size) -> dict",
+      "returns": "dict",
+      "responsibility": "construct one functional order record",
+      "qualified_name": "lesson02.order_book.make_order"
+    },
+    {
+      "id": "functional.add_order",
+      "name": "add_order",
+      "kind": "function",
+      "signature": "add_order(book, order) -> list",
+      "returns": "list",
+      "responsibility": "append an order to the shared functional book",
+      "qualified_name": "lesson02.order_book.add_order"
+    },
+    {
+      "id": "functional.cancel_order",
+      "name": "cancel_order",
+      "kind": "function",
+      "signature": "cancel_order(book, order_id) -> list",
+      "returns": "list",
+      "responsibility": "return a functional book without one order id",
+      "qualified_name": "lesson02.order_book.cancel_order"
+    },
     {
       "id": "functional.best_bid",
       "name": "best_bid",
@@ -193,6 +226,7 @@
       "l02-bridge"
     ],
     "REQUIRED": [
+      "l02-build-functions/imbalance",
       "l02-recall",
       "l02-sort-and-signal",
       "l02-quiz"
@@ -208,6 +242,9 @@
         "python.shared_state"
       ],
       "apis": [
+        "functional.make_order",
+        "functional.add_order",
+        "functional.cancel_order",
         "functional.best_bid",
         "functional.best_ask"
       ],
@@ -245,9 +282,36 @@
   "load": {
     "live_presentation_minutes": 20,
     "guided_minutes": 20,
-    "required_autonomous_minutes": 58,
+    "required_autonomous_minutes": 80,
     "optional_minutes": 41,
-    "overflow_policy": "explicit-route-plan"
+    "overflow_policy": "explicit-route-plan",
+    "autonomous_components": {
+      "documents": [
+        {
+          "id": "l02-build-functions/imbalance",
+          "route": "REQUIRED",
+          "minutes": 1
+        },
+        {
+          "id": "l02-recall",
+          "route": "REQUIRED",
+          "minutes": 5
+        },
+        {
+          "id": "l02-sort-and-signal",
+          "route": "REQUIRED",
+          "minutes": 8
+        }
+      ],
+      "quizzes": [
+        {
+          "id": "l02-quiz",
+          "route": "REQUIRED",
+          "minutes": 8
+        }
+      ],
+      "projects": []
+    }
   },
   "scenes": [
     {
@@ -307,6 +371,7 @@
         {
           "id": "imbalance",
           "route": "REQUIRED",
+          "duration_minutes": 1,
           "dom_stage": 5
         }
       ]
@@ -413,7 +478,13 @@
         "functional.order_book"
       ],
       "apis": [
+        "functional.make_order",
+        "functional.add_order",
+        "functional.cancel_order",
         "functional.best_bid",
+        "functional.best_ask",
+        "functional.mid",
+        "functional.imbalance",
         "functional.spread"
       ],
       "notation": [
@@ -424,6 +495,101 @@
     "need": "Los módulos, imports y errores de dominio hacen reutilizable el libro funcional."
   },
   "api_transitions": [],
+  "symbol_checks": [
+    {
+      "path": "02-python-ii-functional-book/exercises/order_book.py",
+      "symbol": "make_order",
+      "api": "functional.make_order",
+      "kind": "function",
+      "parameters": [
+        {"name": "symbol", "kind": "positional_or_keyword", "annotation": null},
+        {"name": "side", "kind": "positional_or_keyword", "annotation": null},
+        {"name": "price", "kind": "positional_or_keyword", "annotation": null},
+        {"name": "size", "kind": "positional_or_keyword", "annotation": null}
+      ],
+      "source_returns": null,
+      "returns": "dict"
+    },
+    {
+      "path": "02-python-ii-functional-book/exercises/order_book.py",
+      "symbol": "add_order",
+      "api": "functional.add_order",
+      "kind": "function",
+      "parameters": [
+        {"name": "book", "kind": "positional_or_keyword", "annotation": null},
+        {"name": "order", "kind": "positional_or_keyword", "annotation": null}
+      ],
+      "source_returns": null,
+      "returns": "list"
+    },
+    {
+      "path": "02-python-ii-functional-book/exercises/order_book.py",
+      "symbol": "cancel_order",
+      "api": "functional.cancel_order",
+      "kind": "function",
+      "parameters": [
+        {"name": "book", "kind": "positional_or_keyword", "annotation": null},
+        {"name": "order_id", "kind": "positional_or_keyword", "annotation": null}
+      ],
+      "source_returns": null,
+      "returns": "list"
+    },
+    {
+      "path": "02-python-ii-functional-book/exercises/order_book.py",
+      "symbol": "best_bid",
+      "api": "functional.best_bid",
+      "kind": "function",
+      "parameters": [
+        {"name": "book", "kind": "positional_or_keyword", "annotation": null}
+      ],
+      "source_returns": null,
+      "returns": "float"
+    },
+    {
+      "path": "02-python-ii-functional-book/exercises/order_book.py",
+      "symbol": "best_ask",
+      "api": "functional.best_ask",
+      "kind": "function",
+      "parameters": [
+        {"name": "book", "kind": "positional_or_keyword", "annotation": null}
+      ],
+      "source_returns": null,
+      "returns": "float"
+    },
+    {
+      "path": "02-python-ii-functional-book/exercises/order_book.py",
+      "symbol": "spread",
+      "api": "functional.spread",
+      "kind": "function",
+      "parameters": [
+        {"name": "book", "kind": "positional_or_keyword", "annotation": null}
+      ],
+      "source_returns": null,
+      "returns": "float"
+    },
+    {
+      "path": "02-python-ii-functional-book/exercises/order_book.py",
+      "symbol": "mid",
+      "api": "functional.mid",
+      "kind": "function",
+      "parameters": [
+        {"name": "book", "kind": "positional_or_keyword", "annotation": null}
+      ],
+      "source_returns": null,
+      "returns": "float"
+    },
+    {
+      "path": "02-python-ii-functional-book/exercises/order_book.py",
+      "symbol": "imbalance",
+      "api": "functional.imbalance",
+      "kind": "function",
+      "parameters": [
+        {"name": "book", "kind": "positional_or_keyword", "annotation": null}
+      ],
+      "source_returns": null,
+      "returns": "float"
+    }
+  ],
   "package_checks": [],
   "used_later": {
     "concepts": [
@@ -434,7 +600,13 @@
       "python.sorted_key"
     ],
     "apis": [
+      "functional.add_order",
+      "functional.best_ask",
       "functional.best_bid",
+      "functional.cancel_order",
+      "functional.imbalance",
+      "functional.make_order",
+      "functional.mid",
       "functional.spread"
     ],
     "notation": [

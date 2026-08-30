@@ -1,7 +1,10 @@
 # Guía de autoría del learning runtime
 
 Esta guía describe cómo mantener una lesson sin crear una segunda versión del
-contenido. L1–L14 usan el mismo contrato; L15 conserva su UX lineal de examen.
+contenido. L1–L14 usan el mismo contrato; L15 conserva una UX lineal de práctica
+acumulativa pública. El examen final oficial sigue siendo obligatorio, pero
+permanece bloqueado: su banco deberá crearse de nuevo y entregarse desde la
+futura fuente privada autorizada.
 
 ## Una fuente, varios recorridos
 
@@ -53,7 +56,8 @@ Una escena apunta a una sección existente mediante `dom_id`:
   "stages": [
     {"id": "plan", "dom_stage": 5, "route": "LIVE"},
     {"id": "validate", "dom_stage": 6, "route": "LIVE"},
-    {"id": "commit", "dom_stage": 7, "route": "LIVE"}
+    {"id": "commit", "dom_stage": 7, "route": "LIVE"},
+    {"id": "remainder", "dom_stage": 8, "route": "REQUIRED", "duration_minutes": 1}
   ]
 }
 ```
@@ -62,6 +66,58 @@ Una escena apunta a una sección existente mediante `dom_id`:
 la intención de composición; no debe compensar un cuerpo mal estructurado. Una
 etapa puede cambiar de ruta dentro de una escena: el runtime la excluirá del
 recorrido hasta que su ruta esté habilitada.
+
+`routes.LIVE`, `routes.REQUIRED` y `routes.OPTIONAL` son un inventario exacto, no
+una segunda clasificación manual. Cada escena aparece bajo su `scene.route`; una
+etapa que cambia la ruta efectiva aparece además como `scene-id/stage-id` bajo la
+ruta de la etapa. El checker exige la misma secuencia que en `scenes`.
+
+## Carga autónoma sin dobles conteos
+
+Los minutos autónomos separan cuatro clases de trabajo: documento, ejercicio,
+quiz y proyecto. Los ejercicios proceden de `pedagogy/exercise_routes.yml`; el
+manifest de la lesson declara las otras tres en `load.autonomous_components`.
+Toda escena o etapa efectiva REQUIRED/OPTIONAL debe tener un componente de
+documento o quiz con el mismo identificador y ruta. Una escena superior conserva
+sus minutos como presupuesto agregado de su ruta base; una etapa que cambia de
+ruta declara `stage.duration_minutes` como fuente canónica aditiva para su ruta
+efectiva. El componente autónomo del mismo id refleja exactamente ese valor y no
+es una segunda fuente. El runtime muestra la duración del estado activo, no la
+duración base junto a una ruta override. Si una escena
+autónoma mezcla rutas en sus etapas, hay que dividirla para conservar una medida
+honesta de su duración.
+
+```json
+{
+  "required_autonomous_minutes": 133,
+  "autonomous_components": {
+    "documents": [
+      {
+        "id": "l14-capstone",
+        "route": "REQUIRED",
+        "minutes": 90,
+        "overlap_id": "l14-capstone-project"
+      }
+    ],
+    "quizzes": [
+      {"id": "l14-quiz", "route": "REQUIRED", "minutes": 8}
+    ],
+    "projects": [
+      {
+        "id": "l14-capstone-project",
+        "route": "REQUIRED",
+        "minutes": 90,
+        "overlap_id": "l14-capstone-project"
+      }
+    ]
+  }
+}
+```
+
+Por defecto todos los componentes suman. Un mismo `overlap_id` solo puede unir
+representaciones de clases distintas y con igual duración: en el ejemplo,
+documento y proyecto describen la misma actividad de 90 minutos y cuentan una
+vez. El total REQUIRED es ejercicios (35) + actividad (90) + quiz (8) = 133.
 
 ## Cómo crear o migrar una lesson
 
@@ -85,18 +141,41 @@ recorrido hasta que su ruta esté habilitada.
 Desde la raíz del repositorio:
 
 ```bash
+corepack enable
+npm ci
+python -m pip install --requirement requirements-pages-lock.txt --require-hashes --only-binary=:all:
+npx --no-install playwright install chromium webkit
 python pedagogy_check.py
-python framework/_build/pedagogy_reports.py
+python framework/_build/pedagogy_reports.py --check
 python framework/_build/build_course.py --check-only
 python framework/_build/build_course.py
 python -m pytest framework/tests/ -q
-node framework/_build/e2e_check.js
-node framework/_build/desktop_e2e.js --audit-dir artifacts/work2-full-course-scaleout
+npm run test:desktop-contract
+node --test framework/_build/pages_e2e.test.js
+npm run test:e2e-docs
+npm run test:e2e-desktop
+npm run validate:e2e-desktop
+python framework/_build/build_pages.py --output _site
+python framework/_build/check_pages.py _site --base-path /algo_trading_intro/
+python framework/_build/build_pages.py --output _site-repro
+python framework/_build/check_pages.py _site-repro --base-path /algo_trading_intro/
+cmp _site/.pages-integrity.json _site-repro/.pages-integrity.json
+WORK2_PAGES_SCOPE=site node framework/_build/pages_e2e.js _site
 ```
 
-Después de regenerar, `git diff` debe contener únicamente cambios esperados. En CI,
-`pedagogy_reports.py --check` y una segunda regeneración detectan drift o ediciones
-manuales de artefactos generados.
+El runtime de CI usa exactamente Node 20.19.4, npm 10.8.2 y Playwright 1.62.1,
+declarados en `package.json` y `package-lock.json`. La evidencia desktop solo se
+considera válida si el runner termina los 132 registros del plan cerrado y el
+validador independiente vuelve a comprobar el SHA, los 32 inputs, la cobertura y
+la ausencia de registros omitidos, duplicados o inesperados. El gate de Pages
+ejecuta además un shard JupyterLite limpio por L1–L14; esos 14 shards, WebKit
+móvil y la evidencia de identidad del navegador son gates browser remotos, no
+quedan acreditados por construir el site estático localmente.
+
+Después de regenerar, `git status --porcelain=v1 --untracked-files=all` debe quedar
+vacío una vez versionadas todas las salidas públicas esperadas. En CI,
+`pedagogy_reports.py --check` y una segunda regeneración detectan tanto drift o
+ediciones manuales como outputs nuevos no ignorados que falten en el commit.
 
 ## Gate de revisión
 

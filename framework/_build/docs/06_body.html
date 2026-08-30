@@ -236,7 +236,7 @@ Incompleta with abstract method decide</pre>
     </div>
 
     <div class="note"><span class="tag">Por qué esto importa</span>
-    En L10, el <code>Backtest</code> hará exactamente este bucle contra el mercado real.
+    En L10, el <code>Backtest</code> hará exactamente este bucle contra un replay sintético reproducible.
     Podrás enchufarle <em>cualquier</em> estrategia — incluida la tuya de L14 — sin tocar
     una línea del motor. El polimorfismo es el enchufe.</div>
   </div>
@@ -357,9 +357,9 @@ Incompleta with abstract method decide</pre>
 
     <div class="bridge">
       <div class="tag">El puente a L7</div>
-      <p style="margin:.2em 0"><strong>Sabes programar. Ahora toca el mercado de verdad.</strong></p>
+      <p style="margin:.2em 0"><strong>Sabes programar. Ahora toca un replay de mercado controlado.</strong></p>
       <p>Tus estrategias de juguete deciden a partir de una señal numérica. En L7 cargamos
-      <strong>500 snapshots reales de BTCUSDT</strong> y construimos esa señal desde datos.
+      <strong>500 snapshots sintéticos de BTCUSDT</strong> y construimos esa señal desde datos controlados.
       La pregunta seria es: ¿hacia dónde empuja el libro? Imbalance, microprice, profundidad — leer el
       mercado por dentro.</p>
       <p style="margin-bottom:0">Y en L10, esta familia <code>Strategy</code> vuelve — ya no

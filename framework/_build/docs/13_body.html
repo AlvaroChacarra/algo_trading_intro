@@ -131,7 +131,7 @@ bid = 98.80   ask = 100.00
     historias opuestas.</p>
 
     <div class="simcard">
-      <h4>simulador · MMSimulation(MarketMaker(...), seed=42).run()</h4>
+      <h4>simulador · MMSimulation(MarketMaker(...), A=520, seed=42).run()</h4>
       <div class="toggle" role="group" aria-label="Skew">
         <button class="on" id="mm-off">inventory_skew = 0</button>
         <button id="mm-on">inventory_skew = 2.0</button>
@@ -186,8 +186,9 @@ bid = 98.80   ask = 100.00
       simulador, una quote a distancia δ recibe intensidad
       <code>λ(δ) = A·exp(−κδ)</code>. Con A=1 y κ=1.5, cerca (δ=0.2) da
       λ≈0.74; lejos (δ=1.0), λ≈0.22. Alejarte protege el precio, pero reduce la
-      probabilidad de ejecutar. Aquí solo fijamos estas dos intuiciones; las fórmulas y la
-      clase de L14 todavía no aparecen.</p>
+      probabilidad de ejecutar. λ es una intensidad por horizonte: en cada uno de H
+      intervalos el simulador usa <code>p = 1−exp(−λ/H)</code>. Aquí solo fijamos estas
+      dos intuiciones; las fórmulas y la clase de L14 todavía no aparecen.</p>
     </div>
   </div>
 </section>
@@ -292,7 +293,7 @@ bid = 98.80   ask = 100.00
       <div class="tag">El puente a L14</div>
       <p style="margin:.2em 0"><strong>Tu skew es un número a ojo. ¿Cuál es el óptimo?</strong></p>
       <p>Elegiste <code>skew=2.0</code> porque sonaba razonable. Avellaneda y Stoikov
-      (2008) resolvieron el problema de verdad: dado tu miedo (γ), la volatilidad (σ) y el
+      (2008) resolvieron el problema de verdad: dado tu miedo (γ), la volatilidad del horizonte (σ<sub>H</sub>) y el
       tiempo que queda (τ), <em>calcularon</em> dónde cotizar. En L14: la fórmula, qué
       significa cada letra, y tu propia estrategia enchufada al simulador. Última clase de
       construcción.</p>

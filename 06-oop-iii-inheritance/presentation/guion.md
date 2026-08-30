@@ -24,7 +24,7 @@
 
 ## §3 · Polimorfismo vivo (4 min)
 - **Cede el teclado:** slider de imbalance en `[-1,+1]`, tres tarjetas respondiendo distinto a la MISMA llamada. Barre de negativo a positivo y comenta los cruces (Momentum y Contraria se espejan; la base, imperturbable).
-- La nota final es el contrato con el futuro: "en L10, Backtest hará exactamente este bucle contra el mercado real. El polimorfismo es el enchufe."
+- La nota final es el contrato con el futuro: "en L10, Backtest hará exactamente este bucle contra un replay sintético reproducible. El polimorfismo es el enchufe."
 
 ## §4 · El contrato ABC (3 min)
 - Alterna «comportamiento por defecto» y «contrato obligatorio» con la misma hija incompleta: en el primer modo se crea y devuelve `hold`; en el segundo ni siquiera se crea.
@@ -35,7 +35,7 @@
 
 ## §6 · Puente + mapa — cierre del bloque (3 min)
 - Mapa: L1-L5 ✓, L6 iluminada. **Momento solemne:** "el bloque de fundamentos está completo. Sabéis programar."
-- **Puente:** "ahora, el mercado de verdad: 500 snapshots reales de BTCUSDT en L7. Y en L10 esta familia vuelve, enchufada al motor."
+- **Puente:** "ahora, un replay controlado: 500 snapshots sintéticos de BTCUSDT en L7. Y en L10 esta familia vuelve, enchufada al motor."
 - Notebook + gimnasio (15 drills: herencia, super, isinstance, la impostora y la ABC).
 
 ## Checklist

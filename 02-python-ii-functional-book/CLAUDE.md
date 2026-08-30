@@ -21,7 +21,7 @@ argumentos como properties (`book.best_bid`, `book.mid`) y operaciones parametri
 como métodos (`book.imbalance(levels)`). Cero clases: el objetivo es *sentir el dolor* del estado
 compartido.
 
-El deck a medida (Pyodide) trae un **libro vivo** interactivo: añades/cancelas órdenes y ves
+El documento HTML autocontenido trae un **libro vivo** interactivo: añades/cancelas órdenes y ves
 best_bid/ask, spread, mid e imbalance reaccionar. El núcleo son 7 ejercicios que culminan en
 "construye y lee tu libro"; el auxiliar cuenta cuántas funciones reciben `book` (7 → puente a
 POO). `order_book.py` consolida las funciones + un `main` 1:1 con el núcleo.

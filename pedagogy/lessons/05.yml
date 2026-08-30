@@ -261,6 +261,8 @@
       "l05-bridge"
     ],
     "REQUIRED": [
+      "l05-composition/tracker",
+      "l05-composition/equity",
       "l05-encapsulation",
       "l05-quiz"
     ],
@@ -316,9 +318,20 @@
   "load": {
     "live_presentation_minutes": 20,
     "guided_minutes": 20,
-    "required_autonomous_minutes": 34,
+    "required_autonomous_minutes": 52,
     "optional_minutes": 15,
-    "overflow_policy": "explicit-route-plan"
+    "overflow_policy": "explicit-route-plan",
+    "autonomous_components": {
+      "documents": [
+        {"id": "l05-composition/tracker", "route": "REQUIRED", "minutes": 1},
+        {"id": "l05-composition/equity", "route": "REQUIRED", "minutes": 1},
+        {"id": "l05-encapsulation", "route": "REQUIRED", "minutes": 8}
+      ],
+      "quizzes": [
+        {"id": "l05-quiz", "route": "REQUIRED", "minutes": 8}
+      ],
+      "projects": []
+    }
   },
   "scenes": [
     {
@@ -373,11 +386,13 @@
         {
           "id": "tracker",
           "route": "REQUIRED",
+          "duration_minutes": 1,
           "dom_stage": 4
         },
         {
           "id": "equity",
           "route": "REQUIRED",
+          "duration_minutes": 1,
           "dom_stage": 5
         }
       ]

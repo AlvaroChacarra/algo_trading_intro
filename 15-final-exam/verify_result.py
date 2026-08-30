@@ -4,23 +4,27 @@ checkpoint al corregirse.
 Cuando un alumno termina el examen (examen.html) o el checkpoint
 (06-oop-iii-inheritance/checkpoint.html), la página le da un código como:
 
-    AT26-L15-S0-R34-W3-B3-N8.13-27
+    AT26-L15P-S0-R34-W3-B3-N8.12-43
 
 que puede enviar al profesor. Este script lo descifra y comprueba que el
-checksum cuadra (detecta un código mal copiado o manipulado a mano) y que la
-nota es coherente con aciertos/fallos. No es seguridad criptográfica: es una
-forma honesta y sin capturas de pantalla de reportar un resultado.
+checksum cuadra (detecta un código mal copiado) y que la puntuación declarada es
+coherente con aciertos/fallos. No es seguridad criptográfica ni acredita autoría
+o nota: cualquiera puede recalcular la fórmula pública.
 
 Uso:
-    python verify_result.py AT26-L15-S0-R34-W3-B3-N8.13-27
+    python verify_result.py AT26-L15P-S0-R34-W3-B3-N8.12-43
     python verify_result.py           # modo interactivo (pega el código)
 """
 
 from __future__ import annotations
 
+import re
 import sys
 
-EXAM_IDS = {"L15": ("Examen final", 40), "CK6": ("Checkpoint L1-L6", 20)}
+EXAM_IDS = {
+    "L15P": ("Práctica acumulativa pública L15", 40),
+    "CK6": ("Checkpoint L1-L6", 20),
+}
 
 
 def _checksum(seed: int, right: int, wrong: int, blank: int, total: int) -> str:
@@ -30,23 +34,34 @@ def _checksum(seed: int, right: int, wrong: int, blank: int, total: int) -> str:
 
 def parse(code: str) -> dict:
     code = code.strip().upper()
-    parts = code.split("-")
-    if len(parts) != 8 or parts[0] != "AT26":
+    match = re.fullmatch(
+        r"AT26-(?P<exid>[A-Z0-9]+)-S(?P<seed>\d+)-R(?P<right>\d+)-"
+        r"W(?P<wrong>\d+)-B(?P<blank>\d+)-N(?P<nota>\d+(?:\.\d{1,2})?)-"
+        r"(?P<chk>\d{2})",
+        code,
+    )
+    if match is None:
         raise ValueError("formato inesperado: se esperaba "
                          "AT26-<ID>-S<seed>-R<n>-W<n>-B<n>-N<nota>-<chk>")
-    _, exid, s, r, w, b, n, chk = parts
-    try:
-        seed = int(s[1:]); right = int(r[1:]); wrong = int(w[1:])
-        blank = int(b[1:]); nota = float(n[1:])
-    except (ValueError, IndexError):
-        raise ValueError("no pude leer los números del código")
+    values = match.groupdict()
+    exid = values["exid"]
+    if exid not in EXAM_IDS:
+        raise ValueError(f"identificador de prueba desconocido: {exid}")
+    seed = int(values["seed"])
+    right = int(values["right"])
+    wrong = int(values["wrong"])
+    blank = int(values["blank"])
+    nota = float(values["nota"])
+    chk = values["chk"]
+    if not 0.0 <= nota <= 10.0:
+        raise ValueError("la nota debe estar entre 0 y 10")
     return {"exid": exid, "seed": seed, "right": right, "wrong": wrong,
             "blank": blank, "nota": nota, "chk": chk}
 
 
 def verify(code: str) -> tuple[bool, str]:
     d = parse(code)
-    name, total_expected = EXAM_IDS.get(d["exid"], ("Desconocido", None))
+    name, total_expected = EXAM_IDS[d["exid"]]
     total = d["right"] + d["wrong"] + d["blank"]
     problems = []
 
@@ -55,7 +70,7 @@ def verify(code: str) -> tuple[bool, str]:
         problems.append(f"checksum no cuadra (código dice {d['chk']}, debería ser {good_chk}): "
                         "código mal copiado o alterado")
 
-    if total_expected is not None and total != total_expected:
+    if total != total_expected:
         problems.append(f"suma {total} preguntas, pero {name} tiene {total_expected}")
 
     score = d["right"] - 0.5 * d["wrong"]
@@ -74,7 +89,7 @@ def verify(code: str) -> tuple[bool, str]:
     ]
     ok = not problems
     if ok:
-        lines.append("  Estado     : ✅ VÁLIDO — el código es consistente")
+        lines.append("  Estado     : ✅ CONSISTENTE — autoinforme no autenticado")
     else:
         lines.append("  Estado     : ❌ SOSPECHOSO")
         lines += [f"               · {p}" for p in problems]

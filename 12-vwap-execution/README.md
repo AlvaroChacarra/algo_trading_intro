@@ -17,9 +17,10 @@ El perfil son pesos relativos: se normalizan, así que importan las proporciones
 **VWAPStrategy: slicing, TWAP y perfil de volumen estático**
 
 `exchange/strategies/vwap.py` (`VWAPStrategy(symbol, side, total_size, horizon, profile)`):
-en cada tick emite una market order del tamaño del trozo (peso normalizado × total). Sin
-perfil → TWAP uniforme. Es una subclase de `Strategy`: se enchufa al `Backtest` exactamente
-igual que cualquier otra — primera demostración del valor del framework de L10.
+en cada tick calcula el objetivo acumulado del perfil y emite una market order por la brecha
+frente a los fills simulados por el motor canónico. Solo `on_fill` aumenta el volumen ejecutado: enviar una orden no
+equivale a llenarla. Sin perfil → TWAP uniforme. Es una subclase de `Strategy`: se enchufa al
+`Backtest` exactamente igual que cualquier otra — primera demostración del valor del framework de L10.
 
 La predicción dinámica de volumen queda como profundización **OPTIONAL**: ningún contenido ni
 assessment posterior la presupone; LIVE + REQUIRED se sostienen con slicing, TWAP, el perfil

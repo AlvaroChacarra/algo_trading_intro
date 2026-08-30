@@ -86,7 +86,7 @@ SHARED_JS = r"""
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* ── mini-gráficas canvas (compartidas por los docs con datos reales) ── */
+/* ── mini-gráficas canvas (compartidas por los docs con datos reproducibles) ── */
 window.DOC=window.DOC||{};
 DOC.chart=function(canvas,seriesList,opts={}){
   const c=typeof canvas==='string'?document.querySelector(canvas):canvas;
@@ -214,9 +214,12 @@ DOC.save=function(patch){
   const steps=$$('.scrolly .step');
   if(!steps.length)return;
   document.addEventListener('keydown',e=>{
+    if(document.body.classList.contains('lr-modal-open'))return;
     if(document.body.classList.contains('mode-aula'))return;
     if(!['ArrowDown','ArrowUp','PageDown','PageUp'].includes(e.key))return;
     if(/INPUT|TEXTAREA|SELECT|BUTTON/.test(document.activeElement.tagName))return;
+    const scroller=document.activeElement?.closest('[data-lr-scroller="true"]');
+    if(scroller)return;
     const mid=innerHeight/2;
     let idx=0,best=1e12;
     steps.forEach((s,i)=>{const r=s.getBoundingClientRect();
@@ -233,7 +236,9 @@ DOC.save=function(patch){
 /* ── modo profesor: ?profe=1 abre el guion como cajón lateral ── */
 (function(){
   const srcEl=document.getElementById('guion-src');
-  if(!srcEl||!new URLSearchParams(location.search).has('profe'))return;
+  const professor=['1','true'].includes(
+    (new URLSearchParams(location.search).get('profe')||'').toLowerCase());
+  if(!srcEl||!professor)return;
   const mdlite=t=>t
     .replace(/&/g,'&amp;').replace(/</g,'&lt;')
     .replace(/^### (.*)$/gm,'<h4>$1</h4>')
@@ -246,16 +251,54 @@ DOC.save=function(patch){
     .replace(/\n{2,}/g,'</p><p>');
   const drawer=document.createElement('aside');
   drawer.id='guion-drawer';
+  drawer.dataset.overlay='guide';drawer.hidden=true;drawer.inert=true;drawer.setAttribute('inert','');
+  drawer.setAttribute('aria-hidden','true');drawer.setAttribute('aria-label','Guion completo del profesor');
+  drawer.setAttribute('role','dialog');drawer.setAttribute('aria-modal','true');
   drawer.innerHTML='<div class="gd-head">📋 Guion del profesor'
-    +'<button id="gd-close" aria-label="Cerrar">✕</button></div>'
-    +'<div class="gd-body"><p>'+mdlite(srcEl.textContent)+'</p></div>';
+    +'<button type="button" id="gd-close" aria-label="Cerrar guion">✕</button></div>'
+    +'<div class="gd-body" data-lr-scroller="true" data-lr-scroller-axis="vertical" tabindex="0"'
+    +' role="region" aria-label="Contenido desplazable del guion completo"><p>'
+    +mdlite(srcEl.textContent)+'</p></div>';
   document.body.appendChild(drawer);
   const btn=document.createElement('button');
-  btn.id='gd-toggle';btn.className='btn';btn.textContent='📋 Guion';
+  btn.id='gd-toggle';btn.className='btn';btn.type='button';btn.textContent='📋 Guion';
+  btn.setAttribute('aria-controls','guion-drawer');btn.setAttribute('aria-expanded','false');
   document.body.appendChild(btn);
-  const toggle=()=>drawer.classList.toggle('open');
-  btn.addEventListener('click',toggle);
-  drawer.querySelector('#gd-close').addEventListener('click',toggle);
+  let lastTrigger=btn;
+  const setOpen=(open,trigger=null,restore=true)=>{
+    const currentlyOpen=drawer.classList.contains('open');
+    if(open===currentlyOpen)return false;
+    if(open){
+      window.LEARNING_TEACHER_DRAWER?.close({restoreFocus:false});
+      lastTrigger=trigger||document.activeElement||btn;drawer.hidden=false;
+      drawer.inert=false;drawer.removeAttribute('inert');
+      window.LEARNING_MODAL_BACKGROUND?.(drawer,true);
+    }
+    drawer.classList.toggle('open',open);drawer.setAttribute('aria-hidden',String(!open));
+    btn.setAttribute('aria-expanded',String(open));
+    if(open)drawer.querySelector('#gd-close').focus();
+    else{
+      drawer.hidden=true;drawer.inert=true;drawer.setAttribute('inert','');
+      window.LEARNING_MODAL_BACKGROUND?.(drawer,false);
+      if(restore)window.LEARNING_RESTORE_FOCUS?.(lastTrigger,btn);
+    }
+    return true;
+  };
+  const focusable='a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),'
+    +'textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+  drawer.addEventListener('keydown',event=>{
+    if(event.key!=='Tab')return;
+    const items=[...drawer.querySelectorAll(focusable)].filter(node=>!node.hidden&&node.getClientRects().length);
+    if(!items.length)return;
+    const first=items[0],last=items[items.length-1];
+    if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+    else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+  });
+  btn.addEventListener('click',event=>setOpen(true,event.currentTarget));
+  drawer.querySelector('#gd-close').addEventListener('click',()=>setOpen(false));
+  window.GUIDE_DRAWER={open:trigger=>setOpen(true,trigger),
+    close:options=>setOpen(false,null,options?.restoreFocus!==false),
+    isOpen:()=>drawer.classList.contains('open')};
 })();
 
 /* ── scrollytelling genérico ──
@@ -288,16 +331,15 @@ def _css(n: int | None = None) -> str:
     return css
 
 
-def _guion_embed(n: int) -> str:
-    """Guion del profesor embebido (visible solo con ?profe=1)."""
-    path = os.path.join(HERE, "custom", f"{n:02d}_guion.md")
-    if not os.path.exists(path):
-        return ""
-    text = open(path).read().replace("</script", "<\\/script")
+def _guion_embed(text: str) -> str:
+    """Embed the emitted teacher script (visible only with ``?profe=1``)."""
+    if not text:
+        raise ValueError("every interactive document requires a teacher script")
+    text = text.replace("</script", "<\\/script")
     return f'<script type="text/plain" id="guion-src">{text}</script>\n'
 
 
-def build_doc(lesson: dict) -> str:
+def build_doc(lesson: dict, guion_text: str) -> str:
     n = lesson["n"]
     body = open(os.path.join(DOCS, f"{n:02d}_body.html")).read()
     custom_js_path = os.path.join(DOCS, f"{n:02d}_custom.js")
@@ -309,7 +351,7 @@ def build_doc(lesson: dict) -> str:
             f'<meta name="viewport" content="width=device-width, initial-scale=1">\n'
             f'<title>{title}</title>\n<style>\n{_css(n)}</style>\n</head>\n'
             f'<body data-lesson="{n:02d}">\n'
-            f'{body}\n{_guion_embed(n)}{_doc_data(n)}{_pedagogy_contract(n)}'
+            f'{body}\n{_guion_embed(guion_text)}{_doc_data(n)}{_pedagogy_contract(n)}'
             f'<script>\n{scripts}\n</script>\n'
             f'</body>\n</html>\n')
 
@@ -392,7 +434,7 @@ def build_index(lessons: list[dict], root: str) -> str:
     if os.path.exists(os.path.join(root, "14-avellaneda-stoikov", "CAPSTONE.md")):
         capstone = ('<a class="lcard special" href="14-avellaneda-stoikov/CAPSTONE.md">'
                     '<div class="lc-n">🏁</div><div class="lc-t">Capstone · tu market maker</div>'
-                    '<div class="lc-o">Proyecto autónomo REQUIRED · baremo 30/40/30</div></a>')
+                    '<div class="lc-o">Proyecto autónomo REQUIRED · feedback formativo · rúbrica 30/40/30</div></a>')
     blocks = [
         ("FOUNDATIONS", "L1 → L6", "Python y objetos nacen para representar el mercado", range(1, 7), checkpoint),
         ("ENGINE", "L7 → L10", "Del snapshot al motor y al runner", range(7, 11), ""),
@@ -407,19 +449,23 @@ def build_index(lessons: list[dict], root: str) -> str:
   <div class="lgrid">{content}</div>
 </section>''')
     exam = ('<a class="lcard special" href="15-final-exam/examen.html">'
-            '<div class="lc-n">L15 · ASSESSMENT</div><div class="lc-t">Examen final</div>'
-            '<div class="lc-o">Recorrido lineal · 40 preguntas · 40 minutos · +1/−0.5</div></a>')
+            '<div class="lc-n">L15 · PRÁCTICA PÚBLICA</div>'
+            '<div class="lc-t">Práctica acumulativa</div>'
+            '<div class="lc-o">40 preguntas · 40 minutos · no acredita nota oficial</div></a>')
     sections.append(f'''<section class="course-block" aria-labelledby="block-assessment">
   <div class="course-block-head"><div><div class="course-flow">L15</div>
-    <h2 id="block-assessment">ASSESSMENT</h2></div><p>Integra la construcción completa</p></div>
+    <h2 id="block-assessment">ASSESSMENT</h2></div>
+    <p>Practica la integración; la evaluación oficial permanece bloqueada: sus bancos
+    deberán crearse de nuevo en la futura fuente privada autorizada</p></div>
   <div class="assessment-grid">{exam}</div>
 </section>''')
 
     body = f'''<header class="hero wrap course-index-hero" id="s0" style="padding-bottom:24px">
   <div class="eyebrow"><b>Algo Trading · ICAI 2026</b> · mapa del curso</div>
   <h1>Un curso, <em>un sistema</em></h1>
-  <p class="lede">Catorce lessons construyen <code>exchange</code> en tres bloques; L15 evalúa
-  la integración. LIVE y REQUIRED forman el recorrido oficial. OPTIONAL solo aparece cuando lo eliges.</p>
+  <p class="lede">Catorce lessons construyen <code>exchange</code> en tres bloques; L15 permite
+  practicar la integración. LIVE y REQUIRED forman el recorrido obligatorio. OPTIONAL solo aparece
+  cuando lo eliges.</p>
 </header>
 <main class="wrap course-index" style="padding-bottom:60px">
   {''.join(sections)}

@@ -1,5 +1,10 @@
-# Static publication dependencies (not needed by students at runtime).
-nbconvert>=7.16,<8
+# Direct Pages and CI-test dependencies (not needed by students at runtime).
+# Pin every root so regenerating the transitive lock is a deliberate operation.
+nbconvert==7.17.1
 jupyterlite-core==0.8.1
 jupyterlite-pyodide-kernel==0.8.1
-jupyter-server>=2.0,<3
+jupyter-server==2.21.0
+# Required by jupyter-server on the Python 3.11 CI target.  Keep it explicit so
+# cross-version lock generation cannot silently evaluate the marker as 3.12.
+overrides==7.7.0
+pytest==8.4.2

@@ -459,9 +459,18 @@
   "load": {
     "live_presentation_minutes": 20,
     "guided_minutes": 20,
-    "required_autonomous_minutes": 12,
+    "required_autonomous_minutes": 38,
     "optional_minutes": 5,
-    "overflow_policy": "explicit-route-plan"
+    "overflow_policy": "explicit-route-plan",
+    "autonomous_components": {
+      "documents": [
+        {"id": "l10-first-strategy", "route": "REQUIRED", "minutes": 18}
+      ],
+      "quizzes": [
+        {"id": "l10-quiz", "route": "REQUIRED", "minutes": 8}
+      ],
+      "projects": []
+    }
   },
   "scenes": [
     {

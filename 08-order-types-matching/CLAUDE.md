@@ -17,9 +17,10 @@ El **precio efectivo** de una market es el VWAP de sus fills, peor que el best a
 
 ## Implementación técnica
 
-`exchange/matching.py` (`MatchingEngine.process(order, book) -> list[Fill]`): recorre el lado
-contrario, planifica el cruce, aplica FOK (todo-o-nada), consume liquidez (muta el libro) y
-descansa el remanente de una LIMIT. Devuelve los `Fill` generados.
+`exchange/matching.py` (`MatchingEngine.process(order, book) -> list[Fill]`): valida primero
+que `order.symbol == book.symbol`, recorre el lado contrario, planifica el cruce, aplica FOK
+(todo-o-nada), consume liquidez (muta el libro) y descansa el remanente de una LIMIT. Devuelve
+los `Fill` generados.
 
 Conecta todo lo anterior: recibe `Order` (L4), opera sobre `OrderBook` (L5), produce `Fill`
 (L4). La separación PLAN → VALIDATE → COMMIT hace atómica una FOK fallida.

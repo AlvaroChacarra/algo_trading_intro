@@ -11,44 +11,50 @@ const codeStages=[
         self._depth = depth
         self._engine = MatchingEngine()
         self._i = -1
+        self._timestamp = None
         self.book = None
 
     def step(self):
-<span class="active-line">        self._i += 1</span>`,
+<span class="active-line">        next_i = self._i + 1</span>
+        # El estado observable aun no cambia.`,
 `class Market:
-    def __init__(self, symbol, snapshots, depth=10):
-        ...
-        self._i = -1
-        self.book = None
+    ...
 
     def step(self):
-        self._i += 1
-<span class="active-line">        self.book = OrderBook.from_snapshot(</span>
-<span class="active-line">            self.symbol, self._snapshots[self._i], self._depth)</span>
-<span class="active-line">        return self.book</span>`,
+        next_i = self._i + 1
+        snapshot = self._snapshots[next_i]
+<span class="active-line">        next_book = OrderBook.from_snapshot(</span>
+<span class="active-line">            self.symbol, snapshot, self._depth)</span>
+        raw_timestamp = snapshot.get("timestamp", next_i)
+<span class="active-line">        next_timestamp = _integer_timestamp(raw_timestamp)</span>
+        # Si algo falla arriba, _i/_timestamp/book no cambian.`,
 `class Market:
-    def __init__(self, symbol, snapshots, depth=10):
-        ...
-        self._i = -1
-        self.book = None
+    ...
 
-<span class="active-line">    def step(self):</span>
-        self._i += 1
-<span class="active-line">        if self._i &gt;= len(self._snapshots):</span>
+    def step(self):
+        next_i = self._i + 1
+        if next_i &gt;= len(self._snapshots):
+<span class="active-line">            self._i = next_i</span>
+<span class="active-line">            self._timestamp = None</span>
 <span class="active-line">            self.book = None</span>
-<span class="active-line">            return None</span>
-        self.book = OrderBook.from_snapshot(
-            self.symbol, self._snapshots[self._i], self._depth)
-        return self.book`,
+            return None
+
+        snapshot = self._snapshots[next_i]
+        next_book = OrderBook.from_snapshot(
+            self.symbol, snapshot, self._depth)
+        raw_timestamp = snapshot.get("timestamp", next_i)
+        next_timestamp = _integer_timestamp(raw_timestamp)
+
+<span class="active-line">        self._i = next_i</span>
+<span class="active-line">        self._timestamp = next_timestamp</span>
+<span class="active-line">        self.book = next_book</span>
+<span class="active-line">        return next_book</span>`,
 `class Market:
     ...
 
     @property
 <span class="active-line">    def timestamp(self):</span>
-<span class="active-line">        if 0 &lt;= self._i &lt; len(self._snapshots):</span>
-            row = self._snapshots[self._i]
-<span class="active-line">            return int(row.get("timestamp", self._i))</span>
-        return None
+<span class="active-line">        return self._timestamp</span>
 
     def step(self):
         ...`,
@@ -70,6 +76,7 @@ const codeStages=[
         self._snapshots = snapshots
 <span class="active-line">        self._engine = MatchingEngine()</span>
         self._i = -1
+        self._timestamp = None
         self.book = None
     ...
     def submit(self, order):
@@ -82,12 +89,14 @@ const codeStages=[
         self._snapshots = snapshots
         self._engine = MatchingEngine()
         self._i = -1
+        self._timestamp = None
         self.book = None
     ...
     def submit(self, order): ...
 
 <span class="active-line">    def reset(self):</span>
 <span class="active-line">        self._i = -1</span>
+<span class="active-line">        self._timestamp = None</span>
 <span class="active-line">        self.book = None</span>`
 ];
 function paintBuildCode(stage){$('#l9-build-code').innerHTML=codeStages[stage];}

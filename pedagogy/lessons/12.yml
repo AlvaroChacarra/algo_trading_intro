@@ -243,9 +243,18 @@
   "load": {
     "live_presentation_minutes": 20,
     "guided_minutes": 20,
-    "required_autonomous_minutes": 14,
-    "optional_minutes": 35,
-    "overflow_policy": "explicit-route-plan"
+    "required_autonomous_minutes": 22,
+    "optional_minutes": 47,
+    "overflow_policy": "explicit-route-plan",
+    "autonomous_components": {
+      "documents": [
+        {"id": "l12-dynamic-profile", "route": "OPTIONAL", "minutes": 12}
+      ],
+      "quizzes": [
+        {"id": "l12-quiz", "route": "REQUIRED", "minutes": 8}
+      ],
+      "projects": []
+    }
   },
   "scenes": [
     {

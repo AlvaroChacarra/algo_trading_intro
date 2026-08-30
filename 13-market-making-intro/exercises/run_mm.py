@@ -4,10 +4,15 @@
 from exchange.simulation import MMSimulation
 from exchange.strategies import MarketMaker
 
+SIGMA_HORIZON = 0.5
+HORIZON = 500
+ARRIVAL_INTENSITY = 520.0
+
 
 def run(skew):
     mm = MarketMaker("SIM", quote_size=0.1, half_spread=0.6, inventory_skew=skew)
-    res = MMSimulation(mm, s0=100.0, sigma=0.5, steps=500, seed=42).run()
+    res = MMSimulation(mm, s0=100.0, sigma=SIGMA_HORIZON,
+                       steps=HORIZON, A=ARRIVAL_INTENSITY, seed=42).run()
     print(f"  skew={skew:>3}: PnL={res.final_pnl:>6.2f}  "
           f"max|inventario|={res.max_inventory:.2f}")
 

@@ -26,10 +26,11 @@ un `if` que decide).""",
 `if` y funciones. Una orden es un `dict` con `symbol`, `side`, `price`, `size`; un libro es una
 lista de esos dicts.
 
-La presentación HTML (a medida, con **Pyodide** ejecutando Python real en el navegador) lleva 5
-simuladores: texto→bits (`ord`/`bin`), CPython vs compilación nativa, el viaje de una línea con
-**tokens/AST/bytecode reales** (`tokenize`/`ast`/`dis`), el editor en vivo, los retos de
-romper-código y el rule builder. El notebook refuerza con `ord`/`bin` y `dis` (auxiliares A4-A5).
+El documento HTML autocontenido lleva 5 simuladores interactivos: texto→bits (`ord`/`bin`),
+CPython vs compilación nativa, el viaje de una línea con **tokens/AST/bytecode reales**
+(`tokenize`/`ast`/`dis`), el editor guiado, los retos de romper-código y el rule builder. Las
+salidas de Python se calculan y validan durante la generación; el documento no ejecuta Python ni
+carga una CDN en el navegador. El notebook refuerza con `ord`/`bin` y `dis` (auxiliares A4-A5).
 
 Continuidad: el vocabulario (`symbol/side/price/size`) reaparece en `OrderMini` en L4 y, tras
 la migración explícita de firma, en el `Order` estable de `exchange`. Los dicts de L1 son el
@@ -50,7 +51,7 @@ argumentos como properties (`book.best_bid`, `book.mid`) y operaciones parametri
 como métodos (`book.imbalance(levels)`). Cero clases: el objetivo es *sentir el dolor* del estado
 compartido.
 
-El deck a medida (Pyodide) trae un **libro vivo** interactivo: añades/cancelas órdenes y ves
+El documento HTML autocontenido trae un **libro vivo** interactivo: añades/cancelas órdenes y ves
 best_bid/ask, spread, mid e imbalance reaccionar. El núcleo son 7 ejercicios que culminan en
 "construye y lee tu libro"; el auxiliar cuenta cuántas funciones reciben `book` (7 → puente a
 POO). `order_book.py` consolida las funciones + un `main` 1:1 con el núcleo.""",
@@ -69,7 +70,7 @@ base de todo el PnL del curso.""",
 `"buy"`/`"sell"` como antes, pero rechazan valores inválidos. `Order.notional()` reemplaza la
 función `compute_notional` de L1; `Fill.cash_flow()` formaliza el signo por lado.
 
-El deck a medida (Pyodide) trae el morph dict→clase, un **Order inspector** (cambias
+El documento HTML autocontenido trae el morph dict→clase, un **Order inspector** (cambias
 side/price/size y ves notional y `__repr__`) y un visualizador del **signo del cash_flow**. El
 núcleo son 6 ejercicios que culminan en "de la orden al dinero" (Order→Fill→cash_flow); el `.py`
 entregable es `orders_demo.py`.
@@ -101,7 +102,7 @@ asks: list[Level])`. Las lecturas `best_bid`, `best_ask`, `spread`, `mid` siguen
 e `imbalance(levels)` sigue siendo método. `PositionTracker.apply_fill` consume el `Fill` estable
 introducido en L4.
 
-El deck a medida (Pyodide) trae un inspector del `OrderBook` (métricas como properties) y un widget
+El documento HTML autocontenido trae un inspector del `OrderBook` (métricas como properties) y un widget
 del `PositionTracker` (pulsas fills y ves cash/posición/equity, con slider de mark). El núcleo
 son 6 ejercicios que culminan en "los dos objetos, juntos"; el `.py` entregable es `book_demo.py`.
 Puente: ya creas (L4) y compones (L5) objetos; falta la última pieza de OOP — compartir un
@@ -119,7 +120,7 @@ nivel. El conocimiento funcional de las métricas es previo; aquí importa progr
 `OrderBook.from_snapshot`, `depth(side, levels)`, `imbalance(levels)` y `microprice`.
 
 El notebook construye una versión del alumno desde un snapshot pequeño y termina aplicándola a
-la primera fila real del CSV. Solo al final compara comportamiento con el `OrderBook` canónico;
+la primera fila sintética del CSV reproducible. Solo al final compara comportamiento con el `OrderBook` canónico;
 no usa `Market` como caja negra.""",
 },
 6: {
@@ -133,22 +134,24 @@ Tipos de orden y su trade-off **coste / certeza / riesgo**:
 - **FOK** (fill-or-kill): todo o nada.
 
 El **precio efectivo** de una market es el VWAP de sus fills, peor que el best ask cuanto más grande.""",
-"technical": """`exchange/matching.py` (`MatchingEngine.process(order, book) -> list[Fill]`): recorre el lado
-contrario, planifica el cruce, aplica FOK (todo-o-nada), consume liquidez (muta el libro) y
-descansa el remanente de una LIMIT. Devuelve los `Fill` generados.
+"technical": """`exchange/matching.py` (`MatchingEngine.process(order, book) -> list[Fill]`): valida primero
+que `order.symbol == book.symbol`, recorre el lado contrario, planifica el cruce, aplica FOK
+(todo-o-nada), consume liquidez (muta el libro) y descansa el remanente de una LIMIT. Devuelve
+los `Fill` generados.
 
 Conecta todo lo anterior: recibe `Order` (L4), opera sobre `OrderBook` (L5), produce `Fill`
 (L4). La separación PLAN → VALIDATE → COMMIT hace atómica una FOK fallida.""",
 },
 7: {
 "theory": """Una simulación de mercado = **estado** (el libro) + **dinámica** (el matching) +
-**tiempo** (el loop). El **replay** reproduce snapshots históricos en orden; en cada instante
+**tiempo** (el loop). El **replay** reproduce snapshots sintéticos y reproducibles en orden; en cada instante
 puedes enviar órdenes contra el libro de ese momento.
 
 Llevar la cuenta en el tiempo es lo que distingue un cálculo puntual de una estrategia: se
 acumulan fills en un `PositionTracker` y se marca el equity a cada paso, obteniendo la curva
-de PnL. Modelo de simulación: el libro se reconstruye en cada snapshot, así que las órdenes
-límite no persisten entre pasos (las estrategias que quieren persistencia re-cotizan).""",
+de PnL. Cada snapshot reconstruye la liquidez externa. Desde L10, el runner conserva por id
+el remanente de las órdenes propias, lo cruza contra el tick siguiente y permite cancelarlo
+sin retirar liquidez ajena.""",
 "technical": """`exchange/market.py` (`Market`): `step()` reconstruye el libro desde el siguiente snapshot
 y lo devuelve (o `None` al acabar); `submit(order)` cruza contra el libro actual vía el
 `MatchingEngine`; `reset()` rebobina. Se compone con `PositionTracker` para seguir inventario
@@ -164,11 +167,14 @@ subclase de `Strategy` encaja en el mismo runner. Esta ignorancia mutua (la estr
 del motor, el motor no sabe de la estrategia concreta) es lo que hace el sistema modular y
 permite que el alumno enchufe la suya.""",
 "technical": """`exchange/strategy.py`: `Strategy(ABC)` con `on_book_update(book) -> list[Action]`
-(abstracto), `on_fill`, `on_start/on_end`; acciones `NewOrder` y `Cancel`.
-`exchange/backtest.py`: `Backtest(market, strategy)` recorre el mercado, pasa cada libro a la
-estrategia, ejecuta sus acciones contra el matching, actualiza el `PositionTracker` y registra
-`BacktestResult` (fills, equity_curve, final_equity/position). El **mismo** `run()` sirve para
-toda estrategia — el pico arquitectónico del curso.""",
+(abstracto), `on_fill`, `on_start/on_end`; acciones `NewOrder` y `Cancel`. Los hooks tienen una
+implementación no-op y son opcionales de **sobrescribir**, pero conocer el ciclo de vida es
+contenido LIVE/REQUIRED y evaluable; no son profundidad OPTIONAL.
+`exchange/backtest.py`: `Backtest(market, strategy)` recorre el mercado, mantiene por id solo
+el remanente resting de cada LIMIT, ejecuta `NewOrder`/`Cancel`, actualiza el
+`PositionTracker` y registra `BacktestResult` (fills, equity_curve, final_equity/position).
+Una cancelación resta exactamente la cantidad propia aún abierta. El **mismo** `run()` sirve
+para toda estrategia — el pico arquitectónico del curso.""",
 },
 9: {
 "theory": """Una estrategia de verdad necesita una **señal** y una **métrica honesta**. La señal aquí es
@@ -195,9 +201,10 @@ impacto; **trocearla** en el tiempo lo reduce. Dos baselines:
 
 El perfil son pesos relativos: se normalizan, así que importan las proporciones, no la escala.""",
 "technical": """`exchange/strategies/vwap.py` (`VWAPStrategy(symbol, side, total_size, horizon, profile)`):
-en cada tick emite una market order del tamaño del trozo (peso normalizado × total). Sin
-perfil → TWAP uniforme. Es una subclase de `Strategy`: se enchufa al `Backtest` exactamente
-igual que cualquier otra — primera demostración del valor del framework de L10.
+en cada tick calcula el objetivo acumulado del perfil y emite una market order por la brecha
+frente a los fills simulados por el motor canónico. Solo `on_fill` aumenta el volumen ejecutado: enviar una orden no
+equivale a llenarla. Sin perfil → TWAP uniforme. Es una subclase de `Strategy`: se enchufa al
+`Backtest` exactamente igual que cualquier otra — primera demostración del valor del framework de L10.
 
 La predicción dinámica de volumen queda como profundización **OPTIONAL**: ningún contenido ni
 assessment posterior la presupone; LIVE + REQUIRED se sostienen con slicing, TWAP, el perfil
@@ -230,25 +237,36 @@ plano. CARA y la intuición de intensidad de fills forman un puente **LIVE** a �
 L14; la estrategia concreta y sus fórmulas no se exponen en L13.""",
 "technical": """`exchange/strategies/market_maker.py` (`MarketMaker`): `quotes(book) -> (bid, ask)` en torno
 al `reservation_price`, `on_fill` actualiza el inventario interno. Y `exchange/simulation.py`
-(`MMSimulation`): como una limit no se cruza en el replay de snapshots, el market making se
-simula contra un mid en paseo aleatorio con **modelo de intensidad de fills**
-`λ(δ) = A·e^{-κδ}` (más cerca del mid, más probable que te ejecuten).""",
+(`MMSimulation`): el replay no contiene el flujo contrafactual que golpearía cada quote
+pasiva, así que el market making se simula contra un mid en paseo aleatorio con **modelo de
+intensidad de fills** `λ(δ) = A·e^{-κδ}` (más cerca del mid, más probable que te ejecuten).
+Su `sigma` es la volatilidad de precio del horizonte completo y cada paso usa
+`sigma/√steps`. El resultado cuenta fills y conserva series de inventario y PnL para
+validar el feedback.""",
 },
 13: {
 "theory": """**Avellaneda-Stoikov (2008)** sustituye el skew heurístico por el óptimo. Sale de maximizar
 utilidad CARA sobre la riqueza final con inventario incierto; la solución (vía la ecuación
 HJB de control óptimo estocástico — no hace falta derivarla) da dos fórmulas cerradas:
 
-- **Tiempo normalizado**: `τ = (T−t)/T`, por tanto `τ ∈ [0,1]`.
-- **Reservation price**: `r = s − q·γ·σ²·τ` — el mid ajustado por inventario `q` y tiempo.
-- **Optimal spread**: `d = γ·σ²·τ + (2/γ)·ln(1 + γ/κ)` — cuánto separas tus cotizaciones.
+- **Tiempo normalizado**: `τ = clip((H−t)/H, 0, 1)`, por tanto `τ ∈ [0,1]` y no tiene unidades.
+- **Volatilidad de horizonte**: `σ_H = std(S_H−S_0)`, en unidades de precio; la varianza
+  que queda es `σ_H²·τ`.
+- **Reservation price**: `r = s − q·γ·σ_H²·τ` — el mid ajustado por inventario `q` y tiempo.
+- **Optimal spread**: `d = γ·σ_H²·τ + (2/γ)·ln(1 + γ/κ)` — cuánto separas tus cotizaciones.
+
+Ledger de unidades: `s`, `r`, `d` y `σ_H` son precios; `q` cuenta unidades de inventario del
+modelo; `γ` y `κ` son inversas de precio; `τ` es adimensional. Así los dos sumandos de `d`
+y el desplazamiento `s−r` quedan expresados en precio, y `γ/κ` es adimensional.
 
 Detalle clave: el ajuste por inventario **se apaga al acercarse el cierre** (`t → T`).""",
 "technical": """`exchange/strategies/avellaneda_stoikov.py` introduce por primera vez en L14
 `AvellanedaStoikov(MarketMaker)`: parámetros `gamma`, `sigma`, `kappa`, `horizon`; sobrescribe
 `reservation_price` y añade `optimal_spread`, y `quotes` cotiza simétrico en torno a `r`. El
 reloj público `time` avanza el tiempo. Al ser subclase de `MarketMaker`, hereda `on_fill`/inventario y
-se enchufa al mismo `MMSimulation`. Demuestra herencia + especialización.""",
+se enchufa al mismo `MMSimulation`. En ambos objetos, `sigma` representa `σ_H`; el simulador usa
+incrementos `ΔS = σ_H/√H · Z` para que su varianza terminal sea `σ_H²`. Estrategia y simulación
+deben recibir el mismo `sigma` y alinear `horizon == steps`. Demuestra herencia + especialización.""",
 },
 14: {
 "theory": """Poner el modelo a correr. Frente a un market maker naive, el A-S **controla el inventario**
@@ -279,8 +297,9 @@ La segunda mitad de la clase son los **errores**: una función como `best_bid` r
 libro vacío. `try/except` atrapa el fallo y devuelve algo sensato; `raise` lanza un error claro
 cuando el dato no tiene sentido. Una librería de verdad no se cae con un dato raro.""",
 "technical": """Pre-paquete: se trabaja con el módulo `order_book.py` (las funciones de L2) y un `main.py`
-que lo importa. El deck a medida (Pyodide) escribe el módulo en el sistema de archivos virtual y
-lo importa en vivo. Conceptos: `import` vs `from ... import`, alias, `try/except`, `raise`,
+que lo importa. El documento HTML autocontenido representa paso a paso la escritura y la
+importación del módulo; la ejecución real vive en el notebook y en los validadores del generador.
+Conceptos: `import` vs `from ... import`, alias, `try/except`, `raise`,
 excepciones propias, `if __name__ == "__main__"` y argumentos por defecto. El núcleo (6) culmina
 construyendo y leyendo un libro a través del módulo importado; el `.py` entregable es
 `order_book.py` (módulo) + `main.py` (lo importa). Puente: el código ya es una librería, pero
@@ -300,7 +319,7 @@ ya dominada, no a presión.""",
 "technical": """Pura OOP, sin dependencias: una base abstracta `Strategy` con `@abstractmethod decide` y
 subclases que la implementan; un bucle polimórfico (`[s.decide(imb) for s in strategies]`).
 Conceptos: herencia, override, `super().__init__`, `ABC`/`@abstractmethod`, `isinstance`,
-polimorfismo. El deck a medida (Pyodide) trae un **simulador de polimorfismo** en vivo: mueves el
+polimorfismo. El documento HTML autocontenido trae un **simulador de polimorfismo**: mueves el
 imbalance y Momentum/Contrarian/Flat deciden cada uno lo suyo con la misma llamada. El `.py`
 entregable es `strategies_toy.py` (base + Momentum + Contrarian + bucle polimórfico). Puente
 directo a L10: ese `Strategy` de juguete se formaliza como la interfaz del framework y se enchufa

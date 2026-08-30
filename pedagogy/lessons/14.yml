@@ -143,7 +143,7 @@
       "introduced_in": 13,
       "mapping": {
         "before": "r = mid - skew_heurístico × inventario",
-        "now": "r = s - q γ σ² τ expresa el mismo control con unidades."
+        "now": "r = s - q γ σ_H² τ usa τ adimensional y σ_H como volatilidad de precio del horizonte completo."
       }
     },
     {
@@ -286,7 +286,7 @@
       "kind": "constructor",
       "signature": "MMSimulation(strategy: MarketMaker, s0: float = 100.0, sigma: float = 0.5, steps: int = 500, A: float = 1.0, kappa: float = 1.5, seed: int = 42) -> MMSimulation",
       "returns": "MMSimulation",
-      "responsibility": "configure a reproducible fill-intensity simulation",
+      "responsibility": "configure a reproducible fill-intensity simulation whose sigma is full-horizon price volatility",
       "qualified_name": "exchange.simulation.MMSimulation"
     },
     {
@@ -320,9 +320,9 @@
       "id": "avellaneda_stoikov.constructor",
       "name": "AvellanedaStoikov",
       "kind": "constructor",
-      "signature": "AvellanedaStoikov(symbol: str, quote_size: float = 0.01, gamma: float = 0.1, sigma: float = 10.0, kappa: float = 1.5, horizon: int = 500) -> AvellanedaStoikov",
+      "signature": "AvellanedaStoikov(symbol: str, quote_size: float = 0.01, gamma: float = 0.1, sigma: float = 0.5, kappa: float = 1.5, horizon: int = 500) -> AvellanedaStoikov",
       "returns": "AvellanedaStoikov",
-      "responsibility": "configure the A-S risk, volatility, flow, and horizon parameters",
+      "responsibility": "configure A-S risk, full-horizon price volatility, flow, and normalized-time parameters",
       "qualified_name": "exchange.strategies.avellaneda_stoikov.AvellanedaStoikov"
     },
     {
@@ -450,10 +450,30 @@
   "load": {
     "live_presentation_minutes": 22,
     "guided_minutes": 20,
-    "required_autonomous_minutes": 125,
-    "required_project_minutes": 90,
+    "required_autonomous_minutes": 133,
     "optional_minutes": 10,
-    "overflow_policy": "explicit-route-plan"
+    "overflow_policy": "explicit-route-plan",
+    "autonomous_components": {
+      "documents": [
+        {
+          "id": "l14-capstone",
+          "route": "REQUIRED",
+          "minutes": 90,
+          "overlap_id": "l14-capstone-project"
+        }
+      ],
+      "quizzes": [
+        {"id": "l14-quiz", "route": "REQUIRED", "minutes": 8}
+      ],
+      "projects": [
+        {
+          "id": "l14-capstone-project",
+          "route": "REQUIRED",
+          "minutes": 90,
+          "overlap_id": "l14-capstone-project"
+        }
+      ]
+    }
   },
   "scenes": [
     {
@@ -617,17 +637,17 @@
         "notation.as_optimal_spread"
       ]
     },
-    "limitation": "El exchange completo aún no se ha demostrado bajo restricciones de evaluación.",
-    "need": "La evaluación final muestrea razonamiento acumulativo de todos los bloques."
+    "limitation": "El exchange completo aún no se ha demostrado bajo una práctica acumulativa.",
+    "need": "La práctica pública de L15 muestrea razonamiento acumulativo; la evaluación oficial permanece bloqueada: sus bancos deberán crearse de nuevo y entregarse exclusivamente desde la futura fuente privada autorizada."
   },
   "api_transitions": [
     {
       "from_api": "market_maker.constructor",
       "from_signature": "MarketMaker(symbol: str, quote_size: float = 0.01, half_spread: float = 5.0, inventory_skew: float = 2.0) -> MarketMaker",
       "to_api": "avellaneda_stoikov.constructor",
-      "to_signature": "AvellanedaStoikov(symbol: str, quote_size: float = 0.01, gamma: float = 0.1, sigma: float = 10.0, kappa: float = 1.5, horizon: int = 500) -> AvellanedaStoikov",
+      "to_signature": "AvellanedaStoikov(symbol: str, quote_size: float = 0.01, gamma: float = 0.1, sigma: float = 0.5, kappa: float = 1.5, horizon: int = 500) -> AvellanedaStoikov",
       "kind": "explicit-specialization",
-      "reason": "La subclase conserva symbol y quote_size, y sustituye los parámetros heurísticos por γ, σ, κ y horizonte explícitos."
+      "reason": "La subclase conserva symbol y quote_size, y sustituye los parámetros heurísticos por γ y κ en 1/precio, σ_H por horizonte y τ normalizado."
     },
     {
       "from_api": "market_maker.reservation_price",
@@ -635,7 +655,7 @@
       "to_api": "avellaneda_stoikov.reservation_price",
       "to_signature": "reservation_price(mid: float) -> float",
       "kind": "semantic-override",
-      "reason": "La firma permanece estable, pero el centro deja el skew fijo y pasa a qγσ²τ; el contrato separado impide ocultar ese cambio de responsabilidad."
+      "reason": "La firma permanece estable, pero el centro deja el skew fijo y pasa a qγσ_H²τ con una varianza restante dimensionalmente explícita."
     },
     {
       "from_api": "market_maker.quotes",
@@ -937,7 +957,7 @@
               "name": "sigma",
               "kind": "positional_or_keyword",
               "annotation": "float",
-              "default": "10.0"
+              "default": "0.5"
             },
             {
               "name": "kappa",

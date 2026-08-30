@@ -1,6 +1,14 @@
 {
   "version": 2,
-  "scope": "Full-course traceability only; stems and answers remain private",
+  "scope": "Public traceability and practice only; official stems and answers require a new private bank",
+  "public_artifact_status": "PRACTICE_ONLY",
+  "official_assessment_status": "BLOCKED_UNTIL_PRIVATE_BANK",
+  "official_grading_weights_percent": {
+    "attendance": 10,
+    "participation": 20,
+    "continuous_exams": 40,
+    "final_exam": 30
+  },
   "allowed_routes": [
     "LIVE",
     "REQUIRED"
@@ -244,6 +252,11 @@
           "id": "l09-reset-lifecycle",
           "route": "REQUIRED",
           "assessed": true
+        },
+        {
+          "id": "l09-track-equity-over-time",
+          "route": "REQUIRED",
+          "assessed": true
         }
       ],
       "question_distribution": {
@@ -351,6 +364,11 @@
         {
           "id": "l13-prepare-risk-and-fills",
           "route": "LIVE",
+          "assessed": true
+        },
+        {
+          "id": "l13-inspect-pnl-path",
+          "route": "REQUIRED",
           "assessed": true
         }
       ],
@@ -638,6 +656,14 @@
       "difficulty": "medium"
     },
     {
+      "id": "TRACE-L09-04",
+      "lesson": 9,
+      "objective": "l09-track-equity-over-time",
+      "concept": "metrics.equity_curve",
+      "cognitive_level": "analyze",
+      "difficulty": "medium"
+    },
+    {
       "id": "TRACE-L10-01",
       "lesson": 10,
       "objective": "l10-map-toy-to-production",
@@ -730,6 +756,14 @@
       "lesson": 13,
       "objective": "l13-prepare-risk-and-fills",
       "concept": "market_making.cara_utility",
+      "cognitive_level": "apply",
+      "difficulty": "hard"
+    },
+    {
+      "id": "TRACE-L13-04",
+      "lesson": 13,
+      "objective": "l13-inspect-pnl-path",
+      "concept": "market_making.quotes",
       "cognitive_level": "apply",
       "difficulty": "hard"
     },

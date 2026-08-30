@@ -20,9 +20,12 @@ L14; la estrategia concreta y sus fórmulas no se exponen en L13.
 
 `exchange/strategies/market_maker.py` (`MarketMaker`): `quotes(book) -> (bid, ask)` en torno
 al `reservation_price`, `on_fill` actualiza el inventario interno. Y `exchange/simulation.py`
-(`MMSimulation`): como una limit no se cruza en el replay de snapshots, el market making se
-simula contra un mid en paseo aleatorio con **modelo de intensidad de fills**
-`λ(δ) = A·e^{-κδ}` (más cerca del mid, más probable que te ejecuten).
+(`MMSimulation`): el replay no contiene el flujo contrafactual que golpearía cada quote
+pasiva, así que el market making se simula contra un mid en paseo aleatorio con **modelo de
+intensidad de fills** `λ(δ) = A·e^{-κδ}` (más cerca del mid, más probable que te ejecuten).
+Su `sigma` es la volatilidad de precio del horizonte completo y cada paso usa
+`sigma/√steps`. El resultado cuenta fills y conserva series de inventario y PnL para
+validar el feedback.
 
 ## Ejercicios de construcción
 

@@ -11,26 +11,28 @@ una dry-run humana.
 
 | Lesson | Presentación LIVE declarada | Práctica LIVE seleccionada | REQUIRED autónomo | OPTIONAL |
 |---|---:|---:|---:|---:|
-| L1 | 20 min | 20 min | 58 min | 44 min |
-| L2 | 20 min | 20 min | 58 min | 41 min |
-| L3 | 20 min | 20 min | 52 min | 5 min |
-| L4 | 20 min | 20 min | 36 min | 20 min |
-| L5 | 20 min | 20 min | 34 min | 15 min |
-| L6 | 20 min | 20 min | 52 min | 10 min |
-| L7 | 20 min | 20 min | 42 min | 10 min |
-| L8 | 20 min | 20 min | 56 min | 15 min |
-| L9 | 20 min | 20 min | 34 min | 10 min |
-| L10 | 20 min | 20 min | 12 min | 5 min |
-| L11 | 20 min | 20 min | 14 min | 10 min |
-| L12 | 20 min | 20 min | 14 min | 35 min |
-| L13 | 20 min | 20 min | 19 min | 0 min |
-| L14 | 22 min | 20 min | 125 min | 10 min |
+| L1 | 20 min | 19 min | 78 min | 45 min |
+| L2 | 20 min | 18 min | 80 min | 41 min |
+| L3 | 20 min | 18 min | 75 min | 5 min |
+| L4 | 20 min | 20 min | 57 min | 20 min |
+| L5 | 20 min | 20 min | 52 min | 15 min |
+| L6 | 20 min | 20 min | 74 min | 10 min |
+| L7 | 20 min | 19 min | 63 min | 10 min |
+| L8 | 20 min | 19 min | 77 min | 15 min |
+| L9 | 20 min | 20 min | 44 min | 10 min |
+| L10 | 20 min | 21 min | 38 min | 5 min |
+| L11 | 20 min | 20 min | 33 min | 10 min |
+| L12 | 20 min | 20 min | 22 min | 47 min |
+| L13 | 20 min | 20 min | 27 min | 0 min |
+| L14 | 22 min | 21 min | 133 min | 10 min |
 
-L14 suma 35 minutos de ejercicios REQUIRED y un proyecto/capstone REQUIRED de
-90 minutos, declarado por separado como `required_project_minutes`; por eso su
-total autónomo es 125 minutos. En L12, la
-predicción dinámica de volumen es OPTIONAL, no evaluable y no constituye un
-prerrequisito posterior.
+La práctica LIVE no se redondea a 20: refleja exactamente la suma declarada en
+`exercise_routes.yml` y cumple la banda contractual 18–22. La carga suma por
+separado documentos/escenas, ejercicios, quiz y proyecto. L14
+declara que su documento de capstone y su proyecto de 90 minutos son la misma
+actividad mediante `overlap_id`; por eso cuenta ejercicios (35) + proyecto (90) +
+quiz (8) = 133 minutos, no 223. En L12, la predicción dinámica de volumen es
+OPTIONAL, no evaluable y no constituye un prerrequisito posterior.
 
 ## Protocolo de cierre
 
@@ -52,8 +54,9 @@ solo puede recibir GO definitivo cuando el owner adjunte tiempos y resultado.
 ## Evidencia disponible
 
 - Selección explícita de ejercicios y tiempos declarados: disponible.
-- Navegación y geometría automatizadas en los viewports de aceptación: disponible
-  en el artefacto de CI de Work 2.
+- Navegación y geometría automatizadas: el artefacto pre-remediación fue invalidado;
+  la nueva evidencia debe proceder del workflow del SHA integrado y declarar
+  `completed:true`, `passed:true`, navegador e inputs hasheados.
 - Aceptación visual heredada de los cuatro pilotos: disponible en
   `docs/work1-teaching-dry-run.md`.
 - Tiempos reales y PASS humano por lesson: **no disponibles**.

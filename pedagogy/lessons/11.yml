@@ -280,6 +280,7 @@
       "l11-bridge"
     ],
     "REQUIRED": [
+      "l11-three-judges/verdict",
       "l11-cost-autopsy",
       "l11-quiz"
     ],
@@ -334,9 +335,19 @@
   "load": {
     "live_presentation_minutes": 20,
     "guided_minutes": 20,
-    "required_autonomous_minutes": 14,
+    "required_autonomous_minutes": 33,
     "optional_minutes": 10,
-    "overflow_policy": "explicit-route-plan"
+    "overflow_policy": "explicit-route-plan",
+    "autonomous_components": {
+      "documents": [
+        {"id": "l11-three-judges/verdict", "route": "REQUIRED", "minutes": 1},
+        {"id": "l11-cost-autopsy", "route": "REQUIRED", "minutes": 10}
+      ],
+      "quizzes": [
+        {"id": "l11-quiz", "route": "REQUIRED", "minutes": 8}
+      ],
+      "projects": []
+    }
   },
   "scenes": [
     {
@@ -394,6 +405,7 @@
         {
           "id": "verdict",
           "route": "REQUIRED",
+          "duration_minutes": 1,
           "dom_stage": 4
         }
       ]

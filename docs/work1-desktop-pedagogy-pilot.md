@@ -1,5 +1,14 @@
 # Work 1 — Desktop Learning Runtime + Pedagogical Contract Pilot
 
+> Registro histórico del piloto. La evidencia de runtime/desktop quedó
+> superseded por la remediación de Work 2; usar
+> [`work1-work2-reaudit.md`](work1-work2-reaudit.md) para el estado
+> operativo vigente. La reauditoría del 28 de agosto de 2026 conserva las
+> decisiones arquitectónicas del piloto, pero no hereda su PASS técnico: los
+> defectos de teclado, modal, breakpoint, tiempos mixtos y evidencia se validan
+> y corrigen en la rama de remediación de Work 2. El cronometraje humano sigue
+> abierto.
+
 ## Estado y alcance
 
 Rama: `v2/desktop-learning-runtime-pilot`
@@ -143,7 +152,8 @@ Ejemplo:
   "stages": [
     {"id": "plan", "dom_stage": 5, "route": "LIVE"},
     {"id": "validate", "dom_stage": 6, "route": "LIVE"},
-    {"id": "commit", "dom_stage": 7, "route": "LIVE"}
+    {"id": "commit", "dom_stage": 7, "route": "LIVE"},
+    {"id": "remainder", "dom_stage": 8, "route": "REQUIRED", "duration_minutes": 1}
   ]
 }
 ```

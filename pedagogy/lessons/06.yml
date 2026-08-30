@@ -163,9 +163,19 @@
   "load": {
     "live_presentation_minutes": 20,
     "guided_minutes": 20,
-    "required_autonomous_minutes": 52,
+    "required_autonomous_minutes": 74,
     "optional_minutes": 10,
-    "overflow_policy": "explicit-route-plan"
+    "overflow_policy": "explicit-route-plan",
+    "autonomous_components": {
+      "documents": [
+        {"id": "l06-super", "route": "REQUIRED", "minutes": 6},
+        {"id": "l06-abc", "route": "REQUIRED", "minutes": 8}
+      ],
+      "quizzes": [
+        {"id": "l06-quiz", "route": "REQUIRED", "minutes": 8}
+      ],
+      "projects": []
+    }
   },
   "scenes": [
     {
@@ -336,7 +346,49 @@
     "need": "Level y OrderBook convierten snapshots externos en una frontera de dominio estable."
   },
   "api_transitions": [],
-  "package_checks": [],
+  "package_checks": [
+    {
+      "path": "06-oop-iii-inheritance/exercises/exchange/book.py",
+      "class": "OrderBook",
+      "members": {
+        "imbalance": {
+          "api": "orderbook.imbalance",
+          "kind": "method",
+          "parameters": [
+            {
+              "name": "levels",
+              "kind": "positional_or_keyword",
+              "annotation": "int",
+              "default": "1"
+            }
+          ],
+          "returns": "float | None"
+        }
+      }
+    },
+    {
+      "path": "06-oop-iii-inheritance/exercises/strategies_toy.py",
+      "class": "Strategy",
+      "bases": [
+        "ABC"
+      ],
+      "members": {
+        "decide": {
+          "api": "toy_strategy.decide",
+          "kind": "method",
+          "abstract": true,
+          "parameters": [
+            {
+              "name": "imbalance",
+              "kind": "positional_or_keyword",
+              "annotation": "float"
+            }
+          ],
+          "returns": "str"
+        }
+      }
+    }
+  ],
   "used_later": {
     "concepts": [
       "oop.abstract_base_class",

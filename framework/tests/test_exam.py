@@ -11,6 +11,7 @@ import sys
 import pytest
 
 HERE = os.path.dirname(__file__)
+ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
 EXAM = os.path.abspath(os.path.join(HERE, "..", "..", "15-final-exam"))
 sys.path.insert(0, EXAM)
 
@@ -20,11 +21,45 @@ import verify_result as vr  # noqa: E402
 
 BLUEPRINT = os.path.abspath(os.path.join(HERE, "..", "..", "pedagogy",
                                          "assessment_blueprint.yml"))
+CONTINUOUS_MANIFEST = os.path.join(
+    ROOT, "pedagogy", "continuous_assessment_manifest.yml"
+)
 
 
 def _load_blueprint():
     with open(BLUEPRINT, encoding="utf-8") as fh:
         return json.load(fh)
+
+
+def test_official_grading_weights_are_exact_and_sum_to_one_hundred():
+    weights = _load_blueprint()["official_grading_weights_percent"]
+    assert weights == {
+        "attendance": 10,
+        "participation": 20,
+        "continuous_exams": 40,
+        "final_exam": 30,
+    }
+    assert sum(weights.values()) == 100
+
+
+def _load_lesson(number):
+    path = os.path.join(ROOT, "pedagogy", "lessons", f"{number:02d}.yml")
+    with open(path, encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+def _all_objective_semantics():
+    result = {}
+    for lesson_number in range(1, 16):
+        lesson = _load_lesson(lesson_number)
+        for objective in lesson["objectives"]:
+            result[(lesson_number, objective["id"])] = {
+                "concept_ids": set(objective.get("concepts", ())),
+                "api_ids": set(objective.get("apis", ())),
+                "notation_ids": set(objective.get("notation", ())),
+                "route": objective["route"],
+            }
+    return result
 
 
 def _objective_index(blueprint):
@@ -128,6 +163,107 @@ def test_canonical_cumple_distribucion_l15_y_ocho_integraciones_reales():
         assert meta.integration_rationale
 
 
+def test_distribuciones_del_blueprint_suman_diez_y_cuarenta():
+    blueprint = _load_blueprint()
+    for lesson in blueprint["lesson_blueprints"]:
+        expected = 40 if lesson["lesson"] == 15 else 10
+        assert sum(lesson["question_distribution"].values()) == expected
+
+
+def test_blueprint_cubre_exactamente_todos_los_objetivos_evaluables():
+    blueprint = _load_blueprint()
+    declared = {
+        (entry["lesson"], objective["id"])
+        for entry in blueprint["lesson_blueprints"]
+        for objective in entry["objectives"]
+        if objective["assessed"] is True
+    }
+    expected = {
+        (lesson, objective["id"])
+        for lesson in range(1, 16)
+        for objective in _load_lesson(lesson)["objectives"]
+        if objective["route"] in blueprint["allowed_routes"]
+    }
+    assert declared == expected
+    trace_pairs = [
+        (item["lesson"], item["objective"]) for item in blueprint["items"]
+    ]
+    assert len(trace_pairs) == len(set(trace_pairs))
+    assert set(trace_pairs) == expected
+
+
+def test_assessment_publico_no_se_presenta_como_banco_oficial():
+    blueprint = _load_blueprint()
+    assert blueprint["public_artifact_status"] == "PRACTICE_ONLY"
+    assert blueprint["official_assessment_status"] == "BLOCKED_UNTIL_PRIVATE_BANK"
+
+    with open(CONTINUOUS_MANIFEST, encoding="utf-8") as fh:
+        continuous = json.load(fh)
+    assert continuous["status"] == "BLOCKED_UNTIL_PRIVATE_SOURCE"
+    assert continuous["confidentiality"]["fail_closed"] is True
+    assert continuous["contract"] == {
+        "questions_per_lesson": 10,
+        "options": ["A", "B", "C", "D"],
+        "minutes_per_lesson": 10,
+        "combined_assessments_allowed": True,
+        "optional_content_allowed": False,
+    }
+    assert [entry["lesson"] for entry in continuous["coverage"]] == list(range(1, 15))
+    assert {entry["item_count"] for entry in continuous["coverage"]} == {10}
+
+
+def test_canonical_cubre_l1_l14_y_todos_los_requisitos_semanticos_l15():
+    assert {
+        lesson
+        for meta in qb.CANONICAL_METADATA
+        for lesson in meta.lessons
+        if lesson != 15
+    } == set(range(1, 15))
+
+    required = _load_lesson(15)["requires"]
+    for field in ("concept_ids", "api_ids", "notation_ids"):
+        actual = {
+            value
+            for meta in qb.CANONICAL_METADATA
+            for value in getattr(meta, field)
+        }
+        source_field = {
+            "concept_ids": "concepts",
+            "api_ids": "apis",
+            "notation_ids": "notation",
+        }[field]
+        assert set(required[source_field]) <= actual
+
+
+def test_semantica_canonical_pertenece_a_sus_objetivos_y_no_a_optional():
+    semantics = _all_objective_semantics()
+    optional = {"concept_ids": set(), "api_ids": set(), "notation_ids": set()}
+    for values in semantics.values():
+        if values["route"] == "OPTIONAL":
+            for field in optional:
+                optional[field].update(values[field])
+
+    for meta in qb.CANONICAL_METADATA:
+        assert meta.concept_ids or meta.api_ids or meta.notation_ids
+        linked = [semantics[link] for link in zip(meta.lessons, meta.objectives)]
+        for field in optional:
+            allowed = set().union(*(values[field] for values in linked))
+            declared = set(getattr(meta, field))
+            assert declared <= allowed, f"{meta.item_id}: {field} fuera de sus objetivos"
+            assert declared.isdisjoint(optional[field]), (
+                f"{meta.item_id}: {field} depende de OPTIONAL"
+            )
+
+
+def test_tipos_code_reading_y_debugging_tienen_evidencia_en_el_stem():
+    for question, meta in zip(qb.CANONICAL, qb.CANONICAL_METADATA):
+        stem = question[0]
+        if meta.distribution_type == "code_reading":
+            assert "`" in stem or "\n" in stem, meta.item_id
+        if meta.distribution_type == "debugging":
+            assert re.search(r"\b(?:bug|error|falla|incorrect[oa])\b", stem, re.I), meta.item_id
+
+
 def test_instancia_order_del_checkpoint_usa_firma_canonica():
     text = " ".join(question[0] for question in qb.CHECKPOINT)
     assert "Order('BTC', 'buy', 0.5, price=100)" in text
@@ -176,7 +312,7 @@ def test_seeds_distintas_dan_examenes_distintos():
     assert [x[0] for x in a] != [x[0] for x in b]
 
 
-def _code(seed, right, wrong, blank, exid="L15"):
+def _code(seed, right, wrong, blank, exid="L15P"):
     total = right + wrong + blank
     score = right - 0.5 * wrong
     nota = max(0.0, score / total * 10) if total else 0.0
@@ -200,6 +336,22 @@ def test_codigo_con_checksum_alterado_falla():
     bad = good[:-2] + ("00" if good[-2:] != "00" else "11")
     ok, report = vr.verify(bad)
     assert not ok and "checksum" in report.lower()
+
+
+def test_codigo_con_id_desconocido_falla_aunque_checksum_cuadre():
+    code = _code(0, 34, 3, 3, exid="FAKE")
+    with pytest.raises(ValueError, match="desconocido"):
+        vr.verify(code)
+
+
+@pytest.mark.parametrize("code", [
+    "AT26-L15P-S0-R40-W0-B0-N10.01-00",
+    "AT26-L15P-S-1-R40-W0-B0-N10.00-00",
+    "AT26-L15P-S0-R-1-W0-B41-N0.00-00",
+])
+def test_codigo_rechaza_rangos_o_enteros_negativos(code):
+    with pytest.raises(ValueError):
+        vr.verify(code)
 
 
 def test_formato_invalido_lanza():

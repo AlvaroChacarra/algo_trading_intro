@@ -100,7 +100,9 @@
       "l01-errors",
       "l01-recap"
     ],
-    "OPTIONAL": []
+    "OPTIONAL": [
+      "l01-execution/machine-code"
+    ]
   },
   "objectives": [
     {
@@ -142,9 +144,19 @@
   "load": {
     "live_presentation_minutes": 20,
     "guided_minutes": 20,
-    "required_autonomous_minutes": 58,
-    "optional_minutes": 44,
-    "overflow_policy": "explicit-route-plan"
+    "required_autonomous_minutes": 78,
+    "optional_minutes": 45,
+    "overflow_policy": "explicit-route-plan",
+    "autonomous_components": {
+      "documents": [
+        {"id": "l01-execution/machine-code", "route": "OPTIONAL", "minutes": 1},
+        {"id": "l01-errors", "route": "REQUIRED", "minutes": 10}
+      ],
+      "quizzes": [
+        {"id": "l01-recap", "route": "REQUIRED", "minutes": 10}
+      ],
+      "projects": []
+    }
   },
   "scenes": [
     {
@@ -203,6 +215,7 @@
         {
           "id": "machine-code",
           "route": "OPTIONAL",
+          "duration_minutes": 1,
           "dom_stage": 5
         }
       ]

@@ -1,4 +1,4 @@
-"""Datos reales para el doc de L9: un día completo por el loop, con su equity."""
+"""Datos sintéticos para el doc de L9: un replay completo por el loop, con su equity."""
 from exchange.backtest import Backtest
 from exchange.market import Market
 from exchange.orders import Order, OrderType

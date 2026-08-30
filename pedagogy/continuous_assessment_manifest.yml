@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "status": "BLOCKED_UNTIL_PRIVATE_SOURCE",
+  "public_scope": "metadata-only; no stems, answers, keys, or hidden validators",
+  "contract": {
+    "questions_per_lesson": 10,
+    "options": ["A", "B", "C", "D"],
+    "minutes_per_lesson": 10,
+    "combined_assessments_allowed": true,
+    "optional_content_allowed": false
+  },
+  "confidentiality": {
+    "authoritative_location": "future private source repository",
+    "public_repository_role": "contract and release metadata only",
+    "fail_closed": true,
+    "reason": "No private bank is present in this public checkout. Previously published answers are treated as disclosed."
+  },
+  "coverage": [
+    {"lesson": 1, "item_count": 10},
+    {"lesson": 2, "item_count": 10},
+    {"lesson": 3, "item_count": 10},
+    {"lesson": 4, "item_count": 10},
+    {"lesson": 5, "item_count": 10},
+    {"lesson": 6, "item_count": 10},
+    {"lesson": 7, "item_count": 10},
+    {"lesson": 8, "item_count": 10},
+    {"lesson": 9, "item_count": 10},
+    {"lesson": 10, "item_count": 10},
+    {"lesson": 11, "item_count": 10},
+    {"lesson": 12, "item_count": 10},
+    {"lesson": 13, "item_count": 10},
+    {"lesson": 14, "item_count": 10}
+  ]
+}

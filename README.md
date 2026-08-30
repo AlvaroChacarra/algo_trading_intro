@@ -6,7 +6,7 @@ Instructor: **Álvaro López Chacarra** · ICAI.
 
 ## Empieza aquí
 
-Abre **[la web del curso](https://alvarochacarra.github.io/algo_trading_intro/)** desde cualquier dispositivo. Los documentos interactivos se consultan directamente; cada notebook tiene una versión web renderizada y un botón **Ejecutar** para probarlo en JupyterLite sin instalar Python.
+Abre **[la web del curso](https://alvarochacarra.github.io/algo_trading_intro/)** desde cualquier dispositivo. Los documentos interactivos se consultan directamente; los **28 notebooks core de L1–L14** tienen versión web renderizada y botón **Ejecutar** para probarlos en JupyterLite sin instalar Python. El anexo RFQ queda fuera de esa proyección cerrada.
 
 ## Mapa del curso
 
@@ -17,7 +17,7 @@ Abre **[la web del curso](https://alvarochacarra.github.io/algo_trading_intro/)*
 | **STRATEGIES** | 11–14 | Medir con honestidad, ejecutar con VWAP y controlar inventario al hacer mercado | `strategies/vwap`, `strategies/market_maker`, `simulation` |
 | **ASSESSMENT** | 15 | Integración final de Python, motor, ejecución y market making | — |
 
-A mitad de camino, tras la clase 6, hay un **[checkpoint](06-oop-iii-inheritance/checkpoint.html)** (20 preguntas de L1-L6) para comprobar la base antes de tocar el motor. El curso se corona con el **[capstone](14-avellaneda-stoikov/CAPSTONE.md)**: tu propio market maker, con baremo público y leaderboard.
+A mitad de camino, tras la clase 6, hay un **[checkpoint](06-oop-iii-inheritance/checkpoint.html)** (20 preguntas de L1-L6) para comprobar la base antes de tocar el motor. El curso se corona con el **[capstone](14-avellaneda-stoikov/CAPSTONE.md)** y una **[práctica acumulativa pública](15-final-exam/examen.html)**. Esta práctica no sustituye el examen final obligatorio, que permanece bloqueado hasta crear un banco nuevo en la futura fuente privada autorizada.
 
 ## Cada clase
 
@@ -46,7 +46,7 @@ pip install -r requirements.txt
 jupyter notebook
 ```
 
-El núcleo de `exchange` es **solo librería estándar** — el motor y todos los validadores corren sin dependencias externas. Jupyter es lo único que necesitas para los cuadernos; `requirements-dev.txt` añade `pytest` y `playwright` para las herramientas del profesor.
+El núcleo de `exchange` es **solo librería estándar** — el motor y todos los validadores corren sin dependencias externas. Jupyter es lo único que necesitas para los cuadernos; `requirements-dev.txt` añade `pytest` para las herramientas del profesor. Los gates de navegador usan el Playwright de Node fijado en `package-lock.json`: ejecuta `npm ci` antes de lanzarlos.
 
 ## Estructura del repositorio
 
@@ -58,10 +58,12 @@ NN-.../                     una carpeta por clase
 data/                      dataset de snapshots del libro (ver data/README.md)
 pedagogy/                 grafo, superficies de API, rutas, carga y blueprint
 framework/                 implementación de referencia y generador del curso
-15-final-exam/             examen, checkpoint y banco de preguntas
+15-final-exam/             práctica pública y bancos divulgados
 annex-bonds-rfq/           material opcional (bonos y RFQ), fuera del arco principal
 ```
 
 ## Para el profesor
 
 Todo el material se **genera** desde specs en `framework/_build/` — no se editan los notebooks ni los docs a mano. La gobernanza vive en [`AGENTS.md`](AGENTS.md), el contrato ejecutable en `pedagogy/` y la guía para mantener el runtime en [`docs/learning-runtime-authoring.md`](docs/learning-runtime-authoring.md). Añade `?profe=1` a la URL de cualquier documento para abrir el cajón con el guion.
+
+La publicación Pages es manual y solo desde `main`: construir y validar el site no autoriza publicarlo. La evaluación oficial y la migración fuente privada → distribución pública siguen los gates de `ARCHITECTURE.md`.

@@ -244,6 +244,7 @@
       "l08-bridge"
     ],
     "REQUIRED": [
+      "l08-plan-validate-commit/remainder",
       "l08-order-policies",
       "l08-quiz"
     ],
@@ -290,9 +291,19 @@
   "load": {
     "live_presentation_minutes": 20,
     "guided_minutes": 20,
-    "required_autonomous_minutes": 56,
+    "required_autonomous_minutes": 77,
     "optional_minutes": 15,
-    "overflow_policy": "explicit-route-plan"
+    "overflow_policy": "explicit-route-plan",
+    "autonomous_components": {
+      "documents": [
+        {"id": "l08-plan-validate-commit/remainder", "route": "REQUIRED", "minutes": 1},
+        {"id": "l08-order-policies", "route": "REQUIRED", "minutes": 12}
+      ],
+      "quizzes": [
+        {"id": "l08-quiz", "route": "REQUIRED", "minutes": 8}
+      ],
+      "projects": []
+    }
   },
   "scenes": [
     {
@@ -367,6 +378,7 @@
         {
           "id": "remainder",
           "route": "REQUIRED",
+          "duration_minutes": 1,
           "dom_stage": 8
         }
       ]

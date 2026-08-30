@@ -1,6 +1,6 @@
 # Contrato pedagógico --- Algorithmic Trading con Python
 
-**Status:** Proposed baseline\
+**Status:** Authoritative baseline\
 **Version:** 1.1\
 **Date:** 2026-08-17\
 **Owner:** Álvaro López Chacarra\
@@ -332,8 +332,7 @@ el ritmo.
 Sin embargo, por sí solos no garantizan recuperación de contenidos
 antiguos.
 
-Por ello se mantiene como opción preferente un **examen final
-acumulativo**.
+Por ello se mantiene un **examen final acumulativo obligatorio**.
 
 Su función pedagógica es distinta:
 

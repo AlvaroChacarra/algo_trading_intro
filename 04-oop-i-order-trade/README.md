@@ -22,7 +22,7 @@ Primeros módulos reales del paquete: `exchange/orders.py` (`Order`, `Side`, `Or
 `"buy"`/`"sell"` como antes, pero rechazan valores inválidos. `Order.notional()` reemplaza la
 función `compute_notional` de L1; `Fill.cash_flow()` formaliza el signo por lado.
 
-El deck a medida (Pyodide) trae el morph dict→clase, un **Order inspector** (cambias
+El documento HTML autocontenido trae el morph dict→clase, un **Order inspector** (cambias
 side/price/size y ves notional y `__repr__`) y un visualizador del **signo del cash_flow**. El
 núcleo son 6 ejercicios que culminan en "de la orden al dinero" (Order→Fill→cash_flow); el `.py`
 entregable es `orders_demo.py`.

@@ -8,7 +8,7 @@
 
 ## 1. Visión
 
-15 clases de 40 min. El alumno **construye un paquete Python, `exchange/`** — un motor de
+15 clases de aproximadamente 50 min. El alumno **construye un paquete Python, `exchange/`** — un motor de
 microestructura de mercado y un framework de estrategias modulares — y sobre él enchufa un
 **VWAP**, un **market maker (Avellaneda-Stoikov)** y, al final, **su propia estrategia**.
 
@@ -24,13 +24,16 @@ Toda clase "L1-grade" cumple estos 8 puntos. Son innegociables:
 
 1. **Un hilo único** (el *hilo héroe*) que recorre la clase: reto → simuladores → ejercicios → `.py`.
 2. **Apertura como reto**: un objetivo concreto que el alumno **aún no sabe hacer**.
-3. **Presentación HTML interactiva** (Pyodide cuando hay código), diapositivas de **una idea**,
+3. **Presentación HTML interactiva autocontenida** (simuladores JavaScript y resultados de Python
+   calculados y validados en build-time), diapositivas de **una idea**,
    texto **pegado a su simulador**, raíl de progreso, **predice-antes-de-revelar** y honestidad.
 4. **Notebook de construcción** que **refleja el deck y llega al clímax**. Validadores **plegados**
    (`source_hidden`) y soluciones en **`<details>`** desplegable. Título y narrativa cuidados.
 5. **Auxiliares** = drills + profundización/internals + el **puente** a la clase siguiente.
 6. **Un `.py` consolidado 1:1** con el núcleo del notebook.
-7. **Mini-test A/B/C** (≈5 preguntas) al final del deck, con feedback inmediato.
+7. **Quiz diagnóstico formativo A/B/C** (≈5 preguntas) al final del deck, con feedback
+   inmediato. No es el examen continuo oficial: ese conserva 10 preguntas A/B/C/D y ≈10
+   minutos por lesson evaluada según el contrato pedagógico.
 8. **Ganchos de continuidad**: cada clase planta el dolor de la siguiente; el paquete `exchange/` crece.
 
 **Tono:** directo, intuición antes que formalismo, mercado siempre (BTCUSDT), **código simple**
@@ -53,7 +56,7 @@ L1 calculo el mid, pero duplico variables por activo
    → L4 juntar datos + funciones = un objeto: nacen Order y Fill
     → L5 Orders sueltas: necesito un libro que las contenga y llevar la cuenta (composición)
      → L6 tendré muchas estrategias que comparten esqueleto: herencia y polimorfismo (Strategy de juguete)
-      → L7 ya leo el libro real: ¿qué señal esconde? (imbalance)
+      → L7 ya leo el replay sintético: ¿qué señal esconde? (imbalance)
        → L8 ¿y si MANDO una orden contra el libro? (matching, slippage)
         → L9 cruzar en un instante vs a lo largo del tiempo (el loop, PnL)
          → L10 mi estrategia es un if suelto: hazla modular (Strategy real, reusando la herencia de L6)
@@ -61,7 +64,7 @@ L1 calculo el mid, pero duplico variables por activo
            → L12 ejecutar una orden GRANDE sin mover el mercado (TWAP/VWAP fijo; prototipos dinámicos OPTIONAL)
             → L13 y si en vez de ejecutar, COTIZO (market making, inventario)
              → L14 mi skew es heurístico: el óptimo (Avellaneda-Stoikov: modelo + simulación) + escribe TU estrategia
-              → L15 examen
+              → L15 práctica acumulativa pública + examen final obligatorio (banco privado nuevo pendiente)
 ```
 
 ---
@@ -86,16 +89,19 @@ NN-slug/
 **Producción:** el contenido vive en specs (`framework/_build/lessons_*.py` + `lessons_docs.py`);
 `build_course.py` **autovalida cada ejercicio** y emite. Los documentos interactivos se ensamblan
 con `docgen.py`: base compartida (`doc_assets/`: fuentes embebidas + CSS + motores JS) + contenido
-por lección (`docs/NN_body.html` + `NN_custom.js`). En L7-L14, `docs/NN_data.py` **ejecuta el motor
-`exchange/` real en build-time** y embebe sus resultados: los simuladores nunca mienten. Todo es
+por lección (`docs/NN_body.html` + `NN_custom.js`). En L7-L14, `docs/NN_data.py` **ejecuta la
+implementación canónica de `exchange/` en build-time** sobre datos sintéticos y embebe resultados
+reproducibles, no cifras escritas a mano. Todo es
 autocontenido (sin CDNs): funciona en aula sin wifi. Los guiones custom viven en
 `framework/_build/custom/NN_guion.md`. El deck scroll-snap está retirado.
 
 Los gimnasios (auxiliares) siguen el patrón: calentamiento (repaso de la lección anterior) +
 bloques de drills + profundización, con dosis mínima declarada.
 
-Diseño compartido: `#09090b` / `#22d3ee` / bids `#4ade80` / asks `#f87171`, Inter + JetBrains
-Mono, GSAP.
+Diseño compartido del core L1–L14: `#09090b` / `#22d3ee` / bids `#4ade80` /
+asks `#f87171`, Inter + JetBrains Mono y runtime propio autocontenido. Cualquier
+fallback legacy o anexo con dependencias externas queda fuera de la garantía
+offline del core.
 
 ---
 
@@ -152,8 +158,8 @@ Ficha: **Reto · Hilo héroe · Pieza · Simuladores · Núcleo · Auxiliares ·
 
 ### BLOQUE B — El motor (L7–L9)
 
-#### L7 · Microestructura — Del snapshot real al OrderBook  *(era L5, flagship)*
-- **Reto:** 500 snapshots reales de BTC: ¿hacia dónde empuja? · **Hilo:** el imbalance (y microprice).
+#### L7 · Microestructura — Del snapshot sintético al OrderBook  *(era L5, flagship)*
+- **Reto:** 500 snapshots sintéticos y reproducibles de BTCUSDT: ¿hacia dónde empuja? · **Hilo:** el imbalance (y microprice).
 - **Pieza:** `exchange/book.py` y la frontera `OrderBook.from_snapshot`.
 - **Núcleo:** transformar una fila · spread/mid · imbalance(levels) · microprice · depth.
 - **Puente:** sé leer el libro; ¿qué pasa cuando MANDO una orden contra él?
@@ -189,7 +195,8 @@ Ficha: **Reto · Hilo héroe · Pieza · Simuladores · Núcleo · Auxiliares ·
 - **Reto:** vender 10 BTC sin hundir el precio. · **Hilo:** el schedule de participación.
 - **Pieza:** `exchange/strategies/vwap.py`.
 - **Simuladores:** trocear orden grande · perfil de volumen · TWAP vs VWAP · comparación OPTIONAL de un perfil candidato por ventana rolada.
-- **Núcleo:** pesos TWAP · `VWAPStrategy.run` · perfil fijo a medida · precio medio.
+- **Núcleo:** pesos TWAP · `VWAPStrategy.on_book_update` orquestada por
+  `Backtest.run` · perfil fijo a medida · precio medio.
 - **Auxiliares OPTIONAL:** media rolada, normalización y corrección aisladas · regresión a mano (puente ML). No se integran en un controlador online.
 - **`.py`:** `run_vwap.py`. · **Puente:** he sido el que EJECUTA; ¿y si COTIZO?
 
@@ -205,29 +212,37 @@ Ficha: **Reto · Hilo héroe · Pieza · Simuladores · Núcleo · Auxiliares ·
 - **Simuladores:** reservation/optimal spread (sliders) · A-S vs naive · simulación completa · barrido de gamma · **escribe tu estrategia**.
 - **Núcleo:** reservation price · optimal spread · A-S quotes · simular · gamma vs inventario · subclase propia.
 - **Auxiliares:** decaimiento temporal · sensibilidad de parámetros.
-- **`.py`:** `mm_sweep.py`. · **Puente:** motor entero + tu estrategia → examen.
+- **`.py`:** `mm_sweep.py`. · **Puente:** motor entero + tu estrategia → evaluación acumulativa.
 
 ### BLOQUE E — Cierre
 
-#### L15 · Examen final
-Test de 40 min, 40 preguntas (A/B/C), +1 acierto / −0.5 fallo. Cubre todo el arco, incluido
-código del propio framework. Generador en `15-final-exam/generate_exam.py`.
+#### L15 · Práctica pública y examen final oficial
+El repositorio genera una práctica pública de 40 min y 40 preguntas (A/B/C),
++1 acierto / −0.5 fallo, que cubre todo el arco incluido el framework. No acredita
+nota ni sustituye el examen final obligatorio: banco, respuestas y convocatoria
+oficiales deben crearse de nuevo y permanecer en la fuente privada.
 
 ---
 
 ## 6. Estándar de calidad y proceso de producción
 
-- **Calidad:** las 15 con deck a medida nivel L1. Notebook + auxiliares + `.py` + mini-test en todas.
+- **Calidad:** L1–L14 tienen documento interactivo, notebook, auxiliares, `.py` y quiz
+  diagnóstico formativo. L15 es deliberadamente un assessment lineal de práctica pública, sin
+  deck por escenas, notebook ni mini-test propio.
 - **Autovalidación:** ningún ejercicio se publica sin pasar `build_course.py --check-only`.
-- **Estado:** **curso completo (2026.v2)**. L1–L14 producidas (documento interactivo + notebook +
-  gimnasio + guion + `.py`) y L15 (examen). Ver el **estado final detallado en §8**.
+- **Estado:** **release candidate técnico (2026.v2)**. L1–L14 están producidas
+  (documento interactivo + notebook + gimnasio + guion + `.py`) y L15 es
+  práctica pública. No es todavía baseline docente ni publicación conforme:
+  faltan los gates browser del SHA final, la dry-run humana y la autorización
+  private→public. El examen oficial sigue fail-closed hasta disponer de banco
+  privado. Ver el estado detallado en §8.
 - **Anexo:** bonos y RFQ en `annex-bonds-rfq/` (opcional, fuera del arco).
 
 ---
 
 ## 7. Riesgos y mitigación
 
-- *Decks carísimos × 15* → reutilizar el andamiaje de L1/L2 (Pyodide, estilos, simuladores) como
+- *Decks carísimos × 15* → reutilizar el andamiaje de L1/L2 (estilos y simuladores) como
   librería de componentes.
 - *6 fundamentos retrasan el trading* → se compensa cerrando dos agujeros reales (módulos/`import`
   en L3, herencia/polimorfismo en L6) que antes explotaban más tarde; y comprimiendo VWAP y A-S,
@@ -240,22 +255,26 @@ código del propio framework. Generador en `15-final-exam/generate_exam.py`.
 
 ---
 
-## 8. Estado final de producción (curso 2026.v2)
+## 8. Estado del release candidate técnico (curso 2026.v2)
 
-Las 15 clases están producidas y el curso se cerró con una capa de infraestructura por encima
-del blueprint original:
+Las 15 clases están materializadas y cubiertas por una capa de infraestructura
+por encima del blueprint original. El cierre técnico solo se concede al SHA que
+pase CI; el cierre docente y de publicación siguen condicionados:
 
 **Formato de los documentos.** Se sustituyó el deck por un **documento interactivo corrido**
 (`presentation/*-doc.html`) en las 14 clases, autocontenido y sin internet: scrollytelling,
-simuladores alimentados por el **motor real en tiempo de compilación** (`docs/NN_data.py::build()`,
-nada inventado), quiz de diagnóstico y guion embebido. `?profe=1` abre el cajón del guion; hay
+simuladores alimentados por la **implementación canónica en tiempo de compilación**
+(`docs/NN_data.py::build()`) sobre el replay sintético, con resultados calculados en lugar de
+valores escritos a mano; quiz diagnóstico formativo y guion embebido. `?profe=1` abre el cajón del guion; hay
 modo impresión ("apuntes") y navegación por teclado en los scrollys.
 
 **Seguimiento del alumno.**
-- `index.html` raíz: mapa del curso con **progreso local** (scroll + nota del quiz por clase, en `localStorage`).
+- `index.html` raíz: mapa del curso con **progreso local por rutas** LIVE / REQUIRED / OPTIONAL en `localStorage`; el scroll solo pertenece al fallback vertical legacy.
 - **Checkpoint** tras L6 (`06-.../checkpoint.html`): 20 preguntas de L1-L6, autoevaluación de la base.
 - **Capstone** en L14 (`CAPSTONE.md` + `mi_estrategia.py` + `capstone_check.py` + `leaderboard.py`):
-  proyecto abierto con baremo público 30/40/30 y código de resultado verificable.
+  proyecto abierto con baremo público 30/40/30 y checksum de autoinforme. El
+  código detecta errores de copia, pero no acredita autoría ni resultado sin
+  reejecución controlada.
 - `check_my_work.py`: corrección de cualquier cuaderno desde la terminal.
 
 **Ejercicios (293, todos autovalidados).** Cada uno declara **ruta** (LIVE · REQUIRED · OPTIONAL),
@@ -263,12 +282,13 @@ además de **nivel** (🟢 núcleo · 🔵 si vamos
 bien · 🟣 bonus) y minutos; los más densos traen **pista intermedia**; cada gimnasio cierra con un
 **ejercicio de transferencia** que lleva la primitiva a un dominio ajeno al trading.
 
-**Examen (L15).** Banco único (`question_bank.py`, 80 preguntas) con muestreo equilibrado por
-tema; `generate_exam.py --seed N` produce variantes para convocatorias alternativas. Códigos de
-resultado con checksum, validados por `verify_result.py`.
+**Práctica pública (L15).** `question_bank.py` contiene 80 preguntas públicas de
+práctica; `generate_exam.py --seed N` produce variantes de estudio. Como preguntas
+y respuestas están divulgadas, no son válidas para convocatorias oficiales. Los
+códigos de práctica con checksum se validan mediante `verify_result.py`.
 
 **Red de seguridad.** `framework/tests/` (motor, doc-data, examen, capstone), `smoke_test.py`
-end-to-end sobre el CSV real, `e2e_check.js` (los 15 docs + índice abren sin errores), y CI que
+end-to-end sobre el CSV sintético y reproducible, `e2e_check.js` (los 15 docs + índice abren sin errores), y CI que
 regenera y comprueba que nada se editó a mano (`git diff --exit-code`).
 
 **Datos.** Dataset sintético y reproducible de snapshots del libro (ver `data/README.md`).

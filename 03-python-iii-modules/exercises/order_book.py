@@ -28,6 +28,10 @@ def spread(book):
     return best_ask(book) - best_bid(book)
 
 
+def mid(book):
+    return (best_bid(book) + best_ask(book)) / 2
+
+
 def imbalance(book):
     buy = sum(o["size"] for o in book if o["side"] == "buy")
     sell = sum(o["size"] for o in book if o["side"] == "sell")

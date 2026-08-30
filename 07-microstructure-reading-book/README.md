@@ -1,6 +1,6 @@
-# Clase 7 — Del snapshot real al OrderBook
+# Clase 7 — Del snapshot sintético al OrderBook
 
-> Convertir una fila real del feed en Level y OrderBook, y ampliar su API con depth, imbalance y microprice sin duplicar lógica.
+> Convertir una fila del replay sintético en Level y OrderBook, y ampliar su API con depth, imbalance y microprice sin duplicar lógica.
 
 ## Contexto teórico
 
@@ -20,7 +20,7 @@ nivel. El conocimiento funcional de las métricas es previo; aquí importa progr
 `OrderBook.from_snapshot`, `depth(side, levels)`, `imbalance(levels)` y `microprice`.
 
 El notebook construye una versión del alumno desde un snapshot pequeño y termina aplicándola a
-la primera fila real del CSV. Solo al final compara comportamiento con el `OrderBook` canónico;
+la primera fila sintética del CSV reproducible. Solo al final compara comportamiento con el `OrderBook` canónico;
 no usa `Market` como caja negra.
 
 ## Ejercicios de construcción
@@ -32,7 +32,7 @@ no usa `Market` como caja negra.
 - **B5 · Implementa depth** — método de consulta
 - **B6 · Implementa imbalance componiendo métodos** — reutilizar depth
 - **B7 · Implementa microprice** — propiedad derivada del nivel 1
-- **B8 · Snapshot real contra la referencia** — integración y oráculo
+- **B8 · Snapshot sintético contra la referencia** — integración y oráculo
 
 ## Estructura de la carpeta
 

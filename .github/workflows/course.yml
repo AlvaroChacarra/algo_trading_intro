@@ -1,19 +1,26 @@
 name: curso
 
 on:
-  push:
-    branches: ["**"]
-  pull_request:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: course-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   # ── Job rápido: el contrato del repo (cada push) ──────────────────────────
   validate:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
-          python-version: "3.11"
+          python-version: "3.11.9"
 
       - name: Validar el contrato pedagógico del curso completo
         run: python pedagogy_check.py
@@ -21,8 +28,16 @@ jobs:
       - name: Verificar informes de continuidad generados
         run: python framework/_build/pedagogy_reports.py --check
 
-      - name: Tests del motor
-        run: pip install pytest && cd framework && python -m pytest tests/ -q
+      - name: Instalar dependencias de test fijadas
+        run: "pip install --requirement requirements-pages-lock.txt --require-hashes --only-binary=:all:"
+
+      - name: Tests del motor, Pages y contratos
+        run: cd framework && python -m pytest tests/ -q
+
+      - name: Fuzz determinista de atomicidad del matching
+        run: >-
+          python framework/_build/fuzz_matching.py
+          --seed 20260828 --cases 120000
 
       - name: Smoke test end-to-end
         run: cd framework && python smoke_test.py
@@ -54,28 +69,51 @@ jobs:
         run: |
           python framework/_build/build_course.py
           (cd 15-final-exam && python generate_exam.py)
-          git diff --exit-code || {
-            echo '::error::El material generado no coincide con los specs. ¿Editaste un notebook/doc a mano? Edita el spec y regenera.';
-            exit 1; }
+          status_file="$RUNNER_TEMP/course-regeneration-status.txt"
+          git status --porcelain=v1 --untracked-files=all > "$status_file"
+          if [ -s "$status_file" ]; then
+            echo '::error::El material generado no coincide con los specs o contiene salidas no versionadas. Edita el spec, regenera y versiona todas las salidas públicas.'
+            sed -n '1,200p' "$status_file"
+            exit 1
+          fi
 
   # ── Job e2e: runtime completo, geometría y documentos ───────────────────
   e2e:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: "20"
-      - name: Instalar Playwright + Chromium
-        run: npm i playwright@1.62.1 && npx playwright install --with-deps chromium
+          node-version: "20.19.4"
+          cache: npm
+      - name: Instalar dependencias Node fijadas
+        run: npm ci
+      - name: Validar el contrato cerrado de evidencia desktop
+        run: npm run test:desktop-contract
+      - name: Instalar Chromium fijado por Playwright
+        run: |
+          npx --no-install playwright install --with-deps chromium
       - name: Abrir los 15 documentos y fallar ante cualquier error de página
         run: node framework/_build/e2e_check.js
       - name: Validar aula/estudio, teclado y geometría en L1-L14
         run: node framework/_build/desktop_e2e.js --audit-dir artifacts/work2-full-course-scaleout
-      - name: Conservar screenshots y matriz de auditoría
+      - name: Validar independientemente la evidencia desktop
         if: always()
-        uses: actions/upload-artifact@v4
+        run: node framework/_build/validate_desktop_audit.js --verify-browser artifacts/work2-full-course-scaleout
+      - name: Conservar evidencia desktop canónica
+        if: success()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: work2-full-course-scaleout
+          name: work2-full-course-scaleout-${{ github.run_id }}-${{ github.run_attempt }}
           path: artifacts/work2-full-course-scaleout
+          include-hidden-files: true
+          if-no-files-found: error
+      - name: Conservar evidencia desktop forense del fallo
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: work2-full-course-scaleout-forensic-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/work2-full-course-scaleout
+          include-hidden-files: true
           if-no-files-found: warn

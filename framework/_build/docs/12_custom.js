@@ -1,4 +1,4 @@
-/* L12 — hachazo vs TWAP vs VWAP (ejecuciones reales del Backtest) */
+/* L12 — hachazo vs TWAP vs VWAP (ejecuciones simuladas por el Backtest canónico) */
 (function(){
 "use strict";
 const $=s=>document.querySelector(s);

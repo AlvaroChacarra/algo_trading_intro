@@ -3,6 +3,7 @@
   margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;
   border:0!important}
 .lr-has-contract [hidden]{display:none!important}
+[data-lr-scroller="true"]:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
 
 #lr-nav{position:fixed;inset:0 auto 0 0;width:var(--lr-nav-w,230px);z-index:52;
   display:flex;flex-direction:column;background:rgba(9,9,11,.97);border-right:1px solid var(--line);
@@ -34,6 +35,8 @@
 .lr-scene-links button.lr-route-live span{color:var(--accent)}
 .lr-scene-links button.lr-route-required span{color:var(--kw)}
 .lr-scene-links button.lr-route-optional span{color:var(--faint)}
+.lr-scene-links button.lr-route-mixed span{background:linear-gradient(90deg,var(--accent),var(--kw));
+  color:transparent;background-clip:text;-webkit-background-clip:text}
 
 #lr-teacher-toggle{margin:0 6px 9px;min-height:36px;border:1px solid rgba(34,211,238,.38);
   border-radius:8px;background:var(--accent-dim);color:var(--accent);font:600 .68rem var(--mono);cursor:pointer}
@@ -54,6 +57,8 @@
 .lr-teacher-kicker{margin:0;color:var(--accent);font:600 .68rem var(--mono);text-transform:uppercase}
 .lr-teacher-stage{font-size:.78rem}.lr-full-guide{min-height:40px;margin-top:16px;padding:7px 12px;
   border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--accent);font:600 .7rem var(--mono);cursor:pointer}
+.lr-teacher-override{padding:8px 10px;border-left:2px solid var(--kw);background:rgba(192,132,252,.08);
+  color:var(--muted);font-size:.76rem}
 
 .lr-scene-badge{display:flex;gap:8px;align-items:center;margin:0 0 10px;font:600 .58rem var(--mono);
   letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
@@ -61,6 +66,7 @@
 .lr-scene-badge.lr-route-live span:first-child{border-color:rgba(34,211,238,.42);color:var(--accent)}
 .lr-scene-badge.lr-route-required span:first-child{border-color:rgba(192,132,252,.45);color:var(--kw)}
 .lr-scene-badge.lr-route-optional span:first-child{border-color:var(--line);color:var(--faint)}
+.lr-scene-badge.lr-route-mixed span:first-child{border-color:rgba(192,132,252,.45);color:var(--kw)}
 
 #lr-controls{position:fixed;left:var(--lr-nav-w,230px);right:0;bottom:0;height:var(--lr-controls-h,58px);z-index:55;
   display:grid;grid-template-columns:minmax(120px,1fr) auto auto minmax(120px,1fr);align-items:center;
@@ -79,6 +85,8 @@
 #lr-controls .lr-route-scope{padding:0 12px;color:var(--accent);border-color:rgba(34,211,238,.38)}
 #lr-controls.lr-fixed-scope{grid-template-columns:minmax(120px,1fr) auto minmax(120px,1fr)}
 #lr-mobile-toolbar{display:none}
+html.lr-modal-open,body.lr-modal-open{overflow:hidden!important;overscroll-behavior:none}
+body.lr-modal-open::before{content:"";position:fixed;inset:0;z-index:69;background:rgba(0,0,0,.58);backdrop-filter:blur(2px);pointer-events:auto}
 
 /* Layout names are operational: they control scene width and native two-panel ratios. */
 .lr-scene{--lr-scene-max:1180px;--lr-left:42fr;--lr-right:58fr}
@@ -110,7 +118,7 @@
   body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child{overflow:visible;max-width:var(--lr-scene-max);margin:0 auto}
   body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child h2{font-size:clamp(1.08rem,2.15vh,1.72rem);margin:.05em 0 .2em}
   body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child .lede{font-size:clamp(.74rem,1.4vh,.95rem);margin:.2em 0}
-  body.mode-aula>.lr-scene-active>.scrolly{width:100%;max-width:var(--lr-scene-max);height:100%;min-height:0;margin:0 auto;
+  body.mode-aula>.lr-scene-active>.scrolly{display:grid;width:100%;max-width:var(--lr-scene-max);height:100%;min-height:0;margin:0 auto;
     padding:0;grid-template-columns:minmax(260px,var(--lr-left)) minmax(0,var(--lr-right));gap:clamp(14px,1.8vw,32px)}
   body.mode-aula>.lr-scene-active>.scrolly~.wrap{display:none}
   body.mode-aula .steps{min-width:0;min-height:0;height:100%;overflow:hidden}
@@ -157,8 +165,8 @@
 }
 
 @media(max-width:520px){
-  #lr-mobile-toolbar>span{display:none}
-  #lr-mobile-toolbar .lr-study-optional{margin-left:auto}
+  #lr-mobile-toolbar>span{display:block;text-align:left;font-size:.55rem}
+  #lr-mobile-toolbar .lr-study-optional{flex:none}
 }
 
 @media(prefers-reduced-motion:reduce){

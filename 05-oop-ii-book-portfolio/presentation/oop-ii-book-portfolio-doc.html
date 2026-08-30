@@ -599,6 +599,7 @@
   margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;
   border:0!important}
 .lr-has-contract [hidden]{display:none!important}
+[data-lr-scroller="true"]:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
 
 #lr-nav{position:fixed;inset:0 auto 0 0;width:var(--lr-nav-w,230px);z-index:52;
   display:flex;flex-direction:column;background:rgba(9,9,11,.97);border-right:1px solid var(--line);
@@ -630,6 +631,8 @@
 .lr-scene-links button.lr-route-live span{color:var(--accent)}
 .lr-scene-links button.lr-route-required span{color:var(--kw)}
 .lr-scene-links button.lr-route-optional span{color:var(--faint)}
+.lr-scene-links button.lr-route-mixed span{background:linear-gradient(90deg,var(--accent),var(--kw));
+  color:transparent;background-clip:text;-webkit-background-clip:text}
 
 #lr-teacher-toggle{margin:0 6px 9px;min-height:36px;border:1px solid rgba(34,211,238,.38);
   border-radius:8px;background:var(--accent-dim);color:var(--accent);font:600 .68rem var(--mono);cursor:pointer}
@@ -650,6 +653,8 @@
 .lr-teacher-kicker{margin:0;color:var(--accent);font:600 .68rem var(--mono);text-transform:uppercase}
 .lr-teacher-stage{font-size:.78rem}.lr-full-guide{min-height:40px;margin-top:16px;padding:7px 12px;
   border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--accent);font:600 .7rem var(--mono);cursor:pointer}
+.lr-teacher-override{padding:8px 10px;border-left:2px solid var(--kw);background:rgba(192,132,252,.08);
+  color:var(--muted);font-size:.76rem}
 
 .lr-scene-badge{display:flex;gap:8px;align-items:center;margin:0 0 10px;font:600 .58rem var(--mono);
   letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
@@ -657,6 +662,7 @@
 .lr-scene-badge.lr-route-live span:first-child{border-color:rgba(34,211,238,.42);color:var(--accent)}
 .lr-scene-badge.lr-route-required span:first-child{border-color:rgba(192,132,252,.45);color:var(--kw)}
 .lr-scene-badge.lr-route-optional span:first-child{border-color:var(--line);color:var(--faint)}
+.lr-scene-badge.lr-route-mixed span:first-child{border-color:rgba(192,132,252,.45);color:var(--kw)}
 
 #lr-controls{position:fixed;left:var(--lr-nav-w,230px);right:0;bottom:0;height:var(--lr-controls-h,58px);z-index:55;
   display:grid;grid-template-columns:minmax(120px,1fr) auto auto minmax(120px,1fr);align-items:center;
@@ -675,6 +681,8 @@
 #lr-controls .lr-route-scope{padding:0 12px;color:var(--accent);border-color:rgba(34,211,238,.38)}
 #lr-controls.lr-fixed-scope{grid-template-columns:minmax(120px,1fr) auto minmax(120px,1fr)}
 #lr-mobile-toolbar{display:none}
+html.lr-modal-open,body.lr-modal-open{overflow:hidden!important;overscroll-behavior:none}
+body.lr-modal-open::before{content:"";position:fixed;inset:0;z-index:69;background:rgba(0,0,0,.58);backdrop-filter:blur(2px);pointer-events:auto}
 
 /* Layout names are operational: they control scene width and native two-panel ratios. */
 .lr-scene{--lr-scene-max:1180px;--lr-left:42fr;--lr-right:58fr}
@@ -706,7 +714,7 @@
   body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child{overflow:visible;max-width:var(--lr-scene-max);margin:0 auto}
   body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child h2{font-size:clamp(1.08rem,2.15vh,1.72rem);margin:.05em 0 .2em}
   body.mode-aula>.lr-scene-active:has(.scrolly)>.wrap:first-child .lede{font-size:clamp(.74rem,1.4vh,.95rem);margin:.2em 0}
-  body.mode-aula>.lr-scene-active>.scrolly{width:100%;max-width:var(--lr-scene-max);height:100%;min-height:0;margin:0 auto;
+  body.mode-aula>.lr-scene-active>.scrolly{display:grid;width:100%;max-width:var(--lr-scene-max);height:100%;min-height:0;margin:0 auto;
     padding:0;grid-template-columns:minmax(260px,var(--lr-left)) minmax(0,var(--lr-right));gap:clamp(14px,1.8vw,32px)}
   body.mode-aula>.lr-scene-active>.scrolly~.wrap{display:none}
   body.mode-aula .steps{min-width:0;min-height:0;height:100%;overflow:hidden}
@@ -753,8 +761,8 @@
 }
 
 @media(max-width:520px){
-  #lr-mobile-toolbar>span{display:none}
-  #lr-mobile-toolbar .lr-study-optional{margin-left:auto}
+  #lr-mobile-toolbar>span{display:block;text-align:left;font-size:.55rem}
+  #lr-mobile-toolbar .lr-study-optional{flex:none}
 }
 
 @media(prefers-reduced-motion:reduce){
@@ -840,7 +848,7 @@
       <div class="step" data-stage="3" data-name="imbalance"><div class="step-inner">
         <h3><span class="n">3/5</span>La señal, ahora de serie</h3>
         <p><code>ob.imbalance()</code> viaja con el libro a donde el libro vaya. Cuando en
-        L7 carguemos 500 snapshots reales de BTC, cada uno responderá a las mismas
+        L7 carguemos 500 snapshots sintéticos y reproducibles de BTC, cada uno responderá a las mismas
         preguntas.</p>
       </div></div>
       <div class="step" data-stage="4" data-name="estado interno"><div class="step-inner">
@@ -899,7 +907,7 @@ ob.mid          <span class="c"># 99975.0 · property</span></pre>
         </div>
         <p style="color:var(--muted);font-size:.84rem;margin-top:6px">el libro empuja hacia
         arriba — y esta señal ahora <strong>viaja dentro del objeto</strong>, lista para los
-        500 snapshots reales de L7.</p>
+        500 snapshots sintéticos de L7.</p>
       </div>
       <div class="fig-stage" data-stage="4">
         <pre style="font-family:var(--mono);font-size:.76rem;line-height:1.95;margin:6px 0 0">
@@ -1163,7 +1171,7 @@ tracker.apply_fill(Fill(<span class="num">2</span>, <span class="s">'BTCUSDT'</s
 - **0/5 sueltas:** "cinco Orders en cinco variables. ¿Best bid? Nadie lo sabe: no hay libro."
 - **1/5 OrderBook:** "composición: un objeto cuyos atributos son OTROS objetos. No hereda, no copia — TIENE bids y asks dentro."
 - **2/5 properties:** "las funciones de L2 se mudan adentro. Las métricas sin argumentos se leen como atributos calculados: `best_bid`, `spread`, `mid`. `@property` fija desde hoy la misma API que usará L7" — cierra en voz alta el contador plantado en L2.
-- **3/5 imbalance:** "la señal viaja con el libro. En L7 le daremos 500 snapshots reales."
+- **3/5 imbalance:** "la señal viaja con el libro. En L7 le daremos 500 snapshots sintéticos y reproducibles."
 - **4/5 estado interno:** el guion bajo. "No bloquea nada: COMUNICA. Si cualquiera puede escribir tracker._cash = 999999, la contabilidad no vale nada."
 - **5/5 equity:** la puerta única apply_fill y la fórmula: caja + posición × mark.
 
@@ -1195,7 +1203,7 @@ tracker.apply_fill(Fill(<span class="num">2</span>, <span class="s">'BTCUSDT'</s
 - [ ] equity = cash + position × mark.
 - [ ] La ida y vuelta pierde el spread (semilla de L13) — plantada.
 </script>
-<script type="application/json" id="pedagogy-contract">{"lesson":5,"status":"contract-strict","title":"OOP II — OrderBook y PositionTracker","delivery":"lesson","source_path":"framework/_build/docs/05_body.html","requires":{"concepts":["oop.classes","exchange.order","exchange.fill","python.lambda","python.sorted_key","python.fstring","python.generator_expression"],"apis":["order.constructor","fill.constructor","fill.cash_flow"],"notation":["notation.spread","notation.mid","notation.cash_flow"]},"requirement_routes":{"concepts":{"oop.classes":"LIVE","exchange.order":"LIVE","exchange.fill":"LIVE","python.lambda":"LIVE","python.sorted_key":"LIVE","python.fstring":"LIVE","python.generator_expression":"REQUIRED"},"apis":{"order.constructor":"REQUIRED","fill.constructor":"REQUIRED","fill.cash_flow":"LIVE"},"notation":{"notation.spread":"LIVE","notation.mid":"LIVE","notation.cash_flow":"LIVE"}},"introduces":{"concepts":[{"id":"oop.composition","importance":"major","route":"LIVE"},{"id":"oop.encapsulation","importance":"major","route":"REQUIRED"},{"id":"oop.computed_property","importance":"major","route":"LIVE"},{"id":"exchange.orderbook","importance":"major","route":"LIVE"},{"id":"exchange.position_tracker","importance":"major","route":"LIVE"},{"id":"microstructure.spread_cost","importance":"major","route":"REQUIRED"}],"apis":["orderbook.constructor","level.constructor","orderbook.best_bid","orderbook.best_ask","orderbook.spread","orderbook.mid","orderbook.imbalance","tracker.constructor","tracker.position","tracker.apply_fill","tracker.equity"],"notation":["notation.equity"]},"introduction_routes":{"apis":{"orderbook.constructor":"LIVE","level.constructor":"LIVE","orderbook.best_bid":"LIVE","orderbook.best_ask":"LIVE","orderbook.spread":"LIVE","orderbook.mid":"LIVE","orderbook.imbalance":"LIVE","tracker.constructor":"LIVE","tracker.position":"LIVE","tracker.apply_fill":"LIVE","tracker.equity":"LIVE"},"notation":{"notation.equity":"LIVE"}},"recalls":[{"concept":"oop.classes","introduced_in":4,"mapping":{"before":"Order y Fill vinculan un registro con comportamiento.","now":"Los contenedores protegen muchos objetos de dominio y su estado compartido."}}],"api_surface":[{"id":"order.constructor","name":"Order","kind":"constructor","signature":"Order(symbol: str, side: Side, size: float, price: float | None = None, order_type: OrderType = OrderType.LIMIT, id: int = None) -> Order","returns":"Order","responsibility":"construct the canonical order intent","qualified_name":"exchange.orders.Order"},{"id":"fill.constructor","name":"Fill","kind":"constructor","signature":"Fill(order_id: int, symbol: str, side: Side, price: float, size: float, timestamp: int | None = None) -> Fill","returns":"Fill","responsibility":"construct one canonical execution result","qualified_name":"exchange.trades.Fill"},{"id":"fill.cash_flow","name":"cash_flow","kind":"method","signature":"cash_flow() -> float","returns":"float","responsibility":"compute signed fill cash flow","qualified_name":"exchange.trades.Fill.cash_flow"},{"id":"orderbook.constructor","name":"OrderBook","kind":"constructor","signature":"OrderBook(symbol: str, bids: list[Level], asks: list[Level]) -> OrderBook","returns":"OrderBook","responsibility":"construct a sorted two-sided book","qualified_name":"exchange.book.OrderBook"},{"id":"level.constructor","name":"Level","kind":"constructor","signature":"Level(price: float, size: float) -> Level","returns":"Level","responsibility":"construct one visible price level","qualified_name":"exchange.book.Level"},{"id":"orderbook.best_bid","name":"best_bid","kind":"property","signature":"best_bid -> float | None","returns":"float | None","responsibility":"read the highest bid price","qualified_name":"exchange.book.OrderBook.best_bid"},{"id":"orderbook.best_ask","name":"best_ask","kind":"property","signature":"best_ask -> float | None","returns":"float | None","responsibility":"read the lowest ask price","qualified_name":"exchange.book.OrderBook.best_ask"},{"id":"orderbook.spread","name":"spread","kind":"property","signature":"spread -> float | None","returns":"float | None","responsibility":"compute best ask minus best bid","qualified_name":"exchange.book.OrderBook.spread"},{"id":"orderbook.mid","name":"mid","kind":"property","signature":"mid -> float | None","returns":"float | None","responsibility":"compute the top-of-book midpoint","qualified_name":"exchange.book.OrderBook.mid"},{"id":"orderbook.imbalance","name":"imbalance","kind":"method","signature":"imbalance(levels: int = 1) -> float | None","returns":"float | None","responsibility":"compute depth imbalance for selected levels","qualified_name":"exchange.book.OrderBook.imbalance"},{"id":"tracker.apply_fill","name":"apply_fill","kind":"method","signature":"apply_fill(fill: Fill) -> None","returns":"None","responsibility":"update cash and position atomically from a fill","qualified_name":"exchange.portfolio.PositionTracker.apply_fill"},{"id":"tracker.constructor","name":"PositionTracker","kind":"constructor","signature":"PositionTracker(cash: float = 0.0) -> PositionTracker","returns":"PositionTracker","responsibility":"initialize cash, inventory, and fill accounting","qualified_name":"exchange.portfolio.PositionTracker"},{"id":"tracker.position","name":"position","kind":"property","signature":"position -> float","returns":"float","responsibility":"read current signed inventory","qualified_name":"exchange.portfolio.PositionTracker.position"},{"id":"tracker.equity","name":"equity","kind":"method","signature":"equity(mark_price: float) -> float","returns":"float","responsibility":"mark cash and inventory to market","qualified_name":"exchange.portfolio.PositionTracker.equity"}],"routes":{"LIVE":["l05-challenge","l05-composition","l05-book-api","l05-tracker","l05-bridge"],"REQUIRED":["l05-encapsulation","l05-quiz"],"OPTIONAL":[]},"objectives":[{"id":"l05-compose-book","route":"LIVE","concepts":["oop.composition","exchange.orderbook","oop.computed_property"],"apis":["orderbook.constructor","level.constructor","orderbook.best_bid","orderbook.best_ask","orderbook.spread","orderbook.mid","orderbook.imbalance"],"notation":[]},{"id":"l05-account-for-fills","route":"LIVE","concepts":["exchange.position_tracker"],"apis":["tracker.constructor","tracker.position","tracker.apply_fill","tracker.equity"],"notation":["notation.equity"]},{"id":"l05-protect-invariants","route":"REQUIRED","concepts":["oop.encapsulation","microstructure.spread_cost"],"apis":[],"notation":[]}],"load":{"live_presentation_minutes":20,"guided_minutes":20,"required_autonomous_minutes":34,"optional_minutes":15,"overflow_policy":"explicit-route-plan"},"scenes":[{"id":"l05-challenge","dom_id":"s0","type":"hero-challenge","route":"LIVE","layout":"focus","concepts":["oop.composition"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l05-composition","dom_id":"s1","type":"architecture-map","route":"LIVE","layout":"split-42-58","concepts":["oop.composition","exchange.orderbook"],"duration_minutes":9,"stages":[{"id":"orphan-orders","route":"LIVE","dom_stage":0},{"id":"container","route":"LIVE","dom_stage":1},{"id":"properties","route":"LIVE","dom_stage":2},{"id":"signal","route":"LIVE","dom_stage":3},{"id":"tracker","route":"REQUIRED","dom_stage":4},{"id":"equity","route":"REQUIRED","dom_stage":5}]},{"id":"l05-book-api","dom_id":"s2","type":"code-state","route":"LIVE","layout":"split-50-50","concepts":["oop.computed_property","exchange.orderbook"],"duration_minutes":4,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l05-tracker","dom_id":"s3","type":"concept-simulator","route":"LIVE","layout":"split-45-55","concepts":["exchange.position_tracker"],"duration_minutes":3,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l05-encapsulation","dom_id":"s4","type":"guided-exercise","route":"REQUIRED","layout":"focus","concepts":["oop.encapsulation","microstructure.spread_cost"],"duration_minutes":8,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l05-quiz","dom_id":"s5","type":"diagnostic-quiz","route":"REQUIRED","layout":"focus","concepts":["oop.composition","oop.encapsulation"],"duration_minutes":8,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l05-bridge","dom_id":"s6","type":"bridge","route":"LIVE","layout":"focus","concepts":["oop.composition"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]}],"bridge":{"target_lesson":6,"known":{"concepts":["oop.classes","oop.composition"],"apis":["orderbook.imbalance"],"notation":["notation.equity"]},"limitation":"Duplicar una clase completa por estrategia repite estructura y ciclo de vida.","need":"La herencia y un contrato abstracto conservan el esqueleto mientras cambia la decisión."},"api_transitions":[],"package_checks":[{"path":"05-oop-ii-book-portfolio/exercises/exchange/orders.py","class":"Order","members":{"__init__":{"api":"order.constructor","kind":"constructor","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"side","kind":"positional_or_keyword","annotation":"Side"},{"name":"size","kind":"positional_or_keyword","annotation":"float"},{"name":"price","kind":"positional_or_keyword","annotation":"float | None","default":"None"},{"name":"order_type","kind":"positional_or_keyword","annotation":"OrderType","default":"OrderType.LIMIT"},{"name":"id","kind":"positional_or_keyword","annotation":"int","default":"None"}],"returns":"Order"}}},{"path":"05-oop-ii-book-portfolio/exercises/exchange/trades.py","class":"Fill","members":{"__init__":{"api":"fill.constructor","kind":"constructor","parameters":[{"name":"order_id","kind":"positional_or_keyword","annotation":"int"},{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"side","kind":"positional_or_keyword","annotation":"Side"},{"name":"price","kind":"positional_or_keyword","annotation":"float"},{"name":"size","kind":"positional_or_keyword","annotation":"float"},{"name":"timestamp","kind":"positional_or_keyword","annotation":"int | None","default":"None"}],"returns":"Fill"},"cash_flow":{"api":"fill.cash_flow","kind":"method","parameters":[],"returns":"float"}}},{"path":"05-oop-ii-book-portfolio/exercises/exchange/book.py","class":"Level","members":{"__init__":{"api":"level.constructor","kind":"constructor","parameters":[{"name":"price","kind":"positional_or_keyword","annotation":"float"},{"name":"size","kind":"positional_or_keyword","annotation":"float"}],"returns":"Level"}}},{"path":"05-oop-ii-book-portfolio/exercises/exchange/book.py","class":"OrderBook","members":{"__init__":{"api":"orderbook.constructor","kind":"constructor","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"bids","kind":"positional_or_keyword","annotation":"list[Level]"},{"name":"asks","kind":"positional_or_keyword","annotation":"list[Level]"}],"returns":"OrderBook"},"best_bid":{"api":"orderbook.best_bid","kind":"property","parameters":[],"returns":"float | None"},"best_ask":{"api":"orderbook.best_ask","kind":"property","parameters":[],"returns":"float | None"},"spread":{"api":"orderbook.spread","kind":"property","parameters":[],"returns":"float | None"},"mid":{"api":"orderbook.mid","kind":"property","parameters":[],"returns":"float | None"},"imbalance":{"api":"orderbook.imbalance","kind":"method","parameters":[{"name":"levels","kind":"positional_or_keyword","annotation":"int","default":"1"}],"returns":"float | None"}}},{"path":"05-oop-ii-book-portfolio/exercises/exchange/portfolio.py","class":"PositionTracker","members":{"__init__":{"api":"tracker.constructor","kind":"constructor","parameters":[{"name":"cash","kind":"positional_or_keyword","annotation":"float","default":"0.0"}],"returns":"PositionTracker"},"position":{"api":"tracker.position","kind":"property","parameters":[],"returns":"float"},"apply_fill":{"api":"tracker.apply_fill","kind":"method","parameters":[{"name":"fill","kind":"positional_or_keyword","annotation":"Fill"}],"returns":"None"},"equity":{"api":"tracker.equity","kind":"method","parameters":[{"name":"mark_price","kind":"positional_or_keyword","annotation":"float"}],"returns":"float"}}}],"used_later":{"concepts":["exchange.orderbook","microstructure.spread_cost","oop.composition","oop.computed_property"],"apis":["level.constructor","orderbook.best_ask","orderbook.best_bid","orderbook.constructor","orderbook.imbalance","orderbook.mid","orderbook.spread","tracker.apply_fill","tracker.constructor","tracker.equity","tracker.position"],"notation":["notation.equity"]}}</script>
+<script type="application/json" id="pedagogy-contract">{"lesson":5,"status":"contract-strict","title":"OOP II — OrderBook y PositionTracker","delivery":"lesson","source_path":"framework/_build/docs/05_body.html","requires":{"concepts":["oop.classes","exchange.order","exchange.fill","python.lambda","python.sorted_key","python.fstring","python.generator_expression"],"apis":["order.constructor","fill.constructor","fill.cash_flow"],"notation":["notation.spread","notation.mid","notation.cash_flow"]},"requirement_routes":{"concepts":{"oop.classes":"LIVE","exchange.order":"LIVE","exchange.fill":"LIVE","python.lambda":"LIVE","python.sorted_key":"LIVE","python.fstring":"LIVE","python.generator_expression":"REQUIRED"},"apis":{"order.constructor":"REQUIRED","fill.constructor":"REQUIRED","fill.cash_flow":"LIVE"},"notation":{"notation.spread":"LIVE","notation.mid":"LIVE","notation.cash_flow":"LIVE"}},"introduces":{"concepts":[{"id":"oop.composition","importance":"major","route":"LIVE"},{"id":"oop.encapsulation","importance":"major","route":"REQUIRED"},{"id":"oop.computed_property","importance":"major","route":"LIVE"},{"id":"exchange.orderbook","importance":"major","route":"LIVE"},{"id":"exchange.position_tracker","importance":"major","route":"LIVE"},{"id":"microstructure.spread_cost","importance":"major","route":"REQUIRED"}],"apis":["orderbook.constructor","level.constructor","orderbook.best_bid","orderbook.best_ask","orderbook.spread","orderbook.mid","orderbook.imbalance","tracker.constructor","tracker.position","tracker.apply_fill","tracker.equity"],"notation":["notation.equity"]},"introduction_routes":{"apis":{"orderbook.constructor":"LIVE","level.constructor":"LIVE","orderbook.best_bid":"LIVE","orderbook.best_ask":"LIVE","orderbook.spread":"LIVE","orderbook.mid":"LIVE","orderbook.imbalance":"LIVE","tracker.constructor":"LIVE","tracker.position":"LIVE","tracker.apply_fill":"LIVE","tracker.equity":"LIVE"},"notation":{"notation.equity":"LIVE"}},"recalls":[{"concept":"oop.classes","introduced_in":4,"mapping":{"before":"Order y Fill vinculan un registro con comportamiento.","now":"Los contenedores protegen muchos objetos de dominio y su estado compartido."}}],"api_surface":[{"id":"order.constructor","name":"Order","kind":"constructor","signature":"Order(symbol: str, side: Side, size: float, price: float | None = None, order_type: OrderType = OrderType.LIMIT, id: int = None) -> Order","returns":"Order","responsibility":"construct the canonical order intent","qualified_name":"exchange.orders.Order"},{"id":"fill.constructor","name":"Fill","kind":"constructor","signature":"Fill(order_id: int, symbol: str, side: Side, price: float, size: float, timestamp: int | None = None) -> Fill","returns":"Fill","responsibility":"construct one canonical execution result","qualified_name":"exchange.trades.Fill"},{"id":"fill.cash_flow","name":"cash_flow","kind":"method","signature":"cash_flow() -> float","returns":"float","responsibility":"compute signed fill cash flow","qualified_name":"exchange.trades.Fill.cash_flow"},{"id":"orderbook.constructor","name":"OrderBook","kind":"constructor","signature":"OrderBook(symbol: str, bids: list[Level], asks: list[Level]) -> OrderBook","returns":"OrderBook","responsibility":"construct a sorted two-sided book","qualified_name":"exchange.book.OrderBook"},{"id":"level.constructor","name":"Level","kind":"constructor","signature":"Level(price: float, size: float) -> Level","returns":"Level","responsibility":"construct one visible price level","qualified_name":"exchange.book.Level"},{"id":"orderbook.best_bid","name":"best_bid","kind":"property","signature":"best_bid -> float | None","returns":"float | None","responsibility":"read the highest bid price","qualified_name":"exchange.book.OrderBook.best_bid"},{"id":"orderbook.best_ask","name":"best_ask","kind":"property","signature":"best_ask -> float | None","returns":"float | None","responsibility":"read the lowest ask price","qualified_name":"exchange.book.OrderBook.best_ask"},{"id":"orderbook.spread","name":"spread","kind":"property","signature":"spread -> float | None","returns":"float | None","responsibility":"compute best ask minus best bid","qualified_name":"exchange.book.OrderBook.spread"},{"id":"orderbook.mid","name":"mid","kind":"property","signature":"mid -> float | None","returns":"float | None","responsibility":"compute the top-of-book midpoint","qualified_name":"exchange.book.OrderBook.mid"},{"id":"orderbook.imbalance","name":"imbalance","kind":"method","signature":"imbalance(levels: int = 1) -> float | None","returns":"float | None","responsibility":"compute depth imbalance for selected levels","qualified_name":"exchange.book.OrderBook.imbalance"},{"id":"tracker.apply_fill","name":"apply_fill","kind":"method","signature":"apply_fill(fill: Fill) -> None","returns":"None","responsibility":"update cash and position atomically from a fill","qualified_name":"exchange.portfolio.PositionTracker.apply_fill"},{"id":"tracker.constructor","name":"PositionTracker","kind":"constructor","signature":"PositionTracker(cash: float = 0.0) -> PositionTracker","returns":"PositionTracker","responsibility":"initialize cash, inventory, and fill accounting","qualified_name":"exchange.portfolio.PositionTracker"},{"id":"tracker.position","name":"position","kind":"property","signature":"position -> float","returns":"float","responsibility":"read current signed inventory","qualified_name":"exchange.portfolio.PositionTracker.position"},{"id":"tracker.equity","name":"equity","kind":"method","signature":"equity(mark_price: float) -> float","returns":"float","responsibility":"mark cash and inventory to market","qualified_name":"exchange.portfolio.PositionTracker.equity"}],"routes":{"LIVE":["l05-challenge","l05-composition","l05-book-api","l05-tracker","l05-bridge"],"REQUIRED":["l05-composition/tracker","l05-composition/equity","l05-encapsulation","l05-quiz"],"OPTIONAL":[]},"objectives":[{"id":"l05-compose-book","route":"LIVE","concepts":["oop.composition","exchange.orderbook","oop.computed_property"],"apis":["orderbook.constructor","level.constructor","orderbook.best_bid","orderbook.best_ask","orderbook.spread","orderbook.mid","orderbook.imbalance"],"notation":[]},{"id":"l05-account-for-fills","route":"LIVE","concepts":["exchange.position_tracker"],"apis":["tracker.constructor","tracker.position","tracker.apply_fill","tracker.equity"],"notation":["notation.equity"]},{"id":"l05-protect-invariants","route":"REQUIRED","concepts":["oop.encapsulation","microstructure.spread_cost"],"apis":[],"notation":[]}],"load":{"live_presentation_minutes":20,"guided_minutes":20,"required_autonomous_minutes":52,"optional_minutes":15,"overflow_policy":"explicit-route-plan","autonomous_components":{"documents":[{"id":"l05-composition/tracker","route":"REQUIRED","minutes":1},{"id":"l05-composition/equity","route":"REQUIRED","minutes":1},{"id":"l05-encapsulation","route":"REQUIRED","minutes":8}],"quizzes":[{"id":"l05-quiz","route":"REQUIRED","minutes":8}],"projects":[]}},"scenes":[{"id":"l05-challenge","dom_id":"s0","type":"hero-challenge","route":"LIVE","layout":"focus","concepts":["oop.composition"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l05-composition","dom_id":"s1","type":"architecture-map","route":"LIVE","layout":"split-42-58","concepts":["oop.composition","exchange.orderbook"],"duration_minutes":9,"stages":[{"id":"orphan-orders","route":"LIVE","dom_stage":0},{"id":"container","route":"LIVE","dom_stage":1},{"id":"properties","route":"LIVE","dom_stage":2},{"id":"signal","route":"LIVE","dom_stage":3},{"id":"tracker","route":"REQUIRED","duration_minutes":1,"dom_stage":4},{"id":"equity","route":"REQUIRED","duration_minutes":1,"dom_stage":5}]},{"id":"l05-book-api","dom_id":"s2","type":"code-state","route":"LIVE","layout":"split-50-50","concepts":["oop.computed_property","exchange.orderbook"],"duration_minutes":4,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l05-tracker","dom_id":"s3","type":"concept-simulator","route":"LIVE","layout":"split-45-55","concepts":["exchange.position_tracker"],"duration_minutes":3,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l05-encapsulation","dom_id":"s4","type":"guided-exercise","route":"REQUIRED","layout":"focus","concepts":["oop.encapsulation","microstructure.spread_cost"],"duration_minutes":8,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l05-quiz","dom_id":"s5","type":"diagnostic-quiz","route":"REQUIRED","layout":"focus","concepts":["oop.composition","oop.encapsulation"],"duration_minutes":8,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l05-bridge","dom_id":"s6","type":"bridge","route":"LIVE","layout":"focus","concepts":["oop.composition"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]}],"bridge":{"target_lesson":6,"known":{"concepts":["oop.classes","oop.composition"],"apis":["orderbook.imbalance"],"notation":["notation.equity"]},"limitation":"Duplicar una clase completa por estrategia repite estructura y ciclo de vida.","need":"La herencia y un contrato abstracto conservan el esqueleto mientras cambia la decisión."},"api_transitions":[],"package_checks":[{"path":"05-oop-ii-book-portfolio/exercises/exchange/orders.py","class":"Order","members":{"__init__":{"api":"order.constructor","kind":"constructor","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"side","kind":"positional_or_keyword","annotation":"Side"},{"name":"size","kind":"positional_or_keyword","annotation":"float"},{"name":"price","kind":"positional_or_keyword","annotation":"float | None","default":"None"},{"name":"order_type","kind":"positional_or_keyword","annotation":"OrderType","default":"OrderType.LIMIT"},{"name":"id","kind":"positional_or_keyword","annotation":"int","default":"None"}],"returns":"Order"}}},{"path":"05-oop-ii-book-portfolio/exercises/exchange/trades.py","class":"Fill","members":{"__init__":{"api":"fill.constructor","kind":"constructor","parameters":[{"name":"order_id","kind":"positional_or_keyword","annotation":"int"},{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"side","kind":"positional_or_keyword","annotation":"Side"},{"name":"price","kind":"positional_or_keyword","annotation":"float"},{"name":"size","kind":"positional_or_keyword","annotation":"float"},{"name":"timestamp","kind":"positional_or_keyword","annotation":"int | None","default":"None"}],"returns":"Fill"},"cash_flow":{"api":"fill.cash_flow","kind":"method","parameters":[],"returns":"float"}}},{"path":"05-oop-ii-book-portfolio/exercises/exchange/book.py","class":"Level","members":{"__init__":{"api":"level.constructor","kind":"constructor","parameters":[{"name":"price","kind":"positional_or_keyword","annotation":"float"},{"name":"size","kind":"positional_or_keyword","annotation":"float"}],"returns":"Level"}}},{"path":"05-oop-ii-book-portfolio/exercises/exchange/book.py","class":"OrderBook","members":{"__init__":{"api":"orderbook.constructor","kind":"constructor","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"bids","kind":"positional_or_keyword","annotation":"list[Level]"},{"name":"asks","kind":"positional_or_keyword","annotation":"list[Level]"}],"returns":"OrderBook"},"best_bid":{"api":"orderbook.best_bid","kind":"property","parameters":[],"returns":"float | None"},"best_ask":{"api":"orderbook.best_ask","kind":"property","parameters":[],"returns":"float | None"},"spread":{"api":"orderbook.spread","kind":"property","parameters":[],"returns":"float | None"},"mid":{"api":"orderbook.mid","kind":"property","parameters":[],"returns":"float | None"},"imbalance":{"api":"orderbook.imbalance","kind":"method","parameters":[{"name":"levels","kind":"positional_or_keyword","annotation":"int","default":"1"}],"returns":"float | None"}}},{"path":"05-oop-ii-book-portfolio/exercises/exchange/portfolio.py","class":"PositionTracker","members":{"__init__":{"api":"tracker.constructor","kind":"constructor","parameters":[{"name":"cash","kind":"positional_or_keyword","annotation":"float","default":"0.0"}],"returns":"PositionTracker"},"position":{"api":"tracker.position","kind":"property","parameters":[],"returns":"float"},"apply_fill":{"api":"tracker.apply_fill","kind":"method","parameters":[{"name":"fill","kind":"positional_or_keyword","annotation":"Fill"}],"returns":"None"},"equity":{"api":"tracker.equity","kind":"method","parameters":[{"name":"mark_price","kind":"positional_or_keyword","annotation":"float"}],"returns":"float"}}}],"used_later":{"concepts":["exchange.orderbook","microstructure.spread_cost","oop.composition","oop.computed_property"],"apis":["level.constructor","orderbook.best_ask","orderbook.best_bid","orderbook.constructor","orderbook.imbalance","orderbook.mid","orderbook.spread","tracker.apply_fill","tracker.constructor","tracker.equity","tracker.position"],"notation":["notation.equity"]}}</script>
 <script>
 
 (function(){
@@ -1203,7 +1211,7 @@ tracker.apply_fill(Fill(<span class="num">2</span>, <span class="s">'BTCUSDT'</s
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* ── mini-gráficas canvas (compartidas por los docs con datos reales) ── */
+/* ── mini-gráficas canvas (compartidas por los docs con datos reproducibles) ── */
 window.DOC=window.DOC||{};
 DOC.chart=function(canvas,seriesList,opts={}){
   const c=typeof canvas==='string'?document.querySelector(canvas):canvas;
@@ -1331,9 +1339,12 @@ DOC.save=function(patch){
   const steps=$$('.scrolly .step');
   if(!steps.length)return;
   document.addEventListener('keydown',e=>{
+    if(document.body.classList.contains('lr-modal-open'))return;
     if(document.body.classList.contains('mode-aula'))return;
     if(!['ArrowDown','ArrowUp','PageDown','PageUp'].includes(e.key))return;
     if(/INPUT|TEXTAREA|SELECT|BUTTON/.test(document.activeElement.tagName))return;
+    const scroller=document.activeElement?.closest('[data-lr-scroller="true"]');
+    if(scroller)return;
     const mid=innerHeight/2;
     let idx=0,best=1e12;
     steps.forEach((s,i)=>{const r=s.getBoundingClientRect();
@@ -1350,7 +1361,9 @@ DOC.save=function(patch){
 /* ── modo profesor: ?profe=1 abre el guion como cajón lateral ── */
 (function(){
   const srcEl=document.getElementById('guion-src');
-  if(!srcEl||!new URLSearchParams(location.search).has('profe'))return;
+  const professor=['1','true'].includes(
+    (new URLSearchParams(location.search).get('profe')||'').toLowerCase());
+  if(!srcEl||!professor)return;
   const mdlite=t=>t
     .replace(/&/g,'&amp;').replace(/</g,'&lt;')
     .replace(/^### (.*)$/gm,'<h4>$1</h4>')
@@ -1363,16 +1376,54 @@ DOC.save=function(patch){
     .replace(/\n{2,}/g,'</p><p>');
   const drawer=document.createElement('aside');
   drawer.id='guion-drawer';
+  drawer.dataset.overlay='guide';drawer.hidden=true;drawer.inert=true;drawer.setAttribute('inert','');
+  drawer.setAttribute('aria-hidden','true');drawer.setAttribute('aria-label','Guion completo del profesor');
+  drawer.setAttribute('role','dialog');drawer.setAttribute('aria-modal','true');
   drawer.innerHTML='<div class="gd-head">📋 Guion del profesor'
-    +'<button id="gd-close" aria-label="Cerrar">✕</button></div>'
-    +'<div class="gd-body"><p>'+mdlite(srcEl.textContent)+'</p></div>';
+    +'<button type="button" id="gd-close" aria-label="Cerrar guion">✕</button></div>'
+    +'<div class="gd-body" data-lr-scroller="true" data-lr-scroller-axis="vertical" tabindex="0"'
+    +' role="region" aria-label="Contenido desplazable del guion completo"><p>'
+    +mdlite(srcEl.textContent)+'</p></div>';
   document.body.appendChild(drawer);
   const btn=document.createElement('button');
-  btn.id='gd-toggle';btn.className='btn';btn.textContent='📋 Guion';
+  btn.id='gd-toggle';btn.className='btn';btn.type='button';btn.textContent='📋 Guion';
+  btn.setAttribute('aria-controls','guion-drawer');btn.setAttribute('aria-expanded','false');
   document.body.appendChild(btn);
-  const toggle=()=>drawer.classList.toggle('open');
-  btn.addEventListener('click',toggle);
-  drawer.querySelector('#gd-close').addEventListener('click',toggle);
+  let lastTrigger=btn;
+  const setOpen=(open,trigger=null,restore=true)=>{
+    const currentlyOpen=drawer.classList.contains('open');
+    if(open===currentlyOpen)return false;
+    if(open){
+      window.LEARNING_TEACHER_DRAWER?.close({restoreFocus:false});
+      lastTrigger=trigger||document.activeElement||btn;drawer.hidden=false;
+      drawer.inert=false;drawer.removeAttribute('inert');
+      window.LEARNING_MODAL_BACKGROUND?.(drawer,true);
+    }
+    drawer.classList.toggle('open',open);drawer.setAttribute('aria-hidden',String(!open));
+    btn.setAttribute('aria-expanded',String(open));
+    if(open)drawer.querySelector('#gd-close').focus();
+    else{
+      drawer.hidden=true;drawer.inert=true;drawer.setAttribute('inert','');
+      window.LEARNING_MODAL_BACKGROUND?.(drawer,false);
+      if(restore)window.LEARNING_RESTORE_FOCUS?.(lastTrigger,btn);
+    }
+    return true;
+  };
+  const focusable='a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),'
+    +'textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+  drawer.addEventListener('keydown',event=>{
+    if(event.key!=='Tab')return;
+    const items=[...drawer.querySelectorAll(focusable)].filter(node=>!node.hidden&&node.getClientRects().length);
+    if(!items.length)return;
+    const first=items[0],last=items[items.length-1];
+    if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+    else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+  });
+  btn.addEventListener('click',event=>setOpen(true,event.currentTarget));
+  drawer.querySelector('#gd-close').addEventListener('click',()=>setOpen(false));
+  window.GUIDE_DRAWER={open:trigger=>setOpen(true,trigger),
+    close:options=>setOpen(false,null,options?.restoreFocus!==false),
+    isOpen:()=>drawer.classList.contains('open')};
 })();
 
 /* ── scrollytelling genérico ──
@@ -1490,12 +1541,69 @@ const route=value=>ROUTES.includes(String(value||'').toUpperCase())
 const routeClass=value=>`lr-route-${route(value).toLowerCase()}`;
 const scopeRoutes=()=>routeScope==='ALL'?ROUTES:
   routeScope==='LIVE+REQUIRED'?['LIVE','REQUIRED']:['LIVE'];
+const scopeForRoute=value=>route(value)==='OPTIONAL'?'ALL':
+  route(value)==='REQUIRED'?'LIVE+REQUIRED':'LIVE';
 const modeUrl=next=>{
   const q=new URLSearchParams(location.search);q.set('mode',next);
   return `${location.pathname}?${q.toString()}${location.hash}`;
 };
 const stateKey=(scene,stage)=>`${scene.id}::${stage.id}`;
 const reducedMotion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isExposed=node=>Boolean(node&&!node.hidden&&!node.closest('[hidden],[inert]'));
+
+function expose(node,visible){
+  if(!node)return;
+  node.hidden=!visible;
+  node.inert=!visible;
+  node.toggleAttribute('inert',!visible);
+  node.setAttribute('aria-hidden',String(!visible));
+}
+let modalBackgroundState=null,modalBackgroundOwner=null;
+function setModalBackground(dialog,open){
+  if(open){
+    if(modalBackgroundOwner===dialog)return;
+    if(modalBackgroundOwner)throw new Error('another learning modal is already open');
+    modalBackgroundState=[...body.children].filter(node=>node!==dialog).map(node=>({
+      node,inert:node.inert,attribute:node.hasAttribute('inert'),
+    }));
+    modalBackgroundOwner=dialog;
+    modalBackgroundState.forEach(({node})=>{node.inert=true;node.setAttribute('inert','');});
+    body.classList.add('lr-modal-open');
+    document.documentElement.classList.add('lr-modal-open');
+    return;
+  }
+  if(modalBackgroundOwner!==dialog)return;
+  (modalBackgroundState||[]).forEach(({node,inert,attribute})=>{
+    if(!node.isConnected)return;
+    node.inert=inert;node.toggleAttribute('inert',attribute);
+  });
+  modalBackgroundState=null;
+  modalBackgroundOwner=null;
+  body.classList.remove('lr-modal-open');
+  document.documentElement.classList.remove('lr-modal-open');
+}
+window.LEARNING_MODAL_BACKGROUND=setModalBackground;
+function canRestoreFocus(node){
+  return Boolean(node?.isConnected&&!node.hidden&&!node.disabled
+    &&!node.closest('[hidden],[inert]')&&node.getClientRects().length);
+}
+function restoreFocus(...candidates){
+  const target=candidates.find(canRestoreFocus);
+  if(target)target.focus();
+}
+window.LEARNING_RESTORE_FOCUS=restoreFocus;
+function applyRouteClasses(node,routes){
+  if(!node)return;
+  ROUTES.forEach(name=>node.classList.remove(routeClass(name)));
+  const unique=[...new Set(routes.map(route))];
+  unique.forEach(name=>node.classList.add(routeClass(name)));
+  node.classList.toggle('lr-route-mixed',unique.length>1);
+}
+function expandScopeForRoute(value){
+  const target=scopeForRoute(value);
+  const targetIndex=routeScopes.indexOf(target),currentIndex=routeScopes.indexOf(routeScope);
+  if(targetIndex>=0&&targetIndex>currentIndex)routeScope=target;
+}
 
 function elementForStage(nodes,value,index,total){
   if(value!==undefined&&value!==null){
@@ -1518,6 +1626,7 @@ const models=contract.scenes.map(rawScene=>{
   element.dataset.sceneLayout=layout;
   element.dataset.layoutApplied='true';
   element.dataset.route=sceneRoute;
+  element.dataset.sceneRoute=sceneRoute;
   const allSteps=[...element.querySelectorAll('.scrolly .step')];
   const allFigures=[...element.querySelectorAll('.fig-stage')];
   const declared=Array.isArray(rawScene.stages)&&rawScene.stages.length
@@ -1526,6 +1635,8 @@ const models=contract.scenes.map(rawScene=>{
     const stage={...rawStage};
     stage.id=stage.id||`stage-${index+1}`;
     stage.route=route(stage.route||sceneRoute);
+    stage.duration_minutes=Number.isFinite(Number(rawStage.duration_minutes))
+      &&rawStage.duration_minutes!==null?Number(rawStage.duration_minutes):Number(rawScene.duration_minutes);
     stage.step=elementForStage(allSteps,stage.dom_stage,index,declared.length);
     stage.figure=elementForStage(allFigures,stage.dom_stage,index,declared.length);
     [stage.step,stage.figure].filter(Boolean).forEach(node=>{
@@ -1534,15 +1645,20 @@ const models=contract.scenes.map(rawScene=>{
     return stage;
   });
   const firstWrap=element.matches('.wrap')?element:element.querySelector(':scope > .wrap');
+  let badge=null;
   if(firstWrap){
-    const badge=document.createElement('div');
+    badge=document.createElement('div');
     badge.className=`lr-scene-badge ${routeClass(sceneRoute)}`;
     const minutes=Number.isFinite(Number(rawScene.duration_minutes))
-      ?`<span>${esc(rawScene.duration_minutes)} min</span>`:'';
-    badge.innerHTML=`<span>${esc(sceneRoute)}</span><span>${esc(rawScene.type||'scene')}</span>${minutes}`;
+      ?`<span class="lr-duration">${esc(rawScene.duration_minutes)} min</span>`:'';
+    badge.innerHTML=`<span class="lr-route-label">${esc(sceneRoute)}</span><span>${esc(rawScene.type||'scene')}</span>${minutes}`;
     firstWrap.insertBefore(badge,firstWrap.firstChild);
   }
-  return {...rawScene,route:sceneRoute,layout,element,stages,allSteps,allFigures};
+  const effectiveRoutes=[...new Set(stages.map(stage=>stage.route))];
+  element.dataset.effectiveRoutes=effectiveRoutes.join(',');
+  applyRouteClasses(element,effectiveRoutes);
+  return {...rawScene,route:sceneRoute,layout,element,stages,allSteps,allFigures,badge,
+    effectiveRoutes,navButton:null};
 }).filter(Boolean);
 
 if(missingScenes.length){
@@ -1627,16 +1743,22 @@ nav.innerHTML=`
 body.appendChild(nav);
 
 const navLinks=nav.querySelector('.lr-scene-links');
+navLinks.dataset.lrScroller='true';navLinks.dataset.lrScrollerAxis='vertical';navLinks.tabIndex=0;
+navLinks.setAttribute('role','region');navLinks.setAttribute('aria-label','Escenas desplazables de la lección');
 models.forEach((scene,index)=>{
   const button=document.createElement('button');
   button.type='button';button.dataset.sceneIndex=String(index);
-  button.className=routeClass(scene.route);
-  button.innerHTML=`<span>${esc(scene.route)}</span><b>${esc(scene.id.replace(/^l\d+-/,''))}</b>`;
+  applyRouteClasses(button,scene.effectiveRoutes);
+  button.innerHTML=`<span class="lr-route-label">${esc(scene.effectiveRoutes.join('+'))}</span><b>${esc(scene.id.replace(/^l\d+-/,''))}</b>`;
   button.addEventListener('click',()=>{
     if(mode==='aula')goTo(index,0,false);
-    else scene.element.scrollIntoView({behavior:reducedMotion()?'auto':'smooth',block:'start'});
+    else{
+      const stage=allowedStages(scene)[0];
+      if(stage)setStudyCurrent(scene,stage,false);
+      scene.element.scrollIntoView({behavior:reducedMotion()?'auto':'smooth',block:'start'});
+    }
   });
-  navLinks.appendChild(button);
+  navLinks.appendChild(button);scene.navButton=button;
 });
 
 const controls=document.createElement('div');
@@ -1664,6 +1786,7 @@ liveRegion.className='lr-sr-only';liveRegion.setAttribute('aria-live','polite');
 body.appendChild(liveRegion);
 
 let teacherToggle=null,teacherDrawer=null,teacherBody=null,mobileTeacherToggle=null;
+let lastTeacherTrigger=null;
 if(isProfessor){
   teacherToggle=document.createElement('button');
   teacherToggle.id='lr-teacher-toggle';teacherToggle.type='button';
@@ -1675,23 +1798,44 @@ if(isProfessor){
   teacherDrawer=document.createElement('aside');
   teacherDrawer.id='lr-teacher-drawer';teacherDrawer.dataset.overlay='teacher';
   teacherDrawer.setAttribute('aria-label','Guía docente de la escena');
-  teacherDrawer.setAttribute('aria-hidden','true');
+  teacherDrawer.setAttribute('role','dialog');teacherDrawer.setAttribute('aria-modal','true');
+  teacherDrawer.setAttribute('aria-hidden','true');teacherDrawer.hidden=true;teacherDrawer.inert=true;
+  teacherDrawer.setAttribute('inert','');
   teacherDrawer.innerHTML='<div class="lr-teacher-head"><b>Guía docente</b>'
     +'<button type="button" class="lr-teacher-close" aria-label="Cerrar guía docente">×</button></div>'
     +'<div class="lr-teacher-body"></div>';
   body.appendChild(teacherDrawer);teacherBody=teacherDrawer.querySelector('.lr-teacher-body');
-  const toggleTeacher=force=>{
+  teacherBody.dataset.lrScroller='true';teacherBody.dataset.lrScrollerAxis='vertical';
+  teacherBody.tabIndex=0;teacherBody.setAttribute('role','region');
+  teacherBody.setAttribute('aria-label','Contenido desplazable de la guía docente');
+  const toggleTeacher=(force,trigger=null,restore=true)=>{
     const open=force===undefined?!teacherDrawer.classList.contains('open'):force;
+    const currentlyOpen=teacherDrawer.classList.contains('open');
+    if(open===currentlyOpen)return false;
+    if(open){
+      window.GUIDE_DRAWER?.close({restoreFocus:false});
+      lastTeacherTrigger=trigger||document.activeElement||teacherToggle;
+      teacherDrawer.hidden=false;teacherDrawer.inert=false;teacherDrawer.removeAttribute('inert');
+      setModalBackground(teacherDrawer,true);
+    }
     teacherDrawer.classList.toggle('open',open);
     teacherDrawer.setAttribute('aria-hidden',String(!open));
     [teacherToggle,mobileTeacherToggle].filter(Boolean)
       .forEach(button=>button.setAttribute('aria-expanded',String(open)));
     if(open)teacherDrawer.querySelector('.lr-teacher-close').focus();
-    else (mobileQuery.matches?mobileTeacherToggle:teacherToggle)?.focus();
+    else{
+      teacherDrawer.hidden=true;teacherDrawer.inert=true;teacherDrawer.setAttribute('inert','');
+      setModalBackground(teacherDrawer,false);
+      if(restore)restoreFocus(lastTeacherTrigger,teacherToggle,mobileTeacherToggle);
+    }
+    return true;
   };
-  teacherToggle.addEventListener('click',()=>toggleTeacher());
-  mobileTeacherToggle?.addEventListener('click',()=>toggleTeacher());
+  teacherToggle.addEventListener('click',event=>toggleTeacher(undefined,event.currentTarget));
+  mobileTeacherToggle?.addEventListener('click',event=>toggleTeacher(undefined,event.currentTarget));
   teacherDrawer.querySelector('.lr-teacher-close').addEventListener('click',()=>toggleTeacher(false));
+  window.LEARNING_TEACHER_DRAWER={open:trigger=>toggleTeacher(true,trigger),
+    close:options=>toggleTeacher(false,null,options?.restoreFocus!==false),
+    isOpen:()=>teacherDrawer.classList.contains('open')};
 }
 
 function allowedStages(scene){
@@ -1699,9 +1843,74 @@ function allowedStages(scene){
   return scene.stages.filter(stage=>allowedRoutes.includes(stage.route));
 }
 function allowed(scene){
-  return scopeRoutes().includes(scene.route)&&allowedStages(scene).length>0;
+  return allowedStages(scene).length>0;
 }
 function availableModels(){return models.filter(allowed);}
+
+function visibleRoutes(scene){
+  return [...new Set(allowedStages(scene).map(stage=>stage.route))];
+}
+function routeLabel(routes){return routes.length?routes.join('+'):'—';}
+function syncRoutePresentation(scene,stage=null){
+  if(!scene)return;
+  const routes=stage?[stage.route]:visibleRoutes(scene);
+  const effective=routes.length?routes:scene.effectiveRoutes;
+  const label=routeLabel(effective);
+  scene.element.dataset.route=stage?stage.route:label;
+  scene.element.dataset.visibleRoutes=effective.join(',');
+  [scene.element,scene.badge,scene.navButton].filter(Boolean)
+    .forEach(node=>applyRouteClasses(node,effective));
+  scene.badge?.querySelector('.lr-route-label')?.replaceChildren(label);
+  const duration=stage?.duration_minutes??scene.duration_minutes;
+  scene.badge?.querySelector('.lr-duration')?.replaceChildren(`${duration} min`);
+  scene.navButton?.querySelector('.lr-route-label')?.replaceChildren(label);
+}
+
+let scrollerFrame=0;
+function clearRuntimeScroller(node){
+  delete node.dataset.lrScroller;
+  delete node.dataset.lrScrollerAxis;
+  if(node.dataset.lrRuntimeTabindex==='true')node.removeAttribute('tabindex');
+  if(node.dataset.lrRuntimeRole==='true')node.removeAttribute('role');
+  if(node.dataset.lrRuntimeLabel==='true')node.removeAttribute('aria-label');
+  delete node.dataset.lrRuntimeScroller;
+  delete node.dataset.lrRuntimeTabindex;
+  delete node.dataset.lrRuntimeRole;
+  delete node.dataset.lrRuntimeLabel;
+}
+function syncScrollers(){
+  document.querySelectorAll('[data-lr-runtime-scroller="true"]').forEach(clearRuntimeScroller);
+  const tolerance=1;
+  models.filter(scene=>isExposed(scene.element)).forEach(scene=>{
+    [scene.element,...scene.element.querySelectorAll('*')].forEach(node=>{
+      if(!isExposed(node)||!node.getClientRects().length)return;
+      const style=getComputedStyle(node);
+      const overflowX=['auto','scroll'].includes(style.overflowX)
+        &&node.scrollWidth>node.clientWidth+tolerance;
+      const overflowY=['auto','scroll'].includes(style.overflowY)
+        &&node.scrollHeight>node.clientHeight+tolerance;
+      if(!overflowX&&!overflowY)return;
+      node.dataset.lrRuntimeScroller='true';
+      node.dataset.lrScroller='true';
+      node.dataset.lrScrollerAxis=overflowX&&overflowY?'both':(overflowX?'horizontal':'vertical');
+      if(node.tabIndex<0){
+        node.tabIndex=0;node.dataset.lrRuntimeTabindex='true';
+      }
+      if(!node.hasAttribute('role')){
+        node.setAttribute('role','region');node.dataset.lrRuntimeRole='true';
+      }
+      if(!node.getAttribute('aria-label')&&!node.getAttribute('aria-labelledby')){
+        node.setAttribute('aria-label',`Contenido desplazable ${scene.id}`);
+        node.dataset.lrRuntimeLabel='true';
+      }
+    });
+  });
+}
+function queueScrollerSync(){
+  cancelAnimationFrame(scrollerFrame);
+  syncScrollers();
+  scrollerFrame=requestAnimationFrame(syncScrollers);
+}
 
 function activateStage(scene,stage){
   const hasMappedSteps=scene.stages.some(item=>item.step);
@@ -1710,18 +1919,16 @@ function activateStage(scene,stage){
     const model=scene.stages.find(item=>item.step===step);
     const visibleRoute=!model||scopeRoutes().includes(model.route);
     const active=!hasMappedSteps||stage.step===step;
-    step.hidden=!visibleRoute;
+    expose(step,visibleRoute&&(mode==='estudio'||active));
     step.classList.toggle('lr-stage-active',active&&visibleRoute);
     step.classList.toggle('on',active&&visibleRoute);
-    step.setAttribute('aria-hidden',String(!(active&&visibleRoute)));
   });
   scene.allFigures.forEach(figure=>{
     const model=scene.stages.find(item=>item.figure===figure);
     const visibleRoute=!model||scopeRoutes().includes(model.route);
     const active=!hasMappedFigures||stage.figure===figure;
-    figure.hidden=!visibleRoute;
+    expose(figure,active&&visibleRoute);
     figure.classList.toggle('on',active&&visibleRoute);
-    figure.setAttribute('aria-hidden',String(!(active&&visibleRoute)));
   });
   const name=scene.element.querySelector('.stage-name');
   if(name){
@@ -1732,11 +1939,14 @@ function activateStage(scene,stage){
   if(fig&&stage.dom_stage!==undefined){
     fig.dispatchEvent(new CustomEvent('stagechange',{detail:{stage:stage.dom_stage}}));
   }
+  queueScrollerSync();
 }
-function syncNav(scene=null){
+function syncNav(scene=null,stage=null){
   [...navLinks.querySelectorAll('button')].forEach(button=>{
     const index=Number(button.dataset.sceneIndex),model=models[index];
-    button.hidden=!allowed(model);
+    const visible=allowed(model);
+    expose(button,visible);
+    syncRoutePresentation(model,model===scene?stage:null);
     button.classList.toggle('on',model===scene);
     button.setAttribute('aria-current',model===scene?'step':'false');
   });
@@ -1754,8 +1964,9 @@ function syncTeacher(scene,stage){
   const sceneNotes=scene.professor_notes||scene.teacher_notes||scene.teaching_notes;
   const stageNotes=stage.professor_notes||stage.teacher_notes||stage.teaching_notes;
   const fullGuide=document.getElementById('gd-toggle');
-  teacherBody.innerHTML=`<p class="lr-teacher-kicker">${esc(scene.route)} · ${esc(scene.type)} · ${esc(scene.duration_minutes)} min</p>`
+  teacherBody.innerHTML=`<p class="lr-teacher-kicker">${esc(stage.route)} · ${esc(scene.type)} · ${esc(stage.duration_minutes)} min</p>`
     +`<h2>${esc(scene.id)}</h2><p class="lr-teacher-stage">Etapa <code>${esc(stage.id)}</code> · layout <code>${esc(scene.layout)}</code></p>`
+    +(stage.route!==scene.route?`<p class="lr-teacher-override">Ruta efectiva <code>${esc(stage.route)}</code>; la escena declara <code>${esc(scene.route)}</code>.</p>`:'')
     +`<h3>Conceptos</h3><ul>${concepts.length?concepts.map(concept=>`<li><code>${esc(concept)}</code></li>`).join(''):'<li>Ninguno declarado.</li>'}</ul>`
     +`<h3>Objetivos relacionados</h3><ul>${objectives.length?objectives.map(objective=>
       `<li><code>${esc(objective.id)}</code> · ${esc(objective.route)}</li>`).join(''):'<li>Ninguno declarado para esta escena.</li>'}</ul>`
@@ -1763,16 +1974,34 @@ function syncTeacher(scene,stage){
     +(stageNotes?`<h3>Notas de etapa</h3>${notesHtml(stageNotes)}`:'')
     +(fullGuide?'<button type="button" class="lr-full-guide">Abrir guion completo</button>':'');
   teacherBody.querySelector('.lr-full-guide')?.addEventListener('click',()=>{
-    teacherDrawer.classList.remove('open');teacherDrawer.setAttribute('aria-hidden','true');
-    [teacherToggle,mobileTeacherToggle].filter(Boolean)
-      .forEach(button=>button.setAttribute('aria-expanded','false'));
-    fullGuide.click();
+    const returnTrigger=lastTeacherTrigger||teacherToggle;
+    window.LEARNING_TEACHER_DRAWER?.close({restoreFocus:false});
+    if(window.GUIDE_DRAWER)window.GUIDE_DRAWER.open(returnTrigger);
+    else fullGuide.click();
   });
 }
 function updateDeepLink(scene,stage){
   if(!history.replaceState)return;
   const next=`#${encodeURIComponent(scene.id)}/${encodeURIComponent(stage.id)}`;
   if(location.hash!==next)history.replaceState(null,'',`${location.pathname}${location.search}${next}`);
+}
+function setCurrentState(scene,stage){
+  if(!scene||!stage)return;
+  currentScene=models.indexOf(scene);
+  currentStage=Math.max(0,allowedStages(scene).indexOf(stage));
+  body.dataset.currentSceneId=scene.id;
+  body.dataset.currentStageId=stage.id;
+  body.dataset.currentStageRoute=stage.route;
+  body.dataset.currentStageDuration=String(stage.duration_minutes);
+  body.dataset.currentLayout=scene.layout;
+  body.dataset.routeScope=routeScope;
+  scene.element.dataset.currentStageId=stage.id;
+  syncRoutePresentation(scene,stage);
+  const mobileLabel=mobileToolbar.querySelector(':scope > span');
+  if(mobileLabel){
+    const prefix=requestedMode!==mode?'Aula → estudio':'Estudio';
+    mobileLabel.textContent=`Ruta · ${stage.route} · ${stage.duration_minutes} min · ${prefix} · ${scene.id}`;
+  }
 }
 function goTo(sceneIndex,stageIndex,focusHeading=true){
   let scene=models[sceneIndex];
@@ -1783,17 +2012,11 @@ function goTo(sceneIndex,stageIndex,focusHeading=true){
   const stages=allowedStages(scene);
   stageIndex=Math.max(0,Math.min(Number(stageIndex)||0,stages.length-1));
   const stage=stages[stageIndex];
-  currentScene=sceneIndex;currentStage=stageIndex;
-  body.dataset.currentSceneId=scene.id;
-  body.dataset.currentStageId=stage.id;
-  body.dataset.currentStageRoute=stage.route;
-  body.dataset.currentLayout=scene.layout;
-  body.dataset.routeScope=routeScope;
-  scene.element.dataset.currentStageId=stage.id;
+  setCurrentState(scene,stage);
   models.forEach(model=>{
     const active=model===scene;
     model.element.classList.toggle('lr-scene-active',active);
-    model.element.setAttribute('aria-hidden',String(!active));
+    expose(model.element,active);
   });
   activateStage(scene,stage);
   const available=availableModels();
@@ -1811,8 +2034,8 @@ function goTo(sceneIndex,stageIndex,focusHeading=true){
     total+scopeProgress[routeName].visited,0)/Math.max(1,enabledRoutes.reduce((total,routeName)=>
     total+scopeProgress[routeName].total,0))*100);
   controls.querySelector('.lr-route-progress').textContent=`${routeProgress}% visto`;
-  syncNav(scene);syncTeacher(scene,stage);updateDeepLink(scene,stage);
-  liveRegion.textContent=`${scene.id}, etapa ${stageIndex+1} de ${stages.length}`;
+  syncNav(scene,stage);syncTeacher(scene,stage);updateDeepLink(scene,stage);
+  liveRegion.textContent=`${scene.id}, ruta ${stage.route}, ${stage.duration_minutes} minutos, etapa ${stageIndex+1} de ${stages.length}`;
   if(focusHeading){
     const heading=scene.element.querySelector('h1,h2,h3');
     if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}
@@ -1830,14 +2053,43 @@ function move(delta,focusHeading=true){
   const nextIndex=models.indexOf(next),nextStages=allowedStages(next);
   goTo(nextIndex,delta>0?0:nextStages.length-1,focusHeading);
 }
+const focusableSelector='a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),'
+  +'textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+function focusables(root){
+  return [...root.querySelectorAll(focusableSelector)].filter(node=>isExposed(node)
+    &&getComputedStyle(node).visibility!=='hidden'&&node.getClientRects().length);
+}
+function trapFocus(event,root){
+  if(event.key!=='Tab'||!root||root.hidden)return false;
+  const items=focusables(root);if(!items.length)return false;
+  const first=items[0],last=items[items.length-1];
+  if(event.shiftKey&&(document.activeElement===first||!root.contains(document.activeElement))){
+    event.preventDefault();last.focus();return true;
+  }
+  if(!event.shiftKey&&(document.activeElement===last||!root.contains(document.activeElement))){
+    event.preventDefault();first.focus();return true;
+  }
+  return false;
+}
 function closeOverlays(){
-  document.getElementById('guion-drawer')?.classList.remove('open');
-  teacherDrawer?.classList.remove('open');
-  teacherDrawer?.setAttribute('aria-hidden','true');
-  [teacherToggle,mobileTeacherToggle].filter(Boolean)
-    .forEach(button=>button.setAttribute('aria-expanded','false'));
-  document.querySelectorAll('dialog[open]').forEach(dialog=>dialog.close());
-  document.querySelectorAll('[data-overlay].open').forEach(node=>node.classList.remove('open'));
+  if(window.LEARNING_TEACHER_DRAWER?.isOpen()){
+    window.LEARNING_TEACHER_DRAWER.close();return true;
+  }
+  if(window.GUIDE_DRAWER?.isOpen()){
+    window.GUIDE_DRAWER.close();return true;
+  }
+  const dialog=document.querySelector('dialog[open]');
+  if(dialog){dialog.close();return true;}
+  const overlay=document.querySelector('[data-overlay].open');
+  if(overlay){
+    overlay.classList.remove('open');expose(overlay,false);return true;
+  }
+  return false;
+}
+function scrollerOwnsKey(active,key){
+  const scroller=active?.closest?.('[data-lr-scroller="true"]');
+  if(!scroller||!isExposed(scroller))return false;
+  return ['ArrowLeft','ArrowRight','PageUp','PageDown',' '].includes(key);
 }
 function cycleScope(){
   if(routeScopes.length<2)return;
@@ -1851,7 +2103,7 @@ function cycleScope(){
 }
 function syncOptionalControls(){
   document.querySelectorAll('.lr-study-optional').forEach(button=>{
-    button.hidden=mode!=='estudio'||optionalCount===0;
+    expose(button,mode==='estudio'&&optionalCount>0);
     button.setAttribute('aria-pressed',String(routeScope==='ALL'));
     button.textContent=routeScope==='ALL'?'Ocultar OPTIONAL':
       (button.closest('#lr-mobile-toolbar')?'+ OPTIONAL':'Incluir OPTIONAL');
@@ -1861,36 +2113,52 @@ function applyStudyScope(activeScene=null){
   body.dataset.routeScope=routeScope;
   models.forEach(scene=>{
     const sceneVisible=allowed(scene);
-    scene.element.hidden=!sceneVisible;
-    scene.element.setAttribute('aria-hidden',String(!sceneVisible));
+    expose(scene.element,sceneVisible);
     scene.stages.forEach(stage=>{
       const stageVisible=scopeRoutes().includes(stage.route);
-      [stage.step,stage.figure].filter(Boolean).forEach(node=>{
-        node.hidden=!stageVisible;node.setAttribute('aria-hidden',String(!stageVisible));
-      });
+      if(stage.step)expose(stage.step,sceneVisible&&stageVisible);
+      if(stage.figure)expose(stage.figure,false);
     });
+    const preferred=scene===activeScene
+      ?scene.stages.find(stage=>stage.id===body.dataset.currentStageId):allowedStages(scene)[0];
+    if(sceneVisible&&preferred)activateStage(scene,preferred);
   });
-  syncNav(activeScene);syncOptionalControls();saveRuntime(null,null,false);
+  syncNav(activeScene,activeScene?.stages.find(stage=>stage.id===body.dataset.currentStageId));
+  syncOptionalControls();saveRuntime(null,null,false);queueScrollerSync();
 }
 function toggleOptional(){
   routeScope=routeScope==='ALL'?'LIVE+REQUIRED':'ALL';
-  applyStudyScope();
+  let scene=models[currentScene],stage=scene?.stages.find(item=>item.id===body.dataset.currentStageId);
+  if(!scene||!allowed(scene)||!stage||!scopeRoutes().includes(stage.route)){
+    scene=availableModels()[0];stage=scene&&allowedStages(scene)[0];
+  }
+  if(scene&&stage)setCurrentState(scene,stage);
+  applyStudyScope(scene||null);
+  if(scene&&stage)setStudyCurrent(scene,stage,true,true);
   liveRegion.textContent=routeScope==='ALL'?'Contenido OPTIONAL incluido.':'Contenido OPTIONAL oculto.';
 }
 
 controls.querySelector('.lr-prev').addEventListener('click',()=>move(-1,false));
 controls.querySelector('.lr-next').addEventListener('click',()=>move(1,false));
 controls.querySelector('.lr-route-scope').addEventListener('click',cycleScope);
-controls.querySelector('.lr-route-scope').hidden=mode!=='aula'||routeScopes.length<2;
+expose(controls.querySelector('.lr-route-scope'),mode==='aula'&&routeScopes.length>1);
 controls.classList.toggle('lr-fixed-scope',controls.querySelector('.lr-route-scope').hidden);
 document.querySelectorAll('.lr-study-optional').forEach(button=>button.addEventListener('click',toggleOptional));
 
 document.addEventListener('keydown',event=>{
-  if(event.key==='Escape'){closeOverlays();return;}
+  const openDrawer=teacherDrawer?.classList.contains('open')?teacherDrawer:
+    (window.GUIDE_DRAWER?.isOpen()?document.getElementById('guion-drawer'):null);
+  if(openDrawer){
+    if(event.key==='Escape'){if(closeOverlays())event.preventDefault();return;}
+    if(event.key==='Tab')trapFocus(event,openDrawer);
+    return;
+  }
+  if(event.key==='Escape'){if(closeOverlays())event.preventDefault();return;}
   if(mode!=='aula')return;
   const active=document.activeElement;
   if(active&&(/INPUT|TEXTAREA|SELECT/.test(active.tagName)||active.isContentEditable))return;
   if(active&&active.tagName==='BUTTON'&&(event.key===' '||event.key==='Enter'))return;
+  if(scrollerOwnsKey(active,event.key))return;
   if(['ArrowRight','PageDown',' '].includes(event.key)){
     event.preventDefault();move(1,true);
   }else if(['ArrowLeft','PageUp'].includes(event.key)){
@@ -1914,13 +2182,41 @@ function deepLink(){
 function restoredPosition(){
   const linked=deepLink();
   if(linked){
-    if(mode==='estudio'&&linked.stage.route==='OPTIONAL')routeScope='ALL';
+    if(mode==='estudio'||(mode==='aula'&&isProfessor))expandScopeForRoute(linked.stage.route);
     return linked;
   }
   if(!savedRuntime.scene)return null;
   const scene=models.find(item=>item.id===savedRuntime.scene);
   const stage=scene?.stages.find(item=>item.id===savedRuntime.stage);
+  if(stage&&!scopeRoutes().includes(stage.route)&&(mode==='estudio'||isProfessor)){
+    expandScopeForRoute(stage.route);
+  }
   return scene&&stage?{scene,stage}:null;
+}
+
+function setStudyCurrent(scene,stage,mark=true,writeHash=true){
+  if(!scene||!stage||!allowed(scene)||!scopeRoutes().includes(stage.route))return false;
+  setCurrentState(scene,stage);activateStage(scene,stage);
+  syncNav(scene,stage);syncTeacher(scene,stage);saveRuntime(scene,stage,mark);
+  if(writeHash)updateDeepLink(scene,stage);
+  liveRegion.textContent=`${scene.id}, ruta ${stage.route}, ${stage.duration_minutes} minutos, etapa ${currentStage+1} de ${allowedStages(scene).length}`;
+  queueScrollerSync();return true;
+}
+function navigateTo(scene,stage,focusHeading=false){
+  if(!scene||!stage)return false;
+  if(!scopeRoutes().includes(stage.route)){
+    if(mode==='estudio'||isProfessor)expandScopeForRoute(stage.route);
+    else return false;
+  }
+  if(mode==='estudio'){
+    setCurrentState(scene,stage);applyStudyScope(scene);
+    if(!setStudyCurrent(scene,stage,true,true))return false;
+    (stage.step||scene.element).scrollIntoView({behavior:reducedMotion()?'auto':'smooth',block:'center'});
+    return true;
+  }
+  const stages=allowedStages(scene),index=stages.indexOf(stage);
+  if(index<0)return false;
+  goTo(models.indexOf(scene),index,focusHeading);return true;
 }
 
 if(mode==='aula'){
@@ -1932,30 +2228,35 @@ if(mode==='aula'){
   goTo(currentScene,Math.max(0,currentStage),false);
 }else{
   const restored=restoredPosition();
-  if(restored?.stage.route==='OPTIONAL')routeScope='ALL';
-  applyStudyScope(restored?.scene||null);
+  let initial=restored;
+  if(!initial||!allowed(initial.scene)||!scopeRoutes().includes(initial.stage.route)){
+    const scene=availableModels()[0];initial=scene?{scene,stage:allowedStages(scene)[0]}:null;
+  }
+  if(initial)setCurrentState(initial.scene,initial.stage);
+  applyStudyScope(initial?.scene||null);
+  if(initial)setStudyCurrent(initial.scene,initial.stage,true,true);
   const sceneObserver=new IntersectionObserver(entries=>{
     const visible=entries.filter(entry=>entry.isIntersecting&&!entry.target.hidden)
       .sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
     if(!visible)return;
     const scene=models.find(item=>item.element===visible.target);
     if(!scene)return;
-    syncNav(scene);
-    const stage=allowedStages(scene).find(item=>!item.step)||allowedStages(scene)[0];
-    if(stage){saveRuntime(scene,stage,true);updateDeepLink(scene,stage);}
+    if(scene.stages.some(item=>item.step))return;
+    const stage=allowedStages(scene)[0];
+    if(stage)setStudyCurrent(scene,stage,true,true);
   },{rootMargin:'-20% 0px -55% 0px',threshold:[0,.15,.4]});
   models.forEach(scene=>sceneObserver.observe(scene.element));
   models.forEach(scene=>scene.stages.forEach(stage=>{
     if(!stage.step)return;
     const observer=new IntersectionObserver(entries=>{
       if(entries.some(entry=>entry.isIntersecting)&&!stage.step.hidden){
-        saveRuntime(scene,stage,true);syncNav(scene);updateDeepLink(scene,stage);
+        setStudyCurrent(scene,stage,true,true);
       }
     },{rootMargin:'-35% 0px -45% 0px',threshold:.1});
     observer.observe(stage.step);
   }));
-  if(restored&&allowed(restored.scene))requestAnimationFrame(()=>{
-    (restored.stage.step||restored.scene.element).scrollIntoView({block:'center'});
+  if(initial&&restored)requestAnimationFrame(()=>{
+    (initial.stage.step||initial.scene.element).scrollIntoView({block:'center'});
   });
 }
 
@@ -1963,20 +2264,20 @@ syncOptionalControls();
 saveRuntime(null,null,false);
 window.LEARNING_RUNTIME={
   version:RUNTIME_VERSION,contract,mode,isProfessor,
-  getState:()=>({routeScope,scene:models[currentScene]?.id,stage:body.dataset.currentStageId,
-    progress:progressSnapshot()}),
+  getState:()=>({mode,requestedMode,routeScope,scene:body.dataset.currentSceneId||models[currentScene]?.id,
+    stage:body.dataset.currentStageId,route:body.dataset.currentStageRoute,
+    sceneRoute:models[currentScene]?.route,progress:progressSnapshot()}),
   setOptional:enabled=>{if(mode==='estudio'&&(enabled!==(routeScope==='ALL')))toggleOptional();},
   goTo:(sceneId,stageId)=>{
     const scene=models.find(item=>item.id===sceneId);if(!scene)return false;
-    if(mode==='estudio'){
-      const stage=scene.stages.find(item=>item.id===stageId)||allowedStages(scene)[0];
-      if(!stage)return false;
-      (stage.step||scene.element).scrollIntoView({block:'center'});return true;
-    }
-    const stages=allowedStages(scene),index=stages.findIndex(item=>item.id===stageId);
-    goTo(models.indexOf(scene),Math.max(0,index),false);return true;
+    const stage=scene.stages.find(item=>item.id===stageId)||scene.stages[0];
+    return navigateTo(scene,stage,false);
   },
 };
+
+addEventListener('hashchange',()=>{
+  const linked=deepLink();if(linked)navigateTo(linked.scene,linked.stage,false);
+});
 
 mobileQuery.addEventListener?.('change',()=>location.reload());
 })();
