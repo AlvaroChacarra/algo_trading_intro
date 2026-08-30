@@ -335,7 +335,6 @@ test('kernel diagnostics cover context routing, workers, and terminal DOM state'
   assert.match(source, /WORK2_WORKER_READY/);
   assert.match(source, /WORK2_UNHANDLED_REJECTION/);
   assert.match(source, /WORK2_KERNEL_DOM/);
-  assert.match(source, /message !== 'Unhandled Promise Rejection: undefined'/);
 });
 
 test('WORK2_PAGES_LESSON selects exactly one lab shard and rejects bad input', () => {
@@ -379,7 +378,13 @@ test('the 14 shards cover the exact 28-notebook core publication set', () => {
 test('the E2E server declares JavaScript MIME for Pyodide modules', () => {
   const source = fs.readFileSync(path.resolve(__dirname, 'pages_e2e.js'), 'utf8');
   assert.match(source, /'\.mjs': 'text\/javascript'/);
-  assert.ok((source.match(/serviceWorkers: 'block'/g) || []).length >= 2);
+});
+
+test('lab enables the hardened service worker while static site samples block it', () => {
+  const source = fs.readFileSync(path.resolve(__dirname, 'pages_e2e.js'), 'utf8');
+  assert.equal((source.match(/serviceWorkers: 'block'/g) || []).length, 1);
+  assert.equal((source.match(/serviceWorkers: 'allow'/g) || []).length, 1);
+  assert.match(source, /hardened same-origin service/);
 });
 
 test('one context sends exactly one execution after ready and waits for idle', async () => {

@@ -806,12 +806,7 @@ async function runLabAttempt(context, origin, target, plan) {
       const message = browserErrorText(error);
       pageErrors.push(message);
       console.error(`JupyterLite pageerror: ${message}`);
-      // WebKit reports some promise rejections without a reason or stack.
-      // Preserve them as a hard evidence failure, but allow the page to keep
-      // running so diagnostics can reveal whether startup reaches the kernel.
-      if (message !== 'Unhandled Promise Rejection: undefined') {
-        runtimeFailure.fail(`JupyterLite pageerror: ${message}`);
-      }
+      runtimeFailure.fail(`JupyterLite pageerror: ${message}`);
     });
     labPage.on('console', message => {
       if (message.type() === 'error') {
@@ -999,7 +994,9 @@ async function runLabAcceptance(browser, origin, labLessons, plan) {
     // No attempt sends a second execution into the same Pyodide worker.
     const outcome = await retryInFreshContexts({
       createContext: () => browser.newContext({ viewport: { width: 1280, height: 900 },
-        serviceWorkers: 'block' }),
+        // The Pyodide drive uses JupyterLite's hardened same-origin service
+        // worker when SharedArrayBuffer is unavailable (as on GitHub Pages).
+        serviceWorkers: 'allow' }),
       runInContext: context => runLabAttempt(context, origin, target, plan),
       accepts: isCleanLabResult,
       maxAttempts: plan.maxLabAttempts,
