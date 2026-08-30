@@ -413,6 +413,42 @@ function createRuntimeFailureMonitor() {
   };
 }
 
+function isRuntimeDiagnosticUrl(raw) {
+  try {
+    const pathname = new URL(raw).pathname;
+    return pathname.includes('/static/pyodide/') || pathname.includes('/pypi/') ||
+      /\/(?:coincident|comlink)\.worker\.[0-9a-f]+\.js$/.test(pathname);
+  } catch {
+    return false;
+  }
+}
+
+async function installWorkerDiagnostics(page) {
+  await page.addInitScript(() => {
+    const NativeWorker = globalThis.Worker;
+    if (typeof NativeWorker !== 'function') return;
+    globalThis.Worker = new Proxy(NativeWorker, {
+      construct(target, args) {
+        const worker = Reflect.construct(target, args, target);
+        worker.addEventListener('error', event => {
+          const detail = {
+            message: event.message || null,
+            filename: event.filename || null,
+            lineno: event.lineno || null,
+            colno: event.colno || null,
+            error: event.error ? String(event.error) : null,
+          };
+          console.error(`WORK2_WORKER_ERROR ${JSON.stringify(detail)}`);
+        });
+        worker.addEventListener('messageerror', event => {
+          console.error(`WORK2_WORKER_MESSAGE_ERROR ${String(event.data)}`);
+        });
+        return worker;
+      },
+    });
+  });
+}
+
 async function installOfflineRouting(context, origin) {
   const externalRequests = [];
   const siteOrigin = new URL(origin).origin;
@@ -757,11 +793,15 @@ async function runLabAttempt(context, origin, target, plan) {
       console.error(detail);
     });
     labPage.on('response', response => {
+      if (isRuntimeDiagnosticUrl(response.url())) {
+        console.log(`JupyterLite runtime HTTP ${response.status()}: ${response.url()}`);
+      }
       if (response.status() >= 400) {
         const detail = `JupyterLite HTTP ${response.status()}: ${response.url()}`;
         console.error(detail);
       }
     });
+    await installWorkerDiagnostics(labPage);
     const result = {
       reason: '',
       staticOk: false,
@@ -1119,8 +1159,10 @@ module.exports = {
   evidenceTargetIdentity,
   executeSmokeOnce,
   installOfflineRouting,
+  installWorkerDiagnostics,
   isCleanLabResult,
   isAllowedOfflineRequest,
+  isRuntimeDiagnosticUrl,
   labTargetsForLessons,
   launchExactWebKit,
   pagesIntegritySha256,

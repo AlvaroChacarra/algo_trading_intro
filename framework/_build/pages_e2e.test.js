@@ -12,8 +12,10 @@ const {
   evidenceTargetIdentity,
   executeSmokeOnce,
   installOfflineRouting,
+  installWorkerDiagnostics,
   isCleanLabResult,
   isAllowedOfflineRequest,
+  isRuntimeDiagnosticUrl,
   labTargetsForLessons,
   launchExactWebKit,
   parseArguments,
@@ -301,6 +303,29 @@ test('runtime startup errors fail fast and preserve the first cause', async () =
   monitor.fail('first startup failure');
   monitor.fail('later noise');
   await assert.rejects(monitor.promise, /first startup failure/);
+});
+
+test('runtime diagnostics select only kernel bootstrap resources', () => {
+  assert.equal(isRuntimeDiagnosticUrl(
+    'http://127.0.0.1:4321/jupyter/static/pyodide/ipython.whl',
+  ), true);
+  assert.equal(isRuntimeDiagnosticUrl(
+    'http://127.0.0.1:4321/jupyter/pypi/all.json?sha256=abc',
+  ), true);
+  assert.equal(isRuntimeDiagnosticUrl(
+    'http://127.0.0.1:4321/jupyter/extensions/x/static/comlink.worker.abc123.js',
+  ), true);
+  assert.equal(isRuntimeDiagnosticUrl(
+    'http://127.0.0.1:4321/jupyter/lab/index.html',
+  ), false);
+});
+
+test('worker diagnostics are installed before navigation', async () => {
+  let installer = null;
+  await installWorkerDiagnostics({
+    addInitScript: async callback => { installer = callback; },
+  });
+  assert.equal(typeof installer, 'function');
 });
 
 test('WORK2_PAGES_LESSON selects exactly one lab shard and rejects bad input', () => {
