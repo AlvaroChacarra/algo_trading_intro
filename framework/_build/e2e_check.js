@@ -347,7 +347,11 @@ async function aulaSmoke(page, item, errors) {
       return total + stages.filter(stage => (stage.route || scene.route) === 'LIVE').length;
     }, 0);
   });
-  for (let index = 1; index < count; index++) await page.keyboard.press('ArrowRight');
+  // The lesson simulators are allowed to own arrow keys. Full keyboard arbitration is
+  // covered by desktop_e2e.js; this smoke traverses the runtime through its visible
+  // classroom control so lesson-specific handlers cannot turn coverage into a false red.
+  const next = page.locator('#lr-controls .lr-next');
+  for (let index = 1; index < count; index++) await next.click();
   const result = await page.evaluate(expected => ({
     expected,
     activeScenes: [...document.querySelectorAll('body > .lr-scene')]

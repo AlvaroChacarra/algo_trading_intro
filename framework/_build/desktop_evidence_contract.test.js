@@ -815,6 +815,8 @@ test('smoke isolates persisted study state from fresh classroom traversal', () =
   assert.match(smoke, /const studyPage = await studyDesktop\.newPage\(\)/);
   assert.match(smoke, /const aulaPage = await aulaDesktop\.newPage\(\)/);
   assert.doesNotMatch(smoke, /const desktop = await browser\.newContext/);
+  assert.match(smoke, /page\.locator\('#lr-controls \.lr-next'\)/);
+  assert.doesNotMatch(smoke, /page\.keyboard\.press\('ArrowRight'\)/);
 });
 
 test('runner and independent replay retain clean navigation, full plans, deterministic visuals, and both stage surfaces', () => {
