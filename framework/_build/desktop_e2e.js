@@ -502,8 +502,12 @@ async function traverse(page, lesson, viewport, scope, allowedRoutes, pageFailur
     if (!state.passed) state.failureScreenshot = await saveFailure(page, lesson, viewport, scope, state);
     states.push(state);
     if (index < expected.length - 1) {
-      await page.keyboard.press('ArrowRight');
       const next = expected[index + 1];
+      // Geometry traversal must be deterministic. Keyboard ownership is audited
+      // independently below (navigation, drawers and declared scrollers).
+      const moved = await page.evaluate(target =>
+        window.LEARNING_RUNTIME?.goTo(target.scene, target.stage) === true, next);
+      if (!moved) throw new Error(`runtime refused ${next.scene}/${next.stage}`);
       await page.waitForFunction(target => document.body.dataset.currentSceneId === target.scene
         && document.body.dataset.currentStageId === target.stage, next);
     }

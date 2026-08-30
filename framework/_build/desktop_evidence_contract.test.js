@@ -829,6 +829,10 @@ test('runner and independent replay retain clean navigation, full plans, determi
   const prepare = runner.slice(prepareStart, traverseStart);
   assert.match(prepare, /localStorage\.clear\(\)[\s\S]*history\.replaceState/);
   assert.ok(prepare.indexOf('history.replaceState') < prepare.indexOf('page.reload()'));
+  const traverseEnd = runner.indexOf('async function drawerKeyboardAudit(', traverseStart);
+  const traverse = runner.slice(traverseStart, traverseEnd);
+  assert.match(traverse, /window\.LEARNING_RUNTIME\?\.goTo/);
+  assert.doesNotMatch(traverse, /keyboard\.press\('ArrowRight'\)/);
   assert.doesNotMatch(runner, /\.slice\(0,\s*48\)/);
   assert.doesNotMatch(replay, /\.slice\(0,\s*48\)/);
   assert.match(runner,
