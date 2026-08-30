@@ -43,6 +43,7 @@ OUTPUT_OWNER_FILE = ".pages-build-owned.json"
 OUTPUT_INTEGRITY_FILE = ".pages-integrity.json"
 OUTPUT_OWNER = {"schema": 1, "owner": "algo-trading-build-pages"}
 JUPYTERLITE_CANONICAL_TIMESTAMP = "1980-01-01T00:00:00.000000Z"
+JUPYTERLITE_SOURCE_DATE_EPOCH = 315532800
 BUILD_INPUT_PATHS = (
     Path("framework/_build/build_pages.py"),
     Path("framework/_build/pages_offline_policy.py"),
@@ -58,6 +59,16 @@ PYODIDE_ARCHIVE_URL = (
     f"{PYODIDE_VERSION}/{PYODIDE_ARCHIVE}"
 )
 PYODIDE_ARCHIVE_SHA256 = "7220ae5c13993e669559c11ebb236f19b9a143feb18107420b3a49234f06fa67"
+COMM_WHEEL = "comm-0.2.3-py3-none-any.whl"
+COMM_WHEEL_URL = (
+    "https://files.pythonhosted.org/packages/60/97/"
+    "891a0971e1e4a8c5d2b20bbe0e524dc04548d2307fee33cdeba148fd4fc7/"
+    f"{COMM_WHEEL}"
+)
+COMM_WHEEL_SHA256 = "c615d91d75f7f04f095b30d1c1711babd43bdc6419c1be9886a85f2f4e489417"
+JUPYTERLITE_BOOTSTRAP_PACKAGES = frozenset({
+    "comm", "ipykernel", "ipython", "jedi", "micropip", "piplite", "pyodide-kernel",
+})
 PYODIDE_CORE_FILE_NAMES = frozenset({
     "ffi.d.ts",
     "package.json",
@@ -224,6 +235,51 @@ def _pyodide_archive() -> Path:
     finally:
         partial.unlink(missing_ok=True)
     return archive
+
+
+def _comm_wheel() -> Path:
+    """Return the pinned pure-Python ``comm`` wheel required at kernel boot."""
+    supplied = os.environ.get("WORK2_COMM_WHEEL")
+    if supplied:
+        wheel = Path(supplied).expanduser().resolve()
+        if not wheel.is_file():
+            raise RuntimeError(f"WORK2_COMM_WHEEL does not exist: {wheel}")
+        if _sha256(wheel) != COMM_WHEEL_SHA256:
+            raise RuntimeError("WORK2_COMM_WHEEL failed its SHA-256 check")
+        return wheel
+
+    cache = Path(tempfile.gettempdir()) / "algo-trading-pages-cache"
+    if cache.exists():
+        if (cache.is_symlink() or not cache.is_dir()
+                or cache.resolve().parent != Path(tempfile.gettempdir()).resolve()):
+            raise RuntimeError(f"unsafe Pages cache directory: {cache}")
+    else:
+        cache.mkdir(mode=0o700, parents=False)
+    wheel = cache / COMM_WHEEL
+    if wheel.is_file():
+        if wheel.is_symlink():
+            raise RuntimeError(f"unsafe cached comm wheel: {wheel}")
+        if _sha256(wheel) == COMM_WHEEL_SHA256:
+            return wheel
+        wheel.unlink()
+    elif wheel.exists() or wheel.is_symlink():
+        raise RuntimeError(f"unsafe cached comm wheel: {wheel}")
+
+    partial = cache / f".{COMM_WHEEL}.{uuid.uuid4().hex}.partial"
+    try:
+        flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
+        if hasattr(os, "O_NOFOLLOW"):
+            flags |= os.O_NOFOLLOW
+        descriptor = os.open(partial, flags, 0o600)
+        with os.fdopen(descriptor, "wb") as destination:
+            with urllib.request.urlopen(COMM_WHEEL_URL, timeout=90) as response:
+                shutil.copyfileobj(response, destination)
+        if _sha256(partial) != COMM_WHEEL_SHA256:
+            raise RuntimeError("downloaded comm wheel failed its SHA-256 check")
+        partial.replace(wheel)
+    finally:
+        partial.unlink(missing_ok=True)
+    return wheel
 
 MOBILE_CSS = r"""
 <style id="pages-mobile">
@@ -647,6 +703,7 @@ def _build_jupyterlite(output: Path, manifest: dict[str, object]) -> tuple[int, 
         )
         _pyodide_kernel_extension()
         pyodide_archive = _pyodide_archive()
+        comm_wheel = _comm_wheel()
         subprocess.run(
             [
                 sys.executable, "-m", "jupyterlite_core.app", "build",
@@ -655,7 +712,9 @@ def _build_jupyterlite(output: Path, manifest: dict[str, object]) -> tuple[int, 
                 "--apps", "lab",
                 "--no-sourcemaps",
                 "--no-unused-shared-packages",
+                "--source-date-epoch", str(JUPYTERLITE_SOURCE_DATE_EPOCH),
                 "--pyodide", str(pyodide_archive),
+                "--piplite-wheels", str(comm_wheel),
             ],
             cwd=lite_dir,
             check=True,
@@ -722,7 +781,11 @@ def _local_release_target(index: Path, jupyter: Path, raw: object) -> Path:
     return target
 
 
-def _validate_piplite_index(index: Path, jupyter: Path) -> None:
+def _canonical_package_name(name: str) -> str:
+    return re.sub(r"[-_.]+", "-", name.lower())
+
+
+def _validate_piplite_index(index: Path, jupyter: Path) -> set[str]:
     try:
         data = json.loads(index.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
@@ -730,10 +793,12 @@ def _validate_piplite_index(index: Path, jupyter: Path) -> None:
     if not isinstance(data, dict) or not data:
         raise RuntimeError("piplite package index is empty or malformed")
     release_count = 0
+    package_names: set[str] = set()
     for package, metadata in data.items():
         releases = metadata.get("releases") if isinstance(metadata, dict) else None
         if not isinstance(package, str) or not isinstance(releases, dict):
             raise RuntimeError("piplite package index contains malformed package metadata")
+        package_names.add(_canonical_package_name(package))
         for version, records in releases.items():
             if not isinstance(version, str) or not isinstance(records, list) or not records:
                 raise RuntimeError(f"piplite package {package} has malformed releases")
@@ -749,6 +814,20 @@ def _validate_piplite_index(index: Path, jupyter: Path) -> None:
                 release_count += 1
     if not release_count:
         raise RuntimeError("piplite package index contains no releases")
+    return package_names
+
+
+def _validate_kernel_bootstrap_packages(
+    piplite_packages: set[str], pyodide_packages: set[str],
+) -> None:
+    available = {
+        _canonical_package_name(name) for name in piplite_packages | pyodide_packages
+    }
+    missing = sorted(JUPYTERLITE_BOOTSTRAP_PACKAGES - available)
+    if missing:
+        raise RuntimeError(
+            f"JupyterLite offline kernel bootstrap packages are missing: {missing}"
+        )
 
 
 def _validate_core_files(pyodide_dir: Path, core_files: dict[str, str]) -> None:
@@ -782,9 +861,10 @@ def _validate_offline_runtime(output: Path, manifest: dict[str, object]) -> None
         raise RuntimeError("JupyterLite must declare at least one local piplite index")
     if _external_urls(config):
         raise RuntimeError("JupyterLite configuration contains an external URL")
+    piplite_packages: set[str] = set()
     for raw in piplite_urls:
         index = _local_hashed_url(output / "jupyter", raw)
-        _validate_piplite_index(index, output / "jupyter")
+        piplite_packages.update(_validate_piplite_index(index, output / "jupyter"))
 
     pyodide_dir = output / "jupyter" / "static" / "pyodide"
     pyodide_identity = manifest["pyodide"]
@@ -802,6 +882,7 @@ def _validate_offline_runtime(output: Path, manifest: dict[str, object]) -> None
     packages = lock.get("packages")
     if not isinstance(packages, dict) or not packages:
         raise RuntimeError("Pyodide lock contains no packages")
+    _validate_kernel_bootstrap_packages(piplite_packages, set(packages))
     declared_files: set[str] = set()
     for package, metadata in packages.items():
         declared_name = metadata.get("name") if isinstance(metadata, dict) else None

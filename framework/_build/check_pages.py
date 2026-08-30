@@ -33,6 +33,9 @@ EXPECTED_OWNER = {"schema": 1, "owner": "algo-trading-build-pages"}
 JUPYTERLITE_CANONICAL_TIMESTAMP = "1980-01-01T00:00:00.000000Z"
 SHA256_RE = re.compile(r"[0-9a-f]{64}")
 GITHUB_SHA_RE = re.compile(r"[0-9a-f]{40}")
+JUPYTERLITE_BOOTSTRAP_PACKAGES = frozenset({
+    "comm", "ipykernel", "ipython", "jedi", "micropip", "piplite", "pyodide-kernel",
+})
 BUILD_INPUT_PATHS = (
     Path("framework/_build/build_pages.py"),
     Path("framework/_build/pages_offline_policy.py"),
@@ -330,15 +333,21 @@ def _local_release_target(index: Path, jupyter: Path, raw: object) -> Path:
     return target
 
 
-def _validate_piplite_index(index: Path, jupyter: Path) -> None:
+def _canonical_package_name(name: str) -> str:
+    return re.sub(r"[-_.]+", "-", name.lower())
+
+
+def _validate_piplite_index(index: Path, jupyter: Path) -> set[str]:
     data = _read_json(index, "piplite package index")
     if not isinstance(data, dict) or not data:
         raise RuntimeError("piplite package index is empty or malformed")
     release_count = 0
+    package_names: set[str] = set()
     for package, metadata in data.items():
         releases = metadata.get("releases") if isinstance(metadata, dict) else None
         if not isinstance(package, str) or not isinstance(releases, dict):
             raise RuntimeError("piplite package index contains malformed package metadata")
+        package_names.add(_canonical_package_name(package))
         for version, records in releases.items():
             if not isinstance(version, str) or not isinstance(records, list) or not records:
                 raise RuntimeError(f"piplite package {package} has malformed releases")
@@ -354,6 +363,20 @@ def _validate_piplite_index(index: Path, jupyter: Path) -> None:
                 release_count += 1
     if not release_count:
         raise RuntimeError("piplite package index contains no releases")
+    return package_names
+
+
+def _validate_kernel_bootstrap_packages(
+    piplite_packages: set[str], pyodide_packages: set[str],
+) -> None:
+    available = {
+        _canonical_package_name(name) for name in piplite_packages | pyodide_packages
+    }
+    missing = sorted(JUPYTERLITE_BOOTSTRAP_PACKAGES - available)
+    if missing:
+        raise RuntimeError(
+            f"JupyterLite offline kernel bootstrap packages are missing: {missing}"
+        )
 
 
 def _validate_core_files(pyodide_dir: Path, core_files: dict[str, str]) -> None:
@@ -412,8 +435,11 @@ def _validate_offline_runtime(site: Path, manifest: dict[str, object]) -> None:
     piplite_urls = kernel.get("pipliteUrls")
     if not isinstance(piplite_urls, list) or not piplite_urls:
         raise RuntimeError("JupyterLite has no local SHA-256-pinned piplite index")
+    piplite_packages: set[str] = set()
     for raw in piplite_urls:
-        _validate_piplite_index(_local_hashed_url(jupyter, raw), jupyter)
+        piplite_packages.update(
+            _validate_piplite_index(_local_hashed_url(jupyter, raw), jupyter)
+        )
 
     pyodide = jupyter / "static" / "pyodide"
     pyodide_identity = manifest["pyodide"]
@@ -427,6 +453,7 @@ def _validate_offline_runtime(site: Path, manifest: dict[str, object]) -> None:
     packages = lock.get("packages")
     if not isinstance(packages, dict) or not packages:
         raise RuntimeError("Pyodide lock contains no packages")
+    _validate_kernel_bootstrap_packages(piplite_packages, set(packages))
     declared_files: set[str] = set()
     for package, metadata in packages.items():
         declared_name = metadata.get("name") if isinstance(metadata, dict) else None

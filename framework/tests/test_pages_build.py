@@ -65,6 +65,8 @@ def test_jupyterlite_build_relies_on_single_autodiscovered_kernel_extension(
     extension = tmp_path / "labextensions/@jupyterlite/pyodide-kernel-extension"
     archive = tmp_path / "pyodide.tar.bz2"
     archive.write_bytes(b"pinned-pyodide")
+    comm_wheel = tmp_path / "comm.whl"
+    comm_wheel.write_bytes(b"pinned-comm")
     calls: list[list[str]] = []
     extension_checks = 0
 
@@ -87,6 +89,7 @@ def test_jupyterlite_build_relies_on_single_autodiscovered_kernel_extension(
 
     monkeypatch.setattr(BUILD_PAGES, "_pyodide_kernel_extension", resolve_extension)
     monkeypatch.setattr(BUILD_PAGES, "_pyodide_archive", lambda: archive)
+    monkeypatch.setattr(BUILD_PAGES, "_comm_wheel", lambda: comm_wheel)
     monkeypatch.setattr(BUILD_PAGES.subprocess, "run", fake_run)
 
     output = tmp_path / "site"
@@ -99,7 +102,11 @@ def test_jupyterlite_build_relies_on_single_autodiscovered_kernel_extension(
     assert len(calls) == 1
     command = calls[0]
     assert not any("federated_extensions" in argument for argument in command)
+    assert command[command.index("--source-date-epoch") + 1] == str(
+        BUILD_PAGES.JUPYTERLITE_SOURCE_DATE_EPOCH
+    )
     assert command[command.index("--pyodide") + 1] == str(archive)
+    assert command[command.index("--piplite-wheels") + 1] == str(comm_wheel)
 
 
 def test_pyodide_archive_accepts_only_the_pinned_digest(
@@ -125,6 +132,29 @@ def test_pyodide_archive_requires_a_real_supplied_file(
     monkeypatch.setenv("WORK2_PYODIDE_ARCHIVE", str(missing))
     with pytest.raises(RuntimeError, match="does not exist"):
         BUILD_PAGES._pyodide_archive()
+
+
+def test_comm_wheel_accepts_only_the_pinned_digest(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    wheel = tmp_path / "comm.whl"
+    wheel.write_bytes(b"exact-comm-fixture")
+    monkeypatch.setenv("WORK2_COMM_WHEEL", str(wheel))
+    monkeypatch.setattr(BUILD_PAGES, "COMM_WHEEL_SHA256", BUILD_PAGES._sha256(wheel))
+    assert BUILD_PAGES._comm_wheel() == wheel.resolve()
+
+    wheel.write_bytes(b"tampered")
+    with pytest.raises(RuntimeError, match="SHA-256"):
+        BUILD_PAGES._comm_wheel()
+
+
+def test_offline_kernel_bootstrap_requires_comm_and_every_runtime_dependency() -> None:
+    piplite = {"comm", "ipykernel", "piplite", "pyodide-kernel"}
+    pyodide = {"ipython", "jedi", "micropip"}
+    for pages_module in (BUILD_PAGES, CHECK_PAGES):
+        pages_module._validate_kernel_bootstrap_packages(piplite, pyodide)
+        with pytest.raises(RuntimeError, match="bootstrap packages.*comm"):
+            pages_module._validate_kernel_bootstrap_packages(piplite - {"comm"}, pyodide)
 
 
 def test_pages_source_projection_is_closed_world() -> None:
