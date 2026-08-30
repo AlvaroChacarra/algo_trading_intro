@@ -334,6 +334,7 @@ test('kernel diagnostics cover context routing, workers, and terminal DOM state'
   assert.match(source, /WORK2_WORKER_CREATED/);
   assert.match(source, /WORK2_WORKER_READY/);
   assert.match(source, /WORK2_UNHANDLED_REJECTION/);
+  assert.match(source, /WORK2_PROMISE_REJECT_UNDEFINED/);
   assert.match(source, /WORK2_KERNEL_DOM/);
 });
 

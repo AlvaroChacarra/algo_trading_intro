@@ -425,6 +425,13 @@ function isRuntimeDiagnosticUrl(raw) {
 
 async function installWorkerDiagnostics(page) {
   await page.addInitScript(() => {
+    const NativePromiseReject = globalThis.Promise.reject;
+    globalThis.Promise.reject = function(value) {
+      if (arguments.length === 0 || typeof value === 'undefined') {
+        console.error(`WORK2_PROMISE_REJECT_UNDEFINED ${new Error().stack || 'stack unavailable'}`);
+      }
+      return NativePromiseReject.call(this, value);
+    };
     globalThis.addEventListener('unhandledrejection', event => {
       const reason = event.reason;
       const detail = {
