@@ -36,6 +36,7 @@ GITHUB_SHA_RE = re.compile(r"[0-9a-f]{40}")
 JUPYTERLITE_BOOTSTRAP_PACKAGES = frozenset({
     "comm", "ipykernel", "ipython", "jedi", "micropip", "piplite", "pyodide-kernel",
 })
+PYODIDE_BOOTSTRAP_ROOTS = frozenset({"ipython", "jedi", "micropip"})
 BUILD_INPUT_PATHS = (
     Path("framework/_build/build_pages.py"),
     Path("framework/_build/pages_offline_policy.py"),
@@ -379,6 +380,53 @@ def _validate_kernel_bootstrap_packages(
         )
 
 
+def _pyodide_bootstrap_closure(packages: dict[str, object]) -> dict[str, dict[str, object]]:
+    indexed: dict[str, tuple[str, dict[str, object]]] = {}
+    for package, metadata in packages.items():
+        if not isinstance(package, str) or not isinstance(metadata, dict):
+            raise RuntimeError("Pyodide lock contains malformed package metadata")
+        canonical = _canonical_package_name(package)
+        if canonical in indexed:
+            raise RuntimeError(f"Pyodide lock duplicates normalized package: {canonical}")
+        indexed[canonical] = package, metadata
+
+    closure: dict[str, dict[str, object]] = {}
+    pending = list(PYODIDE_BOOTSTRAP_ROOTS)
+    while pending:
+        canonical = _canonical_package_name(pending.pop())
+        if canonical in closure:
+            continue
+        entry = indexed.get(canonical)
+        if entry is None:
+            raise RuntimeError(f"Pyodide lock is missing bootstrap dependency: {canonical}")
+        _package, metadata = entry
+        dependencies = metadata.get("depends", [])
+        if (not isinstance(dependencies, list)
+                or any(not isinstance(item, str) or not item for item in dependencies)):
+            raise RuntimeError(f"Pyodide package has malformed dependencies: {canonical}")
+        closure[canonical] = metadata
+        pending.extend(dependencies)
+    return closure
+
+
+def _validate_prefetched_pyodide_packages(
+    pyodide: Path, packages: dict[str, object],
+) -> set[str]:
+    closure = _pyodide_bootstrap_closure(packages)
+    for package, metadata in closure.items():
+        filename = _manifest_relative(metadata.get("file_name"))
+        digest = metadata.get("sha256")
+        if (len(filename.parts) != 1 or not isinstance(digest, str)
+                or not SHA256_RE.fullmatch(digest)):
+            raise RuntimeError(f"Pyodide bootstrap package is malformed: {package}")
+        target = pyodide / filename
+        if (target.is_symlink() or not target.is_file() or _sha256(target) != digest):
+            raise RuntimeError(
+                f"Pyodide bootstrap package is absent or failed SHA-256: {package}"
+            )
+    return set(closure)
+
+
 def _validate_core_files(pyodide_dir: Path, core_files: dict[str, str]) -> None:
     """Verify every file from the pinned core archive against its trusted hash."""
     for name, expected in core_files.items():
@@ -454,6 +502,7 @@ def _validate_offline_runtime(site: Path, manifest: dict[str, object]) -> None:
     if not isinstance(packages, dict) or not packages:
         raise RuntimeError("Pyodide lock contains no packages")
     _validate_kernel_bootstrap_packages(piplite_packages, set(packages))
+    _validate_prefetched_pyodide_packages(pyodide, packages)
     declared_files: set[str] = set()
     for package, metadata in packages.items():
         declared_name = metadata.get("name") if isinstance(metadata, dict) else None

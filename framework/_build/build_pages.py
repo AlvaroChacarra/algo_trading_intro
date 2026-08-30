@@ -66,6 +66,8 @@ COMM_WHEEL_URL = (
     f"{COMM_WHEEL}"
 )
 COMM_WHEEL_SHA256 = "c615d91d75f7f04f095b30d1c1711babd43bdc6419c1be9886a85f2f4e489417"
+PYODIDE_PACKAGE_BASE_URL = f"https://cdn.jsdelivr.net/pyodide/v{PYODIDE_VERSION}/full/"
+PYODIDE_BOOTSTRAP_ROOTS = frozenset({"ipython", "jedi", "micropip"})
 JUPYTERLITE_BOOTSTRAP_PACKAGES = frozenset({
     "comm", "ipykernel", "ipython", "jedi", "micropip", "piplite", "pyodide-kernel",
 })
@@ -830,6 +832,127 @@ def _validate_kernel_bootstrap_packages(
         )
 
 
+def _pyodide_bootstrap_closure(packages: dict[str, object]) -> dict[str, dict[str, object]]:
+    indexed: dict[str, tuple[str, dict[str, object]]] = {}
+    for package, metadata in packages.items():
+        if not isinstance(package, str) or not isinstance(metadata, dict):
+            raise RuntimeError("Pyodide lock contains malformed package metadata")
+        canonical = _canonical_package_name(package)
+        if canonical in indexed:
+            raise RuntimeError(f"Pyodide lock duplicates normalized package: {canonical}")
+        indexed[canonical] = package, metadata
+
+    closure: dict[str, dict[str, object]] = {}
+    pending = list(PYODIDE_BOOTSTRAP_ROOTS)
+    while pending:
+        canonical = _canonical_package_name(pending.pop())
+        if canonical in closure:
+            continue
+        entry = indexed.get(canonical)
+        if entry is None:
+            raise RuntimeError(f"Pyodide lock is missing bootstrap dependency: {canonical}")
+        _package, metadata = entry
+        dependencies = metadata.get("depends", [])
+        if (not isinstance(dependencies, list)
+                or any(not isinstance(item, str) or not item for item in dependencies)):
+            raise RuntimeError(f"Pyodide package has malformed dependencies: {canonical}")
+        closure[canonical] = metadata
+        pending.extend(dependencies)
+    return closure
+
+
+def _validate_prefetched_pyodide_packages(
+    pyodide: Path, packages: dict[str, object],
+) -> set[str]:
+    closure = _pyodide_bootstrap_closure(packages)
+    for package, metadata in closure.items():
+        filename = _manifest_relative(metadata.get("file_name"))
+        digest = metadata.get("sha256")
+        if (len(filename.parts) != 1 or not isinstance(digest, str)
+                or not re.fullmatch(r"[0-9a-f]{64}", digest)):
+            raise RuntimeError(f"Pyodide bootstrap package is malformed: {package}")
+        target = pyodide / filename
+        if (target.is_symlink() or not target.is_file() or _sha256(target) != digest):
+            raise RuntimeError(
+                f"Pyodide bootstrap package is absent or failed SHA-256: {package}"
+            )
+    return set(closure)
+
+
+def _pyodide_package_cache() -> Path:
+    base = Path(tempfile.gettempdir()) / "algo-trading-pages-cache"
+    if base.exists():
+        if (base.is_symlink() or not base.is_dir()
+                or base.resolve().parent != Path(tempfile.gettempdir()).resolve()):
+            raise RuntimeError(f"unsafe Pages cache directory: {base}")
+    else:
+        base.mkdir(mode=0o700, parents=False)
+    cache = base / f"pyodide-{PYODIDE_VERSION}-packages"
+    if cache.exists():
+        if (cache.is_symlink() or not cache.is_dir() or cache.resolve().parent != base.resolve()):
+            raise RuntimeError(f"unsafe Pyodide package cache directory: {cache}")
+    else:
+        cache.mkdir(mode=0o700, parents=False)
+    return cache
+
+
+def _download_pyodide_package(filename: Path, digest: str) -> Path:
+    cache = _pyodide_package_cache()
+    target = cache / filename
+    if target.is_file():
+        if target.is_symlink():
+            raise RuntimeError(f"unsafe cached Pyodide package: {target}")
+        if _sha256(target) == digest:
+            return target
+        target.unlink()
+    elif target.exists() or target.is_symlink():
+        raise RuntimeError(f"unsafe cached Pyodide package: {target}")
+
+    partial = cache / f".{filename.name}.{uuid.uuid4().hex}.partial"
+    try:
+        flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
+        if hasattr(os, "O_NOFOLLOW"):
+            flags |= os.O_NOFOLLOW
+        descriptor = os.open(partial, flags, 0o600)
+        with os.fdopen(descriptor, "wb") as destination:
+            url = PYODIDE_PACKAGE_BASE_URL + quote(filename.name, safe="")
+            with urllib.request.urlopen(url, timeout=90) as response:
+                shutil.copyfileobj(response, destination)
+        if _sha256(partial) != digest:
+            raise RuntimeError(
+                f"downloaded Pyodide package failed its SHA-256 check: {filename.name}"
+            )
+        partial.replace(target)
+    finally:
+        partial.unlink(missing_ok=True)
+    return target
+
+
+def _prefetch_pyodide_bootstrap(jupyter: Path) -> set[str]:
+    pyodide = jupyter / "static" / "pyodide"
+    try:
+        lock = json.loads((pyodide / "pyodide-lock.json").read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise RuntimeError(f"invalid Pyodide lock while prefetching: {exc}") from exc
+    packages = lock.get("packages") if isinstance(lock, dict) else None
+    if not isinstance(packages, dict) or not packages:
+        raise RuntimeError("Pyodide lock contains no packages to prefetch")
+    closure = _pyodide_bootstrap_closure(packages)
+    for package, metadata in closure.items():
+        filename = _manifest_relative(metadata.get("file_name"))
+        digest = metadata.get("sha256")
+        if (len(filename.parts) != 1 or not isinstance(digest, str)
+                or not re.fullmatch(r"[0-9a-f]{64}", digest)):
+            raise RuntimeError(f"Pyodide bootstrap package is malformed: {package}")
+        target = pyodide / filename
+        if target.exists():
+            if target.is_symlink() or not target.is_file() or _sha256(target) != digest:
+                raise RuntimeError(f"bundled Pyodide package failed SHA-256: {package}")
+            continue
+        shutil.copyfile(_download_pyodide_package(filename, digest), target)
+    return _validate_prefetched_pyodide_packages(pyodide, packages)
+
+
 def _validate_core_files(pyodide_dir: Path, core_files: dict[str, str]) -> None:
     """Verify every file from the pinned core archive against its trusted hash."""
     for name, expected in core_files.items():
@@ -883,6 +1006,7 @@ def _validate_offline_runtime(output: Path, manifest: dict[str, object]) -> None
     if not isinstance(packages, dict) or not packages:
         raise RuntimeError("Pyodide lock contains no packages")
     _validate_kernel_bootstrap_packages(piplite_packages, set(packages))
+    _validate_prefetched_pyodide_packages(pyodide_dir, packages)
     declared_files: set[str] = set()
     for package, metadata in packages.items():
         declared_name = metadata.get("name") if isinstance(metadata, dict) else None
@@ -1070,6 +1194,7 @@ def build(output: Path) -> tuple[int, int, int]:
             raise RuntimeError(
                 f"JupyterLite staged {lab_notebooks} notebooks; nbconvert rendered {len(notebooks)}"
             )
+        _prefetch_pyodide_bootstrap(staging / "jupyter")
         harden_service_worker(staging / "jupyter" / "service-worker.js")
         _harden_html_documents(staging)
         (staging / ".nojekyll").touch()

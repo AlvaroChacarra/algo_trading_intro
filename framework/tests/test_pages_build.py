@@ -157,6 +157,90 @@ def test_offline_kernel_bootstrap_requires_comm_and_every_runtime_dependency() -
             pages_module._validate_kernel_bootstrap_packages(piplite - {"comm"}, pyodide)
 
 
+def _pyodide_bootstrap_fixture() -> dict[str, object]:
+    dependencies = {
+        "micropip": [],
+        "jedi": ["parso"],
+        "parso": [],
+        "ipython": ["prompt_toolkit", "traitlets"],
+        "prompt-toolkit": ["wcwidth"],
+        "traitlets": [],
+        "wcwidth": [],
+    }
+    return {
+        package: {
+            "name": package,
+            "depends": depends,
+            "file_name": f"{package}-fixture.whl",
+            "sha256": "0" * 64,
+        }
+        for package, depends in dependencies.items()
+    }
+
+
+def test_pyodide_bootstrap_closure_normalizes_and_follows_dependencies() -> None:
+    packages = _pyodide_bootstrap_fixture()
+    expected = {
+        "ipython", "jedi", "micropip", "parso", "prompt-toolkit", "traitlets", "wcwidth",
+    }
+    for pages_module in (BUILD_PAGES, CHECK_PAGES):
+        assert set(pages_module._pyodide_bootstrap_closure(packages)) == expected
+
+
+def test_prefetched_pyodide_bootstrap_requires_every_exact_wheel(
+    tmp_path: Path,
+) -> None:
+    packages = _pyodide_bootstrap_fixture()
+    runtime = tmp_path / "pyodide"
+    runtime.mkdir()
+    for package, metadata in packages.items():
+        wheel = runtime / metadata["file_name"]
+        wheel.write_bytes(f"{package}\n".encode())
+        metadata["sha256"] = hashlib.sha256(wheel.read_bytes()).hexdigest()
+
+    for pages_module in (BUILD_PAGES, CHECK_PAGES):
+        assert pages_module._validate_prefetched_pyodide_packages(
+            runtime, packages
+        ) == set(packages)
+
+    (runtime / packages["prompt-toolkit"]["file_name"]).unlink()
+    for pages_module in (BUILD_PAGES, CHECK_PAGES):
+        with pytest.raises(RuntimeError, match="absent or failed SHA-256.*prompt-toolkit"):
+            pages_module._validate_prefetched_pyodide_packages(runtime, packages)
+
+
+def test_pyodide_bootstrap_prefetch_copies_only_hash_verified_lock_closure(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    packages = _pyodide_bootstrap_fixture()
+    sources = tmp_path / "sources"
+    runtime = tmp_path / "jupyter/static/pyodide"
+    sources.mkdir()
+    runtime.mkdir(parents=True)
+    for package, metadata in packages.items():
+        wheel = sources / metadata["file_name"]
+        wheel.write_bytes(f"{package}\n".encode())
+        metadata["sha256"] = hashlib.sha256(wheel.read_bytes()).hexdigest()
+    (runtime / "pyodide-lock.json").write_text(
+        json.dumps({"packages": packages}), encoding="utf-8"
+    )
+
+    requested: list[str] = []
+
+    def fixture_download(filename: Path, digest: str) -> Path:
+        requested.append(filename.name)
+        source = sources / filename
+        assert hashlib.sha256(source.read_bytes()).hexdigest() == digest
+        return source
+
+    monkeypatch.setattr(BUILD_PAGES, "_download_pyodide_package", fixture_download)
+    assert BUILD_PAGES._prefetch_pyodide_bootstrap(tmp_path / "jupyter") == set(packages)
+    assert sorted(requested) == sorted(
+        metadata["file_name"] for metadata in packages.values()
+    )
+    CHECK_PAGES._validate_prefetched_pyodide_packages(runtime, packages)
+
+
 def test_pages_source_projection_is_closed_world() -> None:
     assert BUILD_PAGES._publishable_source(Path("index.html"))
     assert BUILD_PAGES._publishable_source(
