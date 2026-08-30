@@ -388,7 +388,7 @@ function clearRuntimeScroller(node){
 }
 function syncScrollers(){
   document.querySelectorAll('[data-lr-runtime-scroller="true"]').forEach(clearRuntimeScroller);
-  const tolerance=1;
+  const tolerance=2;
   models.filter(scene=>isExposed(scene.element)).forEach(scene=>{
     [scene.element,...scene.element.querySelectorAll('*')].forEach(node=>{
       if(!isExposed(node)||!node.getClientRects().length)return;

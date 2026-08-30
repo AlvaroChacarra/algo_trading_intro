@@ -338,6 +338,34 @@ test('declared keyboard-accessible scrollers prove reachability without hiding r
   assert.equal(contract.desktopStatePassed(clipped), false);
 });
 
+test('document scroll evidence proves vertical reachability only with a verified target', () => {
+  const { expected, state } = flowStateFixture();
+  const documentReachability = {
+    selector: 'document.scrollingElement', documentScroller: true, targetReachable: true,
+    declared: true, declaredAxis: 'vertical', overflowX: false, overflowY: true,
+    real: true, focusable: true, axisMatches: true, reachedEnd: true,
+    targetScrollTop: 120, maximumScrollTop: 600,
+    clipsTargetX: false, clipsTargetY: true,
+  };
+  state.essentialInside = false;
+  state.essentialChecks[0] = { ...state.essentialChecks[0], unoccluded: false,
+    accessible: true, scrollReachable: true, scrollReachability: [documentReachability],
+    diagnosticFailures: [{ kind: 'occluded' }], failures: [] };
+  assert.equal(contract.flowStatePassed(state, expected, 0, 1), true);
+
+  const forged = structuredClone(state);
+  forged.essentialChecks[0].scrollReachability[0].targetReachable = false;
+  assert.equal(contract.flowStatePassed(forged, expected, 0, 1), false);
+
+  const horizontal = structuredClone(state);
+  horizontal.essentialChecks[0].scrollReachability[0].overflowX = true;
+  assert.equal(contract.flowStatePassed(horizontal, expected, 0, 1), false);
+
+  const impossibleOffset = structuredClone(state);
+  impossibleOffset.essentialChecks[0].scrollReachability[0].targetScrollTop = 601;
+  assert.equal(contract.flowStatePassed(impossibleOffset, expected, 0, 1), false);
+});
+
 test('navigation semantics reject aggregate booleans without exact hash and storage provenance', () => {
   const navigation = {
     backward: true, forward: true, tabOrderPassed: true, focusVisible: true,
@@ -830,6 +858,9 @@ test('runtime assets retain modal, scroller, and breakpoint arbitration', () => 
   const docgen = fs.readFileSync(path.join(ROOT, 'framework/_build/docgen.py'), 'utf8');
   assert.match(styles, /body\.lr-modal-open::before\{[^}]*z-index:69/);
   assert.match(styles, /body\.mode-aula>\.lr-scene-active>\.scrolly\{display:grid/);
+  assert.match(styles,
+    /body\.mode-aula>header\.lr-scene-active \.code\{overflow-x:hidden;overflow-y:auto\}/);
+  assert.match(runtime, /function syncScrollers\(\)\{[\s\S]*const tolerance=2;/);
   assert.match(runtime, /window\.LEARNING_MODAL_BACKGROUND=setModalBackground/);
   assert.match(runtime, /document\.addEventListener\('pointerdown'[\s\S]*focusModalOwner\(\)/);
   assert.match(runtime, /document\.addEventListener\('focusin'[\s\S]*focusModalOwner\(\)/);
@@ -895,4 +926,7 @@ test('runner and independent replay retain clean navigation, full plans, determi
 
   assert.match(runner, /\[activeStep, activeFigure\]\.filter\(Boolean\)/);
   assert.match(replay, /\[(?:activeStep|step),\s*(?:activeFigure|figure)\]\.filter\(Boolean\)/);
+  assert.match(runner, /current\.matches\('details:not\(\[open\]\)'\)/);
+  assert.match(replay, /current\.matches\('details:not\(\[open\]\)'\)/);
+  assert.match(runner, /documentScrollerEvidence[\s\S]*targetReachable/);
 });

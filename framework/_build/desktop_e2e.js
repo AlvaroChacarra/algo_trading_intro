@@ -66,9 +66,20 @@ async function expectedStates(page, allowedRoutes) {
       }
       return current === scene ? `#${escape(scene.id)} > ${parts.join(' > ')}` : null;
     };
-    const meaningfulChildren = node => [...(node?.children || [])].filter(child =>
+    const autoEssential = (node, scene, roots = []) => {
+      if (!node) return false;
+      for (let current = node; current && current !== scene; current = current.parentElement) {
+        if (roots.includes(current)) continue;
+        if (current.hidden || current.inert || current.classList.contains('hidden')) return false;
+        if (current.matches('details:not([open])') && current !== node) return false;
+        if (document.body.classList.contains('mode-aula')
+          && current.classList.contains('full-code')) return false;
+      }
+      return true;
+    };
+    const meaningfulChildren = (node, scene, roots = []) => [...(node?.children || [])].filter(child =>
       !['SCRIPT', 'STYLE', 'TEMPLATE'].includes(child.tagName)
-      && !child.classList.contains('lr-scene-badge'));
+      && !child.classList.contains('lr-scene-badge') && autoEssential(child, scene, roots));
     const essentialsFor = (sceneContract, stageContract) => {
       const scene = document.getElementById(sceneContract.dom_id);
       if (!scene) return [];
@@ -87,19 +98,19 @@ async function expectedStates(page, allowedRoutes) {
       for (const root of [step, figure].filter(Boolean)) {
         const content = root.matches('.step')
           ? (root.querySelector(':scope > .step-inner') || root) : root;
-        add(meaningfulChildren(content));
+        add(meaningfulChildren(content, scene, [root]));
         add([...content.querySelectorAll('canvas,svg,img,video,pre,table,[role="img"],'
-          + 'button,input,select,textarea')]);
+          + 'button,input,select,textarea')].filter(node => autoEssential(node, scene, [root])));
       }
       const sharedHeading = [...scene.querySelectorAll('h1,h2')]
-        .find(node => !node.closest('.step,.fig-stage'));
+        .find(node => !node.closest('.step,.fig-stage') && autoEssential(node, scene));
       if (sharedHeading) candidates.unshift(sharedHeading);
       if (!step && !figure) {
         const wrap = scene.matches('.wrap') ? scene
           : scene.querySelector(':scope > .wrap') || scene;
-        add(meaningfulChildren(wrap));
+        add(meaningfulChildren(wrap, scene));
         add([...scene.querySelectorAll('canvas,svg,img,video,pre,table,[role="img"],'
-          + 'button,input,select,textarea')].filter(node => !node.closest('[hidden],[inert]')));
+          + 'button,input,select,textarea')].filter(node => autoEssential(node, scene)));
       }
       return [...new Set(candidates)].map(node => selectorFor(node, scene))
         .filter(Boolean).filter((selector, index, items) => items.indexOf(selector) === index);
@@ -1144,6 +1155,28 @@ async function inspectFlowState(page, expected, position, total) {
     const diagnostic = node => node?.id ? `#${CSS.escape(node.id)}`
       : `${node?.tagName?.toLowerCase() || 'unknown'}.${String(node?.className || '')
         .trim().split(/\s+/).filter(Boolean).slice(0, 2).map(CSS.escape).join('.')}`;
+    const documentScrollerEvidence = (node, targetBox) => {
+      const scrolling = document.scrollingElement || document.documentElement;
+      const overflowY = scrolling.scrollHeight > scrolling.clientHeight + tolerance;
+      const toolbar = document.getElementById('lr-mobile-toolbar');
+      const toolbarBox = toolbar && rendered(toolbar) ? toolbar.getBoundingClientRect() : null;
+      const safeTop = Math.max(0, toolbarBox?.bottom || 0);
+      const originallyClipped = Boolean(targetBox
+        && (targetBox.top < safeTop - tolerance || targetBox.bottom > innerHeight + tolerance));
+      const absoluteTop = targetBox ? targetBox.top + scrollY : 0;
+      const absoluteBottom = targetBox ? targetBox.bottom + scrollY : 0;
+      const maxY = Math.max(0, scrolling.scrollHeight - scrolling.clientHeight);
+      const targetY = Math.max(0, Math.min(maxY, absoluteTop - safeTop));
+      const exposedTop = absoluteTop - targetY;
+      const exposedBottom = absoluteBottom - targetY;
+      const targetReachable = overflowY && originallyClipped
+        && exposedBottom > safeTop + tolerance && exposedTop < innerHeight - tolerance;
+      return { selector: 'document.scrollingElement', documentScroller: true,
+        targetReachable, declared: true, declaredAxis: 'vertical', overflowX: false, overflowY,
+        real: overflowY, focusable: true, axisMatches: true, reachedEnd: true,
+        targetScrollTop: targetY, maximumScrollTop: maxY,
+        clipsTargetX: false, clipsTargetY: originallyClipped && targetReachable };
+    };
     const scrollerEvidence = (scroller, targetBox = null) => {
       const style = getComputedStyle(scroller);
       const overflowX = ['auto', 'scroll'].includes(style.overflowX)
@@ -1180,6 +1213,8 @@ async function inspectFlowState(page, expected, position, total) {
         ancestor = ancestor.parentElement) {
         if (ancestor.dataset.lrScroller === 'true') entries.push(scrollerEvidence(ancestor, box));
       }
+      const documentEvidence = documentScrollerEvidence(node, box);
+      if (documentEvidence.real) entries.push(documentEvidence);
       return entries;
     };
     const scene = document.getElementById(target.domId);
@@ -1224,16 +1259,19 @@ async function inspectFlowState(page, expected, position, total) {
       }
       const scrollReachability = scrollReachabilityFor(entry.node, box);
       const canExposeX = scrollReachability.some(item => validScroller(item)
-        && item.overflowX && item.clipsTargetX);
-      const canExposeY = scrollReachability.some(item => validScroller(item)
-        && item.overflowY && item.clipsTargetY);
+        && !item.documentScroller && item.overflowX && item.clipsTargetX);
+      const canExposeNestedY = scrollReachability.some(item => validScroller(item)
+        && !item.documentScroller && item.overflowY && item.clipsTargetY);
+      const canExposeDocumentY = scrollReachability.some(item => validScroller(item)
+        && item.documentScroller && item.targetReachable && item.clipsTargetY);
+      const canExposeY = canExposeNestedY || canExposeDocumentY;
       const scrollReachable = canExposeX || canExposeY;
       const failures = diagnosticFailures.filter(failure => {
         if (failure.kind === 'occluded') return !scrollReachable;
         if (failure.kind === 'horizontal-viewport') return !canExposeX;
         if (failure.kind === 'clipping-ancestor') {
           return (failure.axes.includes('x') && !canExposeX)
-            || (failure.axes.includes('y') && !canExposeY);
+            || (failure.axes.includes('y') && !canExposeNestedY);
         }
         return true;
       });

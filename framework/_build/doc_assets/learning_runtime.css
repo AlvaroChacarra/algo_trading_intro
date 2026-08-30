@@ -133,6 +133,7 @@ body.lr-modal-open::before{content:"";position:fixed;inset:0;z-index:69;backgrou
   body.mode-aula .fig-stage{overflow:auto}
   body.mode-aula .full-code{display:none!important}
   body.mode-aula .hero{padding:0}
+  body.mode-aula>header.lr-scene-active .code{overflow-x:hidden;overflow-y:auto}
   body.mode-aula .hero h1{font-size:clamp(2rem,4.7vw,4.8rem)}
   body.mode-aula .hero .lede{font-size:clamp(.92rem,1.45vw,1.3rem);max-width:72ch}
   body.mode-aula .hero .challenge{margin-top:clamp(14px,2.5vh,28px)}

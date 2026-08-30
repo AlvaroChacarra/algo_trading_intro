@@ -724,7 +724,19 @@ function visibilityEvidencePassed(visibility) {
 }
 
 function scrollReachabilityEvidencePassed(item) {
-  return Boolean(item) && typeof item.selector === 'string' && item.selector.length > 0
+  const documentEvidence = item?.documentScroller === true;
+  const documentFieldsValid = documentEvidence
+    ? item.selector === 'document.scrollingElement' && item.targetReachable === true
+      && item.declaredAxis === 'vertical' && item.overflowX === false && item.overflowY === true
+      && item.clipsTargetX === false && item.clipsTargetY === true
+      && finiteNumber(item.targetScrollTop) && finiteNumber(item.maximumScrollTop)
+      && item.targetScrollTop >= 0 && item.maximumScrollTop > 0
+      && item.targetScrollTop <= item.maximumScrollTop
+    : item?.selector !== 'document.scrollingElement'
+      && (item?.documentScroller === undefined || item?.documentScroller === false)
+      && item?.targetReachable === undefined;
+  return Boolean(item) && documentFieldsValid
+    && typeof item.selector === 'string' && item.selector.length > 0
     && item.declared === true && ['horizontal', 'vertical', 'both'].includes(item.declaredAxis)
     && allTrue(item, ['real', 'focusable', 'axisMatches', 'reachedEnd'])
     && typeof item.overflowX === 'boolean' && typeof item.overflowY === 'boolean'

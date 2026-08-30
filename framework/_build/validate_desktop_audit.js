@@ -307,9 +307,20 @@ async function verifyBrowserEvidence(auditDirectory, root = ROOT) {
         const step = active?.querySelector('.step.lr-stage-active:not([hidden])');
         const figure = active?.querySelector('.fig-stage.on:not([hidden])');
         const stageNodes = [step, figure].filter(Boolean);
+        const autoEssential = node => {
+          if (!node) return false;
+          for (let current = node; current && current !== active; current = current.parentElement) {
+            if (stageNodes.includes(current)) continue;
+            if (current.hidden || current.inert || current.classList.contains('hidden')) return false;
+            if (current.matches('details:not([open])') && current !== node) return false;
+            if (document.body.classList.contains('mode-aula')
+              && current.classList.contains('full-code')) return false;
+          }
+          return true;
+        };
         const meaningfulChildren = node => [...(node?.children || [])].filter(child =>
           !['SCRIPT', 'STYLE', 'TEMPLATE'].includes(child.tagName)
-          && !child.classList.contains('lr-scene-badge'));
+          && !child.classList.contains('lr-scene-badge') && autoEssential(child));
         const essentialNodes = [];
         const add = nodes => nodes.filter(Boolean).forEach(node => essentialNodes.push(node));
         add([...(active?.querySelectorAll('[data-lr-essential]') || [])].filter(node => {
@@ -321,17 +332,17 @@ async function verifyBrowserEvidence(auditDirectory, root = ROOT) {
             ? (rootNode.querySelector(':scope > .step-inner') || rootNode) : rootNode;
           add(meaningfulChildren(content));
           add([...content.querySelectorAll('canvas,svg,img,video,pre,table,[role="img"],'
-            + 'button,input,select,textarea')]);
+            + 'button,input,select,textarea')].filter(autoEssential));
         }
         const sharedHeading = [...(active?.querySelectorAll('h1,h2') || [])]
-          .find(node => !node.closest('.step,.fig-stage'));
+          .find(node => !node.closest('.step,.fig-stage') && autoEssential(node));
         add([sharedHeading]);
         if (!step && !figure) {
           const wrap = active?.matches('.wrap') ? active
             : active?.querySelector(':scope > .wrap') || active;
           add(meaningfulChildren(wrap));
           add([...(active?.querySelectorAll('canvas,svg,img,video,pre,table,[role="img"],'
-            + 'button,input,select,textarea') || [])]);
+            + 'button,input,select,textarea') || [])].filter(autoEssential));
         }
         const essentialVisibility = [...new Set(essentialNodes)].map(node => {
           const visibility = visibilityEvidence(node);
