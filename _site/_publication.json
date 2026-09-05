@@ -1,0 +1,12 @@
+{
+  "policy_sha256": "06141b6038152d7b7ecb8ebd06535b064439cbc6cb618026e1bea52531ffdb3a",
+  "released_classes": [
+    {
+      "id": "01",
+      "path": "01-python-i-data-model",
+      "publish_at": "2026-09-05T08:45:00+02:00"
+    }
+  ],
+  "source_sha": "2047255ea1985781969b3e3f991a2851dbbcfaf5",
+  "version": 1
+}

@@ -1,0 +1,57 @@
+{
+  "content": [
+    {
+      "content": null,
+      "created": "2026-09-05T08:59:37.782639Z",
+      "format": null,
+      "hash": null,
+      "hash_algorithm": null,
+      "last_modified": "2026-09-05T08:59:22.136027Z",
+      "mimetype": "text/x-python",
+      "name": "trading_snapshot.py",
+      "path": "01-python-i-data-model/exercises/trading_snapshot.py",
+      "size": 1542,
+      "type": "file",
+      "writable": true
+    },
+    {
+      "content": null,
+      "created": "2026-09-05T08:59:37.781760Z",
+      "format": null,
+      "hash": null,
+      "hash_algorithm": null,
+      "last_modified": "2026-09-05T08:59:36.394060Z",
+      "mimetype": null,
+      "name": "01_auxiliary.ipynb",
+      "path": "01-python-i-data-model/exercises/01_auxiliary.ipynb",
+      "size": 48975,
+      "type": "notebook",
+      "writable": true
+    },
+    {
+      "content": null,
+      "created": "2026-09-05T08:59:37.782232Z",
+      "format": null,
+      "hash": null,
+      "hash_algorithm": null,
+      "last_modified": "2026-09-05T08:59:36.394996Z",
+      "mimetype": null,
+      "name": "01_build_exercises.ipynb",
+      "path": "01-python-i-data-model/exercises/01_build_exercises.ipynb",
+      "size": 17502,
+      "type": "notebook",
+      "writable": true
+    }
+  ],
+  "created": "2026-09-05T08:59:37.782399Z",
+  "format": "json",
+  "hash": null,
+  "hash_algorithm": null,
+  "last_modified": "2026-09-05T08:59:37.782399Z",
+  "mimetype": null,
+  "name": "exercises",
+  "path": "01-python-i-data-model/exercises",
+  "size": null,
+  "type": "directory",
+  "writable": true
+}

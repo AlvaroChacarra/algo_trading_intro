@@ -1,5 +1,0 @@
-# Núcleo del curso: el paquete `exchange` es 100% librería estándar.
-# Solo necesitas Jupyter para trabajar los notebooks.
-jupyter>=1.0.0
-notebook>=7.0.0
-ipykernel>=6.20.0

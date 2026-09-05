@@ -10,6 +10,8 @@ from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
+LESSON_DIR_RE = re.compile(r"^(?:0[1-9]|1[0-4])-")
+
 
 class Links(HTMLParser):
     def __init__(self) -> None:
@@ -34,6 +36,20 @@ def local_target(page: Path, raw: str, site: Path, base_path: str) -> Path | Non
             raise ValueError(f"root-relative URL escapes Pages base path: {raw}")
         return site / path[len(base_path):]
     return (page.parent / path).resolve()
+
+
+def _released_classes(site: Path) -> list[dict]:
+    publication = site / "_publication.json"
+    if publication.is_file():
+        data = json.loads(publication.read_text(encoding="utf-8"))
+        classes = data.get("released_classes", [])
+        if isinstance(classes, list):
+            return [item for item in classes if isinstance(item, dict)]
+    return [
+        {"id": path.name[:2], "path": path.name}
+        for path in sorted(site.iterdir())
+        if path.is_dir() and LESSON_DIR_RE.match(path.name)
+    ]
 
 
 def main() -> None:
@@ -82,28 +98,34 @@ def main() -> None:
 
     unexpected_notebooks = [
         path for path in site.rglob("*.ipynb")
-        if ((site / "jupyter" / "files") not in path.parents
-            and path.name != "jupyter-lite.ipynb")
+        if ((site / "jupyter" / "files") not in path.parents and path.name != "jupyter-lite.ipynb")
     ]
     if unexpected_notebooks:
         failures.append("publication notebooks must only exist inside JupyterLite contents")
 
     index = (site / "index.html").read_text(encoding="utf-8")
-    for n in range(1, 15):
-        for suffix in (f"{n:02d}_build_exercises.html", f"{n:02d}_auxiliary.html"):
-            matches = list(site.glob(f"{n:02d}-*/exercises/{suffix}"))
-            if len(matches) != 1:
-                failures.append(f"expected one rendered notebook: {suffix}")
-            elif suffix not in index:
-                failures.append(f"index does not link {suffix}")
-    if len(re.findall(r'class="lc-actions"', index)) != 14:
-        failures.append("index must expose three actions for each of the 14 classes")
+    released = _released_classes(site)
+    released_ids = [str(item.get("id", "")) for item in released]
+    index_ids = re.findall(r'data-lesson=["\'](\d{2})["\']', index)
+    if index_ids != released_ids:
+        failures.append(f"index lesson cards {index_ids} do not match released classes {released_ids}")
+
+    expected_notebooks: list[str] = []
+    for notebook in lab_notebooks:
+        name = notebook.name
+        if re.fullmatch(r"\d{2}_(?:build_exercises|auxiliary)\.ipynb", name):
+            expected_notebooks.append(Path(name).with_suffix(".html").name)
+    for rendered_name in expected_notebooks:
+        if rendered_name not in index:
+            failures.append(f"index does not link {rendered_name}")
+    if len(re.findall(r'class="lc-actions"', index)) != len(released):
+        failures.append("index action-card count does not match released classes")
 
     for page in html_files:
         text = page.read_text(encoding="utf-8")
         relative = page.relative_to(site)
         if relative.parts[0] == "jupyter":
-            continue  # JupyterLite owns and resolves its internal application assets.
+            continue
         if not re.search(r'<meta\s+[^>]*name=["\']viewport["\']', text, re.I):
             failures.append(f"missing viewport: {relative}")
         if relative != Path("index.html") and "course-home" not in text:
@@ -129,7 +151,8 @@ def main() -> None:
         sys.exit(1)
     print(
         f"Pages checks passed: {len(html_files)} HTML files, "
-        f"{len(lab_notebooks)} editable notebooks, base {args.base_path}"
+        f"{len(lab_notebooks)} editable notebooks, {len(released)} released classes, "
+        f"base {args.base_path}"
     )
 
 
