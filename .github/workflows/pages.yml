@@ -30,6 +30,7 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
+          cache-dependency-path: requirements-pages.txt
       - name: Instalar conversor de notebooks
         run: pip install -r requirements-pages.txt
       - name: Construir el site estático
