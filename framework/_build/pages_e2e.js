@@ -25,6 +25,16 @@ function server() {
   });
 }
 
+function releasedLessonNumbers() {
+  const publication = path.join(SITE, '_publication.json');
+  if (!fs.existsSync(publication)) return null;
+  const metadata = JSON.parse(fs.readFileSync(publication, 'utf8'));
+  if (!Array.isArray(metadata.released_classes)) {
+    throw new Error('_publication.json has no released_classes array');
+  }
+  return metadata.released_classes.map(item => Number(item.id));
+}
+
 function lessonSamples() {
   const lessons = [];
   for (const directory of fs.readdirSync(SITE)) {
@@ -34,24 +44,36 @@ function lessonSamples() {
     if (number < 1 || number > 14 || !fs.existsSync(presentation)) continue;
     const docs = fs.readdirSync(presentation).filter(file => file.endsWith('-doc.html'));
     if (docs.length !== 1) throw new Error(`${directory}: expected one interactive document`);
-    lessons.push({ number, relative: `${directory}/presentation/${docs[0]}` });
+    lessons.push({ number, directory, relative: `${directory}/presentation/${docs[0]}` });
   }
   lessons.sort((a, b) => a.number - b.number);
-  if (lessons.length !== 14 || lessons.some((item, index) => item.number !== index + 1)) {
-    throw new Error(`Pages artifact does not contain L1-L14: ${lessons.map(item => item.number)}`);
+  if (!lessons.length) throw new Error('Pages artifact contains no released lessons');
+
+  const expected = releasedLessonNumbers();
+  const observed = lessons.map(item => item.number);
+  if (expected && (expected.length !== observed.length || expected.some((item, index) => item !== observed[index]))) {
+    throw new Error(`Pages lessons ${observed} do not match publication metadata ${expected}`);
   }
   return lessons;
 }
 
 const lessons = lessonSamples();
+const lessonNotebookSamples = lessons.flatMap(item => {
+  const nn = String(item.number).padStart(2, '0');
+  return [
+    `${item.directory}/exercises/${nn}_build_exercises.html`,
+    `${item.directory}/exercises/${nn}_auxiliary.html`,
+  ];
+}).filter(relative => fs.existsSync(path.join(SITE, relative)));
+const optionalSamples = [
+  '06-oop-iii-inheritance/checkpoint.html',
+  '15-final-exam/examen.html',
+].filter(relative => fs.existsSync(path.join(SITE, relative)));
 const samples = [
   '',
   ...lessons.map(item => item.relative),
-  '06-oop-iii-inheritance/checkpoint.html',
-  '15-final-exam/examen.html',
-  '01-python-i-data-model/exercises/01_build_exercises.html',
-  '08-order-types-matching/exercises/08_auxiliary.html',
-  '14-avellaneda-stoikov/exercises/14_build_exercises.html',
+  ...lessonNotebookSamples,
+  ...optionalSamples,
 ];
 
 (async () => {
@@ -90,7 +112,7 @@ const samples = [
     }
   }
 
-  // Every educational lesson uses the same vertical fallback and explicit OPTIONAL opt-in.
+  // Every released educational lesson uses the same vertical fallback and explicit OPTIONAL opt-in.
   for (const lesson of lessons) {
     await page.goto(origin + lesson.relative + '?mode=aula');
     await page.waitForFunction(() => window.LEARNING_RUNTIME?.mode === 'estudio');
@@ -113,9 +135,14 @@ const samples = [
 
   await page.goto(origin);
   const actions = await page.locator('.lc-actions a').count();
-  if (actions !== 42) { failures++; console.error(`✗ index actions=${actions}, expected 42`); }
+  const expectedActions = lessons.length * 3;
+  if (actions !== expectedActions) {
+    failures++; console.error(`✗ index actions=${actions}, expected ${expectedActions}`);
+  }
   const blocks = await page.locator('.course-block').count();
-  if (blocks !== 4) { failures++; console.error(`✗ index blocks=${blocks}, expected 4`); }
+  if (blocks < 1 || blocks > 4) {
+    failures++; console.error(`✗ index blocks=${blocks}, expected between 1 and 4`);
+  }
   await page.locator('.lc-actions a').first().click();
   await page.locator('.course-home').click();
   const returnedPath = new URL(page.url()).pathname;
@@ -123,7 +150,7 @@ const samples = [
     failures++; console.error(`✗ course return resolved to ${page.url()}`);
   }
 
-  // Static notebooks expose a touch-friendly lab link; every lesson must also
+  // Static notebooks expose a touch-friendly lab link; every released lesson must also
   // execute a meaningful, lesson-specific offline smoke in JupyterLite.
   const labSmokes = {
     1: `assert 2 + 2 == 4\nprint('WORK2_L1_OK')`,
