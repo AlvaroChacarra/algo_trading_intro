@@ -51,7 +51,7 @@ estado que L4 convertirá en objetos.
 
 ## Estructura de la carpeta
 
-- `presentation/` — documento interactivo (o deck) + guion del profesor
+- `presentation/` — presentación interactiva
 - `exercises/01_build_exercises.ipynb` — construyes la pieza (rutas LIVE / REQUIRED / OPTIONAL declaradas)
 - `exercises/01_auxiliary.ipynb` — el gimnasio: drills + profundización opcional
 

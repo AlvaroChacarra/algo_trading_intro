@@ -1,358 +1,89 @@
-"""Build the static GitHub Pages site without changing generated course sources."""
+"""Build Pages: the course index and released HTML presentations only.
 
+Python, notebooks and data remain downloadable from the public repository.
+The builder needs only the Python standard library.
+"""
 from __future__ import annotations
 
 import argparse
 import html
-import json
 import os
+from pathlib import Path
 import re
 import shutil
-import subprocess
-import sys
-import tempfile
-import warnings
-from pathlib import Path
-from urllib.parse import quote, unquote, urlsplit
-
-import nbformat
-from nbconvert import HTMLExporter
-from nbformat.validator import normalize
-from nbformat.warnings import MissingIDFieldWarning
-
+from urllib.parse import urlsplit, unquote
 
 ROOT = Path(__file__).resolve().parents[2]
-SKIP_PARTS = {".git", ".github", "_site", "node_modules", "__pycache__"}
-ASSET_SUFFIXES = {
-    ".css", ".js", ".json", ".csv", ".png", ".jpg", ".jpeg", ".gif",
-    ".svg", ".webp", ".ico", ".woff", ".woff2", ".ttf", ".otf", ".wasm",
-}
-LAB_CONTENT_SUFFIXES = {".ipynb", ".py", ".csv", ".json", ".md", ".txt"}
-
-MOBILE_CSS = r"""
-<style id="pages-mobile">
-  html { overflow-wrap: break-word; }
-  body { max-width: 100%; }
-  pre { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  table { max-width: 100%; }
-  img, video { max-width: 100%; height: auto; }
-  canvas, svg { max-width: 100%; }
-  .course-home {
-    position: fixed; left: max(12px, env(safe-area-inset-left));
-    bottom: max(12px, env(safe-area-inset-bottom)); z-index: 10000;
-    display: inline-flex; align-items: center; justify-content: center;
-    min-height: 44px; padding: 0 14px; border: 1px solid rgba(34,211,238,.55);
-    border-radius: 999px; background: rgba(9,9,11,.94); color: #22d3ee;
-    box-shadow: 0 5px 20px rgba(0,0,0,.35); text-decoration: none;
-    font: 600 13px/1 system-ui,-apple-system,sans-serif;
-  }
-  .course-lab {
-    position: fixed; right: max(12px, env(safe-area-inset-right));
-    bottom: max(12px, env(safe-area-inset-bottom)); z-index: 10000;
-    display: inline-flex; align-items: center; justify-content: center;
-    min-height: 44px; padding: 0 14px; border: 1px solid rgba(74,222,128,.6);
-    border-radius: 999px; background: rgba(9,9,11,.94); color: #4ade80;
-    box-shadow: 0 5px 20px rgba(0,0,0,.35); text-decoration: none;
-    font: 600 13px/1 system-ui,-apple-system,sans-serif;
-  }
-  @media (max-width: 700px) {
-    .jp-Notebook { padding: 12px 8px 78px !important; }
-    .jp-Cell { margin-left: 0 !important; margin-right: 0 !important; }
-    .jp-RenderedHTMLCommon { padding-left: 8px !important; padding-right: 8px !important; }
-    .jp-RenderedHTMLCommon table { display: block; overflow-x: auto;
-      -webkit-overflow-scrolling: touch; }
-    .jp-OutputArea-output { max-width: 100%; overflow-x: auto; }
-    .jp-CodeCell .jp-Cell-inputWrapper, .jp-CodeCell .jp-Cell-outputWrapper {
-      max-width: 100%; overflow-x: auto;
-    }
-  }
-</style>
-"""
-
-JUPYTERLITE_SHELL_CSS = r"""
-<style id="course-navigation">
-  .course-home {
-    position: fixed; left: max(12px, env(safe-area-inset-left));
-    bottom: max(12px, env(safe-area-inset-bottom)); z-index: 10000;
-    display: inline-flex; align-items: center; justify-content: center;
-    min-height: 44px; padding: 0 14px; border: 1px solid rgba(34,211,238,.65);
-    border-radius: 999px; background: rgba(9,9,11,.94); color: #22d3ee;
-    box-shadow: 0 5px 20px rgba(0,0,0,.35); text-decoration: none;
-    font: 600 13px/1 system-ui,-apple-system,sans-serif;
-  }
-  @media (max-width: 700px) {
-    .jp-NotebookPanel-toolbar { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    .jp-Notebook { padding: 12px 6px 76px !important; }
-    .jp-Cell { margin-left: 0 !important; margin-right: 0 !important; }
-    .jp-CodeCell .jp-Cell-inputWrapper, .jp-CodeCell .jp-Cell-outputWrapper,
-    .jp-OutputArea-output { max-width: 100%; overflow-x: auto; }
-    .jp-RenderedHTMLCommon table { display: block; max-width: 100%; overflow-x: auto;
-      -webkit-overflow-scrolling: touch; }
-    .cm-editor .cm-content { font-size: 16px; line-height: 1.45; }
-  }
-</style>
-"""
-
-
-def _skipped(path: Path) -> bool:
-    return any(part in SKIP_PARTS for part in path.relative_to(ROOT).parts)
+PUBLIC = 'https://github.com/AlvaroChacarra/algo_trading_intro'
+ASSETS = {'.css', '.js', '.png', '.jpg', '.svg', '.webp', '.woff2', '.woff', '.ttf'}
 
 
 def _safe_output(path: Path) -> Path:
     output = path.resolve()
-    if output in {ROOT, Path("/")}:
-        raise ValueError(f"unsafe output directory: {output}")
+    if output == ROOT or output in ROOT.parents or output == Path('/'):
+        raise ValueError(f'unsafe output directory: {output}')
+    if output.exists() and any(output.iterdir()) and not (output / '.course-pages').is_file():
+        raise ValueError('output no vacío y no creado por este builder')
     return output
 
 
-def _home_href(destination: Path, output: Path) -> str:
-    return os.path.relpath(output / "index.html", destination.parent).replace(os.sep, "/")
+def student_html(document: str) -> str:
+    """A folded instructor drawer is still public HTML: remove its payload."""
+    return re.sub(r'<script\b[^>]*\bid="guion-src"[^>]*>.*?</script>', '', document, flags=re.S)
 
 
-def _lab_href(source: Path, destination: Path, output: Path) -> str:
-    app = output / "jupyter" / "lab" / "index.html"
-    relative_app = os.path.relpath(app, destination.parent).replace(os.sep, "/")
-    notebook_path = quote(source.relative_to(ROOT).as_posix(), safe="/")
-    return f"{relative_app}?path={notebook_path}&mode=single-document"
+def _links(document: str, relative: Path, root: Path) -> str:
+    def replace(match):
+        quote, raw = match.group(1), html.unescape(match.group(2))
+        split = urlsplit(raw)
+        if split.scheme or split.netloc or not split.path:
+            return match.group(0)
+        target = (root / relative.parent / unquote(split.path)).resolve()
+        try:
+            target_rel = target.relative_to(root.resolve())
+        except ValueError:
+            raise ValueError(f'link escapes course root: {relative}: {raw}')
+        if target_rel.name == 'index.html' or ('presentation' in target_rel.parts and target.suffix == '.html'):
+            return match.group(0)
+        if target.suffix == '.html' and 'exercises' in target_rel.parts:
+            target_rel = target_rel.with_suffix('.ipynb')
+        destination = f'{PUBLIC}/blob/main/{target_rel.as_posix()}'
+        if target_rel.suffix == '.ipynb':
+            destination = f'{PUBLIC}/raw/refs/heads/main/{target_rel.as_posix()}'
+        return f'href={quote}{html.escape(destination, quote=True)}{quote}'
+    # Inline JavaScript contains template strings with href=; leave raw text intact.
+    parts = re.split(r'(<(?:script|style)\b[^>]*>.*?</(?:script|style)>)', document, flags=re.S | re.I)
+    return ''.join(part if index % 2 else re.sub(r'''href=(["'])(.*?)\1''', replace, part)
+                   for index, part in enumerate(parts))
 
 
-def augment_html(document: str, home_href: str | None,
-                 lab_href: str | None = None) -> str:
-    """Add publication-only mobile safeguards and a persistent course link."""
-    head_bits = MOBILE_CSS
-    if not re.search(r'<meta\s+[^>]*name=["\']viewport["\']', document, re.I):
-        head_bits = '<meta name="viewport" content="width=device-width, initial-scale=1">\n' + head_bits
-    document, count = re.subn(r"</head\s*>", head_bits + "</head>", document,
-                              count=1, flags=re.I)
-    if count != 1:
-        raise ValueError("HTML document has no closing </head>")
-    if home_href:
-        link = (f'<a class="course-home" href="{html.escape(home_href, quote=True)}" '
-                'aria-label="Volver al índice del curso">← Curso</a>')
-        document, count = re.subn(r"(<body\b[^>]*>)", r"\1\n" + link,
-                                  document, count=1, flags=re.I)
-        if count != 1:
-            raise ValueError("HTML document has no <body>")
-    if lab_href:
-        link = (f'<a class="course-lab" href="{html.escape(lab_href, quote=True)}" '
-                'target="_blank" rel="noopener" '
-                'aria-label="Editar y ejecutar este notebook en el navegador">▶ Ejecutar</a>')
-        document, count = re.subn(r"(<body\b[^>]*>)", r"\1\n" + link,
-                                  document, count=1, flags=re.I)
-        if count != 1:
-            raise ValueError("HTML document has no <body>")
-    return document
-
-
-def augment_jupyterlite_shell(document: str, home_href: str) -> str:
-    """Add a course return link without disturbing JupyterLab's own styles."""
-    document = re.sub(
-        r"<title>.*?</title>",
-        "<title>Algo Trading · Laboratorio</title>",
-        document,
-        count=1,
-        flags=re.I | re.S,
-    )
-    document, count = re.subn(r"</head\s*>", JUPYTERLITE_SHELL_CSS + "</head>",
-                              document, count=1, flags=re.I)
-    if count != 1:
-        raise ValueError("JupyterLite shell has no closing </head>")
-    link = (f'<a class="course-home" href="{html.escape(home_href, quote=True)}" '
-            'aria-label="Volver al índice del curso">← Curso</a>')
-    document, count = re.subn(r"(<body\b[^>]*>)", r"\1\n" + link,
-                              document, count=1, flags=re.I)
-    if count != 1:
-        raise ValueError("JupyterLite shell has no <body>")
-    return document
-
-
-def _copy_html_and_assets(output: Path) -> list[Path]:
-    copied_html: list[Path] = []
-    for source in ROOT.rglob("*"):
-        if not source.is_file() or _skipped(source):
-            continue
-        relative = source.relative_to(ROOT)
-        if "framework" in relative.parts:
-            continue
-        if relative.match("15-final-exam/examen_*.html"):
-            continue  # never publish the generated answer key
-        destination = output / relative
-        if source.suffix.lower() == ".html":
-            destination.parent.mkdir(parents=True, exist_ok=True)
-            home = None if relative == Path("index.html") else _home_href(destination, output)
-            destination.write_text(augment_html(source.read_text(encoding="utf-8"), home),
-                                   encoding="utf-8")
-            copied_html.append(destination)
-        elif source.suffix.lower() in ASSET_SUFFIXES:
-            destination.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(source, destination)
-    return copied_html
-
-
-def _copy_local_html_targets(output: Path, html_files: list[Path]) -> None:
-    """Keep non-HTML files explicitly linked by a published HTML page."""
-    pattern = re.compile(r'(?:href|src)=["\']([^"\']+)["\']', re.I)
-    for published in html_files:
-        for raw in pattern.findall(published.read_text(encoding="utf-8")):
-            split = urlsplit(raw)
-            if split.scheme or split.netloc or raw.startswith(("#", "data:")):
-                continue
-            target = (published.parent / unquote(split.path)).resolve()
-            try:
-                relative = target.relative_to(output)
-            except ValueError:
-                continue
-            source = ROOT / relative
-            if source.is_file() and not target.exists():
-                target.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copy2(source, target)
-
-
-def _convert_notebooks(output: Path) -> list[Path]:
-    exporter = HTMLExporter(template_name="lab")
-    exporter.exclude_input_prompt = True
-    exporter.exclude_output_prompt = True
-    converted: list[Path] = []
-    for source in sorted(ROOT.rglob("*.ipynb")):
-        if _skipped(source) or "framework" in source.relative_to(ROOT).parts:
-            continue
-        relative = source.relative_to(ROOT).with_suffix(".html")
-        destination = output / relative
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", MissingIDFieldWarning)
-            notebook = nbformat.read(source, as_version=4)
-            _, notebook = normalize(notebook)
-        rendered, resources = exporter.from_notebook_node(
-            notebook, resources={"metadata": {"name": source.stem}}
-        )
-        destination.write_text(
-            augment_html(
-                rendered,
-                _home_href(destination, output),
-                _lab_href(source, destination, output),
-            ),
-            encoding="utf-8",
-        )
-        for name, payload in resources.get("outputs", {}).items():
-            asset = destination.parent / name
-            asset.parent.mkdir(parents=True, exist_ok=True)
-            asset.write_bytes(payload)
-        converted.append(destination)
-    return converted
-
-
-def _notebook_sources() -> list[Path]:
-    return [
-        source for source in sorted(ROOT.rglob("*.ipynb"))
-        if not _skipped(source) and "framework" not in source.relative_to(ROOT).parts
-    ]
-
-
-def _stage_lab_contents(contents: Path) -> tuple[int, int]:
-    """Stage notebooks plus the local modules/data they need at runtime."""
-    notebooks = _notebook_sources()
-    roots = {source.parent for source in notebooks}
-    roots.update(
-        data_dir for source in notebooks
-        if (data_dir := source.parent.parent / "data").is_dir()
-    )
-    converted_shell_cells = 0
-    for root in sorted(roots):
-        for source in sorted(root.rglob("*")):
-            if (not source.is_file() or _skipped(source)
-                    or source.suffix.lower() not in LAB_CONTENT_SUFFIXES):
-                continue
-            destination = contents / source.relative_to(ROOT)
-            destination.parent.mkdir(parents=True, exist_ok=True)
-            if source.suffix.lower() != ".ipynb":
-                shutil.copy2(source, destination)
-                continue
-
-            # JupyterLite has no OS subprocess. `%run file.py` preserves the
-            # pedagogical intent while keeping repository notebooks untouched.
-            notebook = json.loads(source.read_text(encoding="utf-8"))
-            for cell in notebook.get("cells", []):
-                if cell.get("cell_type") != "code":
-                    continue
-                original = cell.get("source", [])
-                text = original if isinstance(original, str) else "".join(original)
-                text, count = re.subn(r"(?m)^!python\s+([^\s]+\.py)\s*$", r"%run \1", text)
-                if count:
-                    converted_shell_cells += count
-                    cell["source"] = text if isinstance(original, str) else text.splitlines(True)
-            destination.write_text(json.dumps(notebook, ensure_ascii=False, indent=1),
-                                   encoding="utf-8")
-    return len(notebooks), converted_shell_cells
-
-
-def _build_jupyterlite(output: Path) -> tuple[int, int]:
-    """Build the editable browser lab as a Pages-only publication artifact."""
-    with tempfile.TemporaryDirectory(prefix="algo-trading-jupyterlite-") as temporary:
-        lite_dir = Path(temporary)
-        contents = lite_dir / "files"
-        notebook_count, converted_shell_cells = _stage_lab_contents(contents)
-        config = {
-            "jupyter-lite-schema-version": 0,
-            "jupyter-config-data": {
-                "appName": "Algo Trading · Laboratorio",
-                "showLoadingIndicator": True,
-            },
-        }
-        (lite_dir / "jupyter-lite.json").write_text(
-            json.dumps(config, ensure_ascii=False, indent=2), encoding="utf-8"
-        )
-        subprocess.run(
-            [
-                sys.executable, "-m", "jupyter", "lite", "build",
-                "--lite-dir", str(lite_dir),
-                "--output-dir", str(output / "jupyter"),
-                "--apps", "lab",
-                "--no-sourcemaps",
-                "--no-unused-shared-packages",
-            ],
-            cwd=lite_dir,
-            check=True,
-        )
-
-    shell = output / "jupyter" / "lab" / "index.html"
-    shell.write_text(
-        augment_jupyterlite_shell(
-            shell.read_text(encoding="utf-8"),
-            os.path.relpath(output / "index.html", shell.parent).replace(os.sep, "/"),
-        ),
-        encoding="utf-8",
-    )
-    return notebook_count, converted_shell_cells
-
-
-def build(output: Path) -> tuple[int, int, int]:
+def build(output: Path) -> int:
     output = _safe_output(output)
     if output.exists():
         shutil.rmtree(output)
     output.mkdir(parents=True)
-    html_files = _copy_html_and_assets(output)
-    _copy_local_html_targets(output, html_files)
-    notebooks = _convert_notebooks(output)
-    lab_notebooks, converted_shell_cells = _build_jupyterlite(output)
-    if lab_notebooks != len(notebooks):
-        raise RuntimeError(
-            f"JupyterLite staged {lab_notebooks} notebooks; nbconvert rendered {len(notebooks)}"
-        )
-    (output / ".nojekyll").touch()
-    return len(html_files), len(notebooks), converted_shell_cells
+    (output / '.course-pages').touch()
+    sources = [ROOT / 'index.html'] + sorted(ROOT.glob('[0-9][0-9]-*/presentation/*.html'))
+    for source in sources:
+        relative = source.relative_to(ROOT)
+        destination = output / relative
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        document = _links(student_html(source.read_text(encoding='utf-8')), relative, ROOT)
+        if relative != Path('index.html') and 'class="course-home"' not in document:
+            home = os.path.relpath(output / 'index.html', destination.parent).replace(os.sep, '/')
+            document = document.replace('</body>', f'<a class="course-home" href="{home}">← Curso</a></body>')
+        destination.write_text(document, encoding='utf-8')
+        for asset in source.parent.iterdir():
+            if asset.is_file() and asset.suffix in ASSETS:
+                shutil.copy2(asset, destination.parent / asset.name)
+    if (ROOT / '_publication.json').is_file():
+        shutil.copy2(ROOT / '_publication.json', output / '_publication.json')
+    (output / '.nojekyll').touch()
+    return len(sources)
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--output", type=Path, default=ROOT / "_site")
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--output', type=Path, default=ROOT / '_site')
     args = parser.parse_args()
-    html_count, notebook_count, converted_shell_cells = build(args.output)
-    print(
-        f"Pages site ready: {html_count} source HTML + {notebook_count} notebooks "
-        f"+ JupyterLite ({converted_shell_cells} shell cells adapted)"
-    )
-
-
-if __name__ == "__main__":
-    main()
+    print(f'Pages: {build(args.output)} index/presentation HTML files')

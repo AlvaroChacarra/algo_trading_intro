@@ -1,0 +1,4 @@
+# The course engine itself uses the standard library.
+# Python 3.11 is the tested classroom environment.
+notebook>=7,<8
+ipykernel>=6.20,<8
