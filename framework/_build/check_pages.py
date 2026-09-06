@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import re
 from urllib.parse import unquote, urlsplit
+from build_pages import has_instructor_payload
 
 
 class Links(HTMLParser):
@@ -51,8 +52,11 @@ def check(site, base_path='/algo_trading_intro/'):
         text = path.read_text(encoding='utf-8')
         if 'name="viewport"' not in text and "name='viewport'" not in text:
             failures.append(f'missing viewport: {rel}')
-        if re.search(r'<script\b[^>]*id="guion-src"', text):
-            failures.append(f'instructor payload: {rel}')
+        try:
+            if has_instructor_payload(text):
+                failures.append(f'instructor payload: {rel}')
+        except ValueError as exc:
+            failures.append(f'instructor payload: {rel}: {exc}')
         parser = Links()
         parser.feed(text)
         for url in parser.urls:
@@ -70,6 +74,11 @@ def check(site, base_path='/algo_trading_intro/'):
         expected = {item['id'] for item in released}
         if actual != expected:
             failures.append(f'index lessons {actual} != release {expected}')
+        released_paths = {item['path'] for item in released}
+        actual_paths = {path.name for path in site.iterdir()
+                        if path.is_dir() and re.match(r'^\d{2}-', path.name)}
+        if actual_paths != released_paths:
+            failures.append(f'presentation lessons {actual_paths} != release {released_paths}')
         for item in released:
             if not list((site / item['path'] / 'presentation').glob('*.html')):
                 failures.append(f'missing released presentation: {item["id"]}')

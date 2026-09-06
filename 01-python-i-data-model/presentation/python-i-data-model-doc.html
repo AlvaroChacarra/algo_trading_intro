@@ -595,6 +595,34 @@
   a{color:#0e7490;text-decoration:none}
 }
 /* Shared scene renderer for L1-L14. The manifest owns route, stage and layout. */
+/* Counts of widgets/"~40 min" are not the learner's workload contract. The
+   course index owns the explicit reading/notebook/project breakdown. */
+body.lr-has-contract .hero .meta{display:none}
+.lr-support-open{display:block;width:max-content;max-width:100%;margin:5px 0 9px;
+  padding:6px 11px;min-height:36px;border:1px solid var(--line);border-radius:8px;
+  background:var(--panel);color:var(--accent);font:500 .75rem var(--mono);cursor:pointer}
+.lr-support-open:focus-visible,#lr-support-dialog :is(button,summary):focus-visible{
+  outline:2px solid var(--accent);outline-offset:3px}
+#lr-support-dialog{inset:0;width:min(760px,calc(100vw - 28px));max-height:85dvh;
+  margin:auto;padding:22px;border:1px solid #52525b;border-radius:14px;
+  background:#111115;color:var(--text);box-shadow:0 25px 100px #0009;overflow:auto}
+#lr-support-dialog::backdrop{background:rgba(0,0,0,.72)}
+.lr-support-head{position:sticky;top:0;z-index:1;background:#111115;padding-bottom:12px;
+  display:flex;align-items:start;gap:18px;justify-content:space-between}
+.lr-support-head h2{font-size:1.25rem;line-height:1.35;margin:0;max-width:40ch}
+.lr-support-head button{flex:none;min-height:44px;padding:8px 12px;border:1px solid var(--line);
+  border-radius:8px;background:var(--panel);color:var(--text);cursor:pointer}
+.lr-support-intro,.lr-support-card{font-size:.95rem;line-height:1.6}
+.lr-support-intro{color:var(--muted)}
+.lr-support-card{border:1px solid var(--line);border-radius:9px;padding:12px 16px;margin:12px 0}
+.lr-support-card summary{font-weight:600;cursor:pointer;min-height:30px;color:var(--accent)}
+.lr-support-origin{font-size:.78rem;color:var(--muted)}
+.lr-support-card dt{font-weight:600;margin-top:12px}.lr-support-card dd{margin:3px 0 0;color:var(--muted)}
+.lr-support-card pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:.82rem;line-height:1.6;
+  padding:12px;background:#09090b;border-radius:6px}
+@media(max-width:520px){#lr-support-dialog{padding:15px}.lr-support-head h2{font-size:1.05rem}
+  .lr-support-open{min-height:44px}.lr-support-card{padding:10px}}
+@media print{.lr-support-open,#lr-support-dialog{display:none!important}}
 .lr-sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;
   margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;
   border:0!important}
@@ -738,6 +766,9 @@
 }
 
 @media(max-width:900px){
+  body.lr-has-contract :is(p,li,.note,.box,.code-head){overflow-wrap:anywhere}
+  body.lr-has-contract .code-head{flex-wrap:wrap;gap:5px}
+  body.lr-has-contract .cta>*{min-width:0}
   #lr-nav,#lr-controls,.lr-scene-badge{display:none!important}
   body.lr-has-contract{padding-left:0;max-width:100%;overflow-x:hidden}
   #lr-mobile-toolbar{position:sticky;top:0;z-index:58;display:flex;align-items:center;gap:8px;
@@ -765,6 +796,13 @@
   #lr-nav,#lr-controls,#lr-mobile-toolbar,.lr-scene-badge,#lr-teacher-drawer{display:none!important}
   body.lr-has-contract{padding:0!important}
 }
+
+
+.construction-panel {margin:20px 0;padding:18px 22px;border:1px solid var(--line);border-radius:12px;background:var(--panel);font-size:1rem;line-height:1.65;overflow-wrap:anywhere;}
+.construction-panel summary {cursor:pointer;font-weight:700;color:var(--accent);}
+.construction-panel p,.construction-panel ol,.construction-panel ul {max-width:85ch;}
+.construction-panel li {margin:.6em 0;}
+.construction-panel code {white-space:normal;overflow-wrap:anywhere;}
 </style>
 </head>
 <body data-lesson="01">
@@ -1345,16 +1383,15 @@
       Abre <code>01_build_exercises.ipynb</code> y monta el algoritmo pieza a pieza, con
       validadores.</div>
       <div class="box"><span class="tag">Y después, al gimnasio</span>
-      <code>01_auxiliary.ipynb</code> — 31 drills: números, strings, listas, dicts,
-      bucles y decisiones.</div>
+      <code>01_auxiliary.ipynb</code> — variantes OPTIONAL de la misma pieza. La preparación requerida y la construcción están en el principal.</div>
     </div>
-  </div>
-</section>
+  <details class="construction-panel" id="construction-guide"><summary>Cómo construyes esta pieza en tu sistema</summary><p><strong>Partes de:</strong> Partimos de una quote de un único instrumento: bid es el precio disponible para vender y ask el precio disponible para comprar. En snapshot.py ya están nombrados bid y ask; todavía no hay funciones ni ejecución de órdenes.</p><p><strong>Problema:</strong> Convertir esos dos datos en dos lecturas distintas y comprobables: cuánto separa ambos lados y dónde está su punto medio. El sistema necesita conservar los números, no solo imprimir una frase con ellos.</p><h3>Decisiones de diseño</h3><ol><li>Lee primero bid y ask y conserva su unidad: USD por unidad del instrumento. Una resta de precios sigue siendo un precio; no es un porcentaje ni el coste total de una orden de cualquier tamaño.</li><li>Asigna a spread la distancia desde bid hasta ask. El orden de la resta importa: para una quote normal, el resultado es no negativo; invertir la resta cambia el significado.</li><li>Asigna a mid el promedio de los dos precios. Agrupa la suma antes de dividir para que ambos lados tengan el mismo peso.</li><li>Calcula ambos derivados después de los datos de entrada. Son variables calculadas una vez al ejecutar el archivo: cambiar bid más tarde no recalcula automáticamente spread ni mid.</li></ol><p><strong>Predice y contrasta:</strong> Con bid=99 y ask=101, la distancia es 101−99=2 USD por unidad y el promedio es (99+101)/2=100 USD por unidad. Por tanto snapshot.py debe dejar spread=2 y mid=100. Si repetimos el cálculo para bid=102 y ask=106, esperamos spread=4 y mid=104. Comprar una unidad a 101 y venderla inmediatamente a 99 perdería 2 antes de costes; el mid 100 por sí solo no es un precio garantizado de ejecución.</p><p><strong>Del ejemplo a tu código:</strong> B01–B02 nombran una quote y calculan sus derivados; B07 los usa para razonar una decisión. El proyecto conserva exactamente ese cálculo en snapshot.py, con precios pequeños para verificarlo a mano. Sus targets spread y mid son variables asignadas, no funciones; las listas, órdenes y decisiones practicadas en el principal aportan contexto sin cambiar esta entrega.</p><h3>Tu construcción principal</h3><p>Completa estos cuerpos en <code>student_project/exchange/</code>; el resto está proporcionado.</p><ul><li><code>snapshot.py:spread</code>: En snapshot.py localiza bid y ask y completa spread con la distancia entre ambos. Predice su signo y valor para 99/101 antes de ejecutar; después cambia ambos datos y vuelve a ejecutar para comprobar que la fórmula depende de ellos. <span>Practica L01-B01, L01-B02.</span></li><li><code>snapshot.py:mid</code>: Completa mid usando ambos precios con igual peso. Comprueba que para 99/101 queda a una unidad de cada extremo y explica por qué leer mid no demuestra que puedas comprar o vender a ese precio. <span>Practica L01-B02, L01-B07.</span></li></ul><p>Comprueba tus archivos con <code>python check_project.py 1</code> desde la raíz de tu carpeta de estudio.</p><p><strong>Lo siguiente reutiliza:</strong> L2 seleccionará los mejores precios entre varias órdenes. L3 aplicará estas mismas fórmulas al par seleccionado, en vez de usar una quote fija.</p></details></div></section>
 
 <footer>L1 · De texto a máquina — Algo Trading ICAI 2026 · documento interactivo</footer>
 
 
-<script type="application/json" id="pedagogy-contract">{"lesson":1,"status":"contract-strict","title":"Python I — Dato, cálculo y decisión","delivery":"lesson","source_path":"framework/_build/docs/01_body.html","requires":{"concepts":[],"apis":[],"notation":[]},"requirement_routes":{"concepts":{},"apis":{},"notation":{}},"introduces":{"concepts":[{"id":"python.execution_model","importance":"major","route":"LIVE"},{"id":"python.variables","importance":"major","route":"LIVE"},{"id":"python.collections","importance":"major","route":"LIVE"},{"id":"python.list","importance":"major","route":"LIVE"},{"id":"python.dict","importance":"major","route":"LIVE"},{"id":"python.fstring","importance":"supporting","route":"REQUIRED"},{"id":"python.dict_get","importance":"supporting","route":"REQUIRED"},{"id":"python.control_flow","importance":"major","route":"LIVE"},{"id":"market.order_record","importance":"supporting","route":"LIVE"},{"id":"microstructure.spread","importance":"major","route":"LIVE"},{"id":"microstructure.mid","importance":"major","route":"LIVE"}],"apis":[],"notation":["notation.spread","notation.mid"]},"introduction_routes":{"apis":{},"notation":{"notation.spread":"LIVE","notation.mid":"LIVE"}},"recalls":[],"api_surface":[],"routes":{"LIVE":["l01-challenge","l01-execution","l01-variables","l01-loops","l01-order-data","l01-decision"],"REQUIRED":["l01-errors","l01-recap"],"OPTIONAL":[]},"objectives":[{"id":"l01-explain-execution","route":"LIVE","concepts":["python.execution_model"],"apis":[],"notation":[]},{"id":"l01-model-market-data","route":"LIVE","concepts":["python.variables","python.list","python.dict","market.order_record"],"apis":[],"notation":["notation.spread","notation.mid"]},{"id":"l01-turn-data-into-decision","route":"LIVE","concepts":["python.control_flow","microstructure.spread","microstructure.mid"],"apis":[],"notation":[]}],"load":{"live_presentation_minutes":20,"guided_minutes":20,"required_autonomous_minutes":45,"optional_minutes":62,"overflow_policy":"explicit-route-plan","required_project_minutes":5},"scenes":[{"id":"l01-challenge","dom_id":"s0","type":"hero-challenge","route":"LIVE","layout":"focus","concepts":["market.order_record"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l01-execution","dom_id":"s1","type":"concept-simulator","route":"LIVE","layout":"split-42-58","concepts":["python.execution_model"],"duration_minutes":5,"stages":[{"id":"source","route":"LIVE","dom_stage":0},{"id":"tokens","route":"LIVE","dom_stage":1},{"id":"ast","route":"LIVE","dom_stage":2},{"id":"bytecode","route":"LIVE","dom_stage":3},{"id":"vm","route":"LIVE","dom_stage":4},{"id":"machine-code","route":"OPTIONAL","dom_stage":5}]},{"id":"l01-variables","dom_id":"s2","type":"code-state","route":"LIVE","layout":"split-50-50","concepts":["python.variables"],"duration_minutes":3,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l01-loops","dom_id":"s3","type":"code-state","route":"LIVE","layout":"split-50-50","concepts":["python.list","python.control_flow"],"duration_minutes":3,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l01-order-data","dom_id":"s4","type":"code-state","route":"LIVE","layout":"split-50-50","concepts":["python.dict","market.order_record"],"duration_minutes":3,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l01-decision","dom_id":"s5","type":"guided-exercise","route":"LIVE","layout":"split-50-50","concepts":["microstructure.spread","microstructure.mid","python.control_flow"],"duration_minutes":4,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l01-errors","dom_id":"s6","type":"guided-exercise","route":"REQUIRED","layout":"focus","concepts":["python.execution_model"],"duration_minutes":10,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l01-recap","dom_id":"s7","type":"diagnostic-quiz","route":"REQUIRED","layout":"focus","concepts":["python.variables","python.collections","python.control_flow"],"duration_minutes":10,"stages":[{"id":"main","route":"REQUIRED"}]}],"bridge":{"target_lesson":2,"known":{"concepts":["python.variables","python.collections","python.control_flow"],"apis":[],"notation":["notation.spread","notation.mid"]},"limitation":"Un segundo símbolo duplica datos y cálculos.","need":"Las funciones y un único book compartido convierten la repetición en recetas reutilizables."},"api_transitions":[],"package_checks":[],"used_later":{"concepts":["microstructure.mid","microstructure.spread","python.collections","python.control_flow","python.dict_get","python.fstring","python.variables"],"apis":[],"notation":["notation.mid","notation.spread"]}}</script>
+<script type="application/json" id="pedagogy-contract">{"lesson":1,"status":"contract-strict","title":"Python I — Dato, cálculo y decisión","delivery":"lesson","source_path":"framework/_build/docs/01_body.html","requires":{"concepts":[],"apis":[],"notation":[]},"requirement_routes":{"concepts":{},"apis":{},"notation":{}},"introduces":{"concepts":[{"id":"python.execution_model","importance":"major","route":"LIVE"},{"id":"python.variables","importance":"major","route":"LIVE"},{"id":"python.collections","importance":"major","route":"LIVE"},{"id":"python.list","importance":"major","route":"LIVE"},{"id":"python.dict","importance":"major","route":"LIVE"},{"id":"python.fstring","importance":"supporting","route":"REQUIRED"},{"id":"python.dict_get","importance":"supporting","route":"REQUIRED"},{"id":"python.control_flow","importance":"major","route":"LIVE"},{"id":"market.order_record","importance":"supporting","route":"LIVE"},{"id":"microstructure.spread","importance":"major","route":"LIVE"},{"id":"microstructure.mid","importance":"major","route":"LIVE"}],"apis":[],"notation":["notation.spread","notation.mid"]},"introduction_routes":{"apis":{},"notation":{"notation.spread":"LIVE","notation.mid":"LIVE"}},"recalls":[],"api_surface":[],"routes":{"LIVE":["l01-challenge","l01-execution","l01-variables","l01-loops","l01-order-data","l01-decision"],"REQUIRED":["l01-errors","l01-recap"],"OPTIONAL":[]},"objectives":[{"id":"l01-explain-execution","route":"LIVE","concepts":["python.execution_model"],"apis":[],"notation":[]},{"id":"l01-model-market-data","route":"LIVE","concepts":["python.variables","python.list","python.dict","market.order_record"],"apis":[],"notation":["notation.spread","notation.mid"]},{"id":"l01-turn-data-into-decision","route":"LIVE","concepts":["python.control_flow","microstructure.spread","microstructure.mid"],"apis":[],"notation":[]}],"load":{"live_presentation_minutes":20,"guided_minutes":20,"required_autonomous_minutes":39,"optional_minutes":60,"overflow_policy":"explicit-route-plan","required_project_minutes":5},"scenes":[{"id":"l01-challenge","dom_id":"s0","type":"hero-challenge","route":"LIVE","layout":"focus","concepts":["market.order_record"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l01-execution","dom_id":"s1","type":"concept-simulator","route":"LIVE","layout":"split-42-58","concepts":["python.execution_model"],"duration_minutes":5,"stages":[{"id":"source","route":"LIVE","dom_stage":0},{"id":"tokens","route":"LIVE","dom_stage":1},{"id":"ast","route":"LIVE","dom_stage":2},{"id":"bytecode","route":"LIVE","dom_stage":3},{"id":"vm","route":"LIVE","dom_stage":4},{"id":"machine-code","route":"OPTIONAL","duration_minutes":3,"dom_stage":5}]},{"id":"l01-variables","dom_id":"s2","type":"code-state","route":"LIVE","layout":"split-50-50","concepts":["python.variables"],"duration_minutes":3,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l01-loops","dom_id":"s3","type":"code-state","route":"LIVE","layout":"split-50-50","concepts":["python.list","python.control_flow"],"duration_minutes":3,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l01-order-data","dom_id":"s4","type":"code-state","route":"LIVE","layout":"split-50-50","concepts":["python.dict","market.order_record"],"duration_minutes":3,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l01-decision","dom_id":"s5","type":"guided-exercise","route":"LIVE","layout":"split-50-50","concepts":["microstructure.spread","microstructure.mid","python.control_flow"],"duration_minutes":4,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l01-errors","dom_id":"s6","type":"guided-exercise","route":"REQUIRED","layout":"focus","concepts":["python.execution_model"],"duration_minutes":10,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l01-recap","dom_id":"s7","type":"diagnostic-quiz","route":"REQUIRED","layout":"focus","concepts":["python.variables","python.collections","python.control_flow"],"duration_minutes":10,"stages":[{"id":"main","route":"REQUIRED"}]}],"bridge":{"target_lesson":2,"known":{"concepts":["python.variables","python.collections","python.control_flow"],"apis":[],"notation":["notation.spread","notation.mid"]},"limitation":"Un segundo símbolo duplica datos y cálculos.","need":"Un libro por instrumento y funciones reutilizables evitan duplicar cálculos sin mezclar precios de símbolos distintos."},"api_transitions":[],"package_checks":[],"used_later":{"concepts":["microstructure.mid","microstructure.spread","python.collections","python.control_flow","python.dict_get","python.fstring","python.variables"],"apis":[],"notation":["notation.mid","notation.spread"]}}</script>
+<script type="application/json" id="learning-support">{"lesson": 1, "cards": {"collections": {"title": "Listas, diccionarios y posiciones", "first_lesson": 1, "route": "LIVE", "why": "Una orden tiene varios campos; un libro contiene varias órdenes.", "inputs": "Lista: valores ordenados entre []; dict: pares clave:valor entre {}.", "outputs": "xs[0] devuelve el primer valor. order['size'] devuelve el campo size.", "mechanism": "Los índices empiezan en cero. append añade un elemento a la lista original; no devuelve una lista nueva.", "example": "sizes = [2, 3]\norder = {'side': 'buy', 'size': sizes[0]}\nprint(order['size'])  # 2"}, "errors": {"title": "Leer un error sin adivinar", "first_lesson": 1, "route": "LIVE", "why": "Localizar por qué una operación no puede continuar.", "inputs": "Un traceback: ruta, número de línea, tipo y mensaje del error.", "outputs": "La última línea explica el fallo; la línea de tu archivo indica dónde revisar.", "mechanism": "NameError: nombre no definido. KeyError: clave ausente. TypeError: operación incompatible. Corrige una causa y vuelve a ejecutar desde el inicio.", "example": "order = {'size': 2}\nprint(order['price'])  # KeyError: falta 'price'"}, "flow": {"title": "for, if y sangría", "first_lesson": 1, "route": "LIVE", "why": "Repetir una regla para cada dato y elegir qué rama ejecutar.", "inputs": "for recibe una colección; if una condición que será True o False.", "outputs": "Se ejecuta el bloque sangrado para cada elemento o cuando se cumple la condición.", "mechanism": "Los dos puntos abren un bloque. == compara; = asigna. La sangría decide qué líneas pertenecen al bloque.", "example": "for size in [0, 2]:\n    if size > 0:\n        print(size)  # sólo muestra 2"}, "values": {"title": "Variables, = y print", "first_lesson": 1, "route": "LIVE", "why": "Dar nombre a un dato para poder calcular y comprobar una decisión.", "inputs": "Un valor a la derecha de =; una expresión dentro de print(...).", "outputs": "= vincula un nombre al valor. print muestra texto, pero no guarda un resultado nuevo.", "mechanism": "Python ejecuta las líneas de arriba abajo. Un # inicia un comentario que no se ejecuta.", "example": "price = 100\nquantity = 2\nprint(price * quantity)  # muestra 200"}}, "scenes": {"s0": ["values"], "s1": ["values"], "s2": ["values"], "s3": ["collections", "flow"], "s4": ["collections"], "s5": ["flow"], "s6": ["errors"], "s7": ["values", "flow"]}}</script>
 <script>
 
 (function(){
@@ -1978,7 +2015,10 @@ const models=contract.scenes.map(rawScene=>{
     badge.className=`lr-scene-badge ${routeClass(sceneRoute)}`;
     const minutes=Number.isFinite(Number(rawScene.duration_minutes))
       ?`<span>${esc(rawScene.duration_minutes)} min</span>`:'';
-    badge.innerHTML=`<span>${esc(sceneRoute)}</span><span>${esc(rawScene.type||'scene')}</span>${minutes}`;
+    const audienceRoute={LIVE:'En clase',REQUIRED:'Consolidación',OPTIONAL:'Ampliación opcional'};
+    badge.innerHTML=isProfessor
+      ?`<span>${esc(sceneRoute)}</span><span>${esc(rawScene.type||'scene')}</span>${minutes}`
+      :`<span>${audienceRoute[sceneRoute]}</span>`;
     firstWrap.insertBefore(badge,firstWrap.firstChild);
   }
   return {...rawScene,route:sceneRoute,layout,element,stages,allSteps,allFigures};
@@ -2070,7 +2110,8 @@ models.forEach((scene,index)=>{
   const button=document.createElement('button');
   button.type='button';button.dataset.sceneIndex=String(index);
   button.className=routeClass(scene.route);
-  button.innerHTML=`<span>${esc(scene.route)}</span><b>${esc(scene.id.replace(/^l\d+-/,''))}</b>`;
+  const title=scene.element.querySelector('h1,h2')?.textContent.trim()||'Continuar';
+  button.innerHTML=`<span>${esc(scene.route)}</span><b>${esc(title)}</b>`;
   button.addEventListener('click',()=>{
     if(mode==='aula')goTo(index,0,false);
     else scene.element.scrollIntoView({behavior:reducedMotion()?'auto':'smooth',block:'start'});
@@ -2418,6 +2459,70 @@ window.LEARNING_RUNTIME={
 };
 
 mobileQuery.addEventListener?.('change',()=>location.reload());
+})();
+
+/* Contextual public help: no interpreter, hidden answers or new route state. */
+(function(){
+  'use strict';
+  const source=document.getElementById('learning-support');
+  if(!source)return;
+  const support=JSON.parse(source.textContent);
+  const esc=value=>String(value).replace(/[&<>"']/g,ch=>({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  })[ch]);
+  const dialog=document.createElement('dialog');
+  dialog.id='lr-support-dialog';
+  dialog.setAttribute('aria-labelledby','lr-support-title');
+  dialog.innerHTML='<div class="lr-support-head"><h2 id="lr-support-title">Entender este código</h2>'
+    +'<button type="button" aria-label="Cerrar ayuda">Cerrar ×</button></div>'
+    +'<p class="lr-support-intro">Consulta lo necesario y vuelve al mismo paso. Los ejemplos pequeños son para leer; ejecuta Python en local.</p>'
+    +'<div class="lr-support-content"></div>';
+  document.body.appendChild(dialog);
+  let opener=null;
+  dialog.querySelector('button').addEventListener('click',()=>dialog.close());
+  dialog.addEventListener('close',()=>{
+    opener?.setAttribute('aria-expanded','false');
+    opener?.focus();
+  });
+  // Native dialog traps focus and closes on Escape. Lesson shortcuts must not
+  // consume navigation keys while the learner is operating this help.
+  dialog.addEventListener('keydown',event=>event.stopPropagation());
+  const render=(key,index)=>{
+    const c=support.cards[key];
+    const origin=c.first_lesson<support.lesson
+      ?`Recordatorio de L${c.first_lesson}`:'Herramienta de esta lección';
+    const label=c.route==='OPTIONAL'?' · ampliación opcional':'';
+    return `<details class="lr-support-card" ${index===0?'open':''} data-support-card="${esc(key)}">`
+      +`<summary>${esc(c.title)}</summary><p class="lr-support-origin">${origin}${label}</p>`
+      +`<p>${esc(c.why)}</p><dl><dt>Entrada</dt><dd>${esc(c.inputs)}</dd>`
+      +`<dt>Salida y estado</dt><dd>${esc(c.outputs)}</dd>`
+      +`<dt>Qué hace por dentro</dt><dd>${esc(c.mechanism)}</dd></dl>`
+      +`<pre><code>${esc(c.example)}</code></pre></details>`;
+  };
+  Object.entries(support.scenes).forEach(([domId,keys])=>{
+    const scene=document.getElementById(domId);
+    if(!scene)return;
+    const wrap=scene.matches('.wrap')?scene:scene.querySelector(':scope > .wrap');
+    if(!wrap)return;
+    const button=document.createElement('button');
+    button.type='button';button.className='lr-support-open';
+    button.textContent='Entender este código';
+    button.setAttribute('aria-haspopup','dialog');
+    button.setAttribute('aria-expanded','false');
+    button.setAttribute('aria-controls',dialog.id);
+    button.addEventListener('click',()=>{
+      opener=button;
+      const heading=scene.querySelector('h1,h2')?.textContent.trim()||'este paso';
+      dialog.querySelector('#lr-support-title').textContent=heading;
+      dialog.querySelector('.lr-support-content').innerHTML=keys.map(render).join('');
+      button.setAttribute('aria-expanded','true');
+      dialog.showModal();
+      dialog.querySelector('.lr-support-head button').focus();
+    });
+    const eyebrow=wrap.querySelector(':scope > .eyebrow');
+    if(eyebrow)eyebrow.insertAdjacentElement('afterend',button);
+    else wrap.insertBefore(button,wrap.firstChild);
+  });
 })();
 
 </script>

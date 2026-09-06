@@ -26,6 +26,7 @@ def _run_cells(nb: dict, path: str, ns: dict) -> tuple[int, int, int, list[str]]
     passed = failed = untouched = 0
     details = []
     title = '?'
+    exercise_id = None
     pending = False
     answer_error = None
     for number, cell in enumerate(nb.get('cells', []), 1):
@@ -39,13 +40,15 @@ def _run_cells(nb: dict, path: str, ns: dict) -> tuple[int, int, int, list[str]]
         if cell.get('cell_type') != 'code' or _is_magic(src):
             continue
         metadata = cell.get('metadata', {}).get('course', {})
+        exercise_id = metadata.get('exercise_id', exercise_id)
+        label = f'{exercise_id} · {title}' if exercise_id else title
         is_validator = metadata.get('role') == 'validator' or '# ✅' in src
         if metadata.get('role') == 'answer':
             pending = hashlib.sha256(src.encode()).hexdigest() == metadata.get('starter_sha256')
             answer_error = None
         if is_validator and answer_error:
             failed += 1
-            details.append(f'{title}: ERROR DE EJECUCIÓN: {answer_error}')
+            details.append(f'{label}: ERROR DE EJECUCIÓN: {answer_error}')
             continue
         if is_validator and pending:
             untouched += 1
@@ -55,7 +58,7 @@ def _run_cells(nb: dict, path: str, ns: dict) -> tuple[int, int, int, list[str]]
                 exec(compile(src, f'{path}:celda {number}', 'exec'), ns)
             if is_validator:
                 passed += 1
-        except Exception as exc:
+        except (Exception, SystemExit) as exc:
             message = f'celda {number}: {type(exc).__name__}: {exc}'
             if is_validator:
                 if isinstance(exc, AssertionError) and str(exc).startswith('⏸'):
@@ -63,24 +66,31 @@ def _run_cells(nb: dict, path: str, ns: dict) -> tuple[int, int, int, list[str]]
                 else:
                     failed += 1
                     kind = 'RESPUESTA INCORRECTA' if isinstance(exc, AssertionError) else 'ERROR DE EJECUCIÓN'
-                    details.append(f'{title}: {kind}: {message}')
+                    details.append(f'{label}: {kind}: {message}')
             elif metadata.get('role') == 'answer':
                 answer_error = message
             else:
                 failed += 1
-                details.append(f'{title}: ERROR DE EJECUCIÓN: {message}')
+                details.append(f'{label}: ERROR DE EJECUCIÓN: {message}')
     return passed, failed, untouched, details
 
 
 def check_notebook(path: str) -> tuple[int, int, int, list[str]]:
     path = str(Path(path).resolve())
-    result = subprocess.run(
-        [sys.executable, str(Path(__file__).resolve()), '--worker', path],
-        cwd=Path(path).parent, text=True, capture_output=True, timeout=120,
-    )
+    try:
+        result = subprocess.run(
+            [sys.executable, str(Path(__file__).resolve()), '--worker', path],
+            cwd=Path(path).parent, text=True, capture_output=True, timeout=120,
+        )
+    except subprocess.TimeoutExpired:
+        return 0, 1, 0, [f'{Path(path).name}: ERROR DE EJECUCIÓN: tiempo máximo de 120 s agotado']
     if result.returncode:
-        raise RuntimeError(result.stderr or result.stdout)
-    passed, failed, untouched, details = json.loads(result.stdout)
+        message = result.stderr.strip() or result.stdout.strip() or f'proceso terminado con código {result.returncode}'
+        return 0, 1, 0, [f'{Path(path).name}: ERROR DE EJECUCIÓN: {message}']
+    try:
+        passed, failed, untouched, details = json.loads(result.stdout)
+    except (ValueError, TypeError):
+        return 0, 1, 0, [f'{Path(path).name}: ERROR DE EJECUCIÓN: el proceso no devolvió un resultado válido']
     return passed, failed, untouched, details
 
 

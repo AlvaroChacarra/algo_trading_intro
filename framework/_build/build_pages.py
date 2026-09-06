@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 import html
+from html.parser import HTMLParser
 import os
 from pathlib import Path
 import re
@@ -27,9 +28,73 @@ def _safe_output(path: Path) -> Path:
     return output
 
 
+class _RawTextSpans(HTMLParser):
+    """Locate real HTML raw-text elements without serializing their contents.
+
+    HTMLParser normalizes tag/attribute names and decodes attribute entities.
+    Offsets let us preserve every byte of student JavaScript, including template
+    strings that themselves contain HTML or references to ``guion-src``.
+    """
+    def __init__(self, document: str):
+        super().__init__(convert_charrefs=False)
+        self.document = document
+        self.lines = [0]
+        self.lines.extend(match.end() for match in re.finditer('\n', document))
+        self.active = None
+        self.spans = []
+
+    def absolute_offset(self):
+        line, column = self.getpos()
+        return self.lines[line - 1] + column
+
+    def handle_starttag(self, tag, attrs):
+        if tag in {'script', 'style'} and self.active is None:
+            teacher = tag == 'script' and any(
+                name == 'id' and value and value.casefold() == 'guion-src'
+                for name, value in attrs
+            )
+            self.active = (self.absolute_offset(), tag, teacher)
+
+    def handle_startendtag(self, tag, attrs):
+        # In HTML, <script .../> is NOT a self-closing script element.
+        self.handle_starttag(tag, attrs)
+        if tag in {'script', 'style'}:
+            self.set_cdata_mode(tag)
+
+    def handle_endtag(self, tag):
+        if self.active is not None and tag == self.active[1]:
+            start, _, teacher = self.active
+            end = self.document.find('>', self.absolute_offset()) + 1
+            self.spans.append((start, end, teacher))
+            self.active = None
+
+
+def _raw_text_spans(document: str):
+    parser = _RawTextSpans(document)
+    parser.feed(document)
+    parser.close()
+    if parser.active is not None:
+        start, _, teacher = parser.active
+        # An unterminated teacher payload is never a publishable document.
+        if teacher:
+            raise ValueError('unterminated instructor payload: guion-src')
+        parser.spans.append((start, len(document), False))
+    return parser.spans
+
+
+def has_instructor_payload(document: str) -> bool:
+    return any(teacher for _, _, teacher in _raw_text_spans(document))
+
+
 def student_html(document: str) -> str:
-    """A folded instructor drawer is still public HTML: remove its payload."""
-    return re.sub(r'<script\b[^>]*\bid="guion-src"[^>]*>.*?</script>', '', document, flags=re.S)
+    """Remove only instructor script spans, preserving student scripts exactly."""
+    parts, offset = [], 0
+    for start, end, teacher in _raw_text_spans(document):
+        if teacher:
+            parts.append(document[offset:start])
+            offset = end
+    parts.append(document[offset:])
+    return ''.join(parts)
 
 
 def _links(document: str, relative: Path, root: Path) -> str:
@@ -52,9 +117,13 @@ def _links(document: str, relative: Path, root: Path) -> str:
             destination = f'{PUBLIC}/raw/refs/heads/main/{target_rel.as_posix()}'
         return f'href={quote}{html.escape(destination, quote=True)}{quote}'
     # Inline JavaScript contains template strings with href=; leave raw text intact.
-    parts = re.split(r'(<(?:script|style)\b[^>]*>.*?</(?:script|style)>)', document, flags=re.S | re.I)
-    return ''.join(part if index % 2 else re.sub(r'''href=(["'])(.*?)\1''', replace, part)
-                   for index, part in enumerate(parts))
+    parts, offset = [], 0
+    for start, end, _ in _raw_text_spans(document):
+        parts.append(re.sub(r'''href=(["'])(.*?)\1''', replace, document[offset:start]))
+        parts.append(document[start:end])
+        offset = end
+    parts.append(re.sub(r'''href=(["'])(.*?)\1''', replace, document[offset:]))
+    return ''.join(parts)
 
 
 def build(output: Path) -> int:
