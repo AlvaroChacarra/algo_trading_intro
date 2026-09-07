@@ -42,7 +42,11 @@ def _run_cells(nb: dict, path: str, ns: dict) -> tuple[int, int, int, list[str]]
         metadata = cell.get('metadata', {}).get('course', {})
         exercise_id = metadata.get('exercise_id', exercise_id)
         label = f'{exercise_id} · {title}' if exercise_id else title
-        is_validator = metadata.get('role') == 'validator' or '# ✅' in src
+        is_project = metadata.get('role') == 'project_validator'
+        is_validator = metadata.get('role') in {'validator', 'project_validator'} or '# ✅' in src
+        if is_project:
+            pending = False
+            answer_error = None
         if metadata.get('role') == 'answer':
             pending = hashlib.sha256(src.encode()).hexdigest() == metadata.get('starter_sha256')
             answer_error = None

@@ -33,11 +33,17 @@ Abre 01-python-i-data-model/exercises/01_build_exercises.ipynb y selecciona el k
 
 La ruta debe apuntar al Python de mi-curso/.venv y el resultado debe ser 5. Si no coincide, selecciona el kernel registrado desde ese entorno antes de continuar.
 
-Resuelve una respuesta y ejecuta su comprobación. Las respuestas sin completar aparecen como pendientes en el comprobador de terminal:
+En L1–L6, abre el archivo enlazado en el principal, completa el hueco y
+**guárdalo**. Vuelve al notebook y ejecuta la comprobación con Shift+Enter.
+Comprueba tus archivos en un proceso nuevo; no necesitas reiniciar el kernel.
+En los auxiliares escribes y compruebas directamente en las celdas.
+
+También puedes comprobar desde la terminal:
 
     python check_my_work.py 1
 
-Desde L3 importarás tu módulo. Reinicia el kernel después de editar un archivo .py para no usar una versión antigua guardada en memoria. Cada cuaderno indica dónde se conserva su implementación.
+Si importas por tu cuenta un archivo `.py` en un notebook y luego lo modificas,
+reinicia el kernel para volver a cargarlo.
 
 ## 3. Recibe la siguiente lección
 
@@ -52,15 +58,16 @@ Los notebooks y datos de lecciones futuras aparecen cuando se publiquen. No nece
 ## Tu proyecto continúa entre clases
 
 La carpeta `student_project/exchange/` contiene tus archivos Python. Completa los
-huecos que indique el cierre de cada notebook y ejecuta desde la raíz de tu copia:
+huecos que indique el notebook principal y ejecuta desde la raíz de tu copia:
 
 ```bash
 python check_project.py 1
 ```
 
 Sustituye `1` por la clase alcanzada. El comando comprueba también las anteriores
-y muestra qué carpeta importa. `check_my_work.py` comprueba los miniejercicios del
-notebook; `check_project.py` comprueba la integración de tus archivos reales.
+y muestra qué carpeta importa. `check_my_work.py` ejecuta las comprobaciones del
+notebook (también el proyecto en L1–L6); `check_project.py` comprueba directamente
+la integración de tus archivos reales.
 
 Cada actualización añade módulos nuevos sin sobrescribir los existentes. Los
 archivos de `exercises/exchange/` son referencias para experimentar; el proyecto

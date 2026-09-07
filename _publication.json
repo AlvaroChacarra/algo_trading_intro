@@ -1,5 +1,5 @@
 {
-  "policy_sha256": "a986e62fbfcbb108a1ddda5ee75faf8aef217aee9e40a57f0684753be0e4f06c",
+  "policy_sha256": "eee79346e8c6854e69bba4332493bd037bfdf4f4002111eb27bfb8e9d156965b",
   "released_classes": [
     {
       "id": "01",
@@ -7,6 +7,6 @@
       "publish_at": "2026-09-05T08:45:00+02:00"
     }
   ],
-  "source_sha": "e606518091aff319742286f887090c0744b2e69c",
+  "source_sha": "068b99078c37cd4ba550b27bf32ca4b4c5f798ed",
   "version": 1
 }
