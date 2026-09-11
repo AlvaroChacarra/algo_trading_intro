@@ -5,6 +5,11 @@
       "id": "01",
       "path": "01-python-i-data-model",
       "publish_at": "2026-09-05T08:45:00+02:00"
+    },
+    {
+      "id": "02",
+      "path": "02-python-ii-functional-book",
+      "publish_at": "2026-09-11T08:45:00+02:00"
     }
   ],
   "source_sha": "068b99078c37cd4ba550b27bf32ca4b4c5f798ed",
