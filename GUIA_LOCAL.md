@@ -52,6 +52,8 @@ python mi_main.py
 
 El `.py` ejecuta el programa entero; sus funciones también pueden reutilizarse mediante `import`, que veremos en L3. Ejecutar sin errores no garantiza un cálculo correcto: compara también los números. La versión `.py` es una segunda forma de ejecutar el principal; el notebook ya cubre el ejercicio.
 
+**Para contrastar tu respuesta:** en L1–L3, `exercises/soluciones/` contiene los notebooks principal y auxiliar resueltos y un `main.py` resuelto. Puedes ejecutar sus celdas directamente; desde esa carpeta, `python main.py` ejecuta la solución del principal. Las plantillas de práctica siguen en `exercises/`.
+
 ## 3. Recibe material nuevo
 
 Guarda tus notebooks. Desde la carpeta `algo_trading_intro`, ejecuta:
