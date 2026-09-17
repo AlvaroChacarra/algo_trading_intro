@@ -1,8 +1,8 @@
-# Clase 2 — Python II — El libro funcional
+# Clase 3 — Python III — Módulos y errores
 
-1. [Presentación](presentation/python-ii-functional-book-doc.html): abre el HTML con doble clic, sin servidor.
-2. [Principal](exercises/02_build_exercises.ipynb): completa las celdas.
-3. [Auxiliares](exercises/02_auxiliary.ipynb): refuerzo requerido.
+1. [Presentación](presentation/python-iii-modules-doc.html): abre el HTML con doble clic, sin servidor.
+2. [Principal](exercises/03_build_exercises.ipynb): completa las celdas.
+3. [Auxiliares](exercises/03_auxiliary.ipynb): refuerzo requerido.
 4. [main.py](exercises/main.py): el mismo principal como programa Python.
 
 Guarda tus copias en `exercises`: `mi_principal.ipynb`, `mi_auxiliar.ipynb` y, si practicas el script, `mi_main.py`. Se conservan al actualizar con `git pull --ff-only`.

@@ -1,5 +1,5 @@
 {
-  "policy_sha256": "eee79346e8c6854e69bba4332493bd037bfdf4f4002111eb27bfb8e9d156965b",
+  "policy_sha256": "b22ee560b16b1e2b62a3e26401938b7c72c6d5b32851a8b73655db585c69c32b",
   "released_classes": [
     {
       "id": "01",
@@ -10,8 +10,13 @@
       "id": "02",
       "path": "02-python-ii-functional-book",
       "publish_at": "2026-09-11T08:45:00+02:00"
+    },
+    {
+      "id": "03",
+      "path": "03-python-iii-modules",
+      "publish_at": "2026-09-17T08:45:00+02:00"
     }
   ],
-  "source_sha": "068b99078c37cd4ba550b27bf32ca4b4c5f798ed",
+  "source_sha": "15892feb03bb1b6ac73ea47a1162ffc679310825",
   "version": 1
 }
