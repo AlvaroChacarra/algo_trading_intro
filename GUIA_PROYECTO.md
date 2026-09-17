@@ -34,4 +34,4 @@ L15 utiliza notebooks y programa para el repaso histórico. El examen oficial ac
 
 Guarda las copias personales junto a las plantillas y consérvalas al descargar material nuevo. Git es opcional. La preparación completa está en [la guía local](GUIA_LOCAL.md).
 
-Las soluciones de principales, auxiliares y capstone están en `exercises/solutions/` del source privado; esa carpeta no se distribuye.
+Las soluciones de principales, auxiliares y capstone están en `exercises/solutions/` de cada clase publicada; su README enlaza directamente los notebooks y el script resueltos.

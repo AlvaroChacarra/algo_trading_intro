@@ -14,4 +14,4 @@ Sesión estándar: unos 50 minutos —10 de test, 20 de presentación, 20 de pr�
 
 Datos sintéticos y experimentos docentes. El backtest de snapshots y el simulador de market making son entornos distintos. Las actividades de repaso de L15 son práctica histórica; el examen oficial acumulativo y sus respuestas permanecen en el source privado. Cada clase llega al repositorio público según su calendario.
 
-La autoría y las soluciones están en `algo_trading_intro_source`, privado. Una publicación controlada genera `algo_trading_intro` únicamente con las clases habilitadas por fecha y sus archivos autorizados. No se publican soluciones, validadores, exámenes ni fuentes internas.
+La autoría y las soluciones están en `algo_trading_intro_source`, privado. Una publicación controlada genera `algo_trading_intro` únicamente con las clases habilitadas por fecha y sus archivos autorizados. Cada clase publicada incluye sus soluciones en `exercises/solutions/`, enlazadas desde su README. Los validadores, exámenes y fuentes internas permanecen privados.

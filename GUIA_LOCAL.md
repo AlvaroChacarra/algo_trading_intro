@@ -52,7 +52,7 @@ python mi_main.py
 
 El `.py` ejecuta el programa entero mediante `main()`. Ejecutar sin errores no garantiza un cálculo correcto: compara también los números. El notebook ya cubre el ejercicio; el script permite repetirlo como programa.
 
-Desde las clases de objetos verás también `exercises/exchange/`: es una biblioteca proporcionada para los experimentos. Conserva esa carpeta junto a los notebooks; tus respuestas van en las celdas y en tu copia del script. Las soluciones docentes permanecen privadas.
+Desde las clases de objetos verás también `exercises/exchange/`: es una biblioteca proporcionada para los experimentos. Conserva esa carpeta junto a los notebooks; tus respuestas van en las celdas y en tu copia del script. Consulta las soluciones del principal y los auxiliares en `exercises/solutions/`, o ábrelas desde el README de la clase.
 
 En L14, el proyecto final tiene además `capstone.ipynb` y `capstone.py`: crea `mi_capstone.ipynb` y `mi_capstone.py` en la misma carpeta. Reserva los 90 minutos indicados en su `CAPSTONE.md`.
 

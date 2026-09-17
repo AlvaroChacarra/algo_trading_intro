@@ -26,12 +26,20 @@ async function inspectLayout(page, label) {
 
 async function checkDownloads(page, live) {
   const links = await page.locator('a[href]').evaluateAll(nodes => nodes.map(n => n.href));
-  const notebookLinks = [...new Set(links.filter(href => /\.ipynb(?:$|[?#])/.test(href)))];
+  const solutionFolders = links.filter(href => /\/exercises\/solutions$/.test(href));
+  const solutionLinks = solutionFolders.flatMap(href => {
+    const lesson = new URL(href).pathname.split('/main/')[1].split('/')[0];
+    const id = lesson.slice(0, 2);
+    const base = `https://github.com/AlvaroChacarra/algo_trading_intro/raw/refs/heads/main/${lesson}/exercises/solutions`;
+    return [`${base}/${id}_build_exercises.ipynb`, `${base}/${id}_auxiliary.ipynb`];
+  });
+  const notebookLinks = [...new Set([...links.filter(href => /\.ipynb(?:$|[?#])/.test(href)), ...solutionLinks])];
   for (const href of notebookLinks) {
     const url = new URL(href);
     const relative = decodeURIComponent(url.pathname.split('/main/')[1] || '');
-    assert(relative && !relative.split('/').some(part => ['..', 'solutions', 'soluciones'].includes(part)),
+    assert(relative && !relative.split('/').some(part => ['..', 'soluciones'].includes(part)),
       `unexpected notebook download: ${href}`);
+    const solved = /^\d{2}-[^/]+\/exercises\/solutions\/\d{2}_(build_exercises|auxiliary)\.ipynb$/.test(relative);
     let document;
     if (live) {
       const response = await page.request.get(href);
@@ -42,7 +50,7 @@ async function checkDownloads(page, live) {
     }
     assert.equal(document.nbformat, 4);
     for (const cell of document.cells) {
-      assert(!['solution', 'validator', 'hidden_validator'].includes(cell.metadata?.course?.role),
+      assert(!['validator', 'hidden_validator', ...(solved ? ['answer'] : ['solution'])].includes(cell.metadata?.course?.role),
         `private notebook role: ${href}`);
       if (cell.cell_type === 'code') {
         assert.equal(cell.execution_count, null);
