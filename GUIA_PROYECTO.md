@@ -1,28 +1,37 @@
-# Del notebook al paquete — desde L4
+# Del notebook al programa
 
-En L1–L3 ya has construido `spread`, `mid`, `best_prices` y `describe`. Desde L4 las clases añaden objetos y los reúnen en un paquete llamado `exchange`.
+En todas las clases empezamos investigando en Jupyter. Cada celda permite probar una idea, inspeccionar un dato y explicar un resultado. El principal y los auxiliares incluyen salidas visibles y resultados esperados para contrastar tus respuestas.
 
-## Preparación al comenzar L4
+## El mismo principal en Python
 
-Trabaja dentro del mismo repositorio que actualizas con `git pull`:
-
-1. Crea las carpetas `student_project/exchange` y un archivo vacío `__init__.py` dentro de `exchange`. Este archivo indica que la carpeta es un paquete Python.
-2. Copia ahí los `.py` de `04-oop-i-order-trade/exercises/project_starter`. Incluyen las plantillas de las piezas anteriores y la nueva de L4.
-3. Traslada tus respuestas de los notebooks: `spread` y `mid` a `snapshot.py`, `best_prices` a `functional.py` y `describe` a `application.py`. Conserva el import que ya trae `application.py`: ahora reutiliza tu función de `functional.py`.
-4. Continúa con el principal de L4 y completa `models.py`.
-
-El código proporcionado alrededor de los huecos conecta las piezas. No reemplaces tus respuestas por el paquete de referencia de `exercises/exchange`.
-
-`student_project/` está ignorado por Git: tus cambios permanecen al actualizar. Si ya tenías ese paquete en la versión anterior, cópialo completo y conserva tus archivos.
-
-## Clases siguientes
-
-Después de actualizar, copia únicamente los archivos nuevos de `exercises/project_starter` a tu paquete. No sobrescribas los que ya completaste. El principal de cada clase indica la siguiente pieza y su comprobación acumulativa; los validadores de L4–L14 conservan su funcionamiento anterior.
-
-Desde la raíz del repositorio, por ejemplo en L4:
+Después del notebook, abre `exercises/main.py`, guarda una copia como `mi_main.py` y traslada tus respuestas. Ejecuta desde la carpeta `exercises`:
 
 ```bash
-python check_project.py 4
+python mi_main.py
 ```
 
-La comprobación importa tus archivos reales e incluye las piezas anteriores. La carpeta permanece en el mismo repositorio; no necesitas generar otra copia del curso.
+El punto de entrada `main()` reúne los pasos del principal. Al ejecutar el archivo, Python recorre esos pasos seguidos. Esta segunda versión permite comprobar cómo pasa una investigación por celdas a un programa completo.
+
+Una función reúne una operación que quieres reutilizar; un módulo `.py` puede agrupar funciones o clases; un paquete organiza varios módulos. Separar cálculos de su ejecución ayuda a reutilizar el código sin lanzar todo el experimento al hacer `import`. El curso introduce estas ideas progresivamente.
+
+## Qué contiene la carpeta de ejercicios
+
+| Archivo o carpeta | Para qué sirve |
+|---|---|
+| `NN_build_exercises.ipynb` | Principal de la clase, con tus respuestas en celdas. |
+| `NN_auxiliary.ipynb` | Refuerzo opcional; no es prerrequisito ni evaluable. |
+| `main.py` | Versión del principal ejecutable con Python. |
+| `exchange/`, cuando se proporciona | Biblioteca de referencia que usan los experimentos. |
+| Datos y archivos de apoyo indicados en la clase | Entradas y herramientas ya preparadas para esos experimentos. |
+
+Las piezas avanzan desde precios y objetos hasta libros, ejecuciones, backtests y estrategias. La biblioteca proporcionada permite experimentar con esas conexiones mientras completas la pieza de cada clase. El enunciado distingue el código preparado de lo que debes escribir tú.
+
+## Proyecto final y repaso
+
+L14 tiene además un capstone de 90 minutos: trabaja en `capstone.ipynb`, explica tus decisiones y prueba el programa equivalente `capstone.py`. Guarda tus copias como `mi_capstone.ipynb` y `mi_capstone.py`. Un resultado en datos sintéticos no demuestra rentabilidad futura.
+
+L15 utiliza notebooks y programa para el repaso histórico. El examen oficial acumulativo se administra por separado; sus preguntas y respuestas no forman parte de las soluciones de práctica.
+
+Guarda las copias personales junto a las plantillas y consérvalas al descargar material nuevo. Git es opcional. La preparación completa está en [la guía local](GUIA_LOCAL.md).
+
+Las soluciones de principales, auxiliares y capstone están en `exercises/solutions/` de cada clase publicada; su README enlaza directamente los notebooks y el script resueltos.

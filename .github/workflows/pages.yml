@@ -40,7 +40,14 @@ jobs:
         run: |
           npm install playwright@1.62.1
           npx playwright install --with-deps webkit
-          node framework/_build/pages_e2e.js _site
+          node framework/_build/pages_e2e.js _site --audit-dir artifacts/pages-review
+      - name: Conservar evidencia visual de Pages
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pages-review
+          path: artifacts/pages-review
+          if-no-files-found: warn
       - if: github.repository == 'AlvaroChacarra/algo_trading_intro' && github.event_name != 'pull_request'
         uses: actions/configure-pages@v5
       - if: github.repository == 'AlvaroChacarra/algo_trading_intro' && github.event_name != 'pull_request'
