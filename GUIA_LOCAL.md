@@ -31,17 +31,17 @@ Si PowerShell bloquea la activación, usa `.\.venv\Scripts\python.exe` en lugar 
 
 ## 2. Trabaja en la clase
 
-Abre la carpeta de tu clase y después `exercises`:
+Abre la carpeta de tu clase y después `exercises`. El número del archivo cambia con la clase:
 
 | Plantilla | Tu copia en la misma carpeta |
 |---|---|
-| `01_build_exercises.ipynb` (el número cambia por clase) | `mi_principal.ipynb` |
+| `01_build_exercises.ipynb` | `mi_principal.ipynb` |
 | `01_auxiliary.ipynb` | `mi_auxiliar.ipynb` |
 | `main.py` | `mi_main.py` |
 
 En Jupyter usa **File → Save Notebook As…** para crear tu copia. Conserva las plantillas originales: reciben las mejoras del curso. Tus archivos `mi_…` están ignorados por Git y se quedan en tu ordenador.
 
-En L1–L3 resuelve el principal y el auxiliar **en las celdas**, con **Shift+Enter**, de arriba abajo. Mira las salidas y compáralas con el resultado esperado. Si cambias datos anteriores, vuelve a ejecutar desde ellos; al terminar, usa **Restart Kernel and Run All Cells**.
+Resuelve el principal y los auxiliares **en las celdas**, con **Shift+Enter**, de arriba abajo. Mira las salidas y compáralas con el resultado esperado. Sigue las etiquetas de trabajo obligatorio u opcional de cada notebook. Si cambias datos anteriores, vuelve a ejecutar desde ellos; al terminar, usa **Restart Kernel and Run All Cells**.
 
 El notebook sirve para investigar: experimentar por partes, mirar datos y explicar resultados. Para probar el mismo ejercicio como programa, copia `main.py` como `mi_main.py` y traslada tus respuestas. Abre una segunda terminal, activa el mismo entorno y entra en `exercises` de esa clase:
 
@@ -50,9 +50,13 @@ cd 01-python-i-data-model/exercises
 python mi_main.py
 ```
 
-El `.py` ejecuta el programa entero; sus funciones también pueden reutilizarse mediante `import`, que veremos en L3. Ejecutar sin errores no garantiza un cálculo correcto: compara también los números. La versión `.py` es una segunda forma de ejecutar el principal; el notebook ya cubre el ejercicio.
+El `.py` ejecuta el programa entero mediante `main()`; las funciones permiten organizar código reutilizable. Ejecutar sin errores no garantiza un cálculo correcto: compara también los números. La versión `.py` es otra forma de ejecutar el principal; el notebook ya cubre el ejercicio.
 
-**Para contrastar tu respuesta:** en L1–L3, `exercises/soluciones/` contiene los notebooks principal y auxiliar resueltos y un `main.py` resuelto. Puedes ejecutar sus celdas directamente; desde esa carpeta, `python main.py` ejecuta la solución del principal. Las plantillas de práctica siguen en `exercises/`.
+Desde las clases de objetos verás también `exercises/exchange/`: es una biblioteca de referencia proporcionada para los experimentos. Las celdas indican qué funciones usan. Conserva esa carpeta junto a los notebooks; tus respuestas van en las celdas y en tu copia del script.
+
+**Para contrastar tu respuesta:** `exercises/soluciones/` contiene los notebooks principal y auxiliar resueltos y un `main.py` resuelto. Puedes ejecutar sus celdas directamente; desde esa carpeta, `python main.py` ejecuta la solución del principal. Las plantillas de práctica siguen en `exercises/`.
+
+En L14, el proyecto final tiene además `capstone.ipynb` y `capstone.py`: crea `mi_capstone.ipynb` y `mi_capstone.py` en la misma carpeta. Sus soluciones están también en `soluciones/`. Reserva los 90 minutos indicados en `CAPSTONE.md`.
 
 ## 3. Recibe material nuevo
 
@@ -70,6 +74,6 @@ Las copias personales no se suben a GitHub: conserva una copia de seguridad como
 
 ## Si ya tenías una copia del curso
 
-Conserva tu carpeta anterior. Clona el repositorio y copia tus respuestas L1–L3 con los nombres personales anteriores. No necesitas ejecutar el antiguo creador de carpetas ni sus comprobadores.
+Conserva tu carpeta anterior. Clona el repositorio y copia tus respuestas con los nombres personales anteriores. El recorrido de todas las clases empieza ahora en sus notebooks. Si tenías módulos propios de la versión anterior, consérvalos como trabajo personal y consulta los enunciados actuales para trasladar las respuestas.
 
-La organización acumulativa de L4–L14 continúa en [la guía del proyecto](GUIA_PROYECTO.md), cuando empezamos a organizar paquetes y objetos.
+[Del notebook al programa](GUIA_PROYECTO.md) explica cómo se conectan investigación, scripts y bibliotecas.
