@@ -1,4 +1,4 @@
-"""Clase 3: el mismo ejercicio que el notebook principal.
+"""Clase 2: el mismo ejercicio que el notebook principal.
 
 Guarda una copia como mi_main.py y traslada tu respuesta del notebook.
 Desde esta carpeta: python mi_main.py
@@ -12,20 +12,17 @@ orders = [
     {'side': 'sell', 'price': 101, 'size': 1},
 ]
 
-# Sustituye esta función por TU best_prices del notebook de L2.
 def best_prices(orders):
-    pass
-
-def describe(orders):
-    # Usa best_prices y devuelve las dos métricas.
+    # Selecciona un precio por lado y devuelve el par.
     pass
 
 
 def main():
-    print('ambos lados:', describe(orders))
-    print('solo compras:', describe([{'side': 'buy', 'price': 99}]))
-    print('solo ventas:', describe([{'side': 'sell', 'price': 101}]))
-    print('vacío:', describe([]))
+    print('ambos lados:', best_prices(orders))
+    print('solo compras:', best_prices([{'side': 'buy', 'price': 99}]))
+    print('solo ventas:', best_prices([{'side': 'sell', 'price': 101}]))
+    print('vacío:', best_prices([]))
+    print('libro después:', orders)
 
 
 if __name__ == "__main__":

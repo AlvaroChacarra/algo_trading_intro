@@ -821,18 +821,16 @@ body.lr-has-contract .hero .meta{display:none}
 <header class="hero wrap" id="s0">
   <div class="eyebrow"><b>Algo Trading · ICAI 2026</b> &nbsp;·&nbsp; L3 · Python III &nbsp;·&nbsp; documento interactivo</div>
   <h1>Tu código se vuelve <em>librería</em></h1>
-  <p class="lede">En L2 escribiste siete funciones que valen oro. Pero viven en un notebook:
-  cierras la pestaña y <strong>mueren</strong>. Hoy las mudas a un archivo <code>.py</code>
-  y las usas desde cualquier sitio con una sola línea — igual que haces con
-  <code>import pandas</code>.</p>
+  <p class="lede">En L2 construiste <code>best_prices</code> en un notebook.
+  Hoy añades <code>describe</code> y entiendes cómo guardar funciones en un
+  <code>.py</code> para ejecutarlas o reutilizarlas con <code>import</code>.</p>
 
   <div class="challenge">
     <div class="tag">El reto de hoy</div>
-    <p>Quieres usar <code>best_bid</code> e <code>imbalance</code> en <em>otro</em> archivo,
-    en otro proyecto o en L4. Sin copiar y pegar — eso ya sabemos cómo acaba.</p>
-    <p>Al final de este documento tendrás <strong>tu propio módulo <code>order_book.py</code></strong>,
-    importable y robusto: que en vez de reventar con un traceback críptico, avisa con
-    errores claros que tú diseñaste.</p>
+    <p>Describe un mercado con ambos lados o con un precio ausente, sin inventar datos.</p>
+    <p>Primero resuelve el principal en Jupyter. Después puedes trasladarlo a
+    <code>mi_main.py</code>: <code>python mi_main.py</code> ejecuta la demo;
+    <code>from mi_main import describe</code> reutiliza la función sin arrancarla.</p>
   </div>
 
   <div class="meta">
@@ -848,17 +846,18 @@ body.lr-has-contract .hero .meta{display:none}
   <div class="wrap">
     <div class="eyebrow">§1 · <b>La idea central</b></div>
     <h2>La mudanza: de celdas a módulo</h2>
-    <p class="lede">Sigue bajando: el panel muestra dos archivos. Tus funciones se mudan
-    al de la izquierda; el de la derecha las usa sin saber cómo están hechas.</p>
+    <p class="lede">Esta demostración usa el módulo proporcionado <code>order_book.py</code>
+    para explicar <code>import</code>. Aplicarás la misma idea a <code>best_prices</code>
+    y <code>describe</code> en tu <code>mi_main.py</code>.</p>
   </div>
 
   <div class="scrolly" data-scrolly>
     <div class="steps">
       <div class="step on" data-stage="0" data-name="atrapadas"><div class="step-inner">
         <h3><span class="n">0/5</span>Funciones atrapadas</h3>
-        <p>Tus siete funciones viven en celdas de notebook. Solo existen mientras el kernel
-        vive, y solo <strong>aquí</strong>. Nadie más puede usarlas — ni siquiera tú desde
-        otro archivo.</p>
+        <p>Las funciones de este ejemplo están definidas en celdas. El notebook conserva
+        su código; un kernel nuevo necesita ejecutarlas otra vez. Un módulo permite
+        cargarlas desde otro programa mediante <code>import</code>.</p>
       </div></div>
       <div class="step" data-stage="1" data-name="el módulo"><div class="step-inner">
         <h3><span class="n">1/5</span>Nace <code>order_book.py</code></h3>
@@ -906,7 +905,7 @@ body.lr-has-contract .hero .meta{display:none}
 │ def imbalance(book): …       │
 └──────────────────────────────┘</pre>
         <p style="color:var(--faint);font-size:.8rem;margin-top:18px">💀 al cerrar el
-        notebook, se acabó</p>
+        kernel, necesitas ejecutar las celdas de nuevo</p>
       </div>
       <div class="fig-stage" data-stage="1">
         <div class="twofile">
@@ -1149,7 +1148,7 @@ imbalance(book)
     <div class="pkgmap">
       <div class="pk done">L1 · el dato<span>variables, dicts, decisiones</span></div>
       <div class="pk done">L2 · book funcional<span>funciones sobre el libro</span></div>
-      <div class="pk today">L3 · order_book.py<span>módulo importable y robusto</span></div>
+      <div class="pk today">L3 · mi_main.py<span>funciones reutilizables y robusto</span></div>
       <div class="pk future">L4 · Order y Fill<span>exchange/orders.py</span></div>
       <div class="pk future">L5 · OrderBook + Tracker<span>exchange/book.py</span></div>
       <div class="pk future">L6 · familia Strategy<span>herencia</span></div>
@@ -1170,12 +1169,11 @@ imbalance(book)
 
     <div class="cta">
       <div class="box"><span class="tag">Ahora te toca construir</span>
-      Abre <code>03_build_exercises.ipynb</code>: importa tu módulo, blíndalo y móntale
-      su <code>main</code>.</div>
+      Abre <code>03_build_exercises.ipynb</code>: reutiliza tu <code>best_prices</code> y completa <code>describe</code>. Después puedes ejecutar el mismo principal con <code>python mi_main.py</code>.</div>
       <div class="box"><span class="tag">Y después, al gimnasio</span>
-      <code>03_auxiliary.ipynb</code> — variantes OPTIONAL de la misma pieza. La preparación requerida y la construcción están en el principal.</div>
+      <code>03_auxiliary.ipynb</code> — refuerzo REQUIRED para casa. Consolida lo necesario para L4.</div>
     </div>
-  <details class="construction-panel" id="construction-guide"><summary>Cómo construyes esta pieza en tu sistema</summary><p><strong>Partes de:</strong> Tu functional.py ya ofrece best_prices(orders) y la fábrica make_order. best_prices entrega (bid,ask), con None cuando falta un lado; L1 aporta el significado de spread y mid.</p><p><strong>Problema:</strong> Una aplicación debe consumir esas piezas desde tu paquete y devolver una descripción estable, incluso cuando el libro no alcanza para formar una quote. Importar la aplicación debe dejar disponibles sus funciones sin arrancar su demostración.</p><h3>Decisiones de diseño</h3><ol><li>Localiza el import de exchange.functional en application.py. Ese nombre conecta con tu trabajo de L2; describe no necesita reimplementar el filtrado de órdenes.</li><li>Llama una vez a best_prices y desempaqueta su par como bid, ask. Separar selección y descripción permite atribuir un fallo a una etapa concreta.</li><li>Comprueba la ausencia de cualquiera de los precios antes de hacer aritmética. None significa dato no disponible: no lo sustituyas por cero y no lo confundas con una excepción.</li><li>Devuelve siempre un diccionario con las claves mid y spread. Con ambos lados presentes aplica las fórmulas de L1; si falta alguno, ambas métricas quedan en None.</li><li>Conserva la demo bajo el guard __name__ == &#x27;__main__&#x27;. La validación de make_order y sus ValueError sigue siendo una frontera distinta: describe no debe ocultar indiscriminadamente errores de programación o registros mal formados.</li></ol><p><strong>Predice y contrasta:</strong> Al construir compras a 98 y 99 y ventas a 103 y 101 con make_order, best_prices devuelve (99,101); describe debe producir {&#x27;mid&#x27;:100,&#x27;spread&#x27;:2}. Con una única compra a 99 produce {&#x27;mid&#x27;:None,&#x27;spread&#x27;:None}, porque no existe quote de dos lados. make_order(&#x27;buy&#x27;,99,0) plantea otro caso: rechaza el tamaño con ValueError antes de que haya una orden válida que describir.</p><p><strong>Del ejemplo a tu código:</strong> La práctica principal guía la implementación directa de esta pieza en student_project/exchange/. El refuerzo de casa practica sus conceptos con casos breves.</p><h3>Tu construcción principal</h3><p>Completa estos cuerpos en <code>student_project/exchange/</code>; el resto está proporcionado.</p><ul><li><code>application.py:describe</code>: Completa describe consumiendo best_prices de tu paquete. Traza primero el par recibido, después la guardia y finalmente el diccionario; conserva las mismas dos claves en ambos caminos. Ejecuta una quote completa y otra unilateral y explica por qué importar application no debe imprimir su demo. <span>Practica L03-P01.</span></li></ul><p>Comprueba tus archivos con <code>python check_project.py 3</code> desde la raíz de tu carpeta de estudio.</p><p><strong>Lo siguiente reutiliza:</strong> L4 mantendrá esta separación entre datos válidos y comportamiento reutilizable al representar órdenes y fills como objetos.</p></details></div></section>
+  <details class="construction-panel" id="construction-guide"><summary>Del notebook a un programa Python</summary><p><strong>Problema:</strong> Combinar tu selección de precios con las fórmulas de L1 para describir el mercado, incluso cuando falte un lado. Después reutilizar esa descripción desde otro archivo sin arrancar su demostración al importar.</p><p>Completa el principal en Jupyter y contrasta sus resultados. Después puedes trasladar las mismas respuestas a una copia de <code>main.py</code>, guardada como <code>mi_main.py</code>.</p><p>Desde la carpeta <code>exercises</code> de esta clase: <code>python mi_main.py</code>. Verás los mismos cálculos ejecutados de una vez.</p><p>El notebook sirve para investigar y explicar. Los archivos <code>.py</code> sirven para organizar programas y funciones reutilizables.</p><p><strong>Predice y contrasta:</strong> Con compras a 98 y 99 y ventas a 103 y 101, best_prices devuelve (99,101) y describe devuelve {&#x27;mid&#x27;:100,&#x27;spread&#x27;:2}. Con una sola compra, una sola venta o un libro vacío devuelve {&#x27;mid&#x27;:None,&#x27;spread&#x27;:None}. El auxiliar trabaja otro problema: rechazar precio o tamaño inválidos con ValueError.</p><p><strong>Lo siguiente reutiliza:</strong> L4 mantendrá esta separación entre datos válidos y comportamiento reutilizable al representar órdenes y fills como objetos.</p></details></div></section>
 
 <footer>L3 · Módulos y errores — Algo Trading ICAI 2026 · documento interactivo</footer>
 

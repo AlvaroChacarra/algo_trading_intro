@@ -1,9 +1,10 @@
 # Clase 1 — Python I — El modelo de datos
 
-Hoy añades a tu proyecto: `snapshot.py`: `spread`, `mid`.
+1. [Presentación](presentation/python-i-data-model-doc.html): abre el HTML con doble clic, sin servidor.
+2. [Principal](exercises/01_build_exercises.ipynb): completa las celdas.
+3. [Auxiliares](exercises/01_auxiliary.ipynb): refuerzo requerido.
+4. [main.py](exercises/main.py): el mismo principal como programa Python.
 
-1. [Presentación](presentation/python-i-data-model-doc.html).
-2. [Construcción en clase](exercises/01_build_exercises.ipynb).
-3. [Práctica para casa](exercises/01_auxiliary.ipynb): refuerzo breve para casa.
+Guarda tus copias en `exercises`: `mi_principal.ipynb`, `mi_auxiliar.ipynb` y, si practicas el script, `mi_main.py`. Se conservan al actualizar con `git pull --ff-only`.
 
-Continúa en tu carpeta de estudio: conserva lo construido en `student_project/exchange/`. [Preparar el entorno](../GUIA_LOCAL.md).
+Desde esta carpeta, abre `exercises` en una terminal y ejecuta `python mi_main.py`. [Instalación y actualizaciones](../GUIA_LOCAL.md).

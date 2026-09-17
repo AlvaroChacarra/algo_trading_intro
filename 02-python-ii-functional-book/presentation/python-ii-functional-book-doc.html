@@ -1185,7 +1185,7 @@ spread(<b style="color:var(--accent)">book</b>) · mid(<b style="color:var(--acc
     <div class="pkgmap">
       <div class="pk done">L1 · el dato<span>variables, dicts, decisiones</span></div>
       <div class="pk today">L2 · book funcional<span>funciones sobre el libro</span></div>
-      <div class="pk future">L3 · order_book.py<span>módulo importable</span></div>
+      <div class="pk future">L3 · mi_main.py<span>funciones reutilizables</span></div>
       <div class="pk future">L4 · Order y Fill<span>exchange/orders.py</span></div>
       <div class="pk future">L5 · OrderBook + Tracker<span>exchange/book.py</span></div>
       <div class="pk future">L6 · familia Strategy<span>herencia</span></div>
@@ -1196,21 +1196,20 @@ spread(<b style="color:var(--accent)">book</b>) · mid(<b style="color:var(--acc
     <div class="bridge">
       <div class="tag">El puente a L3</div>
       <p style="margin:.2em 0"><strong>Tus funciones funcionan… dentro de este notebook.</strong></p>
-      <p>Cierra el notebook y mueren. En L3 querrás usarlas desde otro archivo y también en
-      otro proyecto. ¿Copiar y pegar otra vez? Eso repite exactamente el mismo pecado.</p>
-      <p style="margin-bottom:0">La cura: convertir tu código en una <strong>librería
-      importable</strong> — tu propio <code>order_book.py</code>, como cuando escribes
-      <code>import pandas</code>. Ese es el paso de L3.</p>
+      <p>El notebook conserva tu código y tus experimentos. Un kernel nuevo necesita
+      ejecutar de nuevo sus celdas para recuperar las funciones.</p>
+      <p style="margin-bottom:0">También puedes guardarlas en <code>mi_main.py</code>
+      y reutilizarlas con <code>import</code>. En L3 entenderás qué ocurre al importar
+      y añadirás <code>describe</code> a tu lectura del mercado.</p>
     </div>
 
     <div class="cta">
       <div class="box"><span class="tag">Ahora te toca construir</span>
-      Abre <code>02_build_exercises.ipynb</code> y monta el libro pieza a pieza, con
-      validadores.</div>
+      Abre <code>02_build_exercises.ipynb</code> y completa <code>best_prices</code> en las celdas. Prueba ambos lados y el libro vacío; después puedes repetirlo con <code>python mi_main.py</code>.</div>
       <div class="box"><span class="tag">Y después, al gimnasio</span>
-      <code>02_auxiliary.ipynb</code> — variantes OPTIONAL de la misma pieza. La preparación requerida y la construcción están en el principal.</div>
+      <code>02_auxiliary.ipynb</code> — refuerzo REQUIRED para casa. Consolida lo necesario para L3.</div>
     </div>
-  <details class="construction-panel" id="construction-guide"><summary>Cómo construyes esta pieza en tu sistema</summary><p><strong>Partes de:</strong> L1 deja claras las fórmulas de spread y mid a partir de bid y ask. Ahora recibimos una lista de diccionarios de órdenes de un solo instrumento; cada registro aporta side, price y size.</p><p><strong>Problema:</strong> La lista puede llegar desordenada y puede faltar uno de los lados. best_prices(orders) debe seleccionar el mejor precio disponible de cada lado y comunicar su ausencia sin inventar una quote.</p><h3>Decisiones de diseño</h3><ol><li>Fija el contrato antes del recorrido: best_prices recibe orders y devuelve un par en orden (bid, ask). Devuelve precios, no órdenes ni tamaños, y consultar no modifica la lista.</li><li>Separa candidatos con side=&#x27;buy&#x27; y side=&#x27;sell&#x27;. La comparación económica depende del lado: los compradores compiten ofreciendo más y los vendedores ofreciendo menos.</li><li>Obtén el máximo de los precios de compra y el mínimo de los de venta. Puedes separar primero filtrado y agregado para inspeccionar los candidatos antes de compactar el código.</li><li>Resuelve cada lado vacío antes de aplicar su agregado: representa su precio ausente con None. Un libro unilateral conserva el precio que sí existe; una lista vacía devuelve dos ausencias.</li><li>Conserva el orden del par en todas las ramas. En L3 bid, ask = best_prices(orders) asignará el primer resultado a bid y el segundo a ask.</li></ol><p><strong>Predice y contrasta:</strong> Con orders=[{&#x27;side&#x27;:&#x27;buy&#x27;,&#x27;price&#x27;:98,&#x27;size&#x27;:1}, {&#x27;side&#x27;:&#x27;sell&#x27;,&#x27;price&#x27;:103,&#x27;size&#x27;:2}, {&#x27;side&#x27;:&#x27;buy&#x27;,&#x27;price&#x27;:99,&#x27;size&#x27;:4}, {&#x27;side&#x27;:&#x27;sell&#x27;,&#x27;price&#x27;:101,&#x27;size&#x27;:1}], los candidatos bid son 98 y 99; los ask, 103 y 101. Resultado: (99,101), que permite calcular spread 2 y mid 100. Con solo el registro buy a 99 esperamos (99,None); con [] esperamos (None,None). El tamaño 4 no convierte por sí mismo una orden en el mejor precio.</p><p><strong>Del ejemplo a tu código:</strong> La práctica principal guía la implementación directa de esta pieza en student_project/exchange/. El refuerzo de casa practica sus conceptos con casos breves.</p><h3>Tu construcción principal</h3><p>Completa estos cuerpos en <code>student_project/exchange/</code>; el resto está proporcionado.</p><ul><li><code>functional.py:best_prices</code>: Completa best_prices en functional.py. Antes de codificar, escribe los candidatos de cada lado y el par esperado del ejemplo; luego decide cómo evitar max/min sobre una colección vacía. Comprueba lista completa, solo compras, solo ventas y lista vacía, conservando orders intacta. <span>Practica L02-P01.</span></li></ul><p>Comprueba tus archivos con <code>python check_project.py 2</code> desde la raíz de tu carpeta de estudio.</p><p><strong>Lo siguiente reutiliza:</strong> application.describe de L3 importará esta función y decidirá si hay dos precios suficientes para calcular una quote completa.</p></details></div></section>
+  <details class="construction-panel" id="construction-guide"><summary>Del notebook a un programa Python</summary><p><strong>Problema:</strong> La lista puede llegar desordenada y puede faltar uno de los lados. best_prices(orders) debe seleccionar el mejor precio disponible de cada lado y comunicar su ausencia sin inventar una quote.</p><p>Completa el principal en Jupyter y contrasta sus resultados. Después puedes trasladar las mismas respuestas a una copia de <code>main.py</code>, guardada como <code>mi_main.py</code>.</p><p>Desde la carpeta <code>exercises</code> de esta clase: <code>python mi_main.py</code>. Verás los mismos cálculos ejecutados de una vez.</p><p>El notebook sirve para investigar y explicar. Los archivos <code>.py</code> sirven para organizar programas y funciones reutilizables.</p><p><strong>Predice y contrasta:</strong> Con orders=[{&#x27;side&#x27;:&#x27;buy&#x27;,&#x27;price&#x27;:98,&#x27;size&#x27;:1}, {&#x27;side&#x27;:&#x27;sell&#x27;,&#x27;price&#x27;:103,&#x27;size&#x27;:2}, {&#x27;side&#x27;:&#x27;buy&#x27;,&#x27;price&#x27;:99,&#x27;size&#x27;:4}, {&#x27;side&#x27;:&#x27;sell&#x27;,&#x27;price&#x27;:101,&#x27;size&#x27;:1}], los candidatos bid son 98 y 99; los ask, 103 y 101. Resultado: (99,101), que permite calcular spread 2 y mid 100. Con solo el registro buy a 99 esperamos (99,None); con [] esperamos (None,None). El tamaño 4 no convierte por sí mismo una orden en el mejor precio.</p><p><strong>Lo siguiente reutiliza:</strong> En L3 describe utilizará esta misma best_prices y las fórmulas de L1. El notebook será autocontenido; al pasarlo a .py podrás importar sus funciones desde otro archivo.</p></details></div></section>
 
 <footer>L2 · El libro funcional — Algo Trading ICAI 2026 · documento interactivo</footer>
 
