@@ -70,3 +70,25 @@ jobs:
       - name: Publicar GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  # Production checks use the deployed revision, not an unmerged source PR.
+  verify-live:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Comprobar Pages publicado y descargas
+        run: |
+          npm install playwright@1.62.1
+          npx playwright install --with-deps webkit
+          node framework/_build/pages_e2e.js _site --live-url https://alvarochacarra.github.io/algo_trading_intro/ --audit-dir artifacts/pages-live
+      - name: Conservar evidencia del despliegue
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pages-live
+          path: artifacts/pages-live
+          if-no-files-found: warn
