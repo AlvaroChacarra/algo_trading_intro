@@ -202,16 +202,7 @@
   .result-chip{margin:26px auto 0;width:max-content;font-family:var(--mono);font-size:1rem;
                border:1px solid rgba(74,222,128,.5);color:var(--bid);border-radius:10px;
                padding:10px 20px;background:rgba(74,222,128,.07)}
-  @media(max-width:960px){
-    /* sticky debe acotarse a .scrolly entera, no a la fila del grid: flex + figwrap sticky */
-    .scrolly{display:flex;flex-direction:column;gap:0}
-    .figwrap{order:-1;position:sticky;top:8px;z-index:6}
-    .fig{position:relative;top:0;height:340px;box-shadow:0 14px 30px rgba(0,0,0,.55)}
-    .fig-stage{padding:14px}
-    .srcline{margin-top:90px}.toks{margin-top:50px}
-    .steps .step{min-height:60vh}
-    .ast-svg{transform:scale(.8);transform-origin:top center}
-  }
+
 
   /* ── name→value diagram ────────────────────────── */
   .memory{display:flex;flex-direction:column;gap:10px;margin:18px 0;min-height:60px}
@@ -246,7 +237,7 @@
 
   /* ── dict card ─────────────────────────────────── */
   .dictgrid{display:grid;grid-template-columns:1fr 250px;gap:20px;align-items:start;margin:22px 0}
-  @media(max-width:760px){.dictgrid{grid-template-columns:1fr}}
+
   .ordercard{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
   .ordercard .oc-head{padding:10px 16px;border-bottom:1px solid var(--line);
         font-family:var(--mono);font-size:.7rem;letter-spacing:.15em;
@@ -312,7 +303,7 @@
          font-family:var(--mono)}
 
   .fig3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:22px 0}
-  @media(max-width:700px){.fig3{grid-template-columns:1fr}}
+
   .lane{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
   .lane h4{margin:0 0 8px;font-size:.92rem;font-family:var(--mono)}
   .lane p{font-size:.85rem;color:var(--muted);margin:.4em 0}
@@ -322,7 +313,7 @@
   .ownline{background:var(--panel);border:1px solid var(--line);border-radius:14px;
            padding:22px;margin:26px 0}
   .ownline .cols{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
-  @media(max-width:760px){.ownline .cols{grid-template-columns:1fr}}
+
   .ownline h4{font-family:var(--mono);font-size:.7rem;letter-spacing:.15em;
               text-transform:uppercase;color:var(--faint);margin:0 0 10px}
   .ownline pre{font-family:var(--mono);font-size:.78rem;line-height:1.7;margin:0;
@@ -351,7 +342,7 @@
 
 /* CTA de cierre: del documento a los cuadernos */
 .cta{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:26px 0}
-@media(max-width:700px){.cta{grid-template-columns:1fr}}
+
 .cta a,.cta .box{display:block;text-decoration:none;border:1px solid rgba(34,211,238,.4);
      border-radius:12px;padding:16px 20px;color:var(--text)}
 .cta .tag{font-family:var(--mono);font-size:.68rem;letter-spacing:.15em;
@@ -370,7 +361,7 @@
 /* tarjetas de simulador (constructor de Order, tracker, estrategias...) */
 .simcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;
          padding:20px;margin:22px 0;min-width:0}
-.simcard pre{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.simcard pre{max-width:100%;overflow-x:auto}
 .simcard h4{font-family:var(--mono);font-size:.7rem;letter-spacing:.15em;
             text-transform:uppercase;color:var(--faint);margin:0 0 12px}
 .simrow{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:10px 0}
@@ -475,7 +466,7 @@
 .build-code .build-label,.build-state-label{font-family:var(--mono);font-size:.61rem;
   letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:0 0 8px}
 .build-code pre{margin:0;min-height:0;overflow:auto;white-space:pre;font-family:var(--mono);
-  font-size:.64rem;line-height:1.58;color:var(--muted);-webkit-overflow-scrolling:touch}
+  font-size:.64rem;line-height:1.58;color:var(--muted)}
 .build-code pre .active-line{display:inline-block;width:100%;background:var(--accent-dim);
   box-shadow:inset 2px 0 0 var(--accent);color:var(--text)}
 .build-state{position:relative;min-width:0;min-height:0}
@@ -503,23 +494,7 @@
 .full-code{margin-top:20px;border-color:rgba(192,132,252,.4)}
 .full-code summary{min-height:44px;display:flex;align-items:center;color:var(--kw)}
 .full-code .code{margin:12px 0}.full-code .code pre{max-height:620px}
-@media(max-width:620px){
-  .state-inspector{grid-template-columns:1fr}
-  .trace-step{align-items:flex-start}
-  .mode-switch button{font-size:.7rem;padding:7px 10px}
-  .simcard{padding:14px}
-  .engine-map{padding:8px;gap:6px}
-  .engine-map .unit{font-size:.62rem;padding:6px 8px}
-  .code-state{grid-template-columns:1fr}
-  .accumulated-fig{height:430px}
-  .accumulated-fig .build-grid{grid-template-columns:1fr;grid-template-rows:minmax(155px,.9fr) minmax(0,1.1fr)}
-  .build-code{padding:9px 11px;border-right:0;border-bottom:1px solid var(--line)}
-  .build-code pre{font-size:.58rem;line-height:1.42}
-  .accumulated-fig .fig-stage{padding:10px}
-  .object-contrast,.responsibility-grid{grid-template-columns:1fr}
-  .constructor-map div{grid-template-columns:1fr;gap:3px}
-  .branch-map .branch-row{grid-template-columns:72px 1fr}
-}
+
 
 /* ══ índice del curso ══ */
 .lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
@@ -636,13 +611,13 @@
   <div class="course-block-head"><div><div class="course-flow">L1 → L6</div>
     <h2 id="block-foundations">FOUNDATIONS</h2></div><p>Python y objetos nacen para representar el mercado</p></div>
   <div class="lgrid"><article class="lcard" data-lesson="01"
-  data-live-states="10" data-required-states="2">
+  data-live-states="14" data-required-states="8">
   <div class="lc-n">L1</div>
   <div class="lc-t">Python I — El modelo de datos</div>
-  <div class="lc-o">snapshot con spread y mid</div>
+  <div class="lc-o">quotes con spread, mid y clasificación</div>
   <div class="lc-load"><span class="live">LIVE 20 + práctica 20 min</span>
-    <span class="required">REQUIRED 20 min estimados</span><span class="optional">OPTIONAL ejercicios 23 + lectura 3 min</span></div>
-  <div class="lc-dep">Lectura 20 + refuerzo para casa 0 min. La construcción se hace en clase.</div>
+    <span class="required">REQUIRED 26 min estimados</span><span class="optional">OPTIONAL ejercicios 23 + lectura 8 min</span></div>
+  <div class="lc-dep">Lectura 26 + refuerzo para casa 0 min. La construcción se hace en clase.</div>
   <div class="lc-dep">Punto de entrada</div>
   <div class="lc-route-progress" aria-label="Progreso por ruta">
     <div class="lc-route-row live"><span>LIVE</span><div class="lc-bar"><div class="lc-fill"></div></div><output>0%</output></div>
@@ -656,13 +631,13 @@
     <a href="https://github.com/AlvaroChacarra/algo_trading_intro/tree/main/01-python-i-data-model/exercises/solutions">Soluciones</a>
   </nav>
 </article><article class="lcard" data-lesson="02"
-  data-live-states="8" data-required-states="4">
+  data-live-states="15" data-required-states="3">
   <div class="lc-n">L2</div>
   <div class="lc-t">Python II — El libro funcional</div>
   <div class="lc-o">best_prices: mejores precios entre órdenes</div>
   <div class="lc-load"><span class="live">LIVE 20 + práctica 20 min</span>
-    <span class="required">REQUIRED 24 min estimados</span><span class="optional">OPTIONAL ejercicios 15 + lectura 0 min</span></div>
-  <div class="lc-dep">Lectura 24 + refuerzo para casa 0 min. La construcción se hace en clase.</div>
+    <span class="required">REQUIRED 19 min estimados</span><span class="optional">OPTIONAL ejercicios 15 + lectura 0 min</span></div>
+  <div class="lc-dep">Lectura 19 + refuerzo para casa 0 min. La construcción se hace en clase.</div>
   <div class="lc-dep">Continúa L1 · puedes omitir lo opcional</div>
   <div class="lc-route-progress" aria-label="Progreso por ruta">
     <div class="lc-route-row live"><span>LIVE</span><div class="lc-bar"><div class="lc-fill"></div></div><output>0%</output></div>
