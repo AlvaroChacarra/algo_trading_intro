@@ -202,16 +202,7 @@
   .result-chip{margin:26px auto 0;width:max-content;font-family:var(--mono);font-size:1rem;
                border:1px solid rgba(74,222,128,.5);color:var(--bid);border-radius:10px;
                padding:10px 20px;background:rgba(74,222,128,.07)}
-  @media(max-width:960px){
-    /* sticky debe acotarse a .scrolly entera, no a la fila del grid: flex + figwrap sticky */
-    .scrolly{display:flex;flex-direction:column;gap:0}
-    .figwrap{order:-1;position:sticky;top:8px;z-index:6}
-    .fig{position:relative;top:0;height:340px;box-shadow:0 14px 30px rgba(0,0,0,.55)}
-    .fig-stage{padding:14px}
-    .srcline{margin-top:90px}.toks{margin-top:50px}
-    .steps .step{min-height:60vh}
-    .ast-svg{transform:scale(.8);transform-origin:top center}
-  }
+
 
   /* ── name→value diagram ────────────────────────── */
   .memory{display:flex;flex-direction:column;gap:10px;margin:18px 0;min-height:60px}
@@ -246,7 +237,7 @@
 
   /* ── dict card ─────────────────────────────────── */
   .dictgrid{display:grid;grid-template-columns:1fr 250px;gap:20px;align-items:start;margin:22px 0}
-  @media(max-width:760px){.dictgrid{grid-template-columns:1fr}}
+
   .ordercard{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
   .ordercard .oc-head{padding:10px 16px;border-bottom:1px solid var(--line);
         font-family:var(--mono);font-size:.7rem;letter-spacing:.15em;
@@ -312,7 +303,7 @@
          font-family:var(--mono)}
 
   .fig3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:22px 0}
-  @media(max-width:700px){.fig3{grid-template-columns:1fr}}
+
   .lane{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
   .lane h4{margin:0 0 8px;font-size:.92rem;font-family:var(--mono)}
   .lane p{font-size:.85rem;color:var(--muted);margin:.4em 0}
@@ -322,7 +313,7 @@
   .ownline{background:var(--panel);border:1px solid var(--line);border-radius:14px;
            padding:22px;margin:26px 0}
   .ownline .cols{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
-  @media(max-width:760px){.ownline .cols{grid-template-columns:1fr}}
+
   .ownline h4{font-family:var(--mono);font-size:.7rem;letter-spacing:.15em;
               text-transform:uppercase;color:var(--faint);margin:0 0 10px}
   .ownline pre{font-family:var(--mono);font-size:.78rem;line-height:1.7;margin:0;
@@ -351,7 +342,7 @@
 
 /* CTA de cierre: del documento a los cuadernos */
 .cta{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:26px 0}
-@media(max-width:700px){.cta{grid-template-columns:1fr}}
+
 .cta a,.cta .box{display:block;text-decoration:none;border:1px solid rgba(34,211,238,.4);
      border-radius:12px;padding:16px 20px;color:var(--text)}
 .cta .tag{font-family:var(--mono);font-size:.68rem;letter-spacing:.15em;
@@ -370,7 +361,7 @@
 /* tarjetas de simulador (constructor de Order, tracker, estrategias...) */
 .simcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;
          padding:20px;margin:22px 0;min-width:0}
-.simcard pre{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.simcard pre{max-width:100%;overflow-x:auto}
 .simcard h4{font-family:var(--mono);font-size:.7rem;letter-spacing:.15em;
             text-transform:uppercase;color:var(--faint);margin:0 0 12px}
 .simrow{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:10px 0}
@@ -475,7 +466,7 @@
 .build-code .build-label,.build-state-label{font-family:var(--mono);font-size:.61rem;
   letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:0 0 8px}
 .build-code pre{margin:0;min-height:0;overflow:auto;white-space:pre;font-family:var(--mono);
-  font-size:.64rem;line-height:1.58;color:var(--muted);-webkit-overflow-scrolling:touch}
+  font-size:.64rem;line-height:1.58;color:var(--muted)}
 .build-code pre .active-line{display:inline-block;width:100%;background:var(--accent-dim);
   box-shadow:inset 2px 0 0 var(--accent);color:var(--text)}
 .build-state{position:relative;min-width:0;min-height:0}
@@ -503,23 +494,7 @@
 .full-code{margin-top:20px;border-color:rgba(192,132,252,.4)}
 .full-code summary{min-height:44px;display:flex;align-items:center;color:var(--kw)}
 .full-code .code{margin:12px 0}.full-code .code pre{max-height:620px}
-@media(max-width:620px){
-  .state-inspector{grid-template-columns:1fr}
-  .trace-step{align-items:flex-start}
-  .mode-switch button{font-size:.7rem;padding:7px 10px}
-  .simcard{padding:14px}
-  .engine-map{padding:8px;gap:6px}
-  .engine-map .unit{font-size:.62rem;padding:6px 8px}
-  .code-state{grid-template-columns:1fr}
-  .accumulated-fig{height:430px}
-  .accumulated-fig .build-grid{grid-template-columns:1fr;grid-template-rows:minmax(155px,.9fr) minmax(0,1.1fr)}
-  .build-code{padding:9px 11px;border-right:0;border-bottom:1px solid var(--line)}
-  .build-code pre{font-size:.58rem;line-height:1.42}
-  .accumulated-fig .fig-stage{padding:10px}
-  .object-contrast,.responsibility-grid{grid-template-columns:1fr}
-  .constructor-map div{grid-template-columns:1fr;gap:3px}
-  .branch-map .branch-row{grid-template-columns:72px 1fr}
-}
+
 
 /* ══ índice del curso ══ */
 .lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
@@ -620,8 +595,7 @@ body.lr-has-contract .hero .meta{display:none}
 .lr-support-card dt{font-weight:600;margin-top:12px}.lr-support-card dd{margin:3px 0 0;color:var(--muted)}
 .lr-support-card pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:.82rem;line-height:1.6;
   padding:12px;background:#09090b;border-radius:6px}
-@media(max-width:520px){#lr-support-dialog{padding:15px}.lr-support-head h2{font-size:1.05rem}
-  .lr-support-open{min-height:44px}.lr-support-card{padding:10px}}
+
 @media print{.lr-support-open,#lr-support-dialog{display:none!important}}
 .lr-sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;
   margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;
@@ -641,14 +615,13 @@ body.lr-has-contract .hero .meta{display:none}
 .lr-modes a{display:flex;justify-content:center;align-items:center;min-height:36px;border:1px solid var(--line);
   border-radius:8px;text-decoration:none;color:var(--muted);font:600 .68rem var(--mono);text-transform:uppercase}
 .lr-modes a.on{border-color:var(--accent);background:var(--accent-dim);color:var(--accent)}
-.lr-modes a:focus-visible,#lr-nav button:focus-visible,#lr-controls button:focus-visible,
-#lr-mobile-toolbar a:focus-visible,#lr-mobile-toolbar button:focus-visible{
+.lr-modes a:focus-visible,#lr-nav button:focus-visible,#lr-controls button:focus-visible{
   outline:2px solid var(--accent);outline-offset:2px}
-.lr-fallback-note{margin:0 8px 10px;color:var(--warn);font-size:.72rem;line-height:1.4}
 .lr-study-optional{min-height:38px;margin:0 6px 9px;border:1px solid rgba(192,132,252,.42);
   border-radius:8px;background:rgba(192,132,252,.08);color:var(--kw);font:600 .65rem var(--mono);cursor:pointer}
 .lr-study-optional[aria-pressed="true"]{border-color:var(--kw);background:rgba(192,132,252,.16)}
-.lr-scene-links{display:grid;gap:4px;overflow:auto;padding:2px 4px 18px}
+.lr-scene-links{display:grid;grid-auto-rows:max-content;align-content:start;
+  min-height:0;gap:4px;overflow:auto;padding:2px 4px 18px}
 .lr-scene-links button{display:grid;grid-template-columns:56px minmax(0,1fr);gap:6px;align-items:center;width:100%;
   min-height:41px;padding:7px 9px;border:1px solid transparent;border-radius:9px;background:transparent;
   color:var(--muted);text-align:left;cursor:pointer}
@@ -702,7 +675,6 @@ body.lr-has-contract .hero .meta{display:none}
 .lr-progress .lr-route-progress{color:var(--accent)}
 #lr-controls .lr-route-scope{padding:0 12px;color:var(--accent);border-color:rgba(34,211,238,.38)}
 #lr-controls.lr-fixed-scope{grid-template-columns:minmax(120px,1fr) auto minmax(120px,1fr)}
-#lr-mobile-toolbar{display:none}
 
 /* Layout names are operational: they control scene width and native two-panel ratios. */
 .lr-scene{--lr-scene-max:1180px;--lr-left:42fr;--lr-right:58fr}
@@ -711,7 +683,6 @@ body.lr-has-contract .hero .meta{display:none}
 .lr-scene[data-scene-layout="split-45-55"]{--lr-scene-max:1900px;--lr-left:45fr;--lr-right:55fr}
 .lr-scene[data-scene-layout="split-50-50"]{--lr-scene-max:1760px;--lr-left:50fr;--lr-right:50fr}
 
-@media(min-width:901px){
   body.lr-has-contract{--lr-nav-w:clamp(190px,16vw,238px);--lr-controls-h:58px}
   body.mode-estudio.lr-has-contract{padding-left:var(--lr-nav-w)}
   body.mode-estudio.lr-has-contract .wrap{max-width:min(1040px,calc(100vw - var(--lr-nav-w) - 48px))}
@@ -756,46 +727,41 @@ body.lr-has-contract .hero .meta{display:none}
   body.mode-aula .lr-scene-badge{margin-bottom:7px}
   body.mode-aula .lr-scene-active[data-scene-layout^="split-"] :is(.code-state,.state-inspector,.dictgrid,.build-grid,.vmgrid,.ownline .cols){
     grid-template-columns:minmax(0,var(--lr-left)) minmax(0,var(--lr-right))}
-}
 
-@media(max-width:1180px) and (min-width:901px){
+@media(max-width:1180px){
   #lr-controls{grid-template-columns:105px minmax(0,1fr) auto 105px;gap:7px;padding-inline:9px}
   #lr-controls.lr-fixed-scope{grid-template-columns:105px minmax(0,1fr) 105px}
   #lr-controls button span,.lr-progress>span{display:none}
   .lr-progress{gap:5px;font-size:.61rem}
 }
 
-@media(max-width:900px){
-  body.lr-has-contract :is(p,li,.note,.box,.code-head){overflow-wrap:anywhere}
-  body.lr-has-contract .code-head{flex-wrap:wrap;gap:5px}
-  body.lr-has-contract .cta>*{min-width:0}
-  #lr-nav,#lr-controls,.lr-scene-badge{display:none!important}
-  body.lr-has-contract{padding-left:0;max-width:100%;overflow-x:hidden}
-  #lr-mobile-toolbar{position:sticky;top:0;z-index:58;display:flex;align-items:center;gap:8px;
-    min-height:52px;padding:6px max(10px,env(safe-area-inset-left));border-bottom:1px solid var(--line);
-    background:rgba(9,9,11,.96);backdrop-filter:blur(8px);font:600 .65rem var(--mono)}
-  #lr-mobile-toolbar>a{color:var(--accent);text-decoration:none;white-space:nowrap}
-  #lr-mobile-toolbar>span{min-width:0;flex:1;color:var(--muted);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  #lr-mobile-toolbar button{min-height:44px;margin:0;padding:5px 9px;border:1px solid var(--line);border-radius:8px;
-    background:var(--panel);color:var(--kw);font:600 .59rem var(--mono)}
-  #lr-mobile-toolbar .lr-mobile-teacher{color:var(--accent)}
-  body.lr-has-contract .lr-scene{scroll-margin-top:58px}
-  #lr-teacher-drawer{width:min(420px,100vw)}
-}
 
-@media(max-width:520px){
-  #lr-mobile-toolbar>span{display:none}
-  #lr-mobile-toolbar .lr-study-optional{margin-left:auto}
-}
+
+
 
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto!important}
   #lr-teacher-drawer,.lr-scene *{transition:none!important;animation-duration:.001ms!important;animation-iteration-count:1!important}
 }
 @media print{
-  #lr-nav,#lr-controls,#lr-mobile-toolbar,.lr-scene-badge,#lr-teacher-drawer{display:none!important}
+  #lr-nav,#lr-controls,.lr-scene-badge,#lr-teacher-drawer{display:none!important}
   body.lr-has-contract{padding:0!important}
 }
+
+/* Introductory traces: one operation, its inputs, and a visible result. */
+.teaching-trace:not(.scrolly){display:grid;gap:16px;align-content:start;min-width:0}
+.teaching-trace .code-block{margin:0;min-width:0}
+.trace-values{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.trace-values>*{padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel);font: .9rem var(--mono)}
+.trace-result{padding:14px 18px;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;
+  background:rgba(34,211,238,.07);font:1rem/1.55 var(--mono);overflow-wrap:anywhere}
+.trace-caption{color:var(--muted);font-size:.95rem;line-height:1.5;margin:0}
+body:is([data-lesson="01"],[data-lesson="02"],[data-lesson="03"],[data-lesson="04"],[data-lesson="05"]) .teaching-trace pre{
+  font-size:clamp(.88rem,1.12vw,1rem);line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+body:is([data-lesson="01"],[data-lesson="02"],[data-lesson="03"],[data-lesson="04"],[data-lesson="05"]) .teaching-trace .ln.hl{
+  background:rgba(34,211,238,.14);box-shadow:inset 3px 0 var(--accent)}
+  body.mode-aula:is([data-lesson="01"],[data-lesson="02"],[data-lesson="03"],[data-lesson="04"],[data-lesson="05"]) .steps .step-inner p{font-size:1rem;line-height:1.6}
+  body.mode-aula:is([data-lesson="01"],[data-lesson="02"],[data-lesson="03"],[data-lesson="04"],[data-lesson="05"]) .steps .step-inner h3{font-size:1.2rem}
 
 
 .construction-panel {margin:20px 0;padding:18px 22px;border:1px solid var(--line);border-radius:12px;background:var(--panel);font-size:1rem;line-height:1.65;overflow-wrap:anywhere;}
@@ -806,74 +772,39 @@ body.lr-has-contract .hero .meta{display:none}
 </style>
 </head>
 <body data-lesson="01">
-<!-- ══════════════ RAIL ══════════════ -->
-<nav id="rail" aria-label="Progreso">
-  <a href="#s0" class="on"><span class="dot"></span><span class="lab">El reto</span></a>
-  <a href="#s1"><span class="dot"></span><span class="lab">Texto → máquina</span></a>
-  <a href="#s2"><span class="dot"></span><span class="lab">Variables y el mid</span></a>
-  <a href="#s3"><span class="dot"></span><span class="lab">Listas y for</span></a>
-  <a href="#s4"><span class="dot"></span><span class="lab">Diccionarios</span></a>
-  <a href="#s5"><span class="dot"></span><span class="lab">Decisiones</span></a>
-  <a href="#s6"><span class="dot"></span><span class="lab">Errores</span></a>
-  <a href="#s7"><span class="dot"></span><span class="lab">El algoritmo</span></a>
-</nav>
-
-<!-- ══════════════ §0 HERO ══════════════ -->
-<header class="hero wrap" id="s0">
-  <div class="eyebrow"><b>Algo Trading · ICAI 2026</b> &nbsp;·&nbsp; L1 · Python I &nbsp;·&nbsp; documento interactivo</div>
-  <h1>De texto a máquina</h1>
-  <p class="lede">Esto es un libro de órdenes. Al final de hoy habrás escrito un pequeño algoritmo
-  capaz de <strong>leerlo, calcular información y tomar una decisión</strong>. Primero veremos, en
-  cinco minutos, cómo una línea de Python termina convertida en operaciones que ejecuta una CPU.</p>
-
-  <div class="book" id="herobook">
-    <div class="book-title"><span>BTCUSDT · libro de órdenes</span><span class="live">● simulado</span></div>
-    <div id="asks"></div>
-    <div class="midrow">¿ <b>mid</b> ? — el precio "justo" está en este hueco</div>
-    <div id="bids"></div>
-  </div>
-
-  <div class="challenge">
-    <div class="tag">El reto de hoy</div>
-    <p>El mejor comprador paga <code>99950</code>. El mejor vendedor pide <code>100000</code>.
-    El punto medio — el <strong>mid</strong> — es la respuesta más honesta a "cuánto vale".</p>
-    <p>Tú lo calculas de cabeza. Pero una máquina <strong>solo entiende 1s y 0s</strong>, y tú solo
-    sabes escribir texto. Al final de este documento habrás cruzado esa distancia:
-    <strong>un programa en Python que lee un libro, calcula el mid y decide qué hacer</strong>.</p>
-    <p><strong>No necesitas memorizar tokens, AST o bytecode.</strong> Quédate con el modelo mental.</p>
-  </div>
-
-  <div class="meta">
-    <span><b>~40 min</b> lectura + práctica</span>
-    <span><b>7</b> secciones</span>
-    <span><b>5</b> simuladores</span>
-    <span>lo <b style="color:var(--accent)">cian</b> se toca</span>
-  </div>
-</header>
-
-<!-- ══════════════ §1 SCROLLY ══════════════ -->
-<section id="s1">
+<nav id="rail" aria-label="Progreso"><a href="#s0" class="on"><span class="dot"></span><span class="lab">El resultado</span></a><a href="#s2"><span class="dot"></span><span class="lab">Variables</span></a><a href="#s1"><span class="dot"></span><span class="lab">CPython</span></a><a href="#s3"><span class="dot"></span><span class="lab">Listas y for</span></a><a href="#s4"><span class="dot"></span><span class="lab">Diccionarios</span></a><a href="#s5"><span class="dot"></span><span class="lab">Decisiones</span></a><a href="#s6"><span class="dot"></span><span class="lab">Errores</span></a><a href="#s8"><span class="dot"></span><span class="lab">Otros caminos</span></a><a href="#s7"><span class="dot"></span><span class="lab">Tu práctica</span></a></nav>
+<header class="hero wrap" id="s0"><div class="eyebrow"><b>Algo Trading · ICAI 2026</b> · L1 · Python I</div>
+<h1>Leer precios, <em>calcular y decidir</em></h1>
+<p class="lede">Una compra al mejor precio vendedor cuesta 101. Una venta al mejor comprador recibe 99. Vamos a calcular qué separa ambos precios.</p>
+<div class="book" id="herobook"><div class="book-title"><span>Libro simulado · precio y cantidad</span></div><div id="asks"></div><div class="midrow">mid = (99 + 101) / 2 = <b>100</b></div><div id="bids"></div></div>
+<div class="challenge"><div class="tag">El resultado de hoy</div><p><code>spread = 2</code> · <code>mid = 100</code></p><p>El mid es un punto medio, no un «valor justo» ni un precio de ejecución garantizado.</p></div></header><section id="s2">
+<div class="wrap"><h2>Nombres, cálculo y salida</h2><p class="lede">Python ejecuta de arriba abajo. Cada etapa añade una operación.</p></div>
+<div class="scrolly" data-scrolly><div class="steps">
+<div class="step on" data-stage="0" data-name="datos"><div class="step-inner"><h3>1 · Dar nombre a dos valores</h3><p><code>=</code> asigna: vincula el nombre de la izquierda al valor de la derecha. No es una comparación.</p><p><code>bid</code> y <code>ask</code> son nombres elegidos para recordar qué significa cada precio.</p></div></div>
+<div class="step" data-stage="1" data-name="cálculo"><div class="step-inner"><h3>2 · Usar esos nombres</h3><p>Primero se calcula la expresión de la derecha; después se guarda el resultado.</p><p>Los paréntesis hacen que sumemos los dos precios antes de dividir. <code>/</code> devuelve un número decimal: <code>100.0</code>.</p></div></div>
+<div class="step" data-stage="2" data-name="salida"><div class="step-inner"><h3>3 · Mostrar no es calcular</h3><p><code>print(mid)</code> recibe el valor de <code>mid</code> y lo muestra. No cambia los precios.</p><p>Predice la salida. Después cambia ask a 103 en tu notebook y vuelve a ejecutar desde los datos.</p></div></div>
+</div><div class="figwrap"><div class="fig"><div class="fig-head"><span>snapshot.py</span><span class="stage-name">datos</span></div>
+<div class="fig-stage on" data-stage="0"><div class="teaching-trace"><div class="code"><pre><span class="ln hl">bid = 99</span><span class="ln hl">ask = 101</span></pre></div><div class="trace-result">bid → 99<br>ask → 101</div></div></div>
+<div class="fig-stage" data-stage="1"><div class="teaching-trace"><div class="code"><pre><span class="ln">bid = 99</span><span class="ln">ask = 101</span><span class="ln hl">spread = ask - bid</span><span class="ln hl">mid = (bid + ask) / 2</span></pre></div><div class="trace-result">spread → 2 · mid → 100.0</div></div></div>
+<div class="fig-stage" data-stage="2"><div class="teaching-trace"><div class="code"><pre><span class="ln">bid = 99</span><span class="ln">ask = 101</span><span class="ln">mid = (bid + ask) / 2</span><span class="ln hl">print(mid)</span></pre></div><div class="btnrow"><input id="predictIn" type="text" placeholder="Tu predicción" aria-label="Tu predicción"><button class="btn" id="varRun" disabled>▶ Simular</button></div><div class="trace-result hidden" id="varOut">Salida: <span id="varOutVal"></span></div></div></div>
+</div></div></div></section><section id="s1">
   <div class="wrap">
     <div class="eyebrow">§1 · <b>La idea central</b></div>
     <h2>De una intención humana a operaciones ejecutables</h2>
-    <p class="lede">Vas a escribir <code>mid = (bid + ask) / 2</code>. Eso es texto. La CPU no
-    entiende texto. <strong>Python es el lenguaje; CPython es su implementación estándar</strong> y
-    la que utiliza la mayoría. Entre tu línea y la CPU hay varias capas. <strong>Sigue bajando</strong>:
-    el panel que te acompaña va transformando tu línea en cada parada.</p>
+    <p class="lede">Ya calculaste el mid. Ahora observa cómo CPython transforma esa línea en instrucciones ejecutables. Python es el lenguaje; CPython es su implementación estándar.</p>
   </div>
 
   <div class="scrolly" data-scrolly>
     <div class="steps">
       <div class="step on" data-stage="0" data-name="texto"><div class="step-inner">
         <h3><span class="n">0/5</span>Esto es todo lo que Python recibe</h3>
-        <p>Una línea de texto. Para Python, de momento, no significa <strong>nada</strong>:
-        son 30 caracteres, igual que un mensaje de WhatsApp.</p>
+        <p>CPython recibe el texto <code>mid = (bid + ask) / 2</code>. Primero identifica sus partes; después decide en qué orden operarlas.</p>
       </div></div>
       <div class="step" data-stage="1" data-name="tokens"><div class="step-inner">
         <h3><span class="n">1/5</span>Tokenizar: trocear el texto</h3>
         <p>Primera parada: CPython corta la línea en <strong>piezas con etiqueta</strong> — tokens.
         <code>mid</code> es un nombre, <code>=</code> un operador, <code>2</code> un número.</p>
-        <p>Como separar palabras y puntuación en una frase, antes de intentar entenderla.</p>
+
       </div></div>
       <div class="step" data-stage="2" data-name="árbol (AST)"><div class="step-inner">
         <h3><span class="n">2/5</span>El árbol (AST): poner orden</h3>
@@ -901,7 +832,7 @@ body.lr-has-contract .hero .meta{display:none}
         <p>La VM es a su vez un programa, escrito principalmente en C, que la CPU ejecuta como
         machine code propio de su arquitectura.
         <strong>La distancia texto → máquina está cruzada.</strong></p>
-        <p>Y <code>mid</code> ya existe: vale <code>99975.0</code>.</p>
+        <p>Y <code>mid</code> ya existe: vale <code>100.0</code>.</p>
       </div></div>
     </div>
 
@@ -909,7 +840,7 @@ body.lr-has-contract .hero .meta{display:none}
       <div class="fig-head"><span>mid = (bid + ask) / 2</span><span class="stage-name" id="stagename">texto</span></div>
       <div class="fig-stage on" data-stage="0">
         <div class="srcline">mid = (bid + ask) / 2<span class="cursor"></span></div>
-        <p style="text-align:center;color:var(--faint);font-size:.8rem;margin-top:30px">30 caracteres. Nada más.</p>
+        <p style="text-align:center;color:var(--faint);font-size:.8rem;margin-top:30px">21 caracteres: una instrucción.</p>
       </div>
       <div class="fig-stage" data-stage="1">
         <div class="toks">
@@ -969,25 +900,59 @@ body.lr-has-contract .hero .meta{display:none}
         </div>
       </div>
       <div class="fig-stage" data-stage="5">
-        <div class="bin">01001100 01001111 01000001 01000100 00100000 01100010 01101001
-        01100100 00100000 10111010 01001100 01001111 01000001 01000100 00100000
-        01100001 01110011 01101011 01000010 01001001 01001110 01000001 01010010
+        <div class="bin">01001100 01001111 01011 01000100 00101 01100010 01101001
+        01100100 00101 10111010 01001100 01001111 01011 01000100 00101
+        01100001 01110011 01101011 01000010 01001001 01001110 01011 01010010
         01011001 00101111 01010011 01010100 01001111 01010010 01000101</div>
-        <div class="result-chip">mid → 99975.0 ✓</div>
+        <div class="result-chip">mid → 100.0 ✓</div>
         <p style="text-align:center;color:var(--faint);font-size:.8rem;margin-top:22px">
         representación binaria ilustrativa del machine code que ejecuta la CPU</p>
       </div>
     </div></div>
   </div>
 
-  <div class="wrap">
-    <div class="note"><span class="tag">El mapa que importa</span>
-    CPython, escrito principalmente en C, analiza el source, lo compila a Python bytecode y
-    ejecuta ese bytecode mediante su VM. La CPU acaba ejecutando machine code nativo.
-    <strong>Python source ≠ bytecode ≠ machine code</strong> y <strong>CPython ≠ bytecode</strong>.</div>
-
-    <h3>La misma intención, dos caminos</h3>
-    <div class="simcard" id="lang-sim">
+</section>
+<section id="s3">
+<div class="wrap"><h2>Una lista; una misma operación por elemento</h2><p class="lede">Primero observa los datos. Después recórrelos, sin copiar cuatro veces la misma suma.</p></div>
+<div class="scrolly" data-scrolly><div class="steps">
+<div class="step on" data-stage="0" data-name="lista"><div class="step-inner"><h3>1 · Posición y cantidad</h3><p>Los corchetes <code>[]</code> agrupan valores. <code>prices[0]</code> lee el primero: las posiciones empiezan en cero.</p><p><code>len(prices)</code> recibe la lista y devuelve cuántos elementos contiene; no suma sus valores.</p></div></div>
+<div class="step" data-stage="1" data-name="bucle"><div class="step-inner"><h3>2 · Repetir con for</h3><p><code>p</code> toma cada valor, por orden. El bloque con sangría se ejecuta una vez por elemento.</p><p><code>total</code> empieza en cero y acumula las sumas. La última línea queda fuera del bucle: se ejecuta después de las cuatro vueltas.</p></div></div>
+<div class="step" data-stage="2" data-name="ejecución"><div class="step-inner"><h3>3 · Sigue una vuelta</h3><p>Pulsa Paso. Mira qué valor toma <code>p</code> y cuánto vale <code>total</code> después de sumarlo.</p><p>En la segunda vuelta: total anterior 99 + p 100 → total nuevo 199.</p></div></div>
+</div><div class="figwrap"><div class="fig"><div class="fig-head"><span>prices → total → media</span><span class="stage-name">lista</span></div>
+<div class="fig-stage on" data-stage="0"><div class="teaching-trace"><div class="code"><pre><span class="ln">prices = [99, 100, 102, 101]</span><span class="ln hl">print(prices[0])</span><span class="ln hl">print(len(prices))</span></pre></div><div class="trace-result">99<br>4</div></div></div>
+<div class="fig-stage" data-stage="1"><div class="teaching-trace"><div class="code"><pre><span class="ln">prices = [99, 100, 102, 101]</span><span class="ln">total = 0</span><span class="ln hl">for p in prices:</span><span class="ln hl">    total = total + p</span><span class="ln">media = total / len(prices)</span></pre></div><div class="trace-result">Al terminar: total = 402; media = 100.5</div></div></div>
+<div class="fig-stage" data-stage="2"><div class="teaching-trace"><div class="code"><pre><span class="ln">for p in prices:</span><span class="ln hl">    total = total + p</span></pre></div><div class="cells" id="loopCells"></div><div class="acc"><div><span>vuelta</span><b id="accIter">—</b></div><div><span>p</span><b id="accP">—</b></div><div><span>total</span><b id="accTotal">0</b></div><div><span>media</span><b id="accMedia">—</b></div></div><div class="looplog" id="loopLog">Pulsa Paso para empezar.</div><div class="btnrow"><button class="btn" id="loopStep">Paso ›</button><button class="btn" id="loopAuto">▶▶ Auto</button><button class="btn ghost" id="loopReset">↻ Reiniciar</button></div></div></div>
+</div></div></div></section><section id="s4"><div class="wrap"><h2>Un diccionario da nombre a cada campo</h2>
+<p class="lede">Una lista se consulta por posición. Un diccionario, por clave. Toca un campo para seguirlo en la ficha.</p>
+<div class="dictgrid teaching-trace"><div class="code dcode"><pre><span class="ln">order = {</span><span class="ln">    <span class="dk" data-key="side">"side": "buy"</span>,</span><span class="ln">    <span class="dk" data-key="price">"price": 99</span>,</span><span class="ln">    <span class="dk" data-key="size">"size": 2</span>,</span><span class="ln">}</span><span class="ln hl">print(order["price"])  # 99</span></pre></div>
+<div class="ordercard"><div class="oc-head">Orden simulada</div><div class="oc-row" data-key="side"><span class="kk">side</span><span class="vv">buy</span></div><div class="oc-row" data-key="price"><span class="kk">price</span><span class="vv">99</span></div><div class="oc-row" data-key="size"><span class="kk">size</span><span class="vv">2</span></div></div></div>
+<p><code>order["venue"] = "binance"</code> añade un campo. Leer un campo y asignarlo son operaciones distintas.</p>
+<div class="btnrow"><button class="btn" id="venueBtn">Añadir venue</button><span id="venueMsg" aria-live="polite"></span></div></div></section><section id="s5"><div class="wrap"><h2>if elige una rama</h2>
+<p class="lede">Clasifica el spread. Python comprueba las condiciones en orden y ejecuta solo la primera verdadera.</p>
+<div class="decider teaching-trace"><div class="row1"><span class="spread-val">spread = <b id="spVal">2</b></span><input type="range" id="spSlider" min="0" max="10" value="2" step="1" aria-label="Ajusta el spread"></div>
+<div class="code"><pre id="ifCode"><span class="ln" data-br="0">if spread &lt;= 2:</span><span class="ln" data-br="0">    state = "estrecho"</span><span class="ln" data-br="1">elif spread &lt;= 4:</span><span class="ln" data-br="1">    state = "medio"</span><span class="ln" data-br="2">else:</span><span class="ln" data-br="2">    state = "amplio"</span></pre></div>
+<div class="verdict">state = <b id="verdictTxt">"estrecho"</b></div></div>
+<p>Prueba 2, 3 y 5. Con 2 también se cumple ≤4, pero gana la primera rama. <code>elif</code> significa «si no, comprueba esta otra condición».</p>
+<p class="trace-caption">Umbrales de práctica, no una recomendación de compra o venta.</p></div></section><section id="s6">
+<div class="wrap"><h2>Leer el error y corregir una causa</h2><p class="lede">Lee tipo y mensaje; después localiza la línea. Cada ejemplo parte de los datos mostrados.</p></div>
+<div class="scrolly" data-scrolly><div class="steps">
+<div class="step on" data-stage="0" data-name="nombre"><div class="step-inner"><h3>1 · Nombre inexistente</h3><p><code>mid</code> y <code>midd</code> son nombres distintos. El cálculo de la primera línea terminó; falla la segunda.</p></div></div>
+<div class="step" data-stage="1" data-name="tipo"><div class="step-inner"><h3>2 · Texto y número</h3><p>Las comillas crean texto: <code>"99"</code> no es el número 99. <code>int</code> convierte texto entero válido antes de sumar.</p></div></div>
+<div class="step" data-stage="2" data-name="posición"><div class="step-inner"><h3>3 · Fuera de la lista</h3><p>Tres elementos ocupan las posiciones 0, 1 y 2. La posición 3 no existe.</p></div></div>
+<div class="step" data-stage="3" data-name="clave"><div class="step-inner"><h3>4 · Un campo que puede faltar</h3><p><code>order["venue"]</code> falla si no existe la clave. <code>get</code> permite elegir un valor por defecto y no modifica el diccionario.</p></div></div>
+</div><div class="figwrap"><div class="fig"><div class="fig-head"><span>Tracebacks abreviados</span><span class="stage-name">nombre</span></div>
+<div class="fig-stage on" data-stage="0"><div class="teaching-trace"><div class="code"><pre><span class="ln">mid = (99 + 101) / 2</span><span class="ln hl">print(midd)</span></pre></div><div class="trace-result">Línea 2 · NameError: name 'midd' is not defined</div><p class="trace-caption">Corrección: print(mid) → 100.0.</p></div></div>
+<div class="fig-stage" data-stage="1"><div class="teaching-trace"><div class="code"><pre><span class="ln">price = "99"</span><span class="ln hl">total = price + 2</span></pre></div><div class="trace-result">Línea 2 · TypeError: no se puede sumar str e int</div><p class="trace-caption">Corrección: total = int(price) + 2 → 101. Mensaje de error resumido.</p></div></div>
+<div class="fig-stage" data-stage="2"><div class="teaching-trace"><div class="code"><pre><span class="ln">prices = [99, 100, 102]</span><span class="ln hl">print(prices[3])</span></pre></div><div class="trace-result">Línea 2 · IndexError: list index out of range</div><p class="trace-caption">Corrección: prices[2] → 102.</p></div></div>
+<div class="fig-stage" data-stage="3"><div class="teaching-trace"><div class="code"><pre><span class="ln">order = {"price": 99}</span><span class="ln hl">venue = order.get("venue", "sin dato")</span><span class="ln">print(venue)</span></pre></div><div class="trace-result">sin dato</div><p class="trace-caption">order sigue siendo {"price": 99}.</p></div></div>
+</div></div></div></section><section id="s8">
+<div class="wrap"><h2>Ampliar el mapa de ejecución</h2><p class="lede">Estas comparaciones no cambian el código que debes construir.</p></div>
+<div class="scrolly" data-scrolly><div class="steps">
+<div class="step on" data-stage="0" data-name="dos caminos"><div class="step-inner"><h3>La misma intención, dos caminos</h3><p>CPython analiza el código, genera bytecode y lo ejecuta con su VM. C++ suele compilarse a un ejecutable nativo. La CPU ejecuta instrucciones nativas en ambos casos.</p><p>Compara dónde aparece el error en cada simulación.</p></div></div>
+<div class="step" data-stage="1" data-name="ecosistema"><div class="step-inner"><h3>Código que puedes reutilizar</h3><p>El ecosistema incluye bibliotecas para arrays, tablas y cálculo. No las necesitas para el principal de hoy.</p><p>La AI puede ayudar a expresar y escribir un programa; seguimos teniendo que comprobar qué ejecuta y qué resultado produce.</p></div></div>
+<div class="step" data-stage="2" data-name="explorar"><div class="step-inner"><h3>Exploración opcional</h3><p>Este analizador JavaScript ilustra un subconjunto pequeño de Python; no sustituye al intérprete real. No memorices sus instrucciones internas.</p></div></div>
+</div><div class="figwrap"><div class="fig"><div class="fig-head"><span>CPython y otras herramientas</span><span class="stage-name">dos caminos</span></div>
+<div class="fig-stage on" data-stage="0"><div class="teaching-trace"><div class="simcard" id="lang-sim">
       <h4>simulador · mid = (bid + ask) / 2</h4>
       <div class="mode-switch" role="group" aria-label="Pipeline de ejecución">
         <button class="on" id="lang-python">Python · CPython</button>
@@ -1001,13 +966,8 @@ body.lr-has-contract .hero .meta{display:none}
       <div class="looplog" id="lang-log">elige un camino y ejecútalo</div>
     </div>
 
-    <div class="note"><span class="tag">Una regla</span>
-    Python favorece el ciclo corto <strong>write → run → inspect → fix</strong>. C++ desplaza
-    más comprobaciones a la compilación y produce un ejecutable nativo. Ambos ofrecen diagnósticos;
-    cambia el momento del feedback y el artefacto que llega a la CPU.</div>
-
-    <h3>La ventaja no es solo el lenguaje</h3>
-    <div class="simcard" id="ecosystem-sim">
+    </div></div>
+<div class="fig-stage" data-stage="1"><div class="teaching-trace"><div class="simcard" id="ecosystem-sim">
       <h4>animación · el efecto red</h4>
       <div class="execution-trace">
         <div class="trace-step" data-eco="0"><span>sintaxis + iteración rápida</span></div>
@@ -1017,17 +977,8 @@ body.lr-has-contract .hero .meta{display:none}
       </div>
       <button class="btn" id="eco-run">▶ Ver el efecto red</button>
     </div>
-    <p><strong>La ventaja práctica incluye el ecosistema</strong>: código probado que podremos
-    reutilizar durante todo el curso. Es un círculo virtuoso, no una explicación histórica única.</p>
-
-    <details><summary>AI cambia la interfaz, no el problema de fondo</summary><div class="body">
-      <p>Durante décadas expresamos intención con lenguajes formales como Python o C++. Con AI
-      podemos expresar más intención en lenguaje natural: humano → lenguaje natural → AI →
-      representación ejecutable → máquina. Puede cambiar cómo programamos; debajo sigue siendo
-      necesario convertir intención en operaciones ejecutables.</p>
-    </div></details>
-
-    <div class="ownline">
+    </div></div>
+<div class="fig-stage" data-stage="2"><div class="teaching-trace"><div class="ownline">
       <div class="eyebrow" style="margin-bottom:2px">simulador · <b>tu propia línea, las tres fases en vivo</b></div>
       <div class="tag">Exploración autónoma · fuera del core de 20 min</div>
       <p style="font-size:.94rem;color:var(--muted);margin:.4em 0 0">Escribe una asignación o una
@@ -1046,260 +997,10 @@ body.lr-has-contract .hero .meta{display:none}
         <div><h4>La VM ejecuta…</h4><pre id="ownEnv"></pre><div class="res" id="ownRes"></div></div>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- ══════════════ §2 VARIABLES ══════════════ -->
-<section id="s2">
-  <div class="wrap">
-    <div class="eyebrow">§2 · <b>Construye</b></div>
-    <h2>Variables: nombres que apuntan a valores</h2>
-    <p class="lede">Ya sabes qué hace Python con tu texto. Ahora escríbelo de verdad.
-    Una variable no es una "caja": es un <strong>nombre que apunta a un valor</strong>.
-    Cuatro líneas y el reto de la portada queda resuelto.</p>
-
-    <div class="code">
-      <div class="code-head"><span>snapshot.py</span><span>python</span></div>
-      <pre id="varCode"><span class="ln">bid = <span class="num">99950</span></span><span class="ln">ask = <span class="num">100000</span></span><span class="ln">mid = (bid + ask) / <span class="num">2</span></span><span class="ln"><span class="fn">print</span>(mid)</span></pre>
-      <div class="predict" style="margin:0;border-radius:0;border-left:none;border-right:none;border-bottom:none">
-        <div class="tag">Predice antes de ejecutar</div>
-        <p style="margin:.2em 0 .8em;font-size:.94rem">¿Qué aparecerá <em>exactamente</em> en pantalla?
-        Escríbelo — vale equivocarse, no vale saltárselo.</p>
-        <div class="btnrow" style="margin:0">
-          <input type="text" id="predictIn" placeholder="mi predicción…" aria-label="Tu predicción">
-          <button class="btn" id="varRun" disabled>▶ Ejecutar</button>
-        </div>
-      </div>
-      <div class="out hidden" id="varOut"><span class="prompt">&gt;&gt;&gt; </span><span class="val" id="varOutVal"></span></div>
-    </div>
-
-    <div id="afterRun" class="hidden">
-      <div class="note"><span class="tag">¿Y ese .0?</span>
-      Escribiste números enteros pero salió <code>99975.0</code>. La división <code>/</code> en Python
-      <strong>siempre devuelve un <code>float</code></strong> (número con decimales), aunque el
-      resultado sea redondo. Si tu predicción fue <code>99975</code>, acabas de aprender la
-      diferencia entre <code>int</code> y <code>float</code> — mejor que con cualquier definición.</div>
-
-      <h3>Míralo pasar línea a línea</h3>
-      <p>Cada línea ejecutada crea o actualiza un nombre. Pulsa <strong>Paso</strong> y observa
-      cómo se puebla la memoria:</p>
-      <div class="loopviz">
-        <div class="code" style="margin:0 0 16px">
-          <pre id="stepCode"><span class="ln">bid = <span class="num">99950</span></span><span class="ln">ask = <span class="num">100000</span></span><span class="ln">mid = (bid + ask) / <span class="num">2</span></span><span class="ln"><span class="fn">print</span>(mid)</span></pre>
-        </div>
-        <div class="memory" id="memory"><p style="color:var(--faint);font-size:.85rem;margin:0">— memoria vacía —</p></div>
-        <div class="looplog" id="stepLog"></div>
-        <div class="btnrow" style="margin-bottom:0">
-          <button class="btn" id="stepBtn">Paso ›</button>
-          <button class="btn ghost" id="stepReset">↻ Reiniciar</button>
-        </div>
-      </div>
-
-      <details><summary>🔬 Para curiosos: pregúntale a Python por el tipo</summary>
-        <div class="body">
-          <p><code>type()</code> te dice qué es cada cosa. En el REPL:</p>
-          <div class="code" style="margin:12px 0"><pre><span class="ln"><span class="fn">type</span>(bid)   <span class="c"># &lt;class 'int'&gt;</span></span><span class="ln"><span class="fn">type</span>(mid)   <span class="c"># &lt;class 'float'&gt;</span></span><span class="ln"><span class="fn">type</span>(<span class="s">"BTCUSDT"</span>)  <span class="c"># &lt;class 'str'&gt; — texto</span></span></pre></div>
-          <p>Tres tipos te bastan hoy: <code>int</code> (enteros), <code>float</code> (decimales),
-          <code>str</code> (texto). El resto del curso construye sobre estos.</p>
-        </div>
-      </details>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════ §3 LISTAS Y FOR ══════════════ -->
-<section id="s3">
-  <div class="wrap">
-    <div class="eyebrow">§3 · <b>Construye</b></div>
-    <h2>Listas y <code>for</code>: cuando no tienes un dato, sino muchos</h2>
-    <p class="lede">Un mercado no te da un precio: te da un <strong>chorro</strong> de precios.
-    Guardarlos de uno en uno (<code>p1</code>, <code>p2</code>, <code>p3</code>…) no escala.
-    Una <strong>lista</strong> los guarda juntos y un <strong>for</strong> los recorre.</p>
-
-    <div class="code">
-      <div class="code-head"><span>media.py</span><span>python</span></div>
-      <pre><span class="ln">prices = [<span class="num">99950</span>, <span class="num">99975</span>, <span class="num">100010</span>, <span class="num">99990</span>]</span><span class="ln">total = <span class="num">0</span></span><span class="ln"><span class="k">for</span> p <span class="k">in</span> prices:</span><span class="ln">    total = total + p</span><span class="ln">media = total / <span class="fn">len</span>(prices)</span></pre>
-    </div>
-
-    <p>La jugada tiene dos piezas: el <strong>acumulador</strong> (<code>total</code> empieza en 0
-    y va engordando) y el <strong>cursor</strong> (<code>p</code> toma cada valor de la lista, por
-    turno). Ejecuta el bucle vuelta a vuelta:</p>
-
-    <div class="loopviz">
-      <div class="cells" id="loopCells"></div>
-      <div class="acc">
-        <div><span>vuelta</span><b id="accIter">—</b></div>
-        <div><span>p (cursor)</span><b id="accP">—</b></div>
-        <div><span>total (acumulador)</span><b id="accTotal">0</b></div>
-        <div><span>media</span><b id="accMedia">—</b></div>
-      </div>
-      <div class="looplog" id="loopLog">pulsa Paso para entrar en el bucle</div>
-      <div class="btnrow" style="margin-bottom:0">
-        <button class="btn" id="loopStep">Paso ›</button>
-        <button class="btn" id="loopAuto">▶▶ Auto</button>
-        <button class="btn ghost" id="loopReset">↻ Reiniciar</button>
-      </div>
-    </div>
-
-    <div class="note"><span class="tag">El detalle que muerde</span>
-    Las posiciones empiezan en <strong>0</strong>: <code>prices[0]</code> es <code>99950</code> y
-    <code>prices[3]</code> es el último. Pedir <code>prices[4]</code> revienta — lo verás con tus
-    propios ojos en la sección de errores.</div>
-  </div>
-</section>
-
-<!-- ══════════════ §4 DICCIONARIOS ══════════════ -->
-<section id="s4">
-  <div class="wrap">
-    <div class="eyebrow">§4 · <b>Construye</b></div>
-    <h2>Diccionarios: una orden de verdad</h2>
-    <p class="lede">Una orden real no es un número suelto: es <em>lado + precio + tamaño</em>
-    viajando juntos. La lista guarda cosas <strong>por posición</strong>; el diccionario las guarda
-    <strong>por nombre</strong>. Pasa el ratón por el código o por la ficha — son la misma cosa
-    vista dos veces.</p>
-
-    <div class="dictgrid">
-      <div class="code dcode" style="margin:0">
-        <div class="code-head"><span>order.py</span><span>python</span></div>
-        <pre><span class="ln">order = {</span><span class="ln">    <span class="dk" data-key="side"><span class="s">"side"</span>: <span class="s">"buy"</span></span>,</span><span class="ln">    <span class="dk" data-key="price"><span class="s">"price"</span>: <span class="num">99950</span></span>,</span><span class="ln">    <span class="dk" data-key="size"><span class="s">"size"</span>: <span class="num">0.5</span></span>,</span><span class="ln">}</span><span class="ln"></span><span class="ln"><span class="fn">print</span>(<span class="dk" data-key="price">order[<span class="s">"price"</span>]</span>)  <span class="c"># 99950</span></span></pre>
-      </div>
-      <div class="ordercard">
-        <div class="oc-head">ticket de orden</div>
-        <div class="oc-row" data-key="side"><span class="kk">side</span><span class="vv">buy</span></div>
-        <div class="oc-row" data-key="price"><span class="kk">price</span><span class="vv">99950</span></div>
-        <div class="oc-row" data-key="size"><span class="kk">size</span><span class="vv">0.5</span></div>
-      </div>
-    </div>
-
-    <p>Y un diccionario está <strong>vivo</strong>: puedes añadirle campos después de crearlo.</p>
-    <div class="code">
-      <div class="code-head"><span>order.py (sigue)</span><span>python</span></div>
-      <pre><span class="ln">order[<span class="s">"venue"</span>] = <span class="s">"binance"</span>  <span class="c"># campo nuevo, sin permiso de nadie</span></span></pre>
-      <div class="out"><div class="btnrow" style="margin:0"><button class="btn" id="venueBtn">▶ Ejecutar</button>
-      <span style="font-family:var(--mono);font-size:.78rem;color:var(--faint)" id="venueMsg">…y mira la ficha de arriba</span></div></div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════ §5 IF / ELIF ══════════════ -->
-<section id="s5">
-  <div class="wrap">
-    <div class="eyebrow">§5 · <b>Construye</b></div>
-    <h2><code>if / elif / else</code>: convertir un dato en una decisión</h2>
-    <p class="lede">Hasta aquí, tu programa <em>describe</em> el mercado. Un algoritmo de trading
-    además <strong>decide</strong>. La estructura es un embudo: Python prueba condiciones en orden
-    y ejecuta <strong>solo la primera</strong> que se cumple.</p>
-
-    <div class="decider">
-      <div class="row1">
-        <span class="spread-val">spread = <b id="spVal">50</b></span>
-        <input type="range" id="spSlider" min="0" max="200" value="50" step="5"
-               aria-label="Ajusta el spread">
-      </div>
-      <div class="code" style="margin:0">
-        <pre id="ifCode"><span class="ln" data-br="0"><span class="k">if</span> spread &lt; <span class="num">20</span>:</span><span class="ln" data-br="0">    decision = <span class="s">"líquido: cruzar ya"</span></span><span class="ln" data-br="1"><span class="k">elif</span> spread &lt; <span class="num">80</span>:</span><span class="ln" data-br="1">    decision = <span class="s">"aceptable: limit al mid"</span></span><span class="ln" data-br="2"><span class="k">else</span>:</span><span class="ln" data-br="2">    decision = <span class="s">"ilíquido: esperar"</span></span></pre>
-      </div>
-      <div class="verdict">decision = <b id="verdictTxt">"aceptable: limit al mid"</b></div>
-    </div>
-
-    <p>Mueve el slider y fíjate en dos cosas: solo <strong>una</strong> rama se ilumina cada vez,
-    y el orden importa — con <code>spread = 10</code> ambas condiciones son ciertas, pero gana la
-    primera.</p>
-
-    <div class="note"><span class="tag">Honestidad</span>
-    Los umbrales 20 y 80 me los he inventado para la demo. Elegirlos bien es un problema de
-    trading (lo trabajaremos); la <strong>estructura</strong> del embudo es el problema de hoy,
-    y esa ya es tuya.</div>
-  </div>
-</section>
-
-<!-- ══════════════ §6 ERRORES ══════════════ -->
-<section id="s6">
-  <div class="wrap">
-    <div class="eyebrow">§6 · <b>Rompe cosas</b></div>
-    <h2>Rompe código a propósito</h2>
-    <p class="lede">Vas a pasar más tiempo leyendo errores que escribiendo aciertos — mejor
-    perderles el miedo hoy. Regla de oro: <strong>el traceback se lee de abajo arriba</strong>.
-    Ejecuta estos tres desastres controlados.</p>
-
-    <div class="code">
-      <div class="code-head"><span>desastre_1.py — el nombre que no existe</span><span>python</span></div>
-      <pre><span class="ln">mid = (bid + ask) / <span class="num">2</span></span><span class="ln"><span class="fn">print</span>(midd)</span></pre>
-      <div class="out"><div class="btnrow" style="margin:0"><button class="btn tbBtn" data-tb="tb1">▶ Ejecutar</button></div></div>
-      <div class="tb hidden" id="tb1">Traceback (most recent call last):
-  <span class="dim">File "desastre_1.py", line 2, in &lt;module&gt;</span>
-    print(midd)
-<span class="et">NameError</span>: name 'midd' is not defined. <span class="dim">Did you mean: 'mid'?</span></div>
-      <ul class="tb-notes hidden" data-for="tb1">
-        <li><span class="mk">①</span> Abajo del todo: <strong>qué</strong> pasó — <code>NameError</code>, pediste un nombre que no existe.</li>
-        <li><span class="mk">②</span> Justo encima: <strong>dónde</strong> — línea 2.</li>
-        <li><span class="mk">③</span> Python moderno hasta te sugiere el arreglo. Léelo antes de entrar en pánico.</li>
-      </ul>
-    </div>
-
-    <div class="code">
-      <div class="code-head"><span>desastre_2.py — texto que parece número</span><span>python</span></div>
-      <pre><span class="ln">price = <span class="s">"99950"</span>   <span class="c"># ojo: comillas</span></span><span class="ln">total = price + <span class="num">50</span></span></pre>
-      <div class="out"><div class="btnrow" style="margin:0"><button class="btn tbBtn" data-tb="tb2">▶ Ejecutar</button></div></div>
-      <div class="tb hidden" id="tb2">Traceback (most recent call last):
-  <span class="dim">File "desastre_2.py", line 2, in &lt;module&gt;</span>
-    total = price + 50
-<span class="et">TypeError</span>: can only concatenate str (not "int") to str</div>
-      <ul class="tb-notes hidden" data-for="tb2">
-        <li><span class="mk">①</span> <code>"99950"</code> con comillas es <code>str</code> — texto. No un número.</li>
-        <li><span class="mk">②</span> Python se niega a sumar texto + número, y hace bien: ¿qué querías, <code>100000</code> o <code>"9995050"</code>?</li>
-        <li><span class="mk">③</span> Este error te lo comerás con datos bajados de internet: los precios llegan como texto.</li>
-      </ul>
-    </div>
-
-    <div class="code">
-      <div class="code-head"><span>desastre_3.py — la posición que no existe</span><span>python</span></div>
-      <pre><span class="ln">prices = [<span class="num">99950</span>, <span class="num">99975</span>, <span class="num">100010</span>]</span><span class="ln"><span class="fn">print</span>(prices[<span class="num">3</span>])</span></pre>
-      <div class="out"><div class="btnrow" style="margin:0"><button class="btn tbBtn" data-tb="tb3">▶ Ejecutar</button></div></div>
-      <div class="tb hidden" id="tb3">Traceback (most recent call last):
-  <span class="dim">File "desastre_3.py", line 2, in &lt;module&gt;</span>
-    print(prices[3])
-<span class="et">IndexError</span>: list index out of range</div>
-      <ul class="tb-notes hidden" data-for="tb3">
-        <li><span class="mk">①</span> Tres elementos → posiciones <code>0</code>, <code>1</code>, <code>2</code>. La <code>3</code> no existe.</li>
-        <li><span class="mk">②</span> "out of range" = te saliste de la lista. El clásico de los clásicos.</li>
-      </ul>
-    </div>
-
-    <p><strong>Los tres errores del día:</strong> <code>NameError</code> (nombre que no existe),
-    <code>TypeError</code> (tipos que no casan), <code>IndexError</code> (posición que no existe).
-    Cuando te salga uno esta semana — te saldrá — ya sabes leerlo. Las instrucciones anteriores
-    pueden haberse ejecutado bien: el programa falla al alcanzar la operación problemática. Ese
-    feedback inmediato alimenta el ciclo <strong>escribir → ejecutar → observar → corregir</strong>.</p>
-  </div>
-</section>
-
-<!-- ══════════════ §7 ALGORITMO + QUIZ ══════════════ -->
-<section id="s7">
-  <div class="wrap">
-    <div class="eyebrow">§7 · <b>El clímax</b></div>
-    <h2>Dato → cálculo → decisión</h2>
-    <p class="lede">Todo junto. Un diccionario con el libro (dato), el spread y el mid (cálculo),
-    y el embudo que decide (decisión). Esto — quince líneas — <strong>ya es un algoritmo de
-    trading</strong>: primitivo, pero con la misma anatomía que uno profesional.</p>
-
-    <div class="code">
-      <div class="code-head"><span>primer_algoritmo.py</span><span>python</span></div>
-      <pre><span class="ln"><span class="c"># 1 · DATO</span></span><span class="ln">book = {<span class="s">"bid"</span>: <span class="num">99950</span>, <span class="s">"ask"</span>: <span class="num">100000</span>}</span><span class="ln"></span><span class="ln"><span class="c"># 2 · CÁLCULO</span></span><span class="ln">spread = book[<span class="s">"ask"</span>] - book[<span class="s">"bid"</span>]</span><span class="ln">mid = (book[<span class="s">"ask"</span>] + book[<span class="s">"bid"</span>]) / <span class="num">2</span></span><span class="ln"></span><span class="ln"><span class="c"># 3 · DECISIÓN</span></span><span class="ln"><span class="k">if</span> spread &lt; <span class="num">20</span>:</span><span class="ln">    decision = <span class="s">"líquido: cruzar ya"</span></span><span class="ln"><span class="k">elif</span> spread &lt; <span class="num">80</span>:</span><span class="ln">    decision = <span class="s">"aceptable: limit al mid"</span></span><span class="ln"><span class="k">else</span>:</span><span class="ln">    decision = <span class="s">"ilíquido: esperar"</span></span><span class="ln"></span><span class="ln"><span class="fn">print</span>(<span class="s">"mid:"</span>, mid)</span><span class="ln"><span class="fn">print</span>(<span class="s">"spread:"</span>, spread)</span><span class="ln"><span class="fn">print</span>(<span class="s">"decisión:"</span>, decision)</span></pre>
-      <div class="out"><div class="btnrow" style="margin:0"><button class="btn runbtn" id="finalRun" data-target="finalOut" data-seq data-done="✓ ejecutado">▶ Ejecutar el algoritmo</button></div>
-        <div id="finalOut" class="hidden" style="margin-top:10px">
-          <div><span class="prompt">&gt;&gt;&gt; </span><span class="val">mid: 99975.0</span></div>
-          <div><span class="prompt">&gt;&gt;&gt; </span><span class="val">spread: 50</span></div>
-          <div><span class="prompt">&gt;&gt;&gt; </span><span class="val">decisión: aceptable: limit al mid</span></div>
-        </div>
-      </div>
-    </div>
-
-    <p>Cuando esos tres <code>print</code> aparecen, has cerrado el círculo del documento: texto
-    tuyo → tokens → árbol → bytecode → VM → <strong>una decisión sobre BTCUSDT</strong>.</p>
-
-    <h3>5 preguntas para fijar lo de hoy</h3>
-    <div class="quiz" data-quiz id="quiz">
+</div></div>
+</div></div></div></section>
+<section id="s9"><div class="wrap"><h2>Comprueba las cinco piezas</h2>
+<div class="quiz" data-quiz id="quiz">
       <div class="q" data-ok="2">
         <div class="qt">¿Qué hace Python <em>primero</em> con tu archivo?</div>
         <div class="opts">
@@ -1342,55 +1043,31 @@ body.lr-has-contract .hero .meta{display:none}
         <code>dic["clave"]</code> recuperas el valor.</div>
       </div>
       <div class="q" data-ok="2">
-        <div class="qt">Con <code>spread = 100</code> y el embudo <code>if spread &lt; 20 / elif spread &lt; 80 / else</code>, ¿qué rama se ejecuta?</div>
+        <div class="qt">Con <code>spread = 5</code> y el embudo <code>if spread &lt;= 2 / elif spread &lt;= 4 / else</code>, ¿qué rama se ejecuta?</div>
         <div class="opts">
           <button class="opt">A · la primera (if)</button>
           <button class="opt">B · la segunda (elif)</button>
           <button class="opt">C · la tercera (else)</button>
         </div>
-        <div class="why">100 no es &lt; 20 ni &lt; 80, así que caes al <code>else</code>:
-        "ilíquido: esperar".</div>
+        <div class="why">5 no es ≤ 2 ni ≤ 4, así que caes al <code>else</code>:
+        "amplio".</div>
       </div>
       <div class="score" id="score"></div>
     </div>
-
-    <div class="bridge">
-      <div class="tag">El puente a L2</div>
-      <p style="margin:.2em 0"><strong>Tu algoritmo funciona para BTC. Ahora añade ETH.</strong></p>
-      <p>Te tocará duplicar <code>bid_eth</code>, <code>ask_eth</code>, <code>spread_eth</code>,
-      <code>mid_eth</code>, el embudo entero… ¿Y con 20 activos? ¿Y cuando quieras cambiar la
-      fórmula del mid <em>en los 20 sitios a la vez</em>?</p>
-      <p style="margin-bottom:0">Ese dolor tiene cura y se llama <strong>función</strong>.
-      Es exactamente donde empieza L2.</p>
-    </div>
-
-    <h3>Dónde estás en el proyecto</h3>
-    <p>Todo el curso construye <strong>un solo sistema</strong>. Hoy pusiste la primera
-    piedra:</p>
-    <div class="pkgmap">
-      <div class="pk today">L1 · el dato<span>variables, dicts, decisiones</span></div>
-      <div class="pk future">L2 · book funcional<span>funciones sobre el libro</span></div>
-      <div class="pk future">L3 · mi_main.py<span>funciones reutilizables</span></div>
-      <div class="pk future">L4 · Order y Fill<span>exchange/orders.py</span></div>
-      <div class="pk future">L5 · OrderBook + Tracker<span>exchange/book.py</span></div>
-      <div class="pk future">L6 · familia Strategy<span>herencia</span></div>
-      <div class="pk future">L7-10 · motor y framework<span>matching, Market, Strategy, Backtest</span></div>
-      <div class="pk future">L11-14 · estrategias<span>métricas, VWAP, market making</span></div>
-    </div>
-
-    <div class="cta">
-      <div class="box"><span class="tag">Ahora te toca construir</span>
-      Abre <code>01_build_exercises.ipynb</code> y calcula spread y mid en las celdas. Compara tus resultados; después puedes repetirlos con <code>python mi_main.py</code>.</div>
-      <div class="box"><span class="tag">Si quieres más práctica</span>
-      <code>01_auxiliary.ipynb</code> — práctica OPTIONAL. Elige los ejercicios que te ayuden; puedes omitirlos para continuar.</div>
-    </div>
-  <details class="construction-panel" id="construction-guide"><summary>Del notebook a un programa Python</summary><p><strong>Problema:</strong> Convertir esos dos datos en dos lecturas distintas y comprobables: cuánto separa ambos lados y dónde está su punto medio. El sistema necesita conservar los números, no solo imprimir una frase con ellos.</p><p>Completa el principal en Jupyter y contrasta sus resultados. Después puedes trasladar las mismas respuestas a una copia de <code>main.py</code>, guardada como <code>mi_main.py</code>.</p><p>Desde la carpeta <code>exercises</code> de esta clase: <code>python mi_main.py</code>. Verás los mismos cálculos ejecutados de una vez.</p><p>El notebook sirve para investigar y explicar. Los archivos <code>.py</code> sirven para organizar programas y funciones reutilizables.</p><p><strong>Predice y contrasta:</strong> Con bid=99 y ask=101, spread=101−99=2 y mid=(99+101)/2=100, en unidades de precio. Si ask pasa a 103, spread=4 y mid=101. Comprar una unidad a 101 y venderla inmediatamente a 99 perdería 2 antes de costes; mid no garantiza un precio de ejecución.</p><p><strong>Lo siguiente reutiliza:</strong> L2 seleccionará los mejores precios entre varias órdenes. L3 aplicará estas mismas fórmulas al par seleccionado, en vez de usar una quote fija.</p></details></div></section>
-
-<footer>L1 · De texto a máquina — Algo Trading ICAI 2026 · documento interactivo</footer>
+</div></section>
+<section id="s7"><div class="wrap"><h2>Practica la misma regla en dos quotes</h2>
+<p class="lede">Empieza por spread y mid. Después completa el bucle guiado del mismo ejercicio: una lista, un diccionario y una condición.</p>
+<div class="trace-values"><span>99 / 101 → 2 · 100 · estrecho</span><span>99 / 103 → 4 · 101 · amplio</span></div>
+<p>Para guardar un resultado nuevo usa <code>results.append(result)</code>: añade el elemento al final de la lista. No lo confundas con <code>print</code>, que solo muestra.</p>
+<div class="teaching-trace"><div class="code"><pre><span class="ln">results = []</span><span class="ln">result = {"spread": 2, "mid": 100}</span><span class="ln hl">results.append(result)</span><span class="ln">print(results)</span></pre></div></div>
+<p><code>f"spread={spread}"</code> inserta un valor en texto: con spread=2 produce <code>spread=2</code>. No cambia el dato.</p>
+<div class="cta"><div class="box"><span class="tag">Principal</span><code>01_build_exercises.ipynb</code> · Completa los huecos y compara las dos salidas.</div><div class="box"><span class="tag">Auxiliar opcional</span><code>01_auxiliary.ipynb</code> · Más práctica si la necesitas; puedes continuar sin hacerlo.</div></div>
+<div class="bridge"><div class="tag">L2</div><p>Pasaremos de quotes ya resumidas a una lista de órdenes. Una función seleccionará el mejor comprador y el mejor vendedor.</p></div>
+<details class="construction-panel" id="construction-guide"><summary>Del notebook a un programa Python</summary><p><strong>Problema:</strong> Convertir esos dos datos en dos lecturas distintas y comprobables: cuánto separa ambos lados y dónde está su punto medio. El sistema necesita conservar los números, no solo imprimir una frase con ellos.</p><p>Completa el principal en Jupyter y contrasta sus resultados. Después puedes trasladar las mismas respuestas a una copia de <code>main.py</code>, guardada como <code>mi_main.py</code>.</p><p>Desde la carpeta <code>exercises</code> de esta clase: <code>python mi_main.py</code>. Verás los mismos cálculos ejecutados de una vez.</p><p>El notebook sirve para investigar y explicar. Los archivos <code>.py</code> sirven para organizar programas y funciones reutilizables.</p><p><strong>Predice y contrasta:</strong> Con bid=99 y ask=101, spread=101−99=2 y mid=(99+101)/2=100, en unidades de precio. Si ask pasa a 103, spread=4 y mid=101. Comprar una unidad a 101 y venderla inmediatamente a 99 perdería 2 antes de costes; mid no garantiza un precio de ejecución.</p><p><strong>Lo siguiente reutiliza:</strong> L2 seleccionará los mejores precios entre varias órdenes. L3 aplicará estas mismas fórmulas al par seleccionado, en vez de usar una quote fija.</p></details></div></section><footer>L1 · Dato, cálculo y decisión — Algo Trading ICAI 2026</footer>
 
 
-<script type="application/json" id="pedagogy-contract">{"lesson":1,"status":"contract-strict","title":"Python I — Dato, cálculo y decisión","delivery":"lesson","source_path":"framework/_build/docs/01_body.html","requires":{"concepts":[],"apis":[],"notation":[]},"requirement_routes":{"concepts":{},"apis":{},"notation":{}},"introduces":{"concepts":[{"id":"python.execution_model","importance":"major","route":"LIVE"},{"id":"python.variables","importance":"major","route":"LIVE"},{"id":"python.collections","importance":"major","route":"LIVE"},{"id":"python.list","importance":"major","route":"LIVE"},{"id":"python.dict","importance":"major","route":"LIVE"},{"id":"python.fstring","importance":"supporting","route":"REQUIRED"},{"id":"python.dict_get","importance":"supporting","route":"REQUIRED"},{"id":"python.control_flow","importance":"major","route":"LIVE"},{"id":"market.order_record","importance":"supporting","route":"LIVE"},{"id":"microstructure.spread","importance":"major","route":"LIVE"},{"id":"microstructure.mid","importance":"major","route":"LIVE"}],"apis":[],"notation":["notation.spread","notation.mid"]},"introduction_routes":{"apis":{},"notation":{"notation.spread":"LIVE","notation.mid":"LIVE"}},"recalls":[],"api_surface":[],"routes":{"LIVE":["l01-challenge","l01-execution","l01-variables","l01-loops","l01-order-data","l01-decision"],"REQUIRED":["l01-errors","l01-recap"],"OPTIONAL":[]},"objectives":[{"id":"l01-explain-execution","route":"LIVE","concepts":["python.execution_model"],"apis":[],"notation":[]},{"id":"l01-model-market-data","route":"LIVE","concepts":["python.variables","python.list","python.dict","market.order_record"],"apis":[],"notation":["notation.spread","notation.mid"]},{"id":"l01-turn-data-into-decision","route":"LIVE","concepts":["python.control_flow","microstructure.spread","microstructure.mid"],"apis":[],"notation":[]}],"load":{"live_presentation_minutes":20,"guided_minutes":20,"required_autonomous_minutes":0,"optional_minutes":23,"overflow_policy":"explicit-route-plan","required_project_minutes":0},"scenes":[{"id":"l01-challenge","dom_id":"s0","type":"hero-challenge","route":"LIVE","layout":"focus","concepts":["market.order_record"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l01-execution","dom_id":"s1","type":"concept-simulator","route":"LIVE","layout":"split-42-58","concepts":["python.execution_model"],"duration_minutes":5,"stages":[{"id":"source","route":"LIVE","dom_stage":0},{"id":"tokens","route":"LIVE","dom_stage":1},{"id":"ast","route":"LIVE","dom_stage":2},{"id":"bytecode","route":"LIVE","dom_stage":3},{"id":"vm","route":"LIVE","dom_stage":4},{"id":"machine-code","route":"OPTIONAL","duration_minutes":3,"dom_stage":5}]},{"id":"l01-variables","dom_id":"s2","type":"code-state","route":"LIVE","layout":"split-50-50","concepts":["python.variables"],"duration_minutes":3,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l01-loops","dom_id":"s3","type":"code-state","route":"LIVE","layout":"split-50-50","concepts":["python.list","python.control_flow"],"duration_minutes":3,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l01-order-data","dom_id":"s4","type":"code-state","route":"LIVE","layout":"split-50-50","concepts":["python.dict","market.order_record"],"duration_minutes":3,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l01-decision","dom_id":"s5","type":"guided-exercise","route":"LIVE","layout":"split-50-50","concepts":["microstructure.spread","microstructure.mid","python.control_flow"],"duration_minutes":4,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l01-errors","dom_id":"s6","type":"guided-exercise","route":"REQUIRED","layout":"focus","concepts":["python.execution_model","python.dict_get"],"duration_minutes":10,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l01-recap","dom_id":"s7","type":"diagnostic-quiz","route":"REQUIRED","layout":"focus","concepts":["python.variables","python.collections","python.control_flow","python.fstring"],"duration_minutes":10,"stages":[{"id":"main","route":"REQUIRED"}]}],"bridge":{"target_lesson":2,"known":{"concepts":["python.variables","python.collections","python.control_flow"],"apis":[],"notation":["notation.spread","notation.mid"]},"limitation":"Un segundo símbolo duplica datos y cálculos.","need":"Un libro por instrumento y funciones reutilizables evitan duplicar cálculos sin mezclar precios de símbolos distintos."},"api_transitions":[],"package_checks":[],"used_later":{"concepts":["microstructure.mid","microstructure.spread","python.collections","python.control_flow","python.dict_get","python.fstring","python.variables"],"apis":[],"notation":["notation.mid","notation.spread"]}}</script>
-<script type="application/json" id="learning-support">{"lesson": 1, "cards": {"collections": {"title": "Listas, diccionarios y posiciones", "first_lesson": 1, "route": "LIVE", "why": "Una orden tiene varios campos; un libro contiene varias órdenes.", "inputs": "Lista: valores ordenados entre []; dict: pares clave:valor entre {}.", "outputs": "xs[0] devuelve el primer valor; xs[-1], el último. xs[:2] crea una lista con los dos primeros. order['size'] devuelve el campo size.", "mechanism": "Los índices empiezan en cero; un índice negativo cuenta desde el final. El extremo derecho de un slice no se incluye. append añade a la lista original y devuelve None.", "example": "sizes = [2, 3]\norder = {'side': 'buy', 'size': sizes[0]}\nprint(order['size'])  # 2"}, "errors": {"title": "Leer un error sin adivinar", "first_lesson": 1, "route": "LIVE", "why": "Localizar por qué una operación no puede continuar.", "inputs": "Un traceback: ruta, número de línea, tipo y mensaje del error.", "outputs": "La última línea explica el fallo; la línea de tu archivo indica dónde revisar.", "mechanism": "NameError: nombre no definido. KeyError: clave ausente. TypeError: operación incompatible. int('205') devuelve el entero 205; float('205.5'), el decimal 205.5. Convierte el texto numérico antes de operar y vuelve a ejecutar desde el inicio.", "example": "order = {'size': 2}\nprint(order['price'])  # KeyError: falta 'price'"}, "flow": {"title": "for, if y sangría", "first_lesson": 1, "route": "LIVE", "why": "Repetir una regla para cada dato y elegir qué rama ejecutar.", "inputs": "for recibe una colección; if una condición que será True o False.", "outputs": "Se ejecuta el bloque sangrado para cada elemento o cuando se cumple la condición.", "mechanism": "Los dos puntos abren un bloque. == compara; = asigna. La sangría decide qué líneas pertenecen al bloque.", "example": "for size in [0, 2]:\n    if size > 0:\n        print(size)  # sólo muestra 2"}, "fstring": {"title": "f-string: insertar valores en texto", "first_lesson": 1, "route": "REQUIRED", "why": "Mostrar un resultado o construir una clave de columna a partir de un dato.", "inputs": "Una cadena con f delante y expresiones entre llaves: f'precio={price}'.", "outputs": "Devuelve texto con el valor de cada expresión. No modifica los datos originales.", "mechanism": "Con price=99.5, f'{price:.2f}' produce '99.50': .2f muestra dos decimales. Con i=2, f'bid_price_{i}' produce 'bid_price_2'.", "example": "price = 99.5\ni = 2\nprint(f'{price:.2f}', f'bid_price_{i}')  # 99.50 bid_price_2"}, "get": {"title": "dict.get: leer un campo que puede faltar", "first_lesson": 1, "route": "REQUIRED", "why": "Tratar una posición todavía ausente como cero, sin confundir lectura con actualización.", "inputs": "Un diccionario, la clave buscada y un valor por defecto.", "outputs": "d.get(key, default) devuelve el valor existente o default. No modifica d.", "mechanism": "Equivale a preguntar si la clave existe y elegir una de dos respuestas. Para guardar un cambio se necesita d[key] = nuevo_valor.", "example": "positions = {}\nold = positions.get('ETH', 0)  # 0; positions sigue {}\npositions['ETH'] = old + 2"}, "values": {"title": "Variables, = y print", "first_lesson": 1, "route": "LIVE", "why": "Dar nombre a un dato para poder calcular y comprobar una decisión.", "inputs": "Un valor a la derecha de =; una expresión dentro de print(...).", "outputs": "= vincula un nombre al valor. print muestra texto, pero no guarda un resultado nuevo.", "mechanism": "Python ejecuta las líneas de arriba abajo. Un # inicia un comentario que no se ejecuta.", "example": "price = 100\nquantity = 2\nprint(price * quantity)  # muestra 200"}}, "scenes": {"s0": ["values"], "s1": ["values"], "s2": ["values"], "s3": ["collections", "flow"], "s4": ["collections"], "s5": ["flow"], "s6": ["errors", "get"], "s7": ["values", "flow", "fstring"]}}</script>
+<script type="application/json" id="pedagogy-contract">{"lesson":1,"status":"contract-strict","title":"Python I — Dato, cálculo y decisión","delivery":"lesson","source_path":"framework/_build/docs/01_body.html","requires":{"concepts":[],"apis":[],"notation":[]},"requirement_routes":{"concepts":{},"apis":{},"notation":{}},"introduces":{"concepts":[{"id":"python.execution_model","importance":"major","route":"LIVE"},{"id":"python.variables","importance":"major","route":"LIVE"},{"id":"python.collections","importance":"major","route":"LIVE"},{"id":"python.list","importance":"major","route":"LIVE"},{"id":"python.dict","importance":"major","route":"LIVE"},{"id":"python.fstring","importance":"supporting","route":"REQUIRED"},{"id":"python.dict_get","importance":"supporting","route":"REQUIRED"},{"id":"python.control_flow","importance":"major","route":"LIVE"},{"id":"market.order_record","importance":"supporting","route":"LIVE"},{"id":"microstructure.spread","importance":"major","route":"LIVE"},{"id":"microstructure.mid","importance":"major","route":"LIVE"}],"apis":[],"notation":["notation.spread","notation.mid"]},"introduction_routes":{"apis":{},"notation":{"notation.spread":"LIVE","notation.mid":"LIVE"}},"recalls":[],"api_surface":[],"routes":{"LIVE":["l01-challenge","l01-variables","l01-execution","l01-loops","l01-order-data","l01-decision"],"REQUIRED":["l01-errors","l01-execution-context","l01-quiz","l01-recap"],"OPTIONAL":[]},"objectives":[{"id":"l01-explain-execution","route":"LIVE","concepts":["python.execution_model"],"apis":[],"notation":[]},{"id":"l01-model-market-data","route":"LIVE","concepts":["python.variables","python.list","python.dict","market.order_record"],"apis":[],"notation":["notation.spread","notation.mid"]},{"id":"l01-turn-data-into-decision","route":"LIVE","concepts":["python.control_flow","microstructure.spread","microstructure.mid"],"apis":[],"notation":[]}],"load":{"live_presentation_minutes":20,"guided_minutes":20,"required_autonomous_minutes":0,"optional_minutes":23,"overflow_policy":"explicit-route-plan","required_project_minutes":0},"scenes":[{"id":"l01-challenge","dom_id":"s0","type":"hero-challenge","route":"LIVE","layout":"focus","concepts":["market.order_record"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l01-variables","dom_id":"s2","type":"code-state","route":"LIVE","layout":"split-42-58","concepts":["python.variables"],"duration_minutes":3,"stages":[{"id":"values","route":"LIVE","dom_stage":0},{"id":"calculate","route":"LIVE","dom_stage":1},{"id":"print","route":"LIVE","dom_stage":2}]},{"id":"l01-execution","dom_id":"s1","type":"concept-simulator","route":"LIVE","layout":"split-42-58","concepts":["python.execution_model"],"duration_minutes":5,"stages":[{"id":"source","route":"LIVE","dom_stage":0},{"id":"tokens","route":"LIVE","dom_stage":1},{"id":"ast","route":"LIVE","dom_stage":2},{"id":"bytecode","route":"LIVE","dom_stage":3},{"id":"vm","route":"LIVE","dom_stage":4},{"id":"machine-code","route":"OPTIONAL","duration_minutes":3,"dom_stage":5}]},{"id":"l01-loops","dom_id":"s3","type":"code-state","route":"LIVE","layout":"split-42-58","concepts":["python.list","python.control_flow"],"duration_minutes":3,"stages":[{"id":"list","route":"LIVE","dom_stage":0},{"id":"for","route":"LIVE","dom_stage":1},{"id":"trace","route":"LIVE","dom_stage":2}]},{"id":"l01-order-data","dom_id":"s4","type":"code-state","route":"LIVE","layout":"split-50-50","concepts":["python.dict","market.order_record"],"duration_minutes":3,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l01-decision","dom_id":"s5","type":"guided-exercise","route":"LIVE","layout":"split-50-50","concepts":["microstructure.spread","microstructure.mid","python.control_flow"],"duration_minutes":4,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l01-errors","dom_id":"s6","type":"guided-exercise","route":"REQUIRED","layout":"split-42-58","concepts":["python.execution_model","python.dict_get"],"duration_minutes":10,"stages":[{"id":"name","route":"REQUIRED","dom_stage":0},{"id":"type","route":"REQUIRED","dom_stage":1},{"id":"index","route":"REQUIRED","dom_stage":2},{"id":"get","route":"REQUIRED","dom_stage":3}]},{"id":"l01-execution-context","dom_id":"s8","type":"concept-simulator","route":"REQUIRED","layout":"split-42-58","concepts":["python.execution_model"],"duration_minutes":6,"stages":[{"id":"languages","route":"REQUIRED","dom_stage":0},{"id":"ecosystem","route":"REQUIRED","dom_stage":1},{"id":"explore","route":"OPTIONAL","duration_minutes":5,"dom_stage":2}]},{"id":"l01-quiz","dom_id":"s9","type":"diagnostic-quiz","route":"REQUIRED","layout":"focus","concepts":["python.variables","python.collections","python.control_flow"],"duration_minutes":5,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l01-recap","dom_id":"s7","type":"bridge","route":"REQUIRED","layout":"focus","concepts":["python.variables","python.collections","python.control_flow","python.fstring"],"duration_minutes":5,"stages":[{"id":"main","route":"REQUIRED"}]}],"bridge":{"target_lesson":2,"known":{"concepts":["python.variables","python.collections","python.control_flow"],"apis":[],"notation":["notation.spread","notation.mid"]},"limitation":"Un segundo símbolo duplica datos y cálculos.","need":"Un libro por instrumento y funciones reutilizables evitan duplicar cálculos sin mezclar precios de símbolos distintos."},"api_transitions":[],"package_checks":[],"used_later":{"concepts":["microstructure.mid","microstructure.spread","python.collections","python.control_flow","python.dict_get","python.fstring","python.variables"],"apis":[],"notation":["notation.mid","notation.spread"]}}</script>
+<script type="application/json" id="learning-support">{"lesson": 1, "cards": {"collections": {"title": "Listas, diccionarios y posiciones", "first_lesson": 1, "route": "LIVE", "why": "Una orden tiene varios campos; un libro contiene varias órdenes.", "inputs": "Lista: valores ordenados entre []; dict: pares clave:valor entre {}.", "outputs": "xs[0] devuelve el primer valor; xs[-1], el último. xs[:2] crea una lista con los dos primeros. order['size'] devuelve el campo size.", "mechanism": "Los índices empiezan en cero; un índice negativo cuenta desde el final. El extremo derecho de un slice no se incluye. append añade a la lista original y devuelve None.", "example": "sizes = [2, 3]\norder = {'side': 'buy', 'size': sizes[0]}\nprint(order['size'])  # 2"}, "errors": {"title": "Leer un error sin adivinar", "first_lesson": 1, "route": "LIVE", "why": "Localizar por qué una operación no puede continuar.", "inputs": "Un traceback: ruta, número de línea, tipo y mensaje del error.", "outputs": "La última línea explica el fallo; la línea de tu archivo indica dónde revisar.", "mechanism": "NameError: nombre no definido. KeyError: clave ausente. TypeError: operación incompatible. int('205') devuelve el entero 205; float('205.5'), el decimal 205.5. Convierte el texto numérico antes de operar y vuelve a ejecutar desde el inicio.", "example": "order = {'size': 2}\nprint(order['price'])  # KeyError: falta 'price'"}, "flow": {"title": "for, if y sangría", "first_lesson": 1, "route": "LIVE", "why": "Repetir una regla para cada dato y elegir qué rama ejecutar.", "inputs": "for recibe una colección; if una condición que será True o False.", "outputs": "Se ejecuta el bloque sangrado para cada elemento o cuando se cumple la condición.", "mechanism": "Los dos puntos abren un bloque. == compara; = asigna. La sangría decide qué líneas pertenecen al bloque.", "example": "for size in [0, 2]:\n    if size > 0:\n        print(size)  # sólo muestra 2"}, "fstring": {"title": "f-string: insertar valores en texto", "first_lesson": 1, "route": "REQUIRED", "why": "Mostrar un resultado o construir una clave de columna a partir de un dato.", "inputs": "Una cadena con f delante y expresiones entre llaves: f'precio={price}'.", "outputs": "Devuelve texto con el valor de cada expresión. No modifica los datos originales.", "mechanism": "Con price=99.5, f'{price:.2f}' produce '99.50': .2f muestra dos decimales. Con i=2, f'bid_price_{i}' produce 'bid_price_2'.", "example": "price = 99.5\ni = 2\nprint(f'{price:.2f}', f'bid_price_{i}')  # 99.50 bid_price_2"}, "get": {"title": "dict.get: leer un campo que puede faltar", "first_lesson": 1, "route": "REQUIRED", "why": "Tratar una posición todavía ausente como cero, sin confundir lectura con actualización.", "inputs": "Un diccionario, la clave buscada y un valor por defecto.", "outputs": "d.get(key, default) devuelve el valor existente o default. No modifica d.", "mechanism": "Equivale a preguntar si la clave existe y elegir una de dos respuestas. Para guardar un cambio se necesita d[key] = nuevo_valor.", "example": "positions = {}\nold = positions.get('ETH', 0)  # 0; positions sigue {}\npositions['ETH'] = old + 2"}, "length": {"title": "len: cuántos elementos hay", "first_lesson": 1, "route": "LIVE", "why": "Contar observaciones antes de calcular su media.", "inputs": "Una lista: prices = [99, 100, 102, 101].", "outputs": "len(prices) devuelve 4. No suma los precios ni cambia la lista.", "mechanism": "Si total es 402, total / len(prices) produce 100.5. Un índice empieza en cero; la cantidad cuenta todos los elementos.", "example": "prices = [99, 100, 102, 101]\nprint(len(prices))  # 4"}, "values": {"title": "Variables, = y print", "first_lesson": 1, "route": "LIVE", "why": "Dar nombre a un dato para poder calcular y comprobar una decisión.", "inputs": "Un valor a la derecha de =; una expresión dentro de print(...).", "outputs": "= vincula un nombre al valor. print muestra texto, pero no guarda un resultado nuevo.", "mechanism": "Python ejecuta las líneas de arriba abajo. Un # inicia un comentario que no se ejecuta.", "example": "price = 100\nquantity = 2\nprint(price * quantity)  # muestra 200"}}, "scenes": {"s0": ["values"], "s1": ["values"], "s2": ["values"], "s3": ["collections", "flow", "length"], "s4": ["collections"], "s5": ["flow"], "s6": ["errors", "get"], "s7": ["values", "flow", "fstring"], "s8": ["values"], "s9": ["values", "flow"]}}</script>
 <script>
 
 (function(){
@@ -1597,8 +1274,8 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ── hero order book ─────────────────────────── */
 (function(){
-  const asks=[{px:100050,sz:1.2},{px:100025,sz:0.8},{px:100000,sz:1.6}];
-  const bids=[{px:99950,sz:2.1},{px:99925,sz:0.9},{px:99900,sz:1.4}];
+  const asks=[{px:103,sz:1.2},{px:102,sz:0.8},{px:101,sz:1.6}];
+  const bids=[{px:99,sz:2.1},{px:98,sz:0.9},{px:97,sz:1.4}];
   const A=$('#asks'),B=$('#bids');
   function render(){
     const mx=Math.max(...asks.concat(bids).map(l=>l.sz));
@@ -1606,19 +1283,13 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
     B.innerHTML=bids.map(l=>`<div class="lvl b"><span class="px">${l.px.toLocaleString('en-US')}</span><span class="bar" style="width:${l.sz/mx*100}%"></span><span class="sz">${l.sz.toFixed(2)}</span></div>`).join('');
   }
   render();
-  if(!reduced) setInterval(()=>{
-    const side=Math.random()<.5?asks:bids, i=Math.floor(Math.random()*3);
-    side[i].sz=Math.max(.2,Math.min(3,side[i].sz+(Math.random()-.5)*.7));
-    render();
-    const rows=$$((side===asks?'#asks':'#bids')+' .lvl');
-    if(rows[i]){rows[i].classList.add('flash');setTimeout(()=>rows[i].classList.remove('flash'),500);}
-  },1600);
+  // Keep the same data while the learner follows the calculation.
 })();
 
 /* ── VM del pipeline: se engancha al motor genérico de scrolly ── */
 (function(){
   let vmTimer=null;
-  const vmStates=[[],['99950'],['99950','100000'],['199950'],['199950','2'],['99975.0'],[]];
+  const vmStates=[[],['99'],['99','101'],['200'],['200','2'],['100.0'],[]];
   function runVM(){
     clearInterval(vmTimer);
     const rows=$$('#vmByt .row'), stack=$('#vmStack');
@@ -1632,11 +1303,11 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
     }
     stack.innerHTML='';rows.forEach(r=>r.classList.remove('hl'));
     if(reduced){rows[rows.length-1].classList.add('hl');
-      stack.innerHTML='<div class="cell">99975.0</div>';return;}
+      stack.innerHTML='<div class="cell">100.0</div>';return;}
     tick();vmTimer=setInterval(tick,950);
   }
   $('#vmReplay').addEventListener('click',runVM);
-  const fig=document.querySelector('.scrolly .fig');
+  const fig=document.querySelector('#s1 .fig');
   fig.addEventListener('stagechange',e=>{
     if(e.detail.stage===4)runVM();else clearInterval(vmTimer);
   });
@@ -1646,8 +1317,8 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 (function(){
   let mode='python', timers=[];
   const paths={
-    python:['source','Python bytecode','CPython VM','CPU','99975.0'],
-    cpp:['source','compiler','native executable','CPU','99975.0'],
+    python:['source','Python bytecode','CPython VM','CPU','100.0'],
+    cpp:['source','compiler','native executable','CPU','100.0'],
   };
   function clearTimers(){timers.forEach(clearTimeout);timers=[];}
   function paint(labels){
@@ -1677,8 +1348,8 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
   $('#lang-run').addEventListener('click',()=>{
     animate(paths[mode]);
     $('#lang-log').textContent=mode==='python'
-      ?'✓ CPython ejecutó el bytecode · resultado 99975.0'
-      :'✓ el ejecutable nativo corrió · resultado 99975.0';
+      ?'✓ CPython ejecutó el bytecode · resultado 100.0'
+      :'✓ el ejecutable nativo corrió · resultado 100.0';
   });
   $('#lang-break').addEventListener('click',()=>{
     if(mode==='python'){
@@ -1701,7 +1372,7 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 })();
 
 /* ── mini tokenizer / parser / compiler ──────── */
-const ENV={bid:{v:99950,f:false},ask:{v:100000,f:false},spread:{v:50,f:false},mid:{v:99975,f:true}};
+const ENV={bid:{v:99,f:false},ask:{v:101,f:false},spread:{v:2,f:false},mid:{v:100,f:true}};
 function tokenize(src){
   const toks=[];let i=0;
   while(i<src.length){
@@ -1811,7 +1482,7 @@ function treeLines(node){
         return`<span class="tok ${cls}"><small>${tk.t.toLowerCase()}</small><b>${shown}</b></span>`;}).join('');
       $('#ownAst').textContent=treeLines(ast);
       $('#ownByt').textContent=byt.map((b,i)=>`${i+1}  ${b[0].padEnd(12)}${b[1]}`).join('\n');
-      $('#ownEnv').textContent='entorno: bid=99950, ask=100000,\n         spread=50, mid=99975.0';
+      $('#ownEnv').textContent='entorno: bid=99, ask=101,\n         spread=2, mid=100.0';
       $('#ownRes').textContent=(ast.kind==='Assign'?`${ast.target} → `:'resultado → ')+fmt(res)+' ✓';
     }catch(e){
       cols.classList.add('hidden');err.classList.remove('hidden');
@@ -1823,47 +1494,19 @@ function treeLines(node){
   run();
 })();
 
-/* ── §2 predict + run + step-through ─────────── */
+/* Prediction: explicit JavaScript simulation of print(mid). */
 (function(){
   const inp=$('#predictIn'),btn=$('#varRun');
   inp.addEventListener('input',()=>btn.disabled=inp.value.trim().length===0);
   btn.addEventListener('click',()=>{
-    btn.disabled=true;inp.disabled=true;
     $('#varOut').classList.remove('hidden');
-    const target='99975.0',el=$('#varOutVal');
-    if(reduced){el.textContent=target;}
-    else{let k=0;const t=setInterval(()=>{el.textContent=target.slice(0,++k);
-      if(k>=target.length)clearInterval(t);},70);}
-    setTimeout(()=>$('#afterRun').classList.remove('hidden'),reduced?0:600);
+    $('#varOutVal').textContent='100.0';
   });
-  /* step-through */
-  const steps=[
-    {line:0,log:"bid apunta a 99950",row:{n:'bid',v:'99950',t:'int'}},
-    {line:1,log:"ask apunta a 100000",row:{n:'ask',v:'100000',t:'int'}},
-    {line:2,log:"se evalúa (99950+100000)/2 → mid apunta a 99975.0",row:{n:'mid',v:'99975.0',t:'float'}},
-    {line:3,log:"print busca el valor de mid y lo pinta en pantalla",row:null}];
-  let i=0;
-  const lines=$$('#stepCode .ln'),mem=$('#memory'),log=$('#stepLog');
-  function reset(){i=0;lines.forEach(l=>l.classList.remove('hl','dim'));
-    mem.innerHTML='<p style="color:var(--faint);font-size:.85rem;margin:0">— memoria vacía —</p>';
-    log.textContent='';}
-  $('#stepBtn').addEventListener('click',()=>{
-    if(i>=steps.length){reset();return;}
-    const st=steps[i];
-    lines.forEach((l,k)=>{l.classList.toggle('hl',k===st.line);l.classList.toggle('dim',k<st.line);});
-    if(i===0)mem.innerHTML='';
-    if(st.row)mem.insertAdjacentHTML('beforeend',
-      `<div class="mem-row ${st.row.t}"><span class="mem-name">${st.row.n}</span><span class="mem-arrow">─▶</span><span class="mem-val">${st.row.v}<span class="type-chip">${st.row.t}</span></span></div>`);
-    log.textContent='» '+st.log;
-    i++;
-    $('#stepBtn').textContent=i>=steps.length?'↻ otra vez':'Paso ›';
-  });
-  $('#stepReset').addEventListener('click',()=>{reset();$('#stepBtn').textContent='Paso ›';});
 })();
 
 /* ── §3 loop visualizer ──────────────────────── */
 (function(){
-  const prices=[99950,99975,100010,99990];
+  const prices=[99,100,102,101];
   const cellsEl=$('#loopCells');let i=0,total=0,auto=null;
   function render(){
     cellsEl.innerHTML=prices.map((p,k)=>
@@ -1900,6 +1543,10 @@ function treeLines(node){
     $$(`[data-key="${key}"]`).forEach(el=>el.classList.toggle('hl',on));
   }
   $$('.dk,.oc-row').forEach(el=>{
+    el.tabIndex=0;
+    el.addEventListener('focus',()=>link(el.dataset.key,true));
+    el.addEventListener('blur',()=>link(el.dataset.key,false));
+    el.addEventListener('click',()=>link(el.dataset.key,true));
     el.addEventListener('mouseenter',()=>link(el.dataset.key,true));
     el.addEventListener('mouseleave',()=>link(el.dataset.key,false));
   });
@@ -1917,8 +1564,8 @@ function treeLines(node){
   const sl=$('#spSlider');
   function update(){
     const v=+sl.value;$('#spVal').textContent=v;
-    const br=v<20?0:v<80?1:2;
-    const txt=['"líquido: cruzar ya"','"aceptable: limit al mid"','"ilíquido: esperar"'][br];
+    const br=v<=2?0:v<=4?1:2;
+    const txt=['"estrecho"','"medio"','"amplio"'][br];
     $$('#ifCode .ln').forEach(l=>{
       const b=+l.dataset.br;l.classList.toggle('hl',b===br);l.classList.toggle('dim',b!==br);});
     $('#verdictTxt').textContent=txt;
@@ -1945,9 +1592,7 @@ if(!Array.isArray(contract.scenes)||!contract.scenes.length)return;
 
 const body=document.body;
 const params=new URLSearchParams(location.search);
-const mobileQuery=matchMedia('(max-width: 900px)');
-const requestedMode=params.get('mode')==='aula'?'aula':'estudio';
-const mode=requestedMode==='aula'&&!mobileQuery.matches?'aula':'estudio';
+const mode=params.get('mode')==='aula'?'aula':'estudio';
 const isProfessor=['1','true'].includes((params.get('profe')||'').toLowerCase());
 const routeScopes=mode==='aula'
   ?(isProfessor?['LIVE','LIVE+REQUIRED','ALL']:['LIVE'])
@@ -2031,11 +1676,10 @@ if(!models.length)return;
 
 body.classList.add('lr-has-contract',`mode-${mode}`);
 body.dataset.learningMode=mode;
-body.dataset.requestedMode=requestedMode;
+body.dataset.requestedMode=mode;
 body.dataset.professorMode=String(isProfessor);
 body.dataset.runtimeVersion=String(RUNTIME_VERSION);
 document.documentElement.classList.toggle('lr-mode-aula',mode==='aula');
-if(requestedMode!==mode)body.classList.add('lr-mobile-fallback');
 
 const inventory=models.flatMap(scene=>scene.stages.map(stage=>({
   key:stateKey(scene,stage),scene,stage,route:stage.route,
@@ -2099,7 +1743,6 @@ nav.innerHTML=`
     <a href="${modeUrl('aula')}" class="${mode==='aula'?'on':''}">Aula</a>
     <a href="${modeUrl('estudio')}" class="${mode==='estudio'?'on':''}">Estudio</a>
   </div>
-  ${requestedMode!==mode?'<p class="lr-fallback-note">Aula usa el recorrido vertical en esta pantalla.</p>':''}
   <button type="button" class="lr-study-optional" aria-pressed="false">Incluir OPTIONAL</button>
   <div class="lr-scene-links"></div>`;
 body.appendChild(nav);
@@ -2130,27 +1773,17 @@ controls.innerHTML=`
   <button type="button" class="lr-next" aria-label="Etapa siguiente"><span>Siguiente</span> →</button>`;
 body.appendChild(controls);
 
-const mobileToolbar=document.createElement('div');
-mobileToolbar.id='lr-mobile-toolbar';
-mobileToolbar.innerHTML=`<a href="../../index.html">← Curso</a>
-  <span>${requestedMode==='aula'?'Aula → estudio':'Modo estudio'}</span>
-  <button type="button" class="lr-study-optional" aria-pressed="false">+ OPTIONAL</button>
-  ${isProfessor?'<button type="button" class="lr-mobile-teacher" aria-expanded="false">Guía</button>':''}`;
-body.insertBefore(mobileToolbar,body.firstChild);
-
 const liveRegion=document.createElement('div');
 liveRegion.className='lr-sr-only';liveRegion.setAttribute('aria-live','polite');
 body.appendChild(liveRegion);
 
-let teacherToggle=null,teacherDrawer=null,teacherBody=null,mobileTeacherToggle=null;
+let teacherToggle=null,teacherDrawer=null,teacherBody=null;
 if(isProfessor){
   teacherToggle=document.createElement('button');
   teacherToggle.id='lr-teacher-toggle';teacherToggle.type='button';
   teacherToggle.textContent='Guía docente';teacherToggle.setAttribute('aria-expanded','false');
   teacherToggle.setAttribute('aria-controls','lr-teacher-drawer');
   nav.insertBefore(teacherToggle,navLinks);
-  mobileTeacherToggle=mobileToolbar.querySelector('.lr-mobile-teacher');
-  mobileTeacherToggle?.setAttribute('aria-controls','lr-teacher-drawer');
   teacherDrawer=document.createElement('aside');
   teacherDrawer.id='lr-teacher-drawer';teacherDrawer.dataset.overlay='teacher';
   teacherDrawer.setAttribute('aria-label','Guía docente de la escena');
@@ -2163,13 +1796,11 @@ if(isProfessor){
     const open=force===undefined?!teacherDrawer.classList.contains('open'):force;
     teacherDrawer.classList.toggle('open',open);
     teacherDrawer.setAttribute('aria-hidden',String(!open));
-    [teacherToggle,mobileTeacherToggle].filter(Boolean)
-      .forEach(button=>button.setAttribute('aria-expanded',String(open)));
+    teacherToggle.setAttribute('aria-expanded',String(open));
     if(open)teacherDrawer.querySelector('.lr-teacher-close').focus();
-    else (mobileQuery.matches?mobileTeacherToggle:teacherToggle)?.focus();
+    else teacherToggle.focus();
   };
   teacherToggle.addEventListener('click',()=>toggleTeacher());
-  mobileTeacherToggle?.addEventListener('click',()=>toggleTeacher());
   teacherDrawer.querySelector('.lr-teacher-close').addEventListener('click',()=>toggleTeacher(false));
 }
 
@@ -2243,8 +1874,7 @@ function syncTeacher(scene,stage){
     +(fullGuide?'<button type="button" class="lr-full-guide">Abrir guion completo</button>':'');
   teacherBody.querySelector('.lr-full-guide')?.addEventListener('click',()=>{
     teacherDrawer.classList.remove('open');teacherDrawer.setAttribute('aria-hidden','true');
-    [teacherToggle,mobileTeacherToggle].filter(Boolean)
-      .forEach(button=>button.setAttribute('aria-expanded','false'));
+    teacherToggle.setAttribute('aria-expanded','false');
     fullGuide.click();
   });
 }
@@ -2313,8 +1943,7 @@ function closeOverlays(){
   document.getElementById('guion-drawer')?.classList.remove('open');
   teacherDrawer?.classList.remove('open');
   teacherDrawer?.setAttribute('aria-hidden','true');
-  [teacherToggle,mobileTeacherToggle].filter(Boolean)
-    .forEach(button=>button.setAttribute('aria-expanded','false'));
+  teacherToggle?.setAttribute('aria-expanded','false');
   document.querySelectorAll('dialog[open]').forEach(dialog=>dialog.close());
   document.querySelectorAll('[data-overlay].open').forEach(node=>node.classList.remove('open'));
 }
@@ -2332,8 +1961,7 @@ function syncOptionalControls(){
   document.querySelectorAll('.lr-study-optional').forEach(button=>{
     button.hidden=mode!=='estudio'||optionalCount===0;
     button.setAttribute('aria-pressed',String(routeScope==='ALL'));
-    button.textContent=routeScope==='ALL'?'Ocultar OPTIONAL':
-      (button.closest('#lr-mobile-toolbar')?'+ OPTIONAL':'Incluir OPTIONAL');
+    button.textContent=routeScope==='ALL'?'Ocultar OPTIONAL':'Incluir OPTIONAL';
   });
 }
 function applyStudyScope(activeScene=null){
@@ -2457,7 +2085,6 @@ window.LEARNING_RUNTIME={
   },
 };
 
-mobileQuery.addEventListener?.('change',()=>location.reload());
 })();
 
 /* Contextual public help: no interpreter, hidden answers or new route state. */

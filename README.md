@@ -2,6 +2,8 @@
 
 Construimos un sistema de trading y backtesting, pieza a pieza.
 
+Presentaciones para ordenador y proyector, desde 1280×720; sin soporte específico de móvil.
+
 1. [Ver las presentaciones](https://alvarochacarra.github.io/algo_trading_intro/): abre la web y pulsa **Presentación**. En local, doble clic en `index.html`; funciona sin servidor.
 2. [Preparar Python y Jupyter](GUIA_LOCAL.md): una sola instalación dentro del repositorio.
 3. En cada clase publicada, resuelve el **principal en Jupyter** y utiliza los auxiliares opcionales para practicar. Puedes repetir el principal como programa con `python mi_main.py`.

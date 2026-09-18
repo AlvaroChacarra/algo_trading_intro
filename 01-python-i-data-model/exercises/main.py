@@ -7,14 +7,29 @@ Compara los resultados; ejecutar sin errores no prueba que sean correctos.
 
 bid = 99
 ask = 101
+quotes = [
+    {"bid": 99, "ask": 101},
+    {"bid": 99, "ask": 103},
+]
 
-spread = None
-mid = None
+spread = None  # pendiente
+mid = None  # pendiente
+
+results = []
+for quote in quotes:
+    quote_spread = None  # pendiente
+    quote_mid = None  # pendiente
+    if quote["ask"] - quote["bid"] <= 2:
+        state = None  # etiqueta pendiente
+    else:
+        state = None  # etiqueta pendiente
+    results.append({"spread": quote_spread, "mid": quote_mid, "state": state})
 
 
 def main():
     print('spread:', spread)
     print('mid:', mid)
+    print('resúmenes:', results)
 
 
 if __name__ == "__main__":

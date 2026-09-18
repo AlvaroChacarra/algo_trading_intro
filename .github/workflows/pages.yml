@@ -36,7 +36,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: Validar la experiencia móvil en WebKit
+      - name: Validar presentaciones de escritorio y catálogo en WebKit
         run: |
           npm install playwright@1.62.1
           npx playwright install --with-deps webkit

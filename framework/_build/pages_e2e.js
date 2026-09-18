@@ -17,10 +17,32 @@ const prefix = '/algo_trading_intro/';
 async function inspectLayout(page, label) {
   const result = await page.evaluate(() => ({
     horizontalOverflow: document.documentElement.scrollWidth > innerWidth + 2,
+    width: innerWidth,
+    scrollWidth: document.documentElement.scrollWidth,
+    clippedNavTitles: [...document.querySelectorAll('#lr-nav .lr-scene-links button:not([hidden])')]
+      .filter(button => {
+        const bounds = button.getBoundingClientRect();
+        return [...button.children].some(child => {
+          const box = child.getBoundingClientRect();
+          return box.top < bounds.top - 2 || box.bottom > bounds.bottom + 2
+            || box.left < bounds.left - 2 || box.right > bounds.right + 2;
+        });
+      }).map(button => button.textContent.trim()),
+    offenders: [...document.querySelectorAll('body *')].filter(node => {
+      const box = node.getBoundingClientRect(), style = getComputedStyle(node);
+      return style.visibility !== 'hidden' && style.opacity !== '0'
+        && box.width > 0 && (box.right > innerWidth + 2 || box.left < -2);
+    }).slice(0, 20).map(node => ({tag:node.tagName, id:node.id, class:node.className,
+      right:node.getBoundingClientRect().right, width:node.getBoundingClientRect().width})),
     mode: window.LEARNING_RUNTIME?.mode || null,
     scene: document.body.dataset.currentSceneId || null,
   }));
-  assert.equal(result.horizontalOverflow, false, `${label}: horizontal overflow`);
+  if (result.horizontalOverflow && auditDir) {
+    const name = label.replace(/[^a-z0-9-]+/gi, '-');
+    await page.screenshot({path:path.join(auditDir, `overflow-${result.width}-${name}.png`)});
+  }
+  assert.equal(result.horizontalOverflow, false, `${label}: horizontal overflow ${JSON.stringify(result)}`);
+  assert.deepEqual(result.clippedNavTitles, [], `${label}: navigation titles must fit their buttons`);
   return result;
 }
 
@@ -79,7 +101,9 @@ async function checkDownloads(page, live) {
   const records = [];
   if (auditDir) fs.mkdirSync(auditDir, {recursive:true});
   try {
-    for (const viewport of [{width:390,height:844}, {width:1366,height:900}]) {
+    // Narrow screens retain the catalogue/download check. Presentation support
+    // is desktop-only; Chromium covers the larger full-course viewport matrix.
+    for (const viewport of [{width:390,height:844}, {width:1280,height:720}, {width:1366,height:900}, {width:1920,height:1080}]) {
       const page = await browser.newPage({viewport});
       const errors = [];
       const badResponses = [];
@@ -93,7 +117,7 @@ async function checkDownloads(page, live) {
       const downloads = await checkDownloads(page, Boolean(liveUrl));
       const links = await page.locator('.lcard[data-lesson] a[href*="/presentation/"]').evaluateAll(nodes => nodes.map(n => n.getAttribute('href')));
       // A release before L1 is also valid: no published lessons yet.
-      for (const href of links) {
+      for (const href of viewport.width < 1280 ? [] : links) {
         const response = await page.goto(new URL(href, base).href);
         assert.equal(response.status(), 200);
         assert(await page.title());
@@ -102,7 +126,6 @@ async function checkDownloads(page, live) {
         assert(await page.locator('a[href="../../index.html"]').count());
         await page.evaluate(() => document.fonts.ready);
         const layout = await inspectLayout(page, href);
-        if (viewport.width < 768) assert.equal(layout.mode, 'estudio', 'mobile study fallback');
         if (layout.mode === 'aula') {
           const states = await page.evaluate(() => JSON.parse(document.querySelector('#pedagogy-contract').textContent)
             .scenes.filter(scene => scene.route === 'LIVE').flatMap(scene =>
@@ -127,7 +150,7 @@ async function checkDownloads(page, live) {
       assert.deepEqual(errors, []);
       assert.deepEqual(badResponses, []);
       await page.close();
-      console.log(`Pages ${viewport.width}px: ${links.length} presentations, ${downloads} notebook downloads OK`);
+      console.log(`Pages ${viewport.width}px: ${viewport.width < 1280 ? 'catalogue only' : `${links.length} presentations`}, ${downloads} notebook downloads OK`);
     }
   } finally {
     await browser.close();

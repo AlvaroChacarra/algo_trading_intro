@@ -202,16 +202,7 @@
   .result-chip{margin:26px auto 0;width:max-content;font-family:var(--mono);font-size:1rem;
                border:1px solid rgba(74,222,128,.5);color:var(--bid);border-radius:10px;
                padding:10px 20px;background:rgba(74,222,128,.07)}
-  @media(max-width:960px){
-    /* sticky debe acotarse a .scrolly entera, no a la fila del grid: flex + figwrap sticky */
-    .scrolly{display:flex;flex-direction:column;gap:0}
-    .figwrap{order:-1;position:sticky;top:8px;z-index:6}
-    .fig{position:relative;top:0;height:340px;box-shadow:0 14px 30px rgba(0,0,0,.55)}
-    .fig-stage{padding:14px}
-    .srcline{margin-top:90px}.toks{margin-top:50px}
-    .steps .step{min-height:60vh}
-    .ast-svg{transform:scale(.8);transform-origin:top center}
-  }
+
 
   /* ── name→value diagram ────────────────────────── */
   .memory{display:flex;flex-direction:column;gap:10px;margin:18px 0;min-height:60px}
@@ -246,7 +237,7 @@
 
   /* ── dict card ─────────────────────────────────── */
   .dictgrid{display:grid;grid-template-columns:1fr 250px;gap:20px;align-items:start;margin:22px 0}
-  @media(max-width:760px){.dictgrid{grid-template-columns:1fr}}
+
   .ordercard{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
   .ordercard .oc-head{padding:10px 16px;border-bottom:1px solid var(--line);
         font-family:var(--mono);font-size:.7rem;letter-spacing:.15em;
@@ -312,7 +303,7 @@
          font-family:var(--mono)}
 
   .fig3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:22px 0}
-  @media(max-width:700px){.fig3{grid-template-columns:1fr}}
+
   .lane{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
   .lane h4{margin:0 0 8px;font-size:.92rem;font-family:var(--mono)}
   .lane p{font-size:.85rem;color:var(--muted);margin:.4em 0}
@@ -322,7 +313,7 @@
   .ownline{background:var(--panel);border:1px solid var(--line);border-radius:14px;
            padding:22px;margin:26px 0}
   .ownline .cols{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
-  @media(max-width:760px){.ownline .cols{grid-template-columns:1fr}}
+
   .ownline h4{font-family:var(--mono);font-size:.7rem;letter-spacing:.15em;
               text-transform:uppercase;color:var(--faint);margin:0 0 10px}
   .ownline pre{font-family:var(--mono);font-size:.78rem;line-height:1.7;margin:0;
@@ -351,7 +342,7 @@
 
 /* CTA de cierre: del documento a los cuadernos */
 .cta{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:26px 0}
-@media(max-width:700px){.cta{grid-template-columns:1fr}}
+
 .cta a,.cta .box{display:block;text-decoration:none;border:1px solid rgba(34,211,238,.4);
      border-radius:12px;padding:16px 20px;color:var(--text)}
 .cta .tag{font-family:var(--mono);font-size:.68rem;letter-spacing:.15em;
@@ -370,7 +361,7 @@
 /* tarjetas de simulador (constructor de Order, tracker, estrategias...) */
 .simcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;
          padding:20px;margin:22px 0;min-width:0}
-.simcard pre{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.simcard pre{max-width:100%;overflow-x:auto}
 .simcard h4{font-family:var(--mono);font-size:.7rem;letter-spacing:.15em;
             text-transform:uppercase;color:var(--faint);margin:0 0 12px}
 .simrow{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:10px 0}
@@ -475,7 +466,7 @@
 .build-code .build-label,.build-state-label{font-family:var(--mono);font-size:.61rem;
   letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:0 0 8px}
 .build-code pre{margin:0;min-height:0;overflow:auto;white-space:pre;font-family:var(--mono);
-  font-size:.64rem;line-height:1.58;color:var(--muted);-webkit-overflow-scrolling:touch}
+  font-size:.64rem;line-height:1.58;color:var(--muted)}
 .build-code pre .active-line{display:inline-block;width:100%;background:var(--accent-dim);
   box-shadow:inset 2px 0 0 var(--accent);color:var(--text)}
 .build-state{position:relative;min-width:0;min-height:0}
@@ -503,23 +494,7 @@
 .full-code{margin-top:20px;border-color:rgba(192,132,252,.4)}
 .full-code summary{min-height:44px;display:flex;align-items:center;color:var(--kw)}
 .full-code .code{margin:12px 0}.full-code .code pre{max-height:620px}
-@media(max-width:620px){
-  .state-inspector{grid-template-columns:1fr}
-  .trace-step{align-items:flex-start}
-  .mode-switch button{font-size:.7rem;padding:7px 10px}
-  .simcard{padding:14px}
-  .engine-map{padding:8px;gap:6px}
-  .engine-map .unit{font-size:.62rem;padding:6px 8px}
-  .code-state{grid-template-columns:1fr}
-  .accumulated-fig{height:430px}
-  .accumulated-fig .build-grid{grid-template-columns:1fr;grid-template-rows:minmax(155px,.9fr) minmax(0,1.1fr)}
-  .build-code{padding:9px 11px;border-right:0;border-bottom:1px solid var(--line)}
-  .build-code pre{font-size:.58rem;line-height:1.42}
-  .accumulated-fig .fig-stage{padding:10px}
-  .object-contrast,.responsibility-grid{grid-template-columns:1fr}
-  .constructor-map div{grid-template-columns:1fr;gap:3px}
-  .branch-map .branch-row{grid-template-columns:72px 1fr}
-}
+
 
 /* ══ índice del curso ══ */
 .lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
@@ -620,8 +595,7 @@ body.lr-has-contract .hero .meta{display:none}
 .lr-support-card dt{font-weight:600;margin-top:12px}.lr-support-card dd{margin:3px 0 0;color:var(--muted)}
 .lr-support-card pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:.82rem;line-height:1.6;
   padding:12px;background:#09090b;border-radius:6px}
-@media(max-width:520px){#lr-support-dialog{padding:15px}.lr-support-head h2{font-size:1.05rem}
-  .lr-support-open{min-height:44px}.lr-support-card{padding:10px}}
+
 @media print{.lr-support-open,#lr-support-dialog{display:none!important}}
 .lr-sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;
   margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;
@@ -641,14 +615,13 @@ body.lr-has-contract .hero .meta{display:none}
 .lr-modes a{display:flex;justify-content:center;align-items:center;min-height:36px;border:1px solid var(--line);
   border-radius:8px;text-decoration:none;color:var(--muted);font:600 .68rem var(--mono);text-transform:uppercase}
 .lr-modes a.on{border-color:var(--accent);background:var(--accent-dim);color:var(--accent)}
-.lr-modes a:focus-visible,#lr-nav button:focus-visible,#lr-controls button:focus-visible,
-#lr-mobile-toolbar a:focus-visible,#lr-mobile-toolbar button:focus-visible{
+.lr-modes a:focus-visible,#lr-nav button:focus-visible,#lr-controls button:focus-visible{
   outline:2px solid var(--accent);outline-offset:2px}
-.lr-fallback-note{margin:0 8px 10px;color:var(--warn);font-size:.72rem;line-height:1.4}
 .lr-study-optional{min-height:38px;margin:0 6px 9px;border:1px solid rgba(192,132,252,.42);
   border-radius:8px;background:rgba(192,132,252,.08);color:var(--kw);font:600 .65rem var(--mono);cursor:pointer}
 .lr-study-optional[aria-pressed="true"]{border-color:var(--kw);background:rgba(192,132,252,.16)}
-.lr-scene-links{display:grid;gap:4px;overflow:auto;padding:2px 4px 18px}
+.lr-scene-links{display:grid;grid-auto-rows:max-content;align-content:start;
+  min-height:0;gap:4px;overflow:auto;padding:2px 4px 18px}
 .lr-scene-links button{display:grid;grid-template-columns:56px minmax(0,1fr);gap:6px;align-items:center;width:100%;
   min-height:41px;padding:7px 9px;border:1px solid transparent;border-radius:9px;background:transparent;
   color:var(--muted);text-align:left;cursor:pointer}
@@ -702,7 +675,6 @@ body.lr-has-contract .hero .meta{display:none}
 .lr-progress .lr-route-progress{color:var(--accent)}
 #lr-controls .lr-route-scope{padding:0 12px;color:var(--accent);border-color:rgba(34,211,238,.38)}
 #lr-controls.lr-fixed-scope{grid-template-columns:minmax(120px,1fr) auto minmax(120px,1fr)}
-#lr-mobile-toolbar{display:none}
 
 /* Layout names are operational: they control scene width and native two-panel ratios. */
 .lr-scene{--lr-scene-max:1180px;--lr-left:42fr;--lr-right:58fr}
@@ -711,7 +683,6 @@ body.lr-has-contract .hero .meta{display:none}
 .lr-scene[data-scene-layout="split-45-55"]{--lr-scene-max:1900px;--lr-left:45fr;--lr-right:55fr}
 .lr-scene[data-scene-layout="split-50-50"]{--lr-scene-max:1760px;--lr-left:50fr;--lr-right:50fr}
 
-@media(min-width:901px){
   body.lr-has-contract{--lr-nav-w:clamp(190px,16vw,238px);--lr-controls-h:58px}
   body.mode-estudio.lr-has-contract{padding-left:var(--lr-nav-w)}
   body.mode-estudio.lr-has-contract .wrap{max-width:min(1040px,calc(100vw - var(--lr-nav-w) - 48px))}
@@ -756,46 +727,41 @@ body.lr-has-contract .hero .meta{display:none}
   body.mode-aula .lr-scene-badge{margin-bottom:7px}
   body.mode-aula .lr-scene-active[data-scene-layout^="split-"] :is(.code-state,.state-inspector,.dictgrid,.build-grid,.vmgrid,.ownline .cols){
     grid-template-columns:minmax(0,var(--lr-left)) minmax(0,var(--lr-right))}
-}
 
-@media(max-width:1180px) and (min-width:901px){
+@media(max-width:1180px){
   #lr-controls{grid-template-columns:105px minmax(0,1fr) auto 105px;gap:7px;padding-inline:9px}
   #lr-controls.lr-fixed-scope{grid-template-columns:105px minmax(0,1fr) 105px}
   #lr-controls button span,.lr-progress>span{display:none}
   .lr-progress{gap:5px;font-size:.61rem}
 }
 
-@media(max-width:900px){
-  body.lr-has-contract :is(p,li,.note,.box,.code-head){overflow-wrap:anywhere}
-  body.lr-has-contract .code-head{flex-wrap:wrap;gap:5px}
-  body.lr-has-contract .cta>*{min-width:0}
-  #lr-nav,#lr-controls,.lr-scene-badge{display:none!important}
-  body.lr-has-contract{padding-left:0;max-width:100%;overflow-x:hidden}
-  #lr-mobile-toolbar{position:sticky;top:0;z-index:58;display:flex;align-items:center;gap:8px;
-    min-height:52px;padding:6px max(10px,env(safe-area-inset-left));border-bottom:1px solid var(--line);
-    background:rgba(9,9,11,.96);backdrop-filter:blur(8px);font:600 .65rem var(--mono)}
-  #lr-mobile-toolbar>a{color:var(--accent);text-decoration:none;white-space:nowrap}
-  #lr-mobile-toolbar>span{min-width:0;flex:1;color:var(--muted);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  #lr-mobile-toolbar button{min-height:44px;margin:0;padding:5px 9px;border:1px solid var(--line);border-radius:8px;
-    background:var(--panel);color:var(--kw);font:600 .59rem var(--mono)}
-  #lr-mobile-toolbar .lr-mobile-teacher{color:var(--accent)}
-  body.lr-has-contract .lr-scene{scroll-margin-top:58px}
-  #lr-teacher-drawer{width:min(420px,100vw)}
-}
 
-@media(max-width:520px){
-  #lr-mobile-toolbar>span{display:none}
-  #lr-mobile-toolbar .lr-study-optional{margin-left:auto}
-}
+
+
 
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto!important}
   #lr-teacher-drawer,.lr-scene *{transition:none!important;animation-duration:.001ms!important;animation-iteration-count:1!important}
 }
 @media print{
-  #lr-nav,#lr-controls,#lr-mobile-toolbar,.lr-scene-badge,#lr-teacher-drawer{display:none!important}
+  #lr-nav,#lr-controls,.lr-scene-badge,#lr-teacher-drawer{display:none!important}
   body.lr-has-contract{padding:0!important}
 }
+
+/* Introductory traces: one operation, its inputs, and a visible result. */
+.teaching-trace:not(.scrolly){display:grid;gap:16px;align-content:start;min-width:0}
+.teaching-trace .code-block{margin:0;min-width:0}
+.trace-values{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.trace-values>*{padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel);font: .9rem var(--mono)}
+.trace-result{padding:14px 18px;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;
+  background:rgba(34,211,238,.07);font:1rem/1.55 var(--mono);overflow-wrap:anywhere}
+.trace-caption{color:var(--muted);font-size:.95rem;line-height:1.5;margin:0}
+body:is([data-lesson="01"],[data-lesson="02"],[data-lesson="03"],[data-lesson="04"],[data-lesson="05"]) .teaching-trace pre{
+  font-size:clamp(.88rem,1.12vw,1rem);line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+body:is([data-lesson="01"],[data-lesson="02"],[data-lesson="03"],[data-lesson="04"],[data-lesson="05"]) .teaching-trace .ln.hl{
+  background:rgba(34,211,238,.14);box-shadow:inset 3px 0 var(--accent)}
+  body.mode-aula:is([data-lesson="01"],[data-lesson="02"],[data-lesson="03"],[data-lesson="04"],[data-lesson="05"]) .steps .step-inner p{font-size:1rem;line-height:1.6}
+  body.mode-aula:is([data-lesson="01"],[data-lesson="02"],[data-lesson="03"],[data-lesson="04"],[data-lesson="05"]) .steps .step-inner h3{font-size:1.2rem}
 
 
 .construction-panel {margin:20px 0;padding:18px 22px;border:1px solid var(--line);border-radius:12px;background:var(--panel);font-size:1rem;line-height:1.65;overflow-wrap:anywhere;}
@@ -806,416 +772,176 @@ body.lr-has-contract .hero .meta{display:none}
 </style>
 </head>
 <body data-lesson="02">
-<!-- ══════════════ RAIL ══════════════ -->
 <nav id="rail" aria-label="Progreso">
-  <a href="#s0" class="on"><span class="dot"></span><span class="lab">El reto</span></a>
-  <a href="#s1"><span class="dot"></span><span class="lab">La receta</span></a>
-  <a href="#s2"><span class="dot"></span><span class="lab">La fábrica</span></a>
-  <a href="#s3"><span class="dot"></span><span class="lab">El libro vivo</span></a>
-  <a href="#s4"><span class="dot"></span><span class="lab">Leer el libro</span></a>
-  <a href="#s5"><span class="dot"></span><span class="lab">Quiz</span></a>
-  <a href="#s6"><span class="dot"></span><span class="lab">El puente</span></a>
+  <a href="#s0" class="on"><span class="dot"></span><span class="lab">El objetivo</span></a>
+  <a href="#s3"><span class="dot"></span><span class="lab">El libro visible</span></a>
+  <a href="#s1"><span class="dot"></span><span class="lab">best_prices</span></a>
+  <a href="#s7"><span class="dot"></span><span class="lab">Ausencia y contrato</span></a>
+  <a href="#s8"><span class="dot"></span><span class="lab">Tamaños</span></a>
+  <a href="#s2"><span class="dot"></span><span class="lab">Añadir y cancelar</span></a>
+  <a href="#s4"><span class="dot"></span><span class="lab">Compactar y ordenar</span></a>
+  <a href="#s5"><span class="dot"></span><span class="lab">Comprobación</span></a>
+  <a href="#s6"><span class="dot"></span><span class="lab">Principal</span></a>
 </nav>
 
-<!-- ══════════════ §0 HERO ══════════════ -->
 <header class="hero wrap" id="s0">
-  <div class="eyebrow"><b>Algo Trading · ICAI 2026</b> &nbsp;·&nbsp; L2 · Python II &nbsp;·&nbsp; documento interactivo</div>
-  <h1>El libro <em>funcional</em></h1>
-  <p class="lede">Tu algoritmo de L1 funciona. Al añadir ETH intentaste escalarlo…
-  y esto es lo que pasó:</p>
-
-  <div class="code">
-    <div class="code-head"><span>mi_script.py — al añadir otro activo</span><span>python</span></div>
-    <pre><span class="ln">bid_btc = <span class="num">99950</span></span><span class="ln">ask_btc = <span class="num">100000</span></span><span class="ln">mid_btc = (bid_btc + ask_btc) / <span class="num">2</span></span><span class="ln dim">bid_eth = <span class="num">3400</span>          <span class="c"># copiar…</span></span><span class="ln dim">ask_eth = <span class="num">3402</span>          <span class="c"># pegar…</span></span><span class="ln dim">mid_eth = (bid_eth + ask_eth) / <span class="num">2</span>   <span class="c"># rezar…</span></span><span class="ln dim">bid_sol = <span class="c"># ...¿y con 20 activos?</span></span></pre>
-  </div>
-
-  <div class="challenge">
-    <div class="tag">El reto de hoy</div>
-    <p>Cada activo nuevo duplica tus variables. Y si después cambias la fórmula del mid,
-    la cambias <strong>en veinte sitios</strong>. El problema no es el tamaño: es que tu
-    conocimiento vive <em>copiado</em>, no <em>escrito una vez</em>.</p>
-    <p>Hoy sales con dos armas: la <strong>función</strong> (una receta, N usos) y el
-    <strong>book</strong> — una estructura por instrumento, con funciones reutilizables
-    que la leen y la modifican. BTC y ETH mantienen libros separados.</p>
-  </div>
-
-  <div class="meta">
-    <span><b>~40 min</b> lectura + práctica</span>
-    <span><b>7</b> secciones</span>
-    <span><b>3</b> simuladores</span>
-    <span>lo <b style="color:var(--accent)">cian</b> se toca</span>
-  </div>
+  <div class="eyebrow"><b>Algo Trading · ICAI 2026</b> · L2 · Python II</div>
+  <h1>Los mejores <em>precios</em></h1>
+  <p class="lede">Un libro contiene varias órdenes. Hoy escribirás <code>best_prices(orders)</code>: una función que consulta la lista y devuelve el mejor precio comprador y vendedor.</p>
+  <div class="challenge"><div class="tag">Antes de programar</div><p>El siguiente panel muestra cuatro órdenes del ejemplo didáctico. ¿Qué cambiará si añadimos una compra a 100?</p></div>
 </header>
 
-<!-- ══════════════ §1 SCROLLY ══════════════ -->
-<section id="s1">
-  <div class="wrap">
-    <div class="eyebrow">§1 · <b>La idea central</b></div>
-    <h2>De copiar código a escribir recetas</h2>
-    <p class="lede">Sigue bajando: el panel convierte el script duplicado
-    en un libro de órdenes con su equipo de funciones. Es el mismo viaje que harás en el
-    notebook.</p>
-  </div>
-
-  <div class="scrolly" data-scrolly>
-    <div class="steps">
-      <div class="step on" data-stage="0" data-name="el dolor"><div class="step-inner">
-        <h3><span class="n">0/5</span>El diagnóstico</h3>
-        <p>Mira el panel: <strong>la misma fórmula tres veces</strong>. Cada copia es un
-        sitio donde equivocarse y un sitio que actualizar. Esto no escala a 20 activos —
-        ni a 2 con prisa.</p>
-      </div></div>
-      <div class="step" data-stage="1" data-name="la función"><div class="step-inner">
-        <h3><span class="n">1/5</span>La receta: <code>def</code></h3>
-        <p>Una función es una receta con huecos. La escribes <strong>una vez</strong> y la
-        llamas N veces: <code>compute_mid(99950, 100000)</code>, <code>compute_mid(3400, 3402)</code>…</p>
-        <p>Si después cambia la fórmula, la cambias en <strong>un</strong> sitio.</p>
-      </div></div>
-      <div class="step" data-stage="2" data-name="make_order"><div class="step-inner">
-        <h3><span class="n">2/5</span>Una fábrica de órdenes</h3>
-        <p><code>make_order</code> junta las dos ideas de L1 y L2: recibe los campos y
-        devuelve el <strong>diccionario</strong> ya montado. Nunca más un dict a mano con
-        una clave mal escrita.</p>
-      </div></div>
-      <div class="step" data-stage="3" data-name="el book"><div class="step-inner">
-        <h3><span class="n">3/5</span>El <code>book</code>: un solo dato</h3>
-        <p>Las órdenes de <strong>un instrumento</strong> viven en una lista.
-        <code>add_order(book, order)</code> añade una orden. Reutiliza las funciones con
-        <code>book_btc</code> y <code>book_eth</code>; no mezcles sus precios.</p>
-      </div></div>
-      <div class="step" data-stage="4" data-name="leerlo"><div class="step-inner">
-        <h3><span class="n">4/5</span>Leerlo: best bid, best ask, spread, mid</h3>
-        <p>Las métricas de L1 vuelven, pero ahora son <strong>funciones que reciben el
-        book</strong> y lo leen entero: el mejor comprador, el mejor vendedor, y el hueco
-        entre ambos.</p>
-      </div></div>
-      <div class="step" data-stage="5" data-name="la señal"><div class="step-inner">
-        <h3><span class="n">5/5</span>Y una señal: el imbalance</h3>
-        <p>¿Qué lado domina? <code>imbalance(book)</code> lo resume entre −1 y +1:
-        negativo vende, cero equilibra y positivo compra.</p>
-        <p>Fíjate en el contador de abajo del panel: <strong>las 7 funciones reciben
-        <code>book</code></strong>. Guarda ese dato — es la pista de toda la semana.</p>
-      </div></div>
+<section id="s3"><div class="wrap">
+  <div class="eyebrow">§1 · <b>Libro visible</b></div>
+  <h2>Cuatro órdenes, dos mejores precios</h2>
+  <p class="lede">Datos inventados para un solo instrumento. <code>price</code> es precio por unidad y <code>size</code>, cantidad. Los compradores ofrecen como máximo su precio. Los vendedores piden como mínimo el suyo.</p>
+  <div class="simcard">
+    <h4>Representación del libro · operaciones proporcionadas</h4>
+    <div class="btnrow" style="margin-top:0">
+      <button class="btn" id="lb-addbid">+ buy 100 × 1</button>
+      <button class="btn" id="lb-cancel">Retirar sell 101 · id 4</button>
+      <button class="btn ghost" id="lb-addask">Restaurar sell 101</button>
+      <button class="btn ghost" id="lb-reset">↻ Libro inicial</button>
+      <button class="btn ghost" id="lb-empty">Vaciar</button>
     </div>
+    <div class="mini-book" id="lb-book" style="margin:14px 0"></div>
+    <div class="statgrid">
+      <div><span>bid · mayor compra</span><b id="lb-bb">99</b></div>
+      <div><span>ask · menor venta</span><b id="lb-ba">101</b></div>
+      <div><span>spread · ask − bid</span><b id="lb-sp">2</b></div>
+      <div><span>mid · (bid + ask) / 2</span><b id="lb-mid">100.0</b></div>
+    </div>
+    <div class="looplog" id="lb-log" aria-live="polite">Libro inicial: best_prices(orders) devuelve (99, 101).</div>
+  </div>
+  <p class="trace-caption">Este panel usa una simulación JavaScript. Representa operaciones que estudiarás en Python, pero <strong>no ejecuta tu notebook</strong>. Añadir una orden tampoco ejecuta una compraventa.</p>
+  <p>Los <code>id</code> vienen proporcionados para retirar una fila concreta. El principal solo necesita <code>side</code>, <code>price</code> y <code>size</code>. El mid es una referencia entre cotizaciones, no un precio de ejecución garantizado.</p>
+</div></section>
 
+<section id="s1">
+  <div class="wrap"><div class="eyebrow">§2 · <b>La función del principal</b></div><h2>Seguir <code>best_prices</code></h2><p class="lede">Esta traza retoma el <strong>libro inicial de cuatro órdenes</strong>, aunque hayas cambiado el simulador. La función lee precios y conserva las órdenes originales.</p></div>
+  <div class="scrolly teaching-trace" data-scrolly>
+    <div class="steps">
+      <div class="step on" data-stage="0" data-name="argumento y parámetro"><div class="step-inner"><h3><span class="n">1/10</span>La llamada entrega una lista</h3><p>En <code>best_prices(orders)</code>, el argumento es la lista que entregamos. En <code>def best_prices(orders):</code>, el parámetro <code>orders</code> es el nombre que recibe esa lista dentro de la función.</p><p><code>def</code> define el trabajo. La llamada inicia el cuerpo sangrado. Pasar una lista no la copia ni la modifica por sí mismo.</p></div></div>
+      <div class="step" data-stage="1" data-name="fila y diccionario"><div class="step-inner"><h3><span class="n">2/10</span>Una fila es un diccionario</h3><p>La primera compra del panel es <code>orders[0]</code>. Sus campos dicen «compra a 98, cantidad 1».</p><p><code>order["price"]</code> recuperará 98 cuando <code>order</code> se refiera a esa fila. El tamaño no decide qué precio es mejor.</p></div></div>
+      <div class="step" data-stage="2" data-name="listas locales"><div class="step-inner"><h3><span class="n">3/10</span>Preparar dos listas vacías</h3><p><code>buys</code> guardará precios compradores. <code>sells</code> guardará precios vendedores. Son listas nuevas y locales a esta llamada.</p><p>La asignación <code>buys, sells = [], []</code> empareja el primer nombre con la primera lista y el segundo con la segunda.</p></div></div>
+      <div class="step" data-stage="3" data-name="for e if"><div class="step-inner"><h3><span class="n">4/10</span>Primera vuelta del bucle</h3><p><code>for</code> toma una orden cada vez. Primero, <code>order</code> recibe la compra a 98.</p><p><code>if order["side"] == "buy"</code> compara su lado con <code>"buy"</code>. La comparación da <code>True</code>, así que entra en el bloque.</p></div></div>
+      <div class="step" data-stage="4" data-name="append"><div class="step-inner"><h3><span class="n">5/10</span>Guardar el precio comprador</h3><p><code>append(98)</code> añade 98 al final de <code>buys</code>. Modifica esa lista local, no <code>orders</code>.</p><p>La misma orden no pasa el filtro <code>"sell"</code>. Al terminar esta vuelta, <code>sells</code> sigue vacía.</p></div></div>
+      <div class="step" data-stage="5" data-name="filtro de ventas"><div class="step-inner"><h3><span class="n">6/10</span>La siguiente orden es una venta</h3><p>El bucle recibe ahora sell a 103. El filtro buy da <code>False</code> y el filtro sell da <code>True</code>.</p><p>Por eso solo cambia <code>sells</code>: de <code>[]</code> a <code>[103]</code>. ¿En qué lista entrará la siguiente orden, buy a 99?</p></div></div>
+      <div class="step" data-stage="6" data-name="fin del recorrido"><div class="step-inner"><h3><span class="n">7/10</span>Terminar las cuatro vueltas</h3><p>La tercera orden añade 99 a <code>buys</code>. La cuarta añade 101 a <code>sells</code>.</p><p>Las listas conservan el orden de llegada. No necesitamos ordenarlas: <code>max</code> y <code>min</code> comparan todos sus valores.</p></div></div>
+      <div class="step" data-stage="7" data-name="máximo comprador"><div class="step-inner"><h3><span class="n">8/10</span>Elegir el mayor precio comprador</h3><p>Iniciamos ambos resultados como <code>None</code>, que significa precio ausente. <code>if buys</code> pregunta si la lista tiene elementos.</p><p>Como <code>buys = [98, 99]</code>, <code>max(buys)</code> devuelve 99 y lo guardamos en <code>bid</code>.</p></div></div>
+      <div class="step" data-stage="8" data-name="mínimo vendedor"><div class="step-inner"><h3><span class="n">9/10</span>Elegir el menor precio vendedor</h3><p><code>sells = [103, 101]</code> tiene elementos. <code>min(sells)</code> devuelve 101 y lo guardamos en <code>ask</code>.</p><p>La venta a 101 es mejor para quien quiere comprar que la venta a 103. ¿Cambiaría el resultado si inviertes el orden de ambas ventas?</p></div></div>
+      <div class="step" data-stage="9" data-name="return y panel"><div class="step-inner"><h3><span class="n">10/10</span>Devolver y recoger el par</h3><p><code>return bid, ask</code> termina la llamada y devuelve la tupla <code>(99, 101)</code>: un par ordenado.</p><p>La asignación exterior recoge el primer valor en <code>bid</code> y el segundo en <code>ask</code>. Son las dos cifras del panel. <code>print</code> puede mostrarlas, pero <code>return</code> es quien las entrega.</p></div></div>
+    </div>
     <div class="figwrap"><div class="fig">
-      <div class="fig-head"><span>de script duplicado a libro funcional</span><span class="stage-name">el dolor</span></div>
-      <div class="fig-stage on" data-stage="0">
-        <pre style="font-family:var(--mono);font-size:.78rem;line-height:1.9;margin:8px 0 0">
-<span style="color:var(--muted)">mid_btc = (bid_btc + ask_btc) / 2</span>
-<span style="color:var(--ask)">mid_eth = (bid_eth + ask_eth) / 2</span>
-<span style="color:var(--ask)">mid_sol = (bid_sol + ask_sol) / 2</span>
-<span style="color:var(--ask)">mid_ada = (bid_ada + ask_ada) / 2</span></pre>
-        <p style="color:var(--faint);font-size:.8rem;margin-top:20px">la misma idea, copiada.
-        Tres de estas líneas son deuda.</p>
-      </div>
-      <div class="fig-stage" data-stage="1">
-        <pre style="font-family:var(--mono);font-size:.82rem;line-height:2;margin:8px 0 0">
-<span class="k">def</span> <span class="fn">compute_mid</span>(bid, ask):
-    <span class="k">return</span> (bid + ask) / <span class="num">2</span>
-
-compute_mid(<span class="num">99950</span>, <span class="num">100000</span>)  <span class="c"># 99975.0</span>
-compute_mid(<span class="num">3400</span>, <span class="num">3402</span>)      <span class="c"># 3401.0</span>
-compute_mid(<span class="num">142</span>, <span class="num">143</span>)        <span class="c"># 142.5</span></pre>
-        <p style="color:var(--faint);font-size:.8rem;margin-top:16px">una receta · N usos</p>
-      </div>
-      <div class="fig-stage" data-stage="2">
-        <pre style="font-family:var(--mono);font-size:.78rem;line-height:1.9;margin:6px 0 0">
-<span class="k">def</span> <span class="fn">make_order</span>(symbol, side, price, size):
-    <span class="k">return</span> {<span class="s">'symbol'</span>: symbol, <span class="s">'side'</span>: side,
-            <span class="s">'price'</span>: price, <span class="s">'size'</span>: size}</pre>
-        <div class="ordercard" style="max-width:250px;margin:18px auto 0">
-          <div class="oc-head">make_order('BTCUSDT','buy',…)</div>
-          <div class="oc-row"><span class="kk">side</span><span class="vv" style="color:var(--bid)">buy</span></div>
-          <div class="oc-row"><span class="kk">price</span><span class="vv">99950</span></div>
-          <div class="oc-row"><span class="kk">size</span><span class="vv">0.5</span></div>
-        </div>
-      </div>
-      <div class="fig-stage" data-stage="3">
-        <pre style="font-family:var(--mono);font-size:.78rem;margin:4px 0 12px">book = []   <span class="c"># un solo dato</span></pre>
-        <div class="mini-book">
-          <div class="row b"><span>buy&nbsp; 99950</span><small>0.50</small></div>
-          <div class="row b"><span>buy&nbsp; 99940</span><small>0.20</small></div>
-          <div class="row a"><span>sell 100000</span><small>0.30</small></div>
-        </div>
-        <p style="color:var(--faint);font-size:.8rem;margin-top:18px">
-        <code>add_order(book, make_order(…))</code> — y el libro crece</p>
-      </div>
-      <div class="fig-stage" data-stage="4">
-        <div class="mini-book" style="margin-top:4px">
-          <div class="row a"><span>sell 100010</span><small>0.15</small></div>
-          <div class="row a"><span>sell 100000</span><small>0.30</small></div>
-          <div class="sep"></div>
-          <div class="row b"><span>buy&nbsp; 99950</span><small>0.50</small></div>
-          <div class="row b"><span>buy&nbsp; 99940</span><small>0.20</small></div>
-        </div>
-        <div class="statgrid" style="margin-top:18px">
-          <div><span>best_bid</span><b>99950</b></div>
-          <div><span>best_ask</span><b>100000</b></div>
-          <div><span>spread</span><b>50</b></div>
-          <div><span>mid</span><b>99975.0</b></div>
-        </div>
-      </div>
-      <div class="fig-stage" data-stage="5">
-        <div class="statgrid" style="border:none;padding-top:6px">
-          <div><span>imbalance(book)</span><b class="pos">+0.22</b></div>
-        </div>
-        <p style="color:var(--muted);font-size:.82rem;margin:8px 0 18px">Hay más tamaño
-        comprador que vendedor — el signo positivo indica presión compradora.</p>
-        <pre style="font-family:var(--mono);font-size:.75rem;line-height:2;color:var(--muted)">
-make_order(…)          <span class="c">← crea</span>
-add_order(<b style="color:var(--accent)">book</b>, …)     <span class="c">← escribe</span>
-cancel_order(<b style="color:var(--accent)">book</b>, …)  <span class="c">← devuelve lista nueva</span>
-best_bid(<b style="color:var(--accent)">book</b>) · best_ask(<b style="color:var(--accent)">book</b>)
-spread(<b style="color:var(--accent)">book</b>) · mid(<b style="color:var(--accent)">book</b>) · imbalance(<b style="color:var(--accent)">book</b>)</pre>
-        <p style="text-align:center;color:var(--warn);font-family:var(--mono);font-size:.8rem;margin-top:10px">
-        7 funciones · todas reciben book 🤔</p>
-      </div>
+      <div class="fig-head"><span>libro inicial · cuatro órdenes</span><span class="stage-name">argumento y parámetro</span></div>
+      <div class="fig-stage on" data-stage="0"><p class="trace-caption">Llamada, cuando la función ya está definida</p><div class="code"><pre><span class="ln hl">bid, ask = best_prices(orders)</span></pre></div><p class="trace-caption">Encabezado de esa definición</p><div class="code"><pre><span class="ln hl">def best_prices(orders):</span></pre></div><div class="trace-values"><p><b>Fuera:</b> orders contiene cuatro diccionarios.</p><p><b>Dentro:</b> el parámetro orders recibe esa misma lista.</p></div><p class="trace-caption">Son dos fragmentos, no un bloque ejecutable completo. A continuación veremos los datos y el cuerpo.</p></div>
+      <div class="fig-stage" data-stage="1"><div class="mini-book"><div class="row b"><span>buy 98</span><small>cantidad 1</small></div></div><div class="code"><pre><span class="ln">{</span><span class="ln hl">    "side": "buy",</span><span class="ln hl">    "price": 98,</span><span class="ln">    "size": 1</span><span class="ln">}</span></pre></div><div class="trace-values"><p>Contenido de <code>orders[0]</code></p></div><p class="trace-caption">Otras filas: sell 103 × 2, buy 99 × 4, sell 101 × 1.</p></div>
+      <div class="fig-stage" data-stage="2"><div class="code"><pre data-code-part="filter"><span class="ln">def best_prices(orders):</span><span class="ln hl">    buys, sells = [], []</span><span class="ln">    for order in orders:</span><span class="ln">        if order["side"] == "buy":</span><span class="ln">            buys.append(order["price"])</span><span class="ln">        if order["side"] == "sell":</span><span class="ln">            sells.append(order["price"])</span></pre></div><div class="trace-values"><p><code>buys = []</code></p><p><code>sells = []</code></p></div><p class="trace-caption">Primera parte de la función. Después del bucle elegiremos y devolveremos los precios.</p></div>
+      <div class="fig-stage" data-stage="3"><div class="code"><pre><span class="ln">def best_prices(orders):</span><span class="ln">    buys, sells = [], []</span><span class="ln hl">    for order in orders:</span><span class="ln hl">        if order["side"] == "buy":</span><span class="ln">            buys.append(order["price"])</span><span class="ln">        if order["side"] == "sell":</span><span class="ln">            sells.append(order["price"])</span></pre></div><div class="trace-values"><p><code>order = orders[0]</code> · buy 98 × 1</p><p><code>"buy" == "buy"</code> da <b>True</b>.</p></div><div class="trace-result">Antes de append: buys = [], sells = []</div></div>
+      <div class="fig-stage" data-stage="4"><div class="code"><pre><span class="ln">def best_prices(orders):</span><span class="ln">    buys, sells = [], []</span><span class="ln">    for order in orders:</span><span class="ln">        if order["side"] == "buy":</span><span class="ln hl">            buys.append(order["price"])</span><span class="ln">        if order["side"] == "sell":</span><span class="ln">            sells.append(order["price"])</span></pre></div><div class="trace-values"><p><code>order["price"] = 98</code></p><p><code>buys.append(98)</code></p></div><div class="trace-result">Después: buys = [98], sells = []</div></div>
+      <div class="fig-stage" data-stage="5"><div class="code"><pre><span class="ln">def best_prices(orders):</span><span class="ln">    buys, sells = [], []</span><span class="ln">    for order in orders:</span><span class="ln">        if order["side"] == "buy":</span><span class="ln">            buys.append(order["price"])</span><span class="ln hl">        if order["side"] == "sell":</span><span class="ln hl">            sells.append(order["price"])</span></pre></div><div class="trace-values"><p><code>order = orders[1]</code> · sell 103 × 2</p><p><code>"sell" == "sell"</code> da <b>True</b>.</p></div><div class="trace-result">Después: buys = [98], sells = [103]</div></div>
+      <div class="fig-stage" data-stage="6"><div class="code"><pre><span class="ln">def best_prices(orders):</span><span class="ln">    buys, sells = [], []</span><span class="ln hl">    for order in orders:</span><span class="ln">        if order["side"] == "buy":</span><span class="ln">            buys.append(order["price"])</span><span class="ln">        if order["side"] == "sell":</span><span class="ln">            sells.append(order["price"])</span></pre></div><div class="trace-values"><p>Vuelta 3 · buy 99: <code>buys = [98, 99]</code></p><p>Vuelta 4 · sell 101: <code>sells = [103, 101]</code></p></div><div class="trace-result">orders conserva sus cuatro diccionarios.</div></div>
+      <div class="fig-stage" data-stage="7"><div class="code"><pre data-code-part="finish"><span class="ln">    bid, ask = None, None</span><span class="ln hl">    if buys:</span><span class="ln hl">        bid = max(buys)</span><span class="ln">    if sells:</span><span class="ln">        ask = min(sells)</span><span class="ln">    return bid, ask</span></pre></div><div class="trace-values"><p><code>max([98, 99]) = 99</code></p><p><code>bid = 99</code> · <code>ask = None</code>, todavía</p></div><p class="trace-caption">Continuación de la misma función, después del bucle. max devuelve el mayor valor de una colección no vacía.</p></div>
+      <div class="fig-stage" data-stage="8"><div class="code"><pre><span class="ln">    bid, ask = None, None</span><span class="ln">    if buys:</span><span class="ln">        bid = max(buys)</span><span class="ln hl">    if sells:</span><span class="ln hl">        ask = min(sells)</span><span class="ln">    return bid, ask</span></pre></div><div class="trace-values"><p><code>min([103, 101]) = 101</code></p><p><code>bid = 99</code> · <code>ask = 101</code></p></div><p class="trace-caption">min devuelve el menor valor. Reordenar las entradas no cambia este resultado.</p></div>
+      <div class="fig-stage" data-stage="9"><div class="code"><pre><span class="ln">    bid, ask = None, None</span><span class="ln">    if buys:</span><span class="ln">        bid = max(buys)</span><span class="ln">    if sells:</span><span class="ln">        ask = min(sells)</span><span class="ln hl">    return bid, ask</span></pre></div><div class="trace-values"></div><div class="trace-result">Valor devuelto: (99, 101)</div><div class="code"><pre><span class="ln hl">bid, ask = best_prices(orders)</span></pre></div><div class="statgrid"><div><span>primer valor · bid</span><b>99</b></div><div><span>segundo valor · ask</span><b>101</b></div></div></div>
     </div></div>
   </div>
 </section>
 
-<!-- ══════════════ §2 LA FÁBRICA ══════════════ -->
-<section id="s2">
-  <div class="wrap">
-    <div class="eyebrow">§2 · <b>Construye</b></div>
-    <h2>La fábrica y el libro</h2>
-    <p class="lede">Tres funciones cortas y el libro ya vive. Fíjate en el patrón: cada
-    función hace <strong>una</strong> cosa y tiene un nombre que no necesita comentario.</p>
+<section id="s7"><div class="wrap">
+  <div class="eyebrow">§3 · <b>Contrato</b></div>
+  <h2>Un lado ausente devuelve <code>None</code></h2>
+  <p class="lede">Si una lista de candidatos está vacía, su <code>if</code> no entra y el precio conserva <code>None</code>. No llamamos a <code>max([])</code> ni a <code>min([])</code>.</p>
+  <div class="tblwrap"><table><thead><tr><th>Entrada del ejemplo</th><th>Resultado (bid, ask)</th></tr></thead><tbody>
+    <tr><td>Las cuatro órdenes iniciales</td><td><code>(99, 101)</code></td></tr>
+    <tr><td>Solo buy 98 y buy 99</td><td><code>(99, None)</code></td></tr>
+    <tr><td>Solo sell 103 y sell 101</td><td><code>(None, 101)</code></td></tr>
+    <tr><td>Lista vacía <code>[]</code></td><td><code>(None, None)</code></td></tr>
+  </tbody></table></div>
+  <p><code>None</code> es válido para un precio ausente. El panel lo escribe «—». Una entrada mal formada es un problema diferente. En L3 distinguiremos ausencia y entrada inválida.</p>
+  <div class="code"><pre><span class="ln">bid, ask = best_prices(orders)</span><span class="ln">if bid is None or ask is None:</span><span class="ln">    spread_value, mid_value = None, None</span><span class="ln">else:</span><span class="ln">    spread_value = ask - bid</span><span class="ln">    mid_value = (bid + ask) / 2</span></pre></div>
+  <div class="note"><span class="tag">Consulta</span>Repetir la llamada con la misma lista devuelve el mismo par. La función no añade, cancela ni ordena las órdenes originales. Comprueba también una entrada en orden inverso.</div>
+  <details><summary>Referencia ampliada: consultas separadas</summary><p><code>order_book.py</code> ofrece <code>best_bid(book)</code>, <code>best_ask(book)</code>, <code>spread(book)</code> y <code>mid(book)</code>. Calculan los precios por separado, su diferencia y su punto medio. Esa referencia presupone los lados necesarios: consultarlos vacíos lanza <code>ValueError</code>.</p><p>El principal usa <code>best_prices</code>, cuyo contrato devuelve <code>None</code> por lado ausente. El bloque anterior deriva sus métricas respetando ese contrato.</p></details>
+</div></section>
 
-    <div class="code">
-      <div class="code-head"><span>order_book.py (borrador)</span><span>python</span></div>
-      <pre><span class="ln"><span class="k">def</span> <span class="fn">make_order</span>(symbol, side, price, size):</span><span class="ln">    <span class="k">return</span> {<span class="s">'symbol'</span>: symbol, <span class="s">'side'</span>: side, <span class="s">'price'</span>: price, <span class="s">'size'</span>: size}</span><span class="ln"></span><span class="ln"><span class="k">def</span> <span class="fn">add_order</span>(book, order):</span><span class="ln">    book.append(order)</span><span class="ln">    <span class="k">return</span> book</span><span class="ln"></span><span class="ln">book = []</span><span class="ln">book = add_order(book, make_order(<span class="s">'BTCUSDT'</span>, <span class="s">'buy'</span>, <span class="num">99950</span>, <span class="num">0.5</span>))</span><span class="ln"><span class="fn">print</span>(book)</span></pre>
-      <div class="out"><div class="btnrow" style="margin:0"><button class="btn runbtn" data-target="out-make">▶ Ejecutar</button></div>
-        <div id="out-make" class="hidden" style="margin-top:10px"><div><span class="prompt">&gt;&gt;&gt; </span><span class="val">[{'symbol': 'BTCUSDT', 'side': 'buy', 'price': 99950, 'size': 0.5}]</span></div></div>
-      </div>
-    </div>
+<section id="s8"><div class="wrap">
+  <div class="eyebrow">§4 · <b>Cantidad disponible</b></div>
+  <h2>Imbalance: comparar tamaños</h2>
+  <p class="lede">Volvemos al libro inicial. Ahora usamos <code>size</code>, no <code>price</code>. <code>sum</code> suma los valores: compra <code>sum([1, 4]) = 5</code>, venta <code>sum([2, 1]) = 3</code>.</p>
+  <div class="trace-values"><p><code>B = 5</code> unidades compradoras · <code>A = 3</code> unidades vendedoras</p><p><code>(B - A) / (B + A)</code> compara la diferencia de tamaños con el tamaño total.</p></div><div class="trace-result">(5 − 3) / (5 + 3) = 2 / 8 = 0.25</div>
+  <p>El resultado no tiene unidades. Positivo significa más cantidad compradora, negativo más vendedora y cero cantidades iguales. <strong>No indica automáticamente comprar o vender.</strong> Si el total es cero, devolvemos <code>None</code>.</p>
+  <div class="statgrid"><div><span>imbalance del simulador actual</span><b id="lb-imb">+0.25</b></div></div>
+  <p class="trace-caption">La cifra anterior cambia con los botones del libro. Tras añadir buy 100 × 1: (6 − 3) / 9 = 1/3. Tras retirar también sell 101 × 1: (6 − 2) / 8 = 0.5.</p>
+  <p>Esta versión suma todo el libro de ejemplo. En L7 compararemos profundidades usando snapshots sintéticos. Un precio mejor y una cantidad mayor son propiedades diferentes.</p>
+  <details><summary>Referencia ampliada: imbalance(book)</summary><p>En <code>order_book.py</code>, <code>imbalance(book)</code> calcula la misma proporción, pero presupone tamaño total positivo. Un total cero provoca división por cero. La consolidación muestra una variante protegida llamada <code>imbalance_or_none</code>.</p></details>
+</div></section>
 
-    <h3>Cancelar sin borrar: sigue cada orden</h3>
-    <div class="simcard" id="cancel-tracer">
-      <h4>execution trace · cancel_order(book, 1)</h4>
-      <div class="state-inspector">
-        <div class="state-panel"><div class="state-title"><span>book original</span><span>2 órdenes</span></div>
-          <div class="mini-book" id="cancel-source"></div></div>
-        <div class="state-panel changed"><div class="state-title"><span>new_book</span><span id="cancel-count">0 órdenes</span></div>
-          <div class="mini-book" id="cancel-result"></div></div>
-      </div>
-      <div class="execution-trace" id="cancel-trace"></div>
-      <div class="btnrow"><button class="btn" id="cancel-next">▶ siguiente orden</button>
-        <button class="btn ghost" id="cancel-reset">↻ reiniciar</button></div>
-      <div class="mode-switch" role="group" aria-label="Forma de escribir el filtro">
-        <button class="on" id="cancel-explicit">versión explícita</button>
-        <button id="cancel-comp">comprehension</button>
-      </div>
-      <pre id="cancel-code" style="font-family:var(--mono);font-size:.76rem;line-height:1.9;margin:10px 0"></pre>
-      <div class="looplog" id="cancel-log">book is new_book → aún no calculado</div>
+<section id="s2"><div class="wrap">
+  <div class="eyebrow">Consolidación requerida · <b>Modificar el estado</b></div>
+  <h2>Añadir y cancelar órdenes</h2>
+  <p class="lede">Estado significa los datos actuales del libro. <code>best_prices</code> los consulta. Estas operaciones proporcionadas cambian qué órdenes contiene la lista.</p>
+  <div class="code"><pre><span class="ln">def make_order(side, price, size=1):</span><span class="ln">    return {"side": side, "price": price,</span><span class="ln">            "size": size}</span><span class="ln"></span><span class="ln">order = make_order("buy", 100)</span><span class="ln">order["id"] = 5</span><span class="ln">orders.append(order)</span></pre></div>
+  <p><code>size=1</code> es un argumento por defecto: se usa al omitir la cantidad. El simulador proporciona el identificador 5 antes de añadir la orden. <code>append</code> modifica la lista que recibe y devuelve <code>None</code>. No asignes su retorno a <code>orders</code>.</p>
+  <div class="simcard" id="cancel-tracer">
+    <h4>Traza · cancel_order(book, 4)</h4>
+    <p>Partimos otra vez de las cuatro órdenes iniciales. Retiramos la venta a 101 por su id 4.</p>
+    <div class="state-inspector">
+      <div class="state-panel"><div class="state-title"><span>book original</span><span>4 órdenes</span></div><div class="mini-book" id="cancel-source"></div></div>
+      <div class="state-panel changed"><div class="state-title"><span>new_book</span><span id="cancel-count">0 órdenes</span></div><div class="mini-book" id="cancel-result"></div></div>
     </div>
-    <div class="note"><span class="tag">Una regla</span>
-    La comprensión no borra dentro de <code>book</code>: construye otra lista filtrando.
-    Primero entiende el bucle; después comprímelo.</div>
-
-    <h3>Qué significa «estado»</h3>
-    <div class="simcard">
-      <h4>state inspector · todas miran el mismo book</h4>
-      <div class="state-inspector">
-        <div class="state-panel changed"><div class="state-title"><span>book</span><span>estado actual</span></div>
-          <div class="state-list"><div><span>buy 99950</span><b>0.50</b></div><div><span>sell 100000</span><b>0.30</b></div></div></div>
-        <div class="state-panel"><div class="state-title"><span>operaciones</span><span>mismo dato</span></div>
-          <div class="state-list"><div><span>add(book, …)</span><b>→ book</b></div><div><span>best(book)</span><b>→ precio</b></div><div><span>mid(book)</span><b>→ precio</b></div><div><span>imbalance(book)</span><b>→ señal</b></div></div></div>
-      </div>
-      <p style="margin:.4em 0 0"><strong>Estado = los datos que describen cómo está el sistema ahora mismo.</strong></p>
-    </div>
+    <div class="execution-trace" id="cancel-trace"></div>
+    <div class="btnrow"><button class="btn" id="cancel-next">▶ siguiente orden</button><button class="btn ghost" id="cancel-reset">↻ reiniciar</button></div>
+    <div class="mode-switch" role="group" aria-label="Forma de escribir el filtro"><button class="on" id="cancel-explicit">Bucle explícito</button><button id="cancel-comp">Comprensión</button></div>
+    <div class="code"><pre id="cancel-code"></pre></div>
+    <div class="looplog" id="cancel-log" aria-live="polite">book is new_book: aún no calculado</div>
   </div>
-</section>
+  <p>La comprensión <code>[o for o in book if ...]</code> crea otra lista con los elementos que pasan el filtro. Los diccionarios conservados siguen siendo los mismos, sin copia profunda. <code>book = cancel_order(book, 4)</code> guarda la nueva lista en el nombre <code>book</code>.</p>
+</div></section>
 
-<!-- ══════════════ §3 LIBRO VIVO ══════════════ -->
-<section id="s3">
-  <div class="wrap">
-    <div class="eyebrow">§3 · <b>Simulador</b></div>
-    <h2>El libro vivo</h2>
-    <p class="lede">Cada botón llama a una de <em>tus</em> funciones. Mira cómo cambia el
-    libro — y cómo las métricas se recalculan solas. Abajo queda registrada la llamada
-    exacta que acabas de hacer.</p>
-
-    <div class="simcard">
-      <h4>simulador · book + funciones</h4>
-      <div class="btnrow" style="margin-top:0">
-        <button class="btn" id="lb-addbid">+ orden buy</button>
-        <button class="btn" id="lb-addask">+ orden sell</button>
-        <button class="btn ghost" id="lb-cancel">cancel última</button>
-        <button class="btn ghost" id="lb-reset">↻ vaciar</button>
-      </div>
-      <div class="mini-book" id="lb-book" style="min-height:150px;margin:14px 0"></div>
-      <div class="statgrid">
-        <div><span>best_bid</span><b id="lb-bb">—</b></div>
-        <div><span>best_ask</span><b id="lb-ba">—</b></div>
-        <div><span>spread</span><b id="lb-sp">—</b></div>
-        <div><span>mid</span><b id="lb-mid">—</b></div>
-        <div><span>imbalance</span><b id="lb-imb">—</b></div>
-      </div>
-      <div class="looplog" id="lb-log">el libro está vacío — añade una orden</div>
-    </div>
-
-    <div class="note"><span class="tag">Fíjate</span>
-    Con el libro vacío, <code>best_bid</code> no tiene respuesta posible. Hoy devolvemos
-    "—", pero es una pregunta trampa de verdad: ¿qué <em>debería</em> hacer tu función?
-    La respuesta seria (lanzar un error claro) llega en L3.</div>
+<section id="s4"><div class="wrap">
+  <div class="eyebrow">Consolidación requerida · <b>Mismos datos, otra escritura</b></div>
+  <h2>Generadores y ordenación</h2>
+  <p class="lede">Primero comprobamos el bucle explícito. Ahora podemos abreviarlo conservando la misma entrada y salida.</p>
+  <div class="code"><pre><span class="ln">def best_bid_or_none(book):</span><span class="ln">    prices = (o["price"] for o in book</span><span class="ln">              if o["side"] == "buy")</span><span class="ln">    return max(prices, default=None)</span></pre></div>
+  <p>La expresión entre paréntesis produce un precio cada vez: <code>o["price"]</code> indica qué produce, <code>for o in book</code> de dónde sale y <code>if</code> qué deja pasar. El generador no construye una lista. <code>max</code> consume sus valores. <code>default=None</code> fija el resultado si no hay ninguno.</p>
+  <div class="code"><pre><span class="ln">def imbalance_or_none(book):</span><span class="ln">    b = sum(o["size"] for o in book</span><span class="ln">            if o["side"] == "buy")</span><span class="ln">    a = sum(o["size"] for o in book</span><span class="ln">            if o["side"] == "sell")</span><span class="ln">    if b + a == 0:</span><span class="ln">        return None</span><span class="ln">    return (b - a) / (b + a)</span></pre></div>
+  <div class="predict predictgate"><div class="tag">Predice</div><p>Con las cuatro órdenes iniciales, ¿qué devuelve <code>imbalance_or_none(book)</code>?</p><div class="btnrow"><input type="text" placeholder="Mi predicción…" aria-label="Tu predicción"><button class="btn runbtn" data-target="out-imb" disabled>Mostrar resultado</button></div></div>
+  <div class="out hidden" id="out-imb"><span class="val">0.25</span> · (5 − 3) / 8</div>
+  <h3><code>sorted</code> obtiene una clave por orden</h3>
+  <p><code>key=get_price</code> entrega la función a <code>sorted</code>, sin llamarla. <code>sorted</code> la llama una vez por elemento y usa los precios devueltos para crear una lista ordenada. La lista original no cambia.</p>
+  <div class="simcard" id="sort-tracer">
+    <h4>Traza · sorted(orders, key=get_price)</h4>
+    <div class="mode-switch" role="group" aria-label="Función con nombre o lambda"><button class="on" id="sort-fn">get_price</button><button id="sort-lambda">lambda</button></div>
+    <div class="code"><pre id="sort-code"></pre></div>
+    <div class="execution-trace" id="sort-trace"></div>
+    <button class="btn" id="sort-next">▶ siguiente orden</button>
+    <div class="looplog" id="sort-log" aria-live="polite">La función se pasa sin paréntesis: sorted la llamará.</div>
   </div>
-</section>
+  <p><code>lambda order: order["price"]</code> define la misma función de una expresión sin darle nombre. <code>order</code> es el parámetro. La expresión tras <code>:</code> es lo que devuelve. Aquí ordenamos todas las filas por precio como ejercicio de Python, no como regla de prioridad de un mercado.</p>
+</div></section>
 
-<!-- ══════════════ §4 LEER EL LIBRO ══════════════ -->
-<section id="s4">
-  <div class="wrap">
-    <div class="eyebrow">§4 · <b>Construye</b></div>
-    <h2>Leer el libro: métricas y señal</h2>
-    <p class="lede">Las funciones de lectura no tocan el libro — lo <em>resumen</em>.
-    Componlas y tienes el cuadro de mandos de L1. Para N activos reutilizas las funciones
-    con N libros separados: estas consultas no filtran por símbolo.</p>
-
-    <div class="note"><span class="tag">Sintaxis nueva · expresión generadora</span>
-      <code>o['price'] for o in book if ...</code> es un bucle compacto: produce un precio
-      por cada orden que pasa el filtro. Sin corchetes no crea una lista; <code>max</code>,
-      <code>min</code> o <code>sum</code> consumen esos valores uno a uno. Léela siempre en
-      tres piezas: <strong>qué produce · de dónde sale · qué deja pasar</strong>.</div>
-
-    <div class="code">
-      <div class="code-head"><span>order_book.py (lectura)</span><span>python</span></div>
-      <pre><span class="ln"><span class="k">def</span> <span class="fn">best_bid</span>(book):</span><span class="ln">    <span class="k">return</span> <span class="fn">max</span>(o[<span class="s">'price'</span>] <span class="k">for</span> o <span class="k">in</span> book <span class="k">if</span> o[<span class="s">'side'</span>] == <span class="s">'buy'</span>)</span><span class="ln"></span><span class="ln"><span class="k">def</span> <span class="fn">imbalance</span>(book):</span><span class="ln">    buy_size  = <span class="fn">sum</span>(o[<span class="s">'size'</span>] <span class="k">for</span> o <span class="k">in</span> book <span class="k">if</span> o[<span class="s">'side'</span>] == <span class="s">'buy'</span>)</span><span class="ln">    sell_size = <span class="fn">sum</span>(o[<span class="s">'size'</span>] <span class="k">for</span> o <span class="k">in</span> book <span class="k">if</span> o[<span class="s">'side'</span>] == <span class="s">'sell'</span>)</span><span class="ln">    <span class="k">return</span> (buy_size - sell_size) / (buy_size + sell_size)</span></pre>
-      <div class="predict predictgate" style="margin:0;border-radius:0;border-left:none;border-right:none;border-bottom:none">
-        <div class="tag">Predice antes de ejecutar</div>
-        <p style="margin:.2em 0 .8em;font-size:.94rem">El libro tiene tres órdenes:
-        <code>buy 0.3</code>, <code>buy 0.3</code> y <code>sell 0.2</code>.
-        ¿Qué devuelve <code>imbalance(book)</code>?</p>
-        <div class="btnrow" style="margin:0">
-          <input type="text" placeholder="mi predicción…" aria-label="Tu predicción">
-          <button class="btn runbtn" data-target="out-imb" disabled>▶ Ejecutar</button>
-        </div>
-      </div>
-      <div class="out hidden" id="out-imb"><span class="prompt">&gt;&gt;&gt; </span><span class="val">0.50</span>
-        <span style="color:var(--faint)">   # (0.6 − 0.2) / 0.8 — presión compradora</span></div>
-    </div>
-
-    <div class="simcard" id="sort-tracer">
-      <h4>execution trace · sorted(orders, key=get_price)</h4>
-      <div class="mode-switch" role="group" aria-label="Función con nombre o lambda">
-        <button class="on" id="sort-fn">get_price</button><button id="sort-lambda">lambda</button>
-      </div>
-      <pre id="sort-code" style="font-family:var(--mono);font-size:.76rem;line-height:1.9;margin:8px 0"></pre>
-      <div class="execution-trace" id="sort-trace"></div>
-      <button class="btn" id="sort-next">▶ siguiente orden</button>
-      <div class="looplog" id="sort-log">La función se pasa sin paréntesis: sorted la llamará.</div>
-    </div>
-
-    <div class="note"><span class="tag">Honestidad</span>
-    Este imbalance suma <em>todo</em> el libro. Los profesionales suelen mirar solo los
-    primeros niveles (los precios cerca del mid pesan más). Lo refinaremos cuando
-    leamos el libro real en L7.</div>
+<section id="s5"><div class="wrap"><div class="eyebrow">Consolidación requerida · <b>Comprobación</b></div><h2>Predecir el resultado</h2>
+  <div class="quiz" data-quiz>
+    <div class="q" data-ok="1"><div class="qt">Al libro inicial añadimos buy 100 × 1. ¿Qué devuelve <code>best_prices</code>?</div><div class="opts"><button class="opt">A · (99, 101)</button><button class="opt">B · (100, 101)</button><button class="opt">C · (100, 103)</button></div><div class="why">100 supera 98 y 99. Las ventas siguen a 103 y 101: su mínimo sigue siendo 101.</div></div>
+    <div class="q" data-ok="2"><div class="qt">Solo quedan las compras a 98 y 99. ¿Qué devuelve la consulta?</div><div class="opts"><button class="opt">A · (99, 0)</button><button class="opt">B · Lanza un error por faltar ventas</button><button class="opt">C · (99, None)</button></div><div class="why">Hay un precio comprador válido. None expresa la ausencia de precio vendedor, sin inventar cero.</div></div>
+    <div class="q" data-ok="0"><div class="qt">Después de <code>best_prices(orders)</code>, ¿qué contiene <code>orders</code>?</div><div class="opts"><button class="opt">A · Las mismas órdenes y en el mismo orden</button><button class="opt">B · Solo las dos mejores órdenes</button><button class="opt">C · Las órdenes ordenadas por precio</button></div><div class="why">Solo se añaden precios a listas locales. La consulta no modifica la entrada.</div></div>
+    <div class="q" data-ok="2"><div class="qt"><code>imbalance(book) = 0.25</code>. ¿Qué concluyes?</div><div class="opts"><button class="opt">A · Debo comprar</button><button class="opt">B · Hay más cantidad vendedora</button><button class="opt">C · Hay más cantidad compradora en ese libro</button></div><div class="why">Describe tamaños visibles. Por sí solo no justifica una decisión de trading ni predice el siguiente precio.</div></div>
+    <div class="q" data-ok="1"><div class="qt">En <code>sorted(orders, key=get_price)</code>, ¿quién llama a <code>get_price</code>?</div><div class="opts"><button class="opt">A · Nadie, se ordena por el nombre</button><button class="opt">B · sorted, para obtener la clave de cada orden</button><button class="opt">C · El alumno debe llamar antes con get_price()</button></div><div class="why">key recibe una función. La llamada get_price(order) devuelve el precio usado para ordenar.</div></div>
+    <div class="score" id="score"></div>
   </div>
-</section>
+</div></section>
 
-<!-- ══════════════ §5 QUIZ ══════════════ -->
-<section id="s5">
-  <div class="wrap">
-    <div class="eyebrow">§5 · <b>Fija lo de hoy</b></div>
-    <h2>5 preguntas</h2>
-    <div class="quiz" data-quiz>
-      <div class="q" data-ok="1">
-        <div class="qt">¿Qué devuelve <code>make_order('BTCUSDT', 'buy', 99950, 0.5)</code>?</div>
-        <div class="opts">
-          <button class="opt">A · Una lista con los 4 valores</button>
-          <button class="opt">B · Un diccionario con los 4 campos montados</button>
-          <button class="opt">C · Nada: imprime la orden</button>
-        </div>
-        <div class="why">Es una fábrica: recibe los campos y <code>return</code> el dict ya
-        montado, siempre con las mismas claves.</div>
-      </div>
-      <div class="q" data-ok="2">
-        <div class="qt"><code>book.append(order)</code> — ¿qué le pasa a <code>book</code>?</div>
-        <div class="opts">
-          <button class="opt">A · Nada: append devuelve una copia</button>
-          <button class="opt">B · Error: las listas no tienen append</button>
-          <button class="opt">C · Se modifica la propia lista: gana un elemento</button>
-        </div>
-        <div class="why"><code>append</code> muta la lista original. Compáralo con la
-        comprensión de <code>cancel_order</code>, que construye una nueva.</div>
-      </div>
-      <div class="q" data-ok="0">
-        <div class="qt">La comprensión <code>[o for o in book if o['id'] != order_id]</code>…</div>
-        <div class="opts">
-          <button class="opt">A · Crea una lista nueva sin la orden cancelada</button>
-          <button class="opt">B · Borra la orden dentro del book original</button>
-          <button class="opt">C · Ordena el libro por precio</button>
-        </div>
-        <div class="why">Filtra construyendo una lista nueva. El book viejo queda intacto —
-        por eso la función hace <code>return</code>.</div>
-      </div>
-      <div class="q" data-ok="2">
-        <div class="qt"><code>imbalance(book)</code> devuelve +0.50. ¿Qué está diciendo el libro?</div>
-        <div class="opts">
-          <button class="opt">A · Hay más papel vendedor que comprador</button>
-          <button class="opt">B · El mercado está equilibrado</button>
-          <button class="opt">C · Domina el tamaño comprador: la señal está a mitad de camino de +1</button>
-        </div>
-        <div class="why">imbalance = (compra − venta) / total. Cero es equilibrio;
-        +0.50 es presión compradora y +1 sería dominio comprador total.</div>
-      </div>
-      <div class="q" data-ok="1">
-        <div class="qt">Las 7 funciones de hoy comparten algo sospechoso. ¿Qué?</div>
-        <div class="opts">
-          <button class="opt">A · Todas usan comprensiones de lista</button>
-          <button class="opt">B · Todas reciben <code>book</code> como primer argumento</button>
-          <button class="opt">C · Todas devuelven números</button>
-        </div>
-        <div class="why">Un dato y el equipo de funciones que lo manosean, viajando siempre
-        juntos… eso tiene nombre: <strong>objeto</strong>. Llega en L4.</div>
-      </div>
-      <div class="score" id="score"></div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════ §6 PUENTE ══════════════ -->
-<section id="s6">
-  <div class="wrap">
-    <div class="eyebrow">§6 · <b>El puente</b></div>
-    <h2>Dónde estás en el proyecto</h2>
-    <p class="lede">Todo el curso construye <strong>un solo sistema</strong>. Esto es lo
-    que ya es tuyo y lo que viene:</p>
-
-    <div class="pkgmap">
-      <div class="pk done">L1 · el dato<span>variables, dicts, decisiones</span></div>
-      <div class="pk today">L2 · book funcional<span>funciones sobre el libro</span></div>
-      <div class="pk future">L3 · mi_main.py<span>funciones reutilizables</span></div>
-      <div class="pk future">L4 · Order y Fill<span>exchange/orders.py</span></div>
-      <div class="pk future">L5 · OrderBook + Tracker<span>exchange/book.py</span></div>
-      <div class="pk future">L6 · familia Strategy<span>herencia</span></div>
-      <div class="pk future">L7-10 · motor y framework<span>matching, Market, Strategy, Backtest</span></div>
-      <div class="pk future">L11-14 · estrategias<span>métricas, VWAP, market making</span></div>
-    </div>
-
-    <div class="bridge">
-      <div class="tag">El puente a L3</div>
-      <p style="margin:.2em 0"><strong>Tus funciones funcionan… dentro de este notebook.</strong></p>
-      <p>El notebook conserva tu código y tus experimentos. Un kernel nuevo necesita
-      ejecutar de nuevo sus celdas para recuperar las funciones.</p>
-      <p style="margin-bottom:0">También puedes guardarlas en <code>mi_main.py</code>
-      y reutilizarlas con <code>import</code>. En L3 entenderás qué ocurre al importar
-      y añadirás <code>describe</code> a tu lectura del mercado.</p>
-    </div>
-
-    <div class="cta">
-      <div class="box"><span class="tag">Ahora te toca construir</span>
-      Abre <code>02_build_exercises.ipynb</code> y completa <code>best_prices</code> en las celdas. Prueba ambos lados y el libro vacío; después puedes repetirlo con <code>python mi_main.py</code>.</div>
-      <div class="box"><span class="tag">Si quieres más práctica</span>
-      <code>02_auxiliary.ipynb</code> — práctica OPTIONAL. Elige los ejercicios que te ayuden; puedes omitirlos para continuar.</div>
-    </div>
-  <details class="construction-panel" id="construction-guide"><summary>Del notebook a un programa Python</summary><p><strong>Problema:</strong> La lista puede llegar desordenada y puede faltar uno de los lados. best_prices(orders) debe seleccionar el mejor precio disponible de cada lado y comunicar su ausencia sin inventar una quote.</p><p>Completa el principal en Jupyter y contrasta sus resultados. Después puedes trasladar las mismas respuestas a una copia de <code>main.py</code>, guardada como <code>mi_main.py</code>.</p><p>Desde la carpeta <code>exercises</code> de esta clase: <code>python mi_main.py</code>. Verás los mismos cálculos ejecutados de una vez.</p><p>El notebook sirve para investigar y explicar. Los archivos <code>.py</code> sirven para organizar programas y funciones reutilizables.</p><p><strong>Predice y contrasta:</strong> Con orders=[{&#x27;side&#x27;:&#x27;buy&#x27;,&#x27;price&#x27;:98,&#x27;size&#x27;:1}, {&#x27;side&#x27;:&#x27;sell&#x27;,&#x27;price&#x27;:103,&#x27;size&#x27;:2}, {&#x27;side&#x27;:&#x27;buy&#x27;,&#x27;price&#x27;:99,&#x27;size&#x27;:4}, {&#x27;side&#x27;:&#x27;sell&#x27;,&#x27;price&#x27;:101,&#x27;size&#x27;:1}], los candidatos bid son 98 y 99; los ask, 103 y 101. Resultado: (99,101), que permite calcular spread 2 y mid 100. Con solo el registro buy a 99 esperamos (99,None); con [] esperamos (None,None). El tamaño 4 no convierte por sí mismo una orden en el mejor precio.</p><p><strong>Lo siguiente reutiliza:</strong> En L3 describe utilizará esta misma best_prices y las fórmulas de L1. El notebook será autocontenido; al pasarlo a .py podrás importar sus funciones desde otro archivo.</p></details></div></section>
-
-<footer>L2 · El libro funcional — Algo Trading ICAI 2026 · documento interactivo</footer>
+<section id="s6"><div class="wrap">
+  <div class="eyebrow">§5 · <b>Tu principal</b></div><h2>Construir la misma consulta en Python</h2>
+  <div class="cta"><div class="box"><span class="tag">20 minutos · L02-P01</span>Abre <code>02_build_exercises.ipynb</code> y completa <code>best_prices</code>. Comprueba ambos lados, solo compras, solo ventas y lista vacía. Reordena las entradas y comprueba que consultarlas no las cambia.</div></div>
+  <p>Puedes repetir el principal con <code>python mi_main.py</code>. <code>02_auxiliary.ipynb</code> ofrece práctica voluntaria y no hace falta para continuar.</p>
+  <div class="bridge"><div class="tag">L3</div><p>Reutilizarás <code>best_prices</code> desde un módulo y añadirás <code>describe</code> para devolver las métricas del libro.</p></div>
+<details class="construction-panel" id="construction-guide"><summary>Del notebook a un programa Python</summary><p><strong>Problema:</strong> La lista puede llegar desordenada y puede faltar uno de los lados. best_prices(orders) debe seleccionar el mejor precio disponible de cada lado y comunicar su ausencia sin inventar una quote.</p><p>Completa el principal en Jupyter y contrasta sus resultados. Después puedes trasladar las mismas respuestas a una copia de <code>main.py</code>, guardada como <code>mi_main.py</code>.</p><p>Desde la carpeta <code>exercises</code> de esta clase: <code>python mi_main.py</code>. Verás los mismos cálculos ejecutados de una vez.</p><p>El notebook sirve para investigar y explicar. Los archivos <code>.py</code> sirven para organizar programas y funciones reutilizables.</p><p><strong>Predice y contrasta:</strong> Con orders=[{&#x27;side&#x27;:&#x27;buy&#x27;,&#x27;price&#x27;:98,&#x27;size&#x27;:1}, {&#x27;side&#x27;:&#x27;sell&#x27;,&#x27;price&#x27;:103,&#x27;size&#x27;:2}, {&#x27;side&#x27;:&#x27;buy&#x27;,&#x27;price&#x27;:99,&#x27;size&#x27;:4}, {&#x27;side&#x27;:&#x27;sell&#x27;,&#x27;price&#x27;:101,&#x27;size&#x27;:1}], los candidatos bid son 98 y 99; los ask, 103 y 101. Resultado: (99,101), que permite calcular spread 2 y mid 100. Con solo el registro buy a 99 esperamos (99,None); con [] esperamos (None,None). El tamaño 4 no convierte por sí mismo una orden en el mejor precio.</p><p><strong>Lo siguiente reutiliza:</strong> En L3 describe utilizará esta misma best_prices y las fórmulas de L1. El notebook será autocontenido; al pasarlo a .py podrás importar sus funciones desde otro archivo.</p></details></div></section>
+<footer>L2 · El libro funcional · Algo Trading ICAI 2026</footer>
 
 
-<script type="application/json" id="pedagogy-contract">{"lesson":2,"status":"contract-strict","title":"Python II — Funciones y libro compartido","delivery":"lesson","source_path":"framework/_build/docs/02_body.html","requires":{"concepts":["python.variables","python.collections","python.control_flow","python.fstring","python.dict_get","microstructure.spread","microstructure.mid"],"apis":[],"notation":["notation.spread","notation.mid"]},"requirement_routes":{"concepts":{"python.variables":"LIVE","python.collections":"LIVE","python.control_flow":"LIVE","python.fstring":"LIVE","python.dict_get":"LIVE","microstructure.spread":"LIVE","microstructure.mid":"LIVE"},"apis":{},"notation":{"notation.spread":"LIVE","notation.mid":"LIVE"}},"introduces":{"concepts":[{"id":"python.functions","importance":"major","route":"LIVE"},{"id":"python.shared_state","importance":"major","route":"LIVE"},{"id":"functional.order_book","importance":"major","route":"LIVE"},{"id":"microstructure.imbalance","importance":"major","route":"LIVE"},{"id":"python.tuple","importance":"supporting","route":"REQUIRED"},{"id":"python.comprehension","importance":"supporting","route":"REQUIRED"},{"id":"python.generator_expression","importance":"supporting","route":"REQUIRED"},{"id":"python.lambda","importance":"major","route":"REQUIRED"},{"id":"python.sorted_key","importance":"major","route":"REQUIRED"},{"id":"python.default_arguments","importance":"supporting","route":"REQUIRED"}],"apis":["functional.best_bid","functional.best_ask","functional.spread","functional.mid","functional.imbalance"],"notation":["notation.imbalance"]},"introduction_routes":{"apis":{"functional.best_bid":"LIVE","functional.best_ask":"LIVE","functional.spread":"LIVE","functional.mid":"LIVE","functional.imbalance":"LIVE"},"notation":{"notation.imbalance":"LIVE"}},"recalls":[{"concept":"python.control_flow","introduced_in":1,"mapping":{"before":"Una condición inline decide una sola vez.","now":"Una función aplica la misma decisión a cada book."}},{"concept":"python.fstring","introduced_in":1,"mapping":{"before":"Una f-string inserta valores y controla su formato dentro de un ticket.","now":"El calentamiento construye una lectura compacta del mid con el mismo patrón."}},{"concept":"python.dict_get","introduced_in":1,"mapping":{"before":"dict.get(clave, default) evita un KeyError cuando aún no existe una posición.","now":"El calentamiento recupera ETH con valor cero antes de actualizar la cartera."}}],"api_surface":[{"id":"functional.best_bid","name":"best_bid","kind":"function","signature":"best_bid(book) -> float","returns":"float","responsibility":"read the highest bid from the functional book","qualified_name":"lesson02.order_book.best_bid"},{"id":"functional.best_ask","name":"best_ask","kind":"function","signature":"best_ask(book) -> float","returns":"float","responsibility":"read the lowest ask from the functional book","qualified_name":"lesson02.order_book.best_ask"},{"id":"functional.spread","name":"spread","kind":"function","signature":"spread(book) -> float","returns":"float","responsibility":"compute best ask minus best bid","qualified_name":"lesson02.order_book.spread"},{"id":"functional.mid","name":"mid","kind":"function","signature":"mid(book) -> float","returns":"float","responsibility":"compute the midpoint","qualified_name":"lesson02.order_book.mid"},{"id":"functional.imbalance","name":"imbalance","kind":"function","signature":"imbalance(book) -> float","returns":"float","responsibility":"compute top-of-book size imbalance","qualified_name":"lesson02.order_book.imbalance"}],"routes":{"LIVE":["l02-challenge","l02-build-functions","l02-live-book","l02-bridge"],"REQUIRED":["l02-recall","l02-sort-and-signal","l02-quiz"],"OPTIONAL":[]},"objectives":[{"id":"l02-extract-functions","route":"LIVE","concepts":["python.functions","python.shared_state"],"apis":["functional.best_bid","functional.best_ask"],"notation":[]},{"id":"l02-read-functional-book","route":"LIVE","concepts":["functional.order_book","microstructure.imbalance"],"apis":["functional.spread","functional.mid","functional.imbalance"],"notation":["notation.imbalance"]},{"id":"l02-read-sorting-tools","route":"REQUIRED","concepts":["python.lambda","python.sorted_key","python.comprehension","python.generator_expression"],"apis":[],"notation":[]}],"load":{"live_presentation_minutes":20,"guided_minutes":20,"required_autonomous_minutes":0,"optional_minutes":15,"overflow_policy":"explicit-route-plan","required_project_minutes":0},"scenes":[{"id":"l02-challenge","dom_id":"s0","type":"hero-challenge","route":"LIVE","layout":"focus","concepts":["python.shared_state"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l02-build-functions","dom_id":"s1","type":"code-state","route":"LIVE","layout":"split-42-58","concepts":["python.functions","functional.order_book"],"duration_minutes":10,"stages":[{"id":"diagnosis","route":"LIVE","dom_stage":0},{"id":"def","route":"LIVE","dom_stage":1},{"id":"factory","route":"LIVE","dom_stage":2},{"id":"shared-book","route":"LIVE","dom_stage":3},{"id":"metrics","route":"LIVE","dom_stage":4},{"id":"imbalance","route":"REQUIRED","duration_minutes":3,"dom_stage":5}]},{"id":"l02-recall","dom_id":"s2","type":"recall","route":"REQUIRED","layout":"focus","concepts":["python.control_flow","python.functions","python.fstring","python.dict_get"],"duration_minutes":5,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l02-live-book","dom_id":"s3","type":"concept-simulator","route":"LIVE","layout":"split-45-55","concepts":["functional.order_book","python.shared_state"],"duration_minutes":6,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l02-sort-and-signal","dom_id":"s4","type":"code-state","route":"REQUIRED","layout":"split-50-50","concepts":["python.lambda","python.sorted_key","python.generator_expression","microstructure.imbalance"],"duration_minutes":8,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l02-quiz","dom_id":"s5","type":"diagnostic-quiz","route":"REQUIRED","layout":"focus","concepts":["python.functions","functional.order_book"],"duration_minutes":8,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l02-bridge","dom_id":"s6","type":"bridge","route":"LIVE","layout":"focus","concepts":["python.functions"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]}],"bridge":{"target_lesson":3,"known":{"concepts":["python.functions","functional.order_book"],"apis":["functional.best_bid","functional.spread"],"notation":["notation.imbalance"]},"limitation":"Las funciones todavía viven dentro de un notebook.","need":"Los módulos, imports y errores de dominio hacen reutilizable el libro funcional."},"api_transitions":[],"package_checks":[],"used_later":{"concepts":["functional.order_book","python.functions","python.generator_expression","python.lambda","python.sorted_key"],"apis":["functional.best_bid","functional.spread"],"notation":["notation.imbalance"]}}</script>
-<script type="application/json" id="learning-support">{"lesson": 2, "cards": {"aggregate": {"title": "min, max, sum, len y sorted", "first_lesson": 2, "route": "REQUIRED", "why": "Reducir muchos datos a una pregunta sencilla: menor precio, cantidad total o número de elementos.", "inputs": "Una colección de valores comparables o numéricos; sorted admite key= para elegir el criterio.", "outputs": "min/max: un extremo; sum: total; len: cantidad; sorted: lista nueva ordenada.", "mechanism": "min/max sin default fallan con una colección vacía. sorted no cambia la original; key recibe un elemento y devuelve la clave de ordenación.", "example": "prices = [101, 99, 100]\nprint(min(prices), sum(prices), len(prices))  # 99 300 3\nprint(sorted(prices))  # [99, 100, 101]"}, "collections": {"title": "Listas, diccionarios y posiciones", "first_lesson": 1, "route": "LIVE", "why": "Una orden tiene varios campos; un libro contiene varias órdenes.", "inputs": "Lista: valores ordenados entre []; dict: pares clave:valor entre {}.", "outputs": "xs[0] devuelve el primer valor; xs[-1], el último. xs[:2] crea una lista con los dos primeros. order['size'] devuelve el campo size.", "mechanism": "Los índices empiezan en cero; un índice negativo cuenta desde el final. El extremo derecho de un slice no se incluye. append añade a la lista original y devuelve None.", "example": "sizes = [2, 3]\norder = {'side': 'buy', 'size': sizes[0]}\nprint(order['size'])  # 2"}, "comprehension": {"title": "Comprensión, generador y lambda", "first_lesson": 2, "route": "REQUIRED", "why": "Leer una transformación compacta después de entender su bucle equivalente.", "inputs": "Elementos de una colección, una expresión y, opcionalmente, una condición.", "outputs": "[x * 2 for x in xs] crea una lista; (x * 2 for x in xs) entrega valores uno a uno al consumidor.", "mechanism": "lambda x: x['price'] es una función corta equivalente a def key(x): return x['price']. No es otro algoritmo.", "example": "sizes = [1, 2, 3]\nprint([x for x in sizes if x > 1])  # [2, 3]\nprint(sum(x for x in sizes if x > 1))  # 5"}, "functions": {"title": "def, llamada y return", "first_lesson": 2, "route": "LIVE", "why": "Escribir una receta una vez y reutilizarla con otros datos.", "inputs": "Argumentos al llamar: mid(99, 101). Los parámetros bid y ask reciben esos valores.", "outputs": "return entrega un valor al código que llamó. print sólo lo muestra.", "mechanism": "Definir la función no ejecuta su cuerpo. Las variables de dentro son locales salvo mutaciones explícitas de objetos recibidos.", "example": "def mid(bid, ask):\n    return (bid + ask) / 2\nresult = mid(99, 101)  # 100.0"}, "get": {"title": "dict.get: leer un campo que puede faltar", "first_lesson": 1, "route": "REQUIRED", "why": "Tratar una posición todavía ausente como cero, sin confundir lectura con actualización.", "inputs": "Un diccionario, la clave buscada y un valor por defecto.", "outputs": "d.get(key, default) devuelve el valor existente o default. No modifica d.", "mechanism": "Equivale a preguntar si la clave existe y elegir una de dos respuestas. Para guardar un cambio se necesita d[key] = nuevo_valor.", "example": "positions = {}\nold = positions.get('ETH', 0)  # 0; positions sigue {}\npositions['ETH'] = old + 2"}}, "scenes": {"s0": ["functions", "get"], "s1": ["functions"], "s2": ["collections", "functions"], "s3": ["collections", "comprehension"], "s4": ["aggregate", "comprehension"], "s5": ["functions", "get"], "s6": ["functions"]}}</script>
+<script type="application/json" id="pedagogy-contract">{"lesson":2,"status":"contract-strict","title":"Python II — Funciones y mejores precios","delivery":"lesson","source_path":"framework/_build/docs/02_body.html","requires":{"concepts":["python.variables","python.collections","python.control_flow","python.fstring","python.dict_get","microstructure.spread","microstructure.mid"],"apis":[],"notation":["notation.spread","notation.mid"]},"requirement_routes":{"concepts":{"python.variables":"LIVE","python.collections":"LIVE","python.control_flow":"LIVE","python.fstring":"LIVE","python.dict_get":"LIVE","microstructure.spread":"LIVE","microstructure.mid":"LIVE"},"apis":{},"notation":{"notation.spread":"LIVE","notation.mid":"LIVE"}},"introduces":{"concepts":[{"id":"python.functions","importance":"major","route":"LIVE"},{"id":"python.shared_state","importance":"major","route":"LIVE"},{"id":"functional.order_book","importance":"major","route":"LIVE"},{"id":"microstructure.imbalance","importance":"major","route":"LIVE"},{"id":"python.tuple","importance":"supporting","route":"LIVE"},{"id":"python.comprehension","importance":"supporting","route":"REQUIRED"},{"id":"python.generator_expression","importance":"supporting","route":"REQUIRED"},{"id":"python.lambda","importance":"major","route":"REQUIRED"},{"id":"python.sorted_key","importance":"major","route":"REQUIRED"},{"id":"python.default_arguments","importance":"supporting","route":"REQUIRED"}],"apis":["functional.best_prices","functional.best_bid","functional.best_ask","functional.spread","functional.mid","functional.imbalance"],"notation":["notation.imbalance"]},"introduction_routes":{"apis":{"functional.best_bid":"LIVE","functional.best_ask":"LIVE","functional.spread":"LIVE","functional.mid":"LIVE","functional.imbalance":"LIVE","functional.best_prices":"LIVE"},"notation":{"notation.imbalance":"LIVE"}},"recalls":[{"concept":"python.control_flow","introduced_in":1,"mapping":{"before":"Un bucle recorre datos y una condición decide qué bloque ejecutar.","now":"best_prices recorre órdenes y guarda cada precio en la lista de su lado."}}],"api_surface":[{"id":"functional.best_prices","name":"best_prices","kind":"function","signature":"best_prices(orders) -> tuple[float | None, float | None]","returns":"tuple[float | None, float | None]","responsibility":"read the highest buy and lowest sell price without modifying orders; return None per missing side","qualified_name":"lesson02.order_book.best_prices"},{"id":"functional.best_bid","name":"best_bid","kind":"function","signature":"best_bid(book) -> float","returns":"float","responsibility":"read the highest bid from the functional book","qualified_name":"lesson02.order_book.best_bid"},{"id":"functional.best_ask","name":"best_ask","kind":"function","signature":"best_ask(book) -> float","returns":"float","responsibility":"read the lowest ask from the functional book","qualified_name":"lesson02.order_book.best_ask"},{"id":"functional.spread","name":"spread","kind":"function","signature":"spread(book) -> float","returns":"float","responsibility":"compute best ask minus best bid","qualified_name":"lesson02.order_book.spread"},{"id":"functional.mid","name":"mid","kind":"function","signature":"mid(book) -> float","returns":"float","responsibility":"compute the midpoint","qualified_name":"lesson02.order_book.mid"},{"id":"functional.imbalance","name":"imbalance","kind":"function","signature":"imbalance(book) -> float","returns":"float","responsibility":"compute whole-book size imbalance","qualified_name":"lesson02.order_book.imbalance"}],"routes":{"LIVE":["l02-challenge","l02-live-book","l02-build-functions","l02-absence-contract","l02-imbalance","l02-bridge"],"REQUIRED":["l02-recall","l02-sort-and-signal","l02-quiz"],"OPTIONAL":[]},"objectives":[{"id":"l02-extract-functions","route":"LIVE","concepts":["python.functions","python.shared_state","python.tuple"],"apis":["functional.best_prices","functional.best_bid","functional.best_ask"],"notation":[]},{"id":"l02-read-functional-book","route":"LIVE","concepts":["functional.order_book","microstructure.imbalance"],"apis":["functional.spread","functional.mid","functional.imbalance"],"notation":["notation.imbalance"]},{"id":"l02-read-sorting-tools","route":"REQUIRED","concepts":["python.lambda","python.sorted_key","python.comprehension","python.generator_expression"],"apis":[],"notation":[]}],"load":{"live_presentation_minutes":20,"guided_minutes":20,"required_autonomous_minutes":0,"optional_minutes":15,"overflow_policy":"explicit-route-plan","required_project_minutes":0},"scenes":[{"id":"l02-challenge","dom_id":"s0","type":"hero-challenge","route":"LIVE","layout":"focus","concepts":["functional.order_book"],"duration_minutes":1,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l02-live-book","dom_id":"s3","type":"concept-simulator","route":"LIVE","layout":"split-45-55","concepts":["functional.order_book","python.shared_state"],"duration_minutes":3,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l02-build-functions","dom_id":"s1","type":"code-state","route":"LIVE","layout":"split-42-58","concepts":["python.functions","functional.order_book","python.tuple","python.control_flow"],"duration_minutes":10,"stages":[{"id":"call","route":"LIVE","dom_stage":0},{"id":"data","route":"LIVE","dom_stage":1},{"id":"local-lists","route":"LIVE","dom_stage":2},{"id":"loop","route":"LIVE","dom_stage":3},{"id":"filter-buy","route":"LIVE","dom_stage":4},{"id":"filter-sell","route":"LIVE","dom_stage":5},{"id":"candidates","route":"LIVE","dom_stage":6},{"id":"bid","route":"LIVE","dom_stage":7},{"id":"ask","route":"LIVE","dom_stage":8},{"id":"return","route":"LIVE","dom_stage":9}]},{"id":"l02-absence-contract","dom_id":"s7","type":"code-state","route":"LIVE","layout":"focus","concepts":["python.functions","python.tuple","functional.order_book"],"duration_minutes":3,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l02-imbalance","dom_id":"s8","type":"concept-simulator","route":"LIVE","layout":"focus","concepts":["microstructure.imbalance"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l02-recall","dom_id":"s2","type":"recall","route":"REQUIRED","layout":"focus","concepts":["python.functions","python.shared_state","python.comprehension","python.default_arguments"],"duration_minutes":5,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l02-sort-and-signal","dom_id":"s4","type":"code-state","route":"REQUIRED","layout":"split-50-50","concepts":["python.lambda","python.sorted_key","python.generator_expression","microstructure.imbalance"],"duration_minutes":8,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l02-quiz","dom_id":"s5","type":"diagnostic-quiz","route":"REQUIRED","layout":"focus","concepts":["python.functions","functional.order_book"],"duration_minutes":6,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l02-bridge","dom_id":"s6","type":"bridge","route":"LIVE","layout":"focus","concepts":["python.functions"],"duration_minutes":1,"stages":[{"id":"main","route":"LIVE"}]}],"bridge":{"target_lesson":3,"known":{"concepts":["python.functions","functional.order_book"],"apis":["functional.best_prices"],"notation":["notation.imbalance"]},"limitation":"Las funciones todavía viven dentro de un notebook.","need":"Reutilizar best_prices desde un módulo y añadir describe, conservando None para los lados ausentes."},"api_transitions":[],"package_checks":[],"used_later":{"concepts":["functional.order_book","python.functions","python.generator_expression","python.lambda","python.sorted_key"],"apis":["functional.best_prices"],"notation":["notation.imbalance"]}}</script>
+<script type="application/json" id="learning-support">{"lesson": 2, "cards": {"aggregate": {"title": "min, max, sum, len y sorted", "first_lesson": 2, "route": "REQUIRED", "why": "Reducir muchos datos a una pregunta sencilla: menor precio, cantidad total o número de elementos.", "inputs": "Una colección de valores comparables o numéricos; sorted admite key= para elegir el criterio.", "outputs": "min/max: un extremo; sum: total; len: cantidad; sorted: lista nueva ordenada.", "mechanism": "min/max sin default fallan con una colección vacía. sorted no cambia la original; key recibe un elemento y devuelve la clave de ordenación.", "example": "prices = [101, 99, 100]\nprint(min(prices), sum(prices), len(prices))  # 99 300 3\nprint(sorted(prices))  # [99, 100, 101]"}, "collections": {"title": "Listas, diccionarios y posiciones", "first_lesson": 1, "route": "LIVE", "why": "Una orden tiene varios campos; un libro contiene varias órdenes.", "inputs": "Lista: valores ordenados entre []; dict: pares clave:valor entre {}.", "outputs": "xs[0] devuelve el primer valor; xs[-1], el último. xs[:2] crea una lista con los dos primeros. order['size'] devuelve el campo size.", "mechanism": "Los índices empiezan en cero; un índice negativo cuenta desde el final. El extremo derecho de un slice no se incluye. append añade a la lista original y devuelve None.", "example": "sizes = [2, 3]\norder = {'side': 'buy', 'size': sizes[0]}\nprint(order['size'])  # 2"}, "comprehension": {"title": "Comprensión, generador y lambda", "first_lesson": 2, "route": "REQUIRED", "why": "Leer una transformación compacta después de entender su bucle equivalente.", "inputs": "Elementos de una colección, una expresión y, opcionalmente, una condición.", "outputs": "[x * 2 for x in xs] crea una lista; (x * 2 for x in xs) entrega valores uno a uno al consumidor.", "mechanism": "lambda x: x['price'] es una función corta equivalente a def key(x): return x['price']. No es otro algoritmo.", "example": "sizes = [1, 2, 3]\nprint([x for x in sizes if x > 1])  # [2, 3]\nprint(sum(x for x in sizes if x > 1))  # 5"}, "functions": {"title": "def, llamada y return", "first_lesson": 2, "route": "LIVE", "why": "Escribir una receta una vez y reutilizarla con otros datos.", "inputs": "Argumentos al llamar: mid(99, 101). Los parámetros bid y ask reciben esos valores.", "outputs": "return entrega un valor al código que llamó. print sólo lo muestra.", "mechanism": "Definir la función no ejecuta su cuerpo. Las variables de dentro son locales salvo mutaciones explícitas de objetos recibidos.", "example": "def mid(bid, ask):\n    return (bid + ask) / 2\nresult = mid(99, 101)  # 100.0"}, "get": {"title": "dict.get: leer un campo que puede faltar", "first_lesson": 1, "route": "REQUIRED", "why": "Tratar una posición todavía ausente como cero, sin confundir lectura con actualización.", "inputs": "Un diccionario, la clave buscada y un valor por defecto.", "outputs": "d.get(key, default) devuelve el valor existente o default. No modifica d.", "mechanism": "Equivale a preguntar si la clave existe y elegir una de dos respuestas. Para guardar un cambio se necesita d[key] = nuevo_valor.", "example": "positions = {}\nold = positions.get('ETH', 0)  # 0; positions sigue {}\npositions['ETH'] = old + 2"}}, "scenes": {"s0": ["functions", "get"], "s1": ["functions", "aggregate"], "s2": ["collections", "functions"], "s3": ["collections"], "s4": ["aggregate", "comprehension"], "s5": ["functions", "get"], "s6": ["functions"], "s7": ["functions"], "s8": ["aggregate"]}}</script>
 <script>
 
 (function(){
@@ -1414,14 +1140,18 @@ $$('.scrolly[data-scrolly]').forEach(sc=>{
 });
 })();
 
-/* L2 — simulador del libro vivo: cada botón llama a "tus" funciones */
+/* L2 — simulación JavaScript: representa operaciones, no ejecuta el notebook. */
 (function(){
 "use strict";
 const $=s=>document.querySelector(s);
-let book=[], nextId=1;
-const bidPool=[[99950,0.5],[99940,0.2],[99960,0.3],[99930,0.4]];
-const askPool=[[100000,0.3],[100010,0.15],[99990,0.25],[100020,0.5]];
-let bi=0, ai=0;
+const initialOrders=[
+  {id:1,side:'buy',price:98,size:1},
+  {id:2,side:'sell',price:103,size:2},
+  {id:3,side:'buy',price:99,size:4},
+  {id:4,side:'sell',price:101,size:1},
+];
+const initialBook=()=>initialOrders.map(o=>({...o}));
+let book=initialBook();
 
 function bestBid(){const p=book.filter(o=>o.side==='buy').map(o=>o.price);return p.length?Math.max(...p):null;}
 function bestAsk(){const p=book.filter(o=>o.side==='sell').map(o=>o.price);return p.length?Math.min(...p):null;}
@@ -1438,9 +1168,9 @@ function render(){
   else{
     const asks=book.filter(o=>o.side==='sell').sort((x,y)=>y.price-x.price);
     const bids=book.filter(o=>o.side==='buy').sort((x,y)=>y.price-x.price);
-    el.innerHTML=asks.map(o=>`<div class="row a"><span>sell ${o.price}</span><small>${o.size.toFixed(2)} · id=${o.id}</small></div>`).join('')
+    el.innerHTML=asks.map(o=>`<div class="row a" data-order-id="${o.id}"><span>sell ${o.price}</span><small>${o.size} unidades · id=${o.id}</small></div>`).join('')
       +(asks.length&&bids.length?'<div class="sep"></div>':'')
-      +bids.map(o=>`<div class="row b"><span>buy&nbsp; ${o.price}</span><small>${o.size.toFixed(2)} · id=${o.id}</small></div>`).join('');
+      +bids.map(o=>`<div class="row b" data-order-id="${o.id}"><span>buy&nbsp; ${o.price}</span><small>${o.size} unidades · id=${o.id}</small></div>`).join('');
   }
   const bb=bestBid(), ba=bestAsk(), imb=imbalance();
   $('#lb-bb').textContent=bb??'—';
@@ -1450,60 +1180,66 @@ function render(){
   const imbEl=$('#lb-imb');
   imbEl.textContent=imb!==null?(imb>0?'+':'')+imb.toFixed(2):'—';
   imbEl.className=imb===null?'':(imb>0.2?'pos':imb<-.2?'neg':'');
+  $('#lb-addbid').disabled=book.some(o=>o.id===5);
+  $('#lb-addask').disabled=book.some(o=>o.id===4);
+  $('#lb-cancel').disabled=!book.some(o=>o.id===4);
 }
-function log(t){$('#lb-log').textContent='» '+t;}
+function log(t){
+  const py=x=>x===null?'None':String(x);
+  $('#lb-log').textContent=t+' · best_prices(orders) = ('+py(bestBid())+', '+py(bestAsk())+')';
+}
 
 $('#lb-addbid').addEventListener('click',()=>{
-  const [p,s]=bidPool[bi++%bidPool.length];
-  book.push({id:nextId,side:'buy',price:p,size:s});
-  log(`book = add_order(book, make_order('BTCUSDT', 'buy', ${p}, ${s}))   # id=${nextId}`);
-  nextId++;render();
-});
-$('#lb-addask').addEventListener('click',()=>{
-  const [p,s]=askPool[ai++%askPool.length];
-  book.push({id:nextId,side:'sell',price:p,size:s});
-  log(`book = add_order(book, make_order('BTCUSDT', 'sell', ${p}, ${s}))   # id=${nextId}`);
-  nextId++;render();
-});
-$('#lb-cancel').addEventListener('click',()=>{
-  if(!book.length){log('no hay nada que cancelar');return;}
-  const last=book[book.length-1];
-  book=book.filter(o=>o.id!==last.id);
-  log(`book = cancel_order(book, order_id=${last.id})   # lista nueva, sin la ${last.id}`);
+  if(book.some(o=>o.id===5))return;
+  book.push({id:5,side:'buy',price:100,size:1});
+  log('orders.append({"side":"buy", "price":100, "size":1, "id":5})');
   render();
 });
-$('#lb-reset').addEventListener('click',()=>{book=[];nextId=1;bi=0;ai=0;log('book = []');render();});
+$('#lb-addask').addEventListener('click',()=>{
+  if(book.some(o=>o.id===4))return;
+  book.push({...initialOrders[3]});
+  log('Restaurar la orden proporcionada: sell 101 × 1, id=4');
+  render();
+});
+$('#lb-cancel').addEventListener('click',()=>{
+  if(!book.some(o=>o.id===4))return;
+  book=book.filter(o=>o.id!==4);
+  log('orders = cancel_order(orders, 4): nueva lista sin sell 101');
+  render();
+});
+$('#lb-reset').addEventListener('click',()=>{book=initialBook();log('Restaurado el libro inicial de cuatro órdenes');render();});
+$('#lb-empty').addEventListener('click',()=>{book=[];log('orders = []');render();});
 render();
 
 /* cancel_order: primero la traza explícita, después la comprehension */
 (function(){
-  const source=[{id:1,side:'buy',price:99950},{id:2,side:'sell',price:100000}];
+  const source=initialBook();
   let i=0,result=[],compact=false;
   const row=o=>`<div class="row ${o.side==='buy'?'b':'a'}"><span>id=${o.id} · ${o.side}</span><small>${o.price}</small></div>`;
   function code(){
     $('#cancel-code').textContent=compact
-      ?"new_book = [o for o in book if o['id'] != order_id]"
-      :"new_book = []\nfor o in book:\n    if o['id'] != order_id:\n        new_book.append(o)";
+      ?"def cancel_order(book, order_id):\n    return [o for o in book\n            if o['id'] != order_id]"
+      :"def cancel_order(book, order_id):\n    new_book = []\n    for o in book:\n        if o['id'] != order_id:\n            new_book.append(o)\n    return new_book";
   }
   function renderCancel(){
     $('#cancel-source').innerHTML=source.map(row).join('');
     $('#cancel-result').innerHTML=result.length?result.map(row).join(''):'<span style="color:var(--faint)">— vacía —</span>';
-    $('#cancel-count').textContent=`${result.length} orden${result.length===1?'':'es'}`;
+    $('#cancel-count').textContent=`${result.length} ${result.length===1?'orden':'órdenes'}`;
     code();
   }
   function reset(){i=0;result=[];$('#cancel-next').textContent='▶ siguiente orden';$('#cancel-trace').innerHTML='';
     $('#cancel-log').textContent='book is new_book → aún no calculado';renderCancel();}
   $('#cancel-next').addEventListener('click',()=>{
     if(i>=source.length){reset();return;}
-    const o=source[i],keep=o.id!==1;
+    const o=source[i],keep=o.id!==4;
     if(keep)result.push(o);
     $('#cancel-trace').insertAdjacentHTML('beforeend',
-      `<div class="trace-step ${keep?'ok':'fail'}"><span>id=${o.id}: ${o.id} != 1 → ${keep?'TRUE':'FALSE'}</span><span class="trace-meta">${keep?'pasa':'se descarta'}</span></div>`);
+      `<div class="trace-step ${keep?'ok':'fail'}"><span>id=${o.id}: ${o.id} != 4 → ${keep?'True':'False'}</span><span class="trace-meta">${keep?'pasa':'se descarta'}</span></div>`);
     i++;renderCancel();
     if(i===source.length){
-      $('#cancel-log').textContent='book → 2 · new_book → 1 · book is new_book → False';
+      $('#cancel-log').textContent='book → 4 · new_book → 3 · book is new_book → False';
       $('#cancel-next').textContent='↻ otra vez';
-    }else $('#cancel-log').textContent='la lista original sigue teniendo 2 órdenes';
+    }else $('#cancel-log').textContent='la lista original sigue teniendo 4 órdenes';
   });
   $('#cancel-reset').addEventListener('click',()=>{$('#cancel-next').textContent='▶ siguiente orden';reset();});
   $('#cancel-explicit').addEventListener('click',()=>{compact=false;$('#cancel-explicit').classList.add('on');$('#cancel-comp').classList.remove('on');code();});
@@ -1513,20 +1249,20 @@ render();
 
 /* sorted(key=...): la función es un valor que sorted llama por cada orden */
 (function(){
-  const orders=[{name:'A',price:105},{name:'B',price:100},{name:'C',price:110}];
+  const orders=initialBook();
   let i=0,useLambda=false;
   function paintCode(){
     $('#sort-code').textContent=useLambda
-      ?"sorted(orders, key=lambda order: order['price'])"
+      ?"sorted(orders,\n       key=lambda order: order['price'])"
       :"def get_price(order):\n    return order['price']\n\nsorted(orders, key=get_price)";
   }
   function resetSort(){i=0;$('#sort-trace').innerHTML='';$('#sort-next').textContent='▶ siguiente orden';
     $('#sort-log').textContent='La función se pasa sin paréntesis: sorted la llamará.';paintCode();}
   $('#sort-next').addEventListener('click',()=>{
     if(i>=orders.length){resetSort();return;}
-    const o=orders[i++],fn=useLambda?'lambda(order)':`get_price(${o.name})`;
-    $('#sort-trace').insertAdjacentHTML('beforeend',`<div class="trace-step ok"><span>order ${o.name} → ${fn}</span><span class="trace-meta">${o.price}</span></div>`);
-    if(i===orders.length){$('#sort-log').textContent='claves 105 · 100 · 110 → orden final B · A · C';$('#sort-next').textContent='↻ otra vez';}
+    const o=orders[i++],fn=useLambda?'lambda(order)':`get_price(order)`;
+    $('#sort-trace').insertAdjacentHTML('beforeend',`<div class="trace-step ok"><span>id=${o.id} → ${fn}</span><span class="trace-meta">${o.price}</span></div>`);
+    if(i===orders.length){$('#sort-log').textContent='claves 98 · 103 · 99 · 101 → ids 1 · 3 · 4 · 2; original 1 · 2 · 3 · 4 intacto';$('#sort-next').textContent='↻ otra vez';}
   });
   $('#sort-fn').addEventListener('click',()=>{useLambda=false;$('#sort-fn').classList.add('on');$('#sort-lambda').classList.remove('on');resetSort();});
   $('#sort-lambda').addEventListener('click',()=>{useLambda=true;$('#sort-lambda').classList.add('on');$('#sort-fn').classList.remove('on');resetSort();});
@@ -1550,9 +1286,7 @@ if(!Array.isArray(contract.scenes)||!contract.scenes.length)return;
 
 const body=document.body;
 const params=new URLSearchParams(location.search);
-const mobileQuery=matchMedia('(max-width: 900px)');
-const requestedMode=params.get('mode')==='aula'?'aula':'estudio';
-const mode=requestedMode==='aula'&&!mobileQuery.matches?'aula':'estudio';
+const mode=params.get('mode')==='aula'?'aula':'estudio';
 const isProfessor=['1','true'].includes((params.get('profe')||'').toLowerCase());
 const routeScopes=mode==='aula'
   ?(isProfessor?['LIVE','LIVE+REQUIRED','ALL']:['LIVE'])
@@ -1636,11 +1370,10 @@ if(!models.length)return;
 
 body.classList.add('lr-has-contract',`mode-${mode}`);
 body.dataset.learningMode=mode;
-body.dataset.requestedMode=requestedMode;
+body.dataset.requestedMode=mode;
 body.dataset.professorMode=String(isProfessor);
 body.dataset.runtimeVersion=String(RUNTIME_VERSION);
 document.documentElement.classList.toggle('lr-mode-aula',mode==='aula');
-if(requestedMode!==mode)body.classList.add('lr-mobile-fallback');
 
 const inventory=models.flatMap(scene=>scene.stages.map(stage=>({
   key:stateKey(scene,stage),scene,stage,route:stage.route,
@@ -1704,7 +1437,6 @@ nav.innerHTML=`
     <a href="${modeUrl('aula')}" class="${mode==='aula'?'on':''}">Aula</a>
     <a href="${modeUrl('estudio')}" class="${mode==='estudio'?'on':''}">Estudio</a>
   </div>
-  ${requestedMode!==mode?'<p class="lr-fallback-note">Aula usa el recorrido vertical en esta pantalla.</p>':''}
   <button type="button" class="lr-study-optional" aria-pressed="false">Incluir OPTIONAL</button>
   <div class="lr-scene-links"></div>`;
 body.appendChild(nav);
@@ -1735,27 +1467,17 @@ controls.innerHTML=`
   <button type="button" class="lr-next" aria-label="Etapa siguiente"><span>Siguiente</span> →</button>`;
 body.appendChild(controls);
 
-const mobileToolbar=document.createElement('div');
-mobileToolbar.id='lr-mobile-toolbar';
-mobileToolbar.innerHTML=`<a href="../../index.html">← Curso</a>
-  <span>${requestedMode==='aula'?'Aula → estudio':'Modo estudio'}</span>
-  <button type="button" class="lr-study-optional" aria-pressed="false">+ OPTIONAL</button>
-  ${isProfessor?'<button type="button" class="lr-mobile-teacher" aria-expanded="false">Guía</button>':''}`;
-body.insertBefore(mobileToolbar,body.firstChild);
-
 const liveRegion=document.createElement('div');
 liveRegion.className='lr-sr-only';liveRegion.setAttribute('aria-live','polite');
 body.appendChild(liveRegion);
 
-let teacherToggle=null,teacherDrawer=null,teacherBody=null,mobileTeacherToggle=null;
+let teacherToggle=null,teacherDrawer=null,teacherBody=null;
 if(isProfessor){
   teacherToggle=document.createElement('button');
   teacherToggle.id='lr-teacher-toggle';teacherToggle.type='button';
   teacherToggle.textContent='Guía docente';teacherToggle.setAttribute('aria-expanded','false');
   teacherToggle.setAttribute('aria-controls','lr-teacher-drawer');
   nav.insertBefore(teacherToggle,navLinks);
-  mobileTeacherToggle=mobileToolbar.querySelector('.lr-mobile-teacher');
-  mobileTeacherToggle?.setAttribute('aria-controls','lr-teacher-drawer');
   teacherDrawer=document.createElement('aside');
   teacherDrawer.id='lr-teacher-drawer';teacherDrawer.dataset.overlay='teacher';
   teacherDrawer.setAttribute('aria-label','Guía docente de la escena');
@@ -1768,13 +1490,11 @@ if(isProfessor){
     const open=force===undefined?!teacherDrawer.classList.contains('open'):force;
     teacherDrawer.classList.toggle('open',open);
     teacherDrawer.setAttribute('aria-hidden',String(!open));
-    [teacherToggle,mobileTeacherToggle].filter(Boolean)
-      .forEach(button=>button.setAttribute('aria-expanded',String(open)));
+    teacherToggle.setAttribute('aria-expanded',String(open));
     if(open)teacherDrawer.querySelector('.lr-teacher-close').focus();
-    else (mobileQuery.matches?mobileTeacherToggle:teacherToggle)?.focus();
+    else teacherToggle.focus();
   };
   teacherToggle.addEventListener('click',()=>toggleTeacher());
-  mobileTeacherToggle?.addEventListener('click',()=>toggleTeacher());
   teacherDrawer.querySelector('.lr-teacher-close').addEventListener('click',()=>toggleTeacher(false));
 }
 
@@ -1848,8 +1568,7 @@ function syncTeacher(scene,stage){
     +(fullGuide?'<button type="button" class="lr-full-guide">Abrir guion completo</button>':'');
   teacherBody.querySelector('.lr-full-guide')?.addEventListener('click',()=>{
     teacherDrawer.classList.remove('open');teacherDrawer.setAttribute('aria-hidden','true');
-    [teacherToggle,mobileTeacherToggle].filter(Boolean)
-      .forEach(button=>button.setAttribute('aria-expanded','false'));
+    teacherToggle.setAttribute('aria-expanded','false');
     fullGuide.click();
   });
 }
@@ -1918,8 +1637,7 @@ function closeOverlays(){
   document.getElementById('guion-drawer')?.classList.remove('open');
   teacherDrawer?.classList.remove('open');
   teacherDrawer?.setAttribute('aria-hidden','true');
-  [teacherToggle,mobileTeacherToggle].filter(Boolean)
-    .forEach(button=>button.setAttribute('aria-expanded','false'));
+  teacherToggle?.setAttribute('aria-expanded','false');
   document.querySelectorAll('dialog[open]').forEach(dialog=>dialog.close());
   document.querySelectorAll('[data-overlay].open').forEach(node=>node.classList.remove('open'));
 }
@@ -1937,8 +1655,7 @@ function syncOptionalControls(){
   document.querySelectorAll('.lr-study-optional').forEach(button=>{
     button.hidden=mode!=='estudio'||optionalCount===0;
     button.setAttribute('aria-pressed',String(routeScope==='ALL'));
-    button.textContent=routeScope==='ALL'?'Ocultar OPTIONAL':
-      (button.closest('#lr-mobile-toolbar')?'+ OPTIONAL':'Incluir OPTIONAL');
+    button.textContent=routeScope==='ALL'?'Ocultar OPTIONAL':'Incluir OPTIONAL';
   });
 }
 function applyStudyScope(activeScene=null){
@@ -2062,7 +1779,6 @@ window.LEARNING_RUNTIME={
   },
 };
 
-mobileQuery.addEventListener?.('change',()=>location.reload());
 })();
 
 /* Contextual public help: no interpreter, hidden answers or new route state. */
