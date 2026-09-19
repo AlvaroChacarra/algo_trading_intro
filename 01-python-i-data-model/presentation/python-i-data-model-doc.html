@@ -698,7 +698,7 @@ body.lr-has-contract .hero .meta{display:none}
   body.mode-aula>.lr-scene.lr-scene-active{display:grid!important;width:auto;max-width:none;
     height:calc(100dvh - var(--lr-controls-h));margin:0;padding:clamp(12px,1.8vh,24px) clamp(16px,2.2vw,38px);
     border:0;overflow:hidden;align-content:stretch;background:var(--bg)}
-  body.mode-aula>header.lr-scene-active{align-content:center}
+  body.mode-aula>header.lr-scene-active{align-content:safe center;grid-auto-rows:max-content}
   body.mode-aula>.lr-scene-active>.wrap,body.mode-aula>header.lr-scene-active.wrap{
     width:100%;max-width:var(--lr-scene-max);min-height:0;max-height:100%;overflow:auto;padding:0 8px;margin:auto}
   body.mode-aula>.lr-scene-active:has(.scrolly){grid-template-rows:auto minmax(0,1fr);gap:8px}
@@ -713,8 +713,10 @@ body.lr-has-contract .hero .meta{display:none}
   body.mode-aula .steps .step.lr-stage-active{display:flex}
   body.mode-aula .steps .step-inner{width:100%;max-height:100%;padding:clamp(12px,1.7vh,22px);
     opacity:1;border-color:#3a3a44;overflow:auto}
-  body.mode-aula .steps .step-inner h3{font-size:clamp(.86rem,1.6vh,1.04rem)}
-  body.mode-aula .steps .step-inner p{font-size:clamp(.72rem,1.35vh,.93rem);line-height:1.55}
+  /* Keep the L1–L5 reading size throughout the course. Long explanations
+     already have an internal scroll area; shrinking them hid essential logic. */
+  body.mode-aula .steps .step-inner h3{font-size:1.2rem}
+  body.mode-aula .steps .step-inner p{font-size:1rem;line-height:1.6}
   body.mode-aula .figwrap{position:relative;height:100%;min-width:0;min-height:0;top:auto;order:initial}
   body.mode-aula .fig{position:relative;top:0;height:100%;min-height:0;box-shadow:none}
   body.mode-aula .fig-stage{overflow:auto}
@@ -749,19 +751,33 @@ body.lr-has-contract .hero .meta{display:none}
 }
 
 /* Introductory traces: one operation, its inputs, and a visible result. */
-.teaching-trace:not(.scrolly){display:grid;gap:16px;align-content:start;min-width:0}
+.teaching-trace:not(.scrolly){display:grid;gap:16px;align-content:start;min-width:0;
+  grid-auto-rows:max-content}
 .teaching-trace .code-block{margin:0;min-width:0}
 .trace-values{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .trace-values>*{padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel);font: .9rem var(--mono)}
 .trace-result{padding:14px 18px;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;
   background:rgba(34,211,238,.07);font:1rem/1.55 var(--mono);overflow-wrap:anywhere}
 .trace-caption{color:var(--muted);font-size:.95rem;line-height:1.5;margin:0}
-body:is([data-lesson="01"],[data-lesson="02"],[data-lesson="03"],[data-lesson="04"],[data-lesson="05"]) .teaching-trace pre{
+.trace-table{width:100%;table-layout:fixed;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.trace-table th,.trace-table td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
+.trace-table th{color:var(--muted);font-weight:500}
+/* L7–L9: a state above the code gives both evidence and Python the full panel
+   width. The earlier nested split clipped even the highlighted operation. */
+body:is([data-lesson="07"],[data-lesson="08"],[data-lesson="09"]) .accumulated-fig .build-grid,
+body:is([data-lesson="07"],[data-lesson="08"],[data-lesson="09"]) .lr-scene-active[data-scene-layout] .accumulated-fig .build-grid{
+  grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,.95fr) minmax(0,1.05fr)}
+body:is([data-lesson="07"],[data-lesson="08"],[data-lesson="09"]) .accumulated-fig .build-state{order:1}
+body:is([data-lesson="07"],[data-lesson="08"],[data-lesson="09"]) .accumulated-fig .build-code{
+  order:2;border-right:0;border-top:1px solid var(--line);padding:10px 14px}
+body:is([data-lesson="07"],[data-lesson="08"],[data-lesson="09"]) .build-code pre{
+  font-size:.88rem;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
+body:is([data-lesson="07"],[data-lesson="08"],[data-lesson="09"]) .build-code .build-label,
+body:is([data-lesson="07"],[data-lesson="08"],[data-lesson="09"]) .build-state-label{font-size:.72rem}
+body[data-lesson] .teaching-trace pre{
   font-size:clamp(.88rem,1.12vw,1rem);line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
-body:is([data-lesson="01"],[data-lesson="02"],[data-lesson="03"],[data-lesson="04"],[data-lesson="05"]) .teaching-trace .ln.hl{
+body[data-lesson] .teaching-trace .ln.hl{
   background:rgba(34,211,238,.14);box-shadow:inset 3px 0 var(--accent)}
-  body.mode-aula:is([data-lesson="01"],[data-lesson="02"],[data-lesson="03"],[data-lesson="04"],[data-lesson="05"]) .steps .step-inner p{font-size:1rem;line-height:1.6}
-  body.mode-aula:is([data-lesson="01"],[data-lesson="02"],[data-lesson="03"],[data-lesson="04"],[data-lesson="05"]) .steps .step-inner h3{font-size:1.2rem}
 
 
 .construction-panel {margin:20px 0;padding:18px 22px;border:1px solid var(--line);border-radius:12px;background:var(--panel);font-size:1rem;line-height:1.65;overflow-wrap:anywhere;}
@@ -1086,12 +1102,28 @@ DOC.chart=function(canvas,seriesList,opts={}){
   const all=seriesList.flatMap(s=>s.data.slice(0,s.upTo??s.data.length));
   if(!all.length)return;
   let lo=Math.min(...all),hi=Math.max(...all);
+  if(opts.yDomain){[lo,hi]=opts.yDomain;}
   if(opts.zero){lo=Math.min(lo,0);hi=Math.max(hi,0);}
   if(hi-lo<1e-9){hi=lo+1;}
-  const pad=8,X=i=>pad+(W-2*pad)*i/(seriesList[0].data.length-1||1),
-        Y=v=>H-pad-(H-2*pad)*(v-lo)/(hi-lo);
+  const axes=opts.axisLabels;
+  const left=axes?64:8,right=axes?14:8,top=axes?32:8,bottom=axes?30:8;
+  const last=seriesList[0].data.length-1;
+  const X=i=>left+(W-left-right)*i/(last||1),
+        Y=v=>H-bottom-(H-top-bottom)*(v-lo)/(hi-lo);
   ctx.strokeStyle='#26262c';ctx.lineWidth=1;
-  if(lo<0&&hi>0){ctx.beginPath();ctx.moveTo(pad,Y(0));ctx.lineTo(W-pad,Y(0));ctx.stroke();}
+  if(lo<0&&hi>0){ctx.beginPath();ctx.moveTo(left,Y(0));ctx.lineTo(W-right,Y(0));ctx.stroke();}
+  if(axes){
+    ctx.fillStyle='#b9bac4';ctx.font='14px system-ui';
+    ctx.textAlign='left';ctx.textBaseline='top';ctx.fillText(axes.y,left,2);
+    ctx.textAlign='right';ctx.textBaseline='middle';
+    const ticks=lo<0&&hi>0?[lo,0,hi]:[lo,hi];
+    ticks.forEach(value=>ctx.fillText(value===0?'0':value.toFixed(1),left-8,Y(value)));
+    ctx.textAlign='left';ctx.textBaseline='bottom';ctx.fillText('0',X(0),H-2);
+    ctx.textAlign='right';ctx.fillText(String(last),X(last),H-2);
+    ctx.textAlign='center';ctx.fillText(axes.x,(left+W-right)/2,H-2);
+    c.setAttribute('role','img');
+    c.setAttribute('aria-label',`${axes.y}, de ${lo.toFixed(1)} a ${hi.toFixed(1)}; ${axes.x}, de 0 a ${last}`);
+  }
   seriesList.forEach(s=>{
     const n=s.upTo??s.data.length;
     ctx.strokeStyle=s.color||'#22d3ee';ctx.lineWidth=s.width||1.6;
@@ -1892,6 +1924,8 @@ function goTo(sceneIndex,stageIndex,focusHeading=true){
   const stages=allowedStages(scene);
   stageIndex=Math.max(0,Math.min(Number(stageIndex)||0,stages.length-1));
   const stage=stages[stageIndex];
+  const positionChanged=body.dataset.currentSceneId!==scene.id
+    ||body.dataset.currentStageId!==stage.id;
   currentScene=sceneIndex;currentStage=stageIndex;
   body.dataset.currentSceneId=scene.id;
   body.dataset.currentStageId=stage.id;
@@ -1905,6 +1939,15 @@ function goTo(sceneIndex,stageIndex,focusHeading=true){
     model.element.setAttribute('aria-hidden',String(!active));
   });
   activateStage(scene,stage);
+  if(mode==='aula'&&positionChanged){
+    // A new teaching step starts at its caption, including when going back.
+    // Keep predictions, revealed results and controls intact; only reset the
+    // active content's internal scroll after stagechange handlers have run.
+    [scene.element,...scene.element.querySelectorAll(
+      '.wrap,.fig,.fig-stage.on,.step.lr-stage-active .step-inner')].forEach(node=>{
+      node.scrollTop=0;node.scrollLeft=0;
+    });
+  }
   const available=availableModels();
   const scenePosition=available.indexOf(scene)+1;
   const flatStates=available.flatMap(model=>allowedStages(model).map(item=>({scene:model,stage:item})));
