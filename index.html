@@ -569,6 +569,170 @@
   .pkgmap .pk{border-color:#ccc}
   a{color:#0e7490;text-decoration:none}
 }
+/* Observable data/state cards. Colour always accompanies a written role. */
+.viz-flow{display:flex;flex-wrap:wrap;gap:12px;align-items:stretch;margin:16px 0}
+.viz-card{flex:1;min-width:130px;padding:16px 18px;border:1px solid #43506b;border-radius:12px;background:#142035}
+.viz-card>span{display:block;color:#becce5;font-size:.86rem;line-height:1.4;margin-bottom:10px}
+.viz-card>strong{display:block;color:#e8efff;font:600 clamp(1.1rem,1.8vw,1.8rem)/1.3 var(--mono);overflow-wrap:anywhere}
+.viz-card.buy{border-color:#379d83;background:#112c27}.viz-card.buy>strong{color:#81ebbf}
+.viz-card.sell{border-color:#ba7358;background:#332019}.viz-card.sell>strong{color:#ffbb99}
+.viz-card.output{border-color:#ac83db;background:#261c3b}.viz-card.output>strong{color:#ddbdff}
+.viz-quantity{margin:20px 0;padding:20px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+.viz-quantity-row{display:grid;grid-template-columns:130px 1fr 42px;gap:16px;align-items:center;margin:12px 0;font:1rem var(--mono)}
+.viz-track{height:32px;border-radius:5px;background:#25252d;overflow:hidden}
+.viz-track>div{height:100%;background:#81ebbf}.sell .viz-track>div{background:#ffbb99}
+.l2-visual .fig-stage .code{margin:8px 0}.l2-visual .fig-stage .viz-card{padding:12px}
+.l2-visual .fig-stage .viz-card>strong{font-size:1.35rem}
+.l2-visual .fig-stage .code pre{font-size:1rem;line-height:1.5}
+/* The ask step shows two functions plus their results. Recover vertical room
+   from padding, not from the Python or result type size, at 1280 × 720. */
+body[data-lesson="02"] #s1 .fig-stage[data-stage="8"]{padding:14px 22px}
+body[data-lesson="02"] #s1 .fig-stage[data-stage="8"] .code pre{padding:10px 18px}
+body[data-lesson="02"] #s1 .fig-stage[data-stage="8"] .viz-flow{margin:12px 0}
+.l2-visual #sort-tracer{padding:14px;margin:0}.l2-visual #sort-tracer h4{margin:0 0 8px}
+.l2-visual #sort-tracer .execution-trace{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}
+.l2-visual #sort-tracer .trace-meta{flex:none;white-space:nowrap}
+.l2-visual #cancel-trace{grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}
+.l2-visual #cancel-tracer .mini-book{font-size:.95rem}
+.l2-visual #cancel-tracer .state-inspector{margin:12px 0}
+.l2-visual #cancel-tracer .trace-step{padding:7px;min-height:35px}
+.l8-sim-grid{display:grid;grid-template-columns:minmax(240px,.85fr) minmax(0,1.65fr);gap:20px}
+.l8-simulator{margin:12px 0;padding:16px}
+.l8-simulator .mode-switch{flex-wrap:wrap}.l8-simulator .mode-switch button{min-width:45%;font-size:.88rem}
+.l8-simulator .simrow input[type=range]{width:100%}
+.l8-simulator .state-inspector{margin:10px 0;grid-template-columns:1fr 1fr}
+.l8-simulator #sim-phases{grid-template-columns:repeat(4,1fr);gap:5px;margin:0}
+.l8-simulator #sim-phases .trace-step{display:block;min-height:55px;padding:7px}
+.l8-simulator #sim-phases .trace-step:before{display:none}
+.l8-simulator #sim-phases .trace-meta{display:block;margin-top:5px;text-align:left;font-size:.72rem}
+.l8-simulator .mini-book{font-size:.88rem;line-height:1.9}
+.l8-simulator .state-list{font-size:.86rem;gap:12px}
+.l8-simulator .state-list div{flex-wrap:wrap;gap:3px}
+.l9-loop-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:18px;align-items:start}
+.l9-loop-grid .simcard{margin:10px 0;padding:14px}.l9-loop-grid .code{margin:10px 0}
+.l9-loop-grid .code pre{font-size:.9rem;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.l9-loop-grid #pl-owner,.l9-snapshot-strip{grid-template-columns:repeat(3,1fr)}
+.l9-loop-grid #pl-owner .trace-step,.l9-snapshot-strip .trace-step{display:block;padding:7px}
+.l9-loop-grid #pl-owner .trace-step:before,.l9-snapshot-strip .trace-step:before{display:none}
+.l9-loop-grid #pl-owner .trace-meta,.l9-snapshot-strip .trace-meta{display:block;margin-top:6px;text-align:left}
+.l9-snapshot-strip{grid-template-columns:repeat(4,1fr)}
+.l10-flow .fig-stage .viz-card{min-width:110px;padding:12px}.l10-flow .fig-stage .viz-card>strong{font-size:1.3rem}
+.l10-flow #runner-operation{font-size:.95rem;min-height:3em;padding:10px 12px}
+.l10-flow #runner-code{font-size:1rem;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+
+/* L3–L7: persistent files, objects, quantities and state changes. */
+.visual-oop-flow{gap:10px;margin:8px 0}
+.visual-oop-flow .viz-card{min-width:100px;padding:12px}
+.visual-oop-flow .viz-card>span{margin-bottom:6px;font-size:.86rem}
+.visual-oop-flow .viz-card>strong{font-size:1.35rem}
+.visual-oop-flow small,.visual-oop-objects .viz-card small{display:block;margin-top:6px;color:var(--muted);font: .86rem/1.35 var(--mono)}
+.visual-oop-files{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:stretch}
+.visual-oop-window{min-width:0;border:1px solid #556079;border-radius:10px;overflow:hidden;background:var(--panel2)}
+.visual-oop-window.module{border-top:3px solid #c39be8}.visual-oop-window.caller{border-top:3px solid var(--accent)}
+.visual-oop-window-title{padding:9px 10px;border-bottom:1px solid var(--line);color:var(--muted);font:.83rem var(--mono);overflow-wrap:anywhere}
+.visual-oop-window .code{border:0;margin:0;background:transparent;box-shadow:none}
+body[data-lesson] .visual-oop-window .code pre{padding:10px;font-size:.94rem;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+.visual-oop-console{padding:13px 15px;margin-top:12px;border-left:3px solid #c39be8;border-radius:0 8px 8px 0;background:#191322;font:1rem/1.5 var(--mono);overflow-wrap:anywhere}
+.visual-oop-console>span{display:block;color:var(--muted);font:.8rem var(--mono);margin-bottom:8px}.visual-oop-console>strong{font-weight:500}
+/* Nested half-width windows split Python identifiers and lose continuation
+   indentation. Within L3's split figure, give each file the full panel width. */
+body[data-lesson="03"] .visual-oop-modules .visual-oop-files{grid-template-columns:minmax(0,1fr)}
+body[data-lesson="03"] .visual-oop-modules .visual-oop-window .code pre{white-space:pre;overflow-wrap:normal}
+.visual-oop-main .mode-switch{margin:0;width:max-content;max-width:100%}.visual-oop-main .mode-switch button{font-size:.83rem}
+.visual-oop-guard-state{padding:0 10px 10px}.visual-oop-main .execution-trace{margin:0}
+.visual-oop-branches{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:4px 0}
+.visual-oop-branch{padding:10px;border:1px solid var(--line);border-radius:8px;font:.94rem/1.45 var(--mono)}
+.visual-oop-branch b{display:block}.visual-oop-branch.chosen{border-color:var(--bid);background:rgba(52,211,153,.09)}
+.visual-oop-branch.error{border-color:var(--ask);background:rgba(248,113,113,.1)}
+.visual-oop-branch.inactive{opacity:.42}
+body[data-lesson="03"] .visual-oop-errors .teaching-trace{gap:10px}
+body[data-lesson="03"] .visual-oop-errors .code{margin:0}
+/* The complete raise statement needs the same code-panel width as the module
+   scene. Keep its string literal and Python indentation on one visual line. */
+body[data-lesson="03"] #s3{--lr-left:42fr;--lr-right:58fr}
+body[data-lesson="03"] .visual-oop-errors .code pre{white-space:pre;overflow-wrap:normal}
+.visual-oop-objects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:2px 0}
+.visual-oop-object{min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel2)}
+.visual-oop-object.buy{border-color:#379d83;background:#112c27}.visual-oop-object.sell{border-color:#ba7358;background:#332019}
+.visual-oop-object.parameter{border-color:#9975c0;background:#21172d}
+.visual-oop-object-title{font:600 .92rem/1.4 var(--mono);margin-bottom:6px;overflow-wrap:anywhere}
+.visual-oop-object dl,.visual-oop-pair dl{margin:0;display:grid;gap:3px;font:.92rem/1.45 var(--mono)}
+.visual-oop-object dl>div,.visual-oop-pair dl>div{display:flex;justify-content:space-between;gap:6px}
+.visual-oop-object dt,.visual-oop-pair dt{color:var(--muted)}.visual-oop-object dd,.visual-oop-pair dd{margin:0;font-weight:600}
+.visual-oop-object .active{background:rgba(34,211,238,.13);outline:1px solid var(--accent);border-radius:4px;padding:0 4px}
+.visual-oop-book{display:grid;grid-template-columns:1fr 1fr;gap:10px}.visual-oop-book h4{font:.85rem var(--mono);color:var(--muted);margin:0 0 5px}
+.visual-oop-level{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 10px;margin:4px 0;border:1px solid;border-radius:8px;font:1rem var(--mono)}
+.visual-oop-level.buy{border-color:#379d83;background:#112c27}.visual-oop-level.sell{border-color:#ba7358;background:#332019}
+.visual-oop-level>span{font-size:.8rem;color:var(--muted)}.visual-oop-level strong{white-space:nowrap}.visual-oop-level small{font-weight:400;color:var(--muted)}
+.visual-oop-level.excluded{opacity:.42;border-style:dashed}
+.visual-oop-size-comparison{display:grid;gap:7px;font:.94rem var(--mono)}
+.visual-oop-size-comparison>div{display:grid;grid-template-columns:95px 1fr 22px;gap:8px;align-items:center}
+.visual-oop-size-comparison meter{width:100%;height:20px;accent-color:var(--bid)}.visual-oop-size-comparison .sell meter{accent-color:var(--ask)}
+.visual-oop-portfolio .changed{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.visual-oop-operation{display:flex;justify-content:space-between;gap:10px;margin:8px 0;font:.88rem var(--mono);color:var(--muted)}
+.visual-oop-contract{display:grid;gap:8px;padding:16px;border:1px dashed #c39be8;border-radius:10px;font:1rem var(--mono)}
+.visual-oop-contract b{color:#d8b4fe}.visual-oop-contract strong{font-size:1.25rem}
+.visual-oop-band{display:grid;grid-template-columns:1fr 1.3fr 1fr;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:10px 0}
+.visual-oop-band>span{padding:12px 8px;text-align:center;opacity:.5;font:.9rem/1.5 var(--mono);border-bottom:3px solid transparent}
+.visual-oop-band .sell{background:#332019;color:#ffbb99}.visual-oop-band .buy{background:#112c27;color:#81ebbf}.visual-oop-band .hold{background:#23212d;color:#d8d3ea}
+.visual-oop-band .chosen{opacity:1;border-bottom-color:currentColor;font-weight:700}
+.visual-oop-two-signals{grid-template-columns:1fr 1fr}.visual-oop-two-signals p{font-size:.95rem;margin:8px 0;color:var(--muted)}
+.visual-oop-signals .simrow{gap:14px}.visual-oop-signals #pf-imb{flex:1}.visual-oop-signals .code{margin:12px 0}
+.visual-oop-boundaries{display:grid;grid-template-columns:1fr 1fr;gap:8px}.visual-oop-boundaries>div{display:flex;justify-content:space-between;padding:10px;background:var(--panel2);border-radius:8px;font:.9rem var(--mono)}
+/* Keep the four input pairs in the same positions through all factory stages. */
+.visual-oop-raw{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:10px 12px 0}
+.visual-oop-pair{border:1px solid var(--line);border-radius:8px;padding:7px 9px;background:var(--panel2);min-width:0}
+.visual-oop-pair.buy{border-color:#379d83}.visual-oop-pair.sell{border-color:#ba7358}.visual-oop-pair.excluded{opacity:.45;border-style:dashed}
+.visual-oop-pair>b{display:block;font:.83rem var(--mono);margin-bottom:3px}.visual-oop-pair dl{font-size:.82rem;line-height:1.4}.visual-oop-pair dd{font-size:.95rem}
+.visual-oop-factory .build-state{display:flex;flex-direction:column}
+.visual-oop-factory-result{position:relative;flex:1;min-height:53px}
+/* Reserve the cards and result before assigning the remaining height to code;
+   a fractional state row let its minimum-height result overlap the code label. */
+body[data-lesson="07"] #l7-build-fig .build-grid{grid-template-rows:min-content minmax(0,1fr)}
+body[data-lesson="07"] #l7-build-fig .visual-oop-factory-result{min-height:4rem}
+body[data-lesson="07"] .visual-oop-factory-result .fig-stage{padding:8px 12px}
+body[data-lesson="07"] .visual-oop-factory .build-label{margin-bottom:5px;font-size:.75rem}
+body[data-lesson="07"] .visual-oop-factory .build-code pre{font-size:.94rem;line-height:1.43}
+.visual-oop-code-line{display:block;min-height:1.43em}.visual-oop-conversion{display:flex;align-items:center;gap:10px;font:.9rem/1.5 var(--mono)}
+.visual-oop-conversion>strong{color:#d8b4fe;font-weight:500}.visual-oop-conversion>b{color:var(--accent)}
+.visual-oop-destinations,.visual-oop-sorted{display:grid;grid-template-columns:1fr 1fr;gap:8px;font:.88rem var(--mono)}
+.visual-oop-destinations>div{display:grid;gap:4px}.visual-oop-destinations b{color:var(--accent)}
+.visual-oop-api{display:flex;flex-wrap:wrap;gap:8px;font:.9rem var(--mono)}.visual-oop-api b{color:#d8b4fe}
+.visual-oop-sorted .buy{color:#81ebbf}.visual-oop-sorted .sell{color:#ffbb99}
+.visual-oop-book-bars .row{display:grid;grid-template-columns:minmax(90px,1.2fr) 1fr 60px;gap:10px;font-size:.95rem}
+.visual-oop-size-bar{height:12px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden}
+.visual-oop-size-bar i{display:block;height:100%;background:var(--bid)}.row.a .visual-oop-size-bar i{background:var(--ask)}
+.visual-oop-signal-cases{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.visual-oop-signal-cases>div{display:grid;gap:8px;padding:12px 8px;border:1px solid var(--line);border-radius:9px;font:.9rem/1.4 var(--mono)}
+.visual-oop-signal-cases span{font-size:.84rem;color:var(--muted)}.visual-oop-signal-cases strong{font-size:.88rem}
+.visual-oop-signal-cases .counted{border-color:var(--accent);background:var(--accent-dim)}.visual-oop-signal-cases .excluded{opacity:.42;border-style:dashed}
+
+/* L11–L14: quantity, state and price diagrams. Scoped to new teaching components. */
+.late-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0}
+.late-card{min-width:0;padding:14px 16px;border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.025)}
+.late-card>span,.late-card>small,.late-card small{display:block;color:var(--muted);font-size:.88rem;line-height:1.45}
+.late-card strong,.late-card #j3 strong{display:block;margin:6px 0;font-size:1.12rem;line-height:1.35;color:var(--text)}
+.late-context{margin-block:20px}.late-context .late-card:first-child{border-color:rgba(34,211,238,.6)}
+.late-formula{display:flex;align-items:center;flex-wrap:wrap;gap:12px;padding:12px 0;color:var(--text);font:1rem/1.5 var(--mono)}
+.late-formula strong{color:var(--accent)}.late-formula>span{color:var(--muted)}
+.late-flow{display:grid;grid-template-columns:auto 1fr;gap:10px 16px;padding:14px 0;font-size:.95rem}.late-flow>span{color:var(--muted)}
+.late-svg{display:block;width:100%;max-height:245px;margin:10px auto;overflow:visible}.late-svg text{font:20px system-ui,sans-serif}.late-svg text:not([fill]){fill:var(--text)}
+.late-svg-short{max-height:125px}.late-quote-axis{height:200px;max-height:200px}
+.late-badge{font:.85rem/1.45 var(--mono);color:var(--muted);margin:8px 0 12px}
+.late-details{margin-top:12px;font-size:.94rem}.late-details summary{cursor:pointer;color:var(--accent)}
+.late-bridge{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:20px 0}
+.late-bridge>div{border:1px solid var(--line);border-top:3px solid var(--accent);border-radius:5px;padding:15px;min-width:0}
+.late-bridge span{display:block;color:var(--muted);font-size:.88rem;margin-bottom:7px}.late-bridge strong{font-size:1.05rem;line-height:1.4;display:block}
+.late-slices{height:170px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;align-items:end;margin:10px 0 14px}
+.late-slice{text-align:center;min-width:0}.late-slice-size{display:block;color:var(--accent);font:700 1rem/1.4 var(--mono);margin-bottom:5px;white-space:nowrap}
+.late-slice-track{height:106px;border-bottom:1px solid var(--line);display:flex;align-items:flex-end;background:linear-gradient(to top,transparent 49%,var(--line) 50%,transparent 51%)}
+.late-slice-track i{display:block;width:100%;background:var(--accent);opacity:.8;border-radius:4px 4px 0 0}.late-slice strong{display:block;font-size:.84rem;color:var(--muted);padding-top:4px}
+.late-profile-map{display:grid;gap:5px;margin:8px 0 12px}.late-profile-map>div{display:grid;grid-template-columns:135px 1fr;gap:8px;padding:5px 0;border-bottom:1px solid var(--line);font-size:.84rem}.late-profile-map b{font-weight:500;color:var(--muted)}.late-profile-map code{font-size:.88rem;white-space:normal;word-break:normal}
+.late-outcomes{display:flex;gap:16px;margin:7px 0}.late-outcomes>span{flex:1;font-size:.93rem}.late-outcomes b{display:block;font-size:.87rem;color:var(--accent);padding-top:4px}
+.late-result{margin:10px 0;padding:10px 12px;border-left:3px solid var(--accent);font-size:.94rem;line-height:1.5}
+.late-risk-choice{grid-template-columns:.85fr 1.25fr}.late-risk-choice .late-card{padding:12px}
+.late-meter{height:7px;border-radius:4px;background:var(--line);margin:7px 0}.late-meter i{display:block;height:100%;background:var(--accent);border-radius:4px}
+.late-width{display:flex;justify-content:center;gap:20px;font:.88rem/1.45 var(--mono);color:var(--muted)}
 
 
 .course-index{max-width:1320px}.course-index-hero{max-width:1100px}
@@ -631,7 +795,7 @@
     <a href="https://github.com/AlvaroChacarra/algo_trading_intro/tree/main/01-python-i-data-model/exercises/solutions">Soluciones</a>
   </nav>
 </article><article class="lcard" data-lesson="02"
-  data-live-states="15" data-required-states="3">
+  data-live-states="15" data-required-states="8">
   <div class="lc-n">L2</div>
   <div class="lc-t">Python II — El libro funcional</div>
   <div class="lc-o">best_prices: mejores precios entre órdenes</div>
@@ -649,6 +813,66 @@
     <a href="https://github.com/AlvaroChacarra/algo_trading_intro/raw/refs/heads/main/02-python-ii-functional-book/exercises/02_build_exercises.ipynb">↓ Construcción</a>
     <a href="https://github.com/AlvaroChacarra/algo_trading_intro/raw/refs/heads/main/02-python-ii-functional-book/exercises/02_auxiliary.ipynb">↓ Práctica para casa</a>
     <a href="https://github.com/AlvaroChacarra/algo_trading_intro/tree/main/02-python-ii-functional-book/exercises/solutions">Soluciones</a>
+  </nav>
+</article><article class="lcard" data-lesson="03"
+  data-live-states="12" data-required-states="5">
+  <div class="lc-n">L3</div>
+  <div class="lc-t">Python III — Módulos y errores</div>
+  <div class="lc-o">describe: lectura del mercado con tu función de L2</div>
+  <div class="lc-load"><span class="live">LIVE 20 + práctica 20 min</span>
+    <span class="required">REQUIRED 25 min estimados</span><span class="optional">OPTIONAL ejercicios 15 + lectura 0 min</span></div>
+  <div class="lc-dep">Lectura 25 + refuerzo para casa 0 min. La construcción se hace en clase.</div>
+  <div class="lc-dep">Continúa L2 · puedes omitir lo opcional</div>
+  <div class="lc-route-progress" aria-label="Progreso por ruta">
+    <div class="lc-route-row live"><span>LIVE</span><div class="lc-bar"><div class="lc-fill"></div></div><output>0%</output></div>
+    <div class="lc-route-row required"><span>REQUIRED</span><div class="lc-bar"><div class="lc-fill"></div></div><output>0%</output></div>
+  </div>
+  <div class="lc-meta"><span class="lc-status">sin empezar</span><span class="lc-quiz">quiz —</span></div>
+  <nav class="lc-actions" aria-label="Materiales de la clase 3">
+    <a href="03-python-iii-modules/presentation/python-iii-modules-doc.html">📖 Presentación</a>
+    <a href="https://github.com/AlvaroChacarra/algo_trading_intro/raw/refs/heads/main/03-python-iii-modules/exercises/03_build_exercises.ipynb">↓ Construcción</a>
+    <a href="https://github.com/AlvaroChacarra/algo_trading_intro/raw/refs/heads/main/03-python-iii-modules/exercises/03_auxiliary.ipynb">↓ Práctica para casa</a>
+    <a href="https://github.com/AlvaroChacarra/algo_trading_intro/tree/main/03-python-iii-modules/exercises/solutions">Soluciones</a>
+  </nav>
+</article><article class="lcard" data-lesson="04"
+  data-live-states="9" data-required-states="5">
+  <div class="lc-n">L4</div>
+  <div class="lc-t">OOP I — Order y Fill</div>
+  <div class="lc-o">Fill: atributos, instancias y caja</div>
+  <div class="lc-load"><span class="live">LIVE 20 + práctica 20 min</span>
+    <span class="required">REQUIRED 23 min estimados</span><span class="optional">OPTIONAL ejercicios 11 + lectura 0 min</span></div>
+  <div class="lc-dep">Lectura 23 + refuerzo para casa 0 min. La construcción se hace en clase.</div>
+  <div class="lc-dep">Continúa L3 · puedes omitir lo opcional</div>
+  <div class="lc-route-progress" aria-label="Progreso por ruta">
+    <div class="lc-route-row live"><span>LIVE</span><div class="lc-bar"><div class="lc-fill"></div></div><output>0%</output></div>
+    <div class="lc-route-row required"><span>REQUIRED</span><div class="lc-bar"><div class="lc-fill"></div></div><output>0%</output></div>
+  </div>
+  <div class="lc-meta"><span class="lc-status">sin empezar</span><span class="lc-quiz">quiz —</span></div>
+  <nav class="lc-actions" aria-label="Materiales de la clase 4">
+    <a href="04-oop-i-order-trade/presentation/oop-i-order-trade-doc.html">📖 Presentación</a>
+    <a href="https://github.com/AlvaroChacarra/algo_trading_intro/raw/refs/heads/main/04-oop-i-order-trade/exercises/04_build_exercises.ipynb">↓ Construcción</a>
+    <a href="https://github.com/AlvaroChacarra/algo_trading_intro/raw/refs/heads/main/04-oop-i-order-trade/exercises/04_auxiliary.ipynb">↓ Práctica para casa</a>
+    <a href="https://github.com/AlvaroChacarra/algo_trading_intro/tree/main/04-oop-i-order-trade/exercises/solutions">Soluciones</a>
+  </nav>
+</article><article class="lcard" data-lesson="05"
+  data-live-states="13" data-required-states="4">
+  <div class="lc-n">L5</div>
+  <div class="lc-t">OOP II — OrderBook y PositionTracker</div>
+  <div class="lc-o">libro y cartera conectados mediante tus fills</div>
+  <div class="lc-load"><span class="live">LIVE 20 + práctica 20 min</span>
+    <span class="required">REQUIRED 18 min estimados</span><span class="optional">OPTIONAL ejercicios 14 + lectura 0 min</span></div>
+  <div class="lc-dep">Lectura 18 + refuerzo para casa 0 min. La construcción se hace en clase.</div>
+  <div class="lc-dep">Continúa L4 · puedes omitir lo opcional</div>
+  <div class="lc-route-progress" aria-label="Progreso por ruta">
+    <div class="lc-route-row live"><span>LIVE</span><div class="lc-bar"><div class="lc-fill"></div></div><output>0%</output></div>
+    <div class="lc-route-row required"><span>REQUIRED</span><div class="lc-bar"><div class="lc-fill"></div></div><output>0%</output></div>
+  </div>
+  <div class="lc-meta"><span class="lc-status">sin empezar</span><span class="lc-quiz">quiz —</span></div>
+  <nav class="lc-actions" aria-label="Materiales de la clase 5">
+    <a href="05-oop-ii-book-portfolio/presentation/oop-ii-book-portfolio-doc.html">📖 Presentación</a>
+    <a href="https://github.com/AlvaroChacarra/algo_trading_intro/raw/refs/heads/main/05-oop-ii-book-portfolio/exercises/05_build_exercises.ipynb">↓ Construcción</a>
+    <a href="https://github.com/AlvaroChacarra/algo_trading_intro/raw/refs/heads/main/05-oop-ii-book-portfolio/exercises/05_auxiliary.ipynb">↓ Práctica para casa</a>
+    <a href="https://github.com/AlvaroChacarra/algo_trading_intro/tree/main/05-oop-ii-book-portfolio/exercises/solutions">Soluciones</a>
   </nav>
 </article></div>
 </section><section class="course-block" aria-labelledby="block-engine">

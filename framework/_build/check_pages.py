@@ -13,8 +13,10 @@ class Links(HTMLParser):
     def __init__(self):
         super().__init__()
         self.urls = []
+        self.lesson_ids = set()
     def handle_starttag(self, tag, attrs):
         self.urls.extend(value for name, value in attrs if name in {'href', 'src'} and value)
+        self.lesson_ids.update(value for name, value in attrs if name == 'data-lesson' and value)
 
 
 def local_target(page, raw, site, base_path):
@@ -70,7 +72,9 @@ def check(site, base_path='/algo_trading_intro/'):
     if publication.exists():
         released = json.loads(publication.read_text())['released_classes']
         index = (site / 'index.html').read_text()
-        actual = set(re.findall(r'data-lesson="(\d{2})"', index))
+        index_parser = Links()
+        index_parser.feed(index)
+        actual = index_parser.lesson_ids
         expected = {item['id'] for item in released}
         if actual != expected:
             failures.append(f'index lessons {actual} != release {expected}')

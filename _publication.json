@@ -1,5 +1,5 @@
 {
-  "policy_sha256": "0541d5c064bed882019112a867d732af5bb45892fb102daac83e04d998ae3794",
+  "policy_sha256": "22a5817af7490a346819a9ef1da88344f155f4aee81b75018aa97edb0c59d883",
   "released_classes": [
     {
       "id": "01",
@@ -10,8 +10,23 @@
       "id": "02",
       "path": "02-python-ii-functional-book",
       "publish_at": "2026-09-11T08:45:00+02:00"
+    },
+    {
+      "id": "03",
+      "path": "03-python-iii-modules",
+      "publish_at": "2026-09-20T20:42:35+02:00"
+    },
+    {
+      "id": "04",
+      "path": "04-oop-i-order-trade",
+      "publish_at": "2026-09-20T20:42:35+02:00"
+    },
+    {
+      "id": "05",
+      "path": "05-oop-ii-book-portfolio",
+      "publish_at": "2026-09-20T20:42:35+02:00"
     }
   ],
-  "source_sha": "9530f0f76485ba661ee29c24c4f8730e2c535b90",
+  "source_sha": "5a5a8956af000bb9dca1ac7d55924447ad5948ad",
   "version": 1
 }
