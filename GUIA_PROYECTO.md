@@ -1,10 +1,10 @@
 # Del notebook al programa
 
-En todas las clases empezamos investigando en Jupyter. Cada celda permite probar una idea, inspeccionar un dato y explicar un resultado. El principal y los auxiliares incluyen salidas visibles y resultados esperados para contrastar tus respuestas.
+En L1–L2 empezamos investigando en Jupyter. L3–L6 pasan a enunciados y módulos reales: `main.py` importa funciones o clases y los conecta; no duplica un notebook. L7–L14 retoman Jupyter para datos, trazas e investigación, conservando el código personal en las bases heredadas señaladas. Cada celda permite probar una idea, inspeccionar un dato y explicar un resultado. El principal y los auxiliares incluyen salidas visibles y resultados esperados para contrastar tus respuestas.
 
 ## El mismo principal en Python
 
-Después del notebook, abre `exercises/main.py`, guarda una copia como `mi_main.py` y traslada tus respuestas. Ejecuta desde la carpeta `exercises`:
+En las clases con notebook, abre `exercises/main.py`, guarda una copia como `mi_main.py` y traslada tus respuestas. Ejecuta desde la carpeta `exercises`:
 
 ```bash
 python mi_main.py
@@ -34,4 +34,4 @@ L15 utiliza notebooks y programa para el repaso histórico. El examen oficial ac
 
 Guarda las copias personales junto a las plantillas y consérvalas al descargar material nuevo. Git es opcional. La preparación completa está en [la guía local](GUIA_LOCAL.md).
 
-Las soluciones de principales, auxiliares y capstone están en `exercises/solutions/` de cada clase publicada; su README enlaza directamente los notebooks y el script resueltos.
+Las soluciones están en `exercises/solutions/`, enlazadas desde el README de cada clase. L3–L14 usan Markdown: apartados y archivos/programas completos copiables; L14 añade `capstone.md`. Solo L1–L2 conservan notebooks/scripts resueltos en la distribución. Las soluciones del repaso L15 permanecen privadas.

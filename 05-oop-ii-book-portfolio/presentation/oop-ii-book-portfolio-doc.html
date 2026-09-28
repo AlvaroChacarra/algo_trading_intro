@@ -649,7 +649,6 @@ body[data-lesson="03"] .visual-oop-errors .teaching-trace{gap:10px}
 body[data-lesson="03"] .visual-oop-errors .code{margin:0}
 /* The complete raise statement needs the same code-panel width as the module
    scene. Keep its string literal and Python indentation on one visual line. */
-body[data-lesson="03"] #s3{--lr-left:42fr;--lr-right:58fr}
 body[data-lesson="03"] .visual-oop-errors .code pre{white-space:pre;overflow-wrap:normal}
 .visual-oop-objects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:2px 0}
 .visual-oop-object{min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel2)}
@@ -853,7 +852,7 @@ body.lr-has-contract .hero .meta{display:none}
   body.mode-estudio.lr-has-contract .wrap>p{max-width:78ch}
   body.mode-estudio.lr-has-contract .scrolly{max-width:min(1280px,calc(100vw - var(--lr-nav-w) - 30px))}
   body.mode-estudio.lr-has-contract .lr-scene{scroll-margin-top:18px}
-  body.mode-estudio.lr-has-contract #rail,body.mode-estudio.lr-has-contract #lr-controls{display:none}
+  body.mode-estudio.lr-has-contract #rail{display:none}
 
   html.lr-mode-aula,html.lr-mode-aula body{height:100%;overflow:hidden}
   body.mode-aula{height:100dvh;overflow:hidden;padding-left:var(--lr-nav-w);padding-bottom:var(--lr-controls-h)}
@@ -943,6 +942,62 @@ body[data-lesson] .teaching-trace pre{
 body[data-lesson] .teaching-trace .ln.hl{
   background:rgba(34,211,238,.14);box-shadow:inset 3px 0 var(--accent)}
 
+/* Remediation 2026-09-26: readable premises and a figure sized by available desktop space. */
+.lr-stage-picker{max-width:100%;width:100%;margin:0 0 10px;padding:9px 5px;min-height:40px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--text);font:.8rem var(--mono)}
+.lr-stage-picker:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+body.mode-estudio.lr-has-contract{padding-bottom:var(--lr-controls-h)}
+body.mode-estudio .scrolly{grid-template-columns:minmax(300px,40fr) minmax(0,60fr);gap:22px;padding:0 12px}
+body.mode-estudio .fig{top:20px;height:calc(100vh - 100px);min-height:520px;max-height:720px}
+body.mode-estudio .steps .step{min-height:90vh}
+body.mode-estudio .steps .step-inner{opacity:1;border-color:var(--line);padding:18px}
+body.mode-estudio .steps .step.on .step-inner{border-color:var(--accent)}
+body.lr-has-contract .fig-head{font-size:.875rem;padding:10px 14px;color:var(--muted)}
+body.lr-has-contract .fig-stage{padding:14px}
+body.lr-has-contract .statgrid span,body.lr-has-contract .statgrid label{font-size:.875rem}
+body.lr-has-contract pre,body[data-lesson] .teaching-trace pre,body[data-lesson] .build-code pre{white-space:pre;overflow-wrap:normal;word-break:normal;tab-size:4}
+body.lr-has-contract .code pre{font-size:.9rem;line-height:1.5}
+body.lr-has-contract .code .ln.dim{opacity:.75}
+
+body.mode-aula .steps .step-inner p{font-size:.95rem;line-height:1.5}
+body.mode-aula .fig-stage .code{margin:10px 0}
+body.mode-aula .fig-stage .code pre{padding:10px 12px}
+@media print{.lr-stage-picker{display:none}}
+/* Help belongs to the current scene but need not consume a whole heading row. */
+body.mode-aula .lr-scene-active>.wrap:first-child{position:relative}
+body.mode-aula .lr-scene-active .lr-support-open{position:absolute;top:0;right:8px;margin:0;font-size:.75rem;min-height:32px}
+body.mode-aula .lr-scene-active .eyebrow{padding-right:190px}
+body.mode-aula .lr-scene-active:has(.scrolly)>.wrap:first-child h2{font-size:1.25rem}
+body.mode-aula .lr-scene-active:has(.scrolly)>.wrap:first-child .lede{font-size:.875rem}
+#lr-nav .lr-scene-links button b{font-size:.75rem;overflow-wrap:normal;word-break:normal}
+#lr-nav .lr-scene-links button{grid-template-columns:48px minmax(0,1fr);padding:7px 5px}
+/* L5: keep complete Python lines readable in desktop study mode. */
+body.mode-estudio.lr-has-contract .scrolly { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); }
+
+/* The opening and the final experiment display the same tracker state. */
+body[data-lesson="05"] .l5-tracker{padding:14px 16px;margin:14px 0;display:grid;gap:10px}
+body[data-lesson="05"] .l5-tracker h4{font:1rem/1.4 var(--mono);margin:0}
+body[data-lesson="05"] .l5-tracker .btnrow,body[data-lesson="05"] .l5-tracker .simrow{margin:0;gap:8px}
+body[data-lesson="05"] .l5-fill-controls{padding-bottom:9px;border-bottom:1px solid var(--line)}
+body[data-lesson="05"] .l5-mark-controls label{font-size:.92rem}
+body[data-lesson="05"] .l5-mark-controls input{flex:1;min-width:90px}
+body[data-lesson="05"] .l5-tracker .viz-flow{margin:0}
+body[data-lesson="05"] .l5-tracker .viz-card{padding:10px}
+body[data-lesson="05"] .l5-tracker .viz-card>span{font-size:.94rem;margin-bottom:4px}
+body[data-lesson="05"] .l5-tracker .viz-card>strong{font-size:1.55rem}
+body[data-lesson="05"] .l5-tracker .viz-card small{font-size:.87rem}
+body[data-lesson="05"] .l5-tracker .visual-oop-operation{margin:0;font-size:.9rem}
+body[data-lesson="05"] .l5-price-identity{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;font:.9rem/1.4 var(--mono)}
+body[data-lesson="05"] .l5-tracker .looplog{font-size:.92rem;margin:0;min-height:2.9em}
+body[data-lesson="05"].mode-aula .hero h1{font-size:clamp(1.8rem,2.9vw,2.8rem);margin:.18em 0}
+body[data-lesson="05"].mode-aula .hero .lede{font-size:1.05rem;line-height:1.4;margin:8px 0}
+body[data-lesson="05"] #tracker-detail .l5-tracker{margin:0;padding:10px}
+body[data-lesson="05"] #tracker-detail .l5-tracker .viz-card{min-width:80px}
+
+/* Keep the experiment's state, price identity and log visible at 1280×720. */
+body[data-lesson="05"] .l5-tracker h4{letter-spacing:0;text-transform:none}
+body[data-lesson="05"] #tracker-detail .l5-tracker{gap:6px}
+body[data-lesson="05"] #tracker-detail .l5-tracker .btn{padding:8px 10px}
+
 
 .construction-panel {margin:20px 0;padding:18px 22px;border:1px solid var(--line);border-radius:12px;background:var(--panel);font-size:1rem;line-height:1.65;overflow-wrap:anywhere;}
 .construction-panel summary {cursor:pointer;font-weight:700;color:var(--accent);}
@@ -954,9 +1009,9 @@ body[data-lesson] .teaching-trace .ln.hl{
 <body data-lesson="05">
 <nav id="rail" aria-label="Progreso">
   <a href="#s0" class="on"><span class="dot"></span><span class="lab">Mercado y cartera</span></a>
+  <a href="#s3"><span class="dot"></span><span class="lab">Contabilizar fills</span></a>
   <a href="#s1"><span class="dot"></span><span class="lab">Level y OrderBook</span></a>
   <a href="#s2"><span class="dot"></span><span class="lab">Consultar mid</span></a>
-  <a href="#s3"><span class="dot"></span><span class="lab">Contabilizar fills</span></a>
   <a href="#s4"><span class="dot"></span><span class="lab">Estado y API</span></a>
   <a href="#s5"><span class="dot"></span><span class="lab">Quiz</span></a>
   <a href="#s6"><span class="dot"></span><span class="lab">Tu principal</span></a>
@@ -964,23 +1019,97 @@ body[data-lesson] .teaching-trace .ln.hl{
 
 <header class="hero wrap" id="s0">
   <div class="eyebrow"><b>Algo Trading · ICAI 2026</b> · L5 · OOP II</div>
-  <h1>El libro y la <em>cartera</em></h1>
-  <p class="lede">En L4, <code>Fill.cash_flow()</code> devolvía un importe.
-  Ahora el libro describe el mercado y el tracker registra cada ejecución.</p>
-  <div class="challenge"><div class="tag">Ejemplo pedagógico del principal</div>
-    <p>Mejor compra <strong>99</strong>, mejor venta <strong>101 USD/unidad</strong>.
-    El mid es (99+101)/2 = <strong>100</strong>. Nuestra cartera empieza con
-    <strong>1000 USD</strong> y <strong>0 unidades</strong>, todavía sin fills.</p>
-    <p>¿Qué cambia al comprar 2 unidades a 101? ¿Qué cambia si después solo
-    variamos el precio usado para valorar?</p>
-  </div>
-  <div class="meta"><span><b>20 min</b> presentación</span><span><b>20 min</b> principal</span><span>Sin comisiones</span></div>
+  <h1>Comprar cambia la cuenta.<br><em>Valorar cambia su lectura.</em></h1>
+  <p class="lede">Aplica una compra de 2 unidades a 101. Después mueve solo el precio de valoración: ¿qué números permanecen?</p>
+<div class="simcard l5-tracker" id="tracker-first"><h4>Inicio: 1000 USD · 0 unidades · sin comisiones</h4>
+          <div class="btnrow l5-fill-controls"><button class="btn" id="tk-buy">Aplicar compra 2 @ 101</button>
+            <button class="btn" id="tk-sell">Aplicar venta 1 @ 103</button>
+            <button class="btn ghost" id="tk-reset">↻ reiniciar</button></div>
+          <div class="simrow l5-mark-controls"><label for="tk-mark">Solo valorar · mark (USD/unidad)</label>
+            <input type="range" id="tk-mark" min="95" max="110" value="100" step="1">
+            <b id="tk-markv">100</b><button class="btn ghost" id="tk-mark100">100</button><button class="btn ghost" id="tk-mark105">105</button></div>
+          <div class="viz-flow visual-oop-flow visual-oop-portfolio"><div class="viz-card" id="tk-cash-card"><span>cash · USD</span><strong id="tk-cash">1000</strong><small id="tk-cash-delta">sin cambio</small></div><div class="viz-card" id="tk-pos-card"><span>position · unidades</span><strong id="tk-pos">0</strong><small id="tk-pos-delta">sin cambio</small></div><div class="viz-card output" id="tk-eq-card"><span>equity · USD</span><strong id="tk-eq">1000</strong><small id="tk-eq-formula">cash + position × mark</small></div></div><div class="visual-oop-operation"><span id="tk-action">Inicio</span><span>fills: <b id="tk-n">0</b></span></div>
+          <div class="l5-price-identity"><span>Último fill: <b id="tk-fill-price">ninguno</b></span><span>Referencia actual: <b data-current-mark>100 USD/unidad</b></span></div><div class="looplog" id="tk-log" aria-live="polite">1 · Aplica la compra. 2 · Valora a 105. 3 · Vuelve a 100 y aplica la venta.</div>
+        </div>
+  <p class="trace-caption">Fills confirmados supuestos como datos, sin matching. Reutilizas <code>Fill</code> de L4; construirás <code>PositionTracker</code> en <code>portfolio.py</code> y lo usarás desde <code>main.py</code>.</p>
 </header>
 
+<section id="s3">
+  <div class="wrap"><div class="eyebrow">§1 · <b>PositionTracker</b></div>
+    <h2>Aplicar un fill y valorar la posición</h2>
+    <p class="lede">Traza del principal · inicio: 1000 USD / 0 unidades · portfolio.py define; main.py utiliza.</p>
+  </div>
+  <div class="scrolly" data-scrolly>
+    <div class="steps">
+      <div class="step on" data-stage="0" data-name="estado inicial"><div class="step-inner">
+        <h3><span class="n">1/5</span>El tracker conserva el efectivo inicial</h3>
+        <p><code>PositionTracker(cash=1000)</code> guarda 1000 USD y empieza con cero
+        unidades. En L4 main sumaba flujos y restaba tamaños; ahora esta instancia conserva ambos resultados. Son los atributos <code>cash</code> y <code>position</code> del principal.</p>
+        <p>Preparar <code>Fill('buy', 101, 2)</code> describe una ejecución.
+        La cartera cambia cuando llamamos a <code>apply_fill</code>.</p>
+      </div></div>
+      <div class="step" data-stage="1" data-name="compra y deltas"><div class="step-inner">
+        <h3><span class="n">2/5</span>La compra actualiza dos atributos</h3>
+        <p><code>self</code> es el tracker. <code>fill</code> es la ejecución recibida.
+        Dentro de <code>fill.cash_flow()</code>, self es el fill: devuelve −101×2 = −202 USD.</p>
+        <p><code>+=</code> suma al valor anterior. La compra añade 2 unidades.
+        El método modifica el estado y, sin un <code>return</code> explícito, devuelve <code>None</code>.</p>
+        <div class="predict predictgate"><div class="tag">Predice cash y position después</div><div class="btnrow"><input type="text" aria-label="Predicción de cash y position tras comprar"><button class="btn runbtn" data-target="out-tracker-buy" disabled>Revelar estado</button></div></div>
+      </div></div>
+      <div class="step" data-stage="2" data-name="mark independiente"><div class="step-inner">
+        <h3><span class="n">3/5</span>Valorar no ejecuta una venta</h3>
+        <p><code>equity(mark)</code> suma efectivo y posición valorada:
+        USD + unidades × USD/unidad. El argumento <code>mark</code> puede venir del mid
+        o de otra referencia elegida explícitamente.</p>
+        <p>Después de comprar, cambiar solo mark de 100 a 105 lleva la equity de 998 a 1008 USD.
+        <strong>Cash=798 y position=2 no cambian.</strong></p>
+      </div></div>
+      <div class="step" data-stage="3" data-name="venta acumulada"><div class="step-inner">
+        <h3><span class="n">4/5</span>La venta parte del estado anterior</h3>
+        <p>El siguiente fill ejecutado vende 1 unidad a 103. Suma 103 USD y resta
+        una unidad. No reinicia la cartera.</p>
+        <p>Este fill es otro dato pedagógico ya ejecutado. No afirma que se pueda
+        vender a 103 contra el bid 99 del libro inicial.</p>
+      </div></div>
+      <div class="step" data-stage="4" data-name="experimento"><div class="step-inner">
+        <h3><span class="n">5/5</span>Dos acciones distintas</h3>
+        <p>Los botones aplican otro fill cada vez. El slider solo consulta una nueva
+        valoración. Esta vista conserva el estado de la apertura; Reiniciar vuelve a 1000 USD y 0 unidades.</p>
+        <p>Mismo escenario del ejercicio: compra 2 a 101 y venta 1 a 103.
+        Son fills ya confirmados; no simulamos su ejecución contra el libro.</p>
+      </div></div>
+    </div>
+    <div class="figwrap"><div class="fig">
+      <div class="fig-head"><span>Tracker del principal</span><span class="stage-name">estado inicial</span></div>
+      <div class="fig-stage on teaching-trace" data-stage="0">
+        <div class="code code-block"><pre data-code-part="tracker-init"><span class="ln">class PositionTracker:</span><span class="ln">    def __init__(self, cash=0.0):</span><span class="ln hl">        self.cash = cash</span><span class="ln hl">        self.position = 0.0</span><span class="ln"></span><span class="ln"># main.py: imports de ambos módulos</span><span class="ln">tracker = PositionTracker(cash=1000)</span><span class="ln">fill = Fill('buy', 101, 2)</span></pre></div>
+        <div class="viz-flow visual-oop-flow"><div class="viz-card "><span>cash · USD</span><strong>1000</strong><small>sin cambio</small></div><div class="viz-card "><span>position · unidades</span><strong>0</strong><small>sin cambio</small></div></div>
+        <p class="trace-caption">La ejecución está preparada, aún sin contabilizar.</p>
+      </div>
+      <div class="fig-stage teaching-trace" data-stage="1">
+        <div class="trace-values">Antes: 1000 USD y 0 unidades · Fill: comprar 2 a 101</div>
+        <div class="code code-block"><pre data-code-part="apply-fill"><span class="ln"># Dentro de PositionTracker</span><span class="ln">def apply_fill(self, fill):</span><span class="ln hl">    self.cash += fill.cash_flow()</span><span class="ln">    if fill.side == 'buy':</span><span class="ln hl">        self.position += fill.size</span><span class="ln">    else:</span><span class="ln">        self.position -= fill.size</span><span class="ln"></span><span class="ln">tracker.apply_fill(fill)</span></pre></div>
+        <div class="out hidden" id="out-tracker-buy"><div class="viz-flow visual-oop-flow"><div class="viz-card "><span>cash · USD</span><strong>798</strong><small>Δ −202</small></div><div class="viz-card "><span>position · unidades</span><strong>2</strong><small>Δ +2</small></div></div></div>
+      </div>
+      <div class="fig-stage teaching-trace" data-stage="2">
+        <div class="code code-block"><pre data-code-part="equity"><span class="ln"># Dentro de PositionTracker</span><span class="ln">def equity(self, mark):</span><span class="ln hl">    return self.cash + self.position * mark</span><span class="ln"></span><span class="ln">value = tracker.equity(100)  # 998</span><span class="ln hl">new_value = tracker.equity(105)  # 1008</span></pre></div>
+        <div class="viz-flow visual-oop-flow"><div class="viz-card "><span>cash · USD</span><strong>798</strong><small>sin cambio</small></div><div class="viz-card "><span>position · unidades</span><strong>2</strong><small>sin cambio</small></div><div class="viz-card output"><span>equity · USD</span><strong>1008</strong><small>998 → 1008 · Δ +10</small></div></div>
+        <p class="trace-caption">La diferencia de +10 es valoración, no efectivo cobrado.</p>
+      </div>
+      <div class="fig-stage teaching-trace" data-stage="3">
+        <div class="code code-block"><pre><span class="ln">def apply_fill(self, fill):</span><span class="ln hl">    self.cash += fill.cash_flow()</span><span class="ln">    if fill.side == 'buy':</span><span class="ln">        self.position += fill.size</span><span class="ln">    else:</span><span class="ln hl">        self.position -= fill.size</span><span class="ln">fill = Fill('sell', 103, 1)</span><span class="ln">tracker.apply_fill(fill)</span></pre></div>
+        <div class="viz-flow visual-oop-flow"><div class="viz-card "><span>cash · USD</span><strong>901</strong><small>798 + 103</small></div><div class="viz-card "><span>position · unidades</span><strong>1</strong><small>2 − 1</small></div><div class="viz-card output"><span>equity · USD</span><strong>1001</strong><small>901 + 1 × 100</small></div></div>
+        <p class="trace-caption">Consultamos a mark 100: 901 + 1×100 = 1001 USD. El mark 105 previo no se guarda en la cartera.</p>
+      </div>
+      <div class="fig-stage" data-stage="4"><div id="tracker-detail"></div></div>
+    </div></div>
+  </div>
+</section>
+
 <section id="s1">
-  <div class="wrap"><div class="eyebrow">§1 · <b>Composición</b></div>
+  <div class="wrap"><div class="eyebrow">§2 · <b>Composición</b></div>
     <h2>Un libro contiene niveles</h2>
-    <p class="lede">Los mismos tres niveles permanecen durante la construcción.</p>
+    <p class="lede">Ejercicio 5.a · book.py aporta los niveles. main.py los reúne en un libro.</p>
   </div>
   <div class="scrolly" data-scrolly>
     <div class="steps">
@@ -1013,7 +1142,7 @@ body[data-lesson] .teaching-trace .ln.hl{
         <p class="trace-caption">Precio × tamaño · USD/unidad × unidades. b1, b2 y a1 identifican los mismos objetos.</p>
       </div>
       <div class="fig-stage teaching-trace" data-stage="1"><div class="visual-oop-book" data-depth="2"><div><h4>book.bids</h4><div class="visual-oop-level buy"><span>b2</span><strong>99 <small>×</small> 2</strong></div><div class="visual-oop-level buy"><span>b1</span><strong>98 <small>×</small> 1</strong></div></div><div><h4>book.asks</h4><div class="visual-oop-level sell"><span>a1</span><strong>101 <small>×</small> 3</strong></div></div></div>
-        <div class="code code-block"><pre><span class="ln"># Constructor proporcionado: ordena</span><span class="ln hl">book = OrderBook(bids, asks)</span><span class="ln"># book.bids: [Level(99,2), Level(98,1)]</span><span class="ln"># book.asks: [Level(101,3)]</span><span class="ln"></span><span class="ln hl">price = book.bids[0].price</span></pre></div>
+        <div class="code code-block"><pre><span class="ln"># Constructor proporcionado: ordena</span><span class="ln">book = OrderBook(bids, asks)</span><span class="ln"># book.bids: [Level(99,2), Level(98,1)]</span><span class="ln"># book.asks: [Level(101,3)]</span><span class="ln"></span><span class="ln hl">best_bid = book.bids[0]</span><span class="ln hl">price = best_bid.price</span></pre></div>
         <div class="trace-result">price = 99 · siguen presentes los 3 niveles</div>
         <p class="trace-caption">[0] elige el primer objeto. .price lee su atributo.</p>
       </div>
@@ -1027,9 +1156,9 @@ body[data-lesson] .teaching-trace .ln.hl{
 </section>
 
 <section id="s2">
-  <div class="wrap"><div class="eyebrow">§2 · <b>Property</b></div>
+  <div class="wrap"><div class="eyebrow">§3 · <b>Property</b></div>
     <h2>Seguir la consulta <code>book.mid</code></h2>
-    <p class="lede">El objeto ya guarda los datos. La propiedad calcula cuando se lee.</p>
+    <p class="lede">L3: precios en diccionarios. L5: precios en Level. Misma media y mismo None si falta un lado.</p>
   </div>
   <div class="scrolly" data-scrolly>
     <div class="steps">
@@ -1058,13 +1187,9 @@ body[data-lesson] .teaching-trace .ln.hl{
         <p>Restauramos 101 para continuar con el dataset inicial. Un libro sin asks
         devuelve <code>None</code>, no cero. Antes de valorar necesitamos un mark válido.</p>
       </div></div>
-      <div class="step" data-stage="3" data-name="referencia exchange"><div class="step-inner">
-        <h3><span class="n">4/4</span>Consulta de la API ampliada</h3>
-        <p>El <code>OrderBook</code> del principal aporta ordenación e imbalance.
-        Tú completas mid leyendo <code>Level.price</code>.</p>
-        <p>El paquete <code>exchange</code> añade <code>best_bid</code>,
-        <code>best_ask</code> y <code>spread</code> como propiedades.
-        Este bloque distingue esa referencia de tu respuesta.</p>
+      <div class="step" data-stage="3" data-name="conectar sin referencia"><div class="step-inner">
+        <h3><span class="n">4/4</span>Conecta solo con un mark disponible</h3>
+        <p>Ejercicio 5.c: guarda el número devuelto en <code>mark</code>. Si falta un lado, el resultado es <code>None</code>.</p><p><code>main.py</code> decide informar de la ausencia. No pide a la cartera valorar con None ni con cero.</p>
       </div></div>
     </div>
     <div class="figwrap"><div class="fig">
@@ -1080,101 +1205,14 @@ body[data-lesson] .teaching-trace .ln.hl{
         <div class="out hidden" id="out-mid">mark = 100.0 · (99+101)/2</div>
       </div>
       <div class="fig-stage teaching-trace" data-stage="2">
-        <div class="code code-block"><pre><span class="ln hl">book.asks[0].price = 103</span><span class="ln hl">new_mark = book.mid  # 101.0</span><span class="ln">book.asks[0].price = 101  # restaurar</span><span class="ln">mark = book.mid  # 100.0</span><span class="ln"></span><span class="ln">one_side = OrderBook([Level(99, 2)], [])</span><span class="ln">one_side.mid  # None: falta ask</span></pre></div>
+        <div class="code code-block"><pre><span class="ln">previous_mid = book.mid  # 100.0</span><span class="ln hl">book.asks[0].price = 103</span><span class="ln hl">print(previous_mid, book.mid)</span><span class="ln">book.asks[0].price = 101  # restaurar</span><span class="ln">mark = book.mid  # 100.0</span><span class="ln"></span><span class="ln">one_side = OrderBook([Level(99, 2)], [])</span><span class="ln">one_side.mid  # None: falta ask</span></pre></div>
         <div class="trace-result">Solo cambia el dato al asignarlo. Consultar no muta.</div>
         <p class="trace-caption">Guardar mid una sola vez en __init__ dejaría un valor obsoleto.</p>
       </div>
       <div class="fig-stage teaching-trace" data-stage="3">
-        <div class="code code-block"><pre><span class="ln"># Solo referencia: exchange.OrderBook</span><span class="ln"># Mismos niveles 99×2, 98×1, 101×3</span><span class="ln">ob.best_bid  # 99</span><span class="ln">ob.best_ask  # 101</span><span class="ln hl">ob.spread    # 101 - 99 = 2</span><span class="ln">ob.mid       # (99 + 101) / 2 = 100</span><span class="ln">ob.imbalance(levels=1)  # -0.2</span></pre></div>
-        <p class="trace-caption">Property: sin paréntesis. imbalance es método con profundidad.</p>
-        <details><summary>Principal, auxiliares y referencia</summary><div class="body">
-          <p>El principal usa <code>Level(price, size)</code> y
-          <code>OrderBook(bids, asks)</code>. Los auxiliares conservan esos mismos objetos <code>Level</code>. El paquete añade métricas, símbolo y tipos,
-          pero conserva la lectura de propiedades. No mezcles las representaciones.</p>
-        </div></details>
-      </div>
-    </div></div>
-  </div>
-</section>
-
-<section id="s3">
-  <div class="wrap"><div class="eyebrow">§3 · <b>PositionTracker</b></div>
-    <h2>Aplicar un fill y valorar la posición</h2>
-    <p class="lede">Caja en USD, posición en unidades. El mark es un precio de valoración explícito.</p>
-  </div>
-  <div class="scrolly" data-scrolly>
-    <div class="steps">
-      <div class="step on" data-stage="0" data-name="estado inicial"><div class="step-inner">
-        <h3><span class="n">1/5</span>El tracker conserva el efectivo inicial</h3>
-        <p><code>PositionTracker(cash=1000)</code> guarda 1000 USD y empieza con cero
-        unidades. Son los atributos <code>cash</code> y <code>position</code> del principal.</p>
-        <p>Preparar <code>Fill('buy', 101, 2)</code> describe una ejecución.
-        La cartera cambia cuando llamamos a <code>apply_fill</code>.</p>
-      </div></div>
-      <div class="step" data-stage="1" data-name="compra y deltas"><div class="step-inner">
-        <h3><span class="n">2/5</span>La compra actualiza dos atributos</h3>
-        <p><code>self</code> es el tracker. <code>fill</code> es la ejecución recibida.
-        Su <code>cash_flow()</code> devuelve −101×2 = −202 USD.</p>
-        <p><code>+=</code> suma al valor anterior. La compra añade 2 unidades.
-        El método modifica el estado y, sin un <code>return</code> explícito, devuelve <code>None</code>.</p>
-        <div class="predict predictgate"><div class="tag">Predice cash y position después</div><div class="btnrow"><input type="text" aria-label="Predicción de cash y position tras comprar"><button class="btn runbtn" data-target="out-tracker-buy" disabled>Revelar estado</button></div></div>
-      </div></div>
-      <div class="step" data-stage="2" data-name="mark independiente"><div class="step-inner">
-        <h3><span class="n">3/5</span>Valorar no ejecuta una venta</h3>
-        <p><code>equity(mark)</code> suma efectivo y posición valorada:
-        USD + unidades × USD/unidad. El argumento <code>mark</code> puede venir del mid
-        o de otra referencia elegida explícitamente.</p>
-        <p>Después de comprar, cambiar solo mark de 100 a 105 lleva la equity de 998 a 1008 USD.
-        <strong>Cash=798 y position=2 no cambian.</strong></p>
-      </div></div>
-      <div class="step" data-stage="3" data-name="venta acumulada"><div class="step-inner">
-        <h3><span class="n">4/5</span>La venta parte del estado anterior</h3>
-        <p>El siguiente fill ejecutado vende 1 unidad a 103. Suma 103 USD y resta
-        una unidad. No reinicia la cartera.</p>
-        <p>Este fill es otro dato pedagógico ya ejecutado. No afirma que se pueda
-        vender a 103 contra el bid 99 del libro inicial.</p>
-      </div></div>
-      <div class="step" data-stage="4" data-name="experimento"><div class="step-inner">
-        <h3><span class="n">5/5</span>Dos acciones distintas</h3>
-        <p>Los botones aplican otro fill cada vez. El slider solo consulta una nueva
-        valoración. Empieza comprando y cambia mark antes de vender.</p>
-        <p>Esta variación ejecuta al ask fijo 101 y al bid fijo 99. Comprar y vender
-        2 unidades cuesta (101−99)×2 = 4 USD, sin comisiones.</p>
-      </div></div>
-    </div>
-    <div class="figwrap"><div class="fig">
-      <div class="fig-head"><span>Tracker del principal</span><span class="stage-name">estado inicial</span></div>
-      <div class="fig-stage on teaching-trace" data-stage="0">
-        <div class="code code-block"><pre data-code-part="tracker-init"><span class="ln">class PositionTracker:</span><span class="ln">    def __init__(self, cash=0.0):</span><span class="ln hl">        self.cash = cash</span><span class="ln hl">        self.position = 0.0</span><span class="ln"></span><span class="ln">tracker = PositionTracker(cash=1000)</span><span class="ln">fill = Fill('buy', 101, 2)</span></pre></div>
-        <div class="viz-flow visual-oop-flow"><div class="viz-card "><span>cash · USD</span><strong>1000</strong><small>sin cambio</small></div><div class="viz-card "><span>position · unidades</span><strong>0</strong><small>sin cambio</small></div><div class="viz-card output"><span>equity · USD</span><strong>1000</strong><small>mark = 100</small></div></div>
-        <p class="trace-caption">La ejecución está preparada, aún sin contabilizar.</p>
-      </div>
-      <div class="fig-stage teaching-trace" data-stage="1">
-        <div class="trace-values">Antes: 1000 USD y 0 unidades · Fill: comprar 2 a 101</div>
-        <div class="code code-block"><pre data-code-part="apply-fill"><span class="ln"># Dentro de PositionTracker</span><span class="ln">def apply_fill(self, fill):</span><span class="ln hl">    self.cash += fill.cash_flow()</span><span class="ln">    if fill.side == 'buy':</span><span class="ln hl">        self.position += fill.size</span><span class="ln">    else:</span><span class="ln">        self.position -= fill.size</span><span class="ln"></span><span class="ln">tracker.apply_fill(fill)</span></pre></div>
-        <div class="out hidden" id="out-tracker-buy"><div class="viz-flow visual-oop-flow"><div class="viz-card "><span>cash · USD</span><strong>798</strong><small>Δ −202</small></div><div class="viz-card "><span>position · unidades</span><strong>2</strong><small>Δ +2</small></div><div class="viz-card output"><span>equity · USD</span><strong>998</strong><small>798 + 2 × 100</small></div></div></div>
-      </div>
-      <div class="fig-stage teaching-trace" data-stage="2">
-        <div class="code code-block"><pre data-code-part="equity"><span class="ln"># Dentro de PositionTracker</span><span class="ln">def equity(self, mark):</span><span class="ln hl">    return self.cash + self.position * mark</span><span class="ln"></span><span class="ln">value = tracker.equity(100)  # 998</span><span class="ln hl">new_value = tracker.equity(105)  # 1008</span></pre></div>
-        <div class="viz-flow visual-oop-flow"><div class="viz-card "><span>cash · USD</span><strong>798</strong><small>sin cambio</small></div><div class="viz-card "><span>position · unidades</span><strong>2</strong><small>sin cambio</small></div><div class="viz-card output"><span>equity · USD</span><strong>1008</strong><small>998 → 1008 · Δ +10</small></div></div>
-        <p class="trace-caption">La diferencia de +10 es valoración, no efectivo cobrado.</p>
-      </div>
-      <div class="fig-stage teaching-trace" data-stage="3">
-        <div class="code code-block"><pre><span class="ln">def apply_fill(self, fill):</span><span class="ln hl">    self.cash += fill.cash_flow()</span><span class="ln">    if fill.side == 'buy':</span><span class="ln">        self.position += fill.size</span><span class="ln">    else:</span><span class="ln hl">        self.position -= fill.size</span><span class="ln">fill = Fill('sell', 103, 1)</span><span class="ln">tracker.apply_fill(fill)</span></pre></div>
-        <div class="viz-flow visual-oop-flow"><div class="viz-card "><span>cash · USD</span><strong>901</strong><small>798 + 103</small></div><div class="viz-card "><span>position · unidades</span><strong>1</strong><small>2 − 1</small></div><div class="viz-card output"><span>equity · USD</span><strong>1001</strong><small>901 + 1 × 100</small></div></div>
-        <p class="trace-caption">Consultamos a mark 100: 901 + 1×100 = 1001 USD. El mark 105 previo no se guarda en la cartera.</p>
-      </div>
-      <div class="fig-stage" data-stage="4">
-        <div class="simcard"><h4>Estado inicial: 1000 USD, 0 unidades</h4>
-          <div class="btnrow"><button class="btn" id="tk-buy">buy 2 @ 101</button>
-            <button class="btn" id="tk-sell">sell 2 @ 99</button>
-            <button class="btn ghost" id="tk-reset">↻ reiniciar</button></div>
-          <div class="simrow"><label for="tk-mark">mark (USD/unidad)</label>
-            <input type="range" id="tk-mark" min="95" max="110" value="100" step="1">
-            <b id="tk-markv">100</b></div>
-          <div class="viz-flow visual-oop-flow visual-oop-portfolio"><div class="viz-card" id="tk-cash-card"><span>cash · USD</span><strong id="tk-cash">1000</strong><small id="tk-cash-delta">sin cambio</small></div><div class="viz-card" id="tk-pos-card"><span>position · unidades</span><strong id="tk-pos">0</strong><small id="tk-pos-delta">sin cambio</small></div><div class="viz-card output" id="tk-eq-card"><span>equity · USD</span><strong id="tk-eq">1000</strong><small id="tk-eq-formula">cash + position × mark</small></div></div><div class="visual-oop-operation"><span id="tk-action">Inicio</span><span>fills: <b id="tk-n">0</b></span></div>
-          <div class="looplog" id="tk-log" aria-live="polite">Sin fills. El mark solo valora.</div>
-        </div>
+        <div class="code code-block"><pre><span class="ln"># main.py · Ejercicio 5.c</span><span class="ln">mark = book.mid</span><span class="ln hl">if mark is None:</span><span class="ln">    print('Sin referencia para valorar')</span><span class="ln">else:</span><span class="ln hl">    print(tracker.equity(mark))</span></pre></div>
+        <div class="trace-result">Con ambos lados: 901 + 1 × 100 = 1001 USD</div>
+        <p class="trace-caption">Sin asks: None → mensaje. La cartera conserva su estado.</p>
       </div>
     </div></div>
   </div>
@@ -1193,13 +1231,10 @@ body[data-lesson] .teaching-trace .ln.hl{
         <p>Si escribes cash a mano, otro fill sigue sumando desde ese estado manipulado.
         No lo restaura. Solo <strong>reiniciar</strong> recupera el ejemplo inicial.</p>
       </div></div>
-      <div class="step" data-stage="1" data-name="convención interna"><div class="step-inner">
-        <h3><span class="n">2/2</span>La convención del guion bajo</h3>
-        <p>El principal usa <code>cash</code> y <code>position</code>. Una implementación
-        puede guardar <code>_cash</code> y <code>_position</code> para señalar datos internos,
-        y exponer lecturas mediante propiedades.</p>
-        <p>Python permite escribir en ambos casos. Encapsular distribuye responsabilidades:
-        no ofrece seguridad, detección de duplicados ni reparación automática.</p>
+      <div class="step" data-stage="1" data-name="responsabilidades"><div class="step-inner">
+        <h3><span class="n">2/2</span>Una responsabilidad por objeto</h3>
+        <p>Fill calcula el flujo; PositionTracker lo acumula; main.py conecta las llamadas.</p>
+        <p>Modificar cash directamente puede romper la contabilidad. Usar apply_fill mantiene juntas caja y unidades; no repara manipulaciones anteriores.</p>
       </div></div>
     </div>
     <div class="figwrap"><div class="fig">
@@ -1216,9 +1251,9 @@ body[data-lesson] .teaching-trace .ln.hl{
         </div>
       </div>
       <div class="fig-stage teaching-trace" data-stage="1">
-        <div class="code code-block"><pre><span class="ln"># Variante de diseño, no el starter</span><span class="ln"># __init__ guarda _cash y _position</span><span class="ln">@property</span><span class="ln">def cash(self):</span><span class="ln hl">    return self._cash</span><span class="ln"></span><span class="ln"># Python permite tocar el dato interno</span><span class="ln hl">tracker._cash = 1_000_000</span></pre></div>
-        <div class="trace-result">El guion bajo comunica una convención, no bloquea escrituras.</div>
-        <p class="trace-caption">apply_fill asume fills válidos y suma cada llamada. equity solo consulta.</p>
+        <div class="code code-block"><pre><span class="ln"># portfolio.py · Ejercicio 2.a</span><span class="ln">def apply_fill(self, fill):</span><span class="ln hl">    self.cash += fill.cash_flow()</span><span class="ln">    if fill.side == 'buy':</span><span class="ln">        self.position += fill.size</span><span class="ln">    else:</span><span class="ln">        self.position -= fill.size</span></pre></div>
+        <div class="trace-result">Dentro de este método, self es la cartera.</div>
+        <p class="trace-caption">La llamada cash_flow usa otro self: el Fill recibido.</p>
       </div>
     </div></div>
   </div>
@@ -1230,9 +1265,9 @@ body[data-lesson] .teaching-trace .ln.hl{
     <div class="q" data-ok="1"><div class="qt">¿Dónde aparece la composición?</div>
       <div class="opts"><button class="opt">A · OrderBook copia los métodos de Level</button><button class="opt">B · book guarda listas de objetos Level</button><button class="opt">C · Level hereda de PositionTracker</button></div>
       <div class="why">El libro tiene niveles, cada uno con price y size. No necesita heredar de Level.</div></div>
-    <div class="q" data-ok="0"><div class="qt">¿Qué protege el nombre <code>_cash</code>?</div>
-      <div class="opts"><button class="opt">A · Señala una convención, pero Python permite escribirlo</button><button class="opt">B · Impide cualquier cambio desde fuera</button><button class="opt">C · Corrige una compra duplicada</button></div>
-      <div class="why">El guion bajo no añade controles de acceso ni repara la contabilidad.</div></div>
+    <div class="q" data-ok="0"><div class="qt">En <code>apply_fill(self, fill)</code>, ¿qué es self?</div>
+      <div class="opts"><button class="opt">A · La cartera que recibe apply_fill</button><button class="opt">B · Siempre el fill recibido</button><button class="opt">C · Todas las carteras a la vez</button></div>
+      <div class="why">self es el receptor de esa llamada. Dentro de fill.cash_flow(), self será el fill.</div></div>
     <div class="q" data-ok="2"><div class="qt">Desde 1000,0 aplicas dos veces <code>Fill('buy',101,2)</code>:</div>
       <div class="opts"><button class="opt">A · cash=798, position=2</button><button class="opt">B · cash=1000, position=4</button><button class="opt">C · cash=596, position=4</button></div>
       <div class="why">Cada llamada suma −202 y +2. 1000−202−202=596. El método no deduplica fills.</div></div>
@@ -1247,12 +1282,12 @@ body[data-lesson] .teaching-trace .ln.hl{
 </div></section>
 
 <section id="s6"><div class="wrap">
-  <div class="eyebrow">§6 · <b>Principal · 20 min</b></div><h2>Libro, fills y cartera en tu notebook</h2>
+  <div class="eyebrow">§6 · <b>Principal · 20 min</b></div><h2>Conecta tus objetos en main.py</h2>
   <div class="cta"><div class="box"><span class="tag">Ahora te toca</span>
-    Abre <code>05_build_exercises.ipynb</code>. Reutiliza <code>Fill.cash_flow</code> de L4.
+    Abre <code>enunciado.md</code>. Ejercicios 1–4: cartera; 5–6: libro y propiedades. Reutiliza <code>Fill.cash_flow</code> de L4.
     Completa <code>OrderBook.mid</code>, <code>PositionTracker.apply_fill</code> y
     <code>equity</code>. Compara el estado tras cada operación.</div></div>
-  <details><summary>Consulta: recorrido numérico completo</summary><div class="body"><table class="trace-table" data-continuity="l5"><caption>Mismo recorrido del notebook · sin comisiones</caption><thead><tr><th>Operación</th><th>Caja USD</th><th>Posición</th><th>Mark</th><th>Equity USD</th></tr></thead><tbody>
+  <details><summary>Consulta: recorrido numérico completo</summary><div class="body"><table class="trace-table" data-continuity="l5"><caption>Mismo recorrido de main.py · sin comisiones</caption><thead><tr><th>Operación</th><th>Caja USD</th><th>Posición</th><th>Mark</th><th>Equity USD</th></tr></thead><tbody>
 <tr><td>Inicial</td><td>1000</td><td>0</td><td>100</td><td>1000</td></tr>
 <tr><td>buy 2 a 101</td><td>798</td><td>2</td><td>100</td><td>998</td></tr>
 <tr><td>Solo mark</td><td>798</td><td>2</td><td>105</td><td>1008</td></tr>
@@ -1261,14 +1296,13 @@ body[data-lesson] .teaching-trace .ln.hl{
 <p>El libro consulta el mercado. El fill describe una ejecución. El tracker la registra.
   En L6 una señal usará el libro para decidir buy, sell o hold, todavía sin enviar órdenes.</p>
   <details><summary>Consulta: programa y práctica opcional</summary><div class="body">
-    <p><code>main.py</code> repite las mismas clases como programa.
-    <code>05_auxiliary.ipynb</code> ofrece práctica OPTIONAL de composición y propiedades.</p>
+    <p><code>main.py</code> importa tus clases; no las redefine.
+    <code>solutions/solucion.md</code> contiene los archivos completos. Ejercicio 7: variantes OPTIONAL.</p>
   </div></details>
-<details class="construction-panel" id="construction-guide"><summary>Del notebook a un programa Python</summary><p><strong>Problema:</strong> Unir observación y contabilidad sin confundirlas: el libro entrega un precio de referencia actual, los fills cambian caja y cantidad, y la equity valora la cantidad que permanece abierta.</p><p>Completa el principal en Jupyter y contrasta sus resultados. Después puedes trasladar las mismas respuestas a una copia de <code>main.py</code>, guardada como <code>mi_main.py</code>.</p><p>Desde la carpeta <code>exercises</code> de esta clase: <code>python mi_main.py</code>. Verás los mismos cálculos ejecutados de una vez.</p><p>El notebook sirve para investigar y explicar. Los archivos <code>.py</code> sirven para organizar programas y funciones reutilizables.</p><p><strong>Predice y contrasta:</strong> Mismo recorrido de la tabla: inicial 1000/0/100/1000; buy 2 a 101 → caja 798, posición 2, mark 100, equity 998; cambiar solo mark a 105 → equity 1008; sell 1 a 103, consultar mark 100 → caja 901, posición 1, equity 1001.</p><p><strong>Lo siguiente reutiliza:</strong> L7 ampliará las ideas de OrderBook para leer snapshots y medir el libro. El tracker sigue separando efectivo, cantidad y valoración al incorporar ejecuciones en clases posteriores.</p></details></div></section>
-<footer>L5 · OrderBook y PositionTracker · Algo Trading ICAI 2026</footer>
+<details class="construction-panel" id="construction-guide"><summary>Conecta las piezas de tu práctica</summary><p><strong>Partes de:</strong> Reutiliza tu models.py de L4. La referencia incluida se genera desde su solución canónica.</p><p><strong>Problema:</strong> Unir observación y contabilidad sin confundirlas: el libro entrega un precio de referencia actual, los fills cambian caja y cantidad, y la equity valora la cantidad que permanece abierta.</p><p><strong>Predice y contrasta:</strong> Mismo recorrido de la tabla: inicial 1000/0/100/1000; buy 2 a 101 → caja 798, posición 2, mark 100, equity 998; cambiar solo mark a 105 → equity 1008; sell 1 a 103, consultar mark 100 → caja 901, posición 1, equity 1001.</p><p><strong>Del ejemplo a tu código:</strong> main.py conecta los módulos; una sola solución Markdown contiene los archivos completos.</p><p>Abre <code>enunciado.md</code> y completa los cuerpos indicados. El resto de los archivos está proporcionado o procede de la práctica anterior.</p><ul><li><code>book.py:OrderBook.mid</code>: Completa la property mid leyendo .price de los primeros niveles ordenados. Comprueba el promedio del ejemplo, consulta después de cambiar un precio manteniendo el orden y prueba un lado vacío; explica por qué no guardas el promedio en __init__. <span>Practica L05-P01, L05-P02, L05-P03, L05-P04.</span></li><li><code>portfolio.py:PositionTracker.apply_fill</code>: Completa apply_fill usando tu Fill de L4. Antes de ejecutarlo, traza cash y position tras cada fill del ejemplo; comprueba ambos atributos, no solo su combinación final. Conserva el efectivo inicial del tracker. <span>Practica L05-P01, L05-P02, L05-P03, L05-P04.</span></li><li><code>portfolio.py:PositionTracker.equity</code>: Completa equity(mark) con el estado actual y un mark explícito. Verifica 998 tras la compra y 1001 tras la venta del ejemplo; cambia solo el mark y comprueba que cambia la valoración sin cambiar cash ni position. <span>Practica L05-P01, L05-P02, L05-P03, L05-P04.</span></li></ul><p>Desde <code>exercises</code>: <code>python main.py</code>. <code>python -c &quot;import main&quot;</code> debe ser silencioso.</p><p>Solución copiable: <code>solutions/solucion.md</code>.</p><p><strong>Lo siguiente reutiliza:</strong> L7 ampliará las ideas de OrderBook para leer snapshots y medir el libro. El tracker sigue separando efectivo, cantidad y valoración al incorporar ejecuciones en clases posteriores.</p></details></div></section><footer>L5 · OrderBook y PositionTracker · Algo Trading ICAI 2026</footer>
 
 
-<script type="application/json" id="pedagogy-contract">{"lesson":5,"status":"contract-strict","title":"OOP II — OrderBook y PositionTracker","delivery":"lesson","source_path":"framework/_build/docs/05_body.html","requires":{"concepts":["oop.classes","exchange.order","exchange.fill","python.lambda","python.sorted_key","python.fstring","python.generator_expression"],"apis":["order.constructor","fill.constructor","fill.cash_flow"],"notation":["notation.spread","notation.mid","notation.cash_flow"]},"requirement_routes":{"concepts":{"oop.classes":"LIVE","exchange.order":"LIVE","exchange.fill":"LIVE","python.lambda":"LIVE","python.sorted_key":"LIVE","python.fstring":"LIVE","python.generator_expression":"REQUIRED"},"apis":{"order.constructor":"REQUIRED","fill.constructor":"REQUIRED","fill.cash_flow":"LIVE"},"notation":{"notation.spread":"LIVE","notation.mid":"LIVE","notation.cash_flow":"LIVE"}},"introduces":{"concepts":[{"id":"oop.composition","importance":"major","route":"LIVE"},{"id":"oop.encapsulation","importance":"major","route":"REQUIRED"},{"id":"oop.computed_property","importance":"major","route":"LIVE"},{"id":"exchange.orderbook","importance":"major","route":"LIVE"},{"id":"exchange.position_tracker","importance":"major","route":"LIVE"},{"id":"microstructure.spread_cost","importance":"major","route":"REQUIRED"}],"apis":["orderbook.constructor","level.constructor","orderbook.best_bid","orderbook.best_ask","orderbook.spread","orderbook.mid","orderbook.imbalance","tracker.constructor","tracker.position","tracker.apply_fill","tracker.equity"],"notation":["notation.equity"]},"introduction_routes":{"apis":{"orderbook.constructor":"LIVE","level.constructor":"LIVE","orderbook.best_bid":"LIVE","orderbook.best_ask":"LIVE","orderbook.spread":"LIVE","orderbook.mid":"LIVE","orderbook.imbalance":"LIVE","tracker.constructor":"LIVE","tracker.position":"LIVE","tracker.apply_fill":"LIVE","tracker.equity":"LIVE"},"notation":{"notation.equity":"LIVE"}},"recalls":[{"concept":"oop.classes","introduced_in":4,"mapping":{"before":"Order y Fill vinculan un registro con comportamiento.","now":"Los contenedores protegen muchos objetos de dominio y su estado compartido."}}],"api_surface":[{"id":"order.constructor","name":"Order","kind":"constructor","signature":"Order(symbol: str, side: Side, size: float, price: float | None = None, order_type: OrderType = OrderType.LIMIT, id: int = None) -> Order","returns":"Order","responsibility":"construct the canonical order intent","qualified_name":"exchange.orders.Order"},{"id":"fill.constructor","name":"Fill","kind":"constructor","signature":"Fill(order_id: int, symbol: str, side: Side, price: float, size: float, timestamp: int | None = None) -> Fill","returns":"Fill","responsibility":"construct one canonical execution result","qualified_name":"exchange.trades.Fill"},{"id":"fill.cash_flow","name":"cash_flow","kind":"method","signature":"cash_flow() -> float","returns":"float","responsibility":"compute signed fill cash flow","qualified_name":"exchange.trades.Fill.cash_flow"},{"id":"orderbook.constructor","name":"OrderBook","kind":"constructor","signature":"OrderBook(symbol: str, bids: list[Level], asks: list[Level]) -> OrderBook","returns":"OrderBook","responsibility":"construct a sorted two-sided book","qualified_name":"exchange.book.OrderBook"},{"id":"level.constructor","name":"Level","kind":"constructor","signature":"Level(price: float, size: float) -> Level","returns":"Level","responsibility":"construct one visible price level","qualified_name":"exchange.book.Level"},{"id":"orderbook.best_bid","name":"best_bid","kind":"property","signature":"best_bid -> float | None","returns":"float | None","responsibility":"read the highest bid price","qualified_name":"exchange.book.OrderBook.best_bid"},{"id":"orderbook.best_ask","name":"best_ask","kind":"property","signature":"best_ask -> float | None","returns":"float | None","responsibility":"read the lowest ask price","qualified_name":"exchange.book.OrderBook.best_ask"},{"id":"orderbook.spread","name":"spread","kind":"property","signature":"spread -> float | None","returns":"float | None","responsibility":"compute best ask minus best bid","qualified_name":"exchange.book.OrderBook.spread"},{"id":"orderbook.mid","name":"mid","kind":"property","signature":"mid -> float | None","returns":"float | None","responsibility":"compute the top-of-book midpoint","qualified_name":"exchange.book.OrderBook.mid"},{"id":"orderbook.imbalance","name":"imbalance","kind":"method","signature":"imbalance(levels: int = 1) -> float | None","returns":"float | None","responsibility":"compute depth imbalance for selected levels","qualified_name":"exchange.book.OrderBook.imbalance"},{"id":"tracker.apply_fill","name":"apply_fill","kind":"method","signature":"apply_fill(fill: Fill) -> None","returns":"None","responsibility":"update cash and position atomically from a fill","qualified_name":"exchange.portfolio.PositionTracker.apply_fill"},{"id":"tracker.constructor","name":"PositionTracker","kind":"constructor","signature":"PositionTracker(cash: float = 0.0) -> PositionTracker","returns":"PositionTracker","responsibility":"initialize cash, inventory, and fill accounting","qualified_name":"exchange.portfolio.PositionTracker"},{"id":"tracker.position","name":"position","kind":"property","signature":"position -> float","returns":"float","responsibility":"read current signed inventory","qualified_name":"exchange.portfolio.PositionTracker.position"},{"id":"tracker.equity","name":"equity","kind":"method","signature":"equity(mark_price: float) -> float","returns":"float","responsibility":"mark cash and inventory to market","qualified_name":"exchange.portfolio.PositionTracker.equity"}],"routes":{"LIVE":["l05-challenge","l05-composition","l05-book-api","l05-tracker","l05-bridge"],"REQUIRED":["l05-encapsulation","l05-quiz"],"OPTIONAL":[]},"objectives":[{"id":"l05-compose-book","route":"LIVE","concepts":["oop.composition","exchange.orderbook","oop.computed_property"],"apis":["orderbook.constructor","level.constructor","orderbook.best_bid","orderbook.best_ask","orderbook.spread","orderbook.mid","orderbook.imbalance"],"notation":[]},{"id":"l05-account-for-fills","route":"LIVE","concepts":["exchange.position_tracker"],"apis":["tracker.constructor","tracker.position","tracker.apply_fill","tracker.equity"],"notation":["notation.equity"]},{"id":"l05-protect-invariants","route":"REQUIRED","concepts":["oop.encapsulation","microstructure.spread_cost"],"apis":[],"notation":[]}],"load":{"live_presentation_minutes":20,"guided_minutes":20,"required_autonomous_minutes":0,"optional_minutes":14,"overflow_policy":"explicit-route-plan","required_project_minutes":0},"scenes":[{"id":"l05-challenge","dom_id":"s0","type":"hero-challenge","route":"LIVE","layout":"focus","concepts":["oop.composition"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l05-composition","dom_id":"s1","type":"code-state","route":"LIVE","layout":"split-42-58","concepts":["oop.composition","exchange.orderbook"],"duration_minutes":6,"stages":[{"id":"levels","route":"LIVE","dom_stage":0},{"id":"container","route":"LIVE","dom_stage":1},{"id":"imbalance","route":"LIVE","dom_stage":2}]},{"id":"l05-book-api","dom_id":"s2","type":"code-state","route":"LIVE","layout":"split-50-50","concepts":["oop.computed_property","exchange.orderbook"],"duration_minutes":5,"stages":[{"id":"property-call","route":"LIVE","dom_stage":0},{"id":"return-value","route":"LIVE","dom_stage":1},{"id":"changed-and-missing","route":"LIVE","dom_stage":2},{"id":"reference-api","route":"REQUIRED","duration_minutes":2,"dom_stage":3}]},{"id":"l05-tracker","dom_id":"s3","type":"concept-simulator","route":"LIVE","layout":"split-42-58","concepts":["exchange.position_tracker"],"duration_minutes":5,"stages":[{"id":"initial-state","route":"LIVE","dom_stage":0},{"id":"buy-deltas","route":"LIVE","dom_stage":1},{"id":"mark-only","route":"LIVE","dom_stage":2},{"id":"sell-deltas","route":"LIVE","dom_stage":3},{"id":"experiment","route":"LIVE","dom_stage":4}]},{"id":"l05-encapsulation","dom_id":"s4","type":"code-state","route":"REQUIRED","layout":"split-42-58","concepts":["oop.encapsulation","microstructure.spread_cost"],"duration_minutes":8,"stages":[{"id":"accumulation","route":"REQUIRED","dom_stage":0},{"id":"internal-convention","route":"REQUIRED","dom_stage":1}]},{"id":"l05-quiz","dom_id":"s5","type":"diagnostic-quiz","route":"REQUIRED","layout":"focus","concepts":["oop.composition","oop.encapsulation"],"duration_minutes":8,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l05-bridge","dom_id":"s6","type":"bridge","route":"LIVE","layout":"focus","concepts":["oop.composition"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]}],"bridge":{"target_lesson":6,"known":{"concepts":["oop.classes","oop.composition"],"apis":["orderbook.imbalance"],"notation":["notation.equity"]},"limitation":"Duplicar una clase completa por estrategia repite estructura y ciclo de vida.","need":"La herencia y un contrato abstracto conservan el esqueleto mientras cambia la decisión."},"api_transitions":[],"package_checks":[{"path":"05-oop-ii-book-portfolio/exercises/exchange/orders.py","class":"Order","members":{"__init__":{"api":"order.constructor","kind":"constructor","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"side","kind":"positional_or_keyword","annotation":"Side"},{"name":"size","kind":"positional_or_keyword","annotation":"float"},{"name":"price","kind":"positional_or_keyword","annotation":"float | None","default":"None"},{"name":"order_type","kind":"positional_or_keyword","annotation":"OrderType","default":"OrderType.LIMIT"},{"name":"id","kind":"positional_or_keyword","annotation":"int","default":"None"}],"returns":"Order"}}},{"path":"05-oop-ii-book-portfolio/exercises/exchange/trades.py","class":"Fill","members":{"__init__":{"api":"fill.constructor","kind":"constructor","parameters":[{"name":"order_id","kind":"positional_or_keyword","annotation":"int"},{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"side","kind":"positional_or_keyword","annotation":"Side"},{"name":"price","kind":"positional_or_keyword","annotation":"float"},{"name":"size","kind":"positional_or_keyword","annotation":"float"},{"name":"timestamp","kind":"positional_or_keyword","annotation":"int | None","default":"None"}],"returns":"Fill"},"cash_flow":{"api":"fill.cash_flow","kind":"method","parameters":[],"returns":"float"}}},{"path":"05-oop-ii-book-portfolio/exercises/exchange/book.py","class":"Level","members":{"__init__":{"api":"level.constructor","kind":"constructor","parameters":[{"name":"price","kind":"positional_or_keyword","annotation":"float"},{"name":"size","kind":"positional_or_keyword","annotation":"float"}],"returns":"Level"}}},{"path":"05-oop-ii-book-portfolio/exercises/exchange/book.py","class":"OrderBook","members":{"__init__":{"api":"orderbook.constructor","kind":"constructor","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"bids","kind":"positional_or_keyword","annotation":"list[Level]"},{"name":"asks","kind":"positional_or_keyword","annotation":"list[Level]"}],"returns":"OrderBook"},"best_bid":{"api":"orderbook.best_bid","kind":"property","parameters":[],"returns":"float | None"},"best_ask":{"api":"orderbook.best_ask","kind":"property","parameters":[],"returns":"float | None"},"spread":{"api":"orderbook.spread","kind":"property","parameters":[],"returns":"float | None"},"mid":{"api":"orderbook.mid","kind":"property","parameters":[],"returns":"float | None"},"imbalance":{"api":"orderbook.imbalance","kind":"method","parameters":[{"name":"levels","kind":"positional_or_keyword","annotation":"int","default":"1"}],"returns":"float | None"}}},{"path":"05-oop-ii-book-portfolio/exercises/exchange/portfolio.py","class":"PositionTracker","members":{"__init__":{"api":"tracker.constructor","kind":"constructor","parameters":[{"name":"cash","kind":"positional_or_keyword","annotation":"float","default":"0.0"}],"returns":"PositionTracker"},"position":{"api":"tracker.position","kind":"property","parameters":[],"returns":"float"},"apply_fill":{"api":"tracker.apply_fill","kind":"method","parameters":[{"name":"fill","kind":"positional_or_keyword","annotation":"Fill"}],"returns":"None"},"equity":{"api":"tracker.equity","kind":"method","parameters":[{"name":"mark_price","kind":"positional_or_keyword","annotation":"float"}],"returns":"float"}}}],"used_later":{"concepts":["exchange.orderbook","microstructure.spread_cost","oop.composition","oop.computed_property"],"apis":["level.constructor","orderbook.best_ask","orderbook.best_bid","orderbook.constructor","orderbook.imbalance","orderbook.mid","orderbook.spread","tracker.apply_fill","tracker.constructor","tracker.equity","tracker.position"],"notation":["notation.equity"]}}</script>
+<script type="application/json" id="pedagogy-contract">{"lesson":5,"status":"contract-strict","title":"OOP II — OrderBook y PositionTracker","delivery":"lesson","source_path":"framework/_build/docs/05_body.html","requires":{"concepts":["oop.classes","exchange.order","exchange.fill","python.lambda","python.sorted_key","python.fstring","python.generator_expression"],"apis":["order.constructor","fill.constructor","fill.cash_flow"],"notation":["notation.spread","notation.mid","notation.cash_flow"]},"requirement_routes":{"concepts":{"oop.classes":"LIVE","exchange.order":"LIVE","exchange.fill":"LIVE","python.lambda":"LIVE","python.sorted_key":"LIVE","python.fstring":"LIVE","python.generator_expression":"REQUIRED"},"apis":{"order.constructor":"REQUIRED","fill.constructor":"REQUIRED","fill.cash_flow":"LIVE"},"notation":{"notation.spread":"LIVE","notation.mid":"LIVE","notation.cash_flow":"LIVE"}},"introduces":{"concepts":[{"id":"oop.composition","importance":"major","route":"LIVE"},{"id":"oop.encapsulation","importance":"major","route":"REQUIRED"},{"id":"oop.computed_property","importance":"major","route":"LIVE"},{"id":"exchange.orderbook","importance":"major","route":"LIVE"},{"id":"exchange.position_tracker","importance":"major","route":"LIVE"},{"id":"microstructure.spread_cost","importance":"major","route":"REQUIRED"}],"apis":["orderbook.constructor","level.constructor","orderbook.best_bid","orderbook.best_ask","orderbook.spread","orderbook.mid","orderbook.imbalance","tracker.constructor","tracker.position","tracker.apply_fill","tracker.equity"],"notation":["notation.equity"]},"introduction_routes":{"apis":{"orderbook.constructor":"LIVE","level.constructor":"LIVE","orderbook.best_bid":"LIVE","orderbook.best_ask":"LIVE","orderbook.spread":"LIVE","orderbook.mid":"LIVE","orderbook.imbalance":"LIVE","tracker.constructor":"LIVE","tracker.position":"LIVE","tracker.apply_fill":"LIVE","tracker.equity":"LIVE"},"notation":{"notation.equity":"LIVE"}},"recalls":[{"concept":"oop.classes","introduced_in":4,"mapping":{"before":"Order y Fill vinculan un registro con comportamiento.","now":"Los contenedores protegen muchos objetos de dominio y su estado compartido."}}],"api_surface":[{"id":"order.constructor","name":"Order","kind":"constructor","signature":"Order(symbol: str, side: Side, size: float, price: float | None = None, order_type: OrderType = OrderType.LIMIT, id: int = None) -> Order","returns":"Order","responsibility":"construct the canonical order intent","qualified_name":"exchange.orders.Order"},{"id":"fill.constructor","name":"Fill","kind":"constructor","signature":"Fill(order_id: int, symbol: str, side: Side, price: float, size: float, timestamp: int | None = None) -> Fill","returns":"Fill","responsibility":"construct one canonical execution result","qualified_name":"exchange.trades.Fill"},{"id":"fill.cash_flow","name":"cash_flow","kind":"method","signature":"cash_flow() -> float","returns":"float","responsibility":"compute signed fill cash flow","qualified_name":"exchange.trades.Fill.cash_flow"},{"id":"orderbook.constructor","name":"OrderBook","kind":"constructor","signature":"OrderBook(symbol: str, bids: list[Level], asks: list[Level]) -> OrderBook","returns":"OrderBook","responsibility":"construct a sorted two-sided book","qualified_name":"exchange.book.OrderBook"},{"id":"level.constructor","name":"Level","kind":"constructor","signature":"Level(price: float, size: float) -> Level","returns":"Level","responsibility":"construct one visible price level","qualified_name":"exchange.book.Level"},{"id":"orderbook.best_bid","name":"best_bid","kind":"property","signature":"best_bid -> float | None","returns":"float | None","responsibility":"read the highest bid price","qualified_name":"exchange.book.OrderBook.best_bid"},{"id":"orderbook.best_ask","name":"best_ask","kind":"property","signature":"best_ask -> float | None","returns":"float | None","responsibility":"read the lowest ask price","qualified_name":"exchange.book.OrderBook.best_ask"},{"id":"orderbook.spread","name":"spread","kind":"property","signature":"spread -> float | None","returns":"float | None","responsibility":"compute best ask minus best bid","qualified_name":"exchange.book.OrderBook.spread"},{"id":"orderbook.mid","name":"mid","kind":"property","signature":"mid -> float | None","returns":"float | None","responsibility":"compute the top-of-book midpoint","qualified_name":"exchange.book.OrderBook.mid"},{"id":"orderbook.imbalance","name":"imbalance","kind":"method","signature":"imbalance(levels: int = 1) -> float | None","returns":"float | None","responsibility":"compute depth imbalance for selected levels","qualified_name":"exchange.book.OrderBook.imbalance"},{"id":"tracker.apply_fill","name":"apply_fill","kind":"method","signature":"apply_fill(fill: Fill) -> None","returns":"None","responsibility":"update cash and position atomically from a fill","qualified_name":"exchange.portfolio.PositionTracker.apply_fill"},{"id":"tracker.constructor","name":"PositionTracker","kind":"constructor","signature":"PositionTracker(cash: float = 0.0) -> PositionTracker","returns":"PositionTracker","responsibility":"initialize cash, inventory, and fill accounting","qualified_name":"exchange.portfolio.PositionTracker"},{"id":"tracker.position","name":"position","kind":"property","signature":"position -> float","returns":"float","responsibility":"read current signed inventory","qualified_name":"exchange.portfolio.PositionTracker.position"},{"id":"tracker.equity","name":"equity","kind":"method","signature":"equity(mark_price: float) -> float","returns":"float","responsibility":"mark cash and inventory to market","qualified_name":"exchange.portfolio.PositionTracker.equity"}],"routes":{"LIVE":["l05-challenge","l05-tracker","l05-composition","l05-book-api","l05-bridge"],"REQUIRED":["l05-encapsulation","l05-quiz"],"OPTIONAL":[]},"objectives":[{"id":"l05-compose-book","route":"LIVE","concepts":["oop.composition","exchange.orderbook","oop.computed_property"],"apis":["orderbook.constructor","level.constructor","orderbook.best_bid","orderbook.best_ask","orderbook.spread","orderbook.mid","orderbook.imbalance"],"notation":[]},{"id":"l05-account-for-fills","route":"LIVE","concepts":["exchange.position_tracker"],"apis":["tracker.constructor","tracker.position","tracker.apply_fill","tracker.equity"],"notation":["notation.equity"]},{"id":"l05-protect-invariants","route":"REQUIRED","concepts":["oop.encapsulation","microstructure.spread_cost"],"apis":[],"notation":[]}],"load":{"live_presentation_minutes":20,"guided_minutes":20,"required_autonomous_minutes":10,"optional_minutes":5,"overflow_policy":"explicit-route-plan","required_project_minutes":0},"scenes":[{"id":"l05-challenge","dom_id":"s0","type":"hero-challenge","route":"LIVE","layout":"focus","concepts":["oop.composition"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l05-tracker","dom_id":"s3","type":"concept-simulator","route":"LIVE","layout":"split-42-58","concepts":["exchange.position_tracker"],"duration_minutes":5,"stages":[{"id":"initial-state","route":"LIVE","dom_stage":0},{"id":"buy-deltas","route":"LIVE","dom_stage":1},{"id":"mark-only","route":"LIVE","dom_stage":2},{"id":"sell-deltas","route":"LIVE","dom_stage":3},{"id":"experiment","route":"LIVE","dom_stage":4}]},{"id":"l05-composition","dom_id":"s1","type":"code-state","route":"LIVE","layout":"split-42-58","concepts":["oop.composition","exchange.orderbook"],"duration_minutes":6,"stages":[{"id":"levels","route":"LIVE","dom_stage":0},{"id":"container","route":"LIVE","dom_stage":1},{"id":"imbalance","route":"LIVE","dom_stage":2}]},{"id":"l05-book-api","dom_id":"s2","type":"code-state","route":"LIVE","layout":"split-50-50","concepts":["oop.computed_property","exchange.orderbook"],"duration_minutes":5,"stages":[{"id":"property-call","route":"LIVE","dom_stage":0},{"id":"return-value","route":"LIVE","dom_stage":1},{"id":"changed-and-missing","route":"LIVE","dom_stage":2},{"id":"missing-mark","route":"REQUIRED","duration_minutes":2,"dom_stage":3}]},{"id":"l05-encapsulation","dom_id":"s4","type":"code-state","route":"REQUIRED","layout":"split-42-58","concepts":["oop.encapsulation","microstructure.spread_cost"],"duration_minutes":8,"stages":[{"id":"accumulation","route":"REQUIRED","dom_stage":0},{"id":"responsibilities","route":"REQUIRED","dom_stage":1}]},{"id":"l05-quiz","dom_id":"s5","type":"diagnostic-quiz","route":"REQUIRED","layout":"focus","concepts":["oop.composition","oop.encapsulation"],"duration_minutes":8,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l05-bridge","dom_id":"s6","type":"bridge","route":"LIVE","layout":"focus","concepts":["oop.composition"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]}],"bridge":{"target_lesson":6,"known":{"concepts":["oop.classes","oop.composition"],"apis":["orderbook.imbalance"],"notation":["notation.equity"]},"limitation":"Duplicar una clase completa por estrategia repite estructura y ciclo de vida.","need":"La herencia y un contrato abstracto conservan el esqueleto mientras cambia la decisión."},"api_transitions":[],"package_checks":[{"path":"framework/exchange/orders.py","class":"Order","members":{"__init__":{"api":"order.constructor","kind":"constructor","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"side","kind":"positional_or_keyword","annotation":"Side"},{"name":"size","kind":"positional_or_keyword","annotation":"float"},{"name":"price","kind":"positional_or_keyword","annotation":"float | None","default":"None"},{"name":"order_type","kind":"positional_or_keyword","annotation":"OrderType","default":"OrderType.LIMIT"},{"name":"id","kind":"positional_or_keyword","annotation":"int","default":"None"}],"returns":"Order"}}},{"path":"framework/exchange/trades.py","class":"Fill","members":{"__init__":{"api":"fill.constructor","kind":"constructor","parameters":[{"name":"order_id","kind":"positional_or_keyword","annotation":"int"},{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"side","kind":"positional_or_keyword","annotation":"Side"},{"name":"price","kind":"positional_or_keyword","annotation":"float"},{"name":"size","kind":"positional_or_keyword","annotation":"float"},{"name":"timestamp","kind":"positional_or_keyword","annotation":"int | None","default":"None"}],"returns":"Fill"},"cash_flow":{"api":"fill.cash_flow","kind":"method","parameters":[],"returns":"float"}}},{"path":"framework/exchange/book.py","class":"Level","members":{"__init__":{"api":"level.constructor","kind":"constructor","parameters":[{"name":"price","kind":"positional_or_keyword","annotation":"float"},{"name":"size","kind":"positional_or_keyword","annotation":"float"}],"returns":"Level"}}},{"path":"framework/exchange/book.py","class":"OrderBook","members":{"__init__":{"api":"orderbook.constructor","kind":"constructor","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"bids","kind":"positional_or_keyword","annotation":"list[Level]"},{"name":"asks","kind":"positional_or_keyword","annotation":"list[Level]"}],"returns":"OrderBook"},"best_bid":{"api":"orderbook.best_bid","kind":"property","parameters":[],"returns":"float | None"},"best_ask":{"api":"orderbook.best_ask","kind":"property","parameters":[],"returns":"float | None"},"spread":{"api":"orderbook.spread","kind":"property","parameters":[],"returns":"float | None"},"mid":{"api":"orderbook.mid","kind":"property","parameters":[],"returns":"float | None"},"imbalance":{"api":"orderbook.imbalance","kind":"method","parameters":[{"name":"levels","kind":"positional_or_keyword","annotation":"int","default":"1"}],"returns":"float | None"}}},{"path":"framework/exchange/portfolio.py","class":"PositionTracker","members":{"__init__":{"api":"tracker.constructor","kind":"constructor","parameters":[{"name":"cash","kind":"positional_or_keyword","annotation":"float","default":"0.0"}],"returns":"PositionTracker"},"position":{"api":"tracker.position","kind":"property","parameters":[],"returns":"float"},"apply_fill":{"api":"tracker.apply_fill","kind":"method","parameters":[{"name":"fill","kind":"positional_or_keyword","annotation":"Fill"}],"returns":"None"},"equity":{"api":"tracker.equity","kind":"method","parameters":[{"name":"mark_price","kind":"positional_or_keyword","annotation":"float"}],"returns":"float"}}}],"used_later":{"concepts":["exchange.orderbook","microstructure.spread_cost","oop.composition","oop.computed_property"],"apis":["level.constructor","orderbook.best_ask","orderbook.best_bid","orderbook.constructor","orderbook.imbalance","orderbook.mid","orderbook.spread","tracker.apply_fill","tracker.constructor","tracker.equity","tracker.position"],"notation":["notation.equity"]}}</script>
 <script type="application/json" id="learning-support">{"lesson": 5, "cards": {"book": {"title": "Leer el libro: mid e imbalance", "first_lesson": 5, "route": "LIVE", "why": "Separar precio de referencia y desequilibrio de cantidades.", "inputs": "Proyecto: OrderBook(bids, asks), listas de Level(price, size). imbalance(levels=1) usa el mejor nivel por defecto.", "outputs": "mid: (mejor bid + mejor ask)/2, o None si falta un lado. imbalance: (vol_bid-vol_ask)/(vol_bid+vol_ask), o None si no hay volumen. Son lecturas, no ejecuciones.", "mechanism": "Bids ordenados de mayor a menor precio; asks de menor a mayor. Cambiar levels cambia la observación: indícalo al comparar señales.", "example": "# bids=[(99, 3)], asks=[(101, 1)]\n# mid=100; imbalance=(3-1)/(3+1)=0.5"}, "objects": {"title": "Clase, instancia, self y __init__", "first_lesson": 4, "route": "LIVE", "why": "Agrupar datos que pertenecen a una misma orden junto con sus operaciones.", "inputs": "Clase(...): argumentos del constructor. Método: instancia.metodo(...).", "outputs": "Una instancia con atributos propios. self es esa instancia, pasado automáticamente al llamar a un método.", "mechanism": "__init__ prepara el estado. self.size = size guarda un atributo; una variable size sin self sólo es local a la llamada.", "example": "class Ticket:\n    def __init__(self, size):\n        self.size = size\nticket = Ticket(2)\nprint(ticket.size)  # 2"}, "orderfill": {"title": "Order no es Fill: intención frente a ejecución", "first_lesson": 4, "route": "LIVE", "why": "No mover dinero por una orden que todavía no se ha ejecutado.", "inputs": "Principal L4: Fill(side, price, size). Una orden es una intención; su interfaz de referencia se muestra aparte.", "outputs": "Order describe lo solicitado. Fill registra lo realmente ejecutado. Una orden puede producir cero, uno o varios fills.", "mechanism": "Compra: caja baja e inventario sube; venta: al revés. La API de referencia añade symbol, identificadores y enums: distingue esa interfaz de tu clase Fill del notebook.", "example": "# Ejecución ya ocurrida: buy 2 @ 100\n# cambio de caja = -200; cambio de inventario = +2"}, "portfolio": {"title": "Caja, inventario y equity", "first_lesson": 5, "route": "LIVE", "why": "Saber cuánto vale la cuenta, no sólo cuánto efectivo conserva.", "inputs": "Fills ejecutados y un precio de valoración actual (mid).", "outputs": "Aplicar un fill cambia caja e inventario; equity = cash + position * mid.", "mechanism": "Valorar no es vender. El PnL se obtiene comparando equity con el capital inicial y descontando las comisiones previstas.", "example": "# cash=1000, compra 2 @ 100: cash=800, position=2\n# al mid=101: equity=800+2*101=1002"}, "property": {"title": "@property: consultar sin paréntesis", "first_lesson": 5, "route": "LIVE", "why": "Leer una magnitud calculada del estado actual.", "inputs": "Una instancia; por ejemplo book.mid.", "outputs": "El valor devuelto por el método decorado, no una copia guardada de ese valor.", "mechanism": "@property permite escribir book.mid en lugar de book.mid(). En esta clase es una consulta: no consume órdenes ni mueve caja.", "example": "# book.mid consulta; tracker.apply_fill(fill) modifica."}}, "scenes": {"s0": ["objects", "portfolio"], "s1": ["objects", "book"], "s2": ["book", "property"], "s3": ["portfolio", "orderfill"], "s4": ["objects", "property"], "s5": ["book", "portfolio"], "s6": ["book", "portfolio"]}}</script>
 <script>
 
@@ -1488,53 +1522,68 @@ $$('.scrolly[data-scrolly]').forEach(sc=>{
 (function(){
 "use strict";
 const $=s=>document.querySelector(s);
-const BID=99, ASK=101, SIZE=2, INITIAL_CASH=1000;
-let cash=INITIAL_CASH, pos=0, n=0;
+const BUY_PRICE=101, SELL_PRICE=103, BUY_SIZE=2, SELL_SIZE=1, INITIAL_CASH=1000;
+let cash=INITIAL_CASH, pos=0, n=0, mark=100;
+/* Two views, one existing tracker model: changing scene does not reset state. */
+const original=$('#tracker-first');
+original.querySelectorAll('[id^="tk-"]').forEach(node=>node.dataset.tracker=node.id);
+const mirror=original.cloneNode(true);
+mirror.id='tracker-mirror';
+mirror.querySelectorAll('[id]').forEach(node=>node.id+='-detail');
+mirror.querySelectorAll('[for]').forEach(node=>node.htmlFor+='-detail');
+$('#tracker-detail').appendChild(mirror);
+const each=(id,fn)=>document.querySelectorAll(`[data-tracker="${id}"]`).forEach(fn);
+const write=(id,value)=>each(id,node=>node.textContent=value);
+const listen=(id,event,handler)=>each(id,node=>node.addEventListener(event,handler));
+
 function fmt(x){const r=Math.round(x*100)/100;return (r>0?'+':'')+(Number.isInteger(r)?r+'.0':r);}
 function render(){
-  const mark=Number($('#tk-mark').value);
-  $('#tk-markv').textContent=mark;
-  const set=(id,v)=>{const el=$(id);el.textContent=fmt(v);
-    el.className=v>1e-9?'pos':v<-1e-9?'neg':'';};
-  set('#tk-cash',cash);
-  $('#tk-pos').textContent=String(Math.round(pos*100)/100);
-  $('#tk-pos').className=pos>1e-9?'pos':pos<-1e-9?'neg':'';
-  set('#tk-eq',cash+pos*mark);
-  $('#tk-n').textContent=n;
-  $('#tk-eq-formula').textContent=cash+' + '+pos+' × '+mark;
+  each('tk-mark',node=>node.value=mark);
+  write('tk-markv',mark);
+  document.querySelectorAll('[data-current-mark]').forEach(node=>node.textContent=mark+' USD/unidad');
+  const set=(id,value)=>each(id,node=>{node.textContent=fmt(value);node.className=value>1e-9?'pos':value<-1e-9?'neg':'';});
+  set('tk-cash',cash);
+  write('tk-pos',String(Math.round(pos*100)/100));
+  each('tk-pos',node=>node.className=pos>1e-9?'pos':pos<-1e-9?'neg':'');
+  set('tk-eq',cash+pos*mark);
+  write('tk-n',n);
+  write('tk-eq-formula',cash+' USD + '+pos+' u × '+mark+' USD/u');
 }
 function effect(action,dc=0,dp=0){
-  $('#tk-action').textContent=action;
-  $('#tk-cash-delta').textContent=dc?'Δ '+fmt(dc):'sin cambio';
-  $('#tk-pos-delta').textContent=dp?'Δ '+fmt(dp):'sin cambio';
-  $('#tk-cash-card').classList.toggle('changed',dc!==0);
-  $('#tk-pos-card').classList.toggle('changed',dp!==0);
-  $('#tk-eq-card').classList.toggle('changed',action==='Solo mark');
+  write('tk-action',action);
+  write('tk-cash-delta',dc?'Δ '+fmt(dc)+' USD':'sin cambio');
+  write('tk-pos-delta',dp?'Δ '+fmt(dp)+' unidades':'sin cambio');
+  each('tk-cash-card',node=>node.classList.toggle('changed',dc!==0));
+  each('tk-pos-card',node=>node.classList.toggle('changed',dp!==0));
+  each('tk-eq-card',node=>node.classList.toggle('changed',action==='Solo valoración'));
 }
 function fill(side){
-  const px=side==='buy'?ASK:BID;
-  const deltaCash=side==='buy'?-px*SIZE:px*SIZE;
-  const deltaPos=side==='buy'?SIZE:-SIZE;
+  const px=side==='buy'?BUY_PRICE:SELL_PRICE;
+  const size=side==='buy'?BUY_SIZE:SELL_SIZE;
+  const deltaCash=side==='buy'?-px*size:px*size;
+  const deltaPos=side==='buy'?size:-size;
   const beforeCash=cash, beforePos=pos;
-  effect('apply_fill',deltaCash,deltaPos);
-  cash+=deltaCash;
-  pos+=deltaPos;
-  n++;
-  $('#tk-log').textContent="Fill('"+side+"', "+px+", "+SIZE+") · antes: "+beforeCash+", "+beforePos+" · delta: "+fmt(deltaCash)+", "+fmt(deltaPos)+" · después: "+cash+", "+pos+".";
+  effect('Operación · apply_fill',deltaCash,deltaPos);
+  cash+=deltaCash;pos+=deltaPos;n++;
+  write('tk-fill-price',`${side} ${size} u @ ${px} USD/u`);
+  write('tk-log',`Fill('${side}', ${px}, ${size}) · antes ${beforeCash} USD / ${beforePos} u → después ${cash} USD / ${pos} u. Cada click registra otra ejecución.`);
   render();
 }
-$('#tk-buy').addEventListener('click',()=>fill('buy'));
-$('#tk-sell').addEventListener('click',()=>fill('sell'));
-$('#tk-reset').addEventListener('click',()=>{
-  cash=INITIAL_CASH;pos=0;n=0;$('#tk-mark').value=100;effect('Inicio');
-  $('#tk-log').textContent='Inicio: cash=1000, position=0, mark=100. Sin fills.';
+function valueAt(nextMark){
+  mark=Number(nextMark);effect('Solo valoración');render();
+  write('tk-log',`equity(${mark}) = ${cash} + ${pos} × ${mark} = ${cash+pos*mark} USD. Cash=${cash} y position=${pos} permanecen. No hay un fill nuevo.`);
+}
+listen('tk-buy','click',()=>fill('buy'));
+listen('tk-sell','click',()=>fill('sell'));
+listen('tk-reset','click',()=>{
+  cash=INITIAL_CASH;pos=0;n=0;mark=100;effect('Inicio');
+  write('tk-fill-price','ninguno');
+  write('tk-log','Inicio: cash=1000 USD, position=0, mark=100 USD/unidad. Sin fills.');
   render();
 });
-$('#tk-mark').addEventListener('input',()=>{
-  effect('Solo mark');
-  render();
-  $('#tk-log').textContent='Solo valoración: equity = '+cash+' + '+pos+' × '+$('#tk-mark').value+'. Cash='+cash+' y position='+pos+' no cambian.';
-});
+listen('tk-mark','input',event=>valueAt(event.target.value));
+listen('tk-mark100','click',()=>valueAt(100));
+listen('tk-mark105','click',()=>valueAt(105));
 render();
 
 /* La API aplica deltas. No deduplica ni sanea una historia manipulada. */
@@ -1550,7 +1599,7 @@ render();
   }
   $('#inv-fill').addEventListener('click',()=>{
     const beforeCash=invCash,beforePos=invPos;
-    invCash-=ASK*SIZE;invPos+=SIZE;count++;
+    invCash-=BUY_PRICE*BUY_SIZE;invPos+=BUY_SIZE;count++;
     $('#inv-log').textContent='Fill '+count+': antes '+beforeCash+', '+beforePos+'; delta −202, +2; después '+invCash+', '+invPos+'.'+(broken?' La manipulación anterior permanece.':' Cada click contabiliza otra compra.');
     invRender();
   });
@@ -1602,9 +1651,9 @@ const route=value=>ROUTES.includes(String(value||'').toUpperCase())
 const routeClass=value=>`lr-route-${route(value).toLowerCase()}`;
 const scopeRoutes=()=>routeScope==='ALL'?ROUTES:
   routeScope==='LIVE+REQUIRED'?['LIVE','REQUIRED']:['LIVE'];
-const modeUrl=next=>{
+const modeUrl=(next,hash=location.hash)=>{
   const q=new URLSearchParams(location.search);q.set('mode',next);
-  return `${location.pathname}?${q.toString()}${location.hash}`;
+  return `${location.pathname}?${q.toString()}${hash}`;
 };
 const stateKey=(scene,stage)=>`${scene.id}::${stage.id}`;
 const reducedMotion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1732,8 +1781,8 @@ nav.innerHTML=`
   <a class="lr-course-home" href="../../index.html">← Mapa del curso</a>
   <div class="lr-brand"><b>L${Number(contract.lesson)}</b><span>${esc(contract.title)}</span></div>
   <div class="lr-modes" aria-label="Modo de lectura">
-    <a href="${modeUrl('aula')}" class="${mode==='aula'?'on':''}">Aula</a>
-    <a href="${modeUrl('estudio')}" class="${mode==='estudio'?'on':''}">Estudio</a>
+    <a href="${modeUrl('aula')}" data-mode="aula" class="${mode==='aula'?'on':''}">Aula</a>
+    <a href="${modeUrl('estudio')}" data-mode="estudio" class="${mode==='estudio'?'on':''}">Estudio</a>
   </div>
   <button type="button" class="lr-study-optional" aria-pressed="false">Incluir OPTIONAL</button>
   <div class="lr-scene-links"></div>`;
@@ -1764,6 +1813,38 @@ controls.innerHTML=`
   <button type="button" class="lr-route-scope" aria-label="Cambiar alcance de ruta">LIVE</button>
   <button type="button" class="lr-next" aria-label="Etapa siguiente"><span>Siguiente</span> →</button>`;
 body.appendChild(controls);
+const stagePicker=document.createElement('select');
+stagePicker.className='lr-stage-picker';stagePicker.setAttribute('aria-label','Ir a una etapa');
+nav.insertBefore(stagePicker,navLinks);
+stagePicker.addEventListener('change',()=>{
+  const item=inventory.find(entry=>entry.key===stagePicker.value);
+  if(item)goTo(models.indexOf(item.scene),allowedStages(item.scene).indexOf(item.stage),false);
+});
+function syncStagePicker(scene,stage){
+  const available=inventory.filter(item=>allowed(item.scene)&&scopeRoutes().includes(item.route));
+  stagePicker.innerHTML=available.map(item=>{
+    const title=item.scene.element.querySelector('h1,h2')?.textContent.trim()||item.scene.id;
+    const name=item.stage.step?.dataset.name||item.stage.id;
+    return `<option value="${esc(item.key)}">${esc(title)} · ${esc(name)}</option>`;
+  }).join('');
+  if(scene&&stage)stagePicker.value=stateKey(scene,stage);
+}
+function studyActivate(scene,stage,scroll=false,focus=false){
+  currentScene=models.indexOf(scene);currentStage=allowedStages(scene).indexOf(stage);
+  body.dataset.currentSceneId=scene.id;body.dataset.currentStageId=stage.id;
+  activateStage(scene,stage);syncNav(scene);syncStagePicker(scene,stage);syncTeacher(scene,stage);
+  controls.querySelector('.lr-scene-progress').textContent=`Escena ${availableModels().indexOf(scene)+1}/${availableModels().length}`;
+  controls.querySelector('.lr-stage-progress').textContent=`Etapa ${currentStage+1}/${allowedStages(scene).length}`;
+  controls.querySelector('.lr-route-progress').textContent=stage.step?.dataset.name||'Lectura';
+  const flat=inventory.filter(item=>allowed(item.scene)&&scopeRoutes().includes(item.route));
+  const i=flat.findIndex(item=>item.scene===scene&&item.stage===stage);
+  controls.querySelector('.lr-prev').disabled=i<=0;
+  controls.querySelector('.lr-next').disabled=i===flat.length-1;
+  saveRuntime(scene,stage,true);updateDeepLink(scene,stage);
+  if(scroll)(stage.step||scene.element).scrollIntoView({block:stage.step?'center':'start',behavior:reducedMotion()?'auto':'smooth'});
+  if(focus){const h=(stage.step||scene.element).querySelector('h1,h2,h3');if(h){h.tabIndex=-1;h.focus({preventScroll:true});}}
+}
+
 
 const liveRegion=document.createElement('div');
 liveRegion.className='lr-sr-only';liveRegion.setAttribute('aria-live','polite');
@@ -1815,7 +1896,7 @@ function activateStage(scene,stage){
     step.hidden=!visibleRoute;
     step.classList.toggle('lr-stage-active',active&&visibleRoute);
     step.classList.toggle('on',active&&visibleRoute);
-    step.setAttribute('aria-hidden',String(!(active&&visibleRoute)));
+    step.setAttribute('aria-hidden',String(mode==='estudio'?!visibleRoute:!(active&&visibleRoute)));
   });
   scene.allFigures.forEach(figure=>{
     const model=scene.stages.find(item=>item.figure===figure);
@@ -1871,9 +1952,11 @@ function syncTeacher(scene,stage){
   });
 }
 function updateDeepLink(scene,stage){
-  if(!history.replaceState)return;
   const next=`#${encodeURIComponent(scene.id)}/${encodeURIComponent(stage.id)}`;
-  if(location.hash!==next)history.replaceState(null,'',`${location.pathname}${location.search}${next}`);
+  if(history.replaceState&&location.hash!==next)history.replaceState(null,'',`${location.pathname}${location.search}${next}`);
+  nav.querySelectorAll('.lr-modes a').forEach(link=>{
+    link.setAttribute('href',modeUrl(link.dataset.mode,next));
+  });
 }
 function goTo(sceneIndex,stageIndex,focusHeading=true){
   let scene=models[sceneIndex];
@@ -1884,6 +1967,7 @@ function goTo(sceneIndex,stageIndex,focusHeading=true){
   const stages=allowedStages(scene);
   stageIndex=Math.max(0,Math.min(Number(stageIndex)||0,stages.length-1));
   const stage=stages[stageIndex];
+  if(mode==='estudio'){studyActivate(scene,stage,true,focusHeading);return;}
   const positionChanged=body.dataset.currentSceneId!==scene.id
     ||body.dataset.currentStageId!==stage.id;
   currentScene=sceneIndex;currentStage=stageIndex;
@@ -1923,7 +2007,7 @@ function goTo(sceneIndex,stageIndex,focusHeading=true){
     total+scopeProgress[routeName].visited,0)/Math.max(1,enabledRoutes.reduce((total,routeName)=>
     total+scopeProgress[routeName].total,0))*100);
   controls.querySelector('.lr-route-progress').textContent=`${routeProgress}% visto`;
-  syncNav(scene);syncTeacher(scene,stage);updateDeepLink(scene,stage);
+  syncNav(scene);syncStagePicker(scene,stage);syncTeacher(scene,stage);updateDeepLink(scene,stage);
   liveRegion.textContent=`${scene.id}, etapa ${stageIndex+1} de ${stages.length}`;
   if(focusHeading){
     const heading=scene.element.querySelector('h1,h2,h3');
@@ -1982,7 +2066,7 @@ function applyStudyScope(activeScene=null){
       });
     });
   });
-  syncNav(activeScene);syncOptionalControls();saveRuntime(null,null,false);
+  syncNav(activeScene);syncOptionalControls();syncStagePicker();saveRuntime(null,null,false);
 }
 function toggleOptional(){
   routeScope=routeScope==='ALL'?'LIVE+REQUIRED':'ALL';
@@ -1999,7 +2083,7 @@ document.querySelectorAll('.lr-study-optional').forEach(button=>button.addEventL
 
 document.addEventListener('keydown',event=>{
   if(event.key==='Escape'){closeOverlays();return;}
-  if(mode!=='aula')return;
+  if(mode!=='aula'&&(!event.altKey||!['ArrowRight','ArrowLeft'].includes(event.key)))return;
   const active=document.activeElement;
   if(active&&(/INPUT|TEXTAREA|SELECT/.test(active.tagName)||active.isContentEditable))return;
   if(active&&active.tagName==='BUTTON'&&(event.key===' '||event.key==='Enter'))return;
@@ -2046,6 +2130,8 @@ if(mode==='aula'){
   const restored=restoredPosition();
   if(restored?.stage.route==='OPTIONAL')routeScope='ALL';
   applyStudyScope(restored?.scene||null);
+  const initial=restored&&allowed(restored.scene)?restored:{scene:availableModels()[0],stage:allowedStages(availableModels()[0])[0]};
+  studyActivate(initial.scene,initial.stage);
   const sceneObserver=new IntersectionObserver(entries=>{
     const visible=entries.filter(entry=>entry.isIntersecting&&!entry.target.hidden)
       .sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
@@ -2054,14 +2140,14 @@ if(mode==='aula'){
     if(!scene)return;
     syncNav(scene);
     const stage=allowedStages(scene).find(item=>!item.step)||allowedStages(scene)[0];
-    if(stage){saveRuntime(scene,stage,true);updateDeepLink(scene,stage);}
+    if(stage&&!scene.allSteps.length)studyActivate(scene,stage);
   },{rootMargin:'-20% 0px -55% 0px',threshold:[0,.15,.4]});
   models.forEach(scene=>sceneObserver.observe(scene.element));
   models.forEach(scene=>scene.stages.forEach(stage=>{
     if(!stage.step)return;
     const observer=new IntersectionObserver(entries=>{
       if(entries.some(entry=>entry.isIntersecting)&&!stage.step.hidden){
-        saveRuntime(scene,stage,true);syncNav(scene);updateDeepLink(scene,stage);
+        studyActivate(scene,stage);
       }
     },{rootMargin:'-35% 0px -45% 0px',threshold:.1});
     observer.observe(stage.step);
@@ -2083,7 +2169,7 @@ window.LEARNING_RUNTIME={
     if(mode==='estudio'){
       const stage=scene.stages.find(item=>item.id===stageId)||allowedStages(scene)[0];
       if(!stage)return false;
-      (stage.step||scene.element).scrollIntoView({block:'center'});return true;
+      studyActivate(scene,stage,true,false);return true;
     }
     const stages=allowedStages(scene),index=stages.findIndex(item=>item.id===stageId);
     goTo(models.indexOf(scene),Math.max(0,index),false);return true;
@@ -2137,7 +2223,7 @@ window.LEARNING_RUNTIME={
     if(!wrap)return;
     const button=document.createElement('button');
     button.type='button';button.className='lr-support-open';
-    button.textContent='Entender este código';
+    button.textContent=scene.querySelector('pre')?'Ayuda del ejemplo':'Conceptos de este paso';
     button.setAttribute('aria-haspopup','dialog');
     button.setAttribute('aria-expanded','false');
     button.setAttribute('aria-controls',dialog.id);

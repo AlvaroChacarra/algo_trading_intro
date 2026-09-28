@@ -1,12 +1,11 @@
 # Clase 3 — Python III — Módulos y errores
 
 1. [Presentación](presentation/python-iii-modules-doc.html): abre el HTML con doble clic, sin servidor.
-2. [Principal](exercises/03_build_exercises.ipynb): completa las celdas.
-3. [Auxiliares](exercises/03_auxiliary.ipynb): variantes OPTIONAL; no son prerrequisito ni evaluables.
-4. [main.py](exercises/main.py): el mismo principal como programa Python.
+2. [Enunciado](exercises/enunciado.md): recorrido único del ejercicio.
+3. [functional.py](exercises/functional.py): funciones recuperadas de L2; no se copian en main.
+4. [analytics.py](exercises/analytics.py): completa la nueva composición de L3.
+5. [main.py](exercises/main.py): importa módulos y construye el programa.
 
-**Soluciones:** [principal](exercises/solutions/03_build_exercises.ipynb) · [auxiliares](exercises/solutions/03_auxiliary.ipynb) · [script](exercises/solutions/main.py). Consulta y compara con tu intento.
+**Solución:** [solucion.md](exercises/solutions/solucion.md). Es texto de referencia, no una segunda implementación ejecutable.
 
-Guarda tus copias en `exercises`: `mi_principal.ipynb`, `mi_auxiliar.ipynb` y, si practicas el script, `mi_main.py`. Conserva estas copias al descargar material nuevo.
-
-Desde esta carpeta, abre `exercises` en una terminal y ejecuta `python mi_main.py`. [Instalación y actualizaciones](../GUIA_LOCAL.md).
+Desde `exercises`, ejecuta `python main.py` y después `python -c "import main"`. [Instalación y actualizaciones](../GUIA_LOCAL.md).

@@ -649,7 +649,6 @@ body[data-lesson="03"] .visual-oop-errors .teaching-trace{gap:10px}
 body[data-lesson="03"] .visual-oop-errors .code{margin:0}
 /* The complete raise statement needs the same code-panel width as the module
    scene. Keep its string literal and Python indentation on one visual line. */
-body[data-lesson="03"] #s3{--lr-left:42fr;--lr-right:58fr}
 body[data-lesson="03"] .visual-oop-errors .code pre{white-space:pre;overflow-wrap:normal}
 .visual-oop-objects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:2px 0}
 .visual-oop-object{min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel2)}
@@ -853,7 +852,7 @@ body.lr-has-contract .hero .meta{display:none}
   body.mode-estudio.lr-has-contract .wrap>p{max-width:78ch}
   body.mode-estudio.lr-has-contract .scrolly{max-width:min(1280px,calc(100vw - var(--lr-nav-w) - 30px))}
   body.mode-estudio.lr-has-contract .lr-scene{scroll-margin-top:18px}
-  body.mode-estudio.lr-has-contract #rail,body.mode-estudio.lr-has-contract #lr-controls{display:none}
+  body.mode-estudio.lr-has-contract #rail{display:none}
 
   html.lr-mode-aula,html.lr-mode-aula body{height:100%;overflow:hidden}
   body.mode-aula{height:100dvh;overflow:hidden;padding-left:var(--lr-nav-w);padding-bottom:var(--lr-controls-h)}
@@ -943,6 +942,35 @@ body[data-lesson] .teaching-trace pre{
 body[data-lesson] .teaching-trace .ln.hl{
   background:rgba(34,211,238,.14);box-shadow:inset 3px 0 var(--accent)}
 
+/* Remediation 2026-09-26: readable premises and a figure sized by available desktop space. */
+.lr-stage-picker{max-width:100%;width:100%;margin:0 0 10px;padding:9px 5px;min-height:40px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--text);font:.8rem var(--mono)}
+.lr-stage-picker:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+body.mode-estudio.lr-has-contract{padding-bottom:var(--lr-controls-h)}
+body.mode-estudio .scrolly{grid-template-columns:minmax(300px,40fr) minmax(0,60fr);gap:22px;padding:0 12px}
+body.mode-estudio .fig{top:20px;height:calc(100vh - 100px);min-height:520px;max-height:720px}
+body.mode-estudio .steps .step{min-height:90vh}
+body.mode-estudio .steps .step-inner{opacity:1;border-color:var(--line);padding:18px}
+body.mode-estudio .steps .step.on .step-inner{border-color:var(--accent)}
+body.lr-has-contract .fig-head{font-size:.875rem;padding:10px 14px;color:var(--muted)}
+body.lr-has-contract .fig-stage{padding:14px}
+body.lr-has-contract .statgrid span,body.lr-has-contract .statgrid label{font-size:.875rem}
+body.lr-has-contract pre,body[data-lesson] .teaching-trace pre,body[data-lesson] .build-code pre{white-space:pre;overflow-wrap:normal;word-break:normal;tab-size:4}
+body.lr-has-contract .code pre{font-size:.9rem;line-height:1.5}
+body.lr-has-contract .code .ln.dim{opacity:.75}
+
+body.mode-aula .steps .step-inner p{font-size:.95rem;line-height:1.5}
+body.mode-aula .fig-stage .code{margin:10px 0}
+body.mode-aula .fig-stage .code pre{padding:10px 12px}
+@media print{.lr-stage-picker{display:none}}
+/* Help belongs to the current scene but need not consume a whole heading row. */
+body.mode-aula .lr-scene-active>.wrap:first-child{position:relative}
+body.mode-aula .lr-scene-active .lr-support-open{position:absolute;top:0;right:8px;margin:0;font-size:.75rem;min-height:32px}
+body.mode-aula .lr-scene-active .eyebrow{padding-right:190px}
+body.mode-aula .lr-scene-active:has(.scrolly)>.wrap:first-child h2{font-size:1.25rem}
+body.mode-aula .lr-scene-active:has(.scrolly)>.wrap:first-child .lede{font-size:.875rem}
+#lr-nav .lr-scene-links button b{font-size:.75rem;overflow-wrap:normal;word-break:normal}
+#lr-nav .lr-scene-links button{grid-template-columns:48px minmax(0,1fr);padding:7px 5px}
+
 
 .construction-panel {margin:20px 0;padding:18px 22px;border:1px solid var(--line);border-radius:12px;background:var(--panel);font-size:1rem;line-height:1.65;overflow-wrap:anywhere;}
 .construction-panel summary {cursor:pointer;font-weight:700;color:var(--accent);}
@@ -952,6 +980,34 @@ body[data-lesson] .teaching-trace .ln.hl{
 </style>
 </head>
 <body data-lesson="02">
+<style>
+body[data-lesson="02"] .l2-opening-book{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;margin:20px 0 12px}
+body[data-lesson="02"] .l2-order-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+body[data-lesson="02"] .l2-order{display:grid;gap:3px;padding:8px;border:1px solid var(--line);border-radius:7px;font:.86rem/1.3 var(--mono);background:var(--panel2)}
+body[data-lesson="02"] .l2-order strong{font-size:1.15rem}
+body[data-lesson="02"] .l2-order.buy{border-top:3px solid var(--bid)}
+body[data-lesson="02"] .l2-order.sell{border-top:3px solid var(--ask)}
+body[data-lesson="02"] .l2-order.selected{outline:2px solid var(--accent);outline-offset:-2px}
+body[data-lesson="02"] .l2-order.best{border-bottom:3px solid var(--accent)}
+body[data-lesson="02"] .l2-opening-result{display:grid;gap:8px;padding:16px;border-left:3px solid var(--accent);background:var(--panel2);font:.95rem/1.4 var(--mono)}
+body[data-lesson="02"] .l2-opening-result strong{font-size:1.8rem}
+body[data-lesson="02"] .l2-persistent{margin-bottom:10px}
+body[data-lesson="02"] .l2-function-route{font:.88rem/1.4 var(--mono);padding:7px 0;color:var(--accent)}
+body[data-lesson="02"] #s1 .fig-stage{padding:12px 16px}
+body[data-lesson="02"] #s1 .fig-stage .code{margin:7px 0}
+body[data-lesson="02"] #s1 .fig-stage .code pre{font-size:.94rem;line-height:1.35}
+body[data-lesson="02"] #s1 .viz-card{padding:8px}
+body[data-lesson="02"] #s1 .viz-flow{margin:8px 0}
+body[data-lesson="02"] .l2-call-explorer{display:flex;flex-wrap:wrap;gap:10px;align-items:center;border-top:1px solid var(--line);padding-top:12px;margin-top:12px}
+body[data-lesson="02"] .l2-call-explorer select{background:var(--panel2);color:var(--text);font:1rem var(--mono);padding:8px;border:1px solid var(--line);border-radius:6px}
+body[data-lesson="02"] .l2-call-route{flex-basis:100%;min-height:3em;font:.95rem/1.5 var(--mono);white-space:pre-line}
+body[data-lesson="02"] #lb-book .row.selected{outline:1px solid var(--accent);background:var(--accent-dim)}
+body[data-lesson="02"] #lb-book .row.best{border-right:4px solid var(--accent)}
+body[data-lesson="02"] #s3 .simcard{margin:12px 0;padding:16px}
+body[data-lesson="02"] #s3 .btnrow{gap:7px}
+body[data-lesson="02"] #s3 .statgrid{margin:10px 0}
+body[data-lesson="02"].mode-aula .hero h1{font-size:clamp(2rem,3.8vw,3.5rem)}
+</style>
 <nav id="rail" aria-label="Progreso">
   <a href="#s0" class="on"><span class="dot"></span><span class="lab">El objetivo</span></a>
   <a href="#s3"><span class="dot"></span><span class="lab">El libro visible</span></a>
@@ -968,15 +1024,15 @@ body[data-lesson] .teaching-trace .ln.hl{
   <div class="eyebrow"><b>Algo Trading · ICAI 2026</b> · L2 · Python II</div>
   <h1>Los mejores <em>precios</em></h1>
   <p class="lede">Un libro contiene varias órdenes. Hoy escribirás <code>best_prices(orders)</code>: una función que consulta la lista y devuelve el mejor precio comprador y vendedor.</p>
-  <div class="challenge"><div class="tag">Antes de programar</div><p>El siguiente panel muestra cuatro órdenes del ejemplo didáctico. ¿Qué cambiará si añadimos una compra a 100?</p></div>
+  <div class="l2-opening-book"><div class="l2-order-list" data-l2-book="hero"></div><div class="l2-opening-result"><span>best_prices(orders) devuelve</span><strong>(99, 101)</strong><span>bid: máximo de compras · ask: mínimo de ventas</span></div></div><p class="trace-caption">Caso del principal · cuatro órdenes intactas · precio en USD/unidad; size en unidades. ¿Qué cambiará al añadir una compra a 100?</p>
 </header>
 
 <section id="s3"><div class="wrap">
   <div class="eyebrow">§1 · <b>Libro visible</b></div>
   <h2>Cuatro órdenes, dos mejores precios</h2>
-  <p class="lede">Un instrumento · <code>price</code>: precio por unidad · <code>size</code>: cantidad. Mejor compra = máximo; mejor venta = mínimo.</p>
+  <p class="lede">Un instrumento · <code>price</code>: USD por unidad · <code>size</code>: unidades. Mejor compra = máximo; mejor venta = mínimo.</p>
   <div class="simcard">
-    <h4>Representación del libro · operaciones proporcionadas</h4>
+    <h4>Mismo caso · consulta y retorno</h4>
     <div class="btnrow" style="margin-top:0">
       <button class="btn" id="lb-addbid">+ buy 100 × 1</button>
       <button class="btn" id="lb-cancel">Retirar sell 101 · id 4</button>
@@ -991,13 +1047,14 @@ body[data-lesson] .teaching-trace .ln.hl{
       <div><span>spread · ask − bid</span><b id="lb-sp">2</b></div>
       <div><span>mid · (bid + ask) / 2</span><b id="lb-mid">100.0</b></div>
     </div>
+    <div class="l2-call-explorer"><label for="lb-function">Consulta <select id="lb-function"><option value="buy_prices">buy_prices</option><option value="best_bid">best_bid</option><option value="sell_prices">sell_prices</option><option value="best_ask">best_ask</option><option value="best_prices" selected>best_prices</option></select></label><button class="btn" id="lb-call">Llamar</button><button class="btn ghost" id="lb-return" disabled>Devolver al llamador</button><div class="l2-call-route" id="lb-call-route" aria-live="polite">Elige una consulta. La misma lista entra; el retorno vuelve al punto de llamada.</div></div>
     <div class="looplog" id="lb-log" aria-live="polite">Libro inicial: best_prices(orders) devuelve (99, 101).</div>
   </div>
   <p class="trace-caption">Este panel usa una simulación JavaScript. Representa operaciones que estudiarás en Python, pero <strong>no ejecuta tu notebook</strong>. Añadir una orden tampoco ejecuta una compraventa.</p>
   <details><summary>Identificadores y precio de referencia</summary><p>Los <code>id</code> proporcionados permiten retirar una fila. El principal usa <code>side</code>, <code>price</code> y <code>size</code>. Mid es una referencia entre cotizaciones, no un precio de ejecución garantizado.</p></details>
 </div></section>
 
-<section id="s1" class="l2-visual"><div class="wrap"><h2>Cinco funciones, un mismo libro</h2><p class="lede">Seguimos el libro inicial de cuatro órdenes. Cada función usa la salida de la anterior.</p></div><div class="scrolly teaching-trace" data-scrolly><div class="steps"><div class="step on" data-stage="0" data-name="Entregar la lista"><div class="step-inner"><h3><span class="n">1/10</span>Entregar la lista</h3><p>La llamada entrega un <b>argumento</b>. El parámetro <code>orders</code> recibe esa misma lista.</p><p><code>def</code> define; la llamada ejecuta.</p></div></div><div class="step" data-stage="1" data-name="Leer una orden"><div class="step-inner"><h3><span class="n">2/10</span>Leer una orden</h3><p><code>orders[0]</code> es un diccionario. El filtro mira su lado; guardará su precio.</p><p>La cantidad no decide el mejor precio.</p></div></div><div class="step" data-stage="2" data-name="Crear una lista local"><div class="step-inner"><h3><span class="n">3/10</span>Crear una lista local</h3><p><code>prices = []</code> prepara una lista nueva. La entrada conserva sus cuatro órdenes.</p></div></div><div class="step" data-stage="3" data-name="Filtrar una fila"><div class="step-inner"><h3><span class="n">4/10</span>Filtrar una fila</h3><p><code>for</code> toma una orden cada vez. <code>if</code> deja pasar las compras.</p></div></div><div class="step" data-stage="4" data-name="Guardar su precio"><div class="step-inner"><h3><span class="n">5/10</span>Guardar su precio</h3><p><code>append</code> añade 98 al final de <code>prices</code>. Solo cambia esta lista local.</p></div></div><div class="step" data-stage="5" data-name="La venta no pasa"><div class="step-inner"><h3><span class="n">6/10</span>La venta no pasa</h3><p>La fila siguiente es <b>sell 103</b>. La condición da <code>False</code>; no ejecutamos <code>append</code>.</p></div></div><div class="step" data-stage="6" data-name="Devolver los candidatos"><div class="step-inner"><h3><span class="n">7/10</span>Devolver los candidatos</h3><p>La compra a 99 también pasa. La venta a 101 se descarta. <code>return</code> entrega la lista y termina la llamada.</p></div></div><div class="step" data-stage="7" data-name="Elegir el bid"><div class="step-inner"><h3><span class="n">8/10</span>Elegir el bid</h3><p><code>best_bid</code> usa <b>tu filtro</b>. Si la lista está vacía devuelve <code>None</code>; si tiene precios, elige el mayor.</p></div></div><div class="step" data-stage="8" data-name="Repetir para el ask"><div class="step-inner"><h3><span class="n">9/10</span>Repetir para el ask</h3><p>Cambiamos el filtro a <code>sell</code> y elegimos con <code>min</code>. El menor precio vendedor es 101.</p></div></div><div class="step" data-stage="9" data-name="Componer el par"><div class="step-inner"><h3><span class="n">10/10</span>Componer el par</h3><p><code>best_prices</code> llama a las dos consultas. Devuelve una <b>tupla</b>: primero bid, después ask.</p><p><code>return</code> entrega el resultado; <code>print</code> lo muestra.</p></div></div></div><div class="figwrap"><div class="fig"><div class="fig-head"><span>datos → operación → resultado</span><span class="stage-name">Entregar la lista</span></div><div class="fig-stage on" data-stage="0"><div class="code"><pre><span class="ln hl">prices = buy_prices(orders)</span></pre></div><div class="viz-flow"><div class="viz-card data"><span>argumento · fuera</span><strong>4 órdenes</strong></div><div class="viz-card data"><span>parámetro · dentro</span><strong>orders</strong></div></div><div class="code"><pre><span class="ln hl">def buy_prices(orders):</span></pre></div><p class="trace-caption">El cuerpo sangrado se construye en los próximos pasos.</p></div><div class="fig-stage" data-stage="1"><div class="viz-flow"><div class="viz-card buy"><span>side</span><strong>buy</strong></div><div class="viz-card data"><span>price</span><strong>98</strong></div><div class="viz-card data"><span>size</span><strong>1</strong></div></div><div class="code"><pre><span class="ln">order = orders[0]</span><span class="ln hl">order[&quot;price&quot;]</span></pre></div><div class="viz-flow"><div class="viz-card output"><span>valor leído</span><strong>98</strong></div></div></div><div class="fig-stage" data-stage="2"><div class="code"><pre data-code-part="filter"><span class="ln">def buy_prices(orders):</span><span class="ln hl">    prices = []</span><span class="ln">    for order in orders:</span><span class="ln">        if order[&quot;side&quot;] == &quot;buy&quot;:</span><span class="ln">            prices.append(order[&quot;price&quot;])</span><span class="ln">    return prices</span></pre></div><div class="viz-flow"><div class="viz-card data"><span>orders · entrada</span><strong>4 órdenes</strong></div><div class="viz-card output"><span>prices · local</span><strong>[]</strong></div></div></div><div class="fig-stage" data-stage="3"><div class="code"><pre><span class="ln">def buy_prices(orders):</span><span class="ln">    prices = []</span><span class="ln hl">    for order in orders:</span><span class="ln hl">        if order[&quot;side&quot;] == &quot;buy&quot;:</span><span class="ln">            prices.append(order[&quot;price&quot;])</span><span class="ln">    return prices</span></pre></div><div class="viz-flow"><div class="viz-card buy"><span>fila 1</span><strong>buy · 98</strong></div><div class="viz-card output"><span>¿side == buy?</span><strong>True</strong></div></div></div><div class="fig-stage" data-stage="4"><div class="code"><pre><span class="ln">def buy_prices(orders):</span><span class="ln">    prices = []</span><span class="ln">    for order in orders:</span><span class="ln">        if order[&quot;side&quot;] == &quot;buy&quot;:</span><span class="ln hl">            prices.append(order[&quot;price&quot;])</span><span class="ln">    return prices</span></pre></div><div class="viz-flow"><div class="viz-card data"><span>antes</span><strong>[]</strong></div><div class="viz-card output"><span>append(98)</span><strong>[98]</strong></div></div></div><div class="fig-stage" data-stage="5"><div class="code"><pre><span class="ln">def buy_prices(orders):</span><span class="ln">    prices = []</span><span class="ln">    for order in orders:</span><span class="ln hl">        if order[&quot;side&quot;] == &quot;buy&quot;:</span><span class="ln">            prices.append(order[&quot;price&quot;])</span><span class="ln">    return prices</span></pre></div><div class="viz-flow"><div class="viz-card sell"><span>fila 2</span><strong>sell · 103</strong></div><div class="viz-card sell"><span>¿side == buy?</span><strong>False</strong></div><div class="viz-card output"><span>prices conserva</span><strong>[98]</strong></div></div></div><div class="fig-stage" data-stage="6"><div class="code"><pre><span class="ln">def buy_prices(orders):</span><span class="ln">    prices = []</span><span class="ln">    for order in orders:</span><span class="ln">        if order[&quot;side&quot;] == &quot;buy&quot;:</span><span class="ln">            prices.append(order[&quot;price&quot;])</span><span class="ln hl">    return prices</span></pre></div><div class="viz-flow"><div class="viz-card buy"><span>prices devuelta</span><strong>[98, 99]</strong></div><div class="viz-card data"><span>orders</span><strong>intacta</strong></div></div></div><div class="fig-stage" data-stage="7"><div class="code"><pre data-code-part="bid"><span class="ln">def best_bid(orders):</span><span class="ln hl">    prices = buy_prices(orders)</span><span class="ln">    if not prices:</span><span class="ln">        return None</span><span class="ln hl">    return max(prices)</span></pre></div><div class="viz-flow"><div class="viz-card buy"><span>buy_prices</span><strong>[98, 99]</strong></div><div class="viz-card output"><span>max</span><strong>99</strong></div></div></div><div class="fig-stage" data-stage="8"><div class="code"><pre data-code-part="sell"><span class="ln">def sell_prices(orders):</span><span class="ln">    prices = []</span><span class="ln">    for order in orders:</span><span class="ln hl">        if order[&quot;side&quot;] == &quot;sell&quot;:</span><span class="ln">            prices.append(order[&quot;price&quot;])</span><span class="ln">    return prices</span></pre></div><div class="code"><pre data-code-part="ask"><span class="ln">def best_ask(orders):</span><span class="ln">    prices = sell_prices(orders)</span><span class="ln">    if not prices:</span><span class="ln">        return None</span><span class="ln hl">    return min(prices)</span></pre></div><div class="viz-flow"><div class="viz-card sell"><span>sell_prices</span><strong>[103, 101]</strong></div><div class="viz-card output"><span>min</span><strong>101</strong></div></div></div><div class="fig-stage" data-stage="9"><div class="code"><pre data-code-part="compose" data-continuity="l2-composition"><span class="ln">def best_prices(orders):</span><span class="ln hl">    return (best_bid(orders),</span><span class="ln">            best_ask(orders))</span></pre></div><div class="viz-flow"><div class="viz-card buy"><span>best_bid</span><strong>99</strong></div><div class="viz-card sell"><span>best_ask</span><strong>101</strong></div><div class="viz-card output"><span>best_prices</span><strong>(99, 101)</strong></div></div><div class="code"><pre><span class="ln hl">bid, ask = best_prices(orders)</span></pre></div></div></div></div></div></section>
+<section id="s1" class="l2-visual"><div class="wrap"><h2>Cinco funciones, un mismo libro</h2><p class="lede">Volvemos al libro inicial, visible en cada etapa. buy_prices filtra; best_bid usa su retorno; best_prices reúne bid y ask. El experimento anterior conserva su propio estado.</p></div><div class="scrolly teaching-trace" data-scrolly><div class="steps"><div class="step on" data-stage="0" data-name="Entregar la lista"><div class="step-inner"><h3><span class="n">1/10</span>Entregar la lista</h3><p>La llamada entrega un <b>argumento</b>. El parámetro <code>orders</code> recibe esa misma lista.</p><p><code>def</code> define; la llamada ejecuta.</p></div></div><div class="step" data-stage="1" data-name="Leer una orden"><div class="step-inner"><h3><span class="n">2/10</span>Leer una orden</h3><p><code>orders[0]</code> es un diccionario. El filtro mira su lado; guardará su precio.</p><p>La cantidad no decide el mejor precio.</p></div></div><div class="step" data-stage="2" data-name="Crear una lista local"><div class="step-inner"><h3><span class="n">3/10</span>Crear una lista local</h3><p><code>prices = []</code> prepara una lista nueva. La entrada conserva sus cuatro órdenes.</p></div></div><div class="step" data-stage="3" data-name="Filtrar una fila"><div class="step-inner"><h3><span class="n">4/10</span>Filtrar una fila</h3><p><code>for</code> toma una orden cada vez. <code>if</code> deja pasar las compras.</p></div></div><div class="step" data-stage="4" data-name="Guardar su precio"><div class="step-inner"><h3><span class="n">5/10</span>Guardar su precio</h3><p><code>append</code> añade 98 al final de <code>prices</code>. Solo cambia esta lista local.</p></div></div><div class="step" data-stage="5" data-name="La venta no pasa"><div class="step-inner"><h3><span class="n">6/10</span>La venta no pasa</h3><p>La fila siguiente es <b>sell 103</b>. La condición da <code>False</code>; no ejecutamos <code>append</code>.</p></div></div><div class="step" data-stage="6" data-name="Devolver los candidatos"><div class="step-inner"><h3><span class="n">7/10</span>Devolver los candidatos</h3><p>La compra a 99 también pasa. La venta a 101 se descarta. <code>return</code> entrega la lista y termina la llamada.</p></div></div><div class="step" data-stage="7" data-name="Elegir el bid"><div class="step-inner"><h3><span class="n">8/10</span>Elegir el bid</h3><p><code>best_bid</code> usa <b>tu filtro</b>. Si la lista está vacía devuelve <code>None</code>; si tiene precios, elige el mayor.</p></div></div><div class="step" data-stage="8" data-name="Repetir para el ask"><div class="step-inner"><h3><span class="n">9/10</span>Repetir para el ask</h3><p>Cambiamos el filtro a <code>sell</code> y elegimos con <code>min</code>. El menor precio vendedor es 101.</p></div></div><div class="step" data-stage="9" data-name="Componer el par"><div class="step-inner"><h3><span class="n">10/10</span>Componer el par</h3><p><code>best_prices</code> llama a las dos consultas. Devuelve una <b>tupla</b>: primero bid, después ask.</p><p><code>return</code> entrega el resultado; <code>print</code> lo muestra.</p></div></div></div><div class="figwrap"><div class="fig"><div class="fig-head"><span>datos → operación → resultado</span><span class="stage-name">Entregar la lista</span></div><div class="fig-stage on" data-stage="0"><div class="l2-persistent" data-l2-stage="0"><div class="l2-order-list" data-l2-book="0"></div><div class="l2-function-route" data-l2-route="0"></div></div><div class="code"><pre><span class="ln hl">prices = buy_prices(orders)</span></pre></div><div class="viz-flow"><div class="viz-card data"><span>argumento · fuera</span><strong>4 órdenes</strong></div><div class="viz-card data"><span>parámetro · dentro</span><strong>orders</strong></div></div><div class="code"><pre><span class="ln hl">def buy_prices(orders):</span></pre></div><p class="trace-caption">El cuerpo sangrado se construye en los próximos pasos.</p></div><div class="fig-stage" data-stage="1"><div class="l2-persistent" data-l2-stage="1"><div class="l2-order-list" data-l2-book="1"></div><div class="l2-function-route" data-l2-route="1"></div></div><div class="viz-flow"><div class="viz-card buy"><span>side</span><strong>buy</strong></div><div class="viz-card data"><span>price</span><strong>98</strong></div><div class="viz-card data"><span>size</span><strong>1</strong></div></div><div class="code"><pre><span class="ln">order = orders[0]</span><span class="ln hl">order[&quot;price&quot;]</span></pre></div><div class="viz-flow"><div class="viz-card output"><span>valor leído</span><strong>98</strong></div></div></div><div class="fig-stage" data-stage="2"><div class="l2-persistent" data-l2-stage="2"><div class="l2-order-list" data-l2-book="2"></div><div class="l2-function-route" data-l2-route="2"></div></div><div class="code"><pre data-code-part="filter"><span class="ln">def buy_prices(orders):</span><span class="ln hl">    prices = []</span><span class="ln">    for order in orders:</span><span class="ln">        if order[&quot;side&quot;] == &quot;buy&quot;:</span><span class="ln">            prices.append(order[&quot;price&quot;])</span><span class="ln">    return prices</span></pre></div><div class="viz-flow"><div class="viz-card data"><span>orders · entrada</span><strong>4 órdenes</strong></div><div class="viz-card output"><span>prices · local</span><strong>[]</strong></div></div></div><div class="fig-stage" data-stage="3"><div class="l2-persistent" data-l2-stage="3"><div class="l2-order-list" data-l2-book="3"></div><div class="l2-function-route" data-l2-route="3"></div></div><div class="code"><pre><span class="ln">def buy_prices(orders):</span><span class="ln">    prices = []</span><span class="ln hl">    for order in orders:</span><span class="ln hl">        if order[&quot;side&quot;] == &quot;buy&quot;:</span><span class="ln">            prices.append(order[&quot;price&quot;])</span><span class="ln">    return prices</span></pre></div><div class="viz-flow"><div class="viz-card buy"><span>fila 1</span><strong>buy · 98</strong></div><div class="viz-card output"><span>¿side == buy?</span><strong>True</strong></div></div></div><div class="fig-stage" data-stage="4"><div class="l2-persistent" data-l2-stage="4"><div class="l2-order-list" data-l2-book="4"></div><div class="l2-function-route" data-l2-route="4"></div></div><div class="code"><pre><span class="ln">def buy_prices(orders):</span><span class="ln">    prices = []</span><span class="ln">    for order in orders:</span><span class="ln">        if order[&quot;side&quot;] == &quot;buy&quot;:</span><span class="ln hl">            prices.append(order[&quot;price&quot;])</span><span class="ln">    return prices</span></pre></div><div class="viz-flow"><div class="viz-card data"><span>antes</span><strong>[]</strong></div><div class="viz-card output"><span>append(98)</span><strong>[98]</strong></div></div></div><div class="fig-stage" data-stage="5"><div class="l2-persistent" data-l2-stage="5"><div class="l2-order-list" data-l2-book="5"></div><div class="l2-function-route" data-l2-route="5"></div></div><div class="code"><pre><span class="ln">def buy_prices(orders):</span><span class="ln">    prices = []</span><span class="ln">    for order in orders:</span><span class="ln hl">        if order[&quot;side&quot;] == &quot;buy&quot;:</span><span class="ln">            prices.append(order[&quot;price&quot;])</span><span class="ln">    return prices</span></pre></div><div class="viz-flow"><div class="viz-card sell"><span>fila 2</span><strong>sell · 103</strong></div><div class="viz-card sell"><span>¿side == buy?</span><strong>False</strong></div><div class="viz-card output"><span>prices conserva</span><strong>[98]</strong></div></div></div><div class="fig-stage" data-stage="6"><div class="l2-persistent" data-l2-stage="6"><div class="l2-order-list" data-l2-book="6"></div><div class="l2-function-route" data-l2-route="6"></div></div><div class="code"><pre><span class="ln">def buy_prices(orders):</span><span class="ln">    prices = []</span><span class="ln">    for order in orders:</span><span class="ln">        if order[&quot;side&quot;] == &quot;buy&quot;:</span><span class="ln">            prices.append(order[&quot;price&quot;])</span><span class="ln hl">    return prices</span></pre></div><div class="viz-flow"><div class="viz-card buy"><span>prices devuelta</span><strong>[98, 99]</strong></div><div class="viz-card data"><span>orders</span><strong>intacta</strong></div></div></div><div class="fig-stage" data-stage="7"><div class="l2-persistent" data-l2-stage="7"><div class="l2-order-list" data-l2-book="7"></div><div class="l2-function-route" data-l2-route="7"></div></div><div class="code"><pre data-code-part="bid"><span class="ln">def best_bid(orders):</span><span class="ln hl">    prices = buy_prices(orders)</span><span class="ln">    if not prices:</span><span class="ln">        return None</span><span class="ln hl">    return max(prices)</span></pre></div><div class="viz-flow"><div class="viz-card buy"><span>buy_prices</span><strong>[98, 99]</strong></div><div class="viz-card output"><span>max</span><strong>99</strong></div></div></div><div class="fig-stage" data-stage="8"><div class="l2-persistent" data-l2-stage="8"><div class="l2-order-list" data-l2-book="8"></div><div class="l2-function-route" data-l2-route="8"></div></div><div class="code"><pre data-code-part="sell"><span class="ln">def sell_prices(orders):</span><span class="ln">    prices = []</span><span class="ln">    for order in orders:</span><span class="ln hl">        if order[&quot;side&quot;] == &quot;sell&quot;:</span><span class="ln">            prices.append(order[&quot;price&quot;])</span><span class="ln">    return prices</span></pre></div><div class="code"><pre data-code-part="ask"><span class="ln">def best_ask(orders):</span><span class="ln">    prices = sell_prices(orders)</span><span class="ln">    if not prices:</span><span class="ln">        return None</span><span class="ln hl">    return min(prices)</span></pre></div></div><div class="fig-stage" data-stage="9"><div class="l2-persistent" data-l2-stage="9"><div class="l2-order-list" data-l2-book="9"></div><div class="l2-function-route" data-l2-route="9"></div></div><div class="code"><pre data-code-part="compose" data-continuity="l2-composition"><span class="ln">def best_prices(orders):</span><span class="ln hl">    return (best_bid(orders),</span><span class="ln">            best_ask(orders))</span></pre></div><div class="viz-flow"><div class="viz-card buy"><span>best_bid</span><strong>99</strong></div><div class="viz-card sell"><span>best_ask</span><strong>101</strong></div><div class="viz-card output"><span>best_prices</span><strong>(99, 101)</strong></div></div><div class="code"><pre><span class="ln hl">bid, ask = best_prices(orders)</span></pre></div></div></div></div></div></section>
 
 <section id="s7" class="l2-visual"><div class="wrap"><div class="eyebrow">Contrato · <b>ausencia válida</b></div><h2>Un precio ausente es <code>None</code></h2><p class="lede">Elige un libro. Sin ambos lados no calculamos spread ni mid.</p>
 <div class="btnrow" role="group" aria-label="Caso del libro"><button class="btn" data-absence="both">Dos lados</button><button class="btn" data-absence="buy">Solo compras</button><button class="btn" data-absence="sell">Solo ventas</button><button class="btn" data-absence="empty">Vacío</button></div>
@@ -1272,6 +1329,49 @@ const initialOrders=[
 ];
 const initialBook=()=>initialOrders.map(o=>({...o}));
 let book=initialBook();
+const $$=selector=>[...document.querySelectorAll(selector)];
+const orderTile=(order,stage)=>{
+  const selected=stage==='hero'||(+stage<=7&&order.side==='buy')||(+stage===8&&order.side==='sell')||+stage===9;
+  const best=(+stage===7&&order.id===3)||(+stage===8&&order.id===4)||(+stage===9&&[3,4].includes(order.id));
+  return `<div class="l2-order ${order.side}${selected?' selected':''}${best?' best':''}"><span>${order.side} · #${order.id}</span><strong>${order.price}</strong><span>${order.size} ${order.size===1?'unidad':'unidades'}</span></div>`;
+};
+$$('[data-l2-book]').forEach(el=>el.innerHTML=initialOrders.map(order=>orderTile(order,el.dataset.l2Book)).join(''));
+const routes=[
+  'llamador → buy_prices(orders) · espera una lista',
+  'buy_prices lee la fila 1: side y price',
+  'buy_prices prepara prices = [] · orders permanece',
+  'buy_prices selecciona compras del mismo libro',
+  'buy_prices añade 98 a su lista local',
+  'sell 103 no pasa · prices sigue en [98]',
+  'llamador ← buy_prices: [98, 99]',
+  'best_bid → buy_prices → [98, 99] → max → 99 ↩ best_prices',
+  'best_ask → sell_prices → [103, 101] → min → 101 ↩ best_prices',
+  'llamador → best_prices → best_bid / best_ask → (99, 101) ↩ llamador',
+];
+$$('[data-l2-route]').forEach(el=>el.textContent=routes[+el.dataset.l2Route]);
+let queryPending=false;
+function queryData(){
+  const fn=$('#lb-function').value;
+  const side=fn.includes('buy')||fn==='best_bid'?'buy':fn.includes('sell')||fn==='best_ask'?'sell':null;
+  const prices=book.filter(order=>order.side===side).map(order=>order.price);
+  const py=value=>value===null?'None':String(value);
+  let result=fn.endsWith('_prices')&&fn!=='best_prices'?'['+prices.join(', ')+']':fn==='best_bid'?py(bestBid()):fn==='best_ask'?py(bestAsk()):'('+py(bestBid())+', '+py(bestAsk())+')';
+  const calls=fn==='best_prices'?'best_prices → best_bid → buy_prices; después best_ask → sell_prices':fn==='best_bid'?'best_bid → buy_prices':fn==='best_ask'?'best_ask → sell_prices':fn;
+  return {fn,side,result,calls};
+}
+function markQuery(){
+  const {fn,side}=queryData();
+  $$('#lb-book [data-order-id]').forEach(row=>{
+    const order=book.find(order=>order.id===+row.dataset.orderId);
+    row.classList.toggle('selected',queryPending&&(!side||order.side===side));
+    row.classList.toggle('best',queryPending&&fn.startsWith('best_')&&((order.side==='buy'&&order.price===bestBid())||(order.side==='sell'&&order.price===bestAsk()))&&(!side||order.side===side));
+  });
+}
+function resetQuery(){queryPending=false;$('#lb-return').disabled=true;$('#lb-call-route').textContent='Elige una consulta. La lista entra; el retorno vuelve al mismo llamador.';markQuery();}
+$('#lb-call').addEventListener('click',()=>{queryPending=true;const q=queryData();$('#lb-return').disabled=false;$('#lb-call-route').textContent=`Llamador: result = ${q.fn}(orders)\nLlamada: ${q.calls} · la entrada conserva ${book.length} órdenes.`;markQuery();});
+$('#lb-return').addEventListener('click',()=>{const q=queryData();$('#lb-call-route').textContent=`Retorno: ${q.result} ← ${q.fn} ← llamador\nresult = ${q.result} · orders conserva sus ${book.length} órdenes.`;queryPending=false;$('#lb-return').disabled=true;markQuery();});
+$('#lb-function').addEventListener('change',resetQuery);
+
 
 function bestBid(){const p=book.filter(o=>o.side==='buy').map(o=>o.price);return p.length?Math.max(...p):null;}
 function bestAsk(){const p=book.filter(o=>o.side==='sell').map(o=>o.price);return p.length?Math.min(...p):null;}
@@ -1288,13 +1388,13 @@ function render(){
   else{
     const asks=book.filter(o=>o.side==='sell').sort((x,y)=>y.price-x.price);
     const bids=book.filter(o=>o.side==='buy').sort((x,y)=>y.price-x.price);
-    el.innerHTML=asks.map(o=>`<div class="row a" data-order-id="${o.id}"><span>sell ${o.price}</span><small>${o.size} unidades · id=${o.id}</small></div>`).join('')
+    el.innerHTML=asks.map(o=>`<div class="row a" data-order-id="${o.id}"><span>sell ${o.price} USD/u</span><small>${o.size} unidades · id=${o.id}</small></div>`).join('')
       +(asks.length&&bids.length?'<div class="sep"></div>':'')
-      +bids.map(o=>`<div class="row b" data-order-id="${o.id}"><span>buy&nbsp; ${o.price}</span><small>${o.size} unidades · id=${o.id}</small></div>`).join('');
+      +bids.map(o=>`<div class="row b" data-order-id="${o.id}"><span>buy ${o.price} USD/u</span><small>${o.size} unidades · id=${o.id}</small></div>`).join('');
   }
   const bb=bestBid(), ba=bestAsk(), imb=imbalance();
-  $('#lb-bb').textContent=bb??'—';
-  $('#lb-ba').textContent=ba??'—';
+  $('#lb-bb').textContent=bb??'None';
+  $('#lb-ba').textContent=ba??'None';
   $('#lb-sp').textContent=(bb!==null&&ba!==null)?ba-bb:'—';
   $('#lb-mid').textContent=(bb!==null&&ba!==null)?fmtF((bb+ba)/2):'—';
   const b=book.filter(o=>o.side==='buy').reduce((s,o)=>s+o.size,0);
@@ -1318,6 +1418,7 @@ function render(){
   $('#lb-cancel').disabled=!book.some(o=>o.id===4);
   $('#imb-addbid').disabled=$('#lb-addbid').disabled;
   $('#imb-cancel').disabled=$('#lb-cancel').disabled;
+  resetQuery();
 }
 function log(t){
   const py=x=>x===null?'None':String(x);
@@ -1450,9 +1551,9 @@ const route=value=>ROUTES.includes(String(value||'').toUpperCase())
 const routeClass=value=>`lr-route-${route(value).toLowerCase()}`;
 const scopeRoutes=()=>routeScope==='ALL'?ROUTES:
   routeScope==='LIVE+REQUIRED'?['LIVE','REQUIRED']:['LIVE'];
-const modeUrl=next=>{
+const modeUrl=(next,hash=location.hash)=>{
   const q=new URLSearchParams(location.search);q.set('mode',next);
-  return `${location.pathname}?${q.toString()}${location.hash}`;
+  return `${location.pathname}?${q.toString()}${hash}`;
 };
 const stateKey=(scene,stage)=>`${scene.id}::${stage.id}`;
 const reducedMotion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1580,8 +1681,8 @@ nav.innerHTML=`
   <a class="lr-course-home" href="../../index.html">← Mapa del curso</a>
   <div class="lr-brand"><b>L${Number(contract.lesson)}</b><span>${esc(contract.title)}</span></div>
   <div class="lr-modes" aria-label="Modo de lectura">
-    <a href="${modeUrl('aula')}" class="${mode==='aula'?'on':''}">Aula</a>
-    <a href="${modeUrl('estudio')}" class="${mode==='estudio'?'on':''}">Estudio</a>
+    <a href="${modeUrl('aula')}" data-mode="aula" class="${mode==='aula'?'on':''}">Aula</a>
+    <a href="${modeUrl('estudio')}" data-mode="estudio" class="${mode==='estudio'?'on':''}">Estudio</a>
   </div>
   <button type="button" class="lr-study-optional" aria-pressed="false">Incluir OPTIONAL</button>
   <div class="lr-scene-links"></div>`;
@@ -1612,6 +1713,38 @@ controls.innerHTML=`
   <button type="button" class="lr-route-scope" aria-label="Cambiar alcance de ruta">LIVE</button>
   <button type="button" class="lr-next" aria-label="Etapa siguiente"><span>Siguiente</span> →</button>`;
 body.appendChild(controls);
+const stagePicker=document.createElement('select');
+stagePicker.className='lr-stage-picker';stagePicker.setAttribute('aria-label','Ir a una etapa');
+nav.insertBefore(stagePicker,navLinks);
+stagePicker.addEventListener('change',()=>{
+  const item=inventory.find(entry=>entry.key===stagePicker.value);
+  if(item)goTo(models.indexOf(item.scene),allowedStages(item.scene).indexOf(item.stage),false);
+});
+function syncStagePicker(scene,stage){
+  const available=inventory.filter(item=>allowed(item.scene)&&scopeRoutes().includes(item.route));
+  stagePicker.innerHTML=available.map(item=>{
+    const title=item.scene.element.querySelector('h1,h2')?.textContent.trim()||item.scene.id;
+    const name=item.stage.step?.dataset.name||item.stage.id;
+    return `<option value="${esc(item.key)}">${esc(title)} · ${esc(name)}</option>`;
+  }).join('');
+  if(scene&&stage)stagePicker.value=stateKey(scene,stage);
+}
+function studyActivate(scene,stage,scroll=false,focus=false){
+  currentScene=models.indexOf(scene);currentStage=allowedStages(scene).indexOf(stage);
+  body.dataset.currentSceneId=scene.id;body.dataset.currentStageId=stage.id;
+  activateStage(scene,stage);syncNav(scene);syncStagePicker(scene,stage);syncTeacher(scene,stage);
+  controls.querySelector('.lr-scene-progress').textContent=`Escena ${availableModels().indexOf(scene)+1}/${availableModels().length}`;
+  controls.querySelector('.lr-stage-progress').textContent=`Etapa ${currentStage+1}/${allowedStages(scene).length}`;
+  controls.querySelector('.lr-route-progress').textContent=stage.step?.dataset.name||'Lectura';
+  const flat=inventory.filter(item=>allowed(item.scene)&&scopeRoutes().includes(item.route));
+  const i=flat.findIndex(item=>item.scene===scene&&item.stage===stage);
+  controls.querySelector('.lr-prev').disabled=i<=0;
+  controls.querySelector('.lr-next').disabled=i===flat.length-1;
+  saveRuntime(scene,stage,true);updateDeepLink(scene,stage);
+  if(scroll)(stage.step||scene.element).scrollIntoView({block:stage.step?'center':'start',behavior:reducedMotion()?'auto':'smooth'});
+  if(focus){const h=(stage.step||scene.element).querySelector('h1,h2,h3');if(h){h.tabIndex=-1;h.focus({preventScroll:true});}}
+}
+
 
 const liveRegion=document.createElement('div');
 liveRegion.className='lr-sr-only';liveRegion.setAttribute('aria-live','polite');
@@ -1663,7 +1796,7 @@ function activateStage(scene,stage){
     step.hidden=!visibleRoute;
     step.classList.toggle('lr-stage-active',active&&visibleRoute);
     step.classList.toggle('on',active&&visibleRoute);
-    step.setAttribute('aria-hidden',String(!(active&&visibleRoute)));
+    step.setAttribute('aria-hidden',String(mode==='estudio'?!visibleRoute:!(active&&visibleRoute)));
   });
   scene.allFigures.forEach(figure=>{
     const model=scene.stages.find(item=>item.figure===figure);
@@ -1719,9 +1852,11 @@ function syncTeacher(scene,stage){
   });
 }
 function updateDeepLink(scene,stage){
-  if(!history.replaceState)return;
   const next=`#${encodeURIComponent(scene.id)}/${encodeURIComponent(stage.id)}`;
-  if(location.hash!==next)history.replaceState(null,'',`${location.pathname}${location.search}${next}`);
+  if(history.replaceState&&location.hash!==next)history.replaceState(null,'',`${location.pathname}${location.search}${next}`);
+  nav.querySelectorAll('.lr-modes a').forEach(link=>{
+    link.setAttribute('href',modeUrl(link.dataset.mode,next));
+  });
 }
 function goTo(sceneIndex,stageIndex,focusHeading=true){
   let scene=models[sceneIndex];
@@ -1732,6 +1867,7 @@ function goTo(sceneIndex,stageIndex,focusHeading=true){
   const stages=allowedStages(scene);
   stageIndex=Math.max(0,Math.min(Number(stageIndex)||0,stages.length-1));
   const stage=stages[stageIndex];
+  if(mode==='estudio'){studyActivate(scene,stage,true,focusHeading);return;}
   const positionChanged=body.dataset.currentSceneId!==scene.id
     ||body.dataset.currentStageId!==stage.id;
   currentScene=sceneIndex;currentStage=stageIndex;
@@ -1771,7 +1907,7 @@ function goTo(sceneIndex,stageIndex,focusHeading=true){
     total+scopeProgress[routeName].visited,0)/Math.max(1,enabledRoutes.reduce((total,routeName)=>
     total+scopeProgress[routeName].total,0))*100);
   controls.querySelector('.lr-route-progress').textContent=`${routeProgress}% visto`;
-  syncNav(scene);syncTeacher(scene,stage);updateDeepLink(scene,stage);
+  syncNav(scene);syncStagePicker(scene,stage);syncTeacher(scene,stage);updateDeepLink(scene,stage);
   liveRegion.textContent=`${scene.id}, etapa ${stageIndex+1} de ${stages.length}`;
   if(focusHeading){
     const heading=scene.element.querySelector('h1,h2,h3');
@@ -1830,7 +1966,7 @@ function applyStudyScope(activeScene=null){
       });
     });
   });
-  syncNav(activeScene);syncOptionalControls();saveRuntime(null,null,false);
+  syncNav(activeScene);syncOptionalControls();syncStagePicker();saveRuntime(null,null,false);
 }
 function toggleOptional(){
   routeScope=routeScope==='ALL'?'LIVE+REQUIRED':'ALL';
@@ -1847,7 +1983,7 @@ document.querySelectorAll('.lr-study-optional').forEach(button=>button.addEventL
 
 document.addEventListener('keydown',event=>{
   if(event.key==='Escape'){closeOverlays();return;}
-  if(mode!=='aula')return;
+  if(mode!=='aula'&&(!event.altKey||!['ArrowRight','ArrowLeft'].includes(event.key)))return;
   const active=document.activeElement;
   if(active&&(/INPUT|TEXTAREA|SELECT/.test(active.tagName)||active.isContentEditable))return;
   if(active&&active.tagName==='BUTTON'&&(event.key===' '||event.key==='Enter'))return;
@@ -1894,6 +2030,8 @@ if(mode==='aula'){
   const restored=restoredPosition();
   if(restored?.stage.route==='OPTIONAL')routeScope='ALL';
   applyStudyScope(restored?.scene||null);
+  const initial=restored&&allowed(restored.scene)?restored:{scene:availableModels()[0],stage:allowedStages(availableModels()[0])[0]};
+  studyActivate(initial.scene,initial.stage);
   const sceneObserver=new IntersectionObserver(entries=>{
     const visible=entries.filter(entry=>entry.isIntersecting&&!entry.target.hidden)
       .sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
@@ -1902,14 +2040,14 @@ if(mode==='aula'){
     if(!scene)return;
     syncNav(scene);
     const stage=allowedStages(scene).find(item=>!item.step)||allowedStages(scene)[0];
-    if(stage){saveRuntime(scene,stage,true);updateDeepLink(scene,stage);}
+    if(stage&&!scene.allSteps.length)studyActivate(scene,stage);
   },{rootMargin:'-20% 0px -55% 0px',threshold:[0,.15,.4]});
   models.forEach(scene=>sceneObserver.observe(scene.element));
   models.forEach(scene=>scene.stages.forEach(stage=>{
     if(!stage.step)return;
     const observer=new IntersectionObserver(entries=>{
       if(entries.some(entry=>entry.isIntersecting)&&!stage.step.hidden){
-        saveRuntime(scene,stage,true);syncNav(scene);updateDeepLink(scene,stage);
+        studyActivate(scene,stage);
       }
     },{rootMargin:'-35% 0px -45% 0px',threshold:.1});
     observer.observe(stage.step);
@@ -1931,7 +2069,7 @@ window.LEARNING_RUNTIME={
     if(mode==='estudio'){
       const stage=scene.stages.find(item=>item.id===stageId)||allowedStages(scene)[0];
       if(!stage)return false;
-      (stage.step||scene.element).scrollIntoView({block:'center'});return true;
+      studyActivate(scene,stage,true,false);return true;
     }
     const stages=allowedStages(scene),index=stages.findIndex(item=>item.id===stageId);
     goTo(models.indexOf(scene),Math.max(0,index),false);return true;
@@ -1985,7 +2123,7 @@ window.LEARNING_RUNTIME={
     if(!wrap)return;
     const button=document.createElement('button');
     button.type='button';button.className='lr-support-open';
-    button.textContent='Entender este código';
+    button.textContent=scene.querySelector('pre')?'Ayuda del ejemplo':'Conceptos de este paso';
     button.setAttribute('aria-haspopup','dialog');
     button.setAttribute('aria-expanded','false');
     button.setAttribute('aria-controls',dialog.id);

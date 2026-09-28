@@ -1,14 +1,12 @@
 # Clase 5 — OOP II — OrderBook y PositionTracker
 
 1. [Presentación](presentation/oop-ii-book-portfolio-doc.html): abre el HTML con doble clic, sin servidor.
-2. [Principal](exercises/05_build_exercises.ipynb): completa las celdas.
-3. [Auxiliares](exercises/05_auxiliary.ipynb): variantes OPTIONAL; no son prerrequisito ni evaluables.
-4. [main.py](exercises/main.py): el mismo principal como programa Python.
+2. [Enunciado](exercises/enunciado.md): pasos, resultados y práctica opcional.
+3. [models.py](exercises/models.py): reutiliza tu Fill de L4; referencia proporcionada desde su solución.
+4. [portfolio.py](exercises/portfolio.py): completa estado, apply_fill y equity.
+5. [book.py](exercises/book.py): completa mid sobre los niveles proporcionados.
+6. [main.py](exercises/main.py): importa, conecta y comprueba los objetos.
 
-**Soluciones:** [principal](exercises/solutions/05_build_exercises.ipynb) · [auxiliares](exercises/solutions/05_auxiliary.ipynb) · [script](exercises/solutions/main.py). Consulta y compara con tu intento.
+**Solución:** [solucion.md](exercises/solutions/solucion.md), bloques completos para copiar en cada archivo.
 
-Guarda tus copias en `exercises`: `mi_principal.ipynb`, `mi_auxiliar.ipynb` y, si practicas el script, `mi_main.py`. Conserva estas copias al descargar material nuevo.
-
-Desde esta carpeta, abre `exercises` en una terminal y ejecuta `python mi_main.py`. [Instalación y actualizaciones](../GUIA_LOCAL.md).
-
-`exchange/` y sus datos están proporcionados; no necesitas modificarlos.
+Desde `exercises`: `python main.py`. Importar con `python -c "import main"` no imprime nada. [Instalación y actualizaciones](../GUIA_LOCAL.md).

@@ -649,7 +649,6 @@ body[data-lesson="03"] .visual-oop-errors .teaching-trace{gap:10px}
 body[data-lesson="03"] .visual-oop-errors .code{margin:0}
 /* The complete raise statement needs the same code-panel width as the module
    scene. Keep its string literal and Python indentation on one visual line. */
-body[data-lesson="03"] #s3{--lr-left:42fr;--lr-right:58fr}
 body[data-lesson="03"] .visual-oop-errors .code pre{white-space:pre;overflow-wrap:normal}
 .visual-oop-objects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:2px 0}
 .visual-oop-object{min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel2)}
@@ -853,7 +852,7 @@ body.lr-has-contract .hero .meta{display:none}
   body.mode-estudio.lr-has-contract .wrap>p{max-width:78ch}
   body.mode-estudio.lr-has-contract .scrolly{max-width:min(1280px,calc(100vw - var(--lr-nav-w) - 30px))}
   body.mode-estudio.lr-has-contract .lr-scene{scroll-margin-top:18px}
-  body.mode-estudio.lr-has-contract #rail,body.mode-estudio.lr-has-contract #lr-controls{display:none}
+  body.mode-estudio.lr-has-contract #rail{display:none}
 
   html.lr-mode-aula,html.lr-mode-aula body{height:100%;overflow:hidden}
   body.mode-aula{height:100dvh;overflow:hidden;padding-left:var(--lr-nav-w);padding-bottom:var(--lr-controls-h)}
@@ -943,6 +942,35 @@ body[data-lesson] .teaching-trace pre{
 body[data-lesson] .teaching-trace .ln.hl{
   background:rgba(34,211,238,.14);box-shadow:inset 3px 0 var(--accent)}
 
+/* Remediation 2026-09-26: readable premises and a figure sized by available desktop space. */
+.lr-stage-picker{max-width:100%;width:100%;margin:0 0 10px;padding:9px 5px;min-height:40px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--text);font:.8rem var(--mono)}
+.lr-stage-picker:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+body.mode-estudio.lr-has-contract{padding-bottom:var(--lr-controls-h)}
+body.mode-estudio .scrolly{grid-template-columns:minmax(300px,40fr) minmax(0,60fr);gap:22px;padding:0 12px}
+body.mode-estudio .fig{top:20px;height:calc(100vh - 100px);min-height:520px;max-height:720px}
+body.mode-estudio .steps .step{min-height:90vh}
+body.mode-estudio .steps .step-inner{opacity:1;border-color:var(--line);padding:18px}
+body.mode-estudio .steps .step.on .step-inner{border-color:var(--accent)}
+body.lr-has-contract .fig-head{font-size:.875rem;padding:10px 14px;color:var(--muted)}
+body.lr-has-contract .fig-stage{padding:14px}
+body.lr-has-contract .statgrid span,body.lr-has-contract .statgrid label{font-size:.875rem}
+body.lr-has-contract pre,body[data-lesson] .teaching-trace pre,body[data-lesson] .build-code pre{white-space:pre;overflow-wrap:normal;word-break:normal;tab-size:4}
+body.lr-has-contract .code pre{font-size:.9rem;line-height:1.5}
+body.lr-has-contract .code .ln.dim{opacity:.75}
+
+body.mode-aula .steps .step-inner p{font-size:.95rem;line-height:1.5}
+body.mode-aula .fig-stage .code{margin:10px 0}
+body.mode-aula .fig-stage .code pre{padding:10px 12px}
+@media print{.lr-stage-picker{display:none}}
+/* Help belongs to the current scene but need not consume a whole heading row. */
+body.mode-aula .lr-scene-active>.wrap:first-child{position:relative}
+body.mode-aula .lr-scene-active .lr-support-open{position:absolute;top:0;right:8px;margin:0;font-size:.75rem;min-height:32px}
+body.mode-aula .lr-scene-active .eyebrow{padding-right:190px}
+body.mode-aula .lr-scene-active:has(.scrolly)>.wrap:first-child h2{font-size:1.25rem}
+body.mode-aula .lr-scene-active:has(.scrolly)>.wrap:first-child .lede{font-size:.875rem}
+#lr-nav .lr-scene-links button b{font-size:.75rem;overflow-wrap:normal;word-break:normal}
+#lr-nav .lr-scene-links button{grid-template-columns:48px minmax(0,1fr);padding:7px 5px}
+
 
 .construction-panel {margin:20px 0;padding:18px 22px;border:1px solid var(--line);border-radius:12px;background:var(--panel);font-size:1rem;line-height:1.65;overflow-wrap:anywhere;}
 .construction-panel summary {cursor:pointer;font-weight:700;color:var(--accent);}
@@ -952,211 +980,72 @@ body[data-lesson] .teaching-trace .ln.hl{
 </style>
 </head>
 <body data-lesson="04">
-<nav id="rail" aria-label="Progreso">
-  <a href="#s0" class="on"><span class="dot"></span><span class="lab">Order y Fill</span></a>
-  <a href="#s1"><span class="dot"></span><span class="lab">Construir un Fill</span></a>
-  <a href="#s2"><span class="dot"></span><span class="lab">Métodos y consulta</span></a>
-  <a href="#s3"><span class="dot"></span><span class="lab">Dos ejecuciones</span></a>
-  <a href="#s4"><span class="dot"></span><span class="lab">Consultar dos veces</span></a>
-  <a href="#s5"><span class="dot"></span><span class="lab">Quiz</span></a>
-  <a href="#s6"><span class="dot"></span><span class="lab">Tu principal</span></a>
-</nav>
+<style>
+body[data-lesson="04"] .l4-transfer{display:grid;grid-template-columns:1fr 1.5fr 1fr;align-items:center;gap:16px;padding:18px;margin:18px 0;background:var(--panel2);border:1px solid var(--line);border-radius:10px}
+body[data-lesson="04"] .l4-transfer-person{font:600 1.1rem/1.5 var(--mono);text-align:center}
+body[data-lesson="04"] .l4-transfer-person small{font-size:.9rem;font-weight:400}
+body[data-lesson="04"] .l4-transfer-arrows{display:grid;gap:14px;text-align:center;font:1.05rem var(--mono)}
+body[data-lesson="04"] .l4-transfer-arrows span{color:var(--bid)}
+body[data-lesson="04"] .l4-transfer-arrows strong{color:var(--ask);font-weight:500}
+body[data-lesson="04"] .l4-flow-contract{font-size:1rem;line-height:1.55}
+body[data-lesson="04"] .l4-instance-strip{display:grid;grid-template-columns:1fr 1fr;gap:8px;font:.88rem/1.4 var(--mono)}
+body[data-lesson="04"] .l4-instance-strip>span{padding:7px;border:1px solid var(--line);border-radius:7px;background:var(--panel2)}
+body[data-lesson="04"] .l4-instance-strip .active{border-color:var(--accent)}
+body[data-lesson="04"] .l4-strip-caption{font-size:.86rem;line-height:1.4;color:var(--muted);margin:0}
+body[data-lesson="04"] .l4-dynamic-transfer{grid-column:1/-1;font:.94rem/1.5 var(--mono);padding:9px 12px;border:1px solid var(--line);border-radius:7px}
+body[data-lesson="04"] #s1 .fig-stage.teaching-trace{gap:8px}
+body[data-lesson="04"] #s1 .code pre{line-height:1.35}
 
-<header class="hero wrap" id="s0">
-  <div class="eyebrow"><b>Algo Trading · ICAI 2026</b> · L4 · OOP I</div>
-  <h1>Una ejecución, sus datos y su <em>flujo</em></h1>
-  <p class="lede">Una <code>Order</code> expresa intención de negociar. Un <code>Fill</code>
-  describe lo que ya se ejecutó. Hoy usaremos <code>Fill(side, price, size)</code>,
-  la misma clase que completarás en el principal.</p>
-  <div class="code teaching-trace" data-lr-essential="challenge-code">
-    <pre><span class="ln">fill = {'side': 'buy',</span><span class="ln">        'price': 100, 'size': 2}</span><span class="ln">def cash_flow(fill):</span><span class="ln">    amount = fill['price'] * fill['size']</span><span class="ln">    if fill['side'] == 'buy':</span><span class="ln">        return -amount</span><span class="ln">    return amount</span><span class="ln hl">amount = cash_flow(fill)  # -200</span></pre>
-  </div>
-  <div class="challenge"><div class="tag">Ejemplo pedagógico, sin comisiones</div>
-    <p>Compra ejecutada de <strong>2 unidades a 100 USD/unidad</strong>: salen 200 USD.
-    ¿Cómo guardar esos datos y consultar el flujo con <code>f.cash_flow()</code>?</p>
-  </div>
-  <div class="meta"><span><b>20 min</b> presentación</span><span><b>20 min</b> principal</span></div>
-</header>
-
-<section id="s1">
-  <div class="wrap"><div class="eyebrow">§1 · <b>Constructor, self y retorno</b></div>
-    <h2>La ejecución de <code>f.cash_flow()</code></h2>
-    <p class="lede">Seguimos la misma compra: <code>Fill('buy', 100, 2)</code>.</p>
-  </div>
-  <div class="scrolly" data-scrolly>
-    <div class="steps">
-      <div class="step on" data-stage="0" data-name="definición"><div class="step-inner">
-        <h3><span class="n">1/6</span>La clase define cómo guardar los datos</h3>
-        <p><code>class Fill</code> define una plantilla. Su método <code>__init__</code>
-        inicializa cada nueva instancia. Definir la clase todavía no crea <code>f</code>.</p>
-        
-      </div></div>
-      <div class="step" data-stage="1" data-name="llamada y parámetros"><div class="step-inner">
-        <h3><span class="n">2/6</span>La llamada crea una instancia</h3>
-        <p>Python crea el objeto y lo pasa como <code>self</code> a <code>__init__</code>.
-        Los otros argumentos llegan a <code>side</code>, <code>price</code> y <code>size</code>.</p>
-        <p>Al terminar la inicialización, el nombre <code>f</code> apuntará a ese objeto.
-        No escribimos un argumento para <code>self</code>.</p>
-      </div></div>
-      <div class="step" data-stage="2" data-name="atributos guardados"><div class="step-inner">
-        <h3><span class="n">3/6</span>Los parámetros pasan a atributos</h3>
-        <p>En <code>self.price = price</code>, la derecha lee el parámetro <code>100</code>.
-        La izquierda guarda ese valor en el objeto que estamos construyendo.</p>
-        <p>Después del constructor, <code>f.price</code> sigue disponible. El parámetro
-        local <code>price</code> ya no hace falta.</p>
-      </div></div>
-      <div class="step" data-stage="3" data-name="self en el método"><div class="step-inner">
-        <h3><span class="n">4/6</span>La consulta recibe el propio objeto</h3>
-        <p><code>f.cash_flow()</code> entra en el método con <code>self = f</code>.
-        Lee <code>self.side</code> y elige la rama de compra.</p>
-        <p>Un atributo como <code>f.price</code> guarda un dato. Un método como
-        <code>f.cash_flow()</code> ejecuta código al llamarlo.</p>
-      </div></div>
-      <div class="step" data-stage="4" data-name="return y receptor"><div class="step-inner">
-        <h3><span class="n">5/6</span>El resultado vuelve a <code>amount</code></h3>
-        <p>La multiplicación usa 100 USD/unidad y 2 unidades. El signo de compra produce
-        <strong>−200 USD</strong>. <code>return</code> termina el método y entrega ese número.</p>
-        <p>La asignación guarda el resultado en <code>amount</code>. No imprime nada
-        y no actualiza una cuenta.</p>
-      </div></div>
-      <div class="step" data-stage="5" data-name="instancias independientes"><div class="step-inner">
-        <h3><span class="n">6/6</span>Otra instancia conserva otros datos</h3>
-        <p><code>g</code> describe una venta de 2 unidades a 110. En su llamada,
-        <code>self = g</code> y el flujo es +220 USD.</p>
-        <p>Crear o consultar <code>g</code> deja <code>f</code> intacto.
-        <strong>Observa:</strong> <code>f.cash_flow()</code> conserva su valor después de consultar g.</p>
-      </div></div>
-    </div>
-    <div class="figwrap"><div class="fig">
-      <div class="fig-head"><span>Fill del principal</span><span class="stage-name">definición</span></div>
-      <div class="fig-stage on teaching-trace" data-stage="0">
-        <div class="code code-block"><pre data-code-part="fill-init"><span class="ln hl">class Fill:</span><span class="ln hl">    def __init__(self, side, price, size):</span><span class="ln">        self.side = side</span><span class="ln">        self.price = price</span><span class="ln">        self.size = size</span></pre></div>
-        <div class="visual-oop-objects"><div class="visual-oop-object "><div class="visual-oop-object-title">Fill · plantilla</div><dl><div><dt>side</dt><dd>—</dd></div><div><dt>price</dt><dd>—</dd></div><div><dt>size</dt><dd>—</dd></div></dl></div></div><p class="trace-caption">Campos previstos; todavía no existe f.</p>
-      </div>
-      <div class="fig-stage teaching-trace" data-stage="1">
-        <div class="code code-block"><pre><span class="ln">class Fill:</span><span class="ln hl">    def __init__(self, side, price, size):</span><span class="ln">        self.side = side</span><span class="ln">        self.price = price</span><span class="ln">        self.size = size</span><span class="ln"></span><span class="ln hl">f = Fill('buy', 100, 2)</span></pre></div>
-        <div class="visual-oop-objects"><div class="visual-oop-object parameter"><div class="visual-oop-object-title">Argumentos de la llamada</div><dl><div><dt>side</dt><dd>buy</dd></div><div><dt>price</dt><dd>100</dd></div><div><dt>size</dt><dd>2</dd></div></dl></div><div class="visual-oop-object buy"><div class="visual-oop-object-title">self → nueva instancia f</div><dl><div><dt>side</dt><dd>—</dd></div><div><dt>price</dt><dd>—</dd></div><div><dt>size</dt><dd>—</dd></div></dl></div></div>
-      </div>
-      <div class="fig-stage teaching-trace" data-stage="2">
-        <div class="code code-block"><pre><span class="ln">class Fill:</span><span class="ln">    def __init__(self, side, price, size):</span><span class="ln">        self.side = side</span><span class="ln hl">        self.price = price</span><span class="ln">        self.size = size</span><span class="ln"></span><span class="ln">f = Fill('buy', 100, 2)</span></pre></div>
-        <div class="visual-oop-objects"><div class="visual-oop-object parameter"><div class="visual-oop-object-title">Parámetros →</div><dl><div><dt>side</dt><dd>buy</dd></div><div class="active"><dt>price</dt><dd>100</dd></div><div><dt>size</dt><dd>2</dd></div></dl></div><div class="visual-oop-object buy"><div class="visual-oop-object-title">self = f · atributos</div><dl><div><dt>side</dt><dd>buy</dd></div><div class="active"><dt>price</dt><dd>100</dd></div><div><dt>size</dt><dd>2</dd></div></dl></div></div>
-      </div>
-      <div class="fig-stage teaching-trace" data-stage="3">
-        <div class="code code-block"><pre data-code-part="cash-flow"><span class="ln"># Método dentro de la clase Fill</span><span class="ln">def cash_flow(self):</span><span class="ln hl">    if self.side == 'buy':</span><span class="ln">        return -self.price * self.size</span><span class="ln">    return self.price * self.size</span><span class="ln"></span><span class="ln hl">amount = f.cash_flow()</span></pre></div>
-        <div class="visual-oop-objects"><div class="visual-oop-object buy"><div class="visual-oop-object-title">self = f</div><dl><div class="active"><dt>side</dt><dd>buy</dd></div><div><dt>price</dt><dd>100</dd></div><div><dt>size</dt><dd>2</dd></div></dl></div><div class="viz-card buy"><span>self.side == 'buy'</span><strong>True</strong><small>amount espera el retorno</small></div></div>
-      </div>
-      <div class="fig-stage teaching-trace" data-stage="4">
-        <div class="code code-block"><pre><span class="ln"># Método dentro de la clase Fill</span><span class="ln">def cash_flow(self):</span><span class="ln">    if self.side == 'buy':</span><span class="ln hl">        return -self.price * self.size</span><span class="ln">    return self.price * self.size</span><span class="ln"></span><span class="ln hl">amount = f.cash_flow()</span></pre></div>
-        <div class="visual-oop-objects"><div class="visual-oop-object buy"><div class="visual-oop-object-title">f · sin cambios</div><dl><div><dt>side</dt><dd>buy</dd></div><div><dt>price</dt><dd>100</dd></div><div><dt>size</dt><dd>2</dd></div></dl></div><div class="viz-card output"><span>return → amount</span><strong>−200 USD</strong><small>−100 × 2 · int</small></div></div>
-      </div>
-      <div class="fig-stage teaching-trace" data-stage="5">
-        <div class="code code-block"><pre><span class="ln">f = Fill('buy', 100, 2)</span><span class="ln hl">g = Fill('sell', 110, 2)</span><span class="ln hl">other = g.cash_flow()</span><span class="ln">amount = f.cash_flow()</span></pre></div>
-        <div class="visual-oop-objects"><div class="visual-oop-object buy"><div class="visual-oop-object-title">f · compra → −200 USD</div><dl><div><dt>side</dt><dd>buy</dd></div><div><dt>price</dt><dd>100</dd></div><div><dt>size</dt><dd>2</dd></div></dl></div><div class="visual-oop-object sell"><div class="visual-oop-object-title">g · venta → +220 USD</div><dl><div><dt>side</dt><dd>sell</dd></div><div><dt>price</dt><dd>110</dd></div><div><dt>size</dt><dd>2</dd></div></dl></div></div><p class="trace-caption">Cada llamada recibe su propia instancia como self.</p>
-      </div>
-    </div></div>
-  </div>
-</section>
-
-<section id="s2">
-  <div class="wrap"><div class="eyebrow">§2 · <b>Lectura requerida</b></div>
-    <h2>La llamada y las interfaces de consulta</h2>
-  </div>
-  <div class="scrolly" data-scrolly>
-    <div class="steps">
-      <div class="step on" data-stage="0" data-name="objeto como self"><div class="step-inner">
-        <h3><span class="n">1/3</span>El objeto ocupa el primer parámetro</h3>
-        <p>Estas dos llamadas calculan lo mismo. La forma habitual con punto pasa
-        <code>f</code> como <code>self</code> automáticamente.</p>
-        <p><strong>Predice</strong> el valor de <code>amount</code> antes de mostrarlo.</p>
-      </div></div>
-      <div class="step" data-stage="1" data-name="representación"><div class="step-inner">
-        <h3><span class="n">2/3</span><code>__repr__</code> devuelve texto</h3>
-        <p>Este método especial permite inspeccionar el objeto con <code>repr(f)</code>
-        o <code>print(f)</code> si no hay otro <code>__str__</code>.</p>
-        <p>La f-string inserta atributos en el texto. Representar el objeto no valida
-        sus datos ni calcula un movimiento de caja.</p>
-      </div></div>
-      <div class="step" data-stage="2" data-name="referencia ampliada"><div class="step-inner">
-        <h3><span class="n">3/3</span>OrderMini y el paquete exchange</h3>
-        <p>Son interfaces de consulta diferenciadas. <code>OrderMini</code> ilustra la
-        intención y su nocional. El paquete <code>exchange</code> añade símbolo e IDs.</p>
-        <p>El principal mantiene <code>Fill(side, price, size)</code>. Consulta las
-        firmas ampliadas cuando uses el paquete, sin sustituir la del notebook.</p>
-      </div></div>
-    </div>
-    <div class="figwrap"><div class="fig">
-      <div class="fig-head"><span>Métodos y referencia</span><span class="stage-name">objeto como self</span></div>
-      <div class="fig-stage on teaching-trace" data-stage="0">
-        <div class="code code-block"><pre><span class="ln">f = Fill('buy', 100, 2)</span><span class="ln hl">amount = f.cash_flow()</span><span class="ln">same = Fill.cash_flow(f)</span><span class="ln">print(amount)</span></pre></div>
-        <div class="predict predictgate"><div class="btnrow">
-          <input type="text" placeholder="mi predicción…" aria-label="Tu predicción">
-          <button class="btn runbtn" data-target="out-not" disabled>Mostrar salida</button>
-        </div></div>
-        <div class="out hidden" id="out-not">−200 · int, porque 100 y 2 son enteros</div>
-        <p class="trace-caption">return entrega el valor. print lo muestra.</p>
-      </div>
-      <div class="fig-stage teaching-trace" data-stage="1">
-        <div class="code code-block"><pre><span class="ln"># Método añadido a Fill para inspección</span><span class="ln">def __repr__(self):</span><span class="ln hl">    return (f"Fill({self.side} "</span><span class="ln hl">            f"{self.size} @ {self.price})")</span><span class="ln"></span><span class="ln">repr(f)</span><span class="ln"># 'Fill(buy 2 @ 100)'</span></pre></div>
-        <div class="trace-result">Devuelve str · atributos sin cambios</div>
-        <p class="trace-caption">Es una ampliación de inspección. El principal completa atributos y cash_flow.</p>
-      </div>
-      <div class="fig-stage teaching-trace" data-stage="2">
-        <div class="code code-block"><pre><span class="ln"># Consulta: maqueta de una intención</span><span class="ln hl">order = OrderMini('BTCUSD', 'buy', 100, 2)</span><span class="ln">order.notional()  # 100 * 2 = 200</span><span class="ln"></span><span class="ln"># Principal: ejecución confirmada</span><span class="ln hl">f = Fill('buy', 100, 2)</span><span class="ln">f.cash_flow()  # -200</span></pre></div>
-        <details><summary>OrderMini completo, solo para consulta</summary><div class="body">
-          <div class="code code-block"><pre><span class="ln">class OrderMini:</span><span class="ln">    def __init__(</span><span class="ln">        self, symbol, side, price, size):</span><span class="ln">        self.symbol = symbol</span><span class="ln">        self.side = side</span><span class="ln">        self.price = price</span><span class="ln">        self.size = size</span><span class="ln">    def notional(self):</span><span class="ln">        return self.price * self.size</span></pre></div>
-        </div></details>
-        <details><summary>Contrato ampliado de exchange: tipos y firmas</summary><div class="body">
-          <p><code>Side</code> fija BUY/SELL. <code>OrderType</code> fija la política de orden
-          (LIMIT por defecto). Las anotaciones <code>: str</code> y <code>: float</code>
-          describen tipos, no validan por sí solas. <code>float | None</code> admite ausencia.</p>
-          <div class="code code-block"><pre><span class="ln">Order(symbol, side, size, price=None,</span><span class="ln">      order_type=OrderType.LIMIT, id=None)</span><span class="ln">Fill(order_id, symbol, side, price, size,</span><span class="ln">     timestamp=None)</span></pre></div>
-          <p><code>Order.notional()</code> devuelve precio por tamaño. <code>Fill.cash_flow()</code>
-          devuelve el flujo firmado. La firma ampliada usa <code>Side</code>, IDs y símbolo.
-          <code>timestamp</code> es el instante opcional de la ejecución.</p>
-        </div></details>
-      </div>
-    </div></div>
-  </div>
-</section>
-
-<section id="s3"><div class="wrap">
-  <div class="eyebrow">§3 · <b>Simulador</b></div><h2>Comparar ejecuciones</h2>
-  <p class="lede">El primer fill permanece en <code>buy, 100, 2</code>. Los controles
-  crean otro ejemplo. Cambiar el ejemplo no reescribe una ejecución real.</p>
-  <div class="simcard"><h4>Fill(side, price, size)</h4>
-    <div class="simrow"><div class="toggle" role="group" aria-label="side">
-      <button class="on" id="ow-buy">buy</button><button id="ow-sell">sell</button>
-    </div><label>price <input type="number" id="ow-price" value="100" step="1" min="0"></label>
-      <label>size <input type="number" id="ow-size" value="2" step="1" min="0"></label></div>
-    <div class="visual-oop-objects"><div class="visual-oop-object buy"><div class="visual-oop-object-title">f · permanece</div><dl><div><dt>side</dt><dd>buy</dd></div><div><dt>price</dt><dd>100</dd></div><div><dt>size</dt><dd>2</dd></div></dl></div><div class="visual-oop-object" id="ow-object"><div class="visual-oop-object-title">g · nuevo ejemplo</div><dl><div><dt>side</dt><dd id="ow-side"></dd></div><div><dt>price</dt><dd id="ow-attr-price"></dd></div><div><dt>size</dt><dd id="ow-attr-size"></dd></div></dl></div></div><div class="viz-flow visual-oop-flow"><div class="viz-card buy"><span>f.cash_flow()</span><strong>−200 USD</strong></div><div class="viz-card output"><span>g.cash_flow() · USD</span><strong id="ow-cf"></strong><small>price × size = <b id="ow-not"></b></small></div></div><p class="trace-caption" id="ow-repr"></p><div class="looplog" id="ow-log" aria-live="polite"></div>
-  </div>
-  <p class="trace-caption">Prueba sell, 110, 2. El lado decide el signo; consultar no actualiza una cuenta.</p>
-</div></section>
-
-<section id="s4"><div class="wrap">
-  <div class="eyebrow">§4 · <b>Consulta frente a contabilización</b></div>
-  <h2>Consultar dos veces el mismo fill</h2>
-  <div class="code teaching-trace"><pre><span class="ln">f = Fill('buy', 100, 2)</span><span class="ln hl">first = f.cash_flow()</span><span class="ln hl">again = f.cash_flow()</span><span class="ln">g = Fill('sell', 110, 2)</span><span class="ln">total = first + g.cash_flow()</span><span class="ln">print(first, again, total)</span></pre>
-    <div class="out"><button class="btn runbtn" data-target="out-cf">Mostrar salida</button>
-      <div id="out-cf" class="hidden trace-result">−200 −200 20</div></div>
-  </div>
-  <p>Ambas consultas devuelven −200. <code>f</code> conserva sus atributos.
-  Todavía no existe una cuenta que actualizar.</p>
-  <p>Dos ejecuciones distintas, compra 100×2 y venta 110×2, suman
-  <strong>−200 + 220 = +20 USD</strong>. Si partes sin posición y sin comisiones,
-  la cantidad neta es 2−2=0. En L5 un tracker registrará cada ejecución.</p>
-</div></section>
-
-<section id="s5"><div class="wrap">
+body[data-lesson="04"] .l4-economics,body[data-lesson="04"] .l4-file-map{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}
+body[data-lesson="04"] .l4-economics>div{border-left:3px solid var(--accent);background:var(--panel2);padding:14px 18px}
+body[data-lesson="04"] .l4-economics span{display:block;color:var(--muted);font-size:.9rem}
+body[data-lesson="04"] .l4-economics strong{display:block;font-size:1.65rem;margin:8px 0}
+body[data-lesson="04"] .l4-economics p{margin:0;font-size:1rem}
+body[data-lesson="04"] .l4-file-map p{margin:14px;font-size:1rem;line-height:1.6}
+body[data-lesson="04"] .visual-oop-window .code pre{white-space:pre;overflow-wrap:normal;font-size:.94rem}
+body[data-lesson="04"] .fig-stage.teaching-trace{gap:12px}
+body[data-lesson="04"] #ow-code{margin:0;font:1rem/1.5 var(--mono);white-space:pre-wrap}
+body[data-lesson="04"] .l4-simulator .visual-oop-console{margin:10px 0}
+body[data-lesson="04"].mode-aula .hero h1{font-size:clamp(2.1rem,3.5vw,3.4rem);margin:.3em 0}
+body[data-lesson="04"] .fig-stage.teaching-trace{padding:14px 20px;gap:10px}
+body[data-lesson="04"] .fig-stage .l4-economics{margin:0;gap:12px}
+body[data-lesson="04"] .l4-simulator{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px;margin:12px 0}
+body[data-lesson="04"] .l4-simulator .simrow{grid-column:1/-1;margin:0}
+body[data-lesson="04"] .l4-simulator .visual-oop-objects{grid-column:1;grid-row:2;margin:0}
+body[data-lesson="04"] .l4-simulator .visual-oop-console{grid-column:2;grid-row:2;margin:0;align-self:stretch}
+body[data-lesson="04"] .l4-simulator .visual-oop-flow{grid-column:1;grid-row:3;margin:0}
+body[data-lesson="04"] #ow-query{grid-column:2;grid-row:3;align-self:center}
+body[data-lesson="04"] #ow-log{grid-column:1/-1;margin:0}
+body[data-lesson="04"] .l4-simulator .visual-oop-object{padding:10px}
+body[data-lesson="04"] #s6 h2{margin:.3em 0}
+body[data-lesson="04"] #s6 .bridge{margin:12px 0;padding:12px 16px}
+body[data-lesson="04"] #s6 details{margin:6px 0}
+body[data-lesson="04"].mode-estudio .scrolly{grid-template-columns:minmax(0,42fr) minmax(0,58fr)}
+body[data-lesson="04"] #s1 .fig-stage[data-stage="1"]{gap:6px}
+</style><nav id="rail" aria-label="Progreso"><a href="#s0" class="on"><span class="dot"></span><span class="lab">De funciones a objetos</span></a><a href="#s1"><span class="dot"></span><span class="lab">Construir y llamar</span></a><a href="#s3"><span class="dot"></span><span class="lab">Probar dos objetos</span></a><a href="#s4"><span class="dot"></span><span class="lab">Caja y posición</span></a><a href="#s2"><span class="dot"></span><span class="lab">Representar y validar</span></a><a href="#s5"><span class="dot"></span><span class="lab">Comprueba</span></a><a href="#s6"><span class="dot"></span><span class="lab">Tus archivos</span></a></nav>
+<header class="hero wrap" id="s0"><div class="eyebrow"><b>Algo Trading · ICAI 2026</b> · L4 · OOP I</div>
+<h1>Una clase guarda los datos<br>y define cómo usarlos</h1>
+<p class="lede">En L3 importabas funciones. Ahora importarás <code>Fill</code>, una clase para representar una ejecución confirmada.</p>
+<div class="l4-transfer" aria-label="Compra confirmada: entran dos unidades y salen 200 USD"><div class="l4-transfer-person">Contraparte</div><div class="l4-transfer-arrows"><span>2 unidades → entran</span><strong>← salen 200 USD</strong></div><div class="l4-transfer-person">Nosotros<br><small>buy · 2 @ 100</small></div></div><p class="l4-flow-contract"><code>buy.cash_flow()</code> devuelve <strong>−200 USD</strong>. Describe el dinero de esa ejecución; consultar el método todavía no actualiza ninguna cuenta.</p>
+<div class="challenge"><div class="tag">Una orden pide operar. Un fill registra lo ejecutado.</div><p>Vamos a reunir <code>side</code> (lado), <code>price</code> (precio) y <code>size</code> (unidades) con el código que calcula su flujo.</p></div>
+<div class="meta"><span><b>models.py</b> define Fill</span><span><b>main.py</b> la importa y la utiliza</span></div></header><section id="s1"><div class="wrap"><div class="eyebrow">Pasos 1–3 del enunciado</div><h2>De la clase a una llamada entre archivos</h2></div><div class="scrolly" data-scrolly><div class="steps"><div class="step on" data-stage="0" data-name="clase"><div class="step-inner"><h3><span class="n">1/7</span>Una definición reutilizable</h3><p>Una <strong>clase</strong> define cómo son y qué hacen sus objetos. Cada objeto concreto es una <strong>instancia</strong>.</p><p><code>__init__</code> inicializa sus datos. Las líneas sangradas pertenecen al método, dentro de la clase.</p></div></div><div class="step" data-stage="1" data-name="import"><div class="step-inner"><h3><span class="n">2/7</span>La clase también se importa</h3><p>Los dos archivos están en <code>exercises/</code>. El import de L3 funciona igual con una clase.</p><p><code>main.py</code> usa la definición de <code>models.py</code>. Aquí mostraremos fragmentos del interior de <code>main()</code>.</p></div></div><div class="step" data-stage="2" data-name="nueva instancia"><div class="step-inner"><h3><span class="n">3/7</span>Los argumentos entran en __init__</h3><p><code>Fill("buy", 100, 2)</code> crea un objeto y llama a <code>__init__</code> para inicializarlo.</p><p>Python pasa ese objeto como <code>self</code>. Tú proporcionas los otros tres argumentos.</p></div></div><div class="step" data-stage="3" data-name="atributos"><div class="step-inner"><h3><span class="n">4/7</span>self.price guarda el valor en el objeto</h3><p>La derecha de <code>self.price = price</code> lee el parámetro <code>price</code>. La izquierda guarda ese valor en el objeto.</p><p>Después puedes leerlo con <code>buy.price</code>. Es un <strong>atributo</strong>: un dato de esa instancia.</p></div></div><div class="step" data-stage="4" data-name="método"><div class="step-inner"><h3><span class="n">5/7</span>La llamada selecciona qué objeto leer</h3><p>Un <strong>método</strong> es una función definida en la clase. Al llamar a <code>buy.cash_flow()</code>, Python pasa <code>buy</code> como <code>self</code>.</p><p>El punto selecciona el método y los paréntesis lo ejecutan. El método lee los datos de esa compra.</p></div></div><div class="step" data-stage="5" data-name="retorno"><div class="step-inner"><h3><span class="n">6/7</span>return entrega el flujo al programa</h3><p>Comprar consume caja: <strong>−100 × 2 = −200 USD</strong>. <code>return</code> entrega ese número a quien llamó.</p><p><code>amount</code> recibe el resultado. <code>print</code> lo muestra. Los atributos de <code>buy</code> se conservan.</p></div></div><div class="step" data-stage="6" data-name="dos objetos"><div class="step-inner"><h3><span class="n">7/7</span>Una clase, dos instancias independientes</h3><p>La segunda llamada a <code>Fill</code> crea otra instancia. <code>sell.cash_flow()</code> recibe <code>sell</code> como <code>self</code>.</p><p><strong>Predice:</strong> ¿qué devolverá buy después de crear sell?</p></div></div></div><div class="figwrap"><div class="fig"><div class="fig-head"><span>models.py · main.py</span><span class="stage-name">clase</span></div><div class="fig-stage on teaching-trace" data-stage="0"><div class="l4-instance-strip"><span class=""><b>buy</b> · 2 unidades @ 100<br>entran 2 · salen 200 USD</span><span><b>sell</b> · 2 unidades @ 110<br>salen 2 · entran 220 USD</span></div><p class="l4-strip-caption">Casos que construiremos: definir la clase aún no crea estos objetos.</p><div class="visual-oop-window module"><div class="visual-oop-window-title">models.py · definición</div><div class="code code-block"><pre data-code-part="fill-init"><span class="ln hl">class Fill:</span><span class="ln hl">    def __init__(self, side, price, size):</span><span class="ln">        self.side = side</span><span class="ln">        self.price = price</span><span class="ln">        self.size = size</span></pre></div></div><div class="trace-result">Definir Fill todavía no crea una compra.</div><p class="trace-caption">En estas vistas omitimos la validación proporcionada. Se conserva en tu archivo.</p></div><div class="fig-stage teaching-trace" data-stage="1"><div class="l4-instance-strip"><span class=""><b>buy</b> · 2 unidades @ 100<br>entran 2 · salen 200 USD</span><span><b>sell</b> · 2 unidades @ 110<br>salen 2 · entran 220 USD</span></div><p class="l4-strip-caption">Casos que construiremos: definir la clase aún no crea estos objetos.</p><div class="visual-oop-window module"><div class="visual-oop-window-title">models.py</div><div class="code code-block"><pre><span class="ln hl">class Fill:</span><span class="ln">    # Aquí viven sus métodos</span><span class="ln">    ...</span></pre></div></div><div class="visual-oop-window caller"><div class="visual-oop-window-title">main.py · estructura</div><div class="code code-block"><pre><span class="ln hl">from models import Fill</span><span class="ln"></span><span class="ln">def main():</span><span class="ln">    # Aquí crearemos los objetos</span><span class="ln">    ...</span><span class="ln"></span><span class="ln">if __name__ == &quot;__main__&quot;:</span><span class="ln">    main()</span></pre></div></div><p class="trace-caption">Los puntos suspensivos indican código omitido en la vista.</p></div><div class="fig-stage teaching-trace" data-stage="2"><div class="l4-instance-strip"><span class=""><b>buy</b> · 2 unidades @ 100<br>entran 2 · salen 200 USD</span><span><b>sell</b> · 2 unidades @ 110<br>salen 2 · entran 220 USD</span></div><p class="l4-strip-caption">Datos del caso · cada instancia conserva sus propios atributos.</p><div class="visual-oop-window caller"><div class="visual-oop-window-title">main.py · dentro de main()</div><div class="code code-block"><pre><span class="ln hl">buy = Fill(&quot;buy&quot;, 100, 2)</span></pre></div></div><div class="visual-oop-window module"><div class="visual-oop-window-title">models.py · entra en __init__</div><div class="code code-block"><pre><span class="ln hl">def __init__(self, side, price, size):</span><span class="ln">    # self: el nuevo objeto</span><span class="ln">    # side=&quot;buy&quot;, price=100, size=2</span></pre></div></div><div class="trace-result">Al terminar, buy apuntará al nuevo objeto.</div></div><div class="fig-stage teaching-trace" data-stage="3"><div class="l4-instance-strip"><span class="active"><b>buy</b> · 2 unidades @ 100<br>entran 2 · salen 200 USD</span><span><b>sell</b> · 2 unidades @ 110<br>salen 2 · entran 220 USD</span></div><p class="l4-strip-caption">Datos del caso · cada instancia conserva sus propios atributos.</p><div class="visual-oop-window module"><div class="visual-oop-window-title">models.py · dentro de __init__</div><div class="code code-block"><pre><span class="ln">self.side = side</span><span class="ln hl">self.price = price</span><span class="ln">self.size = size</span></pre></div></div><div class="visual-oop-objects"><div class="visual-oop-object parameter"><div class="visual-oop-object-title">Parámetros · entrada</div><dl><div class=""><dt>side</dt><dd>buy</dd></div><div class="active"><dt>price</dt><dd>100</dd></div><div class=""><dt>size</dt><dd>2</dd></div></dl></div><div class="visual-oop-object buy"><div class="visual-oop-object-title">buy · atributos guardados</div><dl><div class=""><dt>side</dt><dd>buy</dd></div><div class="active"><dt>price</dt><dd>100</dd></div><div class=""><dt>size</dt><dd>2</dd></div></dl></div></div><div class="trace-result"><code>price = 100</code> pasa a <code>buy.price = 100</code></div></div><div class="fig-stage teaching-trace" data-stage="4"><div class="l4-instance-strip"><span class="active"><b>buy</b> · 2 unidades @ 100<br>entran 2 · salen 200 USD</span><span><b>sell</b> · 2 unidades @ 110<br>salen 2 · entran 220 USD</span></div><p class="l4-strip-caption">Datos del caso · cada instancia conserva sus propios atributos.</p><div class="visual-oop-window caller"><div class="visual-oop-window-title">main.py · llamada</div><div class="code code-block"><pre><span class="ln hl">amount = buy.cash_flow()</span></pre></div></div><div class="visual-oop-window module"><div class="visual-oop-window-title">models.py · método</div><div class="code code-block"><pre data-code-part="cash-flow"><span class="ln"># Método dentro de la clase Fill</span><span class="ln">def cash_flow(self):</span><span class="ln hl">    if self.side == &#x27;buy&#x27;:</span><span class="ln">        return -self.price * self.size</span><span class="ln">    return self.price * self.size</span></pre></div></div><div class="trace-result"><code>self</code> recibe buy · <code>self.side == "buy"</code> es True</div></div><div class="fig-stage teaching-trace" data-stage="5"><div class="l4-instance-strip"><span class="active"><b>buy</b> · 2 unidades @ 100<br>entran 2 · salen 200 USD</span><span><b>sell</b> · 2 unidades @ 110<br>salen 2 · entran 220 USD</span></div><p class="l4-strip-caption">Datos del caso · cada instancia conserva sus propios atributos.</p><div class="visual-oop-window module"><div class="visual-oop-window-title">models.py · rama de compra</div><div class="code code-block"><pre><span class="ln hl">return -self.price * self.size</span></pre></div></div><div class="visual-oop-window caller"><div class="visual-oop-window-title">main.py · recibe y muestra</div><div class="code code-block"><pre><span class="ln hl">amount = buy.cash_flow()</span><span class="ln">print(amount)</span></pre></div></div><div class="visual-oop-console"><span>Terminal · salida</span><strong>−200</strong></div><p class="trace-caption">Consultar el flujo no actualiza ninguna cuenta.</p></div><div class="fig-stage teaching-trace" data-stage="6"><div class="l4-instance-strip"><span class=""><b>buy</b> · 2 unidades @ 100<br>entran 2 · salen 200 USD</span><span><b>sell</b> · 2 unidades @ 110<br>salen 2 · entran 220 USD</span></div><p class="l4-strip-caption">Datos del caso · cada instancia conserva sus propios atributos.</p><div class="visual-oop-window caller"><div class="visual-oop-window-title">main.py · dentro de main()</div><div class="code code-block"><pre><span class="ln">buy = Fill(&quot;buy&quot;, 100, 2)</span><span class="ln hl">sell = Fill(&quot;sell&quot;, 110, 2)</span><span class="ln">print(buy.cash_flow())</span><span class="ln">print(sell.cash_flow())</span><span class="ln hl">print(buy.cash_flow())</span></pre></div></div><div class="visual-oop-objects"><div class="visual-oop-object buy"><div class="visual-oop-object-title">buy · devuelve −200</div><dl><div class=""><dt>side</dt><dd>buy</dd></div><div class=""><dt>price</dt><dd>100</dd></div><div class=""><dt>size</dt><dd>2</dd></div></dl></div><div class="visual-oop-object sell"><div class="visual-oop-object-title">sell · devuelve +220</div><dl><div class=""><dt>side</dt><dd>sell</dd></div><div class=""><dt>price</dt><dd>110</dd></div><div class=""><dt>size</dt><dd>2</dd></div></dl></div></div></div></div></div></div></section><section id="s3"><div class="wrap"><div class="eyebrow">Paso 3 · simulación ilustrativa</div><h2>Cada llamada lee su propia instancia</h2>
+<p class="lede"><code>buy</code> conserva la compra inicial. Cambia los datos para crear otro objeto de prueba, <code>other</code>.</p>
+<div class="simcard l4-simulator"><div class="simrow"><div class="toggle" role="group" aria-label="Lado del nuevo ejemplo"><button id="ow-buy">buy</button><button class="on" id="ow-sell">sell</button></div><label>price · USD/unidad <input type="number" id="ow-price" value="110" step="1"></label><label>size · unidades <input type="number" id="ow-size" value="2" step="1"></label></div>
+<div class="visual-oop-objects"><div class="visual-oop-object buy"><div class="visual-oop-object-title">buy · permanece</div><dl><div class=""><dt>side</dt><dd>buy</dd></div><div class=""><dt>price</dt><dd>100</dd></div><div class=""><dt>size</dt><dd>2</dd></div></dl></div><div class="visual-oop-object sell" id="ow-object"><div class="visual-oop-object-title" id="ow-title">other · nuevo ejemplo</div><dl><div><dt>side</dt><dd id="ow-side"></dd></div><div><dt>price</dt><dd id="ow-attr-price"></dd></div><div><dt>size</dt><dd id="ow-attr-size"></dd></div></dl></div></div>
+<div class="visual-oop-console"><span>main.py · fragmento generado con los controles</span><pre id="ow-code"></pre></div>
+<button class="btn" id="ow-query">Consultar de nuevo other.cash_flow()</button>
+<div class="visual-oop-flow viz-flow"><div class="viz-card"><span>buy.cash_flow() · USD</span><strong>−200</strong></div><div class="viz-card"><span>other.cash_flow() · USD</span><strong id="ow-cf"></strong><small>price × size = <b id="ow-not"></b></small></div></div>
+<div class="l4-dynamic-transfer" id="ow-transfer" aria-live="polite"></div><div class="looplog" id="ow-log" aria-live="polite"></div><span id="ow-repr" hidden></span></div>
+<p class="trace-caption">Cada cambio crea un ejemplo nuevo. Consultar de nuevo conserva sus atributos y devuelve el mismo flujo.</p></div></section><section id="s4"><div class="wrap"><div class="eyebrow">Pasos 4–5 · caja y unidades</div><h2>El programa reúne los flujos</h2></div><div class="scrolly" data-scrolly><div class="steps"><div class="step on" data-stage="0" data-name="cierre completo"><div class="step-inner"><h3><span class="n">1/2</span>Una compra y una venta completa</h3><p>Ahora <code>main.py</code> suma los resultados de dos ejecuciones distintas. La fórmula de cada flujo sigue en <code>Fill</code>.</p><p>Partimos sin posición y omitimos comisiones. Al vender las dos unidades, la posición queda cerrada.</p></div></div><div class="step" data-stage="1" data-name="venta parcial"><div class="step-inner"><h3><span class="n">2/2</span>Consolidación: vender solo una unidad</h3><p><code>partial_sell</code> sustituye a la venta completa en esta comparación. No sumamos ambas ventas.</p><p>Queda una unidad. La caja de <strong>−90 USD</strong> no basta para medir el resultado económico: falta valorar esa unidad.</p></div></div></div><div class="figwrap"><div class="fig"><div class="fig-head"><span>models.py · main.py</span><span class="stage-name">cierre completo</span></div><div class="fig-stage on teaching-trace" data-stage="0"><div class="visual-oop-window caller"><div class="visual-oop-window-title">main.py · dentro de main()</div><div class="code code-block"><pre data-code-part="round-trip"><span class="ln">total_cash = (</span><span class="ln hl">    buy.cash_flow() + sell.cash_flow()</span><span class="ln">)</span><span class="ln hl">remaining_units = buy.size - sell.size</span><span class="ln">print(total_cash, remaining_units)</span></pre></div></div><div class="l4-economics"><div><span>Caja neta · USD</span><strong>+20</strong><p>−200 + 220</p></div><div><span>Unidades restantes</span><strong>0</strong><p>2 − 2</p></div></div><div class="trace-result">Posición cerrada: esos 20 son el resultado de la vuelta.</div></div><div class="fig-stage teaching-trace" data-stage="1"><div class="visual-oop-window caller"><div class="visual-oop-window-title">main.py · escenario alternativo</div><div class="code code-block"><pre data-code-part="partial-sale"><span class="ln hl">partial_sell = Fill(&quot;sell&quot;, 110, 1)</span><span class="ln">partial_cash = (</span><span class="ln">    buy.cash_flow()</span><span class="ln hl">    + partial_sell.cash_flow()</span><span class="ln">)</span><span class="ln">remaining_units = (</span><span class="ln">    buy.size - partial_sell.size</span><span class="ln">)</span></pre></div></div><div class="l4-economics"><div><span>Caja neta · USD</span><strong>−90</strong><p>−200 + 110</p></div><div><span>Unidades restantes</span><strong>1</strong><p>2 − 1</p></div></div></div></div></div></div></section><section id="s2"><div class="wrap"><div class="eyebrow">Paso 6 · consolidación requerida</div><h2>Inspeccionar el objeto y gestionar errores</h2></div><div class="scrolly" data-scrolly><div class="steps"><div class="step on" data-stage="0" data-name="representación"><div class="step-inner"><h3><span class="n">1/3</span>__repr__ construye un texto legible</h3><p><code>__repr__</code> devuelve una cadena que describe el objeto. En nuestra clase, <code>print(buy)</code> usa esa representación.</p><p>Recuerda la f-string: las llaves insertan los valores de <code>self</code>. Aquí no cambia ningún atributo.</p></div></div><div class="step" data-stage="1" data-name="error"><div class="step-inner"><h3><span class="n">2/3</span>La clase rechaza; main decide qué mostrar</h3><p>La validación de <code>__init__</code> ya está proporcionada: acepta buy/sell y números positivos finitos. Un precio de −10 lanza <code>ValueError</code>.</p><p>Como en L3, <code>except</code> recibe el fallo. No se obtiene una instancia válida de esa llamada.</p></div></div><div class="step" data-stage="2" data-name="entrada"><div class="step-inner"><h3><span class="n">3/3</span>El programa se ejecuta desde la terminal</h3><p>La condición de L3 llama a <code>main()</code> cuando ejecutas el archivo. Importarlo solo deja sus definiciones disponibles.</p><p>Guarda <code>models.py</code> y <code>main.py</code>. Abre la terminal en <code>exercises/</code> y compara.</p></div></div></div><div class="figwrap"><div class="fig"><div class="fig-head"><span>models.py · main.py</span><span class="stage-name">representación</span></div><div class="fig-stage on teaching-trace" data-stage="0"><div class="visual-oop-window module"><div class="visual-oop-window-title">models.py · método dentro de Fill</div><div class="code code-block"><pre data-code-part="fill-repr"><span class="ln">def __repr__(self):</span><span class="ln hl">    return (f&quot;Fill({self.side} &quot;</span><span class="ln hl">            f&quot;{self.size} @ {self.price})&quot;)</span></pre></div></div><div class="visual-oop-window caller"><div class="visual-oop-window-title">main.py</div><div class="code code-block"><pre><span class="ln hl">print(buy)</span></pre></div></div><div class="visual-oop-console"><span>Terminal · salida</span><strong>Fill(buy 2 @ 100)</strong></div></div><div class="fig-stage teaching-trace" data-stage="1"><div class="visual-oop-window caller"><div class="visual-oop-window-title">main.py · dentro de main()</div><div class="code code-block"><pre data-code-part="fill-error"><span class="ln">try:</span><span class="ln hl">    Fill(&quot;buy&quot;, -10, 2)</span><span class="ln hl">except ValueError as error:</span><span class="ln">    print(&quot;Ejecución rechazada:&quot;, error)</span></pre></div></div><div class="trace-result"><code>models.py</code>: __init__ lanza ValueError<br><code>main.py</code>: except muestra el motivo</div><p class="trace-caption">El error informa: fill requiere lado válido y valores positivos finitos.</p></div><div class="fig-stage teaching-trace" data-stage="2"><div class="visual-oop-window caller"><div class="visual-oop-window-title">main.py · final del archivo</div><div class="code code-block"><pre><span class="ln hl">if __name__ == &quot;__main__&quot;:</span><span class="ln">    main()</span></pre></div></div><div class="visual-oop-console"><span>Terminal · salida</span><strong>python main.py<br>… resultados del programa …<br><br>python -c "import main"<br>… sin salida …</strong></div><p class="trace-caption"><code>-c</code> ejecuta la instrucción entre comillas.</p></div></div></div></div></section><section id="s5"><div class="wrap">
   <div class="eyebrow">§5 · <b>Comprobación</b></div><h2>5 preguntas</h2>
   <div class="quiz" data-quiz>
-    <div class="q" data-ok="2"><div class="qt">En <code>f.cash_flow()</code>, ¿quién es self?</div>
-      <div class="opts"><button class="opt">A · La clase Fill entera</button><button class="opt">B · El número devuelto</button><button class="opt">C · La instancia f</button></div>
-      <div class="why">Python pasa f como primer argumento del método. En g.cash_flow(), self sería g.</div></div>
+    <div class="q" data-ok="2"><div class="qt">En <code>buy.cash_flow()</code>, ¿quién es self?</div>
+      <div class="opts"><button class="opt">A · La clase Fill entera</button><button class="opt">B · El número devuelto</button><button class="opt">C · La instancia buy</button></div>
+      <div class="why">Python pasa buy como primer argumento del método. En sell.cash_flow(), self sería sell.</div></div>
     <div class="q" data-ok="0"><div class="qt">¿Cuándo se ejecuta <code>__init__</code>?</div>
       <div class="opts"><button class="opt">A · Al inicializar cada nueva instancia</button><button class="opt">B · Al definir class Fill</button><button class="opt">C · En cada consulta cash_flow()</button></div>
       <div class="why">Fill('buy', 100, 2) crea e inicializa una instancia. Consultar su flujo no vuelve a construirla.</div></div>
-    <div class="q" data-ok="1"><div class="qt"><code>f.price</code> y <code>f.cash_flow()</code> son…</div>
+    <div class="q" data-ok="1"><div class="qt"><code>buy.price</code> y <code>buy.cash_flow()</code> son…</div>
       <div class="opts"><button class="opt">A · Dos métodos</button><button class="opt">B · Un atributo guardado y una llamada a un método</button><button class="opt">C · Dos formas de cambiar cash</button></div>
       <div class="why">El método lee los atributos y devuelve un número. Estos paréntesis ejecutan la consulta.</div></div>
     <div class="q" data-ok="0"><div class="qt">¿Qué devuelve <code>__repr__</code>?</div>
@@ -1167,25 +1056,23 @@ body[data-lesson] .teaching-trace .ln.hl{
       <div class="why">return entrega 110×2=220 USD. El método no actualiza una cuenta ni consume el fill.</div></div>
     <div class="score"></div>
   </div>
-</div></section>
+</div></section><section id="s6"><div class="wrap"><div class="eyebrow">Tu práctica · mismos archivos y ejemplos</div><h2>Del ejemplo a tu programa</h2><p class="lede">Abre <code>exercises/enunciado.md</code>. Completa una sola clase y úsala desde el otro archivo.</p>
+<div class="l4-file-map"><div class="visual-oop-window module"><div class="visual-oop-window-title">models.py · pasos 1 y 3</div><p>Guarda los atributos en <code>__init__</code>.<br>Completa <code>cash_flow()</code>.</p><p>La validación ya está proporcionada.</p></div><div class="visual-oop-window caller"><div class="visual-oop-window-title">main.py · pasos 2 y 4</div><p>Importa Fill. Crea <code>buy</code> y <code>sell</code>.<br>Llama a sus métodos y reúne los flujos.</p><p>Comprueba: caja 20, unidades 0.</p></div></div>
+<p><strong>Después, pasos 5–6:</strong> venta parcial, <code>__repr__</code> y <code>ValueError</code>. Solución copiable por archivo en <code>solutions/solucion.md</code>.</p>
+<div class="bridge"><div class="tag">Siguiente paso · L5</div><p>Tu Fill calcula un flujo. Una cartera usará ese resultado para actualizar caja y unidades.</p></div>
+<details><summary>Consulta posterior: del método paso a paso a la solución compacta</summary><div class="body"><p>La solución Markdown usa <code>sign = -1 if self.side == 'buy' else 1</code>: asigna −1 a una compra y +1 a una venta. Después devuelve <code>sign * self.price * self.size</code>. Es el mismo cálculo que las dos ramas vistas.</p></div></details>
+<details><summary>Consulta posterior: biblioteca exchange (otra firma, fuera del ejercicio)</summary><div class="body">
+          <p><code>Side</code> fija BUY/SELL. <code>OrderType</code> fija la política de orden
+          (LIMIT por defecto). Las anotaciones <code>: str</code> y <code>: float</code>
+          describen tipos, no validan por sí solas. <code>float | None</code> admite ausencia.</p>
+          <div class="code code-block"><pre><span class="ln">Order(symbol, side, size, price=None,</span><span class="ln">      order_type=OrderType.LIMIT, id=None)</span><span class="ln">Fill(order_id, symbol, side, price, size,</span><span class="ln">     timestamp=None)</span></pre></div>
+          <p><code>Order.notional()</code> devuelve precio por tamaño. <code>Fill.cash_flow()</code>
+          devuelve el flujo firmado. La firma ampliada usa <code>Side</code>, IDs y símbolo.
+          <code>timestamp</code> es el instante opcional de la ejecución.</p>
+        </div></details><details class="construction-panel" id="construction-guide"><summary>Conecta las piezas de tu práctica</summary><p><strong>Partes de:</strong> Imports y entrada main de L3; validación de Fill proporcionada. La única clase del alumno vive en models.py.</p><p><strong>Problema:</strong> La cartera necesita saber cuánto efectivo mueve cada ejecución. El importe absoluto no basta: comprar consume caja y vender la aporta, aunque precio y tamaño sean positivos en ambos casos.</p><p><strong>Predice y contrasta:</strong> Ejemplo pedagógico sin comisiones. Fill(&#x27;buy&#x27;,100,2) representa pagar 100 USD/unidad × 2 unidades = 200 USD: cash_flow() devuelve −200. Consultar otra vez devuelve −200 y no cambia el objeto ni una cuenta. Fill(&#x27;sell&#x27;,110,2) devuelve +220. Si ambas ejecuciones cierran una posición inicialmente nula, la cantidad neta es 2−2=0 y la caja acumulada es −200+220=20 USD.</p><p><strong>Del ejemplo a tu código:</strong> Enunciado Markdown, models.py y main.py. La solución completa de ambos archivos vive solo en solutions/solucion.md.</p><p>Abre <code>enunciado.md</code> y completa los cuerpos indicados. El resto de los archivos está proporcionado o procede de la práctica anterior.</p><ul><li><code>models.py:Fill.cash_flow</code>: Completa atributos y cash_flow en una sola clase, crea dos instancias nuevas y reutiliza sus métodos para calcular caja y unidades. <span>Practica L04-P01, L04-P02, L04-P03.</span></li></ul><p>Desde <code>exercises</code>: <code>python main.py</code>. <code>python -c &quot;import main&quot;</code> debe ser silencioso.</p><p>Solución copiable: <code>solutions/solucion.md</code>.</p><p><strong>Lo siguiente reutiliza:</strong> L5 proporciona este Fill desde su respuesta canónica y lo conecta a una cartera. ¿Qué estado debe cambiar al registrar un fill, además de la caja?</p></details></div></section><footer>L4 · Fill en models.py y main.py · Algo Trading ICAI 2026</footer>
 
-<section id="s6"><div class="wrap">
-  <div class="eyebrow">§6 · <b>Principal · 20 min</b></div><h2>Tu método <code>Fill.cash_flow</code></h2>
-  <div class="cta"><div class="box"><span class="tag">Ahora te toca</span>
-    Abre <code>04_build_exercises.ipynb</code>. La validación está proporcionada.
-    Completa los atributos y <code>cash_flow</code>; reúne una compra y una venta y prueba una venta parcial.</div></div>
-  <p>Una orden expresa intención. Tu fill describe una ejecución y devuelve su flujo.
-  En L5 <code>PositionTracker.apply_fill</code> lo sumará a la caja y actualizará la posición.</p>
-  <details><summary>Consulta: programa y práctica opcional</summary><div class="body">
-    <p><code>main.py</code> repite el mismo principal como programa. Los ejercicios de
-    <code>04_auxiliary.ipynb</code> son OPTIONAL y se pueden omitir para continuar.</p>
-  </div></details>
-<details class="construction-panel" id="construction-guide"><summary>Del notebook a un programa Python</summary><p><strong>Problema:</strong> La cartera necesita saber cuánto efectivo mueve cada ejecución. El importe absoluto no basta: comprar consume caja y vender la aporta, aunque precio y tamaño sean positivos en ambos casos.</p><p>Completa el principal en Jupyter y contrasta sus resultados. Después puedes trasladar las mismas respuestas a una copia de <code>main.py</code>, guardada como <code>mi_main.py</code>.</p><p>Desde la carpeta <code>exercises</code> de esta clase: <code>python mi_main.py</code>. Verás los mismos cálculos ejecutados de una vez.</p><p>El notebook sirve para investigar y explicar. Los archivos <code>.py</code> sirven para organizar programas y funciones reutilizables.</p><p><strong>Predice y contrasta:</strong> Ejemplo pedagógico sin comisiones. Fill(&#x27;buy&#x27;,100,2) representa pagar 100 USD/unidad × 2 unidades = 200 USD: cash_flow() devuelve −200. Consultar otra vez devuelve −200 y no cambia el objeto ni una cuenta. Fill(&#x27;sell&#x27;,110,2) devuelve +220. Si ambas ejecuciones cierran una posición inicialmente nula, la cantidad neta es 2−2=0 y la caja acumulada es −200+220=20 USD.</p><p><strong>Lo siguiente reutiliza:</strong> L5 proporciona este Fill desde su respuesta canónica y lo conecta a una cartera. ¿Qué estado debe cambiar al registrar un fill, además de la caja?</p></details></div></section>
-<footer>L4 · Order y Fill · Algo Trading ICAI 2026</footer>
-
-
-<script type="application/json" id="pedagogy-contract">{"lesson":4,"status":"contract-strict","title":"OOP I — Order y Fill","delivery":"lesson","source_path":"framework/_build/docs/04_body.html","requires":{"concepts":["python.variables","python.functions","python.modules","python.fstring","python.generator_expression"],"apis":[],"notation":[]},"requirement_routes":{"concepts":{"python.variables":"LIVE","python.functions":"LIVE","python.modules":"LIVE","python.fstring":"LIVE","python.generator_expression":"LIVE"},"apis":{},"notation":{}},"introduces":{"concepts":[{"id":"oop.classes","importance":"major","route":"LIVE"},{"id":"oop.self","importance":"major","route":"LIVE"},{"id":"oop.methods","importance":"major","route":"LIVE"},{"id":"python.type_hints","importance":"supporting","route":"REQUIRED"},{"id":"exchange.order","importance":"major","route":"LIVE"},{"id":"exchange.fill","importance":"major","route":"LIVE"}],"apis":["side.type","order_type.type","order.constructor","fill.constructor","order.notional","fill.cash_flow"],"notation":["notation.cash_flow"]},"introduction_routes":{"apis":{"side.type":"LIVE","order_type.type":"LIVE","order.constructor":"LIVE","fill.constructor":"LIVE","order.notional":"LIVE","fill.cash_flow":"LIVE"},"notation":{"notation.cash_flow":"LIVE"}},"recalls":[{"concept":"python.functions","introduced_in":2,"mapping":{"before":"Una función recibe un diccionario de orden.","now":"Fill.cash_flow lee los atributos de self y devuelve un flujo sin contabilizarlo."}}],"api_surface":[{"id":"side.type","name":"Side","kind":"type","signature":"Side: type","returns":"Side","responsibility":"represent the stable BUY/SELL side vocabulary","qualified_name":"exchange.orders.Side"},{"id":"order_type.type","name":"OrderType","kind":"type","signature":"OrderType: type","returns":"OrderType","responsibility":"represent the supported order-policy vocabulary","qualified_name":"exchange.orders.OrderType"},{"id":"order.constructor","name":"Order","kind":"constructor","signature":"Order(symbol: str, side: Side, size: float, price: float | None = None, order_type: OrderType = OrderType.LIMIT, id: int = None) -> Order","returns":"Order","responsibility":"construct the canonical order intent","qualified_name":"exchange.orders.Order"},{"id":"fill.constructor","name":"Fill","kind":"constructor","signature":"Fill(order_id: int, symbol: str, side: Side, price: float, size: float, timestamp: int | None = None) -> Fill","returns":"Fill","responsibility":"construct one canonical execution result","qualified_name":"exchange.trades.Fill"},{"id":"order.notional","name":"notional","kind":"method","signature":"notional() -> float","returns":"float","responsibility":"compute order price times size","qualified_name":"exchange.orders.Order.notional"},{"id":"fill.cash_flow","name":"cash_flow","kind":"method","signature":"cash_flow() -> float","returns":"float","responsibility":"compute signed fill cash flow","qualified_name":"exchange.trades.Fill.cash_flow"}],"routes":{"LIVE":["l04-challenge","l04-class-build","l04-order-workshop","l04-bridge"],"REQUIRED":["l04-function-recall","l04-fill-cash-flow","l04-quiz"],"OPTIONAL":[]},"objectives":[{"id":"l04-build-domain-objects","route":"LIVE","concepts":["oop.classes","oop.self","exchange.order","exchange.fill"],"apis":["order.notional","fill.cash_flow"],"notation":[]},{"id":"l04-read-canonical-constructors","route":"REQUIRED","concepts":["python.type_hints"],"apis":["side.type","order_type.type","order.constructor","fill.constructor"],"notation":[]},{"id":"l04-interpret-cash-flow","route":"LIVE","concepts":["exchange.fill"],"apis":["fill.cash_flow"],"notation":["notation.cash_flow"]}],"load":{"live_presentation_minutes":20,"guided_minutes":20,"required_autonomous_minutes":0,"optional_minutes":11,"overflow_policy":"explicit-route-plan","required_project_minutes":0},"scenes":[{"id":"l04-challenge","dom_id":"s0","type":"hero-challenge","route":"LIVE","layout":"focus","concepts":["exchange.order","exchange.fill"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l04-class-build","dom_id":"s1","type":"code-state","route":"LIVE","layout":"split-42-58","concepts":["oop.classes","oop.self","oop.methods"],"duration_minutes":10,"stages":[{"id":"definition","route":"LIVE","dom_stage":0},{"id":"constructor-call","route":"LIVE","dom_stage":1},{"id":"attributes","route":"LIVE","dom_stage":2},{"id":"method-self","route":"LIVE","dom_stage":3},{"id":"return-value","route":"LIVE","dom_stage":4},{"id":"independent-instances","route":"LIVE","dom_stage":5}]},{"id":"l04-function-recall","dom_id":"s2","type":"code-state","route":"REQUIRED","layout":"split-42-58","concepts":["python.functions","oop.methods"],"duration_minutes":7,"stages":[{"id":"bound-method","route":"REQUIRED","dom_stage":0},{"id":"repr","route":"REQUIRED","dom_stage":1},{"id":"reference-api","route":"REQUIRED","dom_stage":2}]},{"id":"l04-order-workshop","dom_id":"s3","type":"concept-simulator","route":"LIVE","layout":"split-45-55","concepts":["exchange.fill","oop.methods"],"duration_minutes":6,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l04-fill-cash-flow","dom_id":"s4","type":"guided-exercise","route":"REQUIRED","layout":"split-50-50","concepts":["exchange.fill"],"duration_minutes":8,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l04-quiz","dom_id":"s5","type":"diagnostic-quiz","route":"REQUIRED","layout":"focus","concepts":["oop.classes","exchange.order","exchange.fill"],"duration_minutes":8,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l04-bridge","dom_id":"s6","type":"bridge","route":"LIVE","layout":"focus","concepts":["exchange.order","exchange.fill"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]}],"bridge":{"target_lesson":5,"known":{"concepts":["oop.classes","exchange.order","exchange.fill"],"apis":["order.constructor","fill.constructor","fill.cash_flow"],"notation":["notation.cash_flow"]},"limitation":"Fill conserva atributos y calcula flujos; aún falta registrar caja, posición y mark en una cartera.","need":"La composición crea fronteras controladas para el estado de mercado y la contabilidad."},"api_transitions":[{"from_api":"pedagogical.OrderMini.__init__","from_signature":"OrderMini(symbol, side, price, size)","to_api":"order.constructor","to_signature":"Order(symbol: str, side: Side, size: float, price: float | None = None, order_type: OrderType = OrderType.LIMIT, id: int = None) -> Order","kind":"pedagogical-to-canonical","reason":"OrderMini queda como consulta diferenciada de intención/nocional; el recorrido central usa el Fill del principal."},{"from_api":"pedagogical.Fill.__init__","from_signature":"Fill(side, price, size)","to_api":"fill.constructor","to_signature":"Fill(order_id: int, symbol: str, side: Side, price: float, size: float, timestamp: int | None = None) -> Fill","kind":"pedagogical-to-canonical","reason":"El principal conserva side/price/size. La referencia exchange añade identificación, símbolo, timestamp y Side; se consulta por separado."}],"package_checks":[{"path":"04-oop-i-order-trade/exercises/exchange/orders.py","class":"Order","members":{"__init__":{"api":"order.constructor","kind":"constructor","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"side","kind":"positional_or_keyword","annotation":"Side"},{"name":"size","kind":"positional_or_keyword","annotation":"float"},{"name":"price","kind":"positional_or_keyword","annotation":"float | None","default":"None"},{"name":"order_type","kind":"positional_or_keyword","annotation":"OrderType","default":"OrderType.LIMIT"},{"name":"id","kind":"positional_or_keyword","annotation":"int","default":"None"}],"returns":"Order"},"notional":{"api":"order.notional","kind":"method","parameters":[],"returns":"float"}}},{"path":"04-oop-i-order-trade/exercises/exchange/trades.py","class":"Fill","members":{"__init__":{"api":"fill.constructor","kind":"constructor","parameters":[{"name":"order_id","kind":"positional_or_keyword","annotation":"int"},{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"side","kind":"positional_or_keyword","annotation":"Side"},{"name":"price","kind":"positional_or_keyword","annotation":"float"},{"name":"size","kind":"positional_or_keyword","annotation":"float"},{"name":"timestamp","kind":"positional_or_keyword","annotation":"int | None","default":"None"}],"returns":"Fill"},"cash_flow":{"api":"fill.cash_flow","kind":"method","parameters":[],"returns":"float"}}}],"symbol_checks":[{"path":"04-oop-i-order-trade/exercises/exchange/orders.py","symbol":"Side","api":"side.type","kind":"type","returns":"Side"},{"path":"04-oop-i-order-trade/exercises/exchange/orders.py","symbol":"OrderType","api":"order_type.type","kind":"type","returns":"OrderType"}],"used_later":{"concepts":["exchange.fill","exchange.order","oop.classes","python.type_hints"],"apis":["fill.cash_flow","fill.constructor","order.constructor","order_type.type","side.type"],"notation":["notation.cash_flow"]}}</script>
-<script type="application/json" id="learning-support">{"lesson": 4, "cards": {"collections": {"title": "Listas, diccionarios y posiciones", "first_lesson": 1, "route": "LIVE", "why": "Una orden tiene varios campos; un libro contiene varias órdenes.", "inputs": "Lista: valores ordenados entre []; dict: pares clave:valor entre {}.", "outputs": "xs[0] devuelve el primer valor; xs[-1], el último. xs[:2] crea una lista con los dos primeros. order['size'] devuelve el campo size.", "mechanism": "Los índices empiezan en cero; un índice negativo cuenta desde el final. El extremo derecho de un slice no se incluye. append añade a la lista original y devuelve None.", "example": "sizes = [2, 3]\norder = {'side': 'buy', 'size': sizes[0]}\nprint(order['size'])  # 2"}, "finite": {"title": "isfinite: comprobar un número finito", "first_lesson": 4, "route": "REQUIRED", "why": "No introducir NaN/infinito o un lado de orden desconocido en los cálculos.", "inputs": "math.isfinite recibe un número.", "outputs": "Devuelve True para números finitos y False para NaN o infinito.", "mechanism": "Comprueba isfinite y después el signo. Ser finito no implica ser positivo: -2 es finito, pero no es un tamaño válido.", "example": "from math import isfinite\nprint(isfinite(100), isfinite(float('inf')))  # True False"}, "objects": {"title": "Clase, instancia, self y __init__", "first_lesson": 4, "route": "LIVE", "why": "Agrupar datos que pertenecen a una misma orden junto con sus operaciones.", "inputs": "Clase(...): argumentos del constructor. Método: instancia.metodo(...).", "outputs": "Una instancia con atributos propios. self es esa instancia, pasado automáticamente al llamar a un método.", "mechanism": "__init__ prepara el estado. self.size = size guarda un atributo; una variable size sin self sólo es local a la llamada.", "example": "class Ticket:\n    def __init__(self, size):\n        self.size = size\nticket = Ticket(2)\nprint(ticket.size)  # 2"}, "orderfill": {"title": "Order no es Fill: intención frente a ejecución", "first_lesson": 4, "route": "LIVE", "why": "No mover dinero por una orden que todavía no se ha ejecutado.", "inputs": "Principal L4: Fill(side, price, size). Una orden es una intención; su interfaz de referencia se muestra aparte.", "outputs": "Order describe lo solicitado. Fill registra lo realmente ejecutado. Una orden puede producir cero, uno o varios fills.", "mechanism": "Compra: caja baja e inventario sube; venta: al revés. La API de referencia añade symbol, identificadores y enums: distingue esa interfaz de tu clase Fill del notebook.", "example": "# Ejecución ya ocurrida: buy 2 @ 100\n# cambio de caja = -200; cambio de inventario = +2"}}, "scenes": {"s0": ["objects"], "s1": ["objects", "collections"], "s2": ["objects"], "s3": ["orderfill", "finite"], "s4": ["orderfill"], "s5": ["objects", "orderfill"], "s6": ["orderfill"]}}</script>
+<script type="application/json" id="pedagogy-contract">{"lesson":4,"status":"contract-strict","title":"OOP I — Order y Fill","delivery":"lesson","source_path":"framework/_build/docs/04_body.html","requires":{"concepts":["python.variables","python.functions","python.modules","python.fstring","python.generator_expression"],"apis":[],"notation":[]},"requirement_routes":{"concepts":{"python.variables":"LIVE","python.functions":"LIVE","python.modules":"LIVE","python.fstring":"LIVE","python.generator_expression":"LIVE"},"apis":{},"notation":{}},"introduces":{"concepts":[{"id":"oop.classes","importance":"major","route":"LIVE"},{"id":"oop.self","importance":"major","route":"LIVE"},{"id":"oop.methods","importance":"major","route":"LIVE"},{"id":"python.type_hints","importance":"supporting","route":"REQUIRED"},{"id":"exchange.order","importance":"major","route":"LIVE"},{"id":"exchange.fill","importance":"major","route":"LIVE"}],"apis":["side.type","order_type.type","order.constructor","fill.constructor","order.notional","fill.cash_flow"],"notation":["notation.cash_flow"]},"introduction_routes":{"apis":{"side.type":"LIVE","order_type.type":"LIVE","order.constructor":"LIVE","fill.constructor":"LIVE","order.notional":"LIVE","fill.cash_flow":"LIVE"},"notation":{"notation.cash_flow":"LIVE"}},"recalls":[{"concept":"python.functions","introduced_in":2,"mapping":{"before":"Una función recibe un diccionario de orden.","now":"Fill.cash_flow lee los atributos de self y devuelve un flujo sin contabilizarlo."}}],"api_surface":[{"id":"side.type","name":"Side","kind":"type","signature":"Side: type","returns":"Side","responsibility":"represent the stable BUY/SELL side vocabulary","qualified_name":"exchange.orders.Side"},{"id":"order_type.type","name":"OrderType","kind":"type","signature":"OrderType: type","returns":"OrderType","responsibility":"represent the supported order-policy vocabulary","qualified_name":"exchange.orders.OrderType"},{"id":"order.constructor","name":"Order","kind":"constructor","signature":"Order(symbol: str, side: Side, size: float, price: float | None = None, order_type: OrderType = OrderType.LIMIT, id: int = None) -> Order","returns":"Order","responsibility":"construct the canonical order intent","qualified_name":"exchange.orders.Order"},{"id":"fill.constructor","name":"Fill","kind":"constructor","signature":"Fill(order_id: int, symbol: str, side: Side, price: float, size: float, timestamp: int | None = None) -> Fill","returns":"Fill","responsibility":"construct one canonical execution result","qualified_name":"exchange.trades.Fill"},{"id":"order.notional","name":"notional","kind":"method","signature":"notional() -> float","returns":"float","responsibility":"compute order price times size","qualified_name":"exchange.orders.Order.notional"},{"id":"fill.cash_flow","name":"cash_flow","kind":"method","signature":"cash_flow() -> float","returns":"float","responsibility":"compute signed fill cash flow","qualified_name":"exchange.trades.Fill.cash_flow"}],"routes":{"LIVE":["l04-challenge","l04-class-build","l04-order-workshop","l04-fill-cash-flow","l04-bridge"],"REQUIRED":["l04-function-recall","l04-quiz"],"OPTIONAL":[]},"objectives":[{"id":"l04-build-domain-objects","route":"LIVE","concepts":["oop.classes","oop.self","exchange.order","exchange.fill"],"apis":["order.notional","fill.cash_flow"],"notation":[]},{"id":"l04-read-canonical-constructors","route":"REQUIRED","concepts":["python.type_hints"],"apis":["side.type","order_type.type","order.constructor","fill.constructor"],"notation":[]},{"id":"l04-interpret-cash-flow","route":"LIVE","concepts":["exchange.fill"],"apis":["fill.cash_flow"],"notation":["notation.cash_flow"]}],"load":{"live_presentation_minutes":20,"guided_minutes":20,"required_autonomous_minutes":8,"optional_minutes":6,"overflow_policy":"explicit-route-plan","required_project_minutes":0},"scenes":[{"id":"l04-challenge","dom_id":"s0","type":"hero-challenge","route":"LIVE","layout":"focus","concepts":["exchange.order","exchange.fill"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l04-class-build","dom_id":"s1","type":"code-state","route":"LIVE","layout":"split-42-58","concepts":["oop.classes","oop.self","oop.methods"],"duration_minutes":10,"stages":[{"id":"definition","route":"LIVE","dom_stage":0},{"id":"module-import","route":"LIVE","dom_stage":1},{"id":"constructor-call","route":"LIVE","dom_stage":2},{"id":"attributes","route":"LIVE","dom_stage":3},{"id":"method-self","route":"LIVE","dom_stage":4},{"id":"return-value","route":"LIVE","dom_stage":5},{"id":"independent-instances","route":"LIVE","dom_stage":6}]},{"id":"l04-order-workshop","dom_id":"s3","type":"concept-simulator","route":"LIVE","layout":"split-45-55","concepts":["exchange.fill","oop.methods"],"duration_minutes":3,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l04-fill-cash-flow","dom_id":"s4","type":"code-state","route":"LIVE","layout":"split-42-58","concepts":["exchange.fill"],"duration_minutes":3,"stages":[{"id":"round-trip","route":"LIVE","dom_stage":0},{"id":"partial-sale","route":"REQUIRED","duration_minutes":2,"dom_stage":1}]},{"id":"l04-function-recall","dom_id":"s2","type":"code-state","route":"REQUIRED","layout":"split-42-58","concepts":["python.functions","oop.methods"],"duration_minutes":6,"stages":[{"id":"repr","route":"REQUIRED","dom_stage":0},{"id":"value-error","route":"REQUIRED","dom_stage":1},{"id":"entrypoint","route":"REQUIRED","dom_stage":2}]},{"id":"l04-quiz","dom_id":"s5","type":"diagnostic-quiz","route":"REQUIRED","layout":"focus","concepts":["oop.classes","exchange.order","exchange.fill"],"duration_minutes":8,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l04-bridge","dom_id":"s6","type":"bridge","route":"LIVE","layout":"focus","concepts":["exchange.order","exchange.fill"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]}],"bridge":{"target_lesson":5,"known":{"concepts":["oop.classes","exchange.order","exchange.fill"],"apis":["order.constructor","fill.constructor","fill.cash_flow"],"notation":["notation.cash_flow"]},"limitation":"Fill conserva atributos y calcula flujos; aún falta registrar caja, posición y mark en una cartera.","need":"La composición crea fronteras controladas para el estado de mercado y la contabilidad."},"api_transitions":[{"from_api":"pedagogical.OrderMini.__init__","from_signature":"OrderMini(symbol, side, price, size)","to_api":"order.constructor","to_signature":"Order(symbol: str, side: Side, size: float, price: float | None = None, order_type: OrderType = OrderType.LIMIT, id: int = None) -> Order","kind":"pedagogical-to-canonical","reason":"OrderMini queda como consulta diferenciada de intención/nocional; el recorrido central usa el Fill del principal."},{"from_api":"pedagogical.Fill.__init__","from_signature":"Fill(side, price, size)","to_api":"fill.constructor","to_signature":"Fill(order_id: int, symbol: str, side: Side, price: float, size: float, timestamp: int | None = None) -> Fill","kind":"pedagogical-to-canonical","reason":"El principal conserva side/price/size. La referencia exchange añade identificación, símbolo, timestamp y Side; se consulta por separado."}],"package_checks":[{"path":"framework/_build/exchange_snapshots/orders_l4.py","class":"Order","members":{"__init__":{"api":"order.constructor","kind":"constructor","parameters":[{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"side","kind":"positional_or_keyword","annotation":"Side"},{"name":"size","kind":"positional_or_keyword","annotation":"float"},{"name":"price","kind":"positional_or_keyword","annotation":"float | None","default":"None"},{"name":"order_type","kind":"positional_or_keyword","annotation":"OrderType","default":"OrderType.LIMIT"},{"name":"id","kind":"positional_or_keyword","annotation":"int","default":"None"}],"returns":"Order"},"notional":{"api":"order.notional","kind":"method","parameters":[],"returns":"float"}}},{"path":"framework/exchange/trades.py","class":"Fill","members":{"__init__":{"api":"fill.constructor","kind":"constructor","parameters":[{"name":"order_id","kind":"positional_or_keyword","annotation":"int"},{"name":"symbol","kind":"positional_or_keyword","annotation":"str"},{"name":"side","kind":"positional_or_keyword","annotation":"Side"},{"name":"price","kind":"positional_or_keyword","annotation":"float"},{"name":"size","kind":"positional_or_keyword","annotation":"float"},{"name":"timestamp","kind":"positional_or_keyword","annotation":"int | None","default":"None"}],"returns":"Fill"},"cash_flow":{"api":"fill.cash_flow","kind":"method","parameters":[],"returns":"float"}}}],"symbol_checks":[{"path":"framework/_build/exchange_snapshots/orders_l4.py","symbol":"Side","api":"side.type","kind":"type","returns":"Side"},{"path":"framework/_build/exchange_snapshots/orders_l4.py","symbol":"OrderType","api":"order_type.type","kind":"type","returns":"OrderType"}],"used_later":{"concepts":["exchange.fill","exchange.order","oop.classes","python.type_hints"],"apis":["fill.cash_flow","fill.constructor","order.constructor","order_type.type","side.type"],"notation":["notation.cash_flow"]}}</script>
+<script type="application/json" id="learning-support">{"lesson": 4, "cards": {"finite": {"title": "isfinite: comprobar un número finito", "first_lesson": 4, "route": "REQUIRED", "why": "No introducir NaN/infinito o un lado de orden desconocido en los cálculos.", "inputs": "math.isfinite recibe un número.", "outputs": "Devuelve True para números finitos y False para NaN o infinito.", "mechanism": "Comprueba isfinite y después el signo. Ser finito no implica ser positivo: -2 es finito, pero no es un tamaño válido.", "example": "from math import isfinite\nprint(isfinite(100), isfinite(float('inf')))  # True False"}, "imports": {"title": "import y __main__", "first_lesson": 3, "route": "LIVE", "why": "Reutilizar funciones sin arrancar por accidente una demostración.", "inputs": "El nombre de un módulo .py disponible en la ruta de Python.", "outputs": "import módulo crea un nombre de módulo; from módulo import función crea el nombre de la función.", "mechanism": "La primera importación ejecuta el nivel superior del archivo. El bloque if __name__ == '__main__' sólo se ejecuta al arrancarlo como programa.", "example": "import math\nprint(math.sqrt(9))  # 3.0\n# math.sqrt recibe un número no negativo y devuelve su raíz."}, "objects": {"title": "Fill: clase, instancia y self", "first_lesson": 4, "route": "LIVE", "why": "Reunir los datos de una ejecución con el cálculo de su flujo.", "inputs": "Fill(side, price, size) crea una instancia. buy.cash_flow() llama a un método.", "outputs": "Una instancia con atributos propios. self recibe el objeto de la llamada.", "mechanism": "models.py define Fill. main.py la importa. __init__ guarda atributos; cash_flow devuelve un número sin cambiar una cuenta.", "example": "from models import Fill\nbuy = Fill('buy', 100, 2)\nprint(buy.price, buy.cash_flow())  # 100 -200"}, "orderfill": {"title": "Intención, ejecución y flujo", "first_lesson": 4, "route": "LIVE", "why": "Distinguir lo solicitado de lo que ya ha ocurrido.", "inputs": "Fill(side, price, size): buy/sell, precio por unidad y unidades ejecutadas.", "outputs": "Comprar consume caja. Vender aporta caja. cash_flow devuelve ese importe firmado.", "mechanism": "Consultar otra vez devuelve el mismo importe. No registra otra operación. main.py suma flujos de ejecuciones distintas.", "example": "buy = Fill('buy', 100, 2)\nsell = Fill('sell', 110, 2)\nprint(buy.cash_flow() + sell.cash_flow())  # 20"}}, "scenes": {"s0": ["objects"], "s1": ["objects", "imports"], "s2": ["objects"], "s3": ["orderfill", "finite"], "s4": ["orderfill"], "s5": ["objects", "orderfill"], "s6": ["orderfill"]}}</script>
 <script>
 
 (function(){
@@ -1404,22 +1291,34 @@ $$('.scrolly[data-scrolly]').forEach(sc=>{
 (function(){
 "use strict";
 const $=s=>document.querySelector(s);
-let side='buy';
+let side='sell';
+let queries=0;
 function fmtF(x){return Number.isInteger(x)?x+'.0':String(Math.round(x*100000000)/100000000);}
-function update(){
+function update(repeat=false){
+  queries=repeat?queries+1:0;
   const price=Number($('#ow-price').value), size=Number($('#ow-size').value);
+  $('#ow-code').textContent=`other = Fill('${side}', ${price}, ${size})\nprint(other.cash_flow())`;
   $('#ow-side').textContent=side;
   $('#ow-attr-price').textContent=price;
   $('#ow-attr-size').textContent=size;
   $('#ow-object').className='visual-oop-object '+side;
   if(!Number.isFinite(price)||!Number.isFinite(size)||price<=0||size<=0){
+    $('#ow-query').disabled=true;
+    $('#ow-code').textContent=($('#ow-price').value===''||$('#ow-size').value==='')
+      ? '# Completa price y size'
+      : `other = Fill('${side}', ${price}, ${size})\n# ValueError: no se consulta cash_flow`;
+    $('#ow-title').textContent='Entrada rechazada · sin objeto';
+    $('#ow-object').className='visual-oop-object';
     $('#ow-repr').textContent='Fill inválido';
     $('#ow-not').textContent='—';
     $('#ow-cf').textContent='—';
     $('#ow-cf').className='';
+    $('#ow-transfer').textContent='Sin instancia válida: no hay flujos que consultar.';
     $('#ow-log').textContent='price y size deben ser positivos y finitos. El constructor del principal rechaza esta entrada.';
     return;
   }
+  $('#ow-query').disabled=false;
+  $('#ow-title').textContent='other · nuevo ejemplo';
   const notional=price*size;
   const cf=side==='buy'?-notional:notional;
   $('#ow-repr').textContent=`Fill(${side} ${size} @ ${price})`;
@@ -1427,12 +1326,16 @@ function update(){
   const cfEl=$('#ow-cf');
   cfEl.textContent=(cf>0?'+':'')+fmtF(cf);
   cfEl.className=cf>0?'pos':cf<0?'neg':'';
-  $('#ow-log').textContent=`g = Fill('${side}', ${price}, ${size}) → ${fmtF(cf)} USD. f sigue intacto; sin actualización de cuenta.`;
+  $('#ow-transfer').textContent=side==='buy'
+    ?`other · contraparte → nosotros: ${size} unidades; nosotros → contraparte: ${notional} USD. cash_flow devuelve ${fmtF(cf)} USD.`
+    :`other · nosotros → contraparte: ${size} unidades; contraparte → nosotros: ${notional} USD. cash_flow devuelve ${fmtF(cf)} USD.`;
+  $('#ow-log').textContent=queries ? `Consulta repetida ${queries}: devuelve ${fmtF(cf)} USD. other conserva sus atributos; buy sigue devolviendo −200.` : `buy devuelve −200. other devuelve ${fmtF(cf)} USD. No se actualiza ninguna cuenta.`;
 }
 $('#ow-buy').addEventListener('click',()=>{side='buy';$('#ow-buy').classList.add('on');$('#ow-sell').classList.remove('on');update();});
 $('#ow-sell').addEventListener('click',()=>{side='sell';$('#ow-sell').classList.add('on');$('#ow-buy').classList.remove('on');update();});
-$('#ow-price').addEventListener('input',update);
-$('#ow-size').addEventListener('input',update);
+$('#ow-price').addEventListener('input',()=>update());
+$('#ow-size').addEventListener('input',()=>update());
+$('#ow-query').addEventListener('click',()=>update(true));
 update();
 })();
 
@@ -1470,9 +1373,9 @@ const route=value=>ROUTES.includes(String(value||'').toUpperCase())
 const routeClass=value=>`lr-route-${route(value).toLowerCase()}`;
 const scopeRoutes=()=>routeScope==='ALL'?ROUTES:
   routeScope==='LIVE+REQUIRED'?['LIVE','REQUIRED']:['LIVE'];
-const modeUrl=next=>{
+const modeUrl=(next,hash=location.hash)=>{
   const q=new URLSearchParams(location.search);q.set('mode',next);
-  return `${location.pathname}?${q.toString()}${location.hash}`;
+  return `${location.pathname}?${q.toString()}${hash}`;
 };
 const stateKey=(scene,stage)=>`${scene.id}::${stage.id}`;
 const reducedMotion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1600,8 +1503,8 @@ nav.innerHTML=`
   <a class="lr-course-home" href="../../index.html">← Mapa del curso</a>
   <div class="lr-brand"><b>L${Number(contract.lesson)}</b><span>${esc(contract.title)}</span></div>
   <div class="lr-modes" aria-label="Modo de lectura">
-    <a href="${modeUrl('aula')}" class="${mode==='aula'?'on':''}">Aula</a>
-    <a href="${modeUrl('estudio')}" class="${mode==='estudio'?'on':''}">Estudio</a>
+    <a href="${modeUrl('aula')}" data-mode="aula" class="${mode==='aula'?'on':''}">Aula</a>
+    <a href="${modeUrl('estudio')}" data-mode="estudio" class="${mode==='estudio'?'on':''}">Estudio</a>
   </div>
   <button type="button" class="lr-study-optional" aria-pressed="false">Incluir OPTIONAL</button>
   <div class="lr-scene-links"></div>`;
@@ -1632,6 +1535,38 @@ controls.innerHTML=`
   <button type="button" class="lr-route-scope" aria-label="Cambiar alcance de ruta">LIVE</button>
   <button type="button" class="lr-next" aria-label="Etapa siguiente"><span>Siguiente</span> →</button>`;
 body.appendChild(controls);
+const stagePicker=document.createElement('select');
+stagePicker.className='lr-stage-picker';stagePicker.setAttribute('aria-label','Ir a una etapa');
+nav.insertBefore(stagePicker,navLinks);
+stagePicker.addEventListener('change',()=>{
+  const item=inventory.find(entry=>entry.key===stagePicker.value);
+  if(item)goTo(models.indexOf(item.scene),allowedStages(item.scene).indexOf(item.stage),false);
+});
+function syncStagePicker(scene,stage){
+  const available=inventory.filter(item=>allowed(item.scene)&&scopeRoutes().includes(item.route));
+  stagePicker.innerHTML=available.map(item=>{
+    const title=item.scene.element.querySelector('h1,h2')?.textContent.trim()||item.scene.id;
+    const name=item.stage.step?.dataset.name||item.stage.id;
+    return `<option value="${esc(item.key)}">${esc(title)} · ${esc(name)}</option>`;
+  }).join('');
+  if(scene&&stage)stagePicker.value=stateKey(scene,stage);
+}
+function studyActivate(scene,stage,scroll=false,focus=false){
+  currentScene=models.indexOf(scene);currentStage=allowedStages(scene).indexOf(stage);
+  body.dataset.currentSceneId=scene.id;body.dataset.currentStageId=stage.id;
+  activateStage(scene,stage);syncNav(scene);syncStagePicker(scene,stage);syncTeacher(scene,stage);
+  controls.querySelector('.lr-scene-progress').textContent=`Escena ${availableModels().indexOf(scene)+1}/${availableModels().length}`;
+  controls.querySelector('.lr-stage-progress').textContent=`Etapa ${currentStage+1}/${allowedStages(scene).length}`;
+  controls.querySelector('.lr-route-progress').textContent=stage.step?.dataset.name||'Lectura';
+  const flat=inventory.filter(item=>allowed(item.scene)&&scopeRoutes().includes(item.route));
+  const i=flat.findIndex(item=>item.scene===scene&&item.stage===stage);
+  controls.querySelector('.lr-prev').disabled=i<=0;
+  controls.querySelector('.lr-next').disabled=i===flat.length-1;
+  saveRuntime(scene,stage,true);updateDeepLink(scene,stage);
+  if(scroll)(stage.step||scene.element).scrollIntoView({block:stage.step?'center':'start',behavior:reducedMotion()?'auto':'smooth'});
+  if(focus){const h=(stage.step||scene.element).querySelector('h1,h2,h3');if(h){h.tabIndex=-1;h.focus({preventScroll:true});}}
+}
+
 
 const liveRegion=document.createElement('div');
 liveRegion.className='lr-sr-only';liveRegion.setAttribute('aria-live','polite');
@@ -1683,7 +1618,7 @@ function activateStage(scene,stage){
     step.hidden=!visibleRoute;
     step.classList.toggle('lr-stage-active',active&&visibleRoute);
     step.classList.toggle('on',active&&visibleRoute);
-    step.setAttribute('aria-hidden',String(!(active&&visibleRoute)));
+    step.setAttribute('aria-hidden',String(mode==='estudio'?!visibleRoute:!(active&&visibleRoute)));
   });
   scene.allFigures.forEach(figure=>{
     const model=scene.stages.find(item=>item.figure===figure);
@@ -1739,9 +1674,11 @@ function syncTeacher(scene,stage){
   });
 }
 function updateDeepLink(scene,stage){
-  if(!history.replaceState)return;
   const next=`#${encodeURIComponent(scene.id)}/${encodeURIComponent(stage.id)}`;
-  if(location.hash!==next)history.replaceState(null,'',`${location.pathname}${location.search}${next}`);
+  if(history.replaceState&&location.hash!==next)history.replaceState(null,'',`${location.pathname}${location.search}${next}`);
+  nav.querySelectorAll('.lr-modes a').forEach(link=>{
+    link.setAttribute('href',modeUrl(link.dataset.mode,next));
+  });
 }
 function goTo(sceneIndex,stageIndex,focusHeading=true){
   let scene=models[sceneIndex];
@@ -1752,6 +1689,7 @@ function goTo(sceneIndex,stageIndex,focusHeading=true){
   const stages=allowedStages(scene);
   stageIndex=Math.max(0,Math.min(Number(stageIndex)||0,stages.length-1));
   const stage=stages[stageIndex];
+  if(mode==='estudio'){studyActivate(scene,stage,true,focusHeading);return;}
   const positionChanged=body.dataset.currentSceneId!==scene.id
     ||body.dataset.currentStageId!==stage.id;
   currentScene=sceneIndex;currentStage=stageIndex;
@@ -1791,7 +1729,7 @@ function goTo(sceneIndex,stageIndex,focusHeading=true){
     total+scopeProgress[routeName].visited,0)/Math.max(1,enabledRoutes.reduce((total,routeName)=>
     total+scopeProgress[routeName].total,0))*100);
   controls.querySelector('.lr-route-progress').textContent=`${routeProgress}% visto`;
-  syncNav(scene);syncTeacher(scene,stage);updateDeepLink(scene,stage);
+  syncNav(scene);syncStagePicker(scene,stage);syncTeacher(scene,stage);updateDeepLink(scene,stage);
   liveRegion.textContent=`${scene.id}, etapa ${stageIndex+1} de ${stages.length}`;
   if(focusHeading){
     const heading=scene.element.querySelector('h1,h2,h3');
@@ -1850,7 +1788,7 @@ function applyStudyScope(activeScene=null){
       });
     });
   });
-  syncNav(activeScene);syncOptionalControls();saveRuntime(null,null,false);
+  syncNav(activeScene);syncOptionalControls();syncStagePicker();saveRuntime(null,null,false);
 }
 function toggleOptional(){
   routeScope=routeScope==='ALL'?'LIVE+REQUIRED':'ALL';
@@ -1867,7 +1805,7 @@ document.querySelectorAll('.lr-study-optional').forEach(button=>button.addEventL
 
 document.addEventListener('keydown',event=>{
   if(event.key==='Escape'){closeOverlays();return;}
-  if(mode!=='aula')return;
+  if(mode!=='aula'&&(!event.altKey||!['ArrowRight','ArrowLeft'].includes(event.key)))return;
   const active=document.activeElement;
   if(active&&(/INPUT|TEXTAREA|SELECT/.test(active.tagName)||active.isContentEditable))return;
   if(active&&active.tagName==='BUTTON'&&(event.key===' '||event.key==='Enter'))return;
@@ -1914,6 +1852,8 @@ if(mode==='aula'){
   const restored=restoredPosition();
   if(restored?.stage.route==='OPTIONAL')routeScope='ALL';
   applyStudyScope(restored?.scene||null);
+  const initial=restored&&allowed(restored.scene)?restored:{scene:availableModels()[0],stage:allowedStages(availableModels()[0])[0]};
+  studyActivate(initial.scene,initial.stage);
   const sceneObserver=new IntersectionObserver(entries=>{
     const visible=entries.filter(entry=>entry.isIntersecting&&!entry.target.hidden)
       .sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
@@ -1922,14 +1862,14 @@ if(mode==='aula'){
     if(!scene)return;
     syncNav(scene);
     const stage=allowedStages(scene).find(item=>!item.step)||allowedStages(scene)[0];
-    if(stage){saveRuntime(scene,stage,true);updateDeepLink(scene,stage);}
+    if(stage&&!scene.allSteps.length)studyActivate(scene,stage);
   },{rootMargin:'-20% 0px -55% 0px',threshold:[0,.15,.4]});
   models.forEach(scene=>sceneObserver.observe(scene.element));
   models.forEach(scene=>scene.stages.forEach(stage=>{
     if(!stage.step)return;
     const observer=new IntersectionObserver(entries=>{
       if(entries.some(entry=>entry.isIntersecting)&&!stage.step.hidden){
-        saveRuntime(scene,stage,true);syncNav(scene);updateDeepLink(scene,stage);
+        studyActivate(scene,stage);
       }
     },{rootMargin:'-35% 0px -45% 0px',threshold:.1});
     observer.observe(stage.step);
@@ -1951,7 +1891,7 @@ window.LEARNING_RUNTIME={
     if(mode==='estudio'){
       const stage=scene.stages.find(item=>item.id===stageId)||allowedStages(scene)[0];
       if(!stage)return false;
-      (stage.step||scene.element).scrollIntoView({block:'center'});return true;
+      studyActivate(scene,stage,true,false);return true;
     }
     const stages=allowedStages(scene),index=stages.findIndex(item=>item.id===stageId);
     goTo(models.indexOf(scene),Math.max(0,index),false);return true;
@@ -2005,7 +1945,7 @@ window.LEARNING_RUNTIME={
     if(!wrap)return;
     const button=document.createElement('button');
     button.type='button';button.className='lr-support-open';
-    button.textContent='Entender este código';
+    button.textContent=scene.querySelector('pre')?'Ayuda del ejemplo':'Conceptos de este paso';
     button.setAttribute('aria-haspopup','dialog');
     button.setAttribute('aria-expanded','false');
     button.setAttribute('aria-controls',dialog.id);

@@ -649,7 +649,6 @@ body[data-lesson="03"] .visual-oop-errors .teaching-trace{gap:10px}
 body[data-lesson="03"] .visual-oop-errors .code{margin:0}
 /* The complete raise statement needs the same code-panel width as the module
    scene. Keep its string literal and Python indentation on one visual line. */
-body[data-lesson="03"] #s3{--lr-left:42fr;--lr-right:58fr}
 body[data-lesson="03"] .visual-oop-errors .code pre{white-space:pre;overflow-wrap:normal}
 .visual-oop-objects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:2px 0}
 .visual-oop-object{min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel2)}
@@ -853,7 +852,7 @@ body.lr-has-contract .hero .meta{display:none}
   body.mode-estudio.lr-has-contract .wrap>p{max-width:78ch}
   body.mode-estudio.lr-has-contract .scrolly{max-width:min(1280px,calc(100vw - var(--lr-nav-w) - 30px))}
   body.mode-estudio.lr-has-contract .lr-scene{scroll-margin-top:18px}
-  body.mode-estudio.lr-has-contract #rail,body.mode-estudio.lr-has-contract #lr-controls{display:none}
+  body.mode-estudio.lr-has-contract #rail{display:none}
 
   html.lr-mode-aula,html.lr-mode-aula body{height:100%;overflow:hidden}
   body.mode-aula{height:100dvh;overflow:hidden;padding-left:var(--lr-nav-w);padding-bottom:var(--lr-controls-h)}
@@ -943,6 +942,35 @@ body[data-lesson] .teaching-trace pre{
 body[data-lesson] .teaching-trace .ln.hl{
   background:rgba(34,211,238,.14);box-shadow:inset 3px 0 var(--accent)}
 
+/* Remediation 2026-09-26: readable premises and a figure sized by available desktop space. */
+.lr-stage-picker{max-width:100%;width:100%;margin:0 0 10px;padding:9px 5px;min-height:40px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--text);font:.8rem var(--mono)}
+.lr-stage-picker:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+body.mode-estudio.lr-has-contract{padding-bottom:var(--lr-controls-h)}
+body.mode-estudio .scrolly{grid-template-columns:minmax(300px,40fr) minmax(0,60fr);gap:22px;padding:0 12px}
+body.mode-estudio .fig{top:20px;height:calc(100vh - 100px);min-height:520px;max-height:720px}
+body.mode-estudio .steps .step{min-height:90vh}
+body.mode-estudio .steps .step-inner{opacity:1;border-color:var(--line);padding:18px}
+body.mode-estudio .steps .step.on .step-inner{border-color:var(--accent)}
+body.lr-has-contract .fig-head{font-size:.875rem;padding:10px 14px;color:var(--muted)}
+body.lr-has-contract .fig-stage{padding:14px}
+body.lr-has-contract .statgrid span,body.lr-has-contract .statgrid label{font-size:.875rem}
+body.lr-has-contract pre,body[data-lesson] .teaching-trace pre,body[data-lesson] .build-code pre{white-space:pre;overflow-wrap:normal;word-break:normal;tab-size:4}
+body.lr-has-contract .code pre{font-size:.9rem;line-height:1.5}
+body.lr-has-contract .code .ln.dim{opacity:.75}
+
+body.mode-aula .steps .step-inner p{font-size:.95rem;line-height:1.5}
+body.mode-aula .fig-stage .code{margin:10px 0}
+body.mode-aula .fig-stage .code pre{padding:10px 12px}
+@media print{.lr-stage-picker{display:none}}
+/* Help belongs to the current scene but need not consume a whole heading row. */
+body.mode-aula .lr-scene-active>.wrap:first-child{position:relative}
+body.mode-aula .lr-scene-active .lr-support-open{position:absolute;top:0;right:8px;margin:0;font-size:.75rem;min-height:32px}
+body.mode-aula .lr-scene-active .eyebrow{padding-right:190px}
+body.mode-aula .lr-scene-active:has(.scrolly)>.wrap:first-child h2{font-size:1.25rem}
+body.mode-aula .lr-scene-active:has(.scrolly)>.wrap:first-child .lede{font-size:.875rem}
+#lr-nav .lr-scene-links button b{font-size:.75rem;overflow-wrap:normal;word-break:normal}
+#lr-nav .lr-scene-links button{grid-template-columns:48px minmax(0,1fr);padding:7px 5px}
+
 
 .construction-panel {margin:20px 0;padding:18px 22px;border:1px solid var(--line);border-radius:12px;background:var(--panel);font-size:1rem;line-height:1.65;overflow-wrap:anywhere;}
 .construction-panel summary {cursor:pointer;font-weight:700;color:var(--accent);}
@@ -952,72 +980,50 @@ body[data-lesson] .teaching-trace .ln.hl{
 </style>
 </head>
 <body data-lesson="03">
+<style>
+body[data-lesson="03"] .l3-flow-demo{margin:16px 0;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px}
+body[data-lesson="03"] .l3-flow-demo .btnrow{margin:0 0 12px}
+body[data-lesson="03"] .l3-file-flow{display:grid;grid-template-columns:1fr 24px 1fr 24px 1fr;align-items:center;gap:7px}
+body[data-lesson="03"] .l3-file-node{display:grid;gap:9px;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:12px;min-width:0;font:.92rem/1.35 var(--mono)}
+body[data-lesson="03"] .l3-file-node small{font-size:.86rem;color:var(--muted)}
+body[data-lesson="03"] .l3-file-node.active{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+body[data-lesson="03"] .l3-call-arrow{text-align:center;color:var(--accent);font-size:1.5rem}
+body[data-lesson="03"] .l3-return-flow{display:flex;justify-content:space-between;gap:12px;font:.88rem/1.4 var(--mono);color:var(--kw);margin:9px 0}
+body[data-lesson="03"] .l3-event{font:1rem/1.45 var(--mono);border-left:3px solid var(--accent);padding:8px 12px;background:var(--accent-dim);min-height:3.4em}
+body[data-lesson="03"] .l3-output{font:.95rem/1.4 var(--mono);white-space:pre-wrap;margin:10px 0 0}
+body[data-lesson="03"] .l3-mini-flow{font:.86rem/1.5 var(--mono);padding:0 0 10px;color:var(--accent)}
+body[data-lesson="03"].mode-aula .hero h1{font-size:clamp(1.8rem,2.8vw,2.8rem)}
+body[data-lesson="03"].mode-aula .hero .lede{margin:8px 0}
+
+#s4 .simcard{display:block!important;padding:12px 16px!important}
+#s4 .mode-switch{display:inline-flex!important;margin:0 12px 6px 0!important}
+#s4 .trace-caption{margin:6px 0!important;font-size:14px!important}
+#s4 .visual-oop-console{padding:8px 12px!important;margin:8px 0!important}
+#s4 .code pre{font-size:14px;line-height:1.45}
+#s4 .visual-oop-files{gap:12px}
+#s4 .visual-oop-window .code{padding:8px}
+</style>
 <nav id="rail" aria-label="Progreso"><a href="#s0" class="on"><span class="dot"></span><span class="lab">El resultado</span></a><a href="#s1"><span class="dot"></span><span class="lab">describe e import</span></a><a href="#s2"><span class="dot"></span><span class="lab">Nombres</span></a><a href="#s3"><span class="dot"></span><span class="lab">Errores</span></a><a href="#s4"><span class="dot"></span><span class="lab">__main__</span></a><a href="#s5"><span class="dot"></span><span class="lab">Comprueba</span></a><a href="#s6"><span class="dot"></span><span class="lab">Tu práctica</span></a></nav>
-<header class="hero wrap" id="s0">
-<div class="eyebrow"><b>Algo Trading · ICAI 2026</b> · L3 · Python III</div>
-<h1>Tu libro, <em>desde otro archivo</em></h1>
-<p class="lede">L2 devuelve los mejores precios. Hoy reutilizas esa función para calcular <code>mid</code> y <code>spread</code>.</p>
-<div class="trace-values"><span>Compras: 98, 99</span><span>Ventas: 103, 101</span></div>
-<div class="challenge"><div class="tag">La función que vas a construir</div>
-<p><code>describe(orders)</code> → <code>{"mid": 100, "spread": 2}</code></p>
-<p>Importarás un módulo proporcionado y compararás importar con ejecutar. <code>mi_main.py</code> conserva el mismo recorrido como alternativa.</p></div></header>
-<section id="s1">
-<div class="wrap"><h2>Una función nueva utiliza la de L2</h2><p class="lede">Seguimos con el libro inicial: compras 98×1 y 99×4; ventas 103×2 y 101×1.</p></div>
-<div class="scrolly" data-scrolly><div class="steps">
-<div class="step on" data-stage="0" data-name="entrada"><div class="step-inner"><h3>1 · Recibir y consultar</h3><p><code>describe(orders)</code> recibe la lista. Dentro, <code>best_prices(orders)</code> selecciona sus dos mejores precios.</p><p><code>bid, ask = ...</code> asigna el primer valor a <code>bid</code> y el segundo a <code>ask</code>. No copia el código de L2: lo llama.</p></div></div>
-<div class="step" data-stage="1" data-name="resultado"><div class="step-inner"><h3>2 · Calcular y devolver</h3><p>La función <code>metrics(bid, ask)</code> recibe los dos precios y aplica las fórmulas de L1. <code>return</code> entrega un diccionario a quien llamó a la función.</p><p>Predice: si el ask sube de 101 a 103, ¿qué dos números cambian?</p></div></div>
-<div class="step" data-stage="2" data-name="ausencia"><div class="step-inner"><h3>3 · Comprobar antes de restar</h3><p><code>None</code> significa que falta un precio. <code>is None</code> pregunta por esa ausencia; <code>or</code> basta con que falte uno de los dos.</p><p>Ese <code>return</code> termina la llamada. La resta nunca recibe <code>None</code>.</p></div></div>
-<div class="step" data-stage="3" data-name="módulo"><div class="step-inner"><h3>4 · Guardar las funciones</h3><p>Un módulo es un archivo <code>.py</code>. El principal proporciona <code>description_example.py</code> para comparar su resultado con tu función.</p><p>Observa las dos ventanas: definir funciones no imprime nada.</p></div></div>
-<div class="step" data-stage="4" data-name="import módulo"><div class="step-inner"><h3>5 · Acceder por el módulo</h3><p>Desde la misma carpeta, <code>import description_example</code> crea el nombre del módulo.</p><p>El punto selecciona su función: <code>description_example.describe(orders)</code>.</p></div></div>
-<div class="step" data-stage="5" data-name="import nombre"><div class="step-inner"><h3>6 · Acceder por el nombre</h3><p><code>from description_example import describe</code> incorpora solo esa función.</p><p>Cambia el nombre disponible en el llamador. El resultado es el mismo.</p></div></div>
-<div class="step" data-stage="6" data-name="dos usos"><div class="step-inner"><h3>Un archivo: importar o ejecutar</h3><p><code>__name__</code> identifica cómo entró Python en el archivo. El guard compara ese nombre antes de llamar a <code>main()</code>.</p></div></div>
-<div class="step" data-stage="7" data-name="contrato"><div class="step-inner"><h3>Ausencia no significa error</h3><p>Conserva el contrato de L2: un lado vacío produce <code>None</code>. Un tamaño negativo es un dato inválido; lo distinguiremos con <code>ValueError</code>.</p></div></div>
-</div><div class="figwrap"><div class="fig"><div class="fig-head"><span>describe → description_example.py</span><span class="stage-name">entrada</span></div>
-<div class="fig-stage on" data-stage="0"><div class="teaching-trace"><div class="code"><pre><span class="ln">def describe(orders):</span><span class="ln hl">    bid, ask = best_prices(orders)</span></pre></div><div class="trace-result">(99, 101) → bid = 99 · ask = 101</div><p class="trace-caption">Fragmento inicial. Todavía falta devolver el resultado.</p></div></div>
-<div class="fig-stage" data-stage="1"><div class="teaching-trace"><div class="code"><pre><span class="ln"># Dentro de metrics, con ambos precios:</span><span class="ln hl">mid = (bid + ask) / 2</span><span class="ln hl">spread = ask - bid</span><span class="ln">return {"mid": mid, "spread": spread}</span></pre></div><div class="trace-result">{"mid": 100.0, "spread": 2}</div><p class="trace-caption">Con ask = 103 → mid = 101.0; spread = 4.</p></div></div>
-<div class="fig-stage" data-stage="2"><div class="teaching-trace"><div class="code"><pre><span class="ln">def metrics(bid, ask):</span><span class="ln hl">    if bid is None or ask is None:</span><span class="ln hl">        return {"mid": None, "spread": None}</span><span class="ln">    return {"mid": (bid+ask)/2, "spread": ask-bid}</span><span class="ln"></span><span class="ln">def describe(orders):</span><span class="ln">    bid, ask = best_prices(orders)</span><span class="ln hl">    return metrics(bid, ask)</span></pre></div><div class="trace-result">Solo compras → {"mid": None, "spread": None}</div><p class="trace-caption">Mismas claves en todos los casos. No sustituimos ausencia por cero.</p></div></div>
-<div class="fig-stage visual-oop-modules" data-stage="3"><div class="visual-oop-files"><div class="visual-oop-window module"><div class="visual-oop-window-title">description_example.py</div><div class="code code-block"><pre><span class="ln">def describe(orders):</span><span class="ln">    bid, ask = best_prices(orders)</span><span class="ln">    return metrics(bid, ask)</span></pre></div></div><div class="visual-oop-window caller"><div class="visual-oop-window-title">notebook llamador</div><div class="code code-block"><pre><span class="ln"># Aún no hay import</span><span class="ln"># Aún no hay llamada</span></pre></div></div></div><div class="visual-oop-console"><span>Consola</span><strong>Sin salida</strong></div></div>
-<div class="fig-stage visual-oop-modules" data-stage="4"><div class="visual-oop-files"><div class="visual-oop-window module"><div class="visual-oop-window-title">description_example.py</div><div class="code code-block"><pre><span class="ln">def describe(orders):</span><span class="ln">    bid, ask = best_prices(orders)</span><span class="ln">    return metrics(bid, ask)</span></pre></div></div><div class="visual-oop-window caller"><div class="visual-oop-window-title">notebook llamador</div><div class="code code-block"><pre><span class="ln">import description_example</span><span class="ln">result = description_example.describe(orders)</span><span class="ln">print(result)</span></pre></div></div></div><div class="visual-oop-console"><span>Consola</span><strong>{&quot;mid&quot;: 100.0, &quot;spread&quot;: 2}</strong></div></div>
-<div class="fig-stage visual-oop-modules" data-stage="5"><div class="visual-oop-files"><div class="visual-oop-window module"><div class="visual-oop-window-title">description_example.py</div><div class="code code-block"><pre><span class="ln">def describe(orders):</span><span class="ln">    bid, ask = best_prices(orders)</span><span class="ln">    return metrics(bid, ask)</span></pre></div></div><div class="visual-oop-window caller"><div class="visual-oop-window-title">notebook llamador</div><div class="code code-block"><pre><span class="ln">from description_example import describe</span><span class="ln">result = describe(orders)</span><span class="ln">print(result)</span></pre></div></div></div><div class="visual-oop-console"><span>Consola</span><strong>{&quot;mid&quot;: 100.0, &quot;spread&quot;: 2}</strong></div></div>
-<div class="fig-stage visual-oop-modules" data-stage="6"><div class="visual-oop-files"><div class="visual-oop-window module"><div class="visual-oop-window-title">description_example.py</div><div class="code code-block"><pre><span class="ln">if __name__ == &quot;__main__&quot;:</span><span class="ln">    main()</span></pre></div></div><div class="visual-oop-window caller"><div class="visual-oop-window-title">notebook llamador</div><div class="code code-block"><pre><span class="ln">import description_example</span><span class="ln"># __name__: &quot;description_example&quot;</span><span class="ln"># guard: False</span></pre></div></div></div><div class="visual-oop-console"><span>Consola</span><strong>Sin demo al importar</strong></div></div>
-<div class="fig-stage" data-stage="7"><div class="teaching-trace"><div class="trace-result">Libro sin ventas → ask = None<br>Orden de tamaño −2 → dato inválido</div><p class="trace-caption">No cambiamos el significado de best_prices entre L2 y L3.</p></div></div>
-</div></div></div></section><section id="s2"><div class="wrap"><h2>¿Qué nombre queda disponible?</h2>
-<p class="lede">Mismo módulo, tres nombres posibles en el llamador. <code>orders</code> ya está definido.</p>
-<div class="simcard teaching-trace"><div class="toggle" role="group" aria-label="Estilo de import">
-<button class="on" id="imp-a">import description_example</button><button id="imp-b">from description_example import describe</button><button id="imp-c">import description_example as market</button>
-</div><div class="visual-oop-files"><div class="visual-oop-window module"><div class="visual-oop-window-title">description_example.py</div><div class="code code-block"><pre><span class="ln">def describe(orders):</span><span class="ln">    bid, ask = best_prices(orders)</span><span class="ln">    return metrics(bid, ask)</span></pre></div></div><div class="visual-oop-window caller"><div class="visual-oop-window-title">notebook llamador</div><div class="code"><pre id="imp-out"></pre></div></div></div><div class="visual-oop-console"><span>Consola · después de print(result)</span><strong>{"mid": 100.0, "spread": 2}</strong></div></div>
-<p><code>as</code> cambia el nombre local, no la función. Evita <code>import *</code>: oculta qué nombres estás incorporando.</p></div></section><section id="s3">
-<div class="wrap"><h2>raise interrumpe; except responde</h2><p class="lede">Ejemplo separado del principal: comprobar el tamaño de una orden antes de aceptarla.</p></div>
-<div class="scrolly" data-scrolly><div class="steps">
-<div class="step on" data-stage="0" data-name="válido"><div class="step-inner"><h3>1 · El caso válido</h3><p><code>require_positive(size)</code> recibe un tamaño. Si es positivo, lo devuelve sin cambiarlo.</p><p><code>ValueError</code> es el tipo de excepción elegido para un valor no permitido.</p></div></div>
-<div class="step" data-stage="1" data-name="raise"><div class="step-inner"><h3>2 · Un valor no permitido</h3><p>Con <code>size = -2</code> se cumple <code>size &lt;= 0</code>. <code>raise</code> interrumpe la función: no llega a <code>return</code>.</p><p>Lee primero la última línea del traceback: tipo de error y mensaje; después busca el archivo y la línea.</p></div></div>
-<div class="step" data-stage="2" data-name="except"><div class="step-inner"><h3>3 · Responder al error concreto</h3><p><code>try</code> intenta la llamada. Si falla con <code>ValueError</code>, salta al bloque <code>except ValueError</code>.</p><p>No convierte −2 en un tamaño válido. El programa rechaza esa orden y puede continuar.</p></div></div>
-<div class="step" data-stage="3" data-name="sin error"><div class="step-inner"><h3>4 · Predecir el otro camino</h3><p>Ahora entra 2. ¿Se imprimirá «orden rechazada»? No: no se lanzó ninguna excepción.</p><p>Un <code>except</code> sin tipo también atraparía fallos inesperados. Captura solo el error que sabes tratar.</p></div></div>
-</div><div class="figwrap"><div class="fig visual-oop-errors"><div class="fig-head"><span>require_positive(size)</span><span class="stage-name">válido</span></div>
-<div class="fig-stage on" data-stage="0"><div class="teaching-trace"><div class="viz-flow visual-oop-flow"><div class="viz-card "><span>Entrada · size</span><strong>2</strong></div><div class="viz-card buy"><span>size ≤ 0</span><strong>False</strong></div></div><div class="visual-oop-branches"><div class="visual-oop-branch chosen">return size <b>→ 2</b></div><div class="visual-oop-branch inactive">raise ValueError <b>→ interrumpe</b></div></div><div class="code"><pre><span class="ln">def require_positive(size):</span><span class="ln">    if size &lt;= 0:</span><span class="ln">        raise ValueError("size debe ser positivo")</span><span class="ln hl">    return size</span></pre></div><div class="trace-result">require_positive(2) → 2</div></div></div>
-<div class="fig-stage" data-stage="1"><div class="teaching-trace"><div class="viz-flow visual-oop-flow"><div class="viz-card "><span>Entrada · size</span><strong>−2</strong></div><div class="viz-card sell"><span>size ≤ 0</span><strong>True</strong></div></div><div class="visual-oop-branches"><div class="visual-oop-branch inactive">return size <b>→ 2</b></div><div class="visual-oop-branch chosen error">raise ValueError <b>→ interrumpe</b></div></div><div class="code"><pre><span class="ln">def require_positive(size):</span><span class="ln">    if size &lt;= 0:</span><span class="ln hl">        raise ValueError("size debe ser positivo")</span><span class="ln">    return size</span></pre></div><div class="trace-result">require_positive(-2)<br>ValueError: size debe ser positivo</div><p class="trace-caption">Salida abreviada: una excepción, no un valor devuelto.</p></div></div>
-<div class="fig-stage" data-stage="2"><div class="teaching-trace"><div class="viz-flow visual-oop-flow"><div class="viz-card "><span>Entrada · size</span><strong>−2</strong></div><div class="viz-card sell"><span>size ≤ 0</span><strong>True</strong></div></div><div class="visual-oop-branches"><div class="visual-oop-branch inactive">return size <b>→ 2</b></div><div class="visual-oop-branch chosen error">raise ValueError <b>→ except</b></div></div><div class="code"><pre><span class="ln">try:</span><span class="ln">    size = require_positive(-2)</span><span class="ln hl">except ValueError:</span><span class="ln hl">    print("orden rechazada")</span></pre></div><div class="trace-result">orden rechazada</div></div></div>
-<div class="fig-stage" data-stage="3"><div class="teaching-trace"><div class="viz-flow visual-oop-flow"><div class="viz-card "><span>Entrada · size</span><strong>2</strong></div><div class="viz-card buy"><span>size ≤ 0</span><strong>False</strong></div></div><div class="visual-oop-branches"><div class="visual-oop-branch chosen">return size <b>→ 2</b></div><div class="visual-oop-branch inactive">raise ValueError <b>→ except</b></div></div><div class="code"><pre><span class="ln">try:</span><span class="ln hl">    size = require_positive(2)</span><span class="ln hl">    print(size)</span><span class="ln">except ValueError:</span><span class="ln">    print("orden rechazada")</span></pre></div><div class="trace-result">2</div></div></div>
-</div></div></div></section><section id="s4"><div class="wrap"><h2>Importar funciones sin arrancar la demo</h2>
-<p class="lede">Primero importa sin guard; después actívalo. El mismo módulo conserva las funciones en ambos casos.</p>
+<header class="hero wrap" id="s0"><div class="eyebrow"><b>Algo Trading · ICAI 2026</b> · L3 · Python III</div><h1>Del precio al resultado,<br><em>a través de tres archivos</em></h1><p class="lede">Compra 99 × 2 y venta 101 × 3 → mid 100.0, spread 2. Conservamos los precios de L2 y reutilizamos la consulta desde otro archivo.</p>
+<div class="l3-flow-demo"><div class="btnrow"><button class="btn" id="module-calculate">Calcular</button><button class="btn ghost" id="module-step">Seguir una llamada</button><button class="btn ghost" id="module-reset">↻ Reiniciar</button></div>
+<div class="l3-file-flow" aria-label="Llamadas de main a analytics y functional; los resultados vuelven al llamador"><div class="l3-file-node" data-module="main"><b>main.py</b><span>Crea las dos órdenes<br>Llama y muestra</span><small>Ejercicio 2 · lo conectas</small></div><span class="l3-call-arrow" aria-label="llama">→</span><div class="l3-file-node" data-module="analytics"><b>analytics.py</b><span>describe(orders)<br>Calcula mid y spread</span><small>Ejercicio 1 · lo completas</small></div><span class="l3-call-arrow" aria-label="llama">→</span><div class="l3-file-node" data-module="functional"><b>functional.py</b><span>best_prices(orders)<br>Devuelve bid y ask</span><small>L2 · proporcionado</small></div></div>
+<div class="l3-return-flow"><span>main ← diccionario ← analytics</span><span>analytics ← (bid, ask) ← functional</span></div>
+<div class="l3-event" id="module-event" aria-live="polite">Datos preparados. Calcular muestra la salida; Seguir una llamada recorre su origen.</div><pre class="l3-output" id="module-output">Salida esperada: {'mid': 100.0, 'spread': 2}</pre></div>
+<p class="trace-caption">Precio, mid y spread en USD/unidad. Simulación ilustrativa del mismo programa de la práctica. Importar hace disponibles sus nombres; llamar ejecuta las funciones.</p></header><section id="s1"><div class="wrap"><h2>Sigue la llamada. Después, el retorno.</h2><p class="lede">Los tres archivos están juntos en exercises/. Compra a 99, venta a 101: los datos exactos de tu práctica.</p></div><div class="scrolly" data-scrolly><div class="steps"><div class="step on" data-stage="0" data-name="Un archivo es un módulo"><div class="step-inner"><h3>1 · Un archivo es un módulo</h3><p><code>functional.py</code> contiene las funciones recuperadas de L2. Un módulo es un archivo Python; estas funciones se pueden reutilizar desde otro archivo.</p></div></div><div class="step " data-stage="1" data-name="Importar para reutilizar"><div class="step-inner"><h3>2 · Importar para reutilizar</h3><p>En <code>analytics.py</code>, el import permite usar <code>best_prices</code>. Definir <code>describe</code> prepara la función; todavía no la llama.</p></div></div><div class="step " data-stage="2" data-name="main crea los datos"><div class="step-inner"><h3>3 · main crea los datos</h3><p><code>main.py</code> importa dos piezas. <code>make_order</code> crea cada diccionario; <code>orders</code> reúne los dos. Estas líneas irán dentro de <code>main()</code>.</p></div></div><div class="step " data-stage="3" data-name="La llamada sale de main"><div class="step-inner"><h3>4 · La llamada sale de main</h3><p>Al llegar a <code>describe(orders)</code>, Python entra en la función de <code>analytics.py</code>. Le pasa la lista; <code>print</code> espera el resultado.</p></div></div><div class="step " data-stage="4" data-name="La llamada llega a L2"><div class="step-inner"><h3>5 · La llamada llega a L2</h3><p><code>describe</code> llama a <code>best_prices</code>. La función de L2 devuelve el mayor precio de compra y el menor de venta. <code>bid, ask</code> recoge ese par.</p></div></div><div class="step " data-stage="5" data-name="El resultado vuelve a main"><div class="step-inner"><h3>6 · El resultado vuelve a main</h3><p>Con ambos precios, <code>describe</code> calcula y devuelve un diccionario. Ahora <code>print</code> puede mostrarlo. Ninguna función se ha copiado en <code>main.py</code>.</p></div></div><div class="step " data-stage="6" data-name="¿Y si solo hay compras?"><div class="step-inner"><h3>7 · ¿Y si solo hay compras?</h3><p><code>best_prices</code> devuelve <code>(99, None)</code>. Antes de calcular, <code>describe</code> comprueba si falta algún precio. <code>return</code> termina la llamada sin hacer la resta.</p></div></div><div class="step " data-stage="7" data-name="La función que vas a completar"><div class="step-inner"><h3>8 · La función que vas a completar</h3><p>Este es el módulo completo. El import reutiliza L2; la comprobación protege el cálculo. <code>main.py</code> se ocupa de los datos y las llamadas.</p></div></div></div><div class="figwrap"><div class="fig"><div class="fig-head"><span>El mismo programa · tres archivos</span><span class="stage-name">Inicio</span></div><div class="fig-stage on" data-stage="0"><div class="l3-mini-flow">Llamadas: main → analytics → functional<br>Retornos: main ← diccionario ← analytics ← par ← functional</div><div class="teaching-trace"><div class="visual-oop-window"><div class="visual-oop-window-title">functional.py · firmas conocidas, cuerpos omitidos</div><div class="code"><pre><span class="ln">def make_order(side, price, size):</span><span class="ln">    ...</span><span class="ln"> </span><span class="ln">def best_prices(orders):</span><span class="ln">    ...</span></pre></div></div><div class="trace-result">make_order → una orden · best_prices → (bid, ask)</div></div></div><div class="fig-stage " data-stage="1"><div class="l3-mini-flow">Llamadas: main → analytics → functional<br>Retornos: main ← diccionario ← analytics ← par ← functional</div><div class="teaching-trace"><div class="visual-oop-window"><div class="visual-oop-window-title">analytics.py · comienzo de tu función</div><div class="code"><pre><span class="ln hl">from functional import best_prices</span><span class="ln"> </span><span class="ln">def describe(orders):</span><span class="ln hl">    bid, ask = best_prices(orders)</span></pre></div></div><div class="trace-result">functional.py → analytics.py · código reutilizado</div></div></div><div class="fig-stage " data-stage="2"><div class="l3-mini-flow">Llamadas: main → analytics → functional<br>Retornos: main ← diccionario ← analytics ← par ← functional</div><div class="teaching-trace"><div class="visual-oop-window"><div class="visual-oop-window-title">main.py · imports y primeras líneas del programa</div><div class="code"><pre><span class="ln hl">from functional import make_order</span><span class="ln hl">from analytics import describe</span><span class="ln"> </span><span class="ln">def main():</span><span class="ln">    orders = [</span><span class="ln">        make_order(&quot;buy&quot;, 99, 2),</span><span class="ln">        make_order(&quot;sell&quot;, 101, 3),</span><span class="ln">    ]</span></pre></div></div><div class="trace-result">Compra: 99 × 2 · Venta: 101 × 3</div></div></div><div class="fig-stage " data-stage="3"><div class="l3-mini-flow">Llamadas: main → analytics → functional<br>Retornos: main ← diccionario ← analytics ← par ← functional</div><div class="teaching-trace"><div class="visual-oop-window"><div class="visual-oop-window-title">main.py · dentro de main()</div><div class="code"><pre><span class="ln hl">print(&quot;mercado:&quot;, describe(orders))</span></pre></div></div><div class="visual-oop-window"><div class="visual-oop-window-title">analytics.py · entra la llamada</div><div class="code"><pre><span class="ln">def describe(orders):</span><span class="ln hl">    bid, ask = best_prices(orders)</span></pre></div></div><div class="trace-result">main.py → analytics.py</div></div></div><div class="fig-stage " data-stage="4"><div class="l3-mini-flow">Llamadas: main → analytics → functional<br>Retornos: main ← diccionario ← analytics ← par ← functional</div><div class="teaching-trace"><div class="visual-oop-window"><div class="visual-oop-window-title">analytics.py · llamada</div><div class="code"><pre><span class="ln">bid, ask = best_prices(orders)</span></pre></div></div><div class="visual-oop-window"><div class="visual-oop-window-title">functional.py · final de best_prices</div><div class="code"><pre><span class="ln">return bid, ask</span></pre></div></div><div class="trace-result">functional.py → analytics.py · (99, 101)</div></div></div><div class="fig-stage " data-stage="5"><div class="l3-mini-flow">Llamadas: main → analytics → functional<br>Retornos: main ← diccionario ← analytics ← par ← functional</div><div class="teaching-trace"><div class="visual-oop-window"><div class="visual-oop-window-title">analytics.py · final de describe</div><div class="code"><pre><span class="ln">return {</span><span class="ln">    &quot;mid&quot;: (bid + ask) / 2,</span><span class="ln">    &quot;spread&quot;: ask - bid,</span><span class="ln">}</span></pre></div></div><div class="trace-result">mid = (99 + 101) / 2 = 100.0<br>spread = 101 − 99 = 2</div><div class="code"><pre><span class="ln">mercado: {&#x27;mid&#x27;: 100.0, &#x27;spread&#x27;: 2}</span></pre></div></div></div><div class="fig-stage " data-stage="6"><div class="l3-mini-flow">Llamadas: main → analytics → functional<br>Retornos: main ← diccionario ← analytics ← par ← functional</div><div class="teaching-trace"><div class="visual-oop-window"><div class="visual-oop-window-title">analytics.py · inmediatamente después de best_prices</div><div class="code"><pre><span class="ln">if bid is None or ask is None:</span><span class="ln">    return {&quot;mid&quot;: None, &quot;spread&quot;: None}</span></pre></div></div><div class="trace-result">Solo compras → mid: None · spread: None</div></div></div><div class="fig-stage " data-stage="7"><div class="l3-mini-flow">Llamadas: main → analytics → functional<br>Retornos: main ← diccionario ← analytics ← par ← functional</div><div class="teaching-trace"><div class="visual-oop-window"><div class="visual-oop-window-title">analytics.py · código completo</div><div class="code"><pre><span class="ln hl">from functional import best_prices</span><span class="ln"> </span><span class="ln">def describe(orders):</span><span class="ln hl">    bid, ask = best_prices(orders)</span><span class="ln">    if bid is None or ask is None:</span><span class="ln">        return {&quot;mid&quot;: None, &quot;spread&quot;: None}</span><span class="ln">    return {</span><span class="ln">        &quot;mid&quot;: (bid + ask) / 2,</span><span class="ln">        &quot;spread&quot;: ask - bid,</span><span class="ln">    }</span></pre></div></div></div></div></div></div></div></section><section id="s2"><div class="wrap"><h2>Dos formas de importar</h2><p class="lede">La función es la misma. Cambia el nombre disponible en <code>main.py</code>.</p><div class="simcard teaching-trace"><div class="toggle" role="group" aria-label="Estilo de import"><button class="on" id="imp-a">import analytics</button><button id="imp-b">from analytics import describe</button><button id="imp-c">Alias: as market</button></div><div class="visual-oop-window"><div class="visual-oop-window-title">main.py · con orders ya creado</div><div class="code"><pre id="imp-out"></pre></div></div><div class="visual-oop-console"><span>Resultado de print</span><strong>{'mid': 100.0, 'spread': 2}</strong></div></div><p><code>as</code> solo cambia el nombre local. En el ejercicio usarás <code>from analytics import describe</code>.</p></div></section><section id="s3"><div class="wrap"><h2>El módulo valida. El programa responde.</h2><p class="lede">El mismo make_order del ejercicio; no añadimos otra función de ejemplo.</p></div><div class="scrolly" data-scrolly><div class="steps"><div class="step on" data-stage="0" data-name="Un dato válido"><div class="step-inner"><h3>1 · Un dato válido</h3><p><code>make_order</code> valida y devuelve una orden. La ausencia de ventas no es un error; un precio negativo sí lo es.</p></div></div><div class="step " data-stage="1" data-name="El módulo rechaza"><div class="step-inner"><h3>2 · El módulo rechaza</h3><p>Con precio −10, <code>raise</code> lanza <code>ValueError</code> e interrumpe la función: no se crea ninguna orden. El mensaje explica el dato inválido.</p></div></div><div class="step " data-stage="2" data-name="main responde"><div class="step-inner"><h3>3 · main responde</h3><p><code>try</code> intenta la llamada. <code>except ValueError as error</code> captura ese tipo de error y le da el nombre <code>error</code> para mostrar su mensaje.</p></div></div><div class="step " data-stage="3" data-name="Predice antes de ejecutar"><div class="step-inner"><h3>4 · Predice antes de ejecutar</h3><p>Si cambias −10 por 99, no se lanza una excepción y <code>except</code> no se ejecuta. El módulo valida; el programa decide cómo responder.</p></div></div></div><div class="figwrap"><div class="fig"><div class="fig-head"><span>El mismo programa · tres archivos</span><span class="stage-name">Inicio</span></div><div class="fig-stage on" data-stage="0"><div class="teaching-trace"><div class="visual-oop-window"><div class="visual-oop-window-title">main.py · dentro de main()</div><div class="code"><pre><span class="ln">order = make_order(&quot;buy&quot;, 99, 2)</span></pre></div></div><div class="trace-result">{'side': 'buy', 'price': 99, 'size': 2}</div></div></div><div class="fig-stage " data-stage="1"><div class="teaching-trace"><div class="visual-oop-window"><div class="visual-oop-window-title">functional.py · fragmento de make_order</div><div class="code"><pre><span class="ln">if price &lt;= 0:</span><span class="ln hl">    raise ValueError(&quot;price debe ser positivo&quot;)</span></pre></div></div><div class="trace-result">make_order("buy", −10, 1)<br>ValueError: price debe ser positivo</div></div></div><div class="fig-stage " data-stage="2"><div class="teaching-trace"><div class="visual-oop-window"><div class="visual-oop-window-title">main.py · dentro de main()</div><div class="code"><pre><span class="ln">try:</span><span class="ln">    make_order(&quot;buy&quot;, -10, 1)</span><span class="ln hl">except ValueError as error:</span><span class="ln">    print(&quot;orden rechazada:&quot;, error)</span></pre></div></div><div class="trace-result">orden rechazada: price debe ser positivo</div></div></div><div class="fig-stage " data-stage="3"><div class="teaching-trace"><div class="visual-oop-window"><div class="visual-oop-window-title">main.py · variante válida</div><div class="code"><pre><span class="ln">try:</span><span class="ln">    make_order(&quot;buy&quot;, 99, 1)</span><span class="ln hl">except ValueError as error:</span><span class="ln">    print(&quot;orden rechazada:&quot;, error)</span></pre></div></div><div class="trace-result">Sin salida: no hay print en el camino válido</div></div></div></div></div></div></section><section id="s4"><div class="wrap"><h2>main.py: importar o ejecutar</h2>
+<p class="lede">Sin la condición, importar también llama a main(). Actívala y compara los dos caminos.</p>
 <div class="simcard teaching-trace visual-oop-main" id="main-sim">
 <div class="mode-switch" role="group" aria-label="Versión del archivo"><button class="on" id="main-broken">sin guard</button><button id="main-fixed">con guard</button></div>
-<div class="mode-switch" role="group" aria-label="Forma de abrir el archivo"><button class="on" id="main-import">import description_example</button><button id="main-direct">python description_example.py</button></div>
-<p class="trace-caption">Final de description_example.py. Las funciones y orders ya están definidos.</p>
-<div class="visual-oop-files"><div class="visual-oop-window module"><div class="visual-oop-window-title">description_example.py</div><div class="code"><pre id="main-code"></pre></div></div><div class="visual-oop-window caller"><div class="visual-oop-window-title">proceso llamador</div><div class="code"><pre id="main-caller"></pre></div><div id="main-trace" class="visual-oop-guard-state"></div></div></div><button class="btn" id="main-run">▶ Simular</button>
-<div class="visual-oop-console" id="main-log">Observa si aparece la salida de describe.</div>
-</div></div></section><section id="s5"><div class="wrap"><h2>Antes de continuar</h2><div class="quiz" data-quiz><div class="q" data-ok="0"><div class="qt">Tras <code>import description_example</code>, ¿cómo llamas a describe?</div><div class="opts"><button class="opt">A · description_example.describe(orders)</button><button class="opt">B · describe(orders)</button><button class="opt">C · import.describe(orders)</button></div><div class="why">El nombre importado es description_example; su función se selecciona con el punto.</div></div>
-<div class="q" data-ok="1"><div class="qt">Tras <code>from description_example import describe</code>, ¿qué nombre puedes usar directamente?</div><div class="opts"><button class="opt">A · mi_main</button><button class="opt">B · describe</button><button class="opt">C · best_prices</button></div><div class="why">Esta instrucción importa describe, no los demás nombres del módulo.</div></div>
+<div class="mode-switch" role="group" aria-label="Forma de abrir el archivo"><button class="on" id="main-import">import main</button><button id="main-direct">python main.py</button></div>
+<p class="trace-caption">Fragmento del programa: mismos imports y primeras órdenes del ejercicio. Simulación ilustrativa; Python se ejecuta en tu terminal.</p>
+<button class="btn" id="main-run">▶ Simular</button>
+<div class="visual-oop-console" id="main-log">Observa si aparece la salida de describe.</div><div class="visual-oop-files"><div class="visual-oop-window module"><div class="visual-oop-window-title">main.py</div><div class="code"><pre id="main-code"></pre></div></div><div class="visual-oop-window caller"><div class="visual-oop-window-title">proceso llamador</div><div class="code"><pre id="main-caller"></pre></div><div id="main-trace" class="visual-oop-guard-state"></div></div></div>
+</div></div></section><section id="s5"><div class="wrap"><h2>Antes de continuar</h2><div class="quiz" data-quiz><div class="q" data-ok="0"><div class="qt">Tras <code>import analytics</code>, ¿cómo llamas a describe?</div><div class="opts"><button class="opt">A · analytics.describe(orders)</button><button class="opt">B · describe(orders)</button><button class="opt">C · import.describe(orders)</button></div><div class="why">El nombre importado es analytics; su función se selecciona con el punto.</div></div>
+<div class="q" data-ok="1"><div class="qt">Tras <code>from analytics import describe</code>, ¿qué nombre puedes usar directamente?</div><div class="opts"><button class="opt">A · analytics</button><button class="opt">B · describe</button><button class="opt">C · best_prices</button></div><div class="why">Esta instrucción importa describe, no los demás nombres del módulo.</div></div>
 <div class="q" data-ok="2"><div class="qt">Si try termina sin error, ¿se ejecuta except?</div><div class="opts"><button class="opt">A · Siempre</button><button class="opt">B · Si hay un print</button><button class="opt">C · No</button></div><div class="why">Solo entra en except si aparece una excepción del tipo indicado.</div></div>
-<div class="q" data-ok="0"><div class="qt">¿Qué hace <code>raise ValueError("size debe ser positivo")</code>?</div><div class="opts"><button class="opt">A · Interrumpe y comunica un valor inválido</button><button class="opt">B · Imprime y continúa</button><button class="opt">C · Corrige el tamaño</button></div><div class="why">raise lanza una excepción; no imprime un aviso ni devuelve un dato corregido.</div></div>
-<div class="q" data-ok="1"><div class="qt">¿Cuándo vale <code>__name__ == "__main__"</code>?</div><div class="opts"><button class="opt">A · Al importar el archivo</button><button class="opt">B · Al ejecutarlo directamente</button><button class="opt">C · Siempre</button></div><div class="why">El guard permite ejecutar la demo solo en ese segundo caso.</div></div><div class="score"></div></div></div></section><section id="s6"><div class="wrap"><h2>Conserva tu función de L2</h2>
-<div class="cta"><div class="box"><span class="tag">Principal</span>Abre <code>03_build_exercises.ipynb</code>. La base de L2 está proporcionada. Completa <code>metrics</code> y <code>describe</code>, compara ausencias e importa el módulo real.</div>
-</div>
-<details><summary>Consulta: programa y práctica opcional</summary><div class="body"><p>El mismo patrón se aplica a tu programa <code>mi_main.py</code> completado: <code>python mi_main.py</code> lo ejecuta y <code>import mi_main</code> carga sus funciones. <code>03_auxiliary.ipynb</code> ofrece práctica OPTIONAL.</p></div></details><div class="bridge"><div class="tag">L4</div><p>Hoy pasas datos a funciones. En L4 un objeto <code>Fill</code> guardará una ejecución y calculará su flujo de caja.</p></div>
-<details class="construction-panel" id="construction-guide"><summary>Del notebook a un programa Python</summary><p><strong>Problema:</strong> Combinar tu selección de precios con las fórmulas de L1 para describir el mercado, incluso cuando falte un lado. Después reutilizar esa descripción desde otro archivo sin arrancar su demostración al importar.</p><p>Completa el principal en Jupyter y contrasta sus resultados. Después puedes trasladar las mismas respuestas a una copia de <code>main.py</code>, guardada como <code>mi_main.py</code>.</p><p>Desde la carpeta <code>exercises</code> de esta clase: <code>python mi_main.py</code>. Verás los mismos cálculos ejecutados de una vez.</p><p>El notebook sirve para investigar y explicar. Los archivos <code>.py</code> sirven para organizar programas y funciones reutilizables.</p><p><strong>Predice y contrasta:</strong> Con compras a 98 y 99 y ventas a 103 y 101, best_prices devuelve (99,101) y describe devuelve {&#x27;mid&#x27;:100,&#x27;spread&#x27;:2}. Con una sola compra, una sola venta o un libro vacío devuelve {&#x27;mid&#x27;:None,&#x27;spread&#x27;:None}. El auxiliar trabaja otro problema: rechazar precio o tamaño inválidos con ValueError.</p><p><strong>Lo siguiente reutiliza:</strong> L4 mantendrá esta separación entre datos válidos y comportamiento reutilizable al representar órdenes y fills como objetos.</p></details></div></section><footer>L3 · Módulos y errores — Algo Trading ICAI 2026</footer>
+<div class="q" data-ok="0"><div class="qt">¿Qué hace <code>raise ValueError("price debe ser positivo")</code>?</div><div class="opts"><button class="opt">A · Interrumpe y comunica un valor inválido</button><button class="opt">B · Imprime y continúa</button><button class="opt">C · Corrige el precio</button></div><div class="why">raise lanza una excepción; no imprime un aviso ni devuelve un dato corregido.</div></div>
+<div class="q" data-ok="1"><div class="qt">¿Cuándo vale <code>__name__ == "__main__"</code>?</div><div class="opts"><button class="opt">A · Al importar el archivo</button><button class="opt">B · Al ejecutarlo directamente</button><button class="opt">C · Siempre</button></div><div class="why">El guard permite ejecutar la demo solo en ese segundo caso.</div></div><div class="score"></div></div></div></section><section id="s6"><div class="wrap"><h2>Ahora construye este programa</h2><p class="lede">La guarda de <code>main.py</code> ya está proporcionada para probar cada paso. Abre <code>exercises/enunciado.md</code>. Los tres archivos ya están en esa carpeta.</p><div class="cta"><div class="box"><span class="tag">1 · analytics.py</span>Completa <code>describe</code> usando <code>best_prices</code>. Prueba mercado completo y solo compras.</div><div class="box"><span class="tag">2 · main.py</span>Importa, crea órdenes, llama a <code>describe</code> y captura el error de precio −10.</div><div class="box"><span class="tag">3 · Terminal</span>Experimenta con la guarda proporcionada y restáurala. Ejecuta los dos comandos desde <code>exercises/</code>.</div></div><div class="code"><pre><span class="ln">python main.py</span><span class="ln">python -c &quot;import main&quot;</span></pre></div><p>El primero imprime los resultados; el segundo no imprime nada. <code>-c</code> ejecuta la instrucción escrita entre comillas.</p><details><summary>Consulta de la solución</summary><div class="body"><code>solutions/solucion.md</code> contiene un bloque copiable por archivo: functional.py, analytics.py y main.py.</div></details><div class="bridge"><div class="tag">L4</div><p>Hoy conectas datos y funciones. En L4, un objeto <code>Fill</code> reunirá una ejecución y su comportamiento.</p></div><details class="construction-panel" id="construction-guide"><summary>Conecta las piezas de tu práctica</summary><p><strong>Partes de:</strong> functional.py está proporcionado y conserva las funciones de L2; no lo copies en main.py.</p><p><strong>Problema:</strong> Combinar tu selección de precios con las fórmulas de L1 para describir el mercado, incluso cuando falte un lado. Después reutilizar esa descripción desde otro archivo sin arrancar su demostración al importar.</p><p><strong>Predice y contrasta:</strong> Compra a 99 de tamaño 2 y venta a 101 de tamaño 3: mid=100.0 y spread=2. Solo compras: ambos None. Precio -10: ValueError, capturado en main.</p><p><strong>Del ejemplo a tu código:</strong> Un único recorrido: enunciado.md y tres módulos Python. Solución textual en solutions/solucion.md.</p><p>Abre <code>enunciado.md</code> y completa los cuerpos indicados. El resto de los archivos está proporcionado o procede de la práctica anterior.</p><ul><li><code>analytics.py:describe</code>: Completa analytics.py y conecta las funciones desde main.py. functional.py conserva la pieza de L2. <span>Practica L03-P02, L03-P01, L03-P03, L03-P04, L03-P05.</span></li></ul><p>Desde <code>exercises</code>: <code>python main.py</code>. <code>python -c &quot;import main&quot;</code> debe ser silencioso.</p><p>Solución copiable: <code>solutions/solucion.md</code>.</p><p><strong>Lo siguiente reutiliza:</strong> L4 mantendrá esta separación entre datos válidos y comportamiento reutilizable al representar órdenes y fills como objetos.</p></details></div></section><footer>L3 · Módulos y errores — Algo Trading ICAI 2026</footer>
 
-
-<script type="application/json" id="pedagogy-contract">{"lesson":3,"status":"contract-strict","title":"Python III — Módulos y errores de dominio","delivery":"lesson","source_path":"framework/_build/docs/03_body.html","requires":{"concepts":["python.functions","functional.order_book","python.fstring"],"apis":["functional.best_prices"],"notation":[]},"requirement_routes":{"concepts":{"python.functions":"LIVE","functional.order_book":"LIVE","python.fstring":"REQUIRED"},"apis":{"functional.best_prices":"LIVE"},"notation":{}},"introduces":{"concepts":[{"id":"python.modules","importance":"major","route":"LIVE"},{"id":"python.imports","importance":"major","route":"LIVE"},{"id":"python.exceptions","importance":"major","route":"LIVE"},{"id":"python.main_guard","importance":"supporting","route":"REQUIRED"},{"id":"python.domain_errors","importance":"supporting","route":"LIVE"}],"apis":[],"notation":[]},"introduction_routes":{"apis":{},"notation":{}},"recalls":[{"concept":"python.functions","introduced_in":2,"mapping":{"before":"Las funciones eliminan duplicación dentro de un notebook.","now":"Los imports reutilizan esas mismas funciones entre archivos."}}],"api_surface":[{"id":"functional.best_prices","name":"best_prices","kind":"function","signature":"best_prices(orders) -> tuple[float | None, float | None]","returns":"tuple[float | None, float | None]","responsibility":"read the highest buy and lowest sell price without modifying orders; return None per missing side","qualified_name":"lesson02.order_book.best_prices"}],"routes":{"LIVE":["l03-challenge","l03-module-build","l03-errors","l03-bridge"],"REQUIRED":["l03-import-recall","l03-main-guard","l03-quiz"],"OPTIONAL":[]},"objectives":[{"id":"l03-reuse-module","route":"LIVE","concepts":["python.modules","python.imports"],"apis":["functional.best_prices"],"notation":[]},{"id":"l03-handle-domain-errors","route":"LIVE","concepts":["python.exceptions"],"apis":[],"notation":[]},{"id":"l03-separate-import-and-execution","route":"REQUIRED","concepts":["python.main_guard","python.domain_errors"],"apis":[],"notation":[]}],"load":{"live_presentation_minutes":20,"guided_minutes":20,"required_autonomous_minutes":0,"optional_minutes":15,"overflow_policy":"explicit-route-plan","required_project_minutes":0},"scenes":[{"id":"l03-challenge","dom_id":"s0","type":"hero-challenge","route":"LIVE","layout":"focus","concepts":["python.modules"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l03-module-build","dom_id":"s1","type":"architecture-map","route":"LIVE","layout":"split-42-58","concepts":["python.modules","python.imports"],"duration_minutes":10,"stages":[{"id":"receive","route":"LIVE","dom_stage":0},{"id":"calculate","route":"LIVE","dom_stage":1},{"id":"absence","route":"LIVE","dom_stage":2},{"id":"module","route":"LIVE","dom_stage":3},{"id":"import-module","route":"LIVE","dom_stage":4},{"id":"import-name","route":"LIVE","dom_stage":5},{"id":"two-lives","route":"REQUIRED","duration_minutes":2,"dom_stage":6},{"id":"robust-library","route":"REQUIRED","duration_minutes":2,"dom_stage":7}]},{"id":"l03-import-recall","dom_id":"s2","type":"recall","route":"REQUIRED","layout":"focus","concepts":["python.functions","python.imports"],"duration_minutes":5,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l03-errors","dom_id":"s3","type":"code-state","route":"LIVE","layout":"split-50-50","concepts":["python.exceptions","python.domain_errors"],"duration_minutes":6,"stages":[{"id":"valid","route":"LIVE","dom_stage":0},{"id":"raise","route":"LIVE","dom_stage":1},{"id":"except","route":"LIVE","dom_stage":2},{"id":"success","route":"LIVE","dom_stage":3}]},{"id":"l03-main-guard","dom_id":"s4","type":"concept-simulator","route":"REQUIRED","layout":"split-45-55","concepts":["python.main_guard"],"duration_minutes":8,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l03-quiz","dom_id":"s5","type":"diagnostic-quiz","route":"REQUIRED","layout":"focus","concepts":["python.modules","python.exceptions"],"duration_minutes":8,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l03-bridge","dom_id":"s6","type":"bridge","route":"LIVE","layout":"focus","concepts":["python.modules"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]}],"bridge":{"target_lesson":4,"known":{"concepts":["python.functions","python.modules","python.exceptions"],"apis":[],"notation":[]},"limitation":"Los diccionarios sin estructura mantienen separados los datos y el comportamiento.","need":"Order y Fill vinculan los datos de mercado con comportamiento e invariantes."},"api_transitions":[],"package_checks":[],"used_later":{"concepts":["python.modules"],"apis":[],"notation":[]}}</script>
+<script type="application/json" id="pedagogy-contract">{"lesson":3,"status":"contract-strict","title":"Python III — Módulos y errores de dominio","delivery":"lesson","source_path":"framework/_build/docs/03_body.html","requires":{"concepts":["python.functions","functional.order_book","python.fstring"],"apis":["functional.best_prices"],"notation":[]},"requirement_routes":{"concepts":{"python.functions":"LIVE","functional.order_book":"LIVE","python.fstring":"REQUIRED"},"apis":{"functional.best_prices":"LIVE"},"notation":{}},"introduces":{"concepts":[{"id":"python.modules","importance":"major","route":"LIVE"},{"id":"python.imports","importance":"major","route":"LIVE"},{"id":"python.exceptions","importance":"major","route":"LIVE"},{"id":"python.main_guard","importance":"supporting","route":"LIVE"},{"id":"python.domain_errors","importance":"supporting","route":"LIVE"}],"apis":[],"notation":[]},"introduction_routes":{"apis":{},"notation":{}},"recalls":[{"concept":"python.functions","introduced_in":2,"mapping":{"before":"Las funciones eliminan duplicación dentro de un notebook.","now":"Los imports reutilizan esas mismas funciones entre archivos."}}],"api_surface":[{"id":"functional.best_prices","name":"best_prices","kind":"function","signature":"best_prices(orders) -> tuple[float | None, float | None]","returns":"tuple[float | None, float | None]","responsibility":"read the highest buy and lowest sell price without modifying orders; return None per missing side","qualified_name":"lesson02.order_book.best_prices"}],"routes":{"LIVE":["l03-challenge","l03-module-build","l03-import-recall","l03-errors","l03-main-guard","l03-bridge"],"REQUIRED":["l03-quiz"],"OPTIONAL":[]},"objectives":[{"id":"l03-reuse-module","route":"LIVE","concepts":["python.modules","python.imports"],"apis":["functional.best_prices"],"notation":[]},{"id":"l03-handle-domain-errors","route":"LIVE","concepts":["python.exceptions"],"apis":[],"notation":[]},{"id":"l03-separate-import-and-execution","route":"LIVE","concepts":["python.main_guard","python.domain_errors"],"apis":[],"notation":[]}],"load":{"live_presentation_minutes":20,"guided_minutes":20,"required_autonomous_minutes":0,"optional_minutes":15,"overflow_policy":"explicit-route-plan","required_project_minutes":0},"scenes":[{"id":"l03-challenge","dom_id":"s0","type":"hero-challenge","route":"LIVE","layout":"focus","concepts":["python.modules"],"duration_minutes":2,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l03-module-build","dom_id":"s1","type":"architecture-map","route":"LIVE","layout":"split-42-58","concepts":["python.modules","python.imports"],"duration_minutes":8,"stages":[{"id":"module","route":"LIVE","dom_stage":0},{"id":"import","route":"LIVE","dom_stage":1},{"id":"data","route":"LIVE","dom_stage":2},{"id":"call","route":"LIVE","dom_stage":3},{"id":"prices","route":"LIVE","dom_stage":4},{"id":"return","route":"LIVE","dom_stage":5},{"id":"absence","route":"LIVE","dom_stage":6},{"id":"complete","route":"LIVE","dom_stage":7}]},{"id":"l03-import-recall","dom_id":"s2","type":"recall","route":"LIVE","layout":"focus","concepts":["python.functions","python.imports"],"duration_minutes":1,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l03-errors","dom_id":"s3","type":"code-state","route":"LIVE","layout":"split-42-58","concepts":["python.exceptions","python.domain_errors"],"duration_minutes":4,"stages":[{"id":"valid","route":"LIVE","dom_stage":0},{"id":"raise","route":"LIVE","dom_stage":1},{"id":"except","route":"LIVE","dom_stage":2},{"id":"success","route":"LIVE","dom_stage":3}]},{"id":"l03-main-guard","dom_id":"s4","type":"concept-simulator","route":"LIVE","layout":"split-45-55","concepts":["python.main_guard"],"duration_minutes":4,"stages":[{"id":"main","route":"LIVE"}]},{"id":"l03-quiz","dom_id":"s5","type":"diagnostic-quiz","route":"REQUIRED","layout":"focus","concepts":["python.modules","python.exceptions"],"duration_minutes":8,"stages":[{"id":"main","route":"REQUIRED"}]},{"id":"l03-bridge","dom_id":"s6","type":"bridge","route":"LIVE","layout":"focus","concepts":["python.modules"],"duration_minutes":1,"stages":[{"id":"main","route":"LIVE"}]}],"bridge":{"target_lesson":4,"known":{"concepts":["python.functions","python.modules","python.exceptions"],"apis":[],"notation":[]},"limitation":"Los diccionarios sin estructura mantienen separados los datos y el comportamiento.","need":"Order y Fill vinculan los datos de mercado con comportamiento e invariantes."},"api_transitions":[],"package_checks":[],"used_later":{"concepts":["python.modules"],"apis":[],"notation":[]}}</script>
 <script type="application/json" id="learning-support">{"lesson": 3, "cards": {"errors": {"title": "Leer un error sin adivinar", "first_lesson": 1, "route": "LIVE", "why": "Localizar por qué una operación no puede continuar.", "inputs": "Un traceback: ruta, número de línea, tipo y mensaje del error.", "outputs": "La última línea explica el fallo; la línea de tu archivo indica dónde revisar.", "mechanism": "NameError: nombre no definido. KeyError: clave ausente. TypeError: operación incompatible. int('205') devuelve el entero 205; float('205.5'), el decimal 205.5. Convierte el texto numérico antes de operar y vuelve a ejecutar desde el inicio.", "example": "order = {'size': 2}\nprint(order['price'])  # KeyError: falta 'price'"}, "exceptions": {"title": "raise y try/except", "first_lesson": 3, "route": "LIVE", "why": "Rechazar una entrada inválida antes de alterar caja o libro.", "inputs": "Una condición inválida; por ejemplo, size <= 0.", "outputs": "raise ValueError(...) interrumpe la función; except ValueError puede gestionar ese error concreto.", "mechanism": "No se usa un error para esconder cualquier fallo. Primero se valida; después se modifica el estado.", "example": "size = 0\nif size <= 0:\n    raise ValueError('size debe ser positivo')"}, "functions": {"title": "def, llamada y return", "first_lesson": 2, "route": "LIVE", "why": "Escribir una receta una vez y reutilizarla con otros datos.", "inputs": "Argumentos al llamar: mid(99, 101). Los parámetros bid y ask reciben esos valores.", "outputs": "return entrega un valor al código que llamó. print sólo lo muestra.", "mechanism": "Definir la función no ejecuta su cuerpo. Las variables de dentro son locales salvo mutaciones explícitas de objetos recibidos.", "example": "def mid(bid, ask):\n    return (bid + ask) / 2\nresult = mid(99, 101)  # 100.0"}, "imports": {"title": "import y __main__", "first_lesson": 3, "route": "LIVE", "why": "Reutilizar funciones sin arrancar por accidente una demostración.", "inputs": "El nombre de un módulo .py disponible en la ruta de Python.", "outputs": "import módulo crea un nombre de módulo; from módulo import función crea el nombre de la función.", "mechanism": "La primera importación ejecuta el nivel superior del archivo. El bloque if __name__ == '__main__' sólo se ejecuta al arrancarlo como programa.", "example": "import math\nprint(math.sqrt(9))  # 3.0\n# math.sqrt recibe un número no negativo y devuelve su raíz."}}, "scenes": {"s0": ["functions"], "s1": ["imports", "functions"], "s2": ["imports"], "s3": ["exceptions", "errors"], "s4": ["imports"], "s5": ["imports", "exceptions"], "s6": ["imports"]}}</script>
 <script>
 
@@ -1237,13 +1243,31 @@ $$('.scrolly[data-scrolly]').forEach(sc=>{
 (function(){
 "use strict";
 const $=s=>document.querySelector(s);
+const moduleSteps=[
+  ['main','main llama describe(orders) en analytics. print espera su retorno.'],
+  ['analytics','describe llama best_prices(orders) en functional. Pasa la misma lista.'],
+  ['functional','best_prices devuelve (99, 101) a analytics: bid=99, ask=101.'],
+  ['analytics',"describe calcula y devuelve {'mid': 100.0, 'spread': 2} a main."],
+  ['main','El retorno llega a main. Ahora print muestra el diccionario.'],
+];
+let moduleIndex=-1;
+function renderModule(){
+  document.querySelectorAll('[data-module]').forEach(node=>node.classList.toggle('active',moduleIndex>=0&&node.dataset.module===moduleSteps[moduleIndex][0]));
+  $('#module-event').textContent=moduleIndex<0?'Datos preparados. Calcular muestra la salida; Seguir una llamada recorre su origen.':`${moduleIndex+1}/5 · ${moduleSteps[moduleIndex][1]}`;
+  $('#module-output').textContent=moduleIndex===4?"mercado: {'mid': 100.0, 'spread': 2}":moduleIndex<0?"Salida esperada: {'mid': 100.0, 'spread': 2}":'print espera: todavía no ha recibido el diccionario.';
+  $('#module-step').textContent=moduleIndex<0||moduleIndex===4?'Seguir una llamada':'Siguiente llamada o retorno';
+}
+$('#module-calculate').addEventListener('click',()=>{moduleIndex=4;renderModule();});
+$('#module-step').addEventListener('click',()=>{moduleIndex=(moduleIndex+1)%moduleSteps.length;renderModule();});
+$('#module-reset').addEventListener('click',()=>{moduleIndex=-1;renderModule();});
+renderModule();
 const escape=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 const lines=(source,active=[])=>source.split('\n').map((line,index)=>
   '<span class="ln'+(active.includes(index)?' hl':'')+'">'+(escape(line)||' ')+'</span>').join('');
 const imports={
-  'imp-a':['import description_example\nresult = description_example.describe(orders)\nprint(result)', 'Nombre disponible: description_example'],
-  'imp-b':['from description_example import describe\nresult = describe(orders)\nprint(result)', 'Nombre disponible: describe'],
-  'imp-c':['import description_example as market\nresult = market.describe(orders)\nprint(result)', 'Nombre disponible: market'],
+  'imp-a':['import analytics\nresult = analytics.describe(orders)\nprint(result)', 'Nombre disponible: analytics'],
+  'imp-b':['from analytics import describe\nresult = describe(orders)\nprint(result)', 'Nombre disponible: describe'],
+  'imp-c':['import analytics as market\nresult = market.describe(orders)\nprint(result)', 'Nombre disponible: market'],
 };
 function showImport(id){
   Object.keys(imports).forEach(key=>$('#'+key).classList.toggle('on',key===id));
@@ -1253,15 +1277,14 @@ function showImport(id){
 Object.keys(imports).forEach(id=>$('#'+id).addEventListener('click',()=>showImport(id)));
 showImport('imp-a');
 let guarded=false,direct=false;
-const code=()=>guarded
-  ?'def main():\n    print(describe(orders))\n\nif __name__ == "__main__":\n    main()'
-  :'def main():\n    print(describe(orders))\n\nmain()';
+const setup='from functional import make_order\nfrom analytics import describe\n\ndef main():\n    orders = [make_order("buy", 99, 2),\n              make_order("sell", 101, 3)]\n    print("mercado:", describe(orders))\n\n';
+const code=()=>setup+(guarded?'if __name__ == "__main__":\n    main()':'main()');
 function renderMain(){
   for(const [id,on] of [['main-broken',!guarded],['main-fixed',guarded],['main-import',!direct],['main-direct',direct]])
     $('#'+id).classList.toggle('on',on);
-  $('#main-code').innerHTML=lines(code(),[3]);
+  $('#main-code').innerHTML=lines(code(),[8]);
   $('#main-trace').textContent='';
-  $('#main-caller').textContent=direct?'$ python description_example.py':'>>> import description_example';
+  $('#main-caller').textContent=direct?'$ python main.py':'>>> import main';
   $('#main-log').textContent='Pulsa Simular para seguir este caso.';
 }
 $('#main-broken').addEventListener('click',()=>{guarded=false;renderMain();});
@@ -1269,16 +1292,17 @@ $('#main-fixed').addEventListener('click',()=>{guarded=true;renderMain();});
 $('#main-import').addEventListener('click',()=>{direct=false;renderMain();});
 $('#main-direct').addEventListener('click',()=>{direct=true;renderMain();});
 $('#main-run').addEventListener('click',()=>{
-  const name=direct?'__main__':'description_example',runs=direct||!guarded;
-  $('#main-code').innerHTML=lines(code(),guarded?(runs?[3,4]:[3]):[3]);
+  const name=direct?'__main__':'main',runs=direct||!guarded;
+  $('#main-code').innerHTML=lines(code(),guarded?(runs?[8,9]:[8]):[8]);
   $('#main-trace').innerHTML='<div class="trace-step ok"><span>__name__ = "'+name+'"</span></div>'
     +'<div class="trace-step '+(!guarded&&!direct?'fail':'ok')+'"><span>'+(runs?'main() → describe(orders)':'guard False → no llama a main()')+'</span></div>';
   $('#main-log').textContent=runs
-    ?'{"mid": 100.0, "spread": 2}'+(!direct?' · La demo se ejecutó al importar.':'')
+    ?"mercado: {'mid': 100.0, 'spread': 2}"+(!direct?' · La demo se ejecutó al importar.':'')
     :'import limpio: funciones disponibles; demo sin ejecutar.';
 });
 renderMain();
 })();
+
 
 (function(){
 'use strict';
@@ -1314,9 +1338,9 @@ const route=value=>ROUTES.includes(String(value||'').toUpperCase())
 const routeClass=value=>`lr-route-${route(value).toLowerCase()}`;
 const scopeRoutes=()=>routeScope==='ALL'?ROUTES:
   routeScope==='LIVE+REQUIRED'?['LIVE','REQUIRED']:['LIVE'];
-const modeUrl=next=>{
+const modeUrl=(next,hash=location.hash)=>{
   const q=new URLSearchParams(location.search);q.set('mode',next);
-  return `${location.pathname}?${q.toString()}${location.hash}`;
+  return `${location.pathname}?${q.toString()}${hash}`;
 };
 const stateKey=(scene,stage)=>`${scene.id}::${stage.id}`;
 const reducedMotion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1444,8 +1468,8 @@ nav.innerHTML=`
   <a class="lr-course-home" href="../../index.html">← Mapa del curso</a>
   <div class="lr-brand"><b>L${Number(contract.lesson)}</b><span>${esc(contract.title)}</span></div>
   <div class="lr-modes" aria-label="Modo de lectura">
-    <a href="${modeUrl('aula')}" class="${mode==='aula'?'on':''}">Aula</a>
-    <a href="${modeUrl('estudio')}" class="${mode==='estudio'?'on':''}">Estudio</a>
+    <a href="${modeUrl('aula')}" data-mode="aula" class="${mode==='aula'?'on':''}">Aula</a>
+    <a href="${modeUrl('estudio')}" data-mode="estudio" class="${mode==='estudio'?'on':''}">Estudio</a>
   </div>
   <button type="button" class="lr-study-optional" aria-pressed="false">Incluir OPTIONAL</button>
   <div class="lr-scene-links"></div>`;
@@ -1476,6 +1500,38 @@ controls.innerHTML=`
   <button type="button" class="lr-route-scope" aria-label="Cambiar alcance de ruta">LIVE</button>
   <button type="button" class="lr-next" aria-label="Etapa siguiente"><span>Siguiente</span> →</button>`;
 body.appendChild(controls);
+const stagePicker=document.createElement('select');
+stagePicker.className='lr-stage-picker';stagePicker.setAttribute('aria-label','Ir a una etapa');
+nav.insertBefore(stagePicker,navLinks);
+stagePicker.addEventListener('change',()=>{
+  const item=inventory.find(entry=>entry.key===stagePicker.value);
+  if(item)goTo(models.indexOf(item.scene),allowedStages(item.scene).indexOf(item.stage),false);
+});
+function syncStagePicker(scene,stage){
+  const available=inventory.filter(item=>allowed(item.scene)&&scopeRoutes().includes(item.route));
+  stagePicker.innerHTML=available.map(item=>{
+    const title=item.scene.element.querySelector('h1,h2')?.textContent.trim()||item.scene.id;
+    const name=item.stage.step?.dataset.name||item.stage.id;
+    return `<option value="${esc(item.key)}">${esc(title)} · ${esc(name)}</option>`;
+  }).join('');
+  if(scene&&stage)stagePicker.value=stateKey(scene,stage);
+}
+function studyActivate(scene,stage,scroll=false,focus=false){
+  currentScene=models.indexOf(scene);currentStage=allowedStages(scene).indexOf(stage);
+  body.dataset.currentSceneId=scene.id;body.dataset.currentStageId=stage.id;
+  activateStage(scene,stage);syncNav(scene);syncStagePicker(scene,stage);syncTeacher(scene,stage);
+  controls.querySelector('.lr-scene-progress').textContent=`Escena ${availableModels().indexOf(scene)+1}/${availableModels().length}`;
+  controls.querySelector('.lr-stage-progress').textContent=`Etapa ${currentStage+1}/${allowedStages(scene).length}`;
+  controls.querySelector('.lr-route-progress').textContent=stage.step?.dataset.name||'Lectura';
+  const flat=inventory.filter(item=>allowed(item.scene)&&scopeRoutes().includes(item.route));
+  const i=flat.findIndex(item=>item.scene===scene&&item.stage===stage);
+  controls.querySelector('.lr-prev').disabled=i<=0;
+  controls.querySelector('.lr-next').disabled=i===flat.length-1;
+  saveRuntime(scene,stage,true);updateDeepLink(scene,stage);
+  if(scroll)(stage.step||scene.element).scrollIntoView({block:stage.step?'center':'start',behavior:reducedMotion()?'auto':'smooth'});
+  if(focus){const h=(stage.step||scene.element).querySelector('h1,h2,h3');if(h){h.tabIndex=-1;h.focus({preventScroll:true});}}
+}
+
 
 const liveRegion=document.createElement('div');
 liveRegion.className='lr-sr-only';liveRegion.setAttribute('aria-live','polite');
@@ -1527,7 +1583,7 @@ function activateStage(scene,stage){
     step.hidden=!visibleRoute;
     step.classList.toggle('lr-stage-active',active&&visibleRoute);
     step.classList.toggle('on',active&&visibleRoute);
-    step.setAttribute('aria-hidden',String(!(active&&visibleRoute)));
+    step.setAttribute('aria-hidden',String(mode==='estudio'?!visibleRoute:!(active&&visibleRoute)));
   });
   scene.allFigures.forEach(figure=>{
     const model=scene.stages.find(item=>item.figure===figure);
@@ -1583,9 +1639,11 @@ function syncTeacher(scene,stage){
   });
 }
 function updateDeepLink(scene,stage){
-  if(!history.replaceState)return;
   const next=`#${encodeURIComponent(scene.id)}/${encodeURIComponent(stage.id)}`;
-  if(location.hash!==next)history.replaceState(null,'',`${location.pathname}${location.search}${next}`);
+  if(history.replaceState&&location.hash!==next)history.replaceState(null,'',`${location.pathname}${location.search}${next}`);
+  nav.querySelectorAll('.lr-modes a').forEach(link=>{
+    link.setAttribute('href',modeUrl(link.dataset.mode,next));
+  });
 }
 function goTo(sceneIndex,stageIndex,focusHeading=true){
   let scene=models[sceneIndex];
@@ -1596,6 +1654,7 @@ function goTo(sceneIndex,stageIndex,focusHeading=true){
   const stages=allowedStages(scene);
   stageIndex=Math.max(0,Math.min(Number(stageIndex)||0,stages.length-1));
   const stage=stages[stageIndex];
+  if(mode==='estudio'){studyActivate(scene,stage,true,focusHeading);return;}
   const positionChanged=body.dataset.currentSceneId!==scene.id
     ||body.dataset.currentStageId!==stage.id;
   currentScene=sceneIndex;currentStage=stageIndex;
@@ -1635,7 +1694,7 @@ function goTo(sceneIndex,stageIndex,focusHeading=true){
     total+scopeProgress[routeName].visited,0)/Math.max(1,enabledRoutes.reduce((total,routeName)=>
     total+scopeProgress[routeName].total,0))*100);
   controls.querySelector('.lr-route-progress').textContent=`${routeProgress}% visto`;
-  syncNav(scene);syncTeacher(scene,stage);updateDeepLink(scene,stage);
+  syncNav(scene);syncStagePicker(scene,stage);syncTeacher(scene,stage);updateDeepLink(scene,stage);
   liveRegion.textContent=`${scene.id}, etapa ${stageIndex+1} de ${stages.length}`;
   if(focusHeading){
     const heading=scene.element.querySelector('h1,h2,h3');
@@ -1694,7 +1753,7 @@ function applyStudyScope(activeScene=null){
       });
     });
   });
-  syncNav(activeScene);syncOptionalControls();saveRuntime(null,null,false);
+  syncNav(activeScene);syncOptionalControls();syncStagePicker();saveRuntime(null,null,false);
 }
 function toggleOptional(){
   routeScope=routeScope==='ALL'?'LIVE+REQUIRED':'ALL';
@@ -1711,7 +1770,7 @@ document.querySelectorAll('.lr-study-optional').forEach(button=>button.addEventL
 
 document.addEventListener('keydown',event=>{
   if(event.key==='Escape'){closeOverlays();return;}
-  if(mode!=='aula')return;
+  if(mode!=='aula'&&(!event.altKey||!['ArrowRight','ArrowLeft'].includes(event.key)))return;
   const active=document.activeElement;
   if(active&&(/INPUT|TEXTAREA|SELECT/.test(active.tagName)||active.isContentEditable))return;
   if(active&&active.tagName==='BUTTON'&&(event.key===' '||event.key==='Enter'))return;
@@ -1758,6 +1817,8 @@ if(mode==='aula'){
   const restored=restoredPosition();
   if(restored?.stage.route==='OPTIONAL')routeScope='ALL';
   applyStudyScope(restored?.scene||null);
+  const initial=restored&&allowed(restored.scene)?restored:{scene:availableModels()[0],stage:allowedStages(availableModels()[0])[0]};
+  studyActivate(initial.scene,initial.stage);
   const sceneObserver=new IntersectionObserver(entries=>{
     const visible=entries.filter(entry=>entry.isIntersecting&&!entry.target.hidden)
       .sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
@@ -1766,14 +1827,14 @@ if(mode==='aula'){
     if(!scene)return;
     syncNav(scene);
     const stage=allowedStages(scene).find(item=>!item.step)||allowedStages(scene)[0];
-    if(stage){saveRuntime(scene,stage,true);updateDeepLink(scene,stage);}
+    if(stage&&!scene.allSteps.length)studyActivate(scene,stage);
   },{rootMargin:'-20% 0px -55% 0px',threshold:[0,.15,.4]});
   models.forEach(scene=>sceneObserver.observe(scene.element));
   models.forEach(scene=>scene.stages.forEach(stage=>{
     if(!stage.step)return;
     const observer=new IntersectionObserver(entries=>{
       if(entries.some(entry=>entry.isIntersecting)&&!stage.step.hidden){
-        saveRuntime(scene,stage,true);syncNav(scene);updateDeepLink(scene,stage);
+        studyActivate(scene,stage);
       }
     },{rootMargin:'-35% 0px -45% 0px',threshold:.1});
     observer.observe(stage.step);
@@ -1795,7 +1856,7 @@ window.LEARNING_RUNTIME={
     if(mode==='estudio'){
       const stage=scene.stages.find(item=>item.id===stageId)||allowedStages(scene)[0];
       if(!stage)return false;
-      (stage.step||scene.element).scrollIntoView({block:'center'});return true;
+      studyActivate(scene,stage,true,false);return true;
     }
     const stages=allowedStages(scene),index=stages.findIndex(item=>item.id===stageId);
     goTo(models.indexOf(scene),Math.max(0,index),false);return true;
@@ -1849,7 +1910,7 @@ window.LEARNING_RUNTIME={
     if(!wrap)return;
     const button=document.createElement('button');
     button.type='button';button.className='lr-support-open';
-    button.textContent='Entender este código';
+    button.textContent=scene.querySelector('pre')?'Ayuda del ejemplo':'Conceptos de este paso';
     button.setAttribute('aria-haspopup','dialog');
     button.setAttribute('aria-expanded','false');
     button.setAttribute('aria-controls',dialog.id);

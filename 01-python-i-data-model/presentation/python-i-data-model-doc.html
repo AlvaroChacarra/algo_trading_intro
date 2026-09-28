@@ -649,7 +649,6 @@ body[data-lesson="03"] .visual-oop-errors .teaching-trace{gap:10px}
 body[data-lesson="03"] .visual-oop-errors .code{margin:0}
 /* The complete raise statement needs the same code-panel width as the module
    scene. Keep its string literal and Python indentation on one visual line. */
-body[data-lesson="03"] #s3{--lr-left:42fr;--lr-right:58fr}
 body[data-lesson="03"] .visual-oop-errors .code pre{white-space:pre;overflow-wrap:normal}
 .visual-oop-objects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:2px 0}
 .visual-oop-object{min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel2)}
@@ -853,7 +852,7 @@ body.lr-has-contract .hero .meta{display:none}
   body.mode-estudio.lr-has-contract .wrap>p{max-width:78ch}
   body.mode-estudio.lr-has-contract .scrolly{max-width:min(1280px,calc(100vw - var(--lr-nav-w) - 30px))}
   body.mode-estudio.lr-has-contract .lr-scene{scroll-margin-top:18px}
-  body.mode-estudio.lr-has-contract #rail,body.mode-estudio.lr-has-contract #lr-controls{display:none}
+  body.mode-estudio.lr-has-contract #rail{display:none}
 
   html.lr-mode-aula,html.lr-mode-aula body{height:100%;overflow:hidden}
   body.mode-aula{height:100dvh;overflow:hidden;padding-left:var(--lr-nav-w);padding-bottom:var(--lr-controls-h)}
@@ -943,6 +942,35 @@ body[data-lesson] .teaching-trace pre{
 body[data-lesson] .teaching-trace .ln.hl{
   background:rgba(34,211,238,.14);box-shadow:inset 3px 0 var(--accent)}
 
+/* Remediation 2026-09-26: readable premises and a figure sized by available desktop space. */
+.lr-stage-picker{max-width:100%;width:100%;margin:0 0 10px;padding:9px 5px;min-height:40px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--text);font:.8rem var(--mono)}
+.lr-stage-picker:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+body.mode-estudio.lr-has-contract{padding-bottom:var(--lr-controls-h)}
+body.mode-estudio .scrolly{grid-template-columns:minmax(300px,40fr) minmax(0,60fr);gap:22px;padding:0 12px}
+body.mode-estudio .fig{top:20px;height:calc(100vh - 100px);min-height:520px;max-height:720px}
+body.mode-estudio .steps .step{min-height:90vh}
+body.mode-estudio .steps .step-inner{opacity:1;border-color:var(--line);padding:18px}
+body.mode-estudio .steps .step.on .step-inner{border-color:var(--accent)}
+body.lr-has-contract .fig-head{font-size:.875rem;padding:10px 14px;color:var(--muted)}
+body.lr-has-contract .fig-stage{padding:14px}
+body.lr-has-contract .statgrid span,body.lr-has-contract .statgrid label{font-size:.875rem}
+body.lr-has-contract pre,body[data-lesson] .teaching-trace pre,body[data-lesson] .build-code pre{white-space:pre;overflow-wrap:normal;word-break:normal;tab-size:4}
+body.lr-has-contract .code pre{font-size:.9rem;line-height:1.5}
+body.lr-has-contract .code .ln.dim{opacity:.75}
+
+body.mode-aula .steps .step-inner p{font-size:.95rem;line-height:1.5}
+body.mode-aula .fig-stage .code{margin:10px 0}
+body.mode-aula .fig-stage .code pre{padding:10px 12px}
+@media print{.lr-stage-picker{display:none}}
+/* Help belongs to the current scene but need not consume a whole heading row. */
+body.mode-aula .lr-scene-active>.wrap:first-child{position:relative}
+body.mode-aula .lr-scene-active .lr-support-open{position:absolute;top:0;right:8px;margin:0;font-size:.75rem;min-height:32px}
+body.mode-aula .lr-scene-active .eyebrow{padding-right:190px}
+body.mode-aula .lr-scene-active:has(.scrolly)>.wrap:first-child h2{font-size:1.25rem}
+body.mode-aula .lr-scene-active:has(.scrolly)>.wrap:first-child .lede{font-size:.875rem}
+#lr-nav .lr-scene-links button b{font-size:.75rem;overflow-wrap:normal;word-break:normal}
+#lr-nav .lr-scene-links button{grid-template-columns:48px minmax(0,1fr);padding:7px 5px}
+
 
 .construction-panel {margin:20px 0;padding:18px 22px;border:1px solid var(--line);border-radius:12px;background:var(--panel);font-size:1rem;line-height:1.65;overflow-wrap:anywhere;}
 .construction-panel summary {cursor:pointer;font-weight:700;color:var(--accent);}
@@ -952,12 +980,27 @@ body[data-lesson] .teaching-trace .ln.hl{
 </style>
 </head>
 <body data-lesson="01">
+<style>
+body[data-lesson="01"] .l1-top-book{margin:18px 0 12px;padding:12px 18px;max-width:none}
+body[data-lesson="01"] .l1-quotes{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+body[data-lesson="01"] .l1-quotes h3{font-size:1rem;margin:10px 0 4px}
+body[data-lesson="01"] .l1-quotes .lvl{display:flex;justify-content:space-between;padding:4px 0;font-size:1.3rem}
+body[data-lesson="01"] .l1-quotes .sz{font-size:.9rem}
+body[data-lesson="01"] .l1-price-axis{display:block;width:100%;max-height:132px;font:18px var(--mono);color:var(--text)}
+body[data-lesson="01"] .l1-premise{font-size:1rem;line-height:1.55;margin:12px 0}
+body[data-lesson="01"] .l1-top-book .book-title{font-size:.86rem;letter-spacing:0;padding:0}
+body[data-lesson="01"] #s3 .btnrow{margin-top:0}
+body[data-lesson="01"].mode-aula .hero h1{font-size:clamp(2rem,3.2vw,3rem)}
+body[data-lesson="01"] #sp-case{font:1rem/1.5 var(--mono)}
+body[data-lesson="01"] #s8 #lang-sim{margin:0}
+</style>
 <nav id="rail" aria-label="Progreso"><a href="#s0" class="on"><span class="dot"></span><span class="lab">El resultado</span></a><a href="#s2"><span class="dot"></span><span class="lab">Variables</span></a><a href="#s1"><span class="dot"></span><span class="lab">CPython</span></a><a href="#s3"><span class="dot"></span><span class="lab">Listas y for</span></a><a href="#s4"><span class="dot"></span><span class="lab">Diccionarios</span></a><a href="#s5"><span class="dot"></span><span class="lab">Decisiones</span></a><a href="#s6"><span class="dot"></span><span class="lab">Errores</span></a><a href="#s8"><span class="dot"></span><span class="lab">Otros caminos</span></a><a href="#s7"><span class="dot"></span><span class="lab">Tu práctica</span></a></nav>
 <header class="hero wrap" id="s0"><div class="eyebrow"><b>Algo Trading · ICAI 2026</b> · L1 · Python I</div>
 <h1>Leer precios, <em>calcular y decidir</em></h1>
-<p class="lede">Una compra al mejor precio vendedor cuesta 101. Una venta al mejor comprador recibe 99. Vamos a calcular qué separa ambos precios.</p>
-<div class="book" id="herobook"><div class="book-title"><span>Libro simulado · precio y cantidad</span></div><div id="asks"></div><div class="midrow">mid = (99 + 101) / 2 = <b>100</b></div><div id="bids"></div></div>
-<div class="challenge"><div class="tag">El resultado de hoy</div><p><code>spread = 2</code> · <code>mid = 100</code></p><p>El mid es un punto medio, no un «valor justo» ni un precio de ejecución garantizado.</p></div></header><section id="s2">
+<p class="lede">Dos cotizaciones del mismo instrumento: vender al bid recibe 99 USD por unidad; comprar al ask cuesta 101. ¿Qué distancia hay entre ambas?</p>
+<div class="book l1-top-book" id="herobook"><div class="book-title">Caso didáctico · precio en USD/unidad · cantidad en unidades</div><div class="l1-quotes"><div><h3>Bid · mejor compra disponible</h3><div id="bids"></div></div><div><h3>Ask · mejor venta disponible</h3><div id="asks"></div></div></div>
+<svg class="l1-price-axis" viewBox="0 0 700 122" role="img" aria-label="Eje de precio: bid 99, mid 100, ask 101 USD por unidad; spread 2 USD por unidad"><line x1="90" y1="53" x2="610" y2="53" stroke="currentColor"/><path d="M90 73v12h520V73" fill="none" stroke="currentColor"/><g text-anchor="middle" fill="currentColor"><circle cx="90" cy="53" r="6"/><text x="90" y="29">bid 99</text><circle cx="350" cy="53" r="6"/><text x="350" y="29">mid 100</text><circle cx="610" cy="53" r="6"/><text x="610" y="29">ask 101</text><text x="350" y="113">spread = 101 − 99 = 2 USD/unidad</text></g></svg></div>
+<p class="l1-premise"><strong>Regla del principal:</strong> spread ≤ 2 → estrecho; spread &gt; 2 → amplio. El mid es una referencia, no un precio de ejecución garantizado.</p></header><section id="s2">
 <div class="wrap"><h2>Nombres, cálculo y salida</h2><p class="lede">Python ejecuta de arriba abajo. Cada etapa añade una operación.</p></div>
 <div class="scrolly" data-scrolly><div class="steps">
 <div class="step on" data-stage="0" data-name="datos"><div class="step-inner"><h3>1 · Dar nombre a dos valores</h3><p><code>=</code> asigna: vincula el nombre de la izquierda al valor de la derecha. No es una comparación.</p><p><code>bid</code> y <code>ask</code> son nombres elegidos para recordar qué significa cada precio.</p></div></div>
@@ -970,15 +1013,15 @@ body[data-lesson] .teaching-trace .ln.hl{
 </div></div></div></section><section id="s1">
   <div class="wrap">
     <div class="eyebrow">§1 · <b>La idea central</b></div>
-    <h2>De una intención humana a operaciones ejecutables</h2>
-    <p class="lede">Ya calculaste el mid. Ahora observa cómo CPython transforma esa línea en instrucciones ejecutables. Python es el lenguaje; CPython es su implementación estándar.</p>
+    <h2>¿Cómo llegó Python a 100.0 y dónde puede fallar?</h2>
+    <p class="lede">Ya viste print(mid) → 100.0. Seguimos ese mismo cálculo para distinguir un texto mal formado de un fallo al ejecutar. Python es el lenguaje; CPython es su implementación estándar.</p>
   </div>
 
   <div class="scrolly" data-scrolly>
     <div class="steps">
       <div class="step on" data-stage="0" data-name="texto"><div class="step-inner">
         <h3><span class="n">0/5</span>Esto es todo lo que Python recibe</h3>
-        <p>CPython recibe el texto <code>mid = (bid + ask) / 2</code>. Primero identifica sus partes; después decide en qué orden operarlas.</p>
+        <p>CPython recibe <code>mid = (bid + ask) / 2</code>. Para llegar a 100.0 necesita una expresión válida y los nombres bid=99 y ask=101. Este recorrido es una representación ilustrativa, no un kernel de Python.</p>
       </div></div>
       <div class="step" data-stage="1" data-name="tokens"><div class="step-inner">
         <h3><span class="n">1/5</span>Tokenizar: trocear el texto</h3>
@@ -991,7 +1034,7 @@ body[data-lesson] .teaching-trace .ln.hl{
         <p>Los tokens en fila no dicen <strong>qué se hace antes</strong>. CPython los organiza en un
         árbol: la suma cuelga de la división, la división cuelga de la asignación.</p>
         <p>Fíjate: el paréntesis que escribiste ya no existe — su trabajo era dar forma al árbol,
-        y el árbol ya la tiene.</p>
+        y el árbol ya la tiene. Si falta cerrar el paréntesis, hay <code>SyntaxError</code> antes de ejecutar.</p>
       </div></div>
       <div class="step" data-stage="3" data-name="bytecode"><div class="step-inner">
         <h3><span class="n">3/5</span>Python bytecode: instrucciones para la VM</h3>
@@ -1005,7 +1048,7 @@ body[data-lesson] .teaching-trace .ln.hl{
         <h3><span class="n">4/5</span>La VM de CPython ejecuta el bytecode</h3>
         <p>CPython recorre el bytecode con una <strong>pila</strong>: apila valores,
         los combina, guarda el resultado. Míralo correr en el panel.</p>
-        <p><strong>CPython no es el bytecode:</strong> es el runtime que lo genera y lo ejecuta.</p>
+        <p><strong>CPython no es el bytecode:</strong> es el runtime que lo genera y lo ejecuta. Si bid no existe, la búsqueda del nombre falla con <code>NameError</code>; no se llega a la división.</p>
       </div></div>
       <div class="step" data-stage="5" data-name="machine code y CPU"><div class="step-inner">
         <h3><span class="n">5/5</span>Machine code: instrucciones nativas para la CPU</h3>
@@ -1101,18 +1144,18 @@ body[data-lesson] .teaching-trace .ln.hl{
 </div><div class="figwrap"><div class="fig"><div class="fig-head"><span>prices → total → media</span><span class="stage-name">lista</span></div>
 <div class="fig-stage on" data-stage="0"><div class="teaching-trace"><div class="code"><pre><span class="ln">prices = [99, 100, 102, 101]</span><span class="ln hl">print(prices[0])</span><span class="ln hl">print(len(prices))</span></pre></div><div class="trace-result">99<br>4</div></div></div>
 <div class="fig-stage" data-stage="1"><div class="teaching-trace"><div class="code"><pre><span class="ln">prices = [99, 100, 102, 101]</span><span class="ln">total = 0</span><span class="ln hl">for p in prices:</span><span class="ln hl">    total = total + p</span><span class="ln">media = total / len(prices)</span></pre></div><div class="trace-result">Al terminar: total = 402; media = 100.5</div></div></div>
-<div class="fig-stage" data-stage="2"><div class="teaching-trace"><div class="code"><pre><span class="ln">for p in prices:</span><span class="ln hl">    total = total + p</span></pre></div><div class="cells" id="loopCells"></div><div class="acc"><div><span>vuelta</span><b id="accIter">—</b></div><div><span>p</span><b id="accP">—</b></div><div><span>total</span><b id="accTotal">0</b></div><div><span>media</span><b id="accMedia">—</b></div></div><div class="looplog" id="loopLog">Pulsa Paso para empezar.</div><div class="btnrow"><button class="btn" id="loopStep">Paso ›</button><button class="btn" id="loopAuto">▶▶ Auto</button><button class="btn ghost" id="loopReset">↻ Reiniciar</button></div></div></div>
+<div class="fig-stage" data-stage="2"><div class="teaching-trace"><div class="btnrow"><button class="btn" id="loopStep">Paso ›</button><button class="btn" id="loopAuto">▶▶ Auto</button><button class="btn ghost" id="loopReset">↻ Reiniciar</button></div><div class="code"><pre><span class="ln">for p in prices:</span><span class="ln hl">    total = total + p</span></pre></div><div class="cells" id="loopCells"></div><div class="acc"><div><span>vuelta</span><b id="accIter">—</b></div><div><span>p</span><b id="accP">—</b></div><div><span>total</span><b id="accTotal">0</b></div><div><span>media</span><b id="accMedia">—</b></div></div><div class="looplog" id="loopLog">Pulsa Paso para empezar.</div></div></div>
 </div></div></div></section><section id="s4"><div class="wrap"><h2>Un diccionario da nombre a cada campo</h2>
 <p class="lede">Una lista se consulta por posición. Un diccionario, por clave. Toca un campo para seguirlo en la ficha.</p>
 <div class="dictgrid teaching-trace"><div class="code dcode"><pre><span class="ln">order = {</span><span class="ln">    <span class="dk" data-key="side">"side": "buy"</span>,</span><span class="ln">    <span class="dk" data-key="price">"price": 99</span>,</span><span class="ln">    <span class="dk" data-key="size">"size": 2</span>,</span><span class="ln">}</span><span class="ln hl">print(order["price"])  # 99</span></pre></div>
 <div class="ordercard"><div class="oc-head">Orden simulada</div><div class="oc-row" data-key="side"><span class="kk">side</span><span class="vv">buy</span></div><div class="oc-row" data-key="price"><span class="kk">price</span><span class="vv">99</span></div><div class="oc-row" data-key="size"><span class="kk">size</span><span class="vv">2</span></div></div></div>
 <p><code>order["venue"] = "binance"</code> añade un campo. Leer un campo y asignarlo son operaciones distintas.</p>
 <div class="btnrow"><button class="btn" id="venueBtn">Añadir venue</button><span id="venueMsg" aria-live="polite"></span></div></div></section><section id="s5"><div class="wrap"><h2>if elige una rama</h2>
-<p class="lede">Clasifica el spread. Python comprueba las condiciones en orden y ejecuta solo la primera verdadera.</p>
-<div class="decider teaching-trace"><div class="row1"><span class="spread-val">spread = <b id="spVal">2</b></span><input type="range" id="spSlider" min="0" max="10" value="2" step="1" aria-label="Ajusta el spread"></div>
-<div class="code"><pre id="ifCode"><span class="ln" data-br="0">if spread &lt;= 2:</span><span class="ln" data-br="0">    state = "estrecho"</span><span class="ln" data-br="1">elif spread &lt;= 4:</span><span class="ln" data-br="1">    state = "medio"</span><span class="ln" data-br="2">else:</span><span class="ln" data-br="2">    state = "amplio"</span></pre></div>
+<p class="lede">Usamos exactamente la regla del notebook principal: hasta 2, estrecho; por encima de 2, amplio. Cambia un dato y anticipa la etiqueta.</p>
+<div class="decider teaching-trace"><div class="row1"><span class="spread-val">spread = <b id="spVal">2</b> USD/unidad</span><input type="range" id="spSlider" min="0" max="10" value="2" step="1" aria-label="Ajusta el spread"></div>
+<div class="code"><pre id="ifCode"><span class="ln" data-br="0">if spread &lt;= 2:</span><span class="ln" data-br="0">    state = "estrecho"</span><span class="ln" data-br="1">else:</span><span class="ln" data-br="1">    state = "amplio"</span></pre></div>
 <div class="verdict">state = <b id="verdictTxt">"estrecho"</b></div></div>
-<p>Prueba 2, 3 y 5. Con 2 también se cumple ≤4, pero gana la primera rama. <code>elif</code> significa «si no, comprueba esta otra condición».</p>
+<div class="btnrow" role="group" aria-label="Casos de la regla principal"><button class="btn ghost" data-spread-case="2">2</button><button class="btn ghost" data-spread-case="3">3</button><button class="btn ghost" data-spread-case="4">4</button><button class="btn ghost" data-spread-case="5">5</button></div><p id="sp-case" aria-live="polite">bid 99 · ask 101 → spread 2 → estrecho.</p><p>Con 2 entra en <code>if</code>. Con 3, 4 o 5 entra en <code>else</code>: amplio, también en el ejercicio y en la consolidación. <code>elif</code> permite añadir otra condición a una regla que necesite más casos; esta regla binaria no la necesita.</p>
 <p class="trace-caption">Umbrales de práctica, no una recomendación de compra o venta.</p></div></section><section id="s6">
 <div class="wrap"><h2>Leer el error y corregir una causa</h2><p class="lede">Lee tipo y mensaje; después localiza la línea. Cada ejemplo parte de los datos mostrados.</p></div>
 <div class="scrolly" data-scrolly><div class="steps">
@@ -1470,13 +1513,12 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ── hero order book ─────────────────────────── */
 (function(){
-  const asks=[{px:103,sz:1.2},{px:102,sz:0.8},{px:101,sz:1.6}];
-  const bids=[{px:99,sz:2.1},{px:98,sz:0.9},{px:97,sz:1.4}];
+  const asks=[{px:101,sz:1.6}], bids=[{px:99,sz:2.1}];
   const A=$('#asks'),B=$('#bids');
   function render(){
-    const mx=Math.max(...asks.concat(bids).map(l=>l.sz));
-    A.innerHTML=asks.map(l=>`<div class="lvl a"><span class="px">${l.px.toLocaleString('en-US')}</span><span class="bar" style="width:${l.sz/mx*100}%"></span><span class="sz">${l.sz.toFixed(2)}</span></div>`).join('');
-    B.innerHTML=bids.map(l=>`<div class="lvl b"><span class="px">${l.px.toLocaleString('en-US')}</span><span class="bar" style="width:${l.sz/mx*100}%"></span><span class="sz">${l.sz.toFixed(2)}</span></div>`).join('');
+    const row=(l,side)=>`<div class="lvl ${side}"><strong class="px">${l.px} USD/unidad</strong><span class="sz">${l.sz} unidades</span></div>`;
+    A.innerHTML=asks.map(l=>row(l,'a')).join('');
+    B.innerHTML=bids.map(l=>row(l,'b')).join('');
   }
   render();
   // Keep the same data while the learner follows the calculation.
@@ -1682,7 +1724,7 @@ function treeLines(node){
       $('#ownRes').textContent=(ast.kind==='Assign'?`${ast.target} → `:'resultado → ')+fmt(res)+' ✓';
     }catch(e){
       cols.classList.add('hidden');err.classList.remove('hidden');
-      err.textContent=`${e.type||'Error'}: ${e.msg||e.message} — igual que te lo diría Python. Arréglalo y reintenta.`;
+      err.textContent=`${e.type||'Error'}: ${e.msg||e.message} — simulación abreviada. Corrige la causa y compruébala después con Python.`;
     }
   };
   $('#ownRun').addEventListener('click',run);
@@ -1760,13 +1802,17 @@ function treeLines(node){
   const sl=$('#spSlider');
   function update(){
     const v=+sl.value;$('#spVal').textContent=v;
-    const br=v<=2?0:v<=4?1:2;
-    const txt=['"estrecho"','"medio"','"amplio"'][br];
+    const br=v<=2?0:1;
+    const txt=['"estrecho"','"amplio"'][br];
     $$('#ifCode .ln').forEach(l=>{
       const b=+l.dataset.br;l.classList.toggle('hl',b===br);l.classList.toggle('dim',b!==br);});
     $('#verdictTxt').textContent=txt;
+    $('#sp-case').textContent=`bid 99 · ask ${99+v} → spread ${v} USD/unidad → ${txt}.`;
+    $$('[data-spread-case]').forEach(button=>button.setAttribute('aria-pressed',String(+button.dataset.spreadCase===v)));
   }
-  sl.addEventListener('input',update);update();
+  sl.addEventListener('input',update);
+  $$('[data-spread-case]').forEach(button=>button.addEventListener('click',()=>{sl.value=button.dataset.spreadCase;update();}));
+  update();
 })();
 
 /* §7: finalRun y quiz usan los motores genéricos (runbtn + data-quiz) */
@@ -1806,9 +1852,9 @@ const route=value=>ROUTES.includes(String(value||'').toUpperCase())
 const routeClass=value=>`lr-route-${route(value).toLowerCase()}`;
 const scopeRoutes=()=>routeScope==='ALL'?ROUTES:
   routeScope==='LIVE+REQUIRED'?['LIVE','REQUIRED']:['LIVE'];
-const modeUrl=next=>{
+const modeUrl=(next,hash=location.hash)=>{
   const q=new URLSearchParams(location.search);q.set('mode',next);
-  return `${location.pathname}?${q.toString()}${location.hash}`;
+  return `${location.pathname}?${q.toString()}${hash}`;
 };
 const stateKey=(scene,stage)=>`${scene.id}::${stage.id}`;
 const reducedMotion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1936,8 +1982,8 @@ nav.innerHTML=`
   <a class="lr-course-home" href="../../index.html">← Mapa del curso</a>
   <div class="lr-brand"><b>L${Number(contract.lesson)}</b><span>${esc(contract.title)}</span></div>
   <div class="lr-modes" aria-label="Modo de lectura">
-    <a href="${modeUrl('aula')}" class="${mode==='aula'?'on':''}">Aula</a>
-    <a href="${modeUrl('estudio')}" class="${mode==='estudio'?'on':''}">Estudio</a>
+    <a href="${modeUrl('aula')}" data-mode="aula" class="${mode==='aula'?'on':''}">Aula</a>
+    <a href="${modeUrl('estudio')}" data-mode="estudio" class="${mode==='estudio'?'on':''}">Estudio</a>
   </div>
   <button type="button" class="lr-study-optional" aria-pressed="false">Incluir OPTIONAL</button>
   <div class="lr-scene-links"></div>`;
@@ -1968,6 +2014,38 @@ controls.innerHTML=`
   <button type="button" class="lr-route-scope" aria-label="Cambiar alcance de ruta">LIVE</button>
   <button type="button" class="lr-next" aria-label="Etapa siguiente"><span>Siguiente</span> →</button>`;
 body.appendChild(controls);
+const stagePicker=document.createElement('select');
+stagePicker.className='lr-stage-picker';stagePicker.setAttribute('aria-label','Ir a una etapa');
+nav.insertBefore(stagePicker,navLinks);
+stagePicker.addEventListener('change',()=>{
+  const item=inventory.find(entry=>entry.key===stagePicker.value);
+  if(item)goTo(models.indexOf(item.scene),allowedStages(item.scene).indexOf(item.stage),false);
+});
+function syncStagePicker(scene,stage){
+  const available=inventory.filter(item=>allowed(item.scene)&&scopeRoutes().includes(item.route));
+  stagePicker.innerHTML=available.map(item=>{
+    const title=item.scene.element.querySelector('h1,h2')?.textContent.trim()||item.scene.id;
+    const name=item.stage.step?.dataset.name||item.stage.id;
+    return `<option value="${esc(item.key)}">${esc(title)} · ${esc(name)}</option>`;
+  }).join('');
+  if(scene&&stage)stagePicker.value=stateKey(scene,stage);
+}
+function studyActivate(scene,stage,scroll=false,focus=false){
+  currentScene=models.indexOf(scene);currentStage=allowedStages(scene).indexOf(stage);
+  body.dataset.currentSceneId=scene.id;body.dataset.currentStageId=stage.id;
+  activateStage(scene,stage);syncNav(scene);syncStagePicker(scene,stage);syncTeacher(scene,stage);
+  controls.querySelector('.lr-scene-progress').textContent=`Escena ${availableModels().indexOf(scene)+1}/${availableModels().length}`;
+  controls.querySelector('.lr-stage-progress').textContent=`Etapa ${currentStage+1}/${allowedStages(scene).length}`;
+  controls.querySelector('.lr-route-progress').textContent=stage.step?.dataset.name||'Lectura';
+  const flat=inventory.filter(item=>allowed(item.scene)&&scopeRoutes().includes(item.route));
+  const i=flat.findIndex(item=>item.scene===scene&&item.stage===stage);
+  controls.querySelector('.lr-prev').disabled=i<=0;
+  controls.querySelector('.lr-next').disabled=i===flat.length-1;
+  saveRuntime(scene,stage,true);updateDeepLink(scene,stage);
+  if(scroll)(stage.step||scene.element).scrollIntoView({block:stage.step?'center':'start',behavior:reducedMotion()?'auto':'smooth'});
+  if(focus){const h=(stage.step||scene.element).querySelector('h1,h2,h3');if(h){h.tabIndex=-1;h.focus({preventScroll:true});}}
+}
+
 
 const liveRegion=document.createElement('div');
 liveRegion.className='lr-sr-only';liveRegion.setAttribute('aria-live','polite');
@@ -2019,7 +2097,7 @@ function activateStage(scene,stage){
     step.hidden=!visibleRoute;
     step.classList.toggle('lr-stage-active',active&&visibleRoute);
     step.classList.toggle('on',active&&visibleRoute);
-    step.setAttribute('aria-hidden',String(!(active&&visibleRoute)));
+    step.setAttribute('aria-hidden',String(mode==='estudio'?!visibleRoute:!(active&&visibleRoute)));
   });
   scene.allFigures.forEach(figure=>{
     const model=scene.stages.find(item=>item.figure===figure);
@@ -2075,9 +2153,11 @@ function syncTeacher(scene,stage){
   });
 }
 function updateDeepLink(scene,stage){
-  if(!history.replaceState)return;
   const next=`#${encodeURIComponent(scene.id)}/${encodeURIComponent(stage.id)}`;
-  if(location.hash!==next)history.replaceState(null,'',`${location.pathname}${location.search}${next}`);
+  if(history.replaceState&&location.hash!==next)history.replaceState(null,'',`${location.pathname}${location.search}${next}`);
+  nav.querySelectorAll('.lr-modes a').forEach(link=>{
+    link.setAttribute('href',modeUrl(link.dataset.mode,next));
+  });
 }
 function goTo(sceneIndex,stageIndex,focusHeading=true){
   let scene=models[sceneIndex];
@@ -2088,6 +2168,7 @@ function goTo(sceneIndex,stageIndex,focusHeading=true){
   const stages=allowedStages(scene);
   stageIndex=Math.max(0,Math.min(Number(stageIndex)||0,stages.length-1));
   const stage=stages[stageIndex];
+  if(mode==='estudio'){studyActivate(scene,stage,true,focusHeading);return;}
   const positionChanged=body.dataset.currentSceneId!==scene.id
     ||body.dataset.currentStageId!==stage.id;
   currentScene=sceneIndex;currentStage=stageIndex;
@@ -2127,7 +2208,7 @@ function goTo(sceneIndex,stageIndex,focusHeading=true){
     total+scopeProgress[routeName].visited,0)/Math.max(1,enabledRoutes.reduce((total,routeName)=>
     total+scopeProgress[routeName].total,0))*100);
   controls.querySelector('.lr-route-progress').textContent=`${routeProgress}% visto`;
-  syncNav(scene);syncTeacher(scene,stage);updateDeepLink(scene,stage);
+  syncNav(scene);syncStagePicker(scene,stage);syncTeacher(scene,stage);updateDeepLink(scene,stage);
   liveRegion.textContent=`${scene.id}, etapa ${stageIndex+1} de ${stages.length}`;
   if(focusHeading){
     const heading=scene.element.querySelector('h1,h2,h3');
@@ -2186,7 +2267,7 @@ function applyStudyScope(activeScene=null){
       });
     });
   });
-  syncNav(activeScene);syncOptionalControls();saveRuntime(null,null,false);
+  syncNav(activeScene);syncOptionalControls();syncStagePicker();saveRuntime(null,null,false);
 }
 function toggleOptional(){
   routeScope=routeScope==='ALL'?'LIVE+REQUIRED':'ALL';
@@ -2203,7 +2284,7 @@ document.querySelectorAll('.lr-study-optional').forEach(button=>button.addEventL
 
 document.addEventListener('keydown',event=>{
   if(event.key==='Escape'){closeOverlays();return;}
-  if(mode!=='aula')return;
+  if(mode!=='aula'&&(!event.altKey||!['ArrowRight','ArrowLeft'].includes(event.key)))return;
   const active=document.activeElement;
   if(active&&(/INPUT|TEXTAREA|SELECT/.test(active.tagName)||active.isContentEditable))return;
   if(active&&active.tagName==='BUTTON'&&(event.key===' '||event.key==='Enter'))return;
@@ -2250,6 +2331,8 @@ if(mode==='aula'){
   const restored=restoredPosition();
   if(restored?.stage.route==='OPTIONAL')routeScope='ALL';
   applyStudyScope(restored?.scene||null);
+  const initial=restored&&allowed(restored.scene)?restored:{scene:availableModels()[0],stage:allowedStages(availableModels()[0])[0]};
+  studyActivate(initial.scene,initial.stage);
   const sceneObserver=new IntersectionObserver(entries=>{
     const visible=entries.filter(entry=>entry.isIntersecting&&!entry.target.hidden)
       .sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
@@ -2258,14 +2341,14 @@ if(mode==='aula'){
     if(!scene)return;
     syncNav(scene);
     const stage=allowedStages(scene).find(item=>!item.step)||allowedStages(scene)[0];
-    if(stage){saveRuntime(scene,stage,true);updateDeepLink(scene,stage);}
+    if(stage&&!scene.allSteps.length)studyActivate(scene,stage);
   },{rootMargin:'-20% 0px -55% 0px',threshold:[0,.15,.4]});
   models.forEach(scene=>sceneObserver.observe(scene.element));
   models.forEach(scene=>scene.stages.forEach(stage=>{
     if(!stage.step)return;
     const observer=new IntersectionObserver(entries=>{
       if(entries.some(entry=>entry.isIntersecting)&&!stage.step.hidden){
-        saveRuntime(scene,stage,true);syncNav(scene);updateDeepLink(scene,stage);
+        studyActivate(scene,stage);
       }
     },{rootMargin:'-35% 0px -45% 0px',threshold:.1});
     observer.observe(stage.step);
@@ -2287,7 +2370,7 @@ window.LEARNING_RUNTIME={
     if(mode==='estudio'){
       const stage=scene.stages.find(item=>item.id===stageId)||allowedStages(scene)[0];
       if(!stage)return false;
-      (stage.step||scene.element).scrollIntoView({block:'center'});return true;
+      studyActivate(scene,stage,true,false);return true;
     }
     const stages=allowedStages(scene),index=stages.findIndex(item=>item.id===stageId);
     goTo(models.indexOf(scene),Math.max(0,index),false);return true;
@@ -2341,7 +2424,7 @@ window.LEARNING_RUNTIME={
     if(!wrap)return;
     const button=document.createElement('button');
     button.type='button';button.className='lr-support-open';
-    button.textContent='Entender este código';
+    button.textContent=scene.querySelector('pre')?'Ayuda del ejemplo':'Conceptos de este paso';
     button.setAttribute('aria-haspopup','dialog');
     button.setAttribute('aria-expanded','false');
     button.setAttribute('aria-controls',dialog.id);

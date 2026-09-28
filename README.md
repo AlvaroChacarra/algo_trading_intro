@@ -6,7 +6,7 @@ Presentaciones para ordenador y proyector, desde 1280×720; sin soporte específ
 
 1. [Ver las presentaciones](https://alvarochacarra.github.io/algo_trading_intro/): abre la web y pulsa **Presentación**. En local, doble clic en `index.html`; funciona sin servidor.
 2. [Preparar Python y Jupyter](GUIA_LOCAL.md): una sola instalación dentro del repositorio.
-3. En cada clase publicada, resuelve el **principal en Jupyter** y utiliza los auxiliares opcionales para practicar. Puedes repetir el principal como programa con `python mi_main.py`.
+3. Sigue el README de la clase. **L3–L6:** enunciado, módulos `.py` y `python main.py`; solución solo Markdown. **L1–L2 y L7–L14:** principal en Jupyter y auxiliares opcionales; el script permite repetir el principal. L7–L14 consultan sus respuestas y programas completos en Markdown.
 
 Descarga **Code → Download ZIP** en [el repositorio público](https://github.com/AlvaroChacarra/algo_trading_intro) y extrae el curso. No necesitas Git ni cuenta de GitHub. Guarda tus respuestas junto a las plantillas como `mi_principal.ipynb`, `mi_auxiliar.ipynb` y `mi_main.py`; conserva esas copias al descargar nuevas clases. Los auxiliares son opcionales.
 

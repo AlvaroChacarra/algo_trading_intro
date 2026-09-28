@@ -52,9 +52,19 @@ python mi_main.py
 
 El `.py` ejecuta el programa entero mediante `main()`. Ejecutar sin errores no garantiza un cálculo correcto: compara también los números. El notebook ya cubre el ejercicio; el script permite repetirlo como programa.
 
-Desde las clases de objetos verás también `exercises/exchange/`: es una biblioteca proporcionada para los experimentos. Conserva esa carpeta junto a los notebooks; tus respuestas van en las celdas y en tu copia del script. Consulta las soluciones del principal y los auxiliares en `exercises/solutions/`, o ábrelas desde el README de la clase.
+Desde L7 verás también `exercises/exchange/`: es una biblioteca proporcionada para los experimentos. Conserva esa carpeta junto a los notebooks; tus respuestas van en las celdas y en tu copia del script. L7–L14 ofrecen soluciones Markdown por apartado y programas completos copiables en `exercises/solutions/solucion.md`; el README de cada clase enlaza su consulta.
 
 En L14, el proyecto final tiene además `capstone.ipynb` y `capstone.py`: crea `mi_capstone.ipynb` y `mi_capstone.py` en la misma carpeta. Reserva los 90 minutos indicados en su `CAPSTONE.md`.
+
+### L3–L6: práctica por archivos
+
+Sigue `enunciado.md` y guarda juntos los módulos y `main.py`. Ejecuta `python main.py`
+desde `exercises`. La solución está en `solutions/solucion.md`, en bloques copiables.
+En L5 reutiliza tu `models.py` terminado en L4; en L6, tu `book.py` de L5.
+L6 no utiliza notebooks ni necesita `exchange/` para estos ejercicios. Si conservas una copia personal,
+copia los archivos juntos y mantén sus nombres para no romper los imports.
+Antes de actualizar, guarda aparte esos módulos completados: tienen los mismos
+nombres que las plantillas y una descarga puede sobrescribirlos.
 
 ## 3. Recibe material nuevo
 
@@ -64,6 +74,6 @@ Si ya utilizas Git, puedes clonar el repositorio en lugar del ZIP y actualizar d
 
 ## Si ya tenías una copia del curso
 
-Conserva tu carpeta anterior. El recorrido de todas las clases empieza ahora en sus notebooks. Si tenías módulos propios, consérvalos como trabajo personal y consulta los enunciados actuales para trasladar las respuestas.
+Conserva tu carpeta anterior. En L3–L6 sigue `enunciado.md` y trabaja directamente sobre los módulos. Si usabas los notebooks antiguos de L6, guárdalos y traslada tus respuestas siguiendo el enunciado nuevo; no busques esos notebooks en la descarga actual. L1–L2 y L7–L14 conservan sus notebooks. En L7–L14 sustituye solo las bases heredadas señaladas por tu código personal y conserva la preparación local de datos/imports. Guarda aparte tus módulos completados antes de actualizar, manteniendo juntos sus nombres e imports.
 
 [Del notebook al programa](GUIA_PROYECTO.md) explica cómo se conectan investigación, scripts y bibliotecas.

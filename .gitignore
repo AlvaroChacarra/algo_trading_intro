@@ -43,3 +43,7 @@ favicon.ico
 # Exámenes con respuestas (no subir al repo)
 15-final-exam/examen_*.pdf
 15-final-exam/examen_*.html
+
+# Regenerable audit/test outputs (sources and tests stay tracked)
+artifacts/
+.pytest_cache/

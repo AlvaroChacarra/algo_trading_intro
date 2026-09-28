@@ -1,5 +1,5 @@
 /* Student acceptance on the published, presentation-only artifact. */
-const {webkit} = require('playwright');
+const {webkit, chromium} = require('playwright');
 const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -12,6 +12,8 @@ const option = name => {
 };
 const liveUrl = option('--live-url');
 const auditDir = option('--audit-dir');
+const browserName = option('--browser') || 'webkit';
+assert(['webkit','chromium'].includes(browserName), 'supported browser: webkit or chromium');
 const prefix = '/algo_trading_intro/';
 
 async function inspectLayout(page, label) {
@@ -53,6 +55,13 @@ async function checkDownloads(page, live) {
     const lesson = new URL(href).pathname.split('/main/')[1].split('/')[0];
     const id = lesson.slice(0, 2);
     const base = `https://github.com/AlvaroChacarra/algo_trading_intro/raw/refs/heads/main/${lesson}/exercises/solutions`;
+    // L3–L14 use canonical Markdown solutions; do not invent legacy notebooks.
+    const folder = path.join(sourceRoot, lesson, 'exercises', 'solutions');
+    if (fs.existsSync(path.join(folder, 'solucion.md'))) {
+      const files = ['solucion.md'];
+      if (fs.existsSync(path.join(folder, 'capstone.md'))) files.push('capstone.md');
+      return files.map(file => `${base}/${file}`);
+    }
     return [`${base}/${id}_build_exercises.ipynb`, `${base}/${id}_auxiliary.ipynb`];
   });
   const notebookLinks = [...new Set([...links.filter(href => /\.ipynb(?:$|[?#])/.test(href)), ...solutionLinks])];
@@ -66,9 +75,15 @@ async function checkDownloads(page, live) {
     if (live) {
       const response = await page.request.get(href);
       assert.equal(response.status(), 200, `notebook download: ${href}`);
-      document = await response.json();
+      document = relative.endsWith('.md') ? await response.text() : await response.json();
     } else {
-      document = JSON.parse(fs.readFileSync(path.join(sourceRoot, relative), 'utf8'));
+      const content = fs.readFileSync(path.join(sourceRoot, relative), 'utf8');
+      document = relative.endsWith('.md') ? content : JSON.parse(content);
+    }
+    if (relative.endsWith('.md')) {
+      assert(/\/exercises\/solutions\/(solucion|capstone)\.md$/.test(relative), `unexpected solution: ${href}`);
+      assert(document.trim().length && /```python\b/.test(document), `empty or incomplete Markdown solution: ${href}`);
+      continue;
     }
     assert.equal(document.nbformat, 4);
     for (const cell of document.cells) {
@@ -97,7 +112,9 @@ async function checkDownloads(page, live) {
   });
   if (!liveUrl) await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   const base = liveUrl || `http://127.0.0.1:${server.address().port}${prefix}`;
-  const browser = await webkit.launch();
+  const browser = await (browserName === 'webkit' ? webkit : chromium).launch(
+    browserName === 'chromium' && process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
+      ? {executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH} : {});
   const records = [];
   if (auditDir) fs.mkdirSync(auditDir, {recursive:true});
   try {
@@ -150,12 +167,12 @@ async function checkDownloads(page, live) {
       assert.deepEqual(errors, []);
       assert.deepEqual(badResponses, []);
       await page.close();
-      console.log(`Pages ${viewport.width}px: ${viewport.width < 1280 ? 'catalogue only' : `${links.length} presentations`}, ${downloads} notebook downloads OK`);
+      console.log(`Pages ${viewport.width}px (${browserName}): ${viewport.width < 1280 ? 'catalogue only' : `${links.length} presentations`}, ${downloads} practice downloads OK`);
     }
   } finally {
     await browser.close();
     if (!liveUrl) await new Promise(resolve => server.close(resolve));
     if (auditDir) fs.writeFileSync(path.join(auditDir, 'pages-audit.json'),
-      JSON.stringify({base:liveUrl || 'local snapshot', source_sha:process.env.GITHUB_SHA || null, records}, null, 2));
+      JSON.stringify({base:liveUrl || 'local snapshot', browser:browserName, source_sha:process.env.GITHUB_SHA || null, records}, null, 2));
   }
 })().catch(error => { console.error(error); process.exit(1); });
