@@ -5,7 +5,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 const assert = require('node:assert/strict');
 const root = path.resolve(process.argv[2] || '_site');
-const sourceRoot = path.resolve(__dirname, '..', '..');
+let sourceRoot = path.resolve(__dirname, '..', '..');
+if (!fs.existsSync(path.join(sourceRoot, 'index.html'))) sourceRoot = path.resolve(__dirname, '..', '..', '..', '..');
 const option = name => {
   const index = process.argv.indexOf(name);
   return index < 0 ? null : process.argv[index + 1];

@@ -17,9 +17,9 @@ __pycache__/
 **/exercises/mi_principal.ipynb
 **/exercises/mi_auxiliar.ipynb
 **/exercises/mi_main.py
+**/exercises/mi_opcionales.py
 **/exercises/mi_capstone.ipynb
 **/exercises/mi_capstone.py
-student_project/
 
 # VS Code
 .vscode/
@@ -30,9 +30,6 @@ Thumbs.db
 
 # Node (nunca versionar dependencias JS)
 node_modules/
-
-# Archivo local de la versión anterior del curso (no subir)
-_archive_v1/
 
 # Project specific
 output/

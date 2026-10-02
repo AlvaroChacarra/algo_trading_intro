@@ -14,7 +14,7 @@ import re
 import shutil
 from urllib.parse import urlsplit, unquote
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = next(p for p in Path(__file__).resolve().parents if (p / 'index.html').is_file())
 PUBLIC = 'https://github.com/AlvaroChacarra/algo_trading_intro'
 ASSETS = {'.css', '.js', '.png', '.jpg', '.svg', '.webp', '.woff2', '.woff', '.ttf'}
 

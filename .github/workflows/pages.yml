@@ -21,6 +21,9 @@ concurrency:
   group: pages-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  COURSE_TOOLS: ${{ github.repository == 'AlvaroChacarra/algo_trading_intro_source' && 'authoring/curso/framework/_build' || 'framework/_build' }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -30,9 +33,9 @@ jobs:
         with:
           python-version: "3.11"
       - name: Construir el site estático
-        run: python framework/_build/build_pages.py --output _site
+        run: python "$COURSE_TOOLS"/build_pages.py --output _site
       - name: Validar HTML, enlaces y base path
-        run: python framework/_build/check_pages.py _site --base-path /algo_trading_intro/
+        run: python "$COURSE_TOOLS"/check_pages.py _site --base-path /algo_trading_intro/
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
@@ -40,7 +43,7 @@ jobs:
         run: |
           npm install playwright@1.62.1
           npx playwright install --with-deps webkit
-          node framework/_build/pages_e2e.js _site --audit-dir artifacts/pages-review
+          node "$COURSE_TOOLS"/pages_e2e.js _site --audit-dir artifacts/pages-review
       - name: Conservar evidencia visual de Pages
         if: always()
         uses: actions/upload-artifact@v4
@@ -84,7 +87,7 @@ jobs:
         run: |
           npm install playwright@1.62.1
           npx playwright install --with-deps webkit
-          node framework/_build/pages_e2e.js _site --live-url https://alvarochacarra.github.io/algo_trading_intro/ --audit-dir artifacts/pages-live
+          node "$COURSE_TOOLS"/pages_e2e.js _site --live-url https://alvarochacarra.github.io/algo_trading_intro/ --audit-dir artifacts/pages-live
       - name: Conservar evidencia del despliegue
         if: always()
         uses: actions/upload-artifact@v4

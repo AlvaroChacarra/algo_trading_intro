@@ -6,13 +6,13 @@ Presentaciones para ordenador y proyector, desde 1280×720; sin soporte específ
 
 1. [Ver las presentaciones](https://alvarochacarra.github.io/algo_trading_intro/): abre la web y pulsa **Presentación**. En local, doble clic en `index.html`; funciona sin servidor.
 2. [Preparar Python y Jupyter](GUIA_LOCAL.md): una sola instalación dentro del repositorio.
-3. Sigue el README de la clase. **L3–L6:** enunciado, módulos `.py` y `python main.py`; solución solo Markdown. **L1–L2 y L7–L14:** principal en Jupyter y auxiliares opcionales; el script permite repetir el principal. L7–L14 consultan sus respuestas y programas completos en Markdown.
+3. Sigue el README de la clase. **L3–L14:** enunciado, módulos `.py` y `python main.py`; solución solo Markdown. **L1–L2:** principal en Jupyter y auxiliares opcionales; el script permite repetir el principal.
 
 Descarga **Code → Download ZIP** en [el repositorio público](https://github.com/AlvaroChacarra/algo_trading_intro) y extrae el curso. No necesitas Git ni cuenta de GitHub. Guarda tus respuestas junto a las plantillas como `mi_principal.ipynb`, `mi_auxiliar.ipynb` y `mi_main.py`; conserva esas copias al descargar nuevas clases. Los auxiliares son opcionales.
 
 El notebook sirve para investigar, experimentar y explicar; los `.py`, para ejecutar programas completos y crear funciones reutilizables. [Del notebook al programa](GUIA_PROYECTO.md) explica esta transición y el código de referencia que acompaña a las clases.
 
-Sesión estándar: unos 50 minutos —10 de test, 20 de presentación, 20 de práctica—. Los notebooks distinguen trabajo obligatorio y opcional; el capstone de L14 tiene su propio notebook y 90 minutos de trabajo autónomo. Evaluación: asistencia 10%, participación 20%, continua 40%, final 30%. En sesiones consecutivas, el test se difiere hasta haber tenido tiempo de estudio.
+Sesión estándar: unos 50 minutos —10 de test, 20 de presentación, 20 de práctica—. Los notebooks distinguen trabajo obligatorio y opcional; el capstone de L14 tiene su propio programa Python y 90 minutos de trabajo autónomo. Evaluación: asistencia 10%, participación 20%, continua 40%, final 30%. En sesiones consecutivas, el test se difiere hasta haber tenido tiempo de estudio.
 
 Datos sintéticos y experimentos docentes. El backtest de snapshots y el simulador de market making son entornos distintos. Las actividades de repaso de L15 son práctica histórica; el examen oficial acumulativo y sus respuestas permanecen en el source privado. Cada clase llega al repositorio público según su calendario.
 
