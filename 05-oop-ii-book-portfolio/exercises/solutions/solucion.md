@@ -69,7 +69,7 @@ class PositionTracker:
 ## `book.py`
 
 ```python
-"""Level y la ordenación están proporcionados; completa únicamente mid."""
+"""Level y OrderBook resueltos: niveles ordenados, mid e imbalance."""
 
 
 class Level:
