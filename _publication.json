@@ -1,5 +1,5 @@
 {
-  "policy_sha256": "36294c49c57da01bcbc45cd246616a2d6e51d4489cd74feda3d2c2b4bfee0e99",
+  "policy_sha256": "29e63a0c12f3f097d0fb8495cd0064c83b28907b75a43f5f4353573d3175115d",
   "released_classes": [
     {
       "id": "01",
@@ -35,43 +35,8 @@
       "id": "07",
       "path": "07-microstructure-reading-book",
       "publish_at": "2026-10-07T08:45:00+02:00"
-    },
-    {
-      "id": "08",
-      "path": "08-order-types-matching",
-      "publish_at": "2026-10-07T15:00:42+02:00"
-    },
-    {
-      "id": "09",
-      "path": "09-market-simulation-loop",
-      "publish_at": "2026-10-07T15:00:42+02:00"
-    },
-    {
-      "id": "10",
-      "path": "10-strategy-framework",
-      "publish_at": "2026-10-07T15:00:42+02:00"
-    },
-    {
-      "id": "11",
-      "path": "11-first-strategy-metrics",
-      "publish_at": "2026-10-07T15:00:42+02:00"
-    },
-    {
-      "id": "12",
-      "path": "12-vwap-execution",
-      "publish_at": "2026-10-07T15:00:42+02:00"
-    },
-    {
-      "id": "13",
-      "path": "13-market-making-intro",
-      "publish_at": "2026-10-07T15:00:42+02:00"
-    },
-    {
-      "id": "14",
-      "path": "14-avellaneda-stoikov",
-      "publish_at": "2026-10-07T15:00:42+02:00"
     }
   ],
-  "source_sha": "39bc564c6e889bc127bb218cf6868c9f35a54e59",
+  "source_sha": "fbc8b4cf4dad91c3347e5f982b31c69d5d0f7442",
   "version": 1
 }
