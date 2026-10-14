@@ -35,6 +35,16 @@
       "id": "07",
       "path": "07-microstructure-reading-book",
       "publish_at": "2026-10-07T08:45:00+02:00"
+    },
+    {
+      "id": "08",
+      "path": "08-order-types-matching",
+      "publish_at": "2026-10-14T08:45:00+02:00"
+    },
+    {
+      "id": "09",
+      "path": "09-market-simulation-loop",
+      "publish_at": "2026-10-14T08:45:00+02:00"
     }
   ],
   "source_sha": "fbc8b4cf4dad91c3347e5f982b31c69d5d0f7442",
