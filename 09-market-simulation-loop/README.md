@@ -1,4 +1,4 @@
-# Clase 9 — Dale un reloj a tu mercado
+# Clase 9 — La misma compra. Otro instante.
 
 1. [Presentación](presentation/market-simulation-loop-doc.html): abre el HTML con doble clic, sin servidor.
 2. [Enunciado](exercises/enunciado.md): pasos, resultados y práctica opcional.

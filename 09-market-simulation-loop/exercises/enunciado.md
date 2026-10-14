@@ -1,4 +1,4 @@
-# Lesson 9 · Dale un reloj a tu mercado
+# Lesson 9 · La misma compra. Otro instante.
 
 **Objetivo.** Construir `ReplayMarket` para visitar fotos en orden, ejecutar en la actual y volver al inicio. El libro cambia con cada foto; caja y posición pertenecen a una cartera externa.
 
@@ -19,6 +19,8 @@ Todo está en esta carpeta. Edita `market.py` y `main.py`; ejecuta `python main.
 **Contratos incluidos.** `SnapshotBook.from_snapshot(symbol,row,depth)` crea un objeto nuevo con bids/asks y consultas mid/spread. `PlannedEngine.process(order,book,timestamp=None)` consume la liquidez de ese libro y devuelve fills. `PositionTracker(1000)` empieza con caja 1000 y posición cero; `apply_fill(fill)` registra ejecución y `equity(mid)` solo valora. `Order(symbol,side,size,price=None,order_type=...)` normaliza buy/sell; cada ExecutionFill contiene order_id, symbol, side, price, size y timestamp, y conserva `cash_flow()`. Se registra cada fill, no la intención enviada.
 
 **Datos y alcance.** Dos fotos sintéticas de control: precios USD/BTC, tamaños BTC, timestamp 0/1. El CSV local contiene 500 fotos sintéticas BTCUSDT, diez niveles por lado; precios USDT/BTC, tamaños BTC y timestamps en segundos Unix. DictReader entrega texto; la factory incluida lo adapta. Procedencia y campos en `exchange/_data/README.md`. No es el JSON histórico real de L7. Caja inicial 1000 en los dos experimentos, sin comisiones ni restricción de financiación: la compra del CSV puede dejar caja negativa. Al avanzar se sustituye el libro; no hay cola de órdenes pasivas ni ejecución entre fotos.
+
+**De la presentación al código.** `step` cambia la foto, `submit` ejecuta en ella y `apply_fill` cambia la cuenta. En cada vuelta: recibe el libro → guarda el mid → decide si toca comprar → aplica los fills. Cuando `step` devuelve `None`, termina: ya no hay una foto activa. No se espera tiempo real ni se consulta una foto futura para tomar la decisión actual.
 
 **Autonomía.** El ciclo de vida se guía en el ejercicio 1. En los bucles de 2B y 3B decide tú qué conservar y cuándo registrar los datos. Antes de ejecutar 4B escribe tu predicción; después explica el resultado con lo que observas.
 
@@ -146,7 +148,7 @@ Devuelve (apertura,cierre) a partir de mids_of; la sesión vacía produce (None,
 
 **Encargo:** Recorre todas las filas, compra una unidad solo en el índice at y devuelve fills, tracker y marks.
 
-Implementa trade_at(rows, at, symbol="BTC"). Crea un ReplayMarket y un PositionTracker(1000), visita todas las fotos y compra exactamente una unidad solo cuando el índice activo sea at. Guarda el mid antes de enviar la orden; aplica cada fill confirmado y acumúlalo. Devuelve (fills, tracker, marks), con un mark por fila. Si at no existe no opera; si faltan filas devuelve listas vacías y cartera intacta. Elige tú la estructura del bucle.
+Implementa trade_at(rows, at, symbol="BTC"). Crea un ReplayMarket y un PositionTracker(1000), visita todas las fotos y compra exactamente una unidad solo cuando el índice activo sea at. Guarda el mid antes de enviar la orden; aplica cada fill confirmado y acumúlalo. Devuelve (fills, tracker, marks), con un mark por fila. Si at no existe no opera; si faltan filas devuelve listas vacías y cartera intacta. Elige tú la estructura del bucle. `marks` guarda precios de valoración, no valores de la cuenta: con las dos fotos será `[100.0, 102.0]` tanto si compras como si no. `fills` contiene solo lo ejecutado; `tracker` conserva caja y posición. La equity al cierre se consulta como `tracker.equity(marks[-1])` cuando haya al menos una foto. No sumes los mids ni registres una orden como si fuera un fill.
 
 **Comprobación:** `python main.py --through 3B`.
 

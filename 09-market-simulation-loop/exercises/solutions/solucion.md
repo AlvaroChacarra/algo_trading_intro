@@ -18,7 +18,7 @@ Consulta el apartado después de intentarlo. Cada archivo aparece **una sola vez
 
 **3A** · Usa mids_of para devolver el primer y último mid; si no hay fotos devuelve (None, None). (100.0, 102.0) y (None, None). No son libros persistentes.
 
-**3B** · Recorre todas las filas, compra una unidad solo en el índice at y devuelve fills, tracker y marks. En índice 0: caja899 y equity final1001; en 1: caja897 y equity999; en9: posición0 y equity1000. Cambia el precio de ejecución, no el reloj.
+**3B** · Recorre todas las filas, compra una unidad solo en el índice at y devuelve fills, tracker y marks. En índice 0: caja899 y equity final1001; en 1: caja897 y equity999; en9: posición0 y equity1000. Cambia el precio de ejecución, no el reloj. `marks=[100.0, 102.0]` conserva los precios observados en los tres casos; no es una equity curve. La valoración final es caja + posición × último mark, no la suma de precios.
 
 **4A** · Lee csv_path con DictReader y usa trade_at en el índice 9 con symbol="BTCUSDT"; guarda los resultados de la sesión. 500 marks. Position coincide con la cantidad ejecutada. Todos los fills pertenecen a BTCUSDT. El mismo reloj sirve para filas textuales.
 
