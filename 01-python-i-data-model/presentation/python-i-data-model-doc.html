@@ -2105,7 +2105,9 @@ function activateStage(scene,stage){
     const active=!hasMappedFigures||stage.figure===figure;
     figure.hidden=!visibleRoute;
     figure.classList.toggle('on',active&&visibleRoute);
-    figure.setAttribute('aria-hidden',String(!(active&&visibleRoute)));
+    // Continuous study figures remain visible and accessible across stages.
+    const continuousStudy=mode==='estudio'&&figure.dataset.studyContinuous==='true';
+    figure.setAttribute('aria-hidden',String(continuousStudy?!visibleRoute:!(active&&visibleRoute)));
   });
   const name=scene.element.querySelector('.stage-name');
   if(name){
