@@ -50,8 +50,18 @@
       "id": "10",
       "path": "10-strategy-framework",
       "publish_at": "2026-10-14T08:45:00+02:00"
+    },
+    {
+      "id": "11",
+      "path": "11-first-strategy-metrics",
+      "publish_at": "2026-10-28T08:45:00+01:00"
+    },
+    {
+      "id": "12",
+      "path": "12-vwap-execution",
+      "publish_at": "2026-10-28T08:45:00+01:00"
     }
   ],
-  "source_sha": "174594bde466141bf919db97b8b7c9411749e8b7",
+  "source_sha": "0f78bef2e4bdf86216645461ab6bf6b5e826d773",
   "version": 1
 }
